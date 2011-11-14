@@ -25,35 +25,47 @@ import static org.testng.Assert.fail;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
 import org.jclouds.cloudstack.CloudStackClient;
-import org.jclouds.cloudstack.CloudStackPropertiesBuilder;
+import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule.GetIPForwardingRuleByVirtualMachine;
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.compute.strategy.CloudStackComputeServiceAdapter;
+import org.jclouds.cloudstack.domain.IPForwardingRule;
+import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.ServiceOffering;
-import org.jclouds.cloudstack.domain.SshKeyPair;
+import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.features.BaseCloudStackClientLiveTest;
+import org.jclouds.cloudstack.functions.StaticNATVirtualMachineInNetwork;
 import org.jclouds.cloudstack.predicates.JobComplete;
 import org.jclouds.cloudstack.predicates.TemplatePredicates;
+import org.jclouds.cloudstack.suppliers.GetCurrentUser;
+import org.jclouds.cloudstack.suppliers.NetworksForCurrentUser;
+import org.jclouds.collect.Memoized;
+import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.ComputeTestUtils;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
+import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.rest.annotations.Identity;
 import org.jclouds.ssh.SshClient;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.net.InetAddresses;
@@ -61,15 +73,19 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Module;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 @Test(groups = "live", singleThreaded = true, testName = "CloudStackComputeServiceAdapterLiveTest")
 public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClientLiveTest {
 
    private CloudStackComputeServiceAdapter adapter;
-   private VirtualMachine vm;
+   private NodeAndInitialCredentials<VirtualMachine> vm;
 
    private String keyPairName;
    private Map<String, String> keyPair;
+   Map<String, Credentials> credentialStore = Maps.newLinkedHashMap();
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
@@ -78,8 +94,16 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
 
          @Override
          protected void configure() {
-            bindProperties(binder(), CloudStackComputeServiceAdapterLiveTest.this.setupProperties());
+            bindProperties(binder(), setupProperties());
+            bind(String.class).annotatedWith(Identity.class).toInstance(identity);
+            bind(new TypeLiteral<Supplier<User>>() {
+            }).annotatedWith(Memoized.class).to(GetCurrentUser.class).in(Scopes.SINGLETON);
+            bind(new TypeLiteral<Supplier<Map<Long, Network>>>() {
+            }).annotatedWith(Memoized.class).to(NetworksForCurrentUser.class).in(Scopes.SINGLETON);
+            bind(new TypeLiteral<Map<String, Credentials>>() {
+            }).toInstance(credentialStore);
             bind(CloudStackClient.class).toInstance(context.getApi());
+            install(new FactoryModuleBuilder().build(StaticNATVirtualMachineInNetwork.Factory.class));
          }
 
          @SuppressWarnings("unused")
@@ -87,6 +111,14 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
          @Singleton
          protected Predicate<Long> jobComplete(JobComplete jobComplete) {
             return new RetryablePredicate<Long>(jobComplete, 1200, 1, 5, TimeUnit.SECONDS);
+         }
+
+         @SuppressWarnings("unused")
+         @Provides
+         @Singleton
+         protected Cache<Long, IPForwardingRule> getIPForwardingRuleByVirtualMachine(
+               GetIPForwardingRuleByVirtualMachine getIPForwardingRule) {
+            return CacheBuilder.newBuilder().build(getIPForwardingRule);
          }
       };
       adapter = Guice.createInjector(module, new Log4JLoggingModule()).getInstance(
@@ -105,35 +137,47 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
       assertFalse(Iterables.isEmpty(adapter.listLocations()));
    }
 
+   private static final PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate = new PrioritizeCredentialsFromTemplate(
+         new DefaultCredentialsFromImageOrOverridingCredentials());
+
    @Test
-   public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentialsWithSecurityGroup() {
+   public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentialsWithSecurityGroup()
+         throws InterruptedException {
       String group = "foo";
       String name = "node" + new Random().nextInt();
       Template template = computeContext.getComputeService().templateBuilder().build();
 
-      client.getSSHKeyPairClient().deleteSSHKeyPair(keyPairName);
-      client.getSSHKeyPairClient().registerSSHKeyPair(keyPairName, keyPair.get("public"));
+      if (!client
+            .getTemplateClient()
+            .getTemplateInZone(Long.parseLong(template.getImage().getId()),
+                  Long.parseLong(template.getLocation().getId())).isPasswordEnabled()) {
+         client.getSSHKeyPairClient().deleteSSHKeyPair(keyPairName);
+         client.getSSHKeyPairClient().registerSSHKeyPair(keyPairName, keyPair.get("public"));
 
-      Map<String, Credentials> credentialStore = Maps.newLinkedHashMap();
-      credentialStore.put("keypair#" + keyPairName, new Credentials("root", keyPair.get("private")));
+         credentialStore.put("keypair#" + keyPairName, new Credentials("root", keyPair.get("private")));
 
-      // TODO: look at SecurityGroupClientLiveTest for how to do this
-      template.getOptions().as(CloudStackTemplateOptions.class).keyPair(keyPairName);
-
-      vm = adapter.createNodeWithGroupEncodedIntoNameThenStoreCredentials(group, name, template, credentialStore);
+         // TODO: look at SecurityGroupClientLiveTest for how to do this
+         template.getOptions().as(CloudStackTemplateOptions.class).keyPair(keyPairName);
+      }
+      vm = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
 
       // TODO: check security groups vm.getSecurityGroups(),
       // check other things, like cpu correct, mem correct, image/os is correct
       // (as possible)
 
-      assert credentialStore.containsKey("node#" + vm.getId()) : "credentials to log into vm not found " + vm;
-      assert InetAddresses.isInetAddress(vm.getIPAddress()) : vm;
+      // check to see if we setup a NAT rule (conceding we could check this from
+      // cache)
+      IPForwardingRule rule = client.getNATClient().getIPForwardingRuleForVirtualMachine(vm.getNode().getId());
 
-      doConnectViaSsh(vm, credentialStore.get("node#" + vm.getId()));
+      String address = rule != null ? rule.getIPAddress() : vm.getNode().getIPAddress();
+
+      assert InetAddresses.isInetAddress(address) : vm;
+      IPSocket socket = new IPSocket(address, 22);
+      doConnectViaSsh(socket, prioritizeCredentialsFromTemplate.apply(template, vm.getCredentials()));
    }
 
-   protected void doConnectViaSsh(VirtualMachine vm, Credentials creds) {
-      SshClient ssh = computeContext.utils().sshFactory().create(new IPSocket(vm.getIPAddress(), 22), creds);
+   protected void doConnectViaSsh(IPSocket socket, Credentials creds) {
+      SshClient ssh = computeContext.utils().sshFactory().create(socket, creds);
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");
@@ -170,7 +214,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
    @AfterGroups(groups = "live")
    protected void tearDown() {
       if (vm != null)
-         adapter.destroyNode(vm.getId() + "");
+         adapter.destroyNode(vm.getNodeId());
       super.tearDown();
    }
 }

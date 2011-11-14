@@ -169,8 +169,10 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testCreateVMInSecurityGroup() throws Exception {
       if (!securityGroupsSupported)
          return;
-      vm = VirtualMachineClientLiveTest.createVirtualMachineWithSecurityGroupInZone(zone.getId(), group.getId(),
-            client, jobComplete, virtualMachineRunning);
+      Long defaultTemplate = (imageId != null && !"".equals(imageId)) ? new Long(imageId) : null;
+      vm = VirtualMachineClientLiveTest.createVirtualMachineWithSecurityGroupInZone(zone.getId(),
+            defaultTemplateOrPreferredInZone(defaultTemplate, client, zone.getId()), group.getId(), client,
+            jobComplete, virtualMachineRunning);
       if (vm.getPassword() != null)
          password = vm.getPassword();
       // ingress port 22

@@ -56,4 +56,34 @@ public class AsyncCreateResponse {
       return jobId;
    }
 
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + (int) (id ^ (id >>> 32));
+      result = prime * result + (int) (jobId ^ (jobId >>> 32));
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      AsyncCreateResponse other = (AsyncCreateResponse) obj;
+      if (id != other.id)
+         return false;
+      if (jobId != other.jobId)
+         return false;
+      return true;
+   }
+
+   @Override
+   public String toString() {
+      return "[id=" + id + ", jobId=" + jobId + "]";
+   }
+
 }

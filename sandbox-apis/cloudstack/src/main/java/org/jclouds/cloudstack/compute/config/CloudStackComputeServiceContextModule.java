@@ -18,11 +18,13 @@
  */
 package org.jclouds.cloudstack.compute.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -35,13 +37,19 @@ import org.jclouds.cloudstack.compute.functions.VirtualMachineToNodeMetadata;
 import org.jclouds.cloudstack.compute.functions.ZoneToLocation;
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.compute.strategy.CloudStackComputeServiceAdapter;
+import org.jclouds.cloudstack.domain.IPForwardingRule;
+import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.OSType;
 import org.jclouds.cloudstack.domain.ServiceOffering;
 import org.jclouds.cloudstack.domain.Template;
+import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.features.GuestOSClient;
+import org.jclouds.cloudstack.functions.StaticNATVirtualMachineInNetwork;
 import org.jclouds.cloudstack.predicates.JobComplete;
+import org.jclouds.cloudstack.suppliers.GetCurrentUser;
+import org.jclouds.cloudstack.suppliers.NetworksForCurrentUser;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
@@ -51,14 +59,19 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.Maps;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
  * 
@@ -90,6 +103,9 @@ public class CloudStackComputeServiceContextModule
       bind(TemplateOptions.class).to(CloudStackTemplateOptions.class);
       bind(new TypeLiteral<Function<Template, OperatingSystem>>() {
       }).to(TemplateToOperatingSystem.class);
+      install(new FactoryModuleBuilder().build(StaticNATVirtualMachineInNetwork.Factory.class));
+      bind(new TypeLiteral<CacheLoader<Long, IPForwardingRule>>() {
+      }).to(GetIPForwardingRuleByVirtualMachine.class);
    }
 
    @Provides
@@ -130,8 +146,56 @@ public class CloudStackComputeServiceContextModule
 
    @Provides
    @Singleton
+   @Memoized
+   public Supplier<Map<Long, Network>> listNetworks(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+         final NetworksForCurrentUser networksForCurrentUser) {
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<Long, Network>>(authException,
+            seconds, networksForCurrentUser);
+   }
+
+   @Provides
+   @Singleton
+   @Memoized
+   public Supplier<User> getCurrentUser(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+         final GetCurrentUser getCurrentUser) {
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<User>(authException, seconds,
+            getCurrentUser);
+   }
+
+   @Provides
+   @Singleton
    protected Predicate<Long> jobComplete(JobComplete jobComplete) {
       // TODO: parameterize
       return new RetryablePredicate<Long>(jobComplete, 1200, 1, 5, TimeUnit.SECONDS);
    }
+
+   @Provides
+   @Singleton
+   protected Cache<Long, IPForwardingRule> getIPForwardingRuleByVirtualMachine(
+         CacheLoader<Long, IPForwardingRule> getIPForwardingRule) {
+      return CacheBuilder.newBuilder().build(getIPForwardingRule);
+   }
+
+   @Singleton
+   public static class GetIPForwardingRuleByVirtualMachine extends CacheLoader<Long, IPForwardingRule> {
+      private final CloudStackClient client;
+
+      @Inject
+      public GetIPForwardingRuleByVirtualMachine(CloudStackClient client) {
+         this.client = checkNotNull(client, "client");
+      }
+
+      /**
+       * @throws ResourceNotFoundException
+       *            when there is no ip forwarding rule available for the VM
+       */
+      @Override
+      public IPForwardingRule load(Long input) {
+         IPForwardingRule rule = client.getNATClient().getIPForwardingRuleForVirtualMachine(input);
+         if (rule == null)
+            throw new ResourceNotFoundException("no ip forwarding rule for: " + input);
+         return rule;
+      }
+   }
+
 }

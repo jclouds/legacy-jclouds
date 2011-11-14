@@ -50,16 +50,18 @@ import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 /**
  * Provides asynchronous access to cloudstack via their REST API.
  * <p/>
  * 
  * @see TemplateClient
- * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
+ * @see <a
+ *      href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html"
+ *      />
  * @author Adrian Cole
  */
 @RequestFilters(QuerySigner.class)
@@ -74,7 +76,9 @@ public interface TemplateAsyncClient {
    @QueryParams(keys = "command", values = "createTemplate")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> createTemplate(@BinderParam(BindTemplateMetadataToQueryParams.class) TemplateMetadata templateMetadata, CreateTemplateOptions... options);
+   ListenableFuture<AsyncCreateResponse> createTemplate(
+         @BinderParam(BindTemplateMetadataToQueryParams.class) TemplateMetadata templateMetadata,
+         CreateTemplateOptions... options);
 
    /**
     * @see TemplateClient#registerTemplate
@@ -83,7 +87,10 @@ public interface TemplateAsyncClient {
    @QueryParams(keys = "command", values = "registerTemplate")
    @SelectJson("template")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Template> registerTemplate(@BinderParam(BindTemplateMetadataToQueryParams.class) TemplateMetadata templateMetadata, @QueryParam("format") String format, @QueryParam("hypervisor") String hypervisor, @QueryParam("url") String url, @QueryParam("zoneid") long zoneId, RegisterTemplateOptions... options);
+   ListenableFuture<Template> registerTemplate(
+         @BinderParam(BindTemplateMetadataToQueryParams.class) TemplateMetadata templateMetadata,
+         @QueryParam("format") String format, @QueryParam("hypervisor") String hypervisor,
+         @QueryParam("url") String url, @QueryParam("zoneid") long zoneId, RegisterTemplateOptions... options);
 
    /**
     * @see TemplateClient#updateTemplate
@@ -101,7 +108,8 @@ public interface TemplateAsyncClient {
    @QueryParams(keys = "command", values = "copyTemplate")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> copyTemplateToZone(@QueryParam("id") long id, @QueryParam("sourcezoneid") long sourceZoneId, @QueryParam("destzoneid") long destZoneId);
+   ListenableFuture<AsyncCreateResponse> copyTemplateToZone(@QueryParam("id") long id,
+         @QueryParam("sourcezoneid") long sourceZoneId, @QueryParam("destzoneid") long destZoneId);
 
    /**
     * @see TemplateClient#deleteTemplate
@@ -135,6 +143,7 @@ public interface TemplateAsyncClient {
     * @see TemplateClient#getTemplate
     */
    @GET
+   // templatefilter required in at least 2.2.8 version
    @QueryParams(keys = { "command", "templatefilter" }, values = { "listTemplates", "executable" })
    @SelectJson("template")
    @OnlyElement
@@ -147,7 +156,8 @@ public interface TemplateAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "updateTemplatePermissions")
-   ListenableFuture<Void> updateTemplatePermissions(@QueryParam("id") long id, UpdateTemplatePermissionsOptions... options);
+   ListenableFuture<Void> updateTemplatePermissions(@QueryParam("id") long id,
+         UpdateTemplatePermissionsOptions... options);
 
    /**
     * @see TemplateClient#listTemplatePermissions
@@ -156,7 +166,8 @@ public interface TemplateAsyncClient {
    @QueryParams(keys = "command", values = "listTemplatePermissions")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Set<TemplatePermission>> listTemplatePermissions(@QueryParam("id") long id, AccountInDomainOptions... options);
+   ListenableFuture<Set<TemplatePermission>> listTemplatePermissions(@QueryParam("id") long id,
+         AccountInDomainOptions... options);
 
    /**
     * @see TemplateClient#extractTemplate
@@ -165,5 +176,6 @@ public interface TemplateAsyncClient {
    @QueryParams(keys = "command", values = "extractTemplate")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> extractTemplate(@QueryParam("id") long id, @QueryParam("mode") ExtractMode mode, @QueryParam("zoneid") long zoneId, ExtractTemplateOptions... options);
+   ListenableFuture<AsyncCreateResponse> extractTemplate(@QueryParam("id") long id,
+         @QueryParam("mode") ExtractMode mode, @QueryParam("zoneid") long zoneId, ExtractTemplateOptions... options);
 }

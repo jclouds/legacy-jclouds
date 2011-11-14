@@ -18,19 +18,27 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.get;
 import static org.testng.Assert.assertEquals;
 
 import java.util.NoSuchElementException;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.functions.ReuseOrAssociateNewPublicIPAddress;
+import org.jclouds.cloudstack.options.ListTemplatesOptions;
+import org.jclouds.cloudstack.predicates.CorrectHypervisorForZone;
 import org.jclouds.cloudstack.predicates.JobComplete;
+import org.jclouds.cloudstack.predicates.OSCategoryIn;
+import org.jclouds.cloudstack.predicates.TemplatePredicates;
 import org.jclouds.cloudstack.predicates.UserPredicates;
 import org.jclouds.cloudstack.predicates.VirtualMachineDestroyed;
 import org.jclouds.cloudstack.predicates.VirtualMachineRunning;
@@ -50,6 +58,7 @@ import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
@@ -63,6 +72,33 @@ import com.google.inject.Module;
 public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
    public BaseCloudStackClientLiveTest() {
       provider = "cloudstack";
+   }
+
+   public static long defaultTemplateOrPreferredInZone(Long defaultTemplate, CloudStackClient client, long zoneId) {
+      long templateId = defaultTemplate != null ? defaultTemplate : getTemplateForZone(client, zoneId);
+      return templateId;
+   }
+
+   public static long getTemplateForZone(CloudStackClient client, long zoneId) {
+      // TODO enum, as this is way too easy to mess up.
+      Set<String> acceptableCategories = ImmutableSet.of("Ubuntu", "CentOS");
+
+      final Predicate<Template> hypervisorPredicate = new CorrectHypervisorForZone(client).apply(zoneId);
+      final Predicate<Template> osTypePredicate = new OSCategoryIn(client).apply(acceptableCategories);
+
+      @SuppressWarnings("unchecked")
+      Predicate<Template> templatePredicate = Predicates.<Template> and(TemplatePredicates.isReady(),
+            hypervisorPredicate, osTypePredicate);
+      Iterable<Template> templates = filter(
+            client.getTemplateClient().listTemplates(ListTemplatesOptions.Builder.zoneId(zoneId)), templatePredicate);
+      if (Iterables.any(templates, TemplatePredicates.isPasswordEnabled())) {
+         templates = filter(templates, TemplatePredicates.isPasswordEnabled());
+      }
+      if (Iterables.size(templates) == 0) {
+         throw new NoSuchElementException(templatePredicate.toString());
+      }
+      long templateId = get(templates, 0).getId();
+      return templateId;
    }
 
    protected String prefix = System.getProperty("user.name");
@@ -83,7 +119,6 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
 
    protected ComputeServiceContext computeContext;
 
-
    protected void checkSSH(IPSocket socket) {
       socketTester.apply(socket);
       SshClient client = sshFactory.create(socket, new Credentials("root", password));
@@ -97,7 +132,7 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
             client.disconnect();
       }
    }
-   
+
    @BeforeGroups(groups = "live")
    public void setupClient() {
       setupCredentials();

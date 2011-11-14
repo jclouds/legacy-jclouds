@@ -32,7 +32,7 @@ import org.jclouds.concurrent.Timeout;
  * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
 public interface AccountClient {
    /**
     * Lists Accounts

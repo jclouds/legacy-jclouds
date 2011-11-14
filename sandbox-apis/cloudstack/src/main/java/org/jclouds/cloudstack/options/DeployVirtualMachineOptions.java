@@ -23,8 +23,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.encryption.internal.Base64;
 
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * Options used to control what disk offerings are returned
@@ -117,6 +120,23 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
    public DeployVirtualMachineOptions networkIds(Iterable<Long> networkIds) {
       this.queryParameters.replaceValues("networkids", ImmutableSet.of(Joiner.on(',').join(networkIds)));
       return this;
+   }
+
+   public Iterable<Long> getNetworkIds() {
+      if (queryParameters.get("networkids").size() == 1) {
+         return Iterables.transform(
+               Splitter.on(",").split(Iterables.getOnlyElement(queryParameters.get("networkids"))),
+               new Function<String, Long>() {
+
+                  @Override
+                  public Long apply(String arg0) {
+                     return Long.parseLong(arg0);
+                  }
+
+               });
+      } else {
+         return ImmutableSet.<Long> of();
+      }
    }
 
    /**

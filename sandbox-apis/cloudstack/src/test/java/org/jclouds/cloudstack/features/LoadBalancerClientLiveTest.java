@@ -67,7 +67,9 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
       prefix += "rule";
       try {
          network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.hasLoadBalancerService());
-         vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, client, jobComplete,
+         Long defaultTemplate = (imageId != null && !"".equals(imageId)) ? new Long(imageId) : null;
+         vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network,
+               defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()), client, jobComplete,
                virtualMachineRunning);
          if (vm.getPassword() != null)
             password = vm.getPassword();

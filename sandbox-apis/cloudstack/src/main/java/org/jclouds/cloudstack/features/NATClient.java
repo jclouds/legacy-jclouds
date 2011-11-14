@@ -32,7 +32,9 @@ import org.jclouds.concurrent.Timeout;
  * <p/>
  * 
  * @see IPForwardingRuleAsyncClient
- * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
+ * @see <a
+ *      href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html"
+ *      />
  * @author Adrian Cole
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
@@ -55,6 +57,24 @@ public interface NATClient {
     * @return IPForwardingRule or null if not found
     */
    IPForwardingRule getIPForwardingRule(long id);
+
+   /**
+    * get a specific IPForwardingRule by ipaddress id
+    * 
+    * @param id
+    *           IPAddress of rule to get
+    * @return IPForwardingRule or null if not found
+    */
+   IPForwardingRule getIPForwardingRuleForIPAddress(long id);
+
+   /**
+    * get a specific IPForwardingRule by virtual machine id
+    * 
+    * @param id
+    *           virtual machine of rule to get
+    * @return IPForwardingRule or null if not found
+    */
+   IPForwardingRule getIPForwardingRuleForVirtualMachine(long id);
 
    /**
     * Creates an ip forwarding rule

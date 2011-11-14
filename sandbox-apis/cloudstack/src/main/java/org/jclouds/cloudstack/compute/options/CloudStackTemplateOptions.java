@@ -55,6 +55,7 @@ import com.google.common.collect.Sets;
 public class CloudStackTemplateOptions extends TemplateOptions implements Cloneable {
 
    protected Set<Long> securityGroupIds = Sets.<Long> newLinkedHashSet();
+   protected Set<Long> networkIds = Sets.<Long> newLinkedHashSet();
    protected String keyPair;
 
    @Override
@@ -70,6 +71,7 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
       if (to instanceof CloudStackTemplateOptions) {
          CloudStackTemplateOptions eTo = CloudStackTemplateOptions.class.cast(to);
          eTo.securityGroupIds(this.securityGroupIds);
+         eTo.keyPair(this.keyPair);
       }
    }
 
@@ -91,6 +93,26 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
 
    public Set<Long> getSecurityGroupIds() {
       return securityGroupIds;
+   }
+
+   /**
+    * @see DeployVirtualMachineOptions#networkId
+    */
+   public CloudStackTemplateOptions networkId(long networkId) {
+      this.networkIds.add(networkId);
+      return this;
+   }
+
+   /**
+    * @see DeployVirtualMachineOptions#networkIds
+    */
+   public CloudStackTemplateOptions networkIds(Iterable<Long> networkIds) {
+      Iterables.addAll(this.networkIds, checkNotNull(networkIds, "networkIds was null"));
+      return this;
+   }
+
+   public Set<Long> getNetworkIds() {
+      return networkIds;
    }
 
    /**
@@ -123,6 +145,22 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
       public static CloudStackTemplateOptions securityGroupIds(Iterable<Long> securityGroupIds) {
          CloudStackTemplateOptions options = new CloudStackTemplateOptions();
          return options.securityGroupIds(securityGroupIds);
+      }
+
+      /**
+       * @see CloudStackTemplateOptions#networkId
+       */
+      public static CloudStackTemplateOptions networkId(long id) {
+         CloudStackTemplateOptions options = new CloudStackTemplateOptions();
+         return options.networkId(id);
+      }
+
+      /**
+       * @see CloudStackTemplateOptions#networkIds
+       */
+      public static CloudStackTemplateOptions networkIds(Iterable<Long> networkIds) {
+         CloudStackTemplateOptions options = new CloudStackTemplateOptions();
+         return options.networkIds(networkIds);
       }
 
       /**

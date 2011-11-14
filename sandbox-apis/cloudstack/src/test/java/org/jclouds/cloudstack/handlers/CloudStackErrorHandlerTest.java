@@ -76,6 +76,17 @@ public class CloudStackErrorHandlerTest {
    }
 
    @Test
+   public void test431MakesResourceNotFoundExceptionOnDelete() {
+      assertCodeMakes(
+            "GET",
+            URI.create("https://api.ninefold.com/compute/v1.0/?response=json&command=deleteSSHKeyPair"),
+            431,
+            "",
+            "{ \"deletekeypairresponse\" : {\"errorcode\" : 431, \"errortext\" : \"A key pair with name 'adriancole-adapter-test-keypair' does not exist for account jclouds in domain id=457\"}  }",
+            ResourceNotFoundException.class);
+   }
+
+   @Test
    public void test409MakesIllegalStateException() {
       assertCodeMakes("GET", URI.create("https://cloudstack.com/foo"), 409, "", "Conflict", IllegalStateException.class);
    }

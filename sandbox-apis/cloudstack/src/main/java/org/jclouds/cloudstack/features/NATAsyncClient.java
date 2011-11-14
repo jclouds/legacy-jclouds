@@ -46,7 +46,9 @@ import com.google.common.util.concurrent.ListenableFuture;
  * <p/>
  * 
  * @see NATClient
- * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
+ * @see <a
+ *      href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html"
+ *      />
  * @author Adrian Cole
  */
 @RequestFilters(QuerySigner.class)
@@ -74,6 +76,28 @@ public interface NATAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<IPForwardingRule> getIPForwardingRule(@QueryParam("id") long id);
 
+   /**
+    * @see NATClient#getIPForwardingRuleForIPAddress
+    */
+   @GET
+   @QueryParams(keys = "command", values = "listIpForwardingRules")
+   @SelectJson("ipforwardingrule")
+   @OnlyElement
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<IPForwardingRule> getIPForwardingRuleForIPAddress(@QueryParam("ipaddressid") long id);
+
+   /**
+    * @see NATClient#getIPForwardingRuleForVirtualMachine
+    */
+   @GET
+   @QueryParams(keys = "command", values = "listIpForwardingRules")
+   @SelectJson("ipforwardingrule")
+   @OnlyElement
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<IPForwardingRule> getIPForwardingRuleForVirtualMachine(@QueryParam("virtualmachineid") long id);
+   
    /**
     * @see NATClient#createIPForwardingRule
     */

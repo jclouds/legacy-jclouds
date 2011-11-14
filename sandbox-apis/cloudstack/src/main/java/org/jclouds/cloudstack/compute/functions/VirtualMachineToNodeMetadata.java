@@ -27,6 +27,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.collect.FindResourceInSet;
 import org.jclouds.collect.Memoized;
@@ -37,12 +38,17 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.InetAddresses2;
+import org.jclouds.util.Throwables2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
+import com.google.common.cache.Cache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
  * @author Adrian Cole
@@ -66,16 +72,20 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
    private final FindLocationForVirtualMachine findLocationForVirtualMachine;
    private final FindHardwareForVirtualMachine findHardwareForVirtualMachine;
    private final FindImageForVirtualMachine findImageForVirtualMachine;
+   private final Cache<Long, IPForwardingRule> getIPForwardingRuleByVirtualMachine;
 
    @Inject
    VirtualMachineToNodeMetadata(Map<String, Credentials> credentialStore,
          FindLocationForVirtualMachine findLocationForVirtualMachine,
          FindHardwareForVirtualMachine findHardwareForVirtualMachine,
-         FindImageForVirtualMachine findImageForVirtualMachine) {
+         FindImageForVirtualMachine findImageForVirtualMachine,
+         Cache<Long, IPForwardingRule> getIPForwardingRuleByVirtualMachine) {
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.findLocationForVirtualMachine = checkNotNull(findLocationForVirtualMachine, "findLocationForVirtualMachine");
       this.findHardwareForVirtualMachine = checkNotNull(findHardwareForVirtualMachine, "findHardwareForVirtualMachine");
       this.findImageForVirtualMachine = checkNotNull(findImageForVirtualMachine, "findImageForVirtualMachine");
+      this.getIPForwardingRuleByVirtualMachine = checkNotNull(getIPForwardingRuleByVirtualMachine,
+            "getIPForwardingRuleByVirtualMachine");
    }
 
    @Override
@@ -107,6 +117,15 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
             builder.privateAddresses(addresses);
          else
             builder.publicAddresses(addresses);
+      }
+      try {
+         IPForwardingRule rule = getIPForwardingRuleByVirtualMachine.getUnchecked(from.getId());
+         builder.publicAddresses(ImmutableSet.<String> of(rule.getIPAddress()));
+      } catch (UncheckedExecutionException e) {
+         if (Throwables2.getFirstThrowableOfType(e, ResourceNotFoundException.class) == null) {
+            Throwables.propagateIfPossible(e.getCause());
+            throw e;
+         }
       }
       builder.credentials(credentialStore.get("node#" + from.getId()));
       return builder.build();
