@@ -16,36 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.trmk.enterprisecloud.domain;
+package org.jclouds.trmk.enterprisecloud.features;
 
-import com.google.common.collect.Sets;
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.trmk.enterprisecloud.domain.VirtualMachine;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Wraps individual Task elements.
- * Needed because parsing is done with JAXB and it does not handle Generic collections
+ * Provides synchronous access to VirtualMachine.
+ * <p/>
+ * 
+ * @see org.jclouds.trmk.enterprisecloud.features.VirtualMachineAsyncClient
+ * @see <a href=
+ *      "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID="
+ *      />
  * @author Jason King
  */
-@XmlRootElement(name = "Tasks")
-public class Tasks {
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
+public interface VirtualMachineClient {
 
-    private LinkedHashSet<Task> tasks = Sets.newLinkedHashSet();
+   /**
+    * The Get Virtual Machines by ID call returns information regarding a
+    * specified virtual machine defined in an environment.
+    *
+    * @return the virtual Machine or null if not found
+    */
+   VirtualMachine getVirtualMachine(long id);
 
-    @XmlElement(name = "Task")
-    public void setTask(Task task) {
-        tasks.add(task);
-    }
-
-    public Set<Task> getTasks() {
-        return Collections.unmodifiableSet(tasks);
-    }
-
-    public String toString() {
-        return "["+tasks.toString()+"]";
-    }
 }

@@ -103,7 +103,8 @@ public class BaseNamedResource<T extends BaseNamedResource<T>> extends BaseResou
 
         BaseNamedResource that = (BaseNamedResource) o;
 
-        if (!name.equals(that.name)) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null)
+            return false;
 
         return true;
     }
@@ -111,7 +112,7 @@ public class BaseNamedResource<T extends BaseNamedResource<T>> extends BaseResou
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + name.hashCode();
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
     }
 

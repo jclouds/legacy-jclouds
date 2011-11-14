@@ -64,6 +64,11 @@ public class Task extends BaseResource<Task> {
       @XmlEnumValue("Success")
       SUCCESS,
       /**
+       * the task completed successfully.
+       */
+      @XmlEnumValue("Complete")
+      COMPLETE,
+      /**
        * the task failed with an error.
        */
       @XmlEnumValue("Error")

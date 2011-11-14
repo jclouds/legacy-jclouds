@@ -27,25 +27,26 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Wraps individual Task elements.
+ * Wraps individual Action elements.
  * Needed because parsing is done with JAXB and it does not handle Generic collections
  * @author Jason King
  */
-@XmlRootElement(name = "Tasks")
-public class Tasks {
+@XmlRootElement(name = "Actions")
+public class Actions {
 
-    private LinkedHashSet<Task> tasks = Sets.newLinkedHashSet();
+    private LinkedHashSet<Action> actions = Sets.newLinkedHashSet();
 
-    @XmlElement(name = "Task")
-    public void setTask(Task task) {
-        tasks.add(task);
+    @XmlElement(name = "Action")
+    void setAction(Action action) {
+        this.actions.add(action);
     }
 
-    public Set<Task> getTasks() {
-        return Collections.unmodifiableSet(tasks);
+    public Set<Action> getActions() {
+        return Collections.unmodifiableSet(actions);
     }
 
     public String toString() {
-        return "["+tasks.toString()+"]";
+        return "["+ actions.toString()+"]";
     }
+
 }

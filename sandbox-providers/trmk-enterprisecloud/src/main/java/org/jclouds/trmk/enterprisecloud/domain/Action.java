@@ -29,18 +29,26 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.trmk.enterprisecloud.domain.internal.BaseNamedResource;
 import org.jclouds.trmk.enterprisecloud.domain.internal.BaseResource;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * 
  * @author Adrian Cole
  * 
  */
+@XmlRootElement(name = "Action")
 public class Action extends BaseNamedResource<Action> {
-   public static enum ActionDisabled {
+    @XmlEnum
+    public static enum ActionDisabled {
       /**
        * The actionDisabled attribute will have a value of noAccess when a user
        * does not have permission to perform the action. For example, for a user
        * with read-only access, all actions have actionDisabled="noAccess" set.
        */
+      @XmlEnumValue("noAccess")
       NO_ACCESS,
       /**
        * The attribute will have a value of disabled when the action is contrary
@@ -51,6 +59,7 @@ public class Action extends BaseNamedResource<Action> {
        * conditions apply, actions have actionDisabled="noAccess" set. If
        * neither condition applies, the attribute will not appear.
        */
+      @XmlEnumValue("disabled")
       DISABLED,
       /**
        * ActionDisabled was not parsed by jclouds.
@@ -162,13 +171,17 @@ public class Action extends BaseNamedResource<Action> {
 
    }
 
-   protected final ActionDisabled actionDisabled;
+   @XmlAttribute
+   protected ActionDisabled actionDisabled;
 
    public Action(URI href, String type, String name, @Nullable ActionDisabled actionDisabled) {
       super(href, type, name);
       this.actionDisabled = actionDisabled;
    }
 
+   protected Action() {
+       //For JAXB
+   }
    /**
     * The attribute actionDisabled appears only when the example has an action
     * disabled for business rules.
