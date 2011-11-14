@@ -66,5 +66,6 @@
         <module>aws-cloudwatch</module>
         <module>go2cloud-jhb1</module>
         <module>softlayer</module>
+        <module>ninefold-compute</module>
     </modules>
 </project>

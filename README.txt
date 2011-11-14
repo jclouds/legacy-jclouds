@@ -21,7 +21,8 @@ our compute api supports: aws-ec2, gogrid, cloudservers-us, stub (in-memory), de
                           slicehost, eucalyptus-partnercloud-ec2, elastichosts-lon-p (Peer 1), 
                           elastichosts-sat-p (Peer 1), elastichosts-lon-b (BlueSquare),
                           openhosting-east1, serverlove-z1-man, skalicloud-sdg-my,
-                          greenhousedata-element-vcloud, softlayer, cloudsigma (generic)
+                          greenhousedata-element-vcloud, softlayer, cloudsigma (generic),
+                          cloudstack (generic), ninefold-compute
 
   * note * the pom dependency org.jclouds/jclouds-allcompute gives you access to
            to all of these providers
@@ -43,7 +44,7 @@ we also have aws-cloudwatch support.
 
 we also have support for: ibmdev, mezeo, nirvanix, boxdotnet, openstack nova, scality ring,
                           hosteurope-storage, tiscali-storage, scaleup-storage, googlestorage,
-                          azurequeue, simpledb, cloudstack as well as a async-http-client
+                          azurequeue, simpledb, as well as a async-http-client
                           driver in the sandbox
 
 

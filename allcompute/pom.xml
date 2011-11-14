@@ -185,5 +185,15 @@
             <artifactId>softlayer</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>cloudstack</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>ninefold-compute</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>
