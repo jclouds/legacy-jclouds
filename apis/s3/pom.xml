@@ -1,162 +1,141 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to jclouds, Inc. (jclouds) under one or more
-    contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  jclouds licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
+  Licensed to jclouds, Inc. (jclouds) under one or more
+  contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  jclouds licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
 
-      http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.jclouds</groupId>
-        <artifactId>jclouds-project</artifactId>
-        <version>1.3.0-SNAPSHOT</version>
-        <relativePath>../../project/pom.xml</relativePath>
-    </parent>
-    <groupId>org.jclouds.api</groupId>
-    <artifactId>s3</artifactId>
-    <name>jcloud s3 api</name>
-    <description>jclouds components to access an implementation of S3</description>
-    <packaging>bundle</packaging>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jclouds</groupId>
+    <artifactId>jclouds-project</artifactId>
+    <version>1.3.0-SNAPSHOT</version>
+    <relativePath>../../project/pom.xml</relativePath>
+  </parent>
+  <groupId>org.jclouds.api</groupId>
+  <artifactId>s3</artifactId>
+  <name>jcloud s3 api</name>
+  <description>jclouds components to access an implementation of S3</description>
+  <packaging>bundle</packaging>
 
-    <properties>
-        <test.initializer>org.jclouds.s3.blobstore.integration.S3TestInitializer</test.initializer>
-        <test.s3.endpoint>https://s3.amazonaws.com</test.s3.endpoint>
-        <test.s3.apiversion>2006-03-01</test.s3.apiversion>
-        <test.s3.identity>${test.aws.identity}</test.s3.identity>
-        <test.s3.credential>${test.aws.credential}</test.s3.credential>
-    </properties>
+  <properties>
+    <test.initializer>org.jclouds.s3.blobstore.integration.S3TestInitializer</test.initializer>
+    <test.s3.endpoint>https://s3.amazonaws.com</test.s3.endpoint>
+    <test.s3.apiversion>2006-03-01</test.s3.apiversion>
+    <test.s3.identity>${test.aws.identity}</test.s3.identity>
+    <test.s3.credential>${test.aws.credential}</test.s3.credential>
+  </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.jamesmurty.utils</groupId>
-            <artifactId>java-xmlbuilder</artifactId>
-            <version>0.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds.common</groupId>
-            <artifactId>aws-common</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds</groupId>
-            <artifactId>jclouds-blobstore</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds</groupId>
-            <artifactId>jclouds-core</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds</groupId>
-            <artifactId>jclouds-blobstore</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds.driver</groupId>
-            <artifactId>jclouds-log4j</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>com.jamesmurty.utils</groupId>
+      <artifactId>java-xmlbuilder</artifactId>
+      <version>0.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jclouds.common</groupId>
+      <artifactId>aws-common</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jclouds</groupId>
+      <artifactId>jclouds-blobstore</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jclouds</groupId>
+      <artifactId>jclouds-core</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jclouds</groupId>
+      <artifactId>jclouds-blobstore</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jclouds.driver</groupId>
+      <artifactId>jclouds-log4j</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.16</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
-    <profiles>
-        <profile>
-            <id>live</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>integration</id>
-                                <phase>integration-test</phase>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.s3.endpoint</name>
-                                            <value>${test.s3.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.s3.apiversion</name>
-                                            <value>${test.s3.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.s3.identity</name>
-                                            <value>${test.s3.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.s3.credential</name>
-                                            <value>${test.s3.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.initializer</name>
-                                            <value>${test.initializer}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.url</name>
-                                            <value>${jclouds.blobstore.httpstream.url}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.md5</name>
-                                            <value>${jclouds.blobstore.httpstream.md5}</value>
-                                        </property>
-                                    </systemProperties>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
-    <build>
+  <profiles>
+    <profile>
+      <id>live</id>
+      <build>
         <plugins>
-            <plugin>    
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>integration</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
                 <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.s3.*;version="${project.version}"</Export-Package>
-                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
-                    </instructions>
+                  <systemPropertyVariables>
+                    <test.initializer>${test.initializer}</test.initializer>
+                    <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
+                    <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
+                    <test.s3.endpoint>${test.s3.endpoint}</test.s3.endpoint>
+                    <test.s3.apiversion>${test.s3.apiversion}</test.s3.apiversion>
+                    <test.s3.identity>${test.s3.identity}</test.s3.identity>
+                    <test.s3.credential>${test.s3.credential}</test.s3.credential>
+                  </systemPropertyVariables>
                 </configuration>
-            </plugin>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
-    </build>
+      </build>
+    </profile>
+  </profiles>
+
+  <build>
+    <plugins>
+      <plugin>  
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+            <Export-Package>org.jclouds.s3.*;version="${project.version}"</Export-Package>
+            <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
 
