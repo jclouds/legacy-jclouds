@@ -62,7 +62,7 @@ public class NinefoldComputeProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getIdentityName() {
-      return "TODO";
+      return "API Key";
    }
 
    /**
@@ -70,7 +70,7 @@ public class NinefoldComputeProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getCredentialName() {
-      return "TODO";
+      return "Secret Key";
    }
 
    /**
@@ -78,7 +78,7 @@ public class NinefoldComputeProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getHomepage() {
-      return URI.create("TODO");
+      return URI.create("http://ninefold.com/virtual-servers/");
    }
 
    /**
@@ -86,7 +86,7 @@ public class NinefoldComputeProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getConsole() {
-      return URI.create("TODO");
+      return URI.create("https://ninefold.com/portal/portal/login");
    }
 
    /**
@@ -94,7 +94,7 @@ public class NinefoldComputeProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getApiDocumentation() {
-      return URI.create("TODO");
+      return URI.create("https://ninefold.com/support/display/SPT/Cloud+Compute");
    }
 
    /**

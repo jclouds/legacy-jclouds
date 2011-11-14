@@ -52,14 +52,16 @@ public class NinefoldComputeTemplateBuilderLiveTest extends BaseTemplateBuilderL
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
-               case UBUNTU:
-                  return (input.version.equals("") || input.version.equals("10.10")) && input.is64Bit;
-               case DEBIAN:
-                  return (input.version.equals("") || input.version.equals("6.0")) && input.is64Bit;
-               case WINDOWS:
-                  return (input.version.equals("") || input.version.equals("2008 R2")) && input.is64Bit;
-               default:
-                  return false;
+            case UBUNTU:
+               return input.version.equals("") || input.version.equals("10.04");
+            case SUSE:
+               return (input.version.equals("") || input.version.equals("11")) && input.is64Bit;
+            case CENTOS:
+               return (input.version.equals("") || input.version.equals("5.5")) && input.is64Bit;
+            case WINDOWS:
+               return input.version.equals("") || (input.version.equals("2008") && !input.is64Bit);
+            default:
+               return false;
             }
          }
 
@@ -72,7 +74,7 @@ public class NinefoldComputeTemplateBuilderLiveTest extends BaseTemplateBuilderL
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getLocation().getId(), "ninefold-compute");
+      assertEquals(defaultTemplate.getLocation().getId(), "1");
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 
