@@ -25,6 +25,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.Set;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Volume;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.ListVolumesOptions;
@@ -66,9 +67,9 @@ public interface VolumeAsyncClient {
    @SelectJson("volume")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Volume> createVolumeFromDiskOfferingInZone(@QueryParam("name") String name,
-                                                               @QueryParam("diskofferingid") long diskOfferingId,
-                                                               @QueryParam("zoneid") long zoneId);
+   ListenableFuture<AsyncCreateResponse> createVolumeFromDiskOfferingInZone(@QueryParam("name") String name,
+                                                                            @QueryParam("diskofferingid") long diskOfferingId,
+                                                                            @QueryParam("zoneid") long zoneId);
 
    /**
     * @see VolumeClient#createVolumeWithSnapshot(String, long)
@@ -78,8 +79,8 @@ public interface VolumeAsyncClient {
    @SelectJson("volume")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Volume> createVolumeWithSnapshot(@QueryParam("name") String name,
-                                                     @QueryParam("snapshotid") long diskOfferingId);
+   ListenableFuture<AsyncCreateResponse> createVolumeWithSnapshot(@QueryParam("name") String name,
+                                                                  @QueryParam("snapshotid") long diskOfferingId);
 
    /**
     * @see VolumeClient#deleteVolume(long)

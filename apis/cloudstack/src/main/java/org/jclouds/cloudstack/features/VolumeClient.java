@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.features;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Volume;
 import org.jclouds.cloudstack.options.ListVolumesOptions;
 import org.jclouds.concurrent.Timeout;
@@ -43,7 +44,7 @@ public interface VolumeClient {
     * @param zoneId the ID of the availability zone
     * @return Volume
     */
-   Volume createVolumeFromDiskOfferingInZone(String name, long diskOfferingId, long zoneId);
+   AsyncCreateResponse createVolumeFromDiskOfferingInZone(String name, long diskOfferingId, long zoneId);
 
    /**
     * Create a volume with given name and snapshotId
@@ -52,7 +53,7 @@ public interface VolumeClient {
     * @param snapshotId Snapshot id to be used while creating the volume
     * @return Volume
     */
-   Volume createVolumeWithSnapshot(String name, long snapshotId);
+   AsyncCreateResponse createVolumeWithSnapshot(String name, long snapshotId);
 
    /**
     * List volumes

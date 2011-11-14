@@ -39,6 +39,7 @@ import org.jclouds.cloudstack.features.SecurityGroupClient;
 import org.jclouds.cloudstack.features.TemplateClient;
 import org.jclouds.cloudstack.features.VMGroupClient;
 import org.jclouds.cloudstack.features.VirtualMachineClient;
+import org.jclouds.cloudstack.features.VolumeClient;
 import org.jclouds.cloudstack.features.ZoneClient;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
@@ -173,4 +174,10 @@ public interface CloudStackClient {
     */
    @Delegate
    ISOClient getISOClient();
+
+	/**
+    * Provides synchronous access to Volumes
+    */
+   @Delegate
+   VolumeClient getVolumeClient();
 }

@@ -74,9 +74,10 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
 
    }
 
-   public void testCreateVolumeWithDiskOffering() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VolumeAsyncClient.class.getMethod("createVolumeWithDiskOfferingInZone",
-                                                         String.class, Long.class, Long.class);
+   public void testCreateVolumeFromDiskOffering() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VolumeAsyncClient.class.getMethod("createVolumeFromDiskOfferingInZone",
+                                                         String.class, long.class , long.class);
+
       HttpRequest httpRequest = processor.createRequest(method, prefix + "-jclouds-volume", 999L, 111L);
 
       assertRequestLineEquals(httpRequest,

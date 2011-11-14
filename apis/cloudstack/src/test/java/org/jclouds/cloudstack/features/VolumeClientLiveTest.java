@@ -18,13 +18,15 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static com.google.common.collect.Iterables.find;
 import static org.testng.AssertJUnit.assertNotNull;
 
 import java.util.Set;
 
-import org.jclouds.cloudstack.domain.DiskOffering;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Volume;
-import org.jclouds.cloudstack.domain.Zone;
 import org.testng.annotations.Test;
 
 /**
@@ -36,6 +38,9 @@ import org.testng.annotations.Test;
 public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
 
    protected String prefix = System.getProperty("user.name");
+   private long zoneId;
+   private long diskOfferingId;
+   private Volume volume;
 
    public void testListVolumes() {
       final Set<Volume> volumes = client.getVolumeClient().listVolumes();
@@ -46,23 +51,25 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public void testCreateVolumeFromDiskofferingInZoneAndDeleteVolume() {
 
-      final Set<Zone> zones = client.getZoneClient().listZones();
-      assertNotNull(zones);
-      final Zone zone = zones.iterator().next();
-
-      final Set<DiskOffering> diskOfferings = client.getOfferingClient().listDiskOfferings();
-      assertNotNull(diskOfferings);
-
+      zoneId = Iterables.getFirst(client.getZoneClient().listZones(), null).getId();
       //Pick some disk offering
-      final DiskOffering diskOffering = diskOfferings.iterator().next();
-      final VolumeClient volumeClient = client.getVolumeClient();
+      diskOfferingId = Iterables.getFirst(client.getOfferingClient().listDiskOfferings(), null).getId();
 
-      final Volume volumeWithDiskOffering =
-            volumeClient.createVolumeFromDiskOfferingInZone(prefix + "-jclouds-volume",
-                  diskOffering.getId(),
-                  zone.getId());
-      checkVolume(volumeWithDiskOffering);
-      volumeClient.deleteVolume(volumeWithDiskOffering.getId());
+
+      while (volume == null) {
+         try {
+            AsyncCreateResponse job = client.getVolumeClient().createVolumeFromDiskOfferingInZone(prefix + "-jclouds-volume",
+                  diskOfferingId, zoneId);
+            assert jobComplete.apply(job.getJobId());
+            volume = findVolumeWithId(job.getId());
+         } catch (IllegalStateException e) {
+            //TODO Retry ?
+            e.printStackTrace();
+         }
+      }
+
+      checkVolume(volume);
+
    }
 
 
@@ -70,4 +77,17 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
       assertNotNull(volume.getId());
       assertNotNull(volume.getName());
    }
+
+   private Volume findVolumeWithId(final long id) {
+      System.out.println(id);
+      return find(client.getVolumeClient().listVolumes(), new Predicate<Volume>() {
+
+         @Override
+         public boolean apply(Volume arg0) {
+            return arg0.getId() == id;
+         }
+
+      });
+   }
+
 }
