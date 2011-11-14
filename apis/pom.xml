@@ -49,5 +49,6 @@
        <module>nova</module>
        <module>cloudwatch</module>
        <module>cloudsigma</module>
+       <module>cloudstack</module>
     </modules>
 </project>
