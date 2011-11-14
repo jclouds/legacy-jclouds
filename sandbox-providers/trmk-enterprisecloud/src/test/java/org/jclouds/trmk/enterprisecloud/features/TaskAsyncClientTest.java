@@ -44,7 +44,7 @@ public class TaskAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClient
       Method method = TaskAsyncClient.class.getMethod("getTasksInEnvironment", long.class);
       HttpRequest httpRequest = processor.createRequest(method, 1l);
 
-      assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/tasks/environments/1 HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/tasks/environments/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest,
             "Accept: application/vnd.tmrk.cloud.task; type=collection\nx-trmk-version: 2011-07-01\n");
       assertPayloadEquals(httpRequest, null, null, false);
@@ -59,9 +59,9 @@ public class TaskAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClient
 
    public void testGetTask() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TaskAsyncClient.class.getMethod("getTask", URI.class);
-      HttpRequest httpRequest = processor.createRequest(method, URI.create("https://services-beta.enterprisecloud.terremark.com/cloudapi/tasks/1"));
+      HttpRequest httpRequest = processor.createRequest(method, URI.create("https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/tasks/1"));
 
-      assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/tasks/1 HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/tasks/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/vnd.tmrk.cloud.task\nx-trmk-version: 2011-07-01\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

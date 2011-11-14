@@ -34,7 +34,7 @@ public class TerremarkEnterpriseCloudPropertiesBuilder extends PropertiesBuilder
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_ENDPOINT, "https://services-beta.enterprisecloud.terremark.com/cloudapi");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud");
       properties.setProperty(PROPERTY_API_VERSION, "2011-07-01");
       return properties;
    }
