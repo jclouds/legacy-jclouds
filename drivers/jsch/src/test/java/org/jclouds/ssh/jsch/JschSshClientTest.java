@@ -31,6 +31,8 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.SshjSshClient;
+import org.jclouds.sshj.SshjSshClientTest.ExceptionWithStrangeToString;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -125,6 +127,37 @@ public class JschSshClientTest {
       assert ssh.causalChainHasMessageContaining(
             new JSchException("Session.connect: java.net.SocketException: Connection reset")).apply("java.net.Socket");
       assert !ssh.causalChainHasMessageContaining(new NullPointerException()).apply(" End of IO Stream Read");
+   }
+
+   public void testRetryOnToStringNpe() {
+      Exception nex = new NullPointerException();
+      Properties props = new Properties();
+      // ensure we test toString on the exception independently
+      props.setProperty("jclouds.ssh.retryable-messages", nex.toString());
+      JschSshClient ssh1 = createClient(props);
+      assert ssh1.shouldRetry(new RuntimeException(nex));
+   }
+
+   private static class ExceptionWithStrangeToString extends RuntimeException {
+      private static final long serialVersionUID = 1L;
+      private static final String MESSAGE = "foo-bar-exception-tostring";
+      public String toString() { return MESSAGE; }
+   }
+
+   public void testRetryOnToStringCustom() {
+      Exception nex = new ExceptionWithStrangeToString();
+      Properties props = new Properties();
+      props.setProperty("jclouds.ssh.retryable-messages", "foo-bar");
+      JschSshClient ssh1 = createClient(props);
+      assert ssh1.shouldRetry(new RuntimeException(nex));
+   }
+
+   public void testRetryNotOnToStringCustomMismatch() {
+      Exception nex = new ExceptionWithStrangeToString();
+      Properties props = new Properties();
+      props.setProperty("jclouds.ssh.retryable-messages", "foo-baR");
+      JschSshClient ssh1 = createClient(props);
+      assert !ssh1.shouldRetry(new RuntimeException(nex));
    }
 
 }

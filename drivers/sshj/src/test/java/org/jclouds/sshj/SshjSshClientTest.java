@@ -124,4 +124,36 @@ public class SshjSshClientTest {
                .apply("java.net.Socket");
       assert !ssh.causalChainHasMessageContaining(new NullPointerException()).apply(" End of IO Stream Read");
    }
+   
+   public void testRetryOnToStringNpe() {
+      Exception nex = new NullPointerException();
+      Properties props = new Properties();
+      // ensure we test toString on the exception independently
+      props.setProperty("jclouds.ssh.retryable-messages", nex.toString());
+      SshjSshClient ssh1 = createClient(props);
+      assert ssh1.shouldRetry(new RuntimeException(nex));
+   }
+
+   private static class ExceptionWithStrangeToString extends RuntimeException {
+      private static final long serialVersionUID = 1L;
+      private static final String MESSAGE = "foo-bar-exception-tostring";
+      public String toString() { return MESSAGE; }
+   }
+
+   public void testRetryOnToStringCustom() {
+      Exception nex = new ExceptionWithStrangeToString();
+      Properties props = new Properties();
+      props.setProperty("jclouds.ssh.retryable-messages", "foo-bar");
+      SshjSshClient ssh1 = createClient(props);
+      assert ssh1.shouldRetry(new RuntimeException(nex));
+   }
+
+   public void testRetryNotOnToStringCustomMismatch() {
+      Exception nex = new ExceptionWithStrangeToString();
+      Properties props = new Properties();
+      props.setProperty("jclouds.ssh.retryable-messages", "foo-baR");
+      SshjSshClient ssh1 = createClient(props);
+      assert !ssh1.shouldRetry(new RuntimeException(nex));
+   }
+
 }
