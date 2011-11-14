@@ -61,7 +61,7 @@ public class SoftLayerExperimentLiveTest {
          context = new ComputeServiceContextFactory().createContext("softlayer", identity, credential, ImmutableSet
                   .<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()));
 
-         assertEquals(context.getComputeService().listAssignableLocations().size(), 6);
+         assertEquals(context.getComputeService().listAssignableLocations().size(), 7);
 
       } finally {
          if (context != null)

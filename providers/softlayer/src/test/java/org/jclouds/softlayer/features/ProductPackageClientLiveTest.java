@@ -18,33 +18,44 @@
  */
 package org.jclouds.softlayer.features;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import org.jclouds.softlayer.compute.functions.ProductItems;
-import org.jclouds.softlayer.domain.*;
-import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.Test;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.capacity;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.categoryCode;
+import static org.jclouds.softlayer.predicates.ProductItemPredicates.units;
+import static org.jclouds.softlayer.predicates.ProductPackagePredicates.named;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
 import java.util.Set;
 
-import static org.jclouds.softlayer.predicates.ProductItemPredicates.*;
-import static org.jclouds.softlayer.predicates.ProductPackagePredicates.named;
-import static org.testng.Assert.*;
+import org.jclouds.softlayer.compute.functions.ProductItems;
+import org.jclouds.softlayer.domain.Address;
+import org.jclouds.softlayer.domain.Datacenter;
+import org.jclouds.softlayer.domain.ProductItem;
+import org.jclouds.softlayer.domain.ProductItemCategory;
+import org.jclouds.softlayer.domain.ProductItemPrice;
+import org.jclouds.softlayer.domain.ProductPackage;
+import org.jclouds.softlayer.domain.Region;
+import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.Test;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 /**
  * Tests behavior of {@code ProductPackageClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
+@Test(groups = "live", singleThreaded = true, testName = "ProductPackageClientLiveTest")
 public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
 
    /**
-    * Name of the package used for ordering virtual guests. For real this is passed in using the
-    * property
+    * Name of the package used for ordering virtual guests. For real this is
+    * passed in using the property
     * 
     * @{code org.jclouds.softlayer.reference.SoftLayerConstants.
     *        PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME}
@@ -59,7 +70,7 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
 
       // This is used several times, so cache to speed up the test.
       cloudServerPackageId = Iterables.find(accountClient.getActivePackages(), named(CLOUD_SERVER_PACKAGE_NAME))
-               .getId();
+            .getId();
       cloudServerProductPackage = client.getProductPackage(cloudServerPackageId);
    }
 
@@ -103,6 +114,7 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
       builder.add(Datacenter.builder().id(138124).name("dal05").longName("Dallas 5").build());
       builder.add(Datacenter.builder().id(168642).name("sjc01").longName("San Jose 1").build());
       builder.add(Datacenter.builder().id(224092).name("sng01").longName("Singapore 1").build());
+      builder.add(Datacenter.builder().id(265592).name("ams01").longName("Amsterdam 1").build());
 
       Set<Datacenter> expected = builder.build();
 
@@ -121,8 +133,8 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
    public void testGetOneGBRamPrice() {
       // Predicate p =
       // Predicates.and(ProductItemPredicates.categoryCode("ram"),ProductItemPredicates.capacity(1.0f));
-      Iterable<ProductItem> ramItems = Iterables.filter(cloudServerProductPackage.getItems(), Predicates.and(
-               categoryCode("ram"), capacity(1.0f)));
+      Iterable<ProductItem> ramItems = Iterables.filter(cloudServerProductPackage.getItems(),
+            Predicates.and(categoryCode("ram"), capacity(1.0f)));
 
       // capacity is key in GB (1Gb = 1.0f)
       Map<Float, ProductItem> ramToProductItem = Maps.uniqueIndex(ramItems, ProductItems.capacity());
@@ -133,10 +145,11 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
 
    @Test
    public void testGetTwoCPUCoresPrice() {
-      // If use ProductItemPredicates.categoryCode("guest_core") get duplicate capacities (units =
+      // If use ProductItemPredicates.categoryCode("guest_core") get duplicate
+      // capacities (units =
       // PRIVATE_CORE and N/A)
-      Iterable<ProductItem> cpuItems = Iterables.filter(cloudServerProductPackage.getItems(), Predicates.and(
-               units("PRIVATE_CORE"), capacity(2.0f)));
+      Iterable<ProductItem> cpuItems = Iterables.filter(cloudServerProductPackage.getItems(),
+            Predicates.and(units("PRIVATE_CORE"), capacity(2.0f)));
 
       // number of cores is the key
       Map<Float, ProductItem> coresToProductItem = Maps.uniqueIndex(cpuItems, ProductItems.capacity());
@@ -148,12 +161,12 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
    @Test
    public void testGetUbuntuPrice() {
       Iterable<ProductItem> operatingSystems = Iterables.filter(cloudServerProductPackage.getItems(),
-               categoryCode("os"));
+            categoryCode("os"));
 
       Map<String, ProductItem> osToProductItem = Maps.uniqueIndex(operatingSystems, ProductItems.description());
 
       ProductItemPrice price = ProductItems.price().apply(
-               osToProductItem.get("Ubuntu Linux 8 LTS Hardy Heron - Minimal Install (64 bit)"));
+            osToProductItem.get("Ubuntu Linux 8 LTS Hardy Heron - Minimal Install (64 bit)"));
       assert new Integer(1693).equals(price.getId());
    }
 
@@ -183,7 +196,8 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
       assert datacenter.getId() > 0 : datacenter;
       assert datacenter.getName() != null : datacenter;
       assert datacenter.getLongName() != null : datacenter;
-      for( Region region: datacenter.getRegions()) checkRegion(region);
+      for (Region region : datacenter.getRegions())
+         checkRegion(region);
    }
 
    private void checkRegion(Region region) {
@@ -194,7 +208,7 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
    private void checkAddress(Address address) {
       assert address.getId() > 0 : address;
       assert address.getCountry() != null : address;
-      if (!address.getCountry().equals("SG"))
+      if (!ImmutableSet.of("SG", "NL").contains(address.getCountry()))
          assert address.getState() != null : address;
    }
 
