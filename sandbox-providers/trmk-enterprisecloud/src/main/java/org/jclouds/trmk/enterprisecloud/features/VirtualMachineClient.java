@@ -19,39 +19,29 @@
 package org.jclouds.trmk.enterprisecloud.features;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.trmk.enterprisecloud.domain.Task;
-import org.jclouds.trmk.enterprisecloud.domain.Tasks;
+import org.jclouds.trmk.enterprisecloud.domain.VirtualMachine;
 
-import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Provides synchronous access to Task.
+ * Provides synchronous access to VirtualMachine.
  * <p/>
  * 
- * @see TaskAsyncClient
+ * @see org.jclouds.trmk.enterprisecloud.features.VirtualMachineAsyncClient
  * @see <a href=
  *      "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID="
  *      />
- * @author Adrian Cole
+ * @author Jason King
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface TaskClient {
+public interface VirtualMachineClient {
 
    /**
-    * The Get Tasks call returns information regarding the tasks in an
-    * environment. The task list is a history of changes to the environment.
-    * 
-    * @return a history of changes to the environment.
+    * The Get Virtual Machines by ID call returns information regarding a
+    * specified virtual machine defined in an environment.
+    *
+    * @return the virtual Machine or null if not found
     */
-   Tasks getTasksInEnvironment(long environmentId);
-
-   /**
-    * The Get Tasks by ID call returns information regarding a specified task in
-    * an environment.
-    * 
-    * @return the task or null if not found
-    */
-   Task getTask(URI taskId);
+   VirtualMachine getVirtualMachine(long id);
 
 }
