@@ -31,8 +31,6 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
-import org.jclouds.sshj.SshjSshClient;
-import org.jclouds.sshj.SshjSshClientTest.ExceptionWithStrangeToString;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -129,7 +127,7 @@ public class JschSshClientTest {
       assert !ssh.causalChainHasMessageContaining(new NullPointerException()).apply(" End of IO Stream Read");
    }
 
-   public void testRetryOnToStringNpe() {
+   public void testRetryOnToStringNpe() throws UnknownHostException {
       Exception nex = new NullPointerException();
       Properties props = new Properties();
       // ensure we test toString on the exception independently
@@ -144,7 +142,7 @@ public class JschSshClientTest {
       public String toString() { return MESSAGE; }
    }
 
-   public void testRetryOnToStringCustom() {
+   public void testRetryOnToStringCustom() throws UnknownHostException {
       Exception nex = new ExceptionWithStrangeToString();
       Properties props = new Properties();
       props.setProperty("jclouds.ssh.retryable-messages", "foo-bar");
@@ -152,7 +150,7 @@ public class JschSshClientTest {
       assert ssh1.shouldRetry(new RuntimeException(nex));
    }
 
-   public void testRetryNotOnToStringCustomMismatch() {
+   public void testRetryNotOnToStringCustomMismatch() throws UnknownHostException {
       Exception nex = new ExceptionWithStrangeToString();
       Properties props = new Properties();
       props.setProperty("jclouds.ssh.retryable-messages", "foo-baR");
