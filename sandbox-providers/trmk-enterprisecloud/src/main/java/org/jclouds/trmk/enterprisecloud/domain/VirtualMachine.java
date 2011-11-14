@@ -56,9 +56,10 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
       private Actions actions;
       private Tasks tasks;
       private String description;
+      private Layout layout;
 
       /**
-       * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getLinks
+       * @see VirtualMachine#getLinks
        */
       public Builder links(Set<Link> links) {
          this.links = new Links();
@@ -67,7 +68,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
       }
 
        /**
-        * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getActions
+        * @see VirtualMachine#getActions
         */
        public Builder actions(Set<Action> actions) {
           this.actions = new Actions();
@@ -76,7 +77,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
        }
 
        /**
-        * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getTasks
+        * @see VirtualMachine#getTasks
         */
        public Builder tasks(Set<Task> tasks) {
           this.tasks = new Tasks();
@@ -86,16 +87,24 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
 
 
        /**
-        * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getDescription
+        * @see VirtualMachine#getDescription
         */
        public Builder description(String description) {
           this.description = description;
           return this;
        }
 
+       /**
+        * @see VirtualMachine#getLayout()
+        */
+       public Builder description(Layout layout) {
+          this.layout = layout;
+          return this;
+       }
+
       @Override
       public VirtualMachine build() {
-         return new VirtualMachine(href, type, name, tasks, actions, links, description);
+         return new VirtualMachine(href, type, name, tasks, actions, links, description, layout);
       }
 
       public Builder fromVirtualMachine(VirtualMachine in) {
@@ -169,12 +178,16 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
    @XmlElement(name = "Description", required = true)
    private String description;
 
-   public VirtualMachine(URI href, String type, String name, Tasks tasks, Actions actions, Links links, String description) {
+   @XmlElement(name = "Layout", required = false)
+   private Layout layout;
+
+   public VirtualMachine(URI href, String type, String name, Tasks tasks, Actions actions, Links links, String description, Layout layout) {
       super(href, type, name);
       this.description = checkNotNull(description, "description");
       this.links = checkNotNull(links, "links");
       this.tasks = checkNotNull(tasks, "tasks");
       this.actions = checkNotNull(actions, "actions");
+      this.layout = layout;
    }
 
    protected VirtualMachine() {
@@ -204,6 +217,10 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
        return description;
    }
 
+   public Layout getLayout() {
+       return layout;
+   }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -214,6 +231,8 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
 
         if (!actions.equals(that.actions)) return false;
         if (!description.equals(that.description)) return false;
+        if (layout != null ? !layout.equals(that.layout) : that.layout != null)
+            return false;
         if (!links.equals(that.links)) return false;
         if (!tasks.equals(that.tasks)) return false;
 
@@ -227,12 +246,13 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
         result = 31 * result + tasks.hashCode();
         result = 31 * result + actions.hashCode();
         result = 31 * result + description.hashCode();
+        result = 31 * result + (layout != null ? layout.hashCode() : 0);
         return result;
     }
 
-   @Override
+    @Override
    public String string() {
-      return super.string()+", links="+links+", tasks="+tasks+", actions="+actions+", description="+description;
+      return super.string()+", links="+links+", tasks="+tasks+", actions="+actions+", description="+description+", layout="+layout;
    }
 
 }
