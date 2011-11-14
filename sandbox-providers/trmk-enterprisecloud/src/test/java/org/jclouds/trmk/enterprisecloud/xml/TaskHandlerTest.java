@@ -36,8 +36,10 @@ import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.trmk.enterprisecloud.domain.NamedResource;
 import org.jclouds.trmk.enterprisecloud.domain.Task;
+import org.jclouds.trmk.enterprisecloud.domain.Tasks;
 import org.jclouds.trmk.enterprisecloud.features.TaskAsyncClient;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Named;
@@ -50,16 +52,23 @@ import static org.jclouds.io.Payloads.newInputStreamPayload;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
- * Tests behavior of {@code TaskHandler}
+ * Tests behavior of JAXB parsing for Task/Tasks
  * 
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "TaskHandlerTest")
 public class TaskHandlerTest extends BaseRestClientTest {
-   static SimpleDateFormatDateService dateService = new SimpleDateFormatDateService();
-   static Task expected = Task
+   private SimpleDateFormatDateService dateService;
+   private Task expected1;
+   private Task expected2;
+
+  @BeforeMethod
+  public void setUp() {
+     dateService = new SimpleDateFormatDateService();
+     expected1 = Task
          .builder()
          .href(URI.create("/livespec/tasks/1002"))
          .type("application/vnd.tmrk.cloud.task")
@@ -75,6 +84,24 @@ public class TaskHandlerTest extends BaseRestClientTest {
          .initiatedBy(
                NamedResource.builder().href(URI.create("/livespec/admin/users/1")).name("User 1")
                      .type("application/vnd.tmrk.cloud.admin.user").build()).build();
+
+      expected2 = Task
+         .builder()
+         .href(URI.create("/livespec/tasks/1003"))
+         .type("application/vnd.tmrk.cloud.task")
+         .operation("Add Node Service 2")
+         .status(Task.Status.SUCCESS)
+         .impactedItem(
+               NamedResource.builder().href(URI.create("/livespec/nodeservices/2")).name("sample node internet 2")
+                     .type("application/vnd.tmrk.cloud.nodeService").build())
+         .startTime(dateService.iso8601DateParse("2011-11-11T11:19:13.38225Z"))
+         .completedTime(dateService.iso8601DateParse("2011-11-11T11:20:13.38225Z"))
+         .notes("Some notes about the operation.")
+         .errorMessage("sample success message 1 here")
+         .initiatedBy(
+               NamedResource.builder().href(URI.create("/livespec/admin/users/3")).name("User 3")
+                     .type("application/vnd.tmrk.cloud.admin.user").build()).build();
+  }
 
    @BeforeClass
    void setupFactory() {
@@ -111,6 +138,25 @@ public class TaskHandlerTest extends BaseRestClientTest {
 
       InputStream is = getClass().getResourceAsStream("/task.xml");
       Task task = parser.apply(new HttpResponse(200, "ok", newInputStreamPayload(is)));
-      assertEquals(task, expected);
+      assertEquals(task, expected1);
+   }
+
+   @Test
+   public void testParseTasksWithJAXB() throws Exception {
+
+      Method method = TaskAsyncClient.class.getMethod("getTasksInEnvironment",long.class);
+      HttpRequest request = factory(TaskAsyncClient.class).createRequest(method,1);
+      assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
+
+      Function<HttpResponse, Tasks> parser = (Function<HttpResponse, Tasks>) RestAnnotationProcessor
+            .createResponseParser(parserFactory, injector, method, request);
+
+      InputStream is = getClass().getResourceAsStream("/tasks.xml");
+      Tasks tasksResponse = parser.apply(new HttpResponse(200, "ok", newInputStreamPayload(is)));
+
+      Set<Task> tasks = tasksResponse.getTasks();
+      assertEquals(tasks.size(), 2);
+      assertTrue(tasks.contains(expected1));
+      assertTrue(tasks.contains(expected2));
    }
 }

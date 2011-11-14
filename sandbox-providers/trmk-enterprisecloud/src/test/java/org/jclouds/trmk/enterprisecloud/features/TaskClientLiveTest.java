@@ -18,14 +18,13 @@
  */
 package org.jclouds.trmk.enterprisecloud.features;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
-import java.util.Set;
-
 import org.jclouds.trmk.enterprisecloud.domain.Task;
+import org.jclouds.trmk.enterprisecloud.domain.Tasks;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tests behavior of {@code TaskClient}
@@ -47,11 +46,11 @@ public class TaskClientLiveTest extends BaseTerremarkEnterpriseCloudClientLiveTe
       // TODO: don't hard-code id
       // TODO: docs say don't parse the href, yet no xml includes "identifier",
       // I suspect we may need to change to URI args as opposed to long
-      Set<Task> response = client.getTasksInEnvironment(77);
+      Tasks response = client.getTasksInEnvironment(77);
       assert null != response;
 
-      assertTrue(response.size() >= 0);
-      for (Task task : response) {
+      assertTrue(response.getTasks().size() >= 0);
+      for (Task task : response.getTasks()) {
          assertEquals(client.getTask(task.getHref()), task);
          assert task.getStatus() != Task.Status.UNRECOGNIZED : response;
       }

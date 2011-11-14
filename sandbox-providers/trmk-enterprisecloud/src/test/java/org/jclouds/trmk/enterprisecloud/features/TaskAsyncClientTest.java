@@ -20,12 +20,10 @@ package org.jclouds.trmk.enterprisecloud.features;
 
 import com.google.inject.TypeLiteral;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.trmk.enterprisecloud.xml.TasksHandler;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -49,8 +47,7 @@ public class TaskAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClient
             "Accept: application/vnd.tmrk.cloud.task; type=collection\nx-trmk-version: 2011-07-01\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, TasksHandler.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
       assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(httpRequest);

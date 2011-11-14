@@ -18,12 +18,12 @@
  */
 package org.jclouds.trmk.enterprisecloud.features;
 
-import java.net.URI;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.trmk.enterprisecloud.domain.Task;
+import org.jclouds.trmk.enterprisecloud.domain.Tasks;
+
+import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to Task.
@@ -44,7 +44,7 @@ public interface TaskClient {
     * 
     * @return a history of changes to the environment.
     */
-   Set<Task> getTasksInEnvironment(long environmentId);
+   Tasks getTasksInEnvironment(long environmentId);
 
    /**
     * The Get Tasks by ID call returns information regarding a specified task in

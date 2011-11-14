@@ -24,14 +24,13 @@ import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.trmk.enterprisecloud.domain.Task;
-import org.jclouds.trmk.enterprisecloud.xml.TasksHandler;
+import org.jclouds.trmk.enterprisecloud.domain.Tasks;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import java.net.URI;
-import java.util.Set;
 
 /**
  * Provides asynchronous access to Task via their REST API.
@@ -53,9 +52,9 @@ public interface TaskAsyncClient {
    @GET
    @Path("/tasks/environments/{environmentId}")
    @Consumes("application/vnd.tmrk.cloud.task; type=collection")
-   @XMLResponseParser(TasksHandler.class)
+   @JAXBResponseParser
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Task>> getTasksInEnvironment(@PathParam("environmentId") long environmentId);
+   ListenableFuture<Tasks> getTasksInEnvironment(@PathParam("environmentId") long environmentId);
 
    /**
     * @see TaskClient#getTask
