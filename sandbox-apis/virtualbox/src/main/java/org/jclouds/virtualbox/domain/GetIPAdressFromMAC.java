@@ -27,6 +27,7 @@ import java.util.Map;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.util.Utils;
+import org.jclouds.virtualbox.functions.MacAddressToBSD;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
