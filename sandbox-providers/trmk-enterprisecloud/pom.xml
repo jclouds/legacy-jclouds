@@ -48,7 +48,7 @@
     </repositories>
 
     <properties>
-        <test.trmk-enterprisecloud.endpoint>https://services-beta.enterprisecloud.terremark.com/cloudapi</test.trmk-enterprisecloud.endpoint>
+        <test.trmk-enterprisecloud.endpoint>https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud</test.trmk-enterprisecloud.endpoint>
         <test.trmk-enterprisecloud.apiversion>2011-07-01</test.trmk-enterprisecloud.apiversion>
         <test.trmk-enterprisecloud.identity>FIXME</test.trmk-enterprisecloud.identity>
         <test.trmk-enterprisecloud.credential>FIXME</test.trmk-enterprisecloud.credential>

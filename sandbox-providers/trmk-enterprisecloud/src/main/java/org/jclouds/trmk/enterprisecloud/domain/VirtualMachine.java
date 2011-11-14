@@ -21,9 +21,12 @@ package org.jclouds.trmk.enterprisecloud.domain;
 import org.jclouds.trmk.enterprisecloud.domain.internal.BaseNamedResource;
 import org.jclouds.trmk.enterprisecloud.domain.internal.BaseResource;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -32,6 +35,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Jason King
  * 
  */
+@XmlRootElement(name = "VirtualMachine")
 public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
 
    @SuppressWarnings("unchecked")
@@ -48,32 +52,35 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
    }
 
    public static class Builder extends BaseNamedResource.Builder<VirtualMachine> {
-      private List<Link> links;
-      private List<Action> actions;
-      private List<Task> tasks;
+      private Links links;
+      private Actions actions;
+      private Tasks tasks;
       private String description;
 
       /**
        * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getLinks
        */
-      public Builder links(List<Link> links) {
-         this.links = links;
+      public Builder links(Set<Link> links) {
+         this.links = new Links();
+         for(Link link:links) this.links.setLink(link);
          return this;
       }
 
        /**
         * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getActions
         */
-       public Builder actions(List<Action> actions) {
-          this.actions = actions;
+       public Builder actions(Set<Action> actions) {
+          this.actions = new Actions();
+          for(Action action:actions) this.actions.setAction(action);
           return this;
        }
 
        /**
         * @see org.jclouds.trmk.enterprisecloud.domain.VirtualMachine#getTasks
         */
-       public Builder tasks(List<Task> tasks) {
-          this.tasks = tasks;
+       public Builder tasks(Set<Task> tasks) {
+          this.tasks = new Tasks();
+          for(Task task: tasks) this.tasks.setTask(task);
           return this;
        }
 
@@ -150,12 +157,19 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
 
    }
 
-   private final List<Link> links;
-   private final List<Task> tasks;
-   private final List<Action> actions;
-   private final String description;
+   @XmlElement(name = "Links", required = true)
+   private Links links;
 
-   public VirtualMachine(URI href, String type, String name, List<Task> tasks, List<Action> actions, List<Link> links, String description) {
+   @XmlElement(name = "Tasks", required = true)
+   private Tasks tasks;
+
+   @XmlElement(name = "Actions", required = true)
+   private Actions actions;
+
+   @XmlElement(name = "Description", required = true)
+   private String description;
+
+   public VirtualMachine(URI href, String type, String name, Tasks tasks, Actions actions, Links links, String description) {
       super(href, type, name);
       this.description = checkNotNull(description, "description");
       this.links = checkNotNull(links, "links");
@@ -163,8 +177,13 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
       this.actions = checkNotNull(actions, "actions");
    }
 
-   public List<Link> getLinks() {
-       return links;
+   protected VirtualMachine() {
+        //For JAXB
+   }
+
+
+   public Set<Link> getLinks() {
+       return Collections.unmodifiableSet(links.getLinks());
    }
 
     /**
@@ -173,12 +192,12 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
      * Use the href to retrieve the complete list of tasks.
      * @return most recent tasks
      */
-   public List<Task> getTasks() {
-       return tasks;
+   public Set<Task> getTasks() {
+       return Collections.unmodifiableSet(tasks.getTasks());
    }
 
-   public List<Action> getActions() {
-       return actions;
+   public Set<Action> getActions() {
+       return Collections.unmodifiableSet(actions.getActions());
    }
 
    public String getDescription() {

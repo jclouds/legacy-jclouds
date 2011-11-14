@@ -34,47 +34,35 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.BaseRestClientTest;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.trmk.enterprisecloud.domain.NamedResource;
-import org.jclouds.trmk.enterprisecloud.domain.Task;
-import org.jclouds.trmk.enterprisecloud.features.TaskAsyncClient;
+import org.jclouds.trmk.enterprisecloud.domain.VirtualMachine;
+import org.jclouds.trmk.enterprisecloud.features.VirtualMachineAsyncClient;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Named;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.Set;
 
 import static org.jclouds.io.Payloads.newInputStreamPayload;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
-import static org.testng.Assert.assertEquals;
+import static org.testng.AssertJUnit.assertEquals;
 
 /**
- * Tests behavior of {@code TaskHandler}
+ * Tests behavior of JAXB parsing for VirtualMachines
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "TaskHandlerTest")
-public class TaskHandlerTest extends BaseRestClientTest {
-   static SimpleDateFormatDateService dateService = new SimpleDateFormatDateService();
-   static Task expected = Task
-         .builder()
-         .href(URI.create("/livespec/tasks/1002"))
-         .type("application/vnd.tmrk.cloud.task")
-         .operation("Add Node Service")
-         .status(Task.Status.ERROR)
-         .impactedItem(
-               NamedResource.builder().href(URI.create("/livespec/nodeservices/1")).name("sample node internet 1")
-                     .type("application/vnd.tmrk.cloud.nodeService").build())
-         .startTime(dateService.iso8601DateParse("2011-11-07T11:19:13.38225Z"))
-         .completedTime(dateService.iso8601DateParse("2011-11-07T11:20:13.38225Z"))
-         .notes("Some notes about the operation.")
-         .errorMessage("sample error message 1 here")
-         .initiatedBy(
-               NamedResource.builder().href(URI.create("/livespec/admin/users/1")).name("User 1")
-                     .type("application/vnd.tmrk.cloud.admin.user").build()).build();
+@Test(groups = "unit", testName = "VirtualMachineJAXBParsingTest")
+public class VirtualMachineJAXBParsingTest extends BaseRestClientTest {
+   private SimpleDateFormatDateService dateService;
+
+  @BeforeMethod
+  public void setUp() {
+     dateService = new SimpleDateFormatDateService();
+  }
 
    @BeforeClass
    void setupFactory() {
@@ -100,17 +88,21 @@ public class TaskHandlerTest extends BaseRestClientTest {
    }
 
    @Test
-   public void testParseTaskWithJAXB() throws Exception {
+   public void testParseVirtualMachineWithJAXB() throws Exception {
 
-      Method method = TaskAsyncClient.class.getMethod("getTask",URI.class);
-      HttpRequest request = factory(TaskAsyncClient.class).createRequest(method);
+      Method method = VirtualMachineAsyncClient.class.getMethod("getVirtualMachine", long.class);
+      HttpRequest request = factory(VirtualMachineAsyncClient.class).createRequest(method,1);
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
 
-      Function<HttpResponse, Task> parser = (Function<HttpResponse, Task>) RestAnnotationProcessor
+      Function<HttpResponse, VirtualMachine> parser = (Function<HttpResponse, VirtualMachine>) RestAnnotationProcessor
             .createResponseParser(parserFactory, injector, method, request);
 
-      InputStream is = getClass().getResourceAsStream("/task.xml");
-      Task task = parser.apply(new HttpResponse(200, "ok", newInputStreamPayload(is)));
-      assertEquals(task, expected);
+      InputStream is = getClass().getResourceAsStream("/virtualMachine.xml");
+      VirtualMachine virtualMachine = parser.apply(new HttpResponse(200, "ok", newInputStreamPayload(is)));
+
+      assertEquals("My first terremark server",virtualMachine.getDescription());
+      assertEquals(6,virtualMachine.getLinks().size());
+      assertEquals(11,virtualMachine.getActions().size());
+      assertEquals(1,virtualMachine.getTasks().size());
    }
 }

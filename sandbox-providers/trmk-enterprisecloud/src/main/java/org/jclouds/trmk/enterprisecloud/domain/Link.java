@@ -26,41 +26,52 @@ import java.util.Map;
 import org.jclouds.trmk.enterprisecloud.domain.internal.BaseNamedResource;
 import org.jclouds.trmk.enterprisecloud.domain.internal.BaseResource;
 
+import javax.xml.bind.annotation.*;
+
 /**
  * 
  * @author Adrian Cole
  * 
  */
+@XmlRootElement(name = "Link")
 public class Link extends BaseNamedResource<Link> {
-   public static enum Relationship {
+    @XmlEnum
+    public static enum Relationship {
       /**
        * The entity in the link owns the entity in the response
        */
+      @XmlEnumValue("up")
       UP,
       /**
        * The entity in the response owns the entity in the link
        */
+      @XmlEnumValue("down")
       DOWN,
       /**
        * The entity in the link is an alternate view of the entity in the
        * response
        */
+      @XmlEnumValue("alternate")
       ALTERNATE,
       /**
        * The link is a path to the first page in the pages of responses
        */
+      @XmlEnumValue("first")
       FIRST,
       /**
        * The link is a path to the previous page in the pages of responses
        */
+      @XmlEnumValue("previous")
       PREVIOUS,
       /**
        * The link is a path to the next page in the pages of responses
        */
+      @XmlEnumValue("next")
       NEXT,
       /**
        * The link is a path to the last page in the pages of responses
        */
+      @XmlEnumValue("last")
       LAST,
       /**
        * Relationship was not parsed by jclouds.
@@ -171,11 +182,16 @@ public class Link extends BaseNamedResource<Link> {
       }
    }
 
-   protected final Relationship rel;
+   @XmlAttribute
+   protected Relationship rel;
 
    public Link(URI href, String type, String name, Relationship rel) {
       super(href, type, name);
       this.rel = checkNotNull(rel, "rel");
+   }
+
+   protected Link() {
+       //For JAXB
    }
 
    /**

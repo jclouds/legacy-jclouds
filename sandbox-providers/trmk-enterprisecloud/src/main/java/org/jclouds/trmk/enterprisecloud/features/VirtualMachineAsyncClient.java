@@ -20,23 +20,23 @@ package org.jclouds.trmk.enterprisecloud.features;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.rest.annotations.*;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Headers;
+import org.jclouds.rest.annotations.JAXBResponseParser;
+import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.trmk.enterprisecloud.domain.Task;
-import org.jclouds.trmk.enterprisecloud.domain.Tasks;
+import org.jclouds.trmk.enterprisecloud.domain.VirtualMachine;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import java.net.URI;
 
 /**
- * Provides asynchronous access to Task via their REST API.
+ * Provides asynchronous access to VirtualMachine via their REST API.
  * <p/>
  * 
- * @see TaskClient
+ * @see org.jclouds.trmk.enterprisecloud.features.TaskClient
  * @see <a href=
  *      "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID="
  *      />
@@ -44,25 +44,16 @@ import java.net.URI;
  */
 @RequestFilters(BasicAuthentication.class)
 @Headers(keys = "x-trmk-version", values = "{jclouds.api-version}")
-public interface TaskAsyncClient {
+public interface VirtualMachineAsyncClient {
 
    /**
-    * @see TaskClient#getTasksInEnvironment
+    * @see org.jclouds.trmk.enterprisecloud.features.VirtualMachineClient#getVirtualMachine
     */
    @GET
-   @Path("/tasks/environments/{environmentId}")
-   @Consumes("application/vnd.tmrk.cloud.task; type=collection")
-   @JAXBResponseParser
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Tasks> getTasksInEnvironment(@PathParam("environmentId") long environmentId);
-
-   /**
-    * @see TaskClient#getTask
-    */
-   @GET
-   @Consumes("application/vnd.tmrk.cloud.task")
+   @Path("/virtualMachines/{id}")
+   @Consumes("application/vnd.tmrk.cloud.virtualMachine")
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Task> getTask(@EndpointParam URI taskId);
+   ListenableFuture<VirtualMachine> getVirtualMachine(@PathParam("id") long id);
 
 }
