@@ -58,6 +58,7 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.annotations.Identity;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.ssh.SshException;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -141,7 +142,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
          new DefaultCredentialsFromImageOrOverridingCredentials());
 
    @Test
-   public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentialsWithSecurityGroup()
+   public void testCreateNodeWithGroupEncodedIntoName()
          throws InterruptedException {
       String group = "foo";
       String name = "node" + new Random().nextInt();
@@ -151,19 +152,13 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
             .getTemplateClient()
             .getTemplateInZone(Long.parseLong(template.getImage().getId()),
                   Long.parseLong(template.getLocation().getId())).isPasswordEnabled()) {
-         client.getSSHKeyPairClient().deleteSSHKeyPair(keyPairName);
-         client.getSSHKeyPairClient().registerSSHKeyPair(keyPairName, keyPair.get("public"));
-
-         credentialStore.put("keypair#" + keyPairName, new Credentials("root", keyPair.get("private")));
 
          // TODO: look at SecurityGroupClientLiveTest for how to do this
          template.getOptions().as(CloudStackTemplateOptions.class).keyPair(keyPairName);
       }
       vm = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
 
-      // TODO: check security groups vm.getSecurityGroups(),
-      // check other things, like cpu correct, mem correct, image/os is correct
-      // (as possible)
+      // TODO: check vm name - it should contain the group
 
       // check to see if we setup a NAT rule (conceding we could check this from
       // cache)
@@ -179,7 +174,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
    protected void doConnectViaSsh(IPSocket socket, Credentials creds) {
       SshClient ssh = computeContext.utils().sshFactory().create(socket, creds);
       try {
-         ssh.connect();
+         connectWithRetry(ssh, 5, 2000);
          ExecResponse hello = ssh.exec("echo hello");
          assertEquals(hello.getOutput().trim(), "hello");
          System.err.println(ssh.exec("df -k").getOutput());
@@ -188,6 +183,19 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
       } finally {
          if (ssh != null)
             ssh.disconnect();
+      }
+   }
+
+   private void connectWithRetry(SshClient ssh, int times, int delayInMilli) {
+      for(int i=0; i<times; i++) {
+         try {
+            ssh.connect();
+            break;
+         } catch(SshException e) {
+            try {
+               Thread.sleep(delayInMilli);
+            } catch (InterruptedException e1) {}
+         }
       }
    }
 
