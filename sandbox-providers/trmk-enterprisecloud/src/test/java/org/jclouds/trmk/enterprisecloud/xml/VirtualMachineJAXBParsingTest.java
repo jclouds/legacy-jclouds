@@ -34,6 +34,7 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.BaseRestClientTest;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.trmk.enterprisecloud.domain.Layout;
 import org.jclouds.trmk.enterprisecloud.domain.VirtualMachine;
 import org.jclouds.trmk.enterprisecloud.features.VirtualMachineAsyncClient;
 import org.testng.annotations.BeforeClass;
@@ -49,6 +50,7 @@ import static org.jclouds.io.Payloads.newInputStreamPayload;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
 
 /**
  * Tests behavior of JAXB parsing for VirtualMachines
@@ -104,5 +106,13 @@ public class VirtualMachineJAXBParsingTest extends BaseRestClientTest {
       assertEquals(6,virtualMachine.getLinks().size());
       assertEquals(11,virtualMachine.getActions().size());
       assertEquals(1,virtualMachine.getTasks().size());
+
+      assertLayout(virtualMachine.getLayout());
+   }
+
+   private void assertLayout(Layout layout) {
+      assertNotNull(layout);
+      assertEquals("test row",layout.getRow().getName());
+      assertEquals("test group",layout.getGroup().getName());
    }
 }
