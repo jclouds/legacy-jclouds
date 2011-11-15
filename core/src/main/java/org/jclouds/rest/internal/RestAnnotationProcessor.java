@@ -19,6 +19,7 @@
 package org.jclouds.rest.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Collections2.filter;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.get;
@@ -755,9 +756,18 @@ public class RestAnnotationProcessor<T> {
          } else {
             throw new IllegalStateException("no annotations on class or method: " + method);
          }
-         return injector.getInstance(Key.get(URI.class, annotation.value()));
+         endpoint = injector.getInstance(Key.get(URI.class, annotation.value()));
       }
-      return endpoint;
+       return addHostIfMissing(endpoint, injector.getInstance(Key.get(URI.class, org.jclouds.location.Provider.class)));
+   }
+
+   public static URI addHostIfMissing(URI original, URI withHost) {
+       checkNotNull(withHost,"URI witHost cannot be null");
+       checkArgument(withHost.getHost()!=null, "URI withHost must have host:"+withHost);
+
+       if(original == null) return null;
+       if (original.getHost() != null) return original;
+       return withHost.resolve(original);
    }
 
    public static final TypeLiteral<ListenableFuture<Boolean>> futureBooleanLiteral = new TypeLiteral<ListenableFuture<Boolean>>() {

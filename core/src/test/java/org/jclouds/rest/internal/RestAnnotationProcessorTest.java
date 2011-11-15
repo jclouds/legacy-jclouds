@@ -32,6 +32,7 @@ import static org.jclouds.io.Payloads.newStringPayload;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -2534,6 +2535,35 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       payload.append("<test><elem>Hello World</elem></test>");
       TestJAXBDomain domain = parser.apply(new HttpResponse(200, "ok", newStringPayload(payload.toString())));
       assertEquals(domain.getElem(), "Hello World");
+   }
+
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testAddHostNullWithHost() throws Exception{
+       assertNull(RestAnnotationProcessor.addHostIfMissing(null,null));
+   }
+
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testAddHostWithHostHasNoHost() throws Exception{
+       assertNull(RestAnnotationProcessor.addHostIfMissing(null,new URI("/no/host")));
+   }
+
+   @Test
+   public void testAddHostNullOriginal() throws Exception{
+       assertNull(RestAnnotationProcessor.addHostIfMissing(null,new URI("http://foo")));
+   }
+
+   @Test
+   public void testAddHostOriginalHasHost() throws Exception{
+
+       URI original = new URI("http://hashost/foo");
+       URI result = RestAnnotationProcessor.addHostIfMissing(original,new URI("http://foo"));
+       assertEquals(original,result);
+   }
+
+   @Test
+   public void testAddHostIfMissing() throws Exception{
+       URI result = RestAnnotationProcessor.addHostIfMissing(new URI("/bar"),new URI("http://foo"));
+       assertEquals(new URI("http://foo/bar"),result);
    }
 
    DateService dateService = new SimpleDateFormatDateService();
