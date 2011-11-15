@@ -43,7 +43,8 @@ import java.net.URI;
  * @author Adrian Cole
  */
 @RequestFilters(BasicAuthentication.class)
-@Headers(keys = "x-trmk-version", values = "{jclouds.api-version}")
+@Headers(keys = "x-tmrk-version", values = "{jclouds.api-version}")
+//@VirtualHost
 public interface TaskAsyncClient {
 
    /**

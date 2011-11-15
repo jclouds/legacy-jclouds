@@ -43,7 +43,7 @@ import javax.ws.rs.PathParam;
  * @author Adrian Cole
  */
 @RequestFilters(BasicAuthentication.class)
-@Headers(keys = "x-trmk-version", values = "{jclouds.api-version}")
+@Headers(keys = "x-tmrk-version", values = "{jclouds.api-version}")
 public interface VirtualMachineAsyncClient {
 
    /**
