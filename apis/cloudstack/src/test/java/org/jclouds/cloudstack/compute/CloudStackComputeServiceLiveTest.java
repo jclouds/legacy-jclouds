@@ -61,4 +61,12 @@ public class CloudStackComputeServiceLiveTest extends BaseComputeServiceLiveTest
       assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
             "node userMetadata did not match %s %s", userMetadata, node);
    }
+
+   @Override
+   @Test(enabled = false)
+   public void testCreateAndRunAService() throws Exception {
+      /* Disabling this test because it's never going to pass if we
+      don't have internet connectivity from the cloudstack environment */
+      super.testCreateAndRunAService();
+   }
 }
