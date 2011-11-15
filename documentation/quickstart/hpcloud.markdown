@@ -33,11 +33,23 @@ context.getBlobStore().createContainerInLocation(null, container);
 context.createInputStreamMap(container).put("blob.txt", inputStream);
 
 // when you need access to hpcloud specific features, use the provider-specific context
-HPCloudObjectStorageClient hpcloudClient = HPCloudObjectStorageClient.class.cast(context.getProviderSpecificContext()
-         .getApi());
+HPCloudObjectStorageClient hpcloudClient = 
+	HPCloudObjectStorageClient.class.cast(context.getProviderSpecificContext().getApi());
 
-// get a cdn uri for the container
-URI cdnURI = hpcloudClient.enableCDN(container);
+// get a CDN URL for the container
+URI uri = hpcloudClient.enableCDN(container);
+
+// get the CDN Metadata for the container
+ContainerCDNMetadata cdnMetadata = hpcloudClient.getCDNMetadata(container)
+...
+
+// create a public non-CDN enabled container (via Swift public ACL method)  
+hpcloudClient.createContainer("public-container", withPublicAccess()));
+		
+ContainerMetadata cm = hpcloudClient.getContainerMetadata("public-container");
+if (cm.isPublic()) {
+	...
+}
 
 context.close();
 {% endhighlight %}
