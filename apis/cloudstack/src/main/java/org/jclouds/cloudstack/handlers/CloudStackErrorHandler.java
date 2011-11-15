@@ -77,6 +77,9 @@ public class CloudStackErrorHandler implements HttpErrorHandler {
                exception = new IllegalStateException(message, exception);
             }
             break;
+         case 537:
+            exception = new IllegalStateException(message, exception);
+            break;
          }
       } finally {
          if (response.getPayload() != null)
