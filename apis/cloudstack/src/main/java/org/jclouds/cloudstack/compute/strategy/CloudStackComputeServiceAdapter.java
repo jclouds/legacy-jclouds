@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.getOnlyElement;
+import static org.jclouds.cloudstack.options.DeployVirtualMachineOptions.Builder.name;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -36,6 +37,7 @@ import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.AsyncJob;
+import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.ServiceOffering;
@@ -100,7 +102,7 @@ public class CloudStackComputeServiceAdapter implements
 
       CloudStackTemplateOptions templateOptions = template.getOptions().as(CloudStackTemplateOptions.class);
 
-      DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
+      DeployVirtualMachineOptions options = name(name);
       if (templateOptions.getSecurityGroupIds().size() > 0) {
          options.securityGroupIds(templateOptions.getSecurityGroupIds());
       } else if (templateOptions.getNetworkIds().size() > 0) {
@@ -196,22 +198,29 @@ public class CloudStackComputeServiceAdapter implements
    @Override
    public void destroyNode(String id) {
       long guestId = Long.parseLong(id);
-      client.getVirtualMachineClient().destroyVirtualMachine(guestId);
+      Long job = client.getVirtualMachineClient().destroyVirtualMachine(guestId);
+      boolean completed = jobComplete.apply(job);
+      IPForwardingRule forwardingRule = client.getNATClient().getIPForwardingRuleForVirtualMachine(guestId);
+      if (forwardingRule != null)
+         client.getNATClient().disableStaticNat(forwardingRule.getIPAddressId());
    }
 
    @Override
    public void rebootNode(String id) {
-      client.getVirtualMachineClient().rebootVirtualMachine(Long.parseLong(id));
+      Long job = client.getVirtualMachineClient().rebootVirtualMachine(Long.parseLong(id));
+      boolean completed = jobComplete.apply(job);
    }
 
    @Override
    public void resumeNode(String id) {
-      client.getVirtualMachineClient().startVirtualMachine(Long.parseLong(id));
+      Long job = client.getVirtualMachineClient().startVirtualMachine(Long.parseLong(id));
+      boolean completed = jobComplete.apply(job);
    }
 
    @Override
    public void suspendNode(String id) {
-      client.getVirtualMachineClient().stopVirtualMachine(Long.parseLong(id));
+      Long job = client.getVirtualMachineClient().stopVirtualMachine(Long.parseLong(id));
+      boolean completed = jobComplete.apply(job);
    }
 
 }

@@ -142,8 +142,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
          new DefaultCredentialsFromImageOrOverridingCredentials());
 
    @Test
-   public void testCreateNodeWithGroupEncodedIntoName()
-         throws InterruptedException {
+   public void testCreateNodeWithGroupEncodedIntoName() throws InterruptedException {
       String group = "foo";
       String name = "node" + new Random().nextInt();
       Template template = computeContext.getComputeService().templateBuilder().build();
@@ -158,8 +157,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
       }
       vm = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
 
-      // TODO: check vm name - it should contain the group
-
+      assertEquals(vm.getNode().getName(), name);
       // check to see if we setup a NAT rule (conceding we could check this from
       // cache)
       IPForwardingRule rule = client.getNATClient().getIPForwardingRuleForVirtualMachine(vm.getNode().getId());
@@ -187,14 +185,15 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
    }
 
    private void connectWithRetry(SshClient ssh, int times, int delayInMilli) {
-      for(int i=0; i<times; i++) {
+      for (int i = 0; i < times; i++) {
          try {
             ssh.connect();
             break;
-         } catch(SshException e) {
+         } catch (SshException e) {
             try {
                Thread.sleep(delayInMilli);
-            } catch (InterruptedException e1) {}
+            } catch (InterruptedException e1) {
+            }
          }
       }
    }
