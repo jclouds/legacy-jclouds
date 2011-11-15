@@ -50,7 +50,9 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.Guice;
 import com.google.inject.Module;
@@ -255,17 +257,20 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
 
    @Test
    public void testTemplateBuilderWithLoginUserSpecified() throws IOException {
-
       ComputeServiceContext context = null;
       try {
          Properties overrides = setupProperties();
-         overrides.setProperty("jclouds.login-user", "foo:bar");
+         String login = loginUser != null ? loginUser : "foo:bar";
+         overrides.setProperty("jclouds.login-user", login);
 
          context = new ComputeServiceContextFactory().createContext(provider,
                ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
 
+         Iterable<String> userPass = Splitter.on(':').split(login);
+         String user = Iterables.get(userPass, 0);
+         String pass = Iterables.get(userPass, 1);
          assertEquals(context.getComputeService().templateBuilder().build().getImage().getDefaultCredentials(),
-               new Credentials("foo", "bar"));
+               new Credentials(user, pass));
       } finally {
          if (context != null)
             context.close();
