@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.features;
 
 import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Predicates.in;
 import static com.google.common.base.Predicates.or;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.get;
@@ -29,6 +30,7 @@ import static org.testng.Assert.assertTrue;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.AsyncJob;
@@ -50,6 +52,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import com.google.common.net.HostSpecifier;
+import org.testng.collections.Sets;
 
 /**
  * Tests behavior of {@code VirtualMachineClientLiveTest}
@@ -142,7 +145,8 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       if (vm.getPassword() != null) {
          conditionallyCheckSSH();
       }
-      assert or(equalTo("NetworkFilesystem"), equalTo("IscsiLUN"), equalTo("VMFS")).apply(vm.getRootDeviceType()) : vm;
+      assert in(ImmutableSet.of("NetworkFilesystem", "IscsiLUN", "VMFS", "PreSetup"))
+         .apply(vm.getRootDeviceType()) : vm;
       checkVm(vm);
    }
 
