@@ -19,8 +19,14 @@
 
 package org.jclouds.cloudstack.domain;
 
-import java.util.Date;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Date;
+import java.util.Map;
+
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -58,8 +64,7 @@ public class Volume implements Comparable<Volume> {
       private String state;
       private String storage;
       private String storageType;
-      //TODO Change to enum
-      private String type;
+      private VolumeType type;
       private long virtualMachineId;
       private String vmDisplayName;
       private String vmName;
@@ -182,7 +187,7 @@ public class Volume implements Comparable<Volume> {
          return this;
       }
 
-      public Builder type(String type) {
+      public Builder type(VolumeType type) {
          this.type = type;
          return this;
       }
@@ -268,8 +273,7 @@ public class Volume implements Comparable<Volume> {
    private String storage;
    @SerializedName("storagetype")
    private String storageType;
-   //TODO Change to enum
-   private String type;
+   private VolumeType type;
    @SerializedName("virtualmachineid")
    private long virtualMachineId;
    @SerializedName("vmdisplayname")
@@ -288,7 +292,7 @@ public class Volume implements Comparable<Volume> {
                  String domain, long domainId, String hypervisor, boolean extractable, long jobId,
                  String jobStatus, String name, String serviceOfferingDisplayText, long serviceOfferingId,
                  String serviceOfferingName, long size, long snapshotId, String state, String storage,
-                 String storageType, String type, long virtualMachineId, String vmDisplayName, String vmName,
+                 String storageType, VolumeType type, long virtualMachineId, String vmDisplayName, String vmName,
                  VirtualMachine.State vmState, long zoneId, String zoneName) {
       this.id = id;
       this.attached = attached;
@@ -415,7 +419,7 @@ public class Volume implements Comparable<Volume> {
       return storageType;
    }
 
-   public String getType() {
+   public VolumeType getType() {
       return type;
    }
 
@@ -530,4 +534,38 @@ public class Volume implements Comparable<Volume> {
       result = 31 * result + (zoneName != null ? zoneName.hashCode() : 0);
       return result;
    }
+
+   public enum VolumeType {
+      ROOT(0),
+      DATADISK(1),
+      UNRECOGNIZED(Integer.MAX_VALUE);
+
+      private int code;
+
+      private static final Map<Integer, VolumeType> INDEX = Maps.uniqueIndex(ImmutableSet.copyOf(VolumeType.values()),
+            new Function<VolumeType, Integer>() {
+
+               @Override
+               public Integer apply(VolumeType input) {
+                  return input.code;
+               }
+
+            });
+
+      VolumeType(int code) {
+         this.code = code;
+      }
+
+      @Override
+      public String toString() {
+         return name();
+      }
+
+      public static VolumeType fromValue(String resourceType) {
+         Integer code = new Integer(checkNotNull(resourceType, "resourcetype"));
+         return INDEX.containsKey(code) ? INDEX.get(code) : UNRECOGNIZED;
+      }
+
+   }
+
 }

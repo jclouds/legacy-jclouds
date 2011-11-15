@@ -33,8 +33,8 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 /**
@@ -64,23 +64,41 @@ public interface VolumeAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "createVolume")
-   @SelectJson("volume")
+   @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<AsyncCreateResponse> createVolumeFromDiskOfferingInZone(@QueryParam("name") String name,
                                                                             @QueryParam("diskofferingid") long diskOfferingId,
                                                                             @QueryParam("zoneid") long zoneId);
 
    /**
-    * @see VolumeClient#createVolumeWithSnapshot(String, long)
+    * @see VolumeClient#createVolumeFromSnapshotInZone(String, long, long)
     */
    @GET
    @QueryParams(keys = "command", values = "createVolume")
-   @SelectJson("volume")
+   @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<AsyncCreateResponse> createVolumeWithSnapshot(@QueryParam("name") String name,
-                                                                  @QueryParam("snapshotid") long diskOfferingId);
+   ListenableFuture<AsyncCreateResponse> createVolumeFromSnapshotInZone(@QueryParam("name") String name,
+                                                                        @QueryParam("snapshotid") long snapshotId,
+                                                                        @QueryParam("zoneid") long zoneId);
+
+   /**
+    * @see VolumeClient#attachVolume(long, long)
+    */
+   @GET
+   @QueryParams(keys = "command", values = "attachVolume")
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<AsyncCreateResponse> attachVolume(@QueryParam("id") long volumeId,
+                                                      @QueryParam("virtualmachineid") long virtualMachineId);
+
+   /**
+    * @see VolumeClient#detachVolume(long)
+    */
+   @GET
+   @QueryParams(keys = "command", values = "detachVolume")
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<AsyncCreateResponse> detachVolume(@QueryParam("id") long volumeId);
 
    /**
     * @see VolumeClient#deleteVolume(long)

@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import static com.google.common.collect.Iterables.find;
 import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertNotSame;
 
 import java.util.Set;
 
@@ -40,6 +41,7 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
    protected String prefix = System.getProperty("user.name");
    private long zoneId;
    private long diskOfferingId;
+   private long snapshotId;
    private Volume volume;
 
    public void testListVolumes() {
@@ -63,23 +65,101 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
             assert jobComplete.apply(job.getJobId());
             volume = findVolumeWithId(job.getId());
          } catch (IllegalStateException e) {
-            //TODO Retry ?
-            e.printStackTrace();
+            //TODO volume creation failed - retry?
          }
       }
 
       checkVolume(volume);
+      //Delete the volume
+      client.getVolumeClient().deleteVolume(volume.getId());
+   }
+
+   public void testCreateVolumeFromDiskofferingInZoneAndAttachVolumeToVirtualMachineAndDetachAndDelete() {
+
+      zoneId = Iterables.getFirst(client.getZoneClient().listZones(), null).getId();
+      //Pick some disk offering
+      diskOfferingId = Iterables.getFirst(client.getOfferingClient().listDiskOfferings(), null).getId();
+
+
+      while (volume == null) {
+         try {
+            AsyncCreateResponse job = client.getVolumeClient().createVolumeFromDiskOfferingInZone(prefix + "-jclouds-volume",
+                  diskOfferingId, zoneId);
+            assert jobComplete.apply(job.getJobId());
+            volume = findVolumeWithId(job.getId());
+         } catch (IllegalStateException e) {
+            //TODO volume creation failed - retry?
+         }
+      }
+
+      checkVolume(volume);
+      long virtualMachineId = Iterables.getFirst(client.getVirtualMachineClient().listVirtualMachines(), null).getId();
+      //Attach Volume
+      Volume attachedVolume = null;
+      while (attachedVolume == null) {
+         try {
+            AsyncCreateResponse job = client.getVolumeClient().attachVolume(volume.getId(), virtualMachineId);
+            assert jobComplete.apply(job.getJobId());
+            attachedVolume = findVolumeWithId(volume.getId());
+            assert attachedVolume.getVirtualMachineId() == virtualMachineId;
+            assert attachedVolume.getAttached() != null;
+         } catch (IllegalStateException e) {
+            //TODO volume creation failed - retry?
+         }
+      }
+
+      //Detach Volume
+      Volume detachedVolume = null;
+      while (detachedVolume == null) {
+         try {
+            AsyncCreateResponse job = client.getVolumeClient().detachVolume(volume.getId());
+            assert jobComplete.apply(job.getJobId());
+            detachedVolume = findVolumeWithId(volume.getId());
+            checkVolume(detachedVolume);
+         } catch (IllegalStateException e) {
+            //TODO volume creation failed - retry?
+         }
+      }
+
+      //Cleanup
+      client.getVolumeClient().deleteVolume(volume.getId());
 
    }
 
 
-   private void checkVolume(Volume volume) {
+   /*
+   TODO Uncomment this test after SnapshotClient has test coverage.
+   public void testCreateVolumeFromSnapshotInZoneAndDeleteVolume() {
+
+      zoneId = Iterables.getFirst(client.getZoneClient().listZones(), null).getId();
+      final Set<Snapshot> snapshots = client.getSnapshotClient().listSnapshots();
+      assertNotNull(snapshots);
+      assertNotSame(0, snapshots.size() );
+      snapshotId = Iterables.getFirst(snapshots, null).getId();
+      while (volume == null) {
+         try {
+            AsyncCreateResponse job = client.getVolumeClient().createVolumeFromSnapshotInZone(prefix + "-jclouds-volume",
+                  snapshotId, zoneId);
+            assert jobComplete.apply(job.getJobId());
+            volume = findVolumeWithId(job.getId());
+         } catch (IllegalStateException e) {
+            //TODO volume creation failed - retry?
+         }
+      }
+
+      checkVolume(volume);
+      //Delete the volume
+      client.getVolumeClient().deleteVolume(volume.getId());
+   }
+   */
+
+   private void checkVolume(final Volume volume) {
       assertNotNull(volume.getId());
       assertNotNull(volume.getName());
+      assertNotSame(Volume.VolumeType.UNRECOGNIZED, volume.getType());
    }
 
    private Volume findVolumeWithId(final long id) {
-      System.out.println(id);
       return find(client.getVolumeClient().listVolumes(), new Predicate<Volume>() {
 
          @Override

@@ -25,7 +25,6 @@ import com.google.inject.TypeLiteral;
 import org.jclouds.cloudstack.options.ListVolumesOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
@@ -59,46 +58,76 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
    }
 
    public void testCreateVolumeWithSnapshot() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VolumeAsyncClient.class.getMethod("createVolumeWithSnapshot", String.class, Long.class);
+      Method method = VolumeAsyncClient.class.getMethod("createVolumeWithSnapshot", String.class, long.class);
       HttpRequest httpRequest = processor.createRequest(method, prefix + "-jclouds-volume", 999L);
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=createVolume&name="
-                  + prefix +"-jclouds-volume&snapshotid=999 HTTP/1.1");
+                  + prefix + "-jclouds-volume&snapshotid=999 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
       checkFilters(httpRequest);
 
    }
 
    public void testCreateVolumeFromDiskOffering() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VolumeAsyncClient.class.getMethod("createVolumeFromDiskOfferingInZone",
-                                                         String.class, long.class , long.class);
+            String.class, long.class, long.class);
 
       HttpRequest httpRequest = processor.createRequest(method, prefix + "-jclouds-volume", 999L, 111L);
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=createVolume&name="
-                  + prefix +"-jclouds-volume&zoneid=111&diskofferingid=999 HTTP/1.1");
+                  + prefix + "-jclouds-volume&zoneid=111&diskofferingid=999 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      checkFilters(httpRequest);
+
+   }
+
+
+   public void testAttachVolume() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VolumeAsyncClient.class.getMethod("attachVolume",
+            long.class, long.class);
+
+      HttpRequest httpRequest = processor.createRequest(method, 111L, 999L);
+
+      assertRequestLineEquals(httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=attachVolume&id=111&virtualmachineid=999 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertSaxResponseParserClassEquals(method, null);
+      checkFilters(httpRequest);
+
+   }
+
+   public void testDetachVolume() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VolumeAsyncClient.class.getMethod("detachVolume", long.class);
+
+      HttpRequest httpRequest = processor.createRequest(method, 111L);
+
+      assertRequestLineEquals(httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=detachVolume&id=111 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertSaxResponseParserClassEquals(method, null);
       checkFilters(httpRequest);
 
    }
 
    public void testDeleteVolume() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VolumeAsyncClient.class.getMethod("deleteVolume", Long.class);
+      Method method = VolumeAsyncClient.class.getMethod("deleteVolume", long.class);
       HttpRequest httpRequest = processor.createRequest(method, prefix + "-jclouds-volume");
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=deleteVolume&id="
-                  + prefix +"-jclouds-volume HTTP/1.1");
+                  + prefix + "-jclouds-volume HTTP/1.1");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertSaxResponseParserClassEquals(method, null);
@@ -106,8 +135,6 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
       checkFilters(httpRequest);
 
    }
-
-
 
 
    @Override

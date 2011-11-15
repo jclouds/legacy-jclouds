@@ -41,8 +41,8 @@ public interface VolumeClient {
     *
     * @param name           name of the volume
     * @param diskOfferingId the ID of the disk offering.
-    * @param zoneId the ID of the availability zone
-    * @return Volume
+    * @param zoneId         the ID of the availability zone
+    * @return AsyncCreateResponse job response used to track creation
     */
    AsyncCreateResponse createVolumeFromDiskOfferingInZone(String name, long diskOfferingId, long zoneId);
 
@@ -51,9 +51,10 @@ public interface VolumeClient {
     *
     * @param name       name of the volume
     * @param snapshotId Snapshot id to be used while creating the volume
-    * @return Volume
+    * @param zoneId     the ID of the availability zone
+    * @return AsyncCreateResponse job response used to track creation
     */
-   AsyncCreateResponse createVolumeWithSnapshot(String name, long snapshotId);
+   AsyncCreateResponse createVolumeFromSnapshotInZone(String name, long snapshotId, long zoneId);
 
    /**
     * List volumes
@@ -68,5 +69,22 @@ public interface VolumeClient {
     * @param id id of the volume
     */
    void deleteVolume(long id);
+
+   /**
+    * Attaches a disk volume to a virtual machine.
+    *
+    * @param volumeId         the ID of the disk volume
+    * @param virtualMachineId the ID of the virtual machine
+    * @return AsyncCreateResponse job response used to track creation
+    */
+   AsyncCreateResponse attachVolume(long volumeId, long virtualMachineId);
+
+   /**
+    * Detaches a disk volume to a virtual machine.
+    *
+    * @param volumeId         the ID of the disk volume
+    * @return AsyncCreateResponse job response used to track creation
+    */
+   AsyncCreateResponse detachVolume(long volumeId);
 
 }
