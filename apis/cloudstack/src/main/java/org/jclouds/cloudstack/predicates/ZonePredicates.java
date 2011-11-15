@@ -20,8 +20,6 @@ package org.jclouds.cloudstack.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.alwaysTrue;
-import static com.google.common.base.Predicates.and;
-import static com.google.common.base.Predicates.not;
 
 import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.Zone;
@@ -69,14 +67,6 @@ public class ZonePredicates {
             return "supportsSecurityGroups()";
          }
       };
-   }
-
-   /**
-    * 
-    * @return true, if the zone supports creation of GuestVirtual Networks
-    */
-   public static Predicate<Zone> supportsGuestVirtualNetworks() {
-      return and(supportsAdvancedNetworks(), not(supportsSecurityGroups()));
    }
 
    /**

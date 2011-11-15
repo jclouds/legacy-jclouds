@@ -27,7 +27,7 @@ import com.google.common.collect.ImmutableSet;
  * Options used to control what network offerings are returned
  * 
  * @see <a href=
- *      "http://download.cloud.com/releases/2.2.0/api/user/listNetworkOfferings.html"
+ *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/user/listNetworkOfferings.html"
  *      />
  * @author Adrian Cole
  */
@@ -36,6 +36,15 @@ public class ListNetworkOfferingsOptions extends BaseHttpRequestOptions {
    public static final ListNetworkOfferingsOptions NONE = new ListNetworkOfferingsOptions();
 
    /**
+    * @param zoneId
+    *           list network offerings available for network creation in specific zone
+    */
+   public ListNetworkOfferingsOptions zoneId(long zoneId) {
+      this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
+      return this;
+   }
+   
+   /**
     * @param id
     *           the ID of the network offering
     */
@@ -43,7 +52,7 @@ public class ListNetworkOfferingsOptions extends BaseHttpRequestOptions {
       this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
       return this;
    }
-
+   
    /**
     * @param name
     *           the network offering name
@@ -163,6 +172,14 @@ public class ListNetworkOfferingsOptions extends BaseHttpRequestOptions {
       public static ListNetworkOfferingsOptions id(long id) {
          ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions();
          return options.id(id);
+      }
+
+      /**
+       * @see ListNetworkOfferingsOptions#zoneId
+       */
+      public static ListNetworkOfferingsOptions zoneId(long zoneId) {
+         ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions();
+         return options.zoneId(zoneId);
       }
 
       /**

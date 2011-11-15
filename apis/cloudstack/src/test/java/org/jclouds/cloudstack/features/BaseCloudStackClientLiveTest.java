@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.get;
 import static org.testng.Assert.assertEquals;
@@ -70,8 +71,29 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
+   protected String domainAdminIdentity;
+   protected String domainAdminCredential;
+
    public BaseCloudStackClientLiveTest() {
       provider = "cloudstack";
+   }
+
+   @Override
+   protected void setupCredentials() {
+      super.setupCredentials();
+      domainAdminIdentity = emptyToNull(System.getProperty("test." + provider + ".domainAdminIdentity"));
+      domainAdminCredential = emptyToNull(System.getProperty("test." + provider + ".domainAdminCredential"));
+   }
+
+   protected Properties setupAdminProperties() {
+      if (domainAdminIdentity != null && domainAdminCredential != null) {
+         Properties overrides = setupProperties();
+         overrides.setProperty(provider + ".identity", domainAdminIdentity);
+         overrides.setProperty(provider + ".credential", domainAdminCredential);
+         return overrides;
+      } else {
+         return null;
+      }
    }
 
    public static long defaultTemplateOrPreferredInZone(Long defaultTemplate, CloudStackClient client, long zoneId) {
@@ -103,21 +125,27 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
 
    protected String prefix = System.getProperty("user.name");
 
-   protected CloudStackClient client;
+   protected ComputeServiceContext computeContext;
    protected RestContext<CloudStackClient, CloudStackAsyncClient> context;
+   protected CloudStackClient client;
+   protected User user;
+
    protected Predicate<IPSocket> socketTester;
    protected RetryablePredicate<Long> jobComplete;
    protected RetryablePredicate<VirtualMachine> virtualMachineRunning;
    protected RetryablePredicate<VirtualMachine> virtualMachineDestroyed;
    protected SshClient.Factory sshFactory;
-   protected User currentUser;
    protected String password = "password";
 
    protected Injector injector;
 
    protected ReuseOrAssociateNewPublicIPAddress reuseOrAssociate;
 
-   protected ComputeServiceContext computeContext;
+   protected boolean domainAdminEnabled;
+   protected ComputeServiceContext domainAdminComputeContext;
+   protected RestContext<CloudStackClient, CloudStackAsyncClient> domainAdminContext;
+   protected CloudStackClient domainAdminClient;
+   protected User domainAdminUser;
 
    protected void checkSSH(IPSocket socket) {
       socketTester.apply(socket);
@@ -136,27 +164,22 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
    @BeforeGroups(groups = "live")
    public void setupClient() {
       setupCredentials();
-      Properties overrides = setupProperties();
+
       computeContext = new ComputeServiceContextFactory().createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
-
+            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), setupProperties());
       context = computeContext.getProviderSpecificContext();
-
       client = context.getApi();
-      // check access
-      Iterable<User> users = Iterables.concat(client.getAccountClient().listAccounts());
-      Predicate<User> apiKeyMatches = UserPredicates.apiKeyEquals(identity);
-      try {
-         currentUser = Iterables.find(users, apiKeyMatches);
-      } catch (NoSuchElementException e) {
-         throw new NoSuchElementException(String.format("none of the following users match %s: %s", apiKeyMatches,
-               users));
-      }
+      user = verifyCurrentUserIsOfType(context, Account.Type.USER);
 
-      if (currentUser.getAccountType() != Account.Type.USER)
-         throw new IllegalArgumentException(String.format(
-               "invalid account type: %s, please specify an apiKey of a USER, for example: %s",
-               currentUser.getAccountType(), Iterables.filter(users, UserPredicates.isUserAccount())));
+      domainAdminEnabled = setupAdminProperties() != null;
+
+      if (domainAdminEnabled) {
+         domainAdminComputeContext = new ComputeServiceContextFactory().createContext(provider,
+               ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), setupAdminProperties());
+         domainAdminContext = domainAdminComputeContext.getProviderSpecificContext();
+         domainAdminClient = domainAdminContext.getApi();
+         domainAdminUser = verifyCurrentUserIsOfType(domainAdminContext, Account.Type.DOMAIN_ADMIN);
+      }
 
       injector = Guice.createInjector(new SshjSshClientModule(), new Log4JLoggingModule());
       sshFactory = injector.getInstance(SshClient.Factory.class);
@@ -172,6 +195,25 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
       injector.injectMembers(virtualMachineDestroyed);
       reuseOrAssociate = new ReuseOrAssociateNewPublicIPAddress(client, jobComplete);
       injector.injectMembers(reuseOrAssociate);
+   }
+
+   protected static User verifyCurrentUserIsOfType(RestContext<CloudStackClient, CloudStackAsyncClient> context,
+         Account.Type type) {
+      Iterable<User> users = Iterables.concat(context.getApi().getAccountClient().listAccounts());
+      Predicate<User> apiKeyMatches = UserPredicates.apiKeyEquals(context.getIdentity());
+      User currentUser;
+      try {
+         currentUser = Iterables.find(users, apiKeyMatches);
+      } catch (NoSuchElementException e) {
+         throw new NoSuchElementException(String.format("none of the following users match %s: %s", apiKeyMatches,
+               users));
+      }
+
+      if (currentUser.getAccountType() != type)
+         throw new IllegalArgumentException(String.format(
+               "invalid account type: %s, please specify an apiKey of %s, for example: %s",
+               currentUser.getAccountType(), type, Iterables.filter(users, UserPredicates.accountTypeEquals(type))));
+      return currentUser;
    }
 
    @AfterGroups(groups = "live")

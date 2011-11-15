@@ -25,6 +25,7 @@ import static org.jclouds.cloudstack.options.ListNetworkOfferingsOptions.Builder
 import static org.jclouds.cloudstack.options.ListNetworkOfferingsOptions.Builder.isShared;
 import static org.jclouds.cloudstack.options.ListNetworkOfferingsOptions.Builder.specifyVLAN;
 import static org.jclouds.cloudstack.options.ListNetworkOfferingsOptions.Builder.trafficType;
+import static org.jclouds.cloudstack.options.ListNetworkOfferingsOptions.Builder.zoneId;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.cloudstack.domain.TrafficType;
@@ -68,6 +69,16 @@ public class ListNetworkOfferingsOptionsTest {
    public void testIdStatic() {
       ListNetworkOfferingsOptions options = id(6);
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("id"));
+   }
+
+   public void testZoneId() {
+      ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions().zoneId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
+   }
+
+   public void testZoneIdStatic() {
+      ListNetworkOfferingsOptions options = zoneId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
    }
 
    public void testSpecifyVLAN() {

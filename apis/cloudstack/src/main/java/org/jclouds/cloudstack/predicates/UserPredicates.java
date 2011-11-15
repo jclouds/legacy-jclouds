@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.predicates;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.domain.Account.Type;
 import org.jclouds.cloudstack.domain.User;
 
 import com.google.common.base.Predicate;
@@ -57,26 +58,44 @@ public class UserPredicates {
       return new ApiKeyEquals(apiKey);
    }
 
-   public static enum IsUserAccount implements Predicate<User> {
-      INSTANCE;
-
-      @Override
-      public boolean apply(User input) {
-         return checkNotNull(input, "user").getAccountType() == Account.Type.USER;
-      }
-
-      @Override
-      public String toString() {
-         return "isUserAccount()";
-      }
+   /**
+    * 
+    * @return true, if the account has user privileges
+    */
+   public static Predicate<User> isUserAccount() {
+      return accountTypeEquals(Account.Type.USER);
    }
-
    /**
     * 
     * @return true, if the user's apiKey is the following
     */
-   public static Predicate<User> isUserAccount() {
-      return IsUserAccount.INSTANCE;
+   public static Predicate<User> accountTypeEquals(Account.Type type) {
+      return new AccountTypeEquals(type);
+   }
+
+   public static class AccountTypeEquals implements Predicate<User> {
+      public AccountTypeEquals(Type type) {
+         this.type = checkNotNull(type, "type");
+      }
+
+      private final Account.Type type;
+
+      @Override
+      public boolean apply(User input) {
+         return checkNotNull(input, "user").getAccountType() == type;
+      }
+
+      @Override
+      public String toString() {
+         return "accountTypeEquals(" + type + ")";
+      }
+   }
+   /**
+    * 
+    * @return true, if the user's apiKey is the following
+    */
+   public static Predicate<User> isAdminAccount() {
+      return accountTypeEquals(Account.Type.ADMIN);
    }
 
 }

@@ -43,7 +43,7 @@ public class CreateNetworkOptions extends AccountInDomainOptions {
 
    /**
     * @param isShared
-    *           true if network is shared, false otherwise
+    *           true if network is shared across accounts in the Zone
     */
    public CreateNetworkOptions isShared(boolean isShared) {
       this.queryParameters.replaceValues("isshared", ImmutableSet.of(isShared + ""));
@@ -61,7 +61,7 @@ public class CreateNetworkOptions extends AccountInDomainOptions {
 
    /**
     * @param endIP
-    *           the ending IP address in the VLAN IP range
+    *           the ending IP address in the network IP range. If not specified, will be defaulted to startIP
     */
    public CreateNetworkOptions endIP(String endIP) {
       this.queryParameters.replaceValues("endip", ImmutableSet.of(endIP));

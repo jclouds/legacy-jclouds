@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.emptyToNull;
 
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import org.jclouds.Constants;
 import org.jclouds.rest.RestContextFactory;
@@ -33,7 +32,8 @@ import org.testng.annotations.BeforeClass;
  * @author Jason King
  */
 public abstract class BaseVersionedServiceLiveTest {
-
+   protected String prefix = System.getProperty("user.name");
+   
    protected String provider;
    protected String identity;
    protected String credential;
