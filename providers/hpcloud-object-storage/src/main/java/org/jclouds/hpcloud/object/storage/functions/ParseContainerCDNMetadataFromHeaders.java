@@ -19,7 +19,9 @@
 package org.jclouds.hpcloud.object.storage.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Lists.newArrayList;
 
+import java.util.List;
 import java.net.URI;
 
 import org.jclouds.hpcloud.object.storage.domain.ContainerCDNMetadata;
@@ -30,6 +32,8 @@ import org.jclouds.openstack.swift.domain.AccountMetadata;
 import org.jclouds.rest.InvocationContext;
 
 import com.google.common.base.Function;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 
 /**
  * This parses {@link AccountMetadata} from HTTP headers.
@@ -52,10 +56,13 @@ public class ParseContainerCDNMetadataFromHeaders implements
       String cdnEnabled = checkNotNull(from.getFirstHeaderOrNull(HPCloudObjectStorageHeaders.CDN_ENABLED),
                HPCloudObjectStorageHeaders.CDN_ENABLED);
       if (cdnUri == null) {
-         // CDN is not, and has never, been enabled for this container.
+         // CDN is not enabled for this container.
          return null;
       } else {
-         return new ContainerCDNMetadata(request.getEndpoint().getPath(), Boolean
+    	 // just need the name from the path
+    	 List<String> parts = newArrayList(Splitter.on('/').split(request.getEndpoint().getPath()));
+
+         return new ContainerCDNMetadata(parts.get(parts.size()-1), Boolean
                   .parseBoolean(cdnEnabled), Long.parseLong(cdnTTL), URI.create(cdnUri));
       }
    }
