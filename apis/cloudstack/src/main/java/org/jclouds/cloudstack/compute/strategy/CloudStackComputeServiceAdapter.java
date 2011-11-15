@@ -111,7 +111,7 @@ public class CloudStackComputeServiceAdapter implements
 
                @Override
                public boolean apply(Network arg0) {
-                  return arg0.getZoneId() == zoneId;
+                  return arg0.getZoneId() == zoneId && arg0.isDefault();
                }
 
             })).getId());
