@@ -32,6 +32,7 @@ import org.virtualbox_4_1.ISnapshot;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 
 /**
  * @author Andrea Turli
@@ -65,8 +66,8 @@ public class TakeSnapshotIfNotAlreadyAttached implements Function<IMachine, ISna
             if (progress.getCompleted())
                logger.debug("Clone done with snapshot name: %s and descripton: %s", snapshotName, snapshotDesc);
          } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error(e.getMessage());
+            propogate(e);
          } finally {
             session.unlockMachine();
          }
@@ -74,5 +75,10 @@ public class TakeSnapshotIfNotAlreadyAttached implements Function<IMachine, ISna
       return machine.getCurrentSnapshot();
    }
    
+   protected <T> T propogate(Exception e) {
+      Throwables.propagate(e);
+      assert false;
+      return null;
+   }
 
 }
