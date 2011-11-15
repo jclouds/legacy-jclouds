@@ -88,7 +88,7 @@ list, Alan Dipert and MeikelBrandmeyer."
 
 (defn localhost? [node]
   "Returns true if the localhost address is in the node's private ips"
-  (seq? (some #(= (InetAddress/getLocalHost) %) (private-ips node))))
+  (seq? (some #(= "localhost" %) (private-ips node))))
 
 (deftest compound-predicate-test
   (is (create-node *compute* "my-group" (build-template *compute* {})))
