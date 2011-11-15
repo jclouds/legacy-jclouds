@@ -44,8 +44,8 @@ public interface NATClient {
     * 
     * @param options
     *           if present, how to constrain the list.
-    * @return IPForwardingRulees matching query, or empty set, if no
-    *         IPForwardingRulees are found
+    * @return IPForwardingRules matching query, or empty set, if no
+    *         IPForwardingRules are found
     */
    Set<IPForwardingRule> listIPForwardingRules(ListIPForwardingRulesOptions... options);
 
@@ -100,4 +100,13 @@ public interface NATClient {
    Long deleteIPForwardingRule(long id);
 
    AsyncCreateResponse enableStaticNATForVirtualMachine(long virtualMachineId, long IPAddressId);
+
+   /**
+    * Disables static rule for given ip address
+    * 
+    * @param IPAddressId
+    *           the public IP address id for which static nat feature is being
+    *           disableed
+    */
+   void disableStaticNat(long IPAddressId);
 }

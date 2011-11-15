@@ -38,6 +38,7 @@ import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -97,7 +98,7 @@ public interface NATAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<IPForwardingRule> getIPForwardingRuleForVirtualMachine(@QueryParam("virtualmachineid") long id);
-   
+
    /**
     * @see NATClient#createIPForwardingRule
     */
@@ -128,5 +129,14 @@ public interface NATAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Long> deleteIPForwardingRule(@QueryParam("id") long id);
+
+   /**
+    * @see NATClient#disableStaticNat
+    */
+   @GET
+   @QueryParams(keys = "command", values = "disableStaticNat")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> disableStaticNat(@QueryParam("ipaddressid") long IPAddressId);
 
 }
