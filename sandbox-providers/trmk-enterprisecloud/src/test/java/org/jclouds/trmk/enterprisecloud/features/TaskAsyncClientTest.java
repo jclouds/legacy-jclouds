@@ -44,7 +44,7 @@ public class TaskAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClient
 
       assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/tasks/environments/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest,
-            "Accept: application/vnd.tmrk.cloud.task; type=collection\nx-trmk-version: 2011-07-01\n");
+            "Accept: application/vnd.tmrk.cloud.task; type=collection\nx-tmrk-version: 2011-07-01\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
@@ -59,7 +59,7 @@ public class TaskAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClient
       HttpRequest httpRequest = processor.createRequest(method, URI.create("https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/tasks/1"));
 
       assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/tasks/1 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/vnd.tmrk.cloud.task\nx-trmk-version: 2011-07-01\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/vnd.tmrk.cloud.task\nx-tmrk-version: 2011-07-01\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
