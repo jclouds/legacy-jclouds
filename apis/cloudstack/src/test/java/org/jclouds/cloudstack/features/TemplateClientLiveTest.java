@@ -20,11 +20,17 @@ package org.jclouds.cloudstack.features;
 
 import static org.jclouds.cloudstack.options.ListTemplatesOptions.Builder.zoneId;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
+import java.util.Random;
 import java.util.Set;
 
-import org.jclouds.cloudstack.domain.Template;
+import org.jclouds.cloudstack.domain.*;
+import org.jclouds.cloudstack.options.CreateTemplateOptions;
+import org.jclouds.cloudstack.options.ListNetworksOptions;
+import org.jclouds.cloudstack.options.ListVolumesOptions;
+import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -36,6 +42,9 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = "live", singleThreaded = true, testName = "TemplateClientLiveTest")
 public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
+
+   private VirtualMachine vm;
+   private Template template;
 
    public void testListTemplates() throws Exception {
       Set<Template> response = client.getTemplateClient().listTemplates();
@@ -63,6 +72,46 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
          assert template.getDomain() != null : template;
          assert template.getDomainId() > 0 : template;
       }
+   }
+
+   public void testCreateTemplate() throws Exception {
+      Zone zone = Iterables.getFirst(client.getZoneClient().listZones(), null);
+      assertNotNull(zone);
+      Network network = Iterables.getFirst(client.getNetworkClient().listNetworks(ListNetworksOptions.Builder.zoneId(zone.getId()).isDefault(true)), null);
+      assertNotNull(network);
+
+      // Create a VM and stop it
+      Long templateId = (imageId != null && !"".equals(imageId)) ? new Long(imageId) : null;
+      vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, templateId, client, jobComplete, virtualMachineRunning);
+      assert jobComplete.apply(client.getVirtualMachineClient().stopVirtualMachine(vm.getId())) : vm;
+
+      // Work out the VM's volume
+      Set<Volume> volumes = client.getVolumeClient().listVolumes(ListVolumesOptions.Builder.virtualMachineId(vm.getId()));
+      assertEquals(volumes.size(), 1);
+      Volume volume = Iterables.getOnlyElement(volumes);
+
+      // Create a template
+      String tmplName = "jclouds-" + Integer.toHexString(new Random().nextInt());
+      CreateTemplateOptions options = CreateTemplateOptions.Builder.volumeId(volume.getId());
+      AsyncCreateResponse response = client.getTemplateClient().createTemplate(TemplateMetadata.builder().name(tmplName).osTypeId(vm.getGuestOSId()).displayText("jclouds live testCreateTemplate").build());
+      assert jobComplete.apply(response.getJobId()) : vm;
+      template = client.getTemplateClient().getTemplateInZone(response.getId(), vm.getZoneId());
+
+      // Assertions
+      assertNotNull(template);
+   }
+
+   @AfterGroups(groups = "live")
+   protected void tearDown() {
+      if (vm != null) {
+         assert jobComplete.apply(client.getVirtualMachineClient().stopVirtualMachine(vm.getId())) : vm;
+         assert jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vm.getId())) : vm;
+         assert virtualMachineDestroyed.apply(vm);
+      }
+      if (template != null) {
+         client.getTemplateClient().deleteTemplate(template.getId());
+      }
+      super.tearDown();
    }
 
 }
