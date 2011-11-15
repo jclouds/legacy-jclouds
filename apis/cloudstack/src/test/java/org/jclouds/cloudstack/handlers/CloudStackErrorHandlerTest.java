@@ -91,6 +91,16 @@ public class CloudStackErrorHandlerTest {
       assertCodeMakes("GET", URI.create("https://cloudstack.com/foo"), 409, "", "Conflict", IllegalStateException.class);
    }
 
+   @Test void test537MakesIllegalStateException() {
+      assertCodeMakes(
+            "GET",
+            URI.create("http://10.26.26.155:8080/client/api?response=json&command=createIpForwardingRule&ipaddressid=37&startport=22&protocol=tcp"),
+            537,
+            "",
+            "{ \"createipforwardingruleresponse\" : {\"errorcode\" : 537, \"errortext\" : \"There is already firewall rule specified for the ip address id=37\"}  }",
+            IllegalStateException.class);
+   }
+
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String content,
          Class<? extends Exception> expected) {
       assertCodeMakes(method, uri, statusCode, message, "text/xml", content, expected);
