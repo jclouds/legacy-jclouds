@@ -18,6 +18,14 @@
  */
 package org.jclouds.openstack.swift.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.net.URI;
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+import com.google.gson.annotations.SerializedName;
+
 
 /**
  * 
@@ -28,14 +36,20 @@ public class ContainerMetadata implements Comparable<ContainerMetadata> {
    private String name;
    private long count;
    private long bytes;
+   @SerializedName("X-Container-Read")
+   private String readACL;
+   //private Map<String, String> metadata = Maps.newLinkedHashMap();
 
+   
    public ContainerMetadata() {
    }
 
-   public ContainerMetadata(String name, long count, long bytes) {
-      setName(name);
-      setBytes(bytes);
-      setCount(count);
+   public ContainerMetadata(String name, long count, long bytes, String readACL) {
+      this.name = name;
+      this.count = count;
+      this.bytes = bytes;
+      this.readACL = readACL;
+      //this.metadata = metadata;
    }
 
    public long getCount() {
@@ -43,25 +57,40 @@ public class ContainerMetadata implements Comparable<ContainerMetadata> {
    }
 
    public void setCount(long count) {
-      this.count = count;
+	  this.count = count;
+   }
+   
+   public String getName() {
+      return name;
    }
 
    public void setName(String name) {
       this.name = name;
    }
-
-   public String getName() {
-      return name;
-   }
-
-   public void setBytes(long bytes) {
-      this.bytes = bytes;
-   }
-
+   
    public long getBytes() {
       return bytes;
    }
-
+   
+   public void setBytes(long bytes) {
+      this.bytes = bytes;
+   }
+   
+   public boolean isPublic() {
+	   if (readACL == null)
+		   return false;
+	   return readACL.equals(".r:*,.rlistings");
+   }
+   
+   public void setReadACL(String readACL) {
+	   this.readACL = readACL;
+	   
+   }
+   /*public Map<String, String> getMetadata() {
+      return metadata;
+   }
+   */
+   
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -97,6 +126,12 @@ public class ContainerMetadata implements Comparable<ContainerMetadata> {
       if (getName() == null)
          return -1;
       return (this == o) ? 0 : getName().compareTo(o.getName());
+   }
+
+   @Override
+   public String toString() {
+		return "ContainerMetadata [name=" + name + ", count=" + count + ", bytes="
+				+ bytes + ", isPublic=" + isPublic() + "]";
    }
 
 }

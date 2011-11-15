@@ -146,7 +146,7 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
       return immediateFuture(Sets.newHashSet(Iterables.transform(blobStore.getContainerToBlobs().keySet(),
                new Function<String, ContainerMetadata>() {
                   public ContainerMetadata apply(String name) {
-                     return new ContainerMetadata(name, -1, -1);
+                     return new ContainerMetadata(name, -1, -1, null);
                   }
                })));
    }

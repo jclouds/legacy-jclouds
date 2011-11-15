@@ -25,8 +25,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.hpcloud.object.storage.domain.ContainerCDNMetadata;
+import org.jclouds.hpcloud.object.storage.options.CreateContainerOptions;
 import org.jclouds.hpcloud.object.storage.options.ListCDNContainerOptions;
 import org.jclouds.openstack.swift.CommonSwiftClient;
+import org.jclouds.openstack.swift.domain.ContainerMetadata;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -43,11 +45,15 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
 public interface HPCloudObjectStorageClient extends CommonSwiftClient {
-	
+
+   boolean createContainer(String container, CreateContainerOptions... options);
+   
    Set<ContainerCDNMetadata> listCDNContainers(ListCDNContainerOptions... options);
 
    ContainerCDNMetadata getCDNMetadata(String container);
-
+   
+   ContainerMetadata getContainerMetadata(String container);
+   
    URI enableCDN(String container, long ttl);
 
    URI enableCDN(String container);
@@ -55,9 +61,5 @@ public interface HPCloudObjectStorageClient extends CommonSwiftClient {
    URI updateCDN(String container, long ttl);
 
    boolean disableCDN(String container);
-   
-   /*boolean isContainerPublic(String container);
-   
-   boolean setContainerACL(String container);
-   */
+
 }
