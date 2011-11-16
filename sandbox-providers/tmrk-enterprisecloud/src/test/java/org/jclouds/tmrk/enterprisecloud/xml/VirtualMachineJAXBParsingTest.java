@@ -34,9 +34,10 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.BaseRestClientTest;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.tmrk.enterprisecloud.domain.Layout;
-import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachine;
+import org.jclouds.tmrk.enterprisecloud.domain.*;
+import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachine.VirtualMachineStatus;
 import org.jclouds.tmrk.enterprisecloud.features.VirtualMachineAsyncClient;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -44,11 +45,14 @@ import org.testng.annotations.Test;
 import javax.inject.Named;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.Set;
 
 import static org.jclouds.io.Payloads.newInputStreamPayload;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
 
@@ -108,6 +112,13 @@ public class VirtualMachineJAXBParsingTest extends BaseRestClientTest {
       assertEquals(1,virtualMachine.getTasks().size());
 
       assertLayout(virtualMachine.getLayout());
+      assertEquals(VirtualMachineStatus.DEPLOYED, virtualMachine.getStatus());
+      assertFalse(virtualMachine.isPoweredOn(),"virtual machine is not powered on");
+      assertEquals(ToolsStatus.NOT_RUNNING, virtualMachine.getToolsStatus());
+      assertEquals(VirtualMachine.VirtualMachineMediaStatus.UNMOUNTED, virtualMachine.getMediaStatus());
+      assertTrue(virtualMachine.isCustomizationPending(),"virtual machine is pending customization");
+      assertOperatingSystem(virtualMachine.getOperatingSystem());
+      assertHardwareConfiguration(virtualMachine.getHardwareConfiguration());
    }
 
    private void assertLayout(Layout layout) {
@@ -115,4 +126,20 @@ public class VirtualMachineJAXBParsingTest extends BaseRestClientTest {
       assertEquals("test row", layout.getRow().getName());
       assertEquals("test group",layout.getGroup().getName());
    }
+
+   private void assertOperatingSystem(OperatingSystem operatingSystem) throws Exception {
+       String href = "/cloudapi/ecloud/operatingsystems/rhel5_64guest/computepools/89";
+       String name = "Red Hat Enterprise Linux 5 (64-bit)";
+       String type = "application/vnd.tmrk.cloud.operatingSystem";
+       OperatingSystem os = OperatingSystem.builder().href(new URI(href)).name(name).type(type).build();
+       Assert.assertEquals(os, operatingSystem);
+   }
+
+   private void assertHardwareConfiguration(HardwareConfiguration hardwareConfiguration) {
+       assertEquals(1,hardwareConfiguration.getActions().size());
+       assertEquals(1,hardwareConfiguration.getProcessorCount());
+       Memory memory = Memory.builder().value(384).unit("MB").build();
+       assertEquals(memory,hardwareConfiguration.getMemory());
+   }
+
 }
