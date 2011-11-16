@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.suppliers;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.NoSuchElementException;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -60,10 +61,13 @@ public class GetCurrentUser implements Supplier<User> {
                users));
       }
 
-      if (currentUser.getAccountType() != Account.Type.USER)
-         throw new IllegalArgumentException(String.format(
+      if (currentUser.getAccountType() != Account.Type.USER) {
+         Logger.getAnonymousLogger().warning("You are using an administrative account to start a machine");
+         /* throw new IllegalArgumentException(String.format(
                "invalid account type: %s, please specify an apiKey of a USER, for example: %s",
                currentUser.getAccountType(), Iterables.filter(users, UserPredicates.isUserAccount())));
+         */
+      }
       return currentUser;
    }
 }

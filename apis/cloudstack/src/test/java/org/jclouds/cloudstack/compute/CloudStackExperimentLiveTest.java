@@ -19,18 +19,24 @@
 package org.jclouds.cloudstack.compute;
 
 import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Sets.newTreeSet;
 import static org.jclouds.cloudstack.options.CreateNetworkOptions.Builder.vlan;
 import static org.jclouds.cloudstack.options.ListNetworkOfferingsOptions.Builder.specifyVLAN;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.domain.Network;
+import org.jclouds.cloudstack.domain.NetworkType;
+import org.jclouds.cloudstack.domain.TrafficType;
 import org.jclouds.cloudstack.features.BaseCloudStackClientLiveTest;
+import org.jclouds.cloudstack.options.ListNetworksOptions;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
@@ -43,12 +49,32 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", testName = "CloudStackExperimentLiveTest")
 public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
+
    public CloudStackExperimentLiveTest() {
       provider = "cloudstack";
    }
 
+   protected void deleteNetworkByVLAN(String vlan, long zoneId) throws URISyntaxException {
+      Set<Network> networks = domainAdminContext.getApi().getNetworkClient().listNetworks(
+         ListNetworksOptions.Builder
+            .isDefault(false)
+            .isSystem(false)
+            .zoneId(zoneId)
+            .trafficType(TrafficType.GUEST)
+      );
+
+      // Warning: the vlan id is not set in the response - using an workaround
+      URI broadcastUri = new URI("vlan://" + vlan);
+      for(Network net : networks) {
+         if (broadcastUri.equals(net.getBroadcastURI())) {
+            long jobId = domainAdminContext.getApi().getNetworkClient().deleteNetwork(net.getId());
+            adminJobComplete.apply(jobId);
+         }
+      }
+   }
+
    @Test
-   public void testAndExperiment() {
+   public void testAndExperiment() throws URISyntaxException {
       if (!domainAdminEnabled) {
          Logger.getAnonymousLogger().log(Level.SEVERE, "domainAdmin credentials not present, skipping test");
          return;
@@ -64,6 +90,9 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
 
          // get the zone we are launching into
          long zoneId = Long.parseLong(template.getLocation().getId());
+
+         // cleanup before running the test
+         deleteNetworkByVLAN("2", zoneId);
 
          // find a network offering that supports vlans in our zone
          long offeringId = get(
@@ -81,6 +110,8 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
 
          // launch the VM
          nodes = computeContext.getComputeService().createNodesInGroup(group, 1, template);
+
+         assert nodes.size() > 0;
 
       } catch (RunNodesException e) {
          Logger.getAnonymousLogger().log(Level.SEVERE, "error creating nodes", e);
