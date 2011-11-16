@@ -89,7 +89,7 @@ public class VirtualMachineToNodeMetadataTest {
 
       assertEquals(
             node.toString(),
-            new NodeMetadataBuilder().id("54").providerId("54").name("i-3-54-VM").location(ZoneToLocationTest.one)
+            new NodeMetadataBuilder().id("54").providerId("54").name("i-3-54-VM").group("i-3").location(ZoneToLocationTest.one)
                   .state(NodeState.PENDING).privateAddresses(ImmutableSet.of("10.1.1.18"))
                   .publicAddresses(ImmutableSet.of("1.1.1.1")).hardware(ServiceOfferingToHardwareTest.one)
                   .imageId(TemplateToImageTest.one.getId())
@@ -134,7 +134,7 @@ public class VirtualMachineToNodeMetadataTest {
 
       assertEquals(
             node.toString(),
-            new NodeMetadataBuilder().id("54").providerId("54").name("i-3-54-VM").location(ZoneToLocationTest.one)
+            new NodeMetadataBuilder().id("54").providerId("54").name("i-3-54-VM").group("i-3").location(ZoneToLocationTest.one)
                   .state(NodeState.PENDING).privateAddresses(ImmutableSet.of("10.1.1.18"))
                   .hardware(ServiceOfferingToHardwareTest.one).imageId(TemplateToImageTest.one.getId())
                   .operatingSystem(TemplateToImageTest.one.getOperatingSystem()).build().toString());
@@ -177,7 +177,7 @@ public class VirtualMachineToNodeMetadataTest {
 
       assertEquals(
             node.toString(),
-            new NodeMetadataBuilder().id("54").providerId("54").name("i-3-54-VM").location(ZoneToLocationTest.one)
+            new NodeMetadataBuilder().id("54").providerId("54").name("i-3-54-VM").group("i-3").location(ZoneToLocationTest.one)
                   .state(NodeState.PENDING).privateAddresses(ImmutableSet.of("10.1.1.18"))
                   .hardware(ServiceOfferingToHardwareTest.one).imageId(TemplateToImageTest.one.getId())
                   .credentials(new Credentials("root", "password"))
