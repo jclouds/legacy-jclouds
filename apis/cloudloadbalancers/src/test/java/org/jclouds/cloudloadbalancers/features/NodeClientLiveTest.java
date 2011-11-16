@@ -68,8 +68,11 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
    protected void tearDown() {
       for (Entry<LoadBalancer, Set<Node>> entry : nodes.entrySet()) {
     	  LoadBalancer lb = entry.getKey();
+    	  LoadBalancerClient lbClient = client.getLoadBalancerClient(lb.getRegion());
     	  
-    	  client.getLoadBalancerClient(lb.getRegion()).removeLoadBalancer(lb.getId());
+    	  if(lbClient.getLoadBalancer(lb.getId()).getStatus() != Status.DELETED) {
+    		  lbClient.removeLoadBalancer(lb.getId());
+    	  }
           assert loadBalancerDeleted.apply(lb) : lb;
       }
       super.tearDown();
