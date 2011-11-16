@@ -34,6 +34,10 @@ import org.jclouds.javax.annotation.Nullable;
  */
 @Singleton
 public class EC2PopulateDefaultLoginCredentialsForImageStrategy extends ReturnCredentialsBoundToImage {
+   public EC2PopulateDefaultLoginCredentialsForImageStrategy() {
+      this(null);
+   }
+
    @Inject
    public EC2PopulateDefaultLoginCredentialsForImageStrategy(@Nullable @Named("image") Credentials creds) {
       super(creds);
