@@ -143,8 +143,8 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
 
    @Test
    public void testCreateNodeWithGroupEncodedIntoName() throws InterruptedException {
-      String group = "foo";
-      String name = "node" + new Random().nextInt();
+      String group = prefix + "#foo";
+      String name = group + "#node#" + new Random().nextInt();
       Template template = computeContext.getComputeService().templateBuilder().build();
 
       if (!client
@@ -157,7 +157,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
       }
       vm = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
 
-      assertEquals(vm.getNode().getName(), name);
+      assertEquals(vm.getNode().getDisplayName(), name);
       // check to see if we setup a NAT rule (conceding we could check this from
       // cache)
       IPForwardingRule rule = client.getNATClient().getIPForwardingRuleForVirtualMachine(vm.getNode().getId());

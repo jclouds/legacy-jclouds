@@ -96,7 +96,7 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
       builder.name(from.getName());
       builder.hostname(from.getHostname());
       builder.location(findLocationForVirtualMachine.apply(from));
-      builder.group(parseGroupFromName(from.getHostname()));
+      builder.group(parseGroupFromName(from.getDisplayName()));
       Image image = findImageForVirtualMachine.apply(from);
       if (image != null) {
          builder.imageId(image.getId());

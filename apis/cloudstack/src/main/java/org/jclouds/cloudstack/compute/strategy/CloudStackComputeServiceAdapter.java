@@ -20,10 +20,13 @@ package org.jclouds.cloudstack.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.getOnlyElement;
-import static org.jclouds.cloudstack.options.DeployVirtualMachineOptions.Builder.name;
+import static org.jclouds.cloudstack.options.DeployVirtualMachineOptions.Builder.displayName;
+import static org.jclouds.cloudstack.predicates.NetworkPredicates.supportsStaticNAT;
+import static org.jclouds.cloudstack.predicates.TemplatePredicates.isReady;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -47,7 +50,6 @@ import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.functions.StaticNATVirtualMachineInNetwork;
 import org.jclouds.cloudstack.functions.StaticNATVirtualMachineInNetwork.Factory;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
-import org.jclouds.cloudstack.predicates.TemplatePredicates;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
@@ -102,21 +104,22 @@ public class CloudStackComputeServiceAdapter implements
 
       CloudStackTemplateOptions templateOptions = template.getOptions().as(CloudStackTemplateOptions.class);
 
-      DeployVirtualMachineOptions options = name(name);
+      // not all hypervisors support setting name
+      DeployVirtualMachineOptions options = displayName(name);
       if (templateOptions.getSecurityGroupIds().size() > 0) {
          options.securityGroupIds(templateOptions.getSecurityGroupIds());
       } else if (templateOptions.getNetworkIds().size() > 0) {
          options.networkIds(templateOptions.getNetworkIds());
       } else if (networks.size() > 0) {
          try {
-            options.networkId(getOnlyElement(filter(networks.values(), new Predicate<Network>() {
+            options.networkId(getOnlyElement(filter(networks.values(), and(new Predicate<Network>() {
 
                @Override
                public boolean apply(Network arg0) {
                   return arg0.getZoneId() == zoneId && arg0.isDefault();
                }
 
-            })).getId());
+            }, supportsStaticNAT()))).getId());
          } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("please choose a specific network in zone " + zoneId + ": " + networks);
          }
@@ -175,7 +178,7 @@ public class CloudStackComputeServiceAdapter implements
    public Iterable<Template> listImages() {
       // TODO: we may need to filter these further
       // we may also want to see if we can work with ssh keys
-      return filter(client.getTemplateClient().listTemplates(), TemplatePredicates.isReady());
+      return filter(client.getTemplateClient().listTemplates(), isReady());
    }
 
    @Override
