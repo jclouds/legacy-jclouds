@@ -18,14 +18,8 @@
  */
 package org.jclouds.cloudstack.features;
 
-import static org.jclouds.cloudstack.options.ListTemplatesOptions.Builder.zoneId;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
-
-import java.util.Random;
-import java.util.Set;
-
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import org.jclouds.cloudstack.domain.*;
 import org.jclouds.cloudstack.options.CreateTemplateOptions;
 import org.jclouds.cloudstack.options.ListNetworksOptions;
@@ -33,7 +27,12 @@ import org.jclouds.cloudstack.options.ListVolumesOptions;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Iterables;
+import javax.annotation.Nullable;
+import java.util.Random;
+import java.util.Set;
+
+import static org.jclouds.cloudstack.options.ListTemplatesOptions.Builder.zoneId;
+import static org.testng.Assert.*;
 
 /**
  * Tests behavior of {@code TemplateClientLiveTest}
@@ -77,7 +76,15 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testCreateTemplate() throws Exception {
       Zone zone = Iterables.getFirst(client.getZoneClient().listZones(), null);
       assertNotNull(zone);
-      Network network = Iterables.getFirst(client.getNetworkClient().listNetworks(ListNetworksOptions.Builder.zoneId(zone.getId()).isDefault(true)), null);
+      Iterable<Network> networks = client.getNetworkClient().listNetworks(ListNetworksOptions.Builder.zoneId(zone.getId()).isDefault(true));
+      networks = Iterables.filter(networks, new Predicate<Network>() {
+         @Override
+         public boolean apply(@Nullable Network network) {
+            return network != null && network.getState().equals("Implemented");
+         }
+      });
+      assertEquals(Iterables.size(networks), 1);
+      Network network = Iterables.getOnlyElement(networks, null);
       assertNotNull(network);
 
       // Create a VM and stop it
@@ -93,7 +100,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       // Create a template
       String tmplName = "jclouds-" + Integer.toHexString(new Random().nextInt());
       CreateTemplateOptions options = CreateTemplateOptions.Builder.volumeId(volume.getId());
-      AsyncCreateResponse response = client.getTemplateClient().createTemplate(TemplateMetadata.builder().name(tmplName).osTypeId(vm.getGuestOSId()).displayText("jclouds live testCreateTemplate").build());
+      AsyncCreateResponse response = client.getTemplateClient().createTemplate(TemplateMetadata.builder().name(tmplName).osTypeId(vm.getGuestOSId()).displayText("jclouds live testCreateTemplate").build(), options);
       assert jobComplete.apply(response.getJobId()) : vm;
       template = client.getTemplateClient().getTemplateInZone(response.getId(), vm.getZoneId());
 
