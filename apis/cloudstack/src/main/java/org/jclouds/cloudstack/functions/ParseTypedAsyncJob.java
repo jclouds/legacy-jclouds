@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.common.base.Strings;
 import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.cloudstack.domain.AsyncJob.Builder;
 import org.jclouds.cloudstack.domain.AsyncJobError;
@@ -36,6 +37,7 @@ import org.jclouds.cloudstack.domain.PortForwardingRule;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.SecurityGroup;
 import org.jclouds.cloudstack.domain.Template;
+import org.jclouds.cloudstack.domain.TemplateExtraction;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.json.Json;
@@ -61,7 +63,7 @@ public class ParseTypedAsyncJob implements Function<AsyncJob<Map<String, JsonBal
    @Named("jclouds.cloudstack.jobresult-type-map")
    Map<String, Class<?>> typeMap = ImmutableMap.<String, Class<?>> builder().put("securitygroup", SecurityGroup.class)
          .put("portforwardingrule", PortForwardingRule.class).put("ipforwardingrule", IPForwardingRule.class)
-         .put("template", Template.class).put("network", Network.class).put("ipaddress", PublicIPAddress.class)
+         .put("network", Network.class).put("ipaddress", PublicIPAddress.class)
          .put("virtualmachine", VirtualMachine.class).build();
    private final Json json;
 
@@ -80,7 +82,15 @@ public class ParseTypedAsyncJob implements Function<AsyncJob<Map<String, JsonBal
                builder.result(null);
             } else {
                Entry<String, JsonBall> entry = Iterables.get(toParse.getResult().entrySet(), 0);
-               if (typeMap.containsKey(entry.getKey())) {
+               if ("template".equals(entry.getKey())) {
+                  // Sometimes Cloudstack will say 'template' and the payload is a Template object.
+                  // Sometimes Cloudstack will say 'template' and the payload is a TemplateExtraction object.
+                  // The 'state' field only exists on TemplateExtraction, so we can test this to work out what we have actually been given.
+                  Template template = json.fromJson(entry.getValue().toString(), Template.class);
+                  TemplateExtraction templateExtraction = json.fromJson(entry.getValue().toString(), TemplateExtraction.class);
+                  boolean isTemplate = Strings.isNullOrEmpty(templateExtraction.getState());
+                  builder.result(isTemplate ? template : templateExtraction);
+               } else if (typeMap.containsKey(entry.getKey())) {
                   builder.result(json.fromJson(entry.getValue().toString(), typeMap.get(entry.getKey())));
                } else {
                   logger.warn(
