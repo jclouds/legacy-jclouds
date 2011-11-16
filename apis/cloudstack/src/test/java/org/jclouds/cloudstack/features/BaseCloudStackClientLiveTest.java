@@ -136,8 +136,10 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
    protected RetryablePredicate<Long> jobComplete;
    protected RetryablePredicate<Long> adminJobComplete;
    protected RetryablePredicate<VirtualMachine> virtualMachineRunning;
+   protected RetryablePredicate<VirtualMachine> adminVirtualMachineRunning;
    protected RetryablePredicate<VirtualMachine> virtualMachineDestroyed;
-   protected SshClient.Factory sshFactory;
+   protected RetryablePredicate<VirtualMachine> adminVirtualMachineDestroyed;
+      protected SshClient.Factory sshFactory;
    protected String password = "password";
 
    protected Injector injector;
@@ -196,9 +198,15 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
       virtualMachineRunning = new RetryablePredicate<VirtualMachine>(new VirtualMachineRunning(client), 600, 5, 5,
             TimeUnit.SECONDS);
       injector.injectMembers(virtualMachineRunning);
+      adminVirtualMachineRunning = new RetryablePredicate<VirtualMachine>(new VirtualMachineRunning(adminClient), 600, 5, 5,
+                  TimeUnit.SECONDS);
+      injector.injectMembers(adminVirtualMachineRunning);
       virtualMachineDestroyed = new RetryablePredicate<VirtualMachine>(new VirtualMachineDestroyed(client), 600, 5, 5,
             TimeUnit.SECONDS);
       injector.injectMembers(virtualMachineDestroyed);
+      adminVirtualMachineDestroyed = new RetryablePredicate<VirtualMachine>(new VirtualMachineDestroyed(adminClient), 600, 5, 5,
+            TimeUnit.SECONDS);
+      injector.injectMembers(adminVirtualMachineDestroyed);
       reuseOrAssociate = new ReuseOrAssociateNewPublicIPAddress(client, jobComplete);
       injector.injectMembers(reuseOrAssociate);
    }
