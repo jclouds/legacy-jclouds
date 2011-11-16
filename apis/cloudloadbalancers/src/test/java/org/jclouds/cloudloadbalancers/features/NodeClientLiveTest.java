@@ -107,22 +107,24 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
       }
    }
 
-   public void testCreateNode() throws Exception {
+   public void testAddNodes() throws Exception {
       for (LoadBalancer lb : nodes.keySet()) {
     	 String region = lb.getRegion();
          Logger.getAnonymousLogger().info("starting node on loadbalancer "+lb.getId()+" in region "+region);
-         Node n = client.getNodeClient(region).createNode(lb.getId(), 
-                  NodeRequest.builder().address("192.168.1.1").port(8080).build());
-         assertEquals(lb.getStatus(), Node.Status.ONLINE);
-         nodes.get(lb).add(n);
-         assertEquals(client.getNodeClient(region).getNode(lb.getId(), n.getId()).getStatus(), Node.Status.ONLINE);
-
-         Node newNode = client.getNodeClient(region).getNode(lb.getId(), n.getId());
-         assertEquals(newNode.getStatus(), Node.Status.ONLINE);
+         Set<Node> newNodes = client.getNodeClient(region).addNodes(lb.getId(), Collections.<NodeRequest>singleton(
+        		 NodeRequest.builder().address("192.168.1.2").port(8080).build()));
+         
+         for (Node n : newNodes) {
+        	 assertEquals(n.getStatus(), Node.Status.ONLINE);
+	         nodes.get(lb).add(n);
+	         assertEquals(client.getNodeClient(region).getNode(lb.getId(), n.getId()).getStatus(), Node.Status.ONLINE);
+         }
+         
+         assert loadBalancerActive.apply(lb) : lb;
       }
    }
 
-   @Test(dependsOnMethods = "testCreateNode")
+   @Test(dependsOnMethods = "testAddNodes")
    public void testModifyNode() throws Exception {
 	   for (Entry<LoadBalancer, Set<Node>> entry : nodes.entrySet()) {
 	    	  for (Node n : entry.getValue()) {

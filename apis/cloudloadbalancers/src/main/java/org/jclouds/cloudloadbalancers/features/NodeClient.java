@@ -52,14 +52,14 @@ public interface NodeClient {
     * @param lbid
     *           loadbalancer on which to create the node
     * @param n
-    *           configuration to create
-    * @return 
+    *           configurations to create
+    * @return created nodes
     * @throws HttpResponseException
     *            If the corresponding request cannot be fulfilled due to insufficient or invalid
     *            data
     * 
     */
-   Node createNode(int lbid, NodeRequest n);
+	Set<Node> addNodes(int lbid, Set<NodeRequest> nodes);
 
    /**
     * 

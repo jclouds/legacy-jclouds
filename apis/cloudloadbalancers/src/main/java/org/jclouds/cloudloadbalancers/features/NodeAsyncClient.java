@@ -62,15 +62,15 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface NodeAsyncClient {
 
    /**
-    * @see NodeClient#createNode
+    * @see NodeClient#addNodes
     */
    @POST
-   @ResponseParser(UnwrapNode.class)
+   @ResponseParser(UnwrapNodes.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("/loadbalancers/{lbid}/nodes")
-   ListenableFuture<Node> createNode(@PathParam("lbid") int lbid,
-		   @WrapWith("node") NodeRequest n);
+   ListenableFuture<Set<Node>> addNodes(@PathParam("lbid") int lbid,
+		   @WrapWith("nodes") Set<NodeRequest> nodes);
 
    /**
     * @see NodeClient#modifyNode
