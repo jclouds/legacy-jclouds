@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer;
+import org.jclouds.cloudloadbalancers.domain.LoadBalancer.Status;
 import org.jclouds.cloudloadbalancers.domain.LoadBalancerRequest;
 import org.jclouds.cloudloadbalancers.domain.Node;
 import org.jclouds.cloudloadbalancers.domain.NodeAttributes;
@@ -87,7 +88,7 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
             assert n.getStatus() != null : n;
             assert n.getWeight() != null : n; //FIXME may fail as can be null (json response doesn't have the attribute)
 
-            Node getDetails = client.getNodeClient(lb.getRegion()).getNode(lb.getId(), n.getId());
+            Node getDetails = client.getNodeClient(lb.getRegion()).getNodeInLoadBalancer(n.getId(), lb.getId());
             System.out.println(n.toString());
             try {
                assertEquals(getDetails.getId(), n.getId());
@@ -107,13 +108,13 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
       for (LoadBalancer lb : nodes.keySet()) {
     	 String region = lb.getRegion();
          Logger.getAnonymousLogger().info("starting node on loadbalancer "+lb.getId()+" in region "+region);
-         Set<Node> newNodes = client.getNodeClient(region).addNodes(lb.getId(), Collections.<NodeRequest>singleton(
-        		 NodeRequest.builder().address("192.168.1.2").port(8080).build()));
+         Set<Node> newNodes = client.getNodeClient(region).createNodesInLoadBalancer(Collections.<NodeRequest>singleton(
+        		 NodeRequest.builder().address("192.168.1.2").port(8080).build()), lb.getId());
          
          for (Node n : newNodes) {
         	 assertEquals(n.getStatus(), Node.Status.ONLINE);
 	         nodes.get(lb).add(n);
-	         assertEquals(client.getNodeClient(region).getNode(lb.getId(), n.getId()).getStatus(), Node.Status.ONLINE);
+	         assertEquals(client.getNodeClient(region).getNodeInLoadBalancer(n.getId(), lb.getId()).getStatus(), Node.Status.ONLINE);
          }
          
          assert loadBalancerActive.apply(lb) : lb;
@@ -125,12 +126,12 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
 	   for (Entry<LoadBalancer, Set<Node>> entry : nodes.entrySet()) {
 	    	  for (Node n : entry.getValue()) {
 	    		  String region = entry.getKey().getRegion();
-				  client.getNodeClient(region).modifyNode(entry.getKey().getId(), n.getId(),
-						   NodeAttributes.Builder.weight(23));
+				  client.getNodeClient(region).updateAttributesForNodeInLoadBalancer(NodeAttributes.Builder.weight(23),
+						  n.getId(), entry.getKey().getId());
 				  assertEquals(client.getNodeClient(region)
-						  .getNode(entry.getKey().getId(), n.getId()).getStatus(), Node.Status.ONLINE);
+						  .getNodeInLoadBalancer(n.getId(), entry.getKey().getId()).getStatus(), Node.Status.ONLINE);
 				   
-				  Node newNode = client.getNodeClient(region).getNode(entry.getKey().getId(), n.getId());
+				  Node newNode = client.getNodeClient(region).getNodeInLoadBalancer(n.getId(), entry.getKey().getId());
 				  assertEquals(newNode.getStatus(), Node.Status.ONLINE);
 				  assertEquals(newNode.getWeight(), (Integer)23);
 		   }

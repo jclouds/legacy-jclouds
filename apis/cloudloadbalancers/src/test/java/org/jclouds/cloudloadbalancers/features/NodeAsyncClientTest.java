@@ -23,7 +23,9 @@ import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.Properties;
+import java.util.Set;
 
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersAsyncClient;
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersClient;
@@ -72,9 +74,9 @@ public class NodeAsyncClientTest extends BaseCloudLoadBalancersAsyncClientTest<N
 
    }
 
-   public void testGetNode() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = NodeAsyncClient.class.getMethod("getNode", int.class, int.class);
-      HttpRequest httpRequest = processor.createRequest(method, 2, 3);
+   public void testGetNodeInLoadBalancer() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = NodeAsyncClient.class.getMethod("getNodeInLoadBalancer", int.class, int.class);
+      HttpRequest httpRequest = processor.createRequest(method, 3, 2);
 
       assertRequestLineEquals(httpRequest,
                "GET https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/1234/loadbalancers/2/nodes/3 HTTP/1.1");
@@ -89,17 +91,17 @@ public class NodeAsyncClientTest extends BaseCloudLoadBalancersAsyncClientTest<N
 
    }
 
-   public void testCreateNodeWithType() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = NodeAsyncClient.class.getMethod("createNode", int.class, NodeRequest.class);
-      HttpRequest httpRequest = processor.createRequest(method, 3, NodeRequest.builder().
-    		  address("192.168.1.1").port(8080).build());
+   public void createNodesInLoadBalancerWithType() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = NodeAsyncClient.class.getMethod("createNodesInLoadBalancer", Set.class, int.class);
+      HttpRequest httpRequest = processor.createRequest(method, Collections.<NodeRequest>singleton(NodeRequest.builder().
+    		  address("192.168.1.1").port(8080).build()), 3);
 
       assertRequestLineEquals(httpRequest,
                "POST https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/1234/loadbalancers/3/nodes HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(
                httpRequest,
-               "{\"node\":{\"address\":\"192.168.1.1\",\"port\":8080,\"condition\":\"ENABLED\"}}",
+               "{\"nodes\":[{\"address\":\"192.168.1.1\",\"port\":8080,\"condition\":\"ENABLED\"}]}",
                "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
@@ -110,10 +112,10 @@ public class NodeAsyncClientTest extends BaseCloudLoadBalancersAsyncClientTest<N
 
    }
 
-   public void testModifyNode() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = NodeAsyncClient.class.getMethod("modifyNode", int.class, int.class,
-               NodeAttributes.class);
-      HttpRequest httpRequest = processor.createRequest(method, 7, 8, Builder.condition(Condition.DISABLED).weight(13));
+   public void testUpdateAttributesForNodeInLoadBalancer() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = NodeAsyncClient.class.getMethod("updateAttributesForNodeInLoadBalancer", NodeAttributes.class, 
+    		  int.class, int.class);
+      HttpRequest httpRequest = processor.createRequest(method, Builder.condition(Condition.DISABLED).weight(13), 8, 7);
 
       assertRequestLineEquals(httpRequest,
                "PUT https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/1234/loadbalancers/7/nodes/8 HTTP/1.1");
@@ -128,9 +130,9 @@ public class NodeAsyncClientTest extends BaseCloudLoadBalancersAsyncClientTest<N
 
    }
 
-   public void testRemoveLoadBalancer() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = NodeAsyncClient.class.getMethod("removeNode", int.class, int.class);
-      HttpRequest httpRequest = processor.createRequest(method, 4, 9);
+   public void testRemoveNodeFromLoadBalancer() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = NodeAsyncClient.class.getMethod("removeNodeFromLoadBalancer", int.class, int.class);
+      HttpRequest httpRequest = processor.createRequest(method, 9, 4);
 
       assertRequestLineEquals(httpRequest,
                "DELETE https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/1234/loadbalancers/4/nodes/9 HTTP/1.1");

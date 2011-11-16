@@ -49,17 +49,17 @@ public interface NodeClient {
     * Internet and ServiceNet; as a result, nodes can either be internal ServiceNet addresses or addresses 
     * on the public Internet.
     * 
-    * @param lbid
-    *           loadbalancer on which to create the node
-    * @param n
+    * @param nodes
     *           configurations to create
+    * @param lbid
+    *           loadbalancer on which to create the nodes
     * @return created nodes
     * @throws HttpResponseException
     *            If the corresponding request cannot be fulfilled due to insufficient or invalid
     *            data
     * 
     */
-	Set<Node> addNodes(int lbid, Set<NodeRequest> nodes);
+	Set<Node> createNodesInLoadBalancer(Set<NodeRequest> nodes, int lbid);
 
    /**
     * 
@@ -71,16 +71,16 @@ public interface NodeClient {
     * A caller can poll the load balancer with its ID to wait for the changes to be applied and the
     * load balancer to return to an ACTIVE status.
     * 
-    * @param lbid
-    *           loadbalancer from which to get the node
-    * @param nid
-    *           node to get
     * @param attrs
     *           what to change
+    * @param nid
+    *           node to get
+    * @param lbid
+    *           loadbalancer from which to get the node
     *           
     * @see LoadBalancerAttributes#fromLoadBalancer
     */
-   void modifyNode(int lbid, int nid, NodeAttributes attrs);
+   void updateAttributesForNodeInLoadBalancer(NodeAttributes attrs, int nid, int lbid);
 
    /**
     * 
@@ -94,13 +94,13 @@ public interface NodeClient {
    /**
     * 
     * 
-    * @param lbid
-    *           loadbalancer from which to get the node
     * @param nid
     *           node to get
+    * @param lbid
+    *           loadbalancer from which to get the node
     * @return details of the specified node, or null if not found
     */
-   Node getNode(int lbid, int nid);
+   Node getNodeInLoadBalancer(int nid, int lbid);
 
    /**
     * Remove a node from the account.
@@ -109,12 +109,12 @@ public interface NodeClient {
     * configuration from the account. Any and all configuration data is immediately purged and is
     * not recoverable.
     * 
-    * @param lbid
-    *           loadbalancer from which to remove the node
     * @param nid
     *           node to remove
+    * @param lbid
+    *           loadbalancer from which to remove the node
     */
-   void removeNode(int lbid, int nid);
+   void removeNodeFromLoadBalancer(int nid, int lbid);
    
    /**
     * Batch-remove nodes from the account.
@@ -124,10 +124,10 @@ public interface NodeClient {
     * cannot be removed due to its current status a 400:BadRequest is returned along with the ids 
     * of the ones the system identified as potential failures for this request
     * 
+    * @param nids
+    *           nodes to remove
     * @param lbid
     *           loadbalancer from which to remove the node
-    * @param nid
-    *           node to remove
     */
-   void removeNodes(int lbid, Set<Integer> nids);
+   void removeNodesFromLoadBalancer(Set<Integer> nids, int lbid);
 }

@@ -60,25 +60,25 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface NodeAsyncClient {
 
    /**
-    * @see NodeClient#addNodes
+    * @see NodeClient#createNodesInLoadBalancer
     */
    @POST
    @SelectJson("nodes")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("/loadbalancers/{lbid}/nodes")
-   ListenableFuture<Set<Node>> addNodes(@PathParam("lbid") int lbid,
-		   @WrapWith("nodes") Set<NodeRequest> nodes);
+   ListenableFuture<Set<Node>> createNodesInLoadBalancer(@WrapWith("nodes") Set<NodeRequest> nodes,
+		   @PathParam("lbid") int lbid);
 
    /**
-    * @see NodeClient#modifyNode
+    * @see NodeClient#updateAttributesForNodeInLoadBalancer
     */
    @PUT
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/loadbalancers/{lbid}/nodes/{nid}")
-   ListenableFuture<Void> modifyNode(@PathParam("lbid") int lbid,
+   ListenableFuture<Void> updateAttributesForNodeInLoadBalancer(@WrapWith("node") NodeAttributes attrs,
 		   @PathParam("nid") int nid,
-           @WrapWith("node") NodeAttributes attrs);
+		   @PathParam("lbid") int lbid);
 
    /**
     * @see NodeClient#listNodes
@@ -91,35 +91,35 @@ public interface NodeAsyncClient {
    ListenableFuture<Set<Node>> listNodes(@PathParam("lbid") int lbid);
    
    /**
-    * @see NodeClient#getNode
+    * @see NodeClient#getNodeInLoadBalancer
     */
    @GET
    @SelectJson("node")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/loadbalancers/{lbid}/nodes/{nid}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Node> getNode(@PathParam("lbid") int lbid,
-		   @PathParam("nid") int nid);
+   ListenableFuture<Node> getNodeInLoadBalancer(@PathParam("nid") int nid,
+		   @PathParam("lbid") int lbid);
    
    /**
-    * @see NodeClient#removeNode
+    * @see NodeClient#removeNodeFromLoadBalancer
     */
    @DELETE
    @Path("/loadbalancers/{lbid}/nodes/{nid}")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @Consumes("*/*")
-   ListenableFuture<Void> removeNode(@PathParam("lbid") int lbid,
-		   @PathParam("nid") int nid);
+   ListenableFuture<Void> removeNodeFromLoadBalancer(@PathParam("nid") int nid,
+		   @PathParam("lbid") int lbid);
    
    /**
-    * @see NodeClient#removeNode
+    * @see NodeClient#removeNodesFromLoadBalancer
     */
    @DELETE
    @Path("/loadbalancers/{lbid}/nodes")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @Consumes("*/*")
-   ListenableFuture<Void> removeNodes(@PathParam("lbid") int lbid, 
-		   @QueryParam("id") Set<Integer> nids);
+   ListenableFuture<Void> removeNodesFromLoadBalancer(@QueryParam("id") Set<Integer> nids, 
+		   @PathParam("lbid") int lbid);
 
 
 }
