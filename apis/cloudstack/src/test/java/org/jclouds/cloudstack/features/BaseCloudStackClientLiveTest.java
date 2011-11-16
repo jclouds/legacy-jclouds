@@ -216,11 +216,8 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
       }
 
       if (currentUser.getAccountType() != type) {
-         Logger.getAnonymousLogger().warning("You are using an administrative account for testing");
-         /* throw new IllegalArgumentException(String.format(
-               "invalid account type: %s, please specify an apiKey of %s, for example: %s",
-               currentUser.getAccountType(), type, Iterables.filter(users, UserPredicates.accountTypeEquals(type))));
-          */
+         Logger.getAnonymousLogger().warning(
+            String.format("Expecting an user with type %s. Got: %s", type.toString(), currentUser.toString()));
       }
       return currentUser;
    }

@@ -33,7 +33,6 @@ import java.util.logging.Logger;
 
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.domain.Network;
-import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.TrafficType;
 import org.jclouds.cloudstack.features.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.options.ListNetworksOptions;
@@ -54,7 +53,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
       provider = "cloudstack";
    }
 
-   protected void deleteNetworkByVLAN(String vlan, long zoneId) throws URISyntaxException {
+   protected void deleteNetworksInZoneWithVlanId(long zoneId, String vlanId) {
       Set<Network> networks = domainAdminContext.getApi().getNetworkClient().listNetworks(
          ListNetworksOptions.Builder
             .isDefault(false)
@@ -64,7 +63,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
       );
 
       // Warning: the vlan id is not set in the response - using an workaround
-      URI broadcastUri = new URI("vlan://" + vlan);
+      URI broadcastUri = URI.create("vlan://" + vlanId);
       for(Network net : networks) {
          if (broadcastUri.equals(net.getBroadcastURI())) {
             long jobId = domainAdminContext.getApi().getNetworkClient().deleteNetwork(net.getId());
@@ -74,13 +73,14 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    @Test
-   public void testAndExperiment() throws URISyntaxException {
+   public void testAndExperiment() {
       if (!domainAdminEnabled) {
          Logger.getAnonymousLogger().log(Level.SEVERE, "domainAdmin credentials not present, skipping test");
          return;
       }
 
       String group = prefix + "-vlan";
+      String vlanId = "2";
       Network network = null;
       Set<? extends NodeMetadata> nodes = null;
       try {
@@ -92,7 +92,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
          long zoneId = Long.parseLong(template.getLocation().getId());
 
          // cleanup before running the test
-         deleteNetworkByVLAN("2", zoneId);
+         deleteNetworksInZoneWithVlanId(zoneId, vlanId);
 
          // find a network offering that supports vlans in our zone
          long offeringId = get(
@@ -103,7 +103,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
                .getNetworkClient()
                // startIP/endIP/netmask/gateway must be specified together
                .createNetworkInZone(zoneId, offeringId, group, group,
-                     vlan("2").startIP("192.168.1.2").netmask("255.255.255.0").gateway("192.168.1.1"));
+                     vlan(vlanId).startIP("192.168.1.2").netmask("255.255.255.0").gateway("192.168.1.1"));
 
          // set options to specify this network id
          template.getOptions().as(CloudStackTemplateOptions.class).networkId(network.getId());
