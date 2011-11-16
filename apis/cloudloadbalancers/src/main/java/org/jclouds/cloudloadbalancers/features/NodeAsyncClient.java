@@ -33,6 +33,8 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.cloudloadbalancers.domain.Node;
 import org.jclouds.cloudloadbalancers.domain.NodeAttributes;
 import org.jclouds.cloudloadbalancers.domain.NodeRequest;
+import org.jclouds.cloudloadbalancers.functions.UnwrapNode;
+import org.jclouds.cloudloadbalancers.functions.UnwrapNodes;
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -118,7 +120,7 @@ public interface NodeAsyncClient {
    @Path("/loadbalancers/{lbid}/nodes")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @Consumes("*/*")
-   ListenableFuture<Void> removeNode(@PathParam("lbid") int lbid, 
+   ListenableFuture<Void> removeNodes(@PathParam("lbid") int lbid, 
 		   @QueryParam("id") Set<Integer> nids);
 
 

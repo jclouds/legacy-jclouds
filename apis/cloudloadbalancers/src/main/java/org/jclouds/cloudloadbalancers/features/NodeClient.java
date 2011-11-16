@@ -49,7 +49,8 @@ public interface NodeClient {
     * Internet and ServiceNet; as a result, nodes can either be internal ServiceNet addresses or addresses 
     * on the public Internet.
     * 
-    * 
+    * @param lbid
+    *           loadbalancer on which to create the node
     * @param n
     *           configuration to create
     * @return 
@@ -58,7 +59,7 @@ public interface NodeClient {
     *            data
     * 
     */
-   Node createNode(NodeRequest n);
+   Node createNode(int lbid, NodeRequest n);
 
    /**
     * 

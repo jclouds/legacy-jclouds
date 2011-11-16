@@ -19,6 +19,7 @@
 package org.jclouds.cloudloadbalancers.domain;
 
 import org.jclouds.cloudloadbalancers.domain.internal.BaseNode;
+import org.jclouds.cloudloadbalancers.domain.internal.BaseNode.Condition;
 
 /**
  * 
@@ -42,12 +43,12 @@ public class NodeAttributes {
    }
 
    public static <T extends BaseNode<T>> NodeAttributes fromNode(T n) {
-      return Builder.condition(n.getCondition().name()).weight(n.getWeight());
+      return Builder.condition(n.getCondition()).weight(n.getWeight());
    }
 
    public static class Builder {
-      public static NodeAttributes condition(String condition) {
-         return new NodeAttributes().condition(condition);
+      public static NodeAttributes condition(Condition condition) {
+         return new NodeAttributes().condition(condition.name());
       }
 
       public static NodeAttributes weight(int weight) {

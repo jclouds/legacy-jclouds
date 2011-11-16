@@ -40,7 +40,6 @@ public class UnwrapNodes implements Function<HttpResponse, Set<Node>>,
          InvocationContext<UnwrapNodes> {
 
    private final ParseJson<Map<String, Set<Node>>> json;
-   private ConvertLB convertLB;
 
    @Inject
    UnwrapNodes(ParseJson<Map<String, Set<Node>>> json) {

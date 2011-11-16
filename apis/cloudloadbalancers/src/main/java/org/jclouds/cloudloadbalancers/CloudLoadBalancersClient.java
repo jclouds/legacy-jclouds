@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudloadbalancers.features.LoadBalancerClient;
+import org.jclouds.cloudloadbalancers.features.NodeClient;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
@@ -56,5 +57,12 @@ public interface CloudLoadBalancersClient {
    @Delegate
    LoadBalancerClient getLoadBalancerClient(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) String region);
+   
+   /**
+    * Provides synchronous access to Node features.
+    */
+   @Delegate
+   NodeClient getNodeClient(
+		   @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) String region);
 
 }
