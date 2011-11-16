@@ -64,9 +64,9 @@ public class TakeSnapshotIfNotAlreadyAttached implements Function<IMachine, ISna
             session = manager.openMachineSession(machine);
             IProgress progress = session.getConsole().takeSnapshot(snapshotName, snapshotDesc);
             if (progress.getCompleted())
-               logger.debug("Clone done with snapshot name: %s and descripton: %s", snapshotName, snapshotDesc);
+               logger.debug("Snapshot %s (description: %s) taken from %s", snapshotName, snapshotDesc, machine.getName());
          } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e, "Problem creating snapshot %s (descripton: %s) from machine %s", snapshotName, snapshotDesc, machine.getName());
             propogate(e);
          } finally {
             session.unlockMachine();
