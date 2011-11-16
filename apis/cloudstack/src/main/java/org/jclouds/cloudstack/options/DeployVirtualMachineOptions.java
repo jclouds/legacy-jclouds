@@ -29,6 +29,8 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
+import java.util.Map;
+
 /**
  * Options used to control what disk offerings are returned
  * 
@@ -50,7 +52,7 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
     * parameter passed is from an ISO object, the diskOfferingId refers to a
     * ROOT Disk Volume created.
     * 
-    * @param id
+    * @param diskofferingid
     *           the ID of the disk offering
     */
    public DeployVirtualMachineOptions diskOfferingId(long diskofferingid) {
@@ -101,6 +103,35 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
     */
    public DeployVirtualMachineOptions name(String name) {
       this.queryParameters.replaceValues("name", ImmutableSet.of(name));
+      return this;
+   }
+
+   /**
+    * @param ipAddress
+    *          the requested ip address (2.2.12 only option)
+    */
+   public DeployVirtualMachineOptions ipAddress(String ipAddress) {
+      this.queryParameters.replaceValues("ipaddress", ImmutableSet.of(ipAddress));
+      return this;
+   }
+
+   /**
+    * @param ipToNetworkList
+    *          mapping ip addresses to network ids (2.2.12 only option)
+    */
+   public DeployVirtualMachineOptions ipToNetworkList(Map<String, Long> ipToNetworkList) {
+      int count = 0;
+      for(String ip : ipToNetworkList.keySet()) {
+         this.queryParameters.replaceValues(
+            String.format("ipnetworklist[%d].ip", count),
+            ImmutableSet.of(ip)
+         );
+         this.queryParameters.replaceValues(
+            String.format("ipnetworklist[%d].networkid", count),
+            ImmutableSet.of("" + ipToNetworkList.get(ip))
+         );
+         count += 1;
+      }
       return this;
    }
 
@@ -234,6 +265,22 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
       public static DeployVirtualMachineOptions name(String name) {
          DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
          return options.name(name);
+      }
+
+      /**
+       * @see DeployVirtualMachineOptions#ipAddress
+       */
+      public static DeployVirtualMachineOptions ipAddress(String ipAddress) {
+         DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
+         return options.ipAddress(ipAddress);
+      }
+
+      /**
+       * @see DeployVirtualMachineOptions#ipToNetworkList
+       */
+      public static DeployVirtualMachineOptions ipToNetworkList(Map<String, Long> ipToNetworkList) {
+         DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
+         return options.ipToNetworkList(ipToNetworkList);
       }
 
       /**
