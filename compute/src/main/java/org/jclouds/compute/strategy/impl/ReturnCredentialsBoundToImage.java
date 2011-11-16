@@ -18,10 +18,14 @@
  */
 package org.jclouds.compute.strategy.impl;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.javax.annotation.Nullable;
@@ -41,6 +45,14 @@ public class ReturnCredentialsBoundToImage implements PopulateDefaultLoginCreden
 
    @Override
    public Credentials execute(Object resourceToAuthenticate) {
-      return creds;
+      checkState(resourceToAuthenticate instanceof Image, "this is only valid for images");
+      if (creds != null)
+         return creds;
+      Image image = Image.class.cast(resourceToAuthenticate);
+      if (image.getOperatingSystem() != null && OsFamily.WINDOWS.equals(image.getOperatingSystem().getFamily())) {
+         return new Credentials("Administrator", null);
+      } else {
+         return new Credentials("root", null);
+      }
    }
 }
