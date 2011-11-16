@@ -32,6 +32,8 @@ import org.jclouds.cloudloadbalancers.CloudLoadBalancersAsyncClient;
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersClient;
 import org.jclouds.cloudloadbalancers.features.LoadBalancerAsyncClient;
 import org.jclouds.cloudloadbalancers.features.LoadBalancerClient;
+import org.jclouds.cloudloadbalancers.features.NodeAsyncClient;
+import org.jclouds.cloudloadbalancers.features.NodeClient;
 import org.jclouds.cloudloadbalancers.handlers.ParseCloudLoadBalancersErrorFromHttpResponse;
 import org.jclouds.cloudloadbalancers.reference.RackspaceConstants;
 import org.jclouds.http.HttpErrorHandler;
@@ -74,6 +76,7 @@ public class CloudLoadBalancersRestClientModule extends
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
          .put(LoadBalancerClient.class, LoadBalancerAsyncClient.class)//
+         .put(NodeClient.class, NodeAsyncClient.class)//
          .build();
 
    public CloudLoadBalancersRestClientModule() {

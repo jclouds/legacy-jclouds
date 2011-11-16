@@ -21,6 +21,7 @@ package org.jclouds.cloudloadbalancers;
 import java.util.Set;
 
 import org.jclouds.cloudloadbalancers.features.LoadBalancerAsyncClient;
+import org.jclouds.cloudloadbalancers.features.NodeAsyncClient;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.Delegate;
@@ -54,5 +55,12 @@ public interface CloudLoadBalancersAsyncClient {
    @Delegate
    LoadBalancerAsyncClient getLoadBalancerClient(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) String region);
+   
+   /**
+    * Provides asynchronous access to Node features.
+    */
+   @Delegate
+   NodeAsyncClient getNodeClient(
+		   @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) String region);
 
 }
