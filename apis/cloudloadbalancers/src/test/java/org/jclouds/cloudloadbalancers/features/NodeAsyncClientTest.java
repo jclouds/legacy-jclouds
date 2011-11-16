@@ -32,9 +32,8 @@ import org.jclouds.cloudloadbalancers.domain.NodeAttributes;
 import org.jclouds.cloudloadbalancers.domain.NodeAttributes.Builder;
 import org.jclouds.cloudloadbalancers.domain.NodeRequest;
 import org.jclouds.cloudloadbalancers.domain.internal.BaseNode.Condition;
-import org.jclouds.cloudloadbalancers.functions.UnwrapNode;
-import org.jclouds.cloudloadbalancers.functions.UnwrapNodes;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
@@ -65,7 +64,7 @@ public class NodeAsyncClientTest extends BaseCloudLoadBalancersAsyncClientTest<N
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, UnwrapNodes.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
@@ -82,7 +81,7 @@ public class NodeAsyncClientTest extends BaseCloudLoadBalancersAsyncClientTest<N
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, UnwrapNode.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
@@ -103,7 +102,7 @@ public class NodeAsyncClientTest extends BaseCloudLoadBalancersAsyncClientTest<N
                "{\"node\":{\"address\":\"192.168.1.1\",\"port\":8080,\"condition\":\"ENABLED\"}}",
                "application/json", false);
 
-      assertResponseParserClassEquals(method, httpRequest, UnwrapNode.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 

@@ -33,12 +33,10 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.cloudloadbalancers.domain.Node;
 import org.jclouds.cloudloadbalancers.domain.NodeAttributes;
 import org.jclouds.cloudloadbalancers.domain.NodeRequest;
-import org.jclouds.cloudloadbalancers.functions.UnwrapNode;
-import org.jclouds.cloudloadbalancers.functions.UnwrapNodes;
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.WrapWith;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
@@ -65,7 +63,7 @@ public interface NodeAsyncClient {
     * @see NodeClient#addNodes
     */
    @POST
-   @ResponseParser(UnwrapNodes.class)
+   @SelectJson("nodes")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("/loadbalancers/{lbid}/nodes")
@@ -86,7 +84,7 @@ public interface NodeAsyncClient {
     * @see NodeClient#listNodes
     */
    @GET
-   @ResponseParser(UnwrapNodes.class)
+   @SelectJson("nodes")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/loadbalancers/{lbid}/nodes")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -96,7 +94,7 @@ public interface NodeAsyncClient {
     * @see NodeClient#getNode
     */
    @GET
-   @ResponseParser(UnwrapNode.class)
+   @SelectJson("node")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/loadbalancers/{lbid}/nodes/{nid}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
