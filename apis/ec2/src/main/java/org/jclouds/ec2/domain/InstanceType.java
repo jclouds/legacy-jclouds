@@ -133,7 +133,21 @@ public class InstanceType {
     * </ul>
     */
    public static final String C1_XLARGE = "c1.xlarge";
-
+   
+   /**
+    * Cluster Compute Instance
+    * <ul>
+    * <li>22 GB of memory</li>
+    * <li>33.5 EC2 Compute Units (2 x Intel Xeon X5570, quad-core "Nehalem"
+    * architecture)</li>
+    * <li>1690 GB of 64-bit storage (2 x 840 GB, plus 10 GB root partition)</li>
+    * <li>10 Gbps Ethernet</li>
+    * <li>64-bit platform</li>
+    * <li>I/O Performance: High</li>
+    * </ul>
+    */
+   public static final String CG1_4XLARGE = "cg1.4xlarge";
+   
    /**
     * Cluster Compute Instance
     * <ul>
@@ -147,5 +161,18 @@ public class InstanceType {
     * </ul>
     */
    public static final String CC1_4XLARGE = "cc1.4xlarge";
+   
+   /**
+    * Cluster Compute Eight Extra Large specifications
+    * <ul>
+    * <li>60.5 GB of memory</li>
+    * <li>88 EC2 Compute Units (Eight-core 2 x Intel Xeon)</li>
+    * <li>3370 GB of 64-bit storage (4 x 840 GB, plus 10 GB root partition)</li>
+    * <li>10 Gbps Ethernet</li>
+    * <li>64-bit platform</li>
+    * <li>I/O Performance: High</li>
+    * </ul>
+    */
+   public static final String CC2_8XLARGE = "cc2.8xlarge";
 
 }

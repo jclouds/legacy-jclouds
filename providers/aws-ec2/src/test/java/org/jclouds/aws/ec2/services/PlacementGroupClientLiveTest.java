@@ -67,7 +67,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
+@Test(groups = "live", singleThreaded = true, testName = "PlacementGroupClientLiveTest")
 public class PlacementGroupClientLiveTest {
 
    private AWSEC2Client client;
@@ -169,7 +169,7 @@ public class PlacementGroupClientLiveTest {
 
       Template template = context.getComputeService().templateBuilder().fastest().osFamily(OsFamily.AMZN_LINUX).build();
       assert template != null : "The returned template was null, but it should have a value.";
-      assertEquals(template.getHardware().getProviderId(), InstanceType.CC1_4XLARGE);
+      assertEquals(template.getHardware().getProviderId(), InstanceType.CC2_8XLARGE);
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
       assertEquals(template.getImage().getUserMetadata().get("virtualizationType"), "hvm");
       assertEquals(template.getImage().getUserMetadata().get("hypervisor"), "xen");

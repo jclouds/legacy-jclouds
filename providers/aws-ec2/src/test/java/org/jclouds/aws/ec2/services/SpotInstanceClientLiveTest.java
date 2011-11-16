@@ -143,8 +143,8 @@ public class SpotInstanceClientLiveTest {
                      ImmutableSet.of("Linux/UNIX", "Linux/UNIX (Amazon VPC)", "SUSE Linux", "SUSE Linux (Amazon VPC)",
                               "Windows", "Windows (Amazon VPC)")).apply(spot.getProductDescription()) : spot;
             assert in(
-                     ImmutableSet.of("c1.medium", "c1.xlarge", "cc1.4xlarge", "cg1.4xlarge", "m1.large", "m1.small",
-                              "m1.xlarge", "m2.2xlarge", "m2.4xlarge", "m2.xlarge", "t1.micro")).apply(
+                     ImmutableSet.of("c1.medium", "c1.xlarge", "cc1.4xlarge", "cg1.4xlarge", "cc2.8xlarge", "m1.large",
+                              "m1.small", "m1.xlarge", "m2.2xlarge", "m2.4xlarge", "m2.xlarge", "t1.micro")).apply(
                      spot.getInstanceType()) : spot;
 
          }
@@ -167,7 +167,7 @@ public class SpotInstanceClientLiveTest {
                "us-west-2",
                0.09f,
                1,
-               LaunchSpecification.builder().imageId("ami-951945d0").instanceType(InstanceType.M1_SMALL).build(),
+               LaunchSpecification.builder().imageId("ami-38fe7308").instanceType(InstanceType.M1_SMALL).build(),
                launchGroup(launchGroup).availabilityZoneGroup(launchGroup).validFrom(
                         new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(2))).validUntil(
                         new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(SPOT_DELAY_SECONDS))));

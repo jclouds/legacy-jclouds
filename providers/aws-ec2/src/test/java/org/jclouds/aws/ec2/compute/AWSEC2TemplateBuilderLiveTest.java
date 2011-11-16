@@ -188,25 +188,25 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
       Template fastestTemplate = context.getComputeService().templateBuilder().fastest().osFamily(OsFamily.AMZN_LINUX)
             .build();
       assert (fastestTemplate.getImage().getProviderId().startsWith("ami-")) : fastestTemplate;
-      assertEquals(fastestTemplate.getHardware().getProviderId(), InstanceType.CC1_4XLARGE);
+      assertEquals(fastestTemplate.getHardware().getProviderId(), InstanceType.CC2_8XLARGE);
       assertEquals(fastestTemplate.getImage().getOperatingSystem().getVersion(), "2011.09.2");
       assertEquals(fastestTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(fastestTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
       assertEquals(fastestTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
       assertEquals(fastestTemplate.getLocation().getId(), "us-east-1");
-      assertEquals(getCores(fastestTemplate.getHardware()), 8.0d);
+      assertEquals(getCores(fastestTemplate.getHardware()), 16.0d);
       assertEquals(fastestTemplate.getImage().getOperatingSystem().getArch(), "hvm");
 
       fastestTemplate = context.getComputeService().templateBuilder().fastest().build();
       System.out.println(fastestTemplate.getImage());
       assert (fastestTemplate.getImage().getProviderId().startsWith("ami-")) : fastestTemplate;
-      assertEquals(fastestTemplate.getHardware().getProviderId(), InstanceType.CC1_4XLARGE);
+      assertEquals(fastestTemplate.getHardware().getProviderId(), InstanceType.CC2_8XLARGE);
       assertEquals(fastestTemplate.getImage().getOperatingSystem().getVersion(), "12.04");
       assertEquals(fastestTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(fastestTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(fastestTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
       assertEquals(fastestTemplate.getLocation().getId(), "us-east-1");
-      assertEquals(getCores(fastestTemplate.getHardware()), 8.0d);
+      assertEquals(getCores(fastestTemplate.getHardware()), 16.0d);
       assertEquals(fastestTemplate.getImage().getOperatingSystem().getArch(), "hvm");
    }
 

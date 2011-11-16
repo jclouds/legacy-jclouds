@@ -21,6 +21,8 @@ package org.jclouds.aws.ec2.compute.suppliers;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.c1_medium;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.c1_xlarge;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.cc1_4xlarge;
+import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.cc2_8xlarge;
+import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.cg1_4xlarge;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m1_large;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m1_small32;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m1_xlarge;
@@ -59,6 +61,8 @@ public class AWSEC2HardwareSupplier extends EC2HardwareSupplier {
    public Set<? extends Hardware> get() {
       Builder<Hardware> sizes = ImmutableSet.builder();
       sizes.add(cc1_4xlarge().supportsImageIds(ccAmis).build());
+      sizes.add(cg1_4xlarge().supportsImageIds(ccAmis).build());
+      sizes.add(cc2_8xlarge().supportsImageIds(ccAmis).build());
       sizes.addAll(ImmutableSet.<Hardware> of(t1_micro().build(), c1_medium().build(), c1_xlarge().build(), m1_large()
                .build(), m1_small32().build(), m1_xlarge().build(), m2_xlarge().build(), m2_2xlarge().build(),
                m2_4xlarge().build()));
