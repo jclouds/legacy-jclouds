@@ -21,6 +21,7 @@ package org.jclouds.cloudloadbalancers.features;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -66,11 +67,6 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
    protected void tearDown() {
       for (Entry<LoadBalancer, Set<Node>> entry : nodes.entrySet()) {
     	  LoadBalancer lb = entry.getKey();
-    	  for (Node n : entry.getValue()) {
-	         client.getNodeClient(lb.getRegion()).removeNode(lb.getId(), n.getId());
-	         assertEquals(client.getNodeClient(lb.getRegion()).
-	        		 getNode(lb.getId(), n.getId()), null);
-    	  }
     	  
     	  client.getLoadBalancerClient(lb.getRegion()).removeLoadBalancer(lb.getId());
           assert loadBalancerDeleted.apply(lb) : lb;
@@ -89,7 +85,7 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
             assert n.getAddress() != null : n;
             assert n.getPort() != -1 : n;
             assert n.getStatus() != null : n;
-            assert n.getWeight() != -1 : n;
+            assert n.getWeight() != null : n; //FIXME may fail as can be null (json response doesn't have the attribute)
 
             Node getDetails = client.getNodeClient(lb.getRegion()).getNode(lb.getId(), n.getId());
             System.out.println(n.toString());
@@ -99,7 +95,7 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
                assertEquals(getDetails.getAddress(), n.getAddress());
                assertEquals(getDetails.getPort(), n.getPort());
                assertEquals(getDetails.getStatus(), n.getStatus());
-               assertEquals(getDetails.getWeight(), n.getWeight());
+               assertEquals(getDetails.getWeight(), n.getWeight()); //FIXME disparity between list/get can lead these to mismatch
             } catch (AssertionError e) {
                throw new AssertionError(String.format("%s\n%s - %s", e.getMessage(),getDetails, n));
             }
