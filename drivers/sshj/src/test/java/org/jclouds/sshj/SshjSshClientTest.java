@@ -99,8 +99,10 @@ public class SshjSshClientTest {
    public void testOnlyRetryAuthWhenSet() {
       SshjSshClient ssh1 = createClient();
       assert !ssh1.shouldRetry(new AuthorizationException("problem", null));
+      assert !ssh1.shouldRetry(new UserAuthException("problem", null));
       ssh1.retryAuth = true;
       assert ssh1.shouldRetry(new AuthorizationException("problem", null));
+      assert ssh1.shouldRetry(new UserAuthException("problem", null));
    }
 
    public void testOnlyRetryAuthWhenSetViaProperties() {
@@ -108,6 +110,7 @@ public class SshjSshClientTest {
       props.setProperty("jclouds.ssh.retry-auth", "true");
       SshjSshClient ssh1 = createClient(props);
       assert ssh1.shouldRetry(new AuthorizationException("problem", null));
+      assert ssh1.shouldRetry(new UserAuthException("problem", null));
    }
 
    public void testExceptionMessagesRetry() {

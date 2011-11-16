@@ -378,7 +378,7 @@ public class SshjSshClient implements SshClient {
    @VisibleForTesting
    boolean shouldRetry(Exception from) {
       Predicate<Throwable> predicate = retryAuth ? Predicates.<Throwable> or(retryPredicate,
-               instanceOf(AuthorizationException.class)) : retryPredicate;
+            instanceOf(AuthorizationException.class), instanceOf(UserAuthException.class)) : retryPredicate;
       if (any(getCausalChain(from), predicate))
          return true;
       if (!retryableMessages.equals(""))
