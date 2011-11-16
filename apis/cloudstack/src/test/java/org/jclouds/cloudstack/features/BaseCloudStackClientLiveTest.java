@@ -27,6 +27,7 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
@@ -128,10 +129,12 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
    protected ComputeServiceContext computeContext;
    protected RestContext<CloudStackClient, CloudStackAsyncClient> context;
    protected CloudStackClient client;
+   protected CloudStackClient adminClient;
    protected User user;
 
    protected Predicate<IPSocket> socketTester;
    protected RetryablePredicate<Long> jobComplete;
+   protected RetryablePredicate<Long> adminJobComplete;
    protected RetryablePredicate<VirtualMachine> virtualMachineRunning;
    protected RetryablePredicate<VirtualMachine> virtualMachineDestroyed;
    protected SshClient.Factory sshFactory;
@@ -179,6 +182,7 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
          domainAdminContext = domainAdminComputeContext.getProviderSpecificContext();
          domainAdminClient = domainAdminContext.getApi();
          domainAdminUser = verifyCurrentUserIsOfType(domainAdminContext, Account.Type.DOMAIN_ADMIN);
+         adminClient = domainAdminContext.getApi();
       }
 
       injector = Guice.createInjector(new SshjSshClientModule(), new Log4JLoggingModule());
@@ -187,6 +191,8 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
       injector.injectMembers(socketTester);
       jobComplete = new RetryablePredicate<Long>(new JobComplete(client), 1200, 1, 5, TimeUnit.SECONDS);
       injector.injectMembers(jobComplete);
+      adminJobComplete = new RetryablePredicate<Long>(new JobComplete(adminClient), 1200, 1, 5, TimeUnit.SECONDS);
+      injector.injectMembers(adminJobComplete);
       virtualMachineRunning = new RetryablePredicate<VirtualMachine>(new VirtualMachineRunning(client), 600, 5, 5,
             TimeUnit.SECONDS);
       injector.injectMembers(virtualMachineRunning);
@@ -209,10 +215,10 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
                users));
       }
 
-      if (currentUser.getAccountType() != type)
-         throw new IllegalArgumentException(String.format(
-               "invalid account type: %s, please specify an apiKey of %s, for example: %s",
-               currentUser.getAccountType(), type, Iterables.filter(users, UserPredicates.accountTypeEquals(type))));
+      if (currentUser.getAccountType() != type) {
+         Logger.getAnonymousLogger().warning(
+            String.format("Expecting an user with type %s. Got: %s", type.toString(), currentUser.toString()));
+      }
       return currentUser;
    }
 

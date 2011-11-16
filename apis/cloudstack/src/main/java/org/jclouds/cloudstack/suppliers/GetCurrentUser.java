@@ -22,12 +22,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.NoSuchElementException;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.predicates.UserPredicates;
+import org.jclouds.logging.Logger;
 import org.jclouds.rest.annotations.Identity;
 
 import com.google.common.base.Predicate;
@@ -39,6 +41,10 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 public class GetCurrentUser implements Supplier<User> {
+
+   @Resource
+   protected Logger logger = Logger.NULL;
+
    private final CloudStackClient client;
    private final String identity;
 
@@ -60,10 +66,9 @@ public class GetCurrentUser implements Supplier<User> {
                users));
       }
 
-      if (currentUser.getAccountType() != Account.Type.USER)
-         throw new IllegalArgumentException(String.format(
-               "invalid account type: %s, please specify an apiKey of a USER, for example: %s",
-               currentUser.getAccountType(), Iterables.filter(users, UserPredicates.isUserAccount())));
+      if (currentUser.getAccountType() != Account.Type.USER) {
+         logger.warn("Expecting an user account: {}", currentUser);
+      }
       return currentUser;
    }
 }
