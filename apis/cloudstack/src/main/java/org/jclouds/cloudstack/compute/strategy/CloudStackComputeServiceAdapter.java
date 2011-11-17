@@ -127,6 +127,14 @@ public class CloudStackComputeServiceAdapter implements
          throw new IllegalArgumentException("please setup a network or security group for zone: " + zoneId);
       }
 
+      if (templateOptions.getIpOnDefaultNetwork() != null) {
+         options.ipOnDefaultNetwork(templateOptions.getIpOnDefaultNetwork());
+      }
+
+      if (templateOptions.getIpsToNetworks().size() > 0) {
+         options.ipsToNetworks(templateOptions.getIpsToNetworks());
+      }
+
       if (templateOptions.getKeyPair() != null) {
          options.keyPair(templateOptions.getKeyPair());
          if (templateOptions.getRunScript() != null) {

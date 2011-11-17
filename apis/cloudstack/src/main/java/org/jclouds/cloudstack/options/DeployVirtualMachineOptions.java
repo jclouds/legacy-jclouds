@@ -107,28 +107,28 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
    }
 
    /**
-    * @param ipAddress
+    * @param ipOnDefaultNetwork
     *          the requested ip address (2.2.12 only option)
     */
-   public DeployVirtualMachineOptions ipAddress(String ipAddress) {
-      this.queryParameters.replaceValues("ipaddress", ImmutableSet.of(ipAddress));
+   public DeployVirtualMachineOptions ipOnDefaultNetwork(String ipOnDefaultNetwork) {
+      this.queryParameters.replaceValues("ipaddress", ImmutableSet.of(ipOnDefaultNetwork));
       return this;
    }
 
    /**
-    * @param ipToNetworkList
+    * @param ipsToNetworks
     *          mapping ip addresses to network ids (2.2.12 only option)
     */
-   public DeployVirtualMachineOptions ipToNetworkList(Map<String, Long> ipToNetworkList) {
+   public DeployVirtualMachineOptions ipsToNetworks(Map<String, Long> ipsToNetworks) {
       int count = 0;
-      for(String ip : ipToNetworkList.keySet()) {
+      for(String ip : ipsToNetworks.keySet()) {
          this.queryParameters.replaceValues(
             String.format("ipnetworklist[%d].ip", count),
             ImmutableSet.of(ip)
          );
          this.queryParameters.replaceValues(
             String.format("ipnetworklist[%d].networkid", count),
-            ImmutableSet.of("" + ipToNetworkList.get(ip))
+            ImmutableSet.of("" + ipsToNetworks.get(ip))
          );
          count += 1;
       }
@@ -268,19 +268,19 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
       }
 
       /**
-       * @see DeployVirtualMachineOptions#ipAddress
+       * @see DeployVirtualMachineOptions#ipOnDefaultNetwork
        */
-      public static DeployVirtualMachineOptions ipAddress(String ipAddress) {
+      public static DeployVirtualMachineOptions ipOnDefaultNetwork(String ipOnDefaultNetwork) {
          DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
-         return options.ipAddress(ipAddress);
+         return options.ipOnDefaultNetwork(ipOnDefaultNetwork);
       }
 
       /**
-       * @see DeployVirtualMachineOptions#ipToNetworkList
+       * @see DeployVirtualMachineOptions#ipsToNetworks
        */
-      public static DeployVirtualMachineOptions ipToNetworkList(Map<String, Long> ipToNetworkList) {
+      public static DeployVirtualMachineOptions ipsToNetworks(Map<String, Long> ipsToNetworks) {
          DeployVirtualMachineOptions options = new DeployVirtualMachineOptions();
-         return options.ipToNetworkList(ipToNetworkList);
+         return options.ipsToNetworks(ipsToNetworks);
       }
 
       /**

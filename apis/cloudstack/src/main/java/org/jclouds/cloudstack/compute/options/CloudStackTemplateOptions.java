@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Maps;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.options.TemplateOptions;
@@ -56,6 +57,8 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
 
    protected Set<Long> securityGroupIds = Sets.<Long> newLinkedHashSet();
    protected Set<Long> networkIds = Sets.<Long> newLinkedHashSet();
+   protected Map<String, Long> ipsToNetworks = Maps.<String, Long>newLinkedHashMap();
+   protected String ipOnDefaultNetwork;
    protected String keyPair;
 
    @Override
@@ -116,6 +119,30 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
    }
 
    /**
+    * @see DeployVirtualMachineOptions#ipOnDefaultNetwork
+    */
+   public CloudStackTemplateOptions ipOnDefaultNetwork(String ipOnDefaultNetwork) {
+      this.ipOnDefaultNetwork = ipOnDefaultNetwork;
+      return this;
+   }
+
+   public String getIpOnDefaultNetwork() {
+      return ipOnDefaultNetwork;
+   }
+
+   /**
+    * @see DeployVirtualMachineOptions#ipOnDefaultNetwork(String)
+    */
+   public CloudStackTemplateOptions ipsToNetworks(Map<String, Long> ipsToNetworks) {
+      this.ipsToNetworks.putAll(ipsToNetworks);
+      return this;
+   }
+
+   public Map<String, Long> getIpsToNetworks() {
+      return ipsToNetworks;
+   }
+
+   /**
     * @see DeployVirtualMachineOptions#keyPair(String)
     */
    public CloudStackTemplateOptions keyPair(String keyPair) {
@@ -161,6 +188,22 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
       public static CloudStackTemplateOptions networkIds(Iterable<Long> networkIds) {
          CloudStackTemplateOptions options = new CloudStackTemplateOptions();
          return options.networkIds(networkIds);
+      }
+
+      /**
+       * @see CloudStackTemplateOptions#ipOnDefaultNetwork
+       */
+      public static CloudStackTemplateOptions ipOnDefaultNetwork(String ipAddress) {
+         CloudStackTemplateOptions options = new CloudStackTemplateOptions();
+         return options.ipOnDefaultNetwork(ipAddress);
+      }
+
+      /**
+       * @see CloudStackTemplateOptions#ipsToNetworks
+       */
+      public static CloudStackTemplateOptions ipsToNetworks(Map<String, Long> ipToNetworkMap) {
+         CloudStackTemplateOptions options = new CloudStackTemplateOptions();
+         return options.ipsToNetworks(ipToNetworkMap);
       }
 
       /**

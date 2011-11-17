@@ -19,7 +19,6 @@
 package org.jclouds.cloudstack.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.in;
 import static com.google.common.base.Predicates.or;
 import static com.google.common.collect.Iterables.find;
@@ -143,7 +142,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
             return network.getId();
          }
       }));
-      options.ipToNetworkList(ipToNetwork);
+      options.ipsToNetworks(ipToNetwork);
 
       return createVirtualMachineWithOptionsInZone(options, zoneId, templateId,
          client, jobComplete, virtualMachineRunning);
@@ -244,12 +243,12 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
 
          String ipAddress = "192.168.0.4";
 
-         Map<String, Long> ipToNetwork = Maps.newHashMap();
-         ipToNetwork.put(ipAddress, network.getId());
+         Map<String, Long> ipsToNetworks = Maps.newHashMap();
+         ipsToNetworks.put(ipAddress, network.getId());
 
          vm = createVirtualMachineInNetworkWithIp(
             adminClient, templateId, ImmutableSet.of(requiredNetwork, network),
-            ipToNetwork, adminJobComplete, adminVirtualMachineRunning);
+            ipsToNetworks, adminJobComplete, adminVirtualMachineRunning);
          logger.info("Created VM: " + vm);
 
          boolean hasStaticIpNic = false;
