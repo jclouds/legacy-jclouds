@@ -28,8 +28,7 @@ import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
 import javax.annotation.Nullable;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.util.Random;
 import java.util.Set;
@@ -132,18 +131,14 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       assert jobComplete.apply(response.getJobId()) : template;
 
       // Get the result
-      AsyncJob<TemplateExtraction> asyncJob = client.getAsyncJobClient().<TemplateExtraction>getAsyncJob(response.getJobId());
+      AsyncJob<TemplateExtraction> asyncJob = client.getAsyncJobClient().getAsyncJob(response.getJobId());
       TemplateExtraction extract = asyncJob.getResult();
       assertNotNull(extract);
 
       // Check that the URL can be retrieved
       String extractUrl = extract.getUrl();
       assertNotNull(extractUrl);
-      URL url = new URL(URLDecoder.decode(extractUrl, "utf-8"));
-      HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-      connection.setRequestMethod("GET");
-      connection.connect();
-      assertEquals(connection.getResponseCode(), 200);
-      connection.disconnect();
+      URI uri = new URI(URLDecoder.decode(extractUrl, "utf-8"));
+      assertTrue(context.utils().http().exists(uri), "does not exist: " + uri);
    }
 }
