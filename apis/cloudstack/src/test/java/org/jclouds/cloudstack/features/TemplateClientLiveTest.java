@@ -28,6 +28,8 @@ import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
 import javax.annotation.Nullable;
+import java.net.URI;
+import java.net.URLDecoder;
 import java.util.Random;
 import java.util.Set;
 
@@ -73,6 +75,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       }
    }
 
+   @Test(enabled = true)
    public void testCreateTemplate() throws Exception {
       Zone zone = Iterables.getFirst(client.getZoneClient().listZones(), null);
       assertNotNull(zone);
@@ -121,4 +124,21 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       super.tearDown();
    }
 
+   @Test(enabled = true, dependsOnMethods = "testCreateTemplate")
+   public void testExtractTemplate() throws Exception {
+      // Initiate the extraction and wait for it to complete
+      AsyncCreateResponse response = client.getTemplateClient().extractTemplate(template.getId(), ExtractMode.HTTP_DOWNLOAD, template.getZoneId());
+      assert jobComplete.apply(response.getJobId()) : template;
+
+      // Get the result
+      AsyncJob<TemplateExtraction> asyncJob = client.getAsyncJobClient().getAsyncJob(response.getJobId());
+      TemplateExtraction extract = asyncJob.getResult();
+      assertNotNull(extract);
+
+      // Check that the URL can be retrieved
+      String extractUrl = extract.getUrl();
+      assertNotNull(extractUrl);
+      URI uri = new URI(URLDecoder.decode(extractUrl, "utf-8"));
+      assertTrue(context.utils().http().exists(uri), "does not exist: " + uri);
+   }
 }

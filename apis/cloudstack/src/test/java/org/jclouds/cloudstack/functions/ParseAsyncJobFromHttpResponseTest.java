@@ -19,13 +19,11 @@
 package org.jclouds.cloudstack.functions;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.InputStream;
 
-import org.jclouds.cloudstack.domain.AsyncJob;
-import org.jclouds.cloudstack.domain.AsyncJobError;
-import org.jclouds.cloudstack.domain.IPForwardingRule;
-import org.jclouds.cloudstack.domain.PublicIPAddress;
+import org.jclouds.cloudstack.domain.*;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.http.HttpResponse;
@@ -187,4 +185,14 @@ public class ParseAsyncJobFromHttpResponseTest {
       assertEquals(response, expects);
    }
 
+   public void testOverloadedKeyName() {
+      InputStream is = getClass().getResourceAsStream("/queryasyncjobresultresponse-createtemplate.json");
+      ParseAsyncJobFromHttpResponse parser = i.getInstance(ParseAsyncJobFromHttpResponse.class);
+      AsyncJob response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      assertTrue(response.getResult() instanceof Template, "response expected to be Template, actually is "+response.getResult().getClass());
+
+      is = getClass().getResourceAsStream("/queryasyncjobresultresponse-extracttemplate.json");
+      response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      assertTrue(response.getResult() instanceof TemplateExtraction, "response expected to be TemplateExtraction, actually is "+response.getResult().getClass());
+   }
 }
