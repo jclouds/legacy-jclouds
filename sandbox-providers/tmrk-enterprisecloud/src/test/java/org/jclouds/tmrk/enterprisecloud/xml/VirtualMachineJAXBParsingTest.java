@@ -140,6 +140,18 @@ public class VirtualMachineJAXBParsingTest extends BaseRestClientTest {
        assertEquals(1,hardwareConfiguration.getProcessorCount());
        Memory memory = Memory.builder().value(384).unit("MB").build();
        assertEquals(memory,hardwareConfiguration.getMemory());
+       assertDisks(hardwareConfiguration.getDisks());
    }
+
+   private void assertDisks(Disks disks) {
+       VirtualDisk disk = VirtualDisk.builder().index(0).name("Hard Disk 1")
+                                     .size(Size.builder().value(10).unit("GB").build())
+                                     .build();
+       Disks expectedDisks = new Disks();
+       expectedDisks.setVirtualDisk(disk);
+
+       assertEquals(expectedDisks,disks);
+   }
+
 
 }

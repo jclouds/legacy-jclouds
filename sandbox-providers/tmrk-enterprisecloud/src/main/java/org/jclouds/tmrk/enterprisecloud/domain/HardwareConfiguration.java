@@ -54,6 +54,7 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
        private Actions actions;
        private int processorCount;
        private Memory memory;
+       private Disks disks;
 
        /**
         * @see HardwareConfiguration#getActions
@@ -80,9 +81,17 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
           return this;
        }
 
+       /**
+        * @see HardwareConfiguration#getDisks
+        */
+       public Builder disks(Disks disks) {
+          this.disks = disks;
+          return this;
+       }
+
        @Override
        public HardwareConfiguration build() {
-           return new HardwareConfiguration(actions, processorCount, memory);
+           return new HardwareConfiguration(actions, processorCount, memory, disks);
        }
 
       /**
@@ -119,23 +128,29 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
 
       public Builder fromHardwareConfiguration(HardwareConfiguration in) {
         return fromResource(in).actions(in.getActions())
-                               .processorCount(in.getProcessorCount());
+                               .processorCount(in.getProcessorCount())
+                               .memory(in.getMemory())
+                               .disks(in.getDisks());
       }
    }
 
-   @XmlElement(name = "Actions", required = true)
+   @XmlElement(name = "Actions", required = false)
    private Actions actions;
 
    @XmlElement(name = "ProcessorCount", required = true)
    private int processorCount;
 
-   @XmlElement(name = "Memory", required = true)
+   @XmlElement(name = "Memory", required = false)
    private Memory memory;
 
-   public HardwareConfiguration(@Nullable Actions actions, int processorCount, @Nullable Memory memory) {
+   @XmlElement(name = "Disks", required = false)
+   private Disks disks;
+
+   public HardwareConfiguration(@Nullable Actions actions, int processorCount, @Nullable Memory memory, @Nullable Disks disks) {
        this.actions = checkNotNull(actions, "actions");
        this.processorCount = processorCount;
        this.memory = memory;
+       this.disks = disks;
    }
 
     protected HardwareConfiguration() {
@@ -152,6 +167,10 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
 
     public Memory getMemory() {
         return memory;
+    }
+
+    public Disks getDisks() {
+        return disks;
     }
 
     @Override
@@ -182,6 +201,7 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
 
     @Override
     public String string() {
-        return super.string()+", actions="+actions+", processorCount="+processorCount+", memory="+memory;
+        return super.string()+", actions="+actions+", processorCount="+processorCount+
+              ", memory="+memory+", disks="+disks;
     }
 }
