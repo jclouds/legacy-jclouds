@@ -18,19 +18,18 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Nullable;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
-import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.gson.annotations.SerializedName;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Adrian Cole
@@ -42,13 +41,11 @@ public class Network implements Comparable<Network> {
 
    public static class Builder {
       private long id;
-      private String account;
       private String broadcastDomainType;
       private URI broadcastURI;
       private String displayText;
       private List<String> DNS = ImmutableList.of();
       private String domain;
-      private long domainId;
       private String endIP;
       private String gateway;
       private boolean isDefault;
@@ -68,15 +65,10 @@ public class Network implements Comparable<Network> {
       private String VLAN;
       private TrafficType trafficType;
       private long zoneId;
-      private Set<? extends NetworkService> services = ImmutableSet.<NetworkService> of();
+      private Set<? extends NetworkService> services = ImmutableSet.<NetworkService>of();
 
       public Builder id(long id) {
          this.id = id;
-         return this;
-      }
-
-      public Builder account(String account) {
-         this.account = account;
          return this;
       }
 
@@ -102,11 +94,6 @@ public class Network implements Comparable<Network> {
 
       public Builder domain(String domain) {
          this.domain = domain;
-         return this;
-      }
-
-      public Builder domainId(long domainId) {
-         this.domainId = domainId;
          return this;
       }
 
@@ -206,12 +193,12 @@ public class Network implements Comparable<Network> {
       }
 
       public Builder services(Set<? extends NetworkService> services) {
-         this.services = ImmutableSet.<NetworkService> copyOf(checkNotNull(services, "services"));
+         this.services = ImmutableSet.<NetworkService>copyOf(checkNotNull(services, "services"));
          return this;
       }
 
       public Network build() {
-         return new Network(id, account, broadcastDomainType, broadcastURI, displayText, DNS, domain, domainId, endIP,
+         return new Network(id, broadcastDomainType, broadcastURI, displayText, DNS, domain, endIP,
                gateway, isDefault, isShared, isSystem, netmask, networkDomain, networkOfferingAvailability,
                networkOfferingDisplayText, networkOfferingId, networkOfferingName, related, startIP, name, state,
                guestIPType, VLAN, trafficType, zoneId, services);
@@ -219,7 +206,6 @@ public class Network implements Comparable<Network> {
    }
 
    private long id;
-   private String account;
    @SerializedName("broadcastdomaintype")
    private String broadcastDomainType;
    @SerializedName("broadcasturi")
@@ -230,10 +216,8 @@ public class Network implements Comparable<Network> {
    private String DNS1;
    @SerializedName("dns2")
    private String DNS2;
+   @SerializedName("networkdomain")
    private String domain;
-   @Nullable
-   @SerializedName("domainid")
-   private long domainId;
    @SerializedName("endip")
    private String endIP;
    private String gateway;
@@ -270,7 +254,7 @@ public class Network implements Comparable<Network> {
    private long zoneId;
    @SerializedName("service")
    // so tests and serialization comes out expected
-   private SortedSet<? extends NetworkService> services = ImmutableSortedSet.<NetworkService> of();
+   private SortedSet<? extends NetworkService> services = ImmutableSortedSet.<NetworkService>of();
 
    /**
     * present only for serializer
@@ -279,21 +263,19 @@ public class Network implements Comparable<Network> {
 
    }
 
-   public Network(long id, String account, String broadcastDomainType, URI broadcastURI, String displayText,
-         List<String> DNS, String domain, long domainId, String endIP, String gateway, boolean isDefault,
-         boolean isShared, boolean isSystem, String netmask, String networkDomain, String networkOfferingAvailability,
-         String networkOfferingDisplayText, long networkOfferingId, String networkOfferingName, long related,
-         String startIP, String name, String state, GuestIPType type, String vLAN, TrafficType trafficType,
-         long zoneId, Set<? extends NetworkService> services) {
+   public Network(long id, String broadcastDomainType, URI broadcastURI, String displayText,
+                  List<String> DNS, String domain, String endIP, String gateway, boolean isDefault,
+                  boolean isShared, boolean isSystem, String netmask, String networkDomain, String networkOfferingAvailability,
+                  String networkOfferingDisplayText, long networkOfferingId, String networkOfferingName, long related,
+                  String startIP, String name, String state, GuestIPType type, String vLAN, TrafficType trafficType,
+                  long zoneId, Set<? extends NetworkService> services) {
       this.id = id;
-      this.account = account;
       this.broadcastDomainType = broadcastDomainType;
       this.broadcastURI = broadcastURI;
       this.displayText = displayText;
       this.DNS1 = checkNotNull(DNS, "DNS").size() > 0 ? DNS.get(0) : null;
       this.DNS2 = DNS.size() > 1 ? DNS.get(1) : null;
       this.domain = domain;
-      this.domainId = domainId;
       this.endIP = endIP;
       this.gateway = gateway;
       this.isDefault = isDefault;
@@ -321,13 +303,6 @@ public class Network implements Comparable<Network> {
     */
    public long getId() {
       return id;
-   }
-
-   /**
-    * @return the name of the account to which the template beLongs
-    */
-   public String getAccount() {
-      return account;
    }
 
    /**
@@ -368,14 +343,6 @@ public class Network implements Comparable<Network> {
     */
    public String getDomain() {
       return domain;
-   }
-
-   /**
-    * @return the ID of the containing domain, null for public zones
-    */
-   @Nullable
-   public long getDomainId() {
-      return domainId;
    }
 
    /**
@@ -525,12 +492,10 @@ public class Network implements Comparable<Network> {
       result = prime * result + ((DNS1 == null) ? 0 : DNS1.hashCode());
       result = prime * result + ((DNS2 == null) ? 0 : DNS2.hashCode());
       result = prime * result + ((VLAN == null) ? 0 : VLAN.hashCode());
-      result = prime * result + ((account == null) ? 0 : account.hashCode());
       result = prime * result + ((broadcastDomainType == null) ? 0 : broadcastDomainType.hashCode());
       result = prime * result + ((broadcastURI == null) ? 0 : broadcastURI.hashCode());
       result = prime * result + ((displayText == null) ? 0 : displayText.hashCode());
       result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-      result = prime * result + (int) (domainId ^ (domainId >>> 32));
       result = prime * result + ((endIP == null) ? 0 : endIP.hashCode());
       result = prime * result + ((gateway == null) ? 0 : gateway.hashCode());
       result = prime * result + ((guestIPType == null) ? 0 : guestIPType.hashCode());
@@ -578,11 +543,6 @@ public class Network implements Comparable<Network> {
             return false;
       } else if (!VLAN.equals(other.VLAN))
          return false;
-      if (account == null) {
-         if (other.account != null)
-            return false;
-      } else if (!account.equals(other.account))
-         return false;
       if (broadcastDomainType == null) {
          if (other.broadcastDomainType != null)
             return false;
@@ -602,8 +562,6 @@ public class Network implements Comparable<Network> {
          if (other.domain != null)
             return false;
       } else if (!domain.equals(other.domain))
-         return false;
-      if (domainId != other.domainId)
          return false;
       if (endIP == null) {
          if (other.endIP != null)
@@ -684,10 +642,10 @@ public class Network implements Comparable<Network> {
    @Override
    public String toString() {
       return "[id=" + id + ", state=" + state + ", name=" + name + ", displayText=" + displayText + ", guestIPType="
-            + guestIPType + ", trafficType=" + trafficType + ", DNS=" + getDNS() + ", VLAN=" + VLAN + ", account="
-            + account + ", startIP=" + startIP + ", endIP=" + endIP + ", netmask=" + netmask + ", gateway=" + gateway
+            + guestIPType + ", trafficType=" + trafficType + ", DNS=" + getDNS() + ", VLAN=" + VLAN
+            + ", startIP=" + startIP + ", endIP=" + endIP + ", netmask=" + netmask + ", gateway=" + gateway
             + ", broadcastDomainType=" + broadcastDomainType + ", broadcastURI=" + broadcastURI + ", services="
-            + services + ", domain=" + domain + ", domainId=" + domainId + ", isDefault=" + isDefault + ", isShared="
+            + services + ", domain=" + domain + ", isDefault=" + isDefault + ", isShared="
             + isShared + ", isSystem=" + isSystem + ", related=" + related + ", zoneId=" + zoneId + ", domain="
             + networkDomain + ", networkOfferingAvailability=" + networkOfferingAvailability
             + ", networkOfferingDisplayText=" + networkOfferingDisplayText + ", networkOfferingId=" + networkOfferingId
