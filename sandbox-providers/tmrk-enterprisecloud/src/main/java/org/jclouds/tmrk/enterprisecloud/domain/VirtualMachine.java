@@ -18,16 +18,21 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import static com.google.common.base.CaseFormat.LOWER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -56,7 +61,15 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
       private Actions actions;
       private Tasks tasks;
       private String description;
+      private VirtualMachineStatus status;
+
       private Layout layout;
+      private Boolean poweredOn;
+      private ToolsStatus toolsStatus;
+      private VirtualMachineMediaStatus mediaStatus;
+      private Boolean customizationPending;
+      private OperatingSystem operatingSystem;
+      private HardwareConfiguration hardwareConfiguration;
 
       /**
        * @see VirtualMachine#getLinks
@@ -102,9 +115,75 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
           return this;
        }
 
+       /**
+        * @see VirtualMachine#getToolsStatus()
+        */
+       public Builder toolStatus(ToolsStatus toolsStatus) {
+          this.toolsStatus = toolsStatus;
+          return this;
+       }
+
+       /**
+        * @see VirtualMachine#isCustomizationPending()
+        */
+       public Builder customizationPending(Boolean customizationPending) {
+          this.customizationPending = customizationPending;
+          return this;
+       }
+
+       /**
+        * @see VirtualMachine#getStatus()
+        */
+       public Builder status(VirtualMachineStatus status) {
+          this.status = status;
+          return this;
+       }
+
+       /**
+        * @see VirtualMachine#getToolsStatus()
+        */
+       public Builder toolsStatus(ToolsStatus toolsStatus) {
+          this.toolsStatus = toolsStatus;
+          return this;
+       }
+
+       /**
+        * @see VirtualMachine#getMediaStatus()
+        */
+       public Builder mediaStatus(VirtualMachineMediaStatus mediaStatus) {
+          this.mediaStatus = mediaStatus;
+          return this;
+       }
+
+       /**
+        * @see VirtualMachine#isPoweredOn()
+        */
+       public Builder poweredOn(Boolean poweredOn) {
+          this.poweredOn = poweredOn;
+          return this;
+       }
+
+       /**
+        * @see VirtualMachine#getOperatingSystem()
+        */
+       public Builder operatingSystem(OperatingSystem operatingSystem) {
+          this.operatingSystem = operatingSystem;
+          return this;
+       }
+
+       /**
+        * @see VirtualMachine#getHardwareConfiguration()
+        */
+       public Builder hardwareConfiguration(HardwareConfiguration hardwareConfiguration) {
+          this.hardwareConfiguration = hardwareConfiguration;
+          return this;
+       }
+
       @Override
       public VirtualMachine build() {
-         return new VirtualMachine(href, type, name, tasks, actions, links, description, layout);
+         return new VirtualMachine(href, type, name, tasks, actions, links, description, layout,
+               status, poweredOn, toolsStatus, mediaStatus, customizationPending, operatingSystem,
+               hardwareConfiguration);
       }
 
       public Builder fromVirtualMachine(VirtualMachine in) {
@@ -112,7 +191,14 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
             .links(in.getLinks())
             .tasks(in.getTasks())
             .actions(in.getActions())
-            .description(in.getDescription());
+            .description(in.getDescription())
+            .status(in.getStatus())
+            .poweredOn(in.isPoweredOn())
+            .toolsStatus(in.getToolsStatus())
+            .mediaStatus(in.getMediaStatus())
+            .customizationPending(in.isCustomizationPending())
+            .operatingSystem(in.getOperatingSystem())
+            .hardwareConfiguration(in.getHardwareConfiguration());
       }
 
       /**
@@ -181,13 +267,44 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
    @XmlElement(name = "Layout", required = false)
    private Layout layout;
 
-   public VirtualMachine(URI href, String type, String name, Tasks tasks, Actions actions, Links links, String description, Layout layout) {
+   @XmlElement(name = "Status", required = false)
+   private VirtualMachineStatus status;
+
+   @XmlElement(name = "PoweredOn", required = false)
+   private Boolean poweredOn;
+
+   @XmlElement(name = "ToolsStatus", required = false)
+   private ToolsStatus toolsStatus;
+
+   @XmlElement(name = "MediaStatus", required = false)
+   private VirtualMachineMediaStatus mediaStatus;
+
+   @XmlElement(name = "CustomizationPending", required = false)
+   private Boolean customizationPending;
+
+   @XmlElement(name = "OperatingSystem", required = false)
+   private OperatingSystem operatingSystem;
+
+   @XmlElement(name = "HardwareConfiguration", required = false)
+   private HardwareConfiguration hardwareConfiguation;
+
+    public VirtualMachine(URI href, String type, String name, Tasks tasks, Actions actions, Links links, String description, @Nullable Layout layout,
+                         VirtualMachineStatus status, @Nullable Boolean poweredOn, @Nullable ToolsStatus toolsStatus, @Nullable VirtualMachineMediaStatus mediaStatus, @Nullable Boolean customizationPending,
+                         @Nullable OperatingSystem operatingSystem, @Nullable HardwareConfiguration hardwareConfiguration ) {
       super(href, type, name);
       this.description = checkNotNull(description, "description");
       this.links = checkNotNull(links, "links");
       this.tasks = checkNotNull(tasks, "tasks");
       this.actions = checkNotNull(actions, "actions");
+      this.status = checkNotNull(status, "status");
+
       this.layout = layout;
+      this.poweredOn = poweredOn;
+      this.toolsStatus = toolsStatus;
+      this.mediaStatus = mediaStatus;
+      this.customizationPending = customizationPending;
+      this.operatingSystem = operatingSystem;
+      this.hardwareConfiguation = hardwareConfiguration;
    }
 
    protected VirtualMachine() {
@@ -217,8 +334,54 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
        return description;
    }
 
+   public VirtualMachineStatus getStatus() {
+       return status;
+   }
+
    public Layout getLayout() {
        return layout;
+   }
+
+   /**
+    * Is optional, so may return null
+    */
+   public Boolean isPoweredOn() {
+       return poweredOn;
+   }
+
+    /**
+     * Is optional, so may return null
+     */
+   public ToolsStatus getToolsStatus() {
+       return toolsStatus;
+   }
+
+   /**
+    * Is optional, so may return null
+    */
+   public VirtualMachineMediaStatus getMediaStatus() {
+       return mediaStatus;
+   }
+
+   /**
+    * Is optional, so may return null
+    */
+   public HardwareConfiguration getHardwareConfiguration() {
+       return hardwareConfiguation;
+   }
+
+    /**
+     * Is optional, so may return null
+     */
+   public Boolean isCustomizationPending() {
+       return customizationPending;
+   }
+
+   /**
+    * Is optional, so may return null
+    */
+   public OperatingSystem getOperatingSystem() {
+       return operatingSystem;
    }
 
     @Override
@@ -230,11 +393,22 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
         VirtualMachine that = (VirtualMachine) o;
 
         if (!actions.equals(that.actions)) return false;
+        if (customizationPending != null ? !customizationPending.equals(that.customizationPending) : that.customizationPending != null)
+            return false;
         if (!description.equals(that.description)) return false;
+        if (hardwareConfiguation != null ? !hardwareConfiguation.equals(that.hardwareConfiguation) : that.hardwareConfiguation != null)
+            return false;
         if (layout != null ? !layout.equals(that.layout) : that.layout != null)
             return false;
         if (!links.equals(that.links)) return false;
+        if (mediaStatus != that.mediaStatus) return false;
+        if (operatingSystem != null ? !operatingSystem.equals(that.operatingSystem) : that.operatingSystem != null)
+            return false;
+        if (poweredOn != null ? !poweredOn.equals(that.poweredOn) : that.poweredOn != null)
+            return false;
+        if (status != that.status) return false;
         if (!tasks.equals(that.tasks)) return false;
+        if (toolsStatus != that.toolsStatus) return false;
 
         return true;
     }
@@ -247,12 +421,63 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
         result = 31 * result + actions.hashCode();
         result = 31 * result + description.hashCode();
         result = 31 * result + (layout != null ? layout.hashCode() : 0);
+        result = 31 * result + status.hashCode();
+        result = 31 * result + (poweredOn != null ? poweredOn.hashCode() : 0);
+        result = 31 * result + (toolsStatus != null ? toolsStatus.hashCode() : 0);
+        result = 31 * result + (mediaStatus != null ? mediaStatus.hashCode() : 0);
+        result = 31 * result + (customizationPending != null ? customizationPending.hashCode() : 0);
+        result = 31 * result + (operatingSystem != null ? operatingSystem.hashCode() : 0);
+        result = 31 * result + (hardwareConfiguation != null ? hardwareConfiguation.hashCode() : 0);
         return result;
     }
 
     @Override
    public String string() {
-      return super.string()+", links="+links+", tasks="+tasks+", actions="+actions+", description="+description+", layout="+layout;
+      return super.string()+", links="+links+", tasks="+tasks+", actions="+actions+", description="+description+", layout="+layout+
+                            ", status="+status+", poweredOn="+poweredOn+", toolsStatus="+toolsStatus+", mediaStatus="+mediaStatus+
+                            ", operatingSystem="+operatingSystem+", hardwareConfiguration="+hardwareConfiguation;
+   }
+
+   @XmlEnum
+   public enum VirtualMachineStatus {
+       @XmlEnumValue("NotDeployed")
+       NOT_DEPLOYED,
+       @XmlEnumValue("Deployed")
+       DEPLOYED,
+       @XmlEnumValue("Orphaned")
+       ORPHANED,
+       @XmlEnumValue("TaskInProgress")
+       TASK_IN_PROGRESS,
+       @XmlEnumValue("CopyInProgress")
+       COPY_IN_PROGRESS;
+
+       public String value() {
+           return UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
+       }
+
+       @Override
+       public String toString() {
+           return value();
+       }
+
+   }
+
+   @XmlEnum
+   public enum VirtualMachineMediaStatus {
+       @XmlEnumValue("Unmounted")
+       UNMOUNTED,
+       @XmlEnumValue("Mounted")
+       MOUNTED;
+
+       public String value() {
+           return UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
+       }
+
+       @Override
+       public String toString() {
+           return value();
+       }
+
    }
 
 }
