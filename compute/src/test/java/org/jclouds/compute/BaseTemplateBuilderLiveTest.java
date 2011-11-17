@@ -257,35 +257,25 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
 
    @Test
    public void testTemplateBuilderWithLoginUserSpecified() throws IOException {
+      tryOverrideUsingPropertyKey("jclouds.login-user");
+      tryOverrideUsingPropertyKey(provider + ".login-user");
+   }
+
+   protected void tryOverrideUsingPropertyKey(String propertyKey) {
       ComputeServiceContext context = null;
       try {
          Properties overrides = setupProperties();
          String login = loginUser != null ? loginUser : "foo:bar";
-         overrides.setProperty("jclouds.login-user", login);
+         overrides.setProperty(propertyKey, login);
 
          context = new ComputeServiceContextFactory().createContext(provider,
                ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
 
          Iterable<String> userPass = Splitter.on(':').split(login);
          String user = Iterables.get(userPass, 0);
-         String pass = Iterables.get(userPass, 1);
+         String pass = Iterables.size(userPass) > 1 ? Iterables.get(userPass, 1) : null;
          assertEquals(context.getComputeService().templateBuilder().build().getImage().getDefaultCredentials(),
                new Credentials(user, pass));
-      } finally {
-         if (context != null)
-            context.close();
-      }
-
-      context = null;
-      try {
-         Properties overrides = setupProperties();
-         overrides.setProperty(provider + ".login-user", "foo:bar");
-
-         context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
-
-         assertEquals(context.getComputeService().templateBuilder().build().getImage().getDefaultCredentials(),
-               new Credentials("foo", "bar"));
       } finally {
          if (context != null)
             context.close();
