@@ -26,8 +26,8 @@ import org.testng.annotations.Test;
  * @author Dan Lo Bianco
  */
 @Test(groups = "live", singleThreaded = true)
-public class CloudLoadBalancersUSClientLiveTest extends LoadBalancerClientLiveTest {
-   public CloudLoadBalancersUSClientLiveTest() {
+public class CloudLoadBalancersUSLoadBalancerClientLiveTest extends LoadBalancerClientLiveTest {
+   public CloudLoadBalancersUSLoadBalancerClientLiveTest() {
       provider = "cloudloadbalancers-us";
    }
 }

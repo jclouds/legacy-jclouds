@@ -30,6 +30,7 @@ import org.jclouds.cloudloadbalancers.domain.LoadBalancerRequest;
 import org.jclouds.cloudloadbalancers.domain.NodeRequest;
 import org.jclouds.cloudloadbalancers.domain.VirtualIP.Type;
 import org.testng.annotations.AfterGroups;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -43,6 +44,12 @@ import com.google.common.collect.Sets;
 @Test(groups = "live", singleThreaded = true, testName = "LoadBalancerClientLiveTest")
 public class LoadBalancerClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
    private Set<LoadBalancer> lbs = Sets.newLinkedHashSet();
+   
+   @BeforeGroups(groups = "live")
+   protected void setup() {
+	   assertTrue(client.getConfiguredRegions().size() > 0, "Need to have some regions!");
+	   Logger.getAnonymousLogger().info("running against regions "+client.getConfiguredRegions());
+   }
 
    @AfterGroups(groups = "live")
    protected void tearDown() {

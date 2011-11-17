@@ -171,7 +171,7 @@ public class Node extends BaseNode<Node> {
 
    @Override
    public String toString() {
-      return String.format("[id=%s, address=%s, condition=%s,  port=%s,  weight=%s,status=%s]", id, address, condition,
+      return String.format("[id=%s, address=%s, condition=%s,  port=%s,  weight=%s, status=%s]", id, address, condition,
                port, weight, status);
    }
 
