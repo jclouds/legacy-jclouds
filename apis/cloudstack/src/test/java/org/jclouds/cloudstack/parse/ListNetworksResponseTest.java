@@ -66,7 +66,7 @@ public class ListNetworksResponseTest extends BaseSetParserTest<Network> {
                   .broadcastURI(URI.create("vlan://240"))
                   .DNS(ImmutableList.of("8.8.8.8"))
                   .guestIPType(GuestIPType.VIRTUAL)
-                  .domain("ROOT")
+                  .domain("cs3cloud.internal")
                   .isDefault(true)
                   .services(
                         ImmutableSortedSet.of(
