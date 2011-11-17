@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.compute.options;
 
+import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.ipOnDefaultNetwork;
+import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.ipsToNetworks;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.keyPair;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.networkId;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.networkIds;
@@ -29,6 +31,9 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import org.testng.collections.Maps;
+
+import java.util.Map;
 
 /**
  * Tests possible uses of {@code CloudStackTemplateOptions} and
@@ -105,6 +110,39 @@ public class CloudStackTemplateOptionsTest {
       TemplateOptions options = networkIds(ImmutableSet.of(3l));
       assertEquals(options.as(CloudStackTemplateOptions.class).getNetworkIds(), ImmutableSet.of(3l));
    }
+
+   @Test
+   public void testIpOnDefaultNetwork() {
+      TemplateOptions options = new CloudStackTemplateOptions().ipOnDefaultNetwork("10.0.0.1");
+      assertEquals(options.as(CloudStackTemplateOptions.class).getIpOnDefaultNetwork(), "10.0.0.1");
+   }
+
+   @Test
+   public void testIpOnDefaultNetworkStatic() {
+      TemplateOptions options = ipOnDefaultNetwork("10.0.0.1");
+      assertEquals(options.as(CloudStackTemplateOptions.class).getIpOnDefaultNetwork(), "10.0.0.1");
+   }
+
+   @Test
+   public void testIpsToNetwork() {
+      Map<String, Long> ipsToNetworks = Maps.newHashMap();
+      ipsToNetworks.put("10.0.0.1", 5L);
+
+      TemplateOptions options = new CloudStackTemplateOptions().ipsToNetworks(ipsToNetworks);
+      assertEquals(options.as(CloudStackTemplateOptions.class)
+         .getIpsToNetworks().get("10.0.0.1").longValue(), 5L);
+   }
+
+   @Test
+   public void testIpsToNetworkStatic() {
+      Map<String, Long> ipsToNetworks = Maps.newHashMap();
+      ipsToNetworks.put("10.0.0.1", 5L);
+
+      TemplateOptions options = ipsToNetworks(ipsToNetworks);
+      assertEquals(options.as(CloudStackTemplateOptions.class)
+         .getIpsToNetworks().get("10.0.0.1").longValue(), 5L);
+   }
+
 
    @Test
    public void testKeyPair() {
