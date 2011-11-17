@@ -18,9 +18,7 @@
  */
 package org.jclouds.cloudstack.parse;
 
-import java.net.URI;
-import java.util.Set;
-
+import com.google.common.collect.*;
 import org.jclouds.cloudstack.domain.GuestIPType;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkService;
@@ -29,11 +27,8 @@ import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.ImmutableSortedSet;
+import java.net.URI;
+import java.util.Set;
 
 /**
  * 
@@ -71,8 +66,6 @@ public class ListNetworksResponseTest extends BaseSetParserTest<Network> {
                   .broadcastURI(URI.create("vlan://240"))
                   .DNS(ImmutableList.of("8.8.8.8"))
                   .guestIPType(GuestIPType.VIRTUAL)
-                  .account("adrian")
-                  .domainId(1)
                   .domain("ROOT")
                   .isDefault(true)
                   .services(
