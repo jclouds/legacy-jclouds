@@ -139,5 +139,5 @@
             type="application/vnd.tmrk.cloud.operatingSystem"/>
     <ToolsStatus>NotRunning</ToolsStatus>
     <MediaStatus>Unmounted</MediaStatus>
-    <CustomizationPending>false</CustomizationPending>
+    <CustomizationPending>true</CustomizationPending>
 </VirtualMachine>
