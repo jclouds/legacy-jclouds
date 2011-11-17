@@ -39,7 +39,7 @@
     <test.ninefold-compute.identity>FIXME_IDENTITY</test.ninefold-compute.identity>
     <test.ninefold-compute.credential>FIXME_CREDENTIAL</test.ninefold-compute.credential>
     <test.ninefold-compute.image-id>575</test.ninefold-compute.image-id>
-    <test.ninefold-compute.login-user>user</test.ninefold-compute.login-user>
+    <test.ninefold-compute.login-user>user:Password01</test.ninefold-compute.login-user>
   </properties>
 
   <dependencies>
