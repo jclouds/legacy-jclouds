@@ -38,6 +38,7 @@ import org.jclouds.tmrk.enterprisecloud.domain.*;
 import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachine.VirtualMachineStatus;
 import org.jclouds.tmrk.enterprisecloud.features.VirtualMachineAsyncClient;
 import org.testng.Assert;
+import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -119,6 +120,7 @@ public class VirtualMachineJAXBParsingTest extends BaseRestClientTest {
       assertTrue(virtualMachine.isCustomizationPending(),"virtual machine is pending customization");
       assertOperatingSystem(virtualMachine.getOperatingSystem());
       assertHardwareConfiguration(virtualMachine.getHardwareConfiguration());
+      assertIpAddresses(virtualMachine.getIpAddresses());
    }
 
    private void assertLayout(Layout layout) {
@@ -135,11 +137,55 @@ public class VirtualMachineJAXBParsingTest extends BaseRestClientTest {
        Assert.assertEquals(os, operatingSystem);
    }
 
-   private void assertHardwareConfiguration(HardwareConfiguration hardwareConfiguration) {
+   private void assertHardwareConfiguration(HardwareConfiguration hardwareConfiguration) throws Exception {
        assertEquals(1,hardwareConfiguration.getActions().size());
        assertEquals(1,hardwareConfiguration.getProcessorCount());
        Memory memory = Memory.builder().value(384).unit("MB").build();
        assertEquals(memory,hardwareConfiguration.getMemory());
+       assertDisks(hardwareConfiguration.getDisks());
+       assertNics(hardwareConfiguration.getNics().getVirtualNics());
    }
 
+   private void assertDisks(Disks disks) {
+       VirtualDisk disk = VirtualDisk.builder().index(0).name("Hard Disk 1")
+                                     .size(Size.builder().value(10).unit("GB").build())
+                                     .build();
+       Disks expectedDisks = new Disks();
+       expectedDisks.setVirtualDisk(disk);
+
+       assertEquals(expectedDisks, disks);
+   }
+
+
+   private void assertNics(Set<VirtualNic> nics) throws Exception {
+
+       assertEquals(1, nics.size());
+
+       NetworkReference network = NetworkReference.builder()
+             .href(new URI("/cloudapi/ecloud/networks/3936"))
+             .name("10.146.204.64/28")
+             .type("application/vnd.tmrk.cloud.network")
+             .networkType(NetworkReference.NetworkType.INTERNAL)
+             .build();
+
+       VirtualNic nic = VirtualNic.builder()
+             .macAddress("00:50:56:b8:00:58")
+             .name("Network adapter 1")
+             .network(network)
+             .unitNumber(7)
+             .build();
+       assertEquals(nic,nics.iterator().next());
+   }
+
+   private void assertIpAddresses(VirtualMachineIpAddresses ipAddresses) {
+       AssignedIpAddresses assignedIpAddresses = ipAddresses.getAssignedIpAddresses();
+       Assert.assertNotNull(assignedIpAddresses);
+       Set<DeviceNetwork> deviceNetworks = assignedIpAddresses.getNetworks().getDeviceNetworks();
+       assertEquals(1,deviceNetworks.size());
+       DeviceNetwork network = deviceNetworks.iterator().next(); //todo use guava instead.
+       Set<String> ips = network.getIpAddresses().getIpAddresses();
+       assertEquals(2,ips.size());
+       assertTrue(ips.contains("10.146.204.67"));
+       assertTrue(ips.contains("10.146.204.68"));
+   }
 }

@@ -21,28 +21,29 @@ package org.jclouds.tmrk.enterprisecloud.domain;
 import com.google.common.collect.Sets;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Wraps individual Action elements.
- * Needed because parsing is done with JAXB and it does not handle Generic collections
+ * Wraps individual IpAddresses
  * @author Jason King
  */
-@XmlRootElement(name = "Actions")
-public class Actions {
+public class DeviceIps {
 
-    private LinkedHashSet<Action> actions = Sets.newLinkedHashSet();
+    private LinkedHashSet<String> ipAddresses = Sets.newLinkedHashSet();
 
-    @XmlElement(name = "Action")
-    void setAction(Action action) {
-        this.actions.add(action);
+    protected DeviceIps() {
+        // For JAXB
     }
 
-    public Set<Action> getActions() {
-        return Collections.unmodifiableSet(actions);
+    @XmlElement(name = "IpAddress")
+    void setIpAddress(String ipAddress) {
+        this.ipAddresses.add(ipAddress);
+    }
+
+    public Set<String> getIpAddresses() {
+        return Collections.unmodifiableSet(ipAddresses);
     }
 
     @Override
@@ -50,20 +51,20 @@ public class Actions {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Actions actions1 = (Actions) o;
+        DeviceIps deviceIps = (DeviceIps) o;
 
-        if (!actions.equals(actions1.actions)) return false;
+        if (!ipAddresses.equals(deviceIps.ipAddresses)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return actions.hashCode();
+        return ipAddresses.hashCode();
     }
 
     public String toString() {
-        return "["+ actions.toString()+"]";
+        return "["+ ipAddresses.toString()+"]";
     }
 
 }

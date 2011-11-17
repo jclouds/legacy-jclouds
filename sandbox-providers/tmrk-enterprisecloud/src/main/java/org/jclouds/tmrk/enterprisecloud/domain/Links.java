@@ -45,6 +45,23 @@ public class Links {
         return Collections.unmodifiableSet(links);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Links links1 = (Links) o;
+
+        if (!links.equals(links1.links)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return links.hashCode();
+    }
+
     public String toString() {
         return "["+ links.toString()+"]";
     }

@@ -54,6 +54,8 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
        private Actions actions;
        private int processorCount;
        private Memory memory;
+       private Disks disks;
+       private Nics nics;
 
        /**
         * @see HardwareConfiguration#getActions
@@ -80,9 +82,25 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
           return this;
        }
 
+       /**
+        * @see HardwareConfiguration#getDisks
+        */
+       public Builder disks(Disks disks) {
+          this.disks = disks;
+          return this;
+       }
+
+       /**
+        * @see HardwareConfiguration#getDisks
+        */
+       public Builder nics(Nics nics) {
+          this.nics = nics;
+          return this;
+       }
+
        @Override
        public HardwareConfiguration build() {
-           return new HardwareConfiguration(actions, processorCount, memory);
+           return new HardwareConfiguration(actions, processorCount, memory, disks, nics);
        }
 
       /**
@@ -119,23 +137,34 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
 
       public Builder fromHardwareConfiguration(HardwareConfiguration in) {
         return fromResource(in).actions(in.getActions())
-                               .processorCount(in.getProcessorCount());
+                               .processorCount(in.getProcessorCount())
+                               .memory(in.getMemory())
+                               .disks(in.getDisks())
+                               .nics(in.getNics());
       }
    }
 
-   @XmlElement(name = "Actions", required = true)
+   @XmlElement(name = "Actions", required = false)
    private Actions actions;
 
    @XmlElement(name = "ProcessorCount", required = true)
    private int processorCount;
 
-   @XmlElement(name = "Memory", required = true)
+   @XmlElement(name = "Memory", required = false)
    private Memory memory;
 
-   public HardwareConfiguration(@Nullable Actions actions, int processorCount, @Nullable Memory memory) {
+   @XmlElement(name = "Disks", required = false)
+   private Disks disks;
+
+   @XmlElement(name = "Nics", required = false)
+   private Nics nics;
+
+   public HardwareConfiguration(@Nullable Actions actions, int processorCount, @Nullable Memory memory, @Nullable Disks disks, @Nullable Nics nics) {
        this.actions = checkNotNull(actions, "actions");
        this.processorCount = processorCount;
        this.memory = memory;
+       this.disks = disks;
+       this.nics = nics;
    }
 
     protected HardwareConfiguration() {
@@ -154,6 +183,14 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
         return memory;
     }
 
+    public Disks getDisks() {
+        return disks;
+    }
+
+    public Nics getNics() {
+        return nics;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -165,7 +202,11 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
         if (processorCount != that.processorCount) return false;
         if (actions != null ? !actions.equals(that.actions) : that.actions != null)
             return false;
+        if (disks != null ? !disks.equals(that.disks) : that.disks != null)
+            return false;
         if (memory != null ? !memory.equals(that.memory) : that.memory != null)
+            return false;
+        if (nics != null ? !nics.equals(that.nics) : that.nics != null)
             return false;
 
         return true;
@@ -177,11 +218,14 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
         result = 31 * result + (actions != null ? actions.hashCode() : 0);
         result = 31 * result + processorCount;
         result = 31 * result + (memory != null ? memory.hashCode() : 0);
+        result = 31 * result + (disks != null ? disks.hashCode() : 0);
+        result = 31 * result + (nics != null ? nics.hashCode() : 0);
         return result;
     }
 
     @Override
     public String string() {
-        return super.string()+", actions="+actions+", processorCount="+processorCount+", memory="+memory;
+        return super.string()+", actions="+actions+", processorCount="+processorCount+
+              ", memory="+memory+", disks="+disks+", nics="+nics;
     }
 }
