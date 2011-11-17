@@ -38,6 +38,7 @@ import org.jclouds.tmrk.enterprisecloud.domain.*;
 import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachine.VirtualMachineStatus;
 import org.jclouds.tmrk.enterprisecloud.features.VirtualMachineAsyncClient;
 import org.testng.Assert;
+import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -119,6 +120,7 @@ public class VirtualMachineJAXBParsingTest extends BaseRestClientTest {
       assertTrue(virtualMachine.isCustomizationPending(),"virtual machine is pending customization");
       assertOperatingSystem(virtualMachine.getOperatingSystem());
       assertHardwareConfiguration(virtualMachine.getHardwareConfiguration());
+      assertIpAddresses(virtualMachine.getIpAddresses());
    }
 
    private void assertLayout(Layout layout) {
@@ -173,5 +175,17 @@ public class VirtualMachineJAXBParsingTest extends BaseRestClientTest {
              .unitNumber(7)
              .build();
        assertEquals(nic,nics.iterator().next());
+   }
+
+   private void assertIpAddresses(VirtualMachineIpAddresses ipAddresses) {
+       AssignedIpAddresses assignedIpAddresses = ipAddresses.getAssignedIpAddresses();
+       Assert.assertNotNull(assignedIpAddresses);
+       Set<DeviceNetwork> deviceNetworks = assignedIpAddresses.getNetworks().getDeviceNetworks();
+       assertEquals(1,deviceNetworks.size());
+       DeviceNetwork network = deviceNetworks.iterator().next(); //todo use guava instead.
+       Set<String> ips = network.getIpAddresses().getIpAddresses();
+       assertEquals(2,ips.size());
+       assertTrue(ips.contains("10.146.204.67"));
+       assertTrue(ips.contains("10.146.204.68"));
    }
 }
