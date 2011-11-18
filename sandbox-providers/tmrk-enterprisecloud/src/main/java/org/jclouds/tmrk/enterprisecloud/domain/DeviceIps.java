@@ -29,6 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.util.Preconditions2.checkNotEmpty;
 
 /**
+ * <xs:complexType name="DeviceIps">
  * Wraps individual IpAddresses
  * @author Jason King
  */

@@ -23,6 +23,7 @@ import org.jclouds.javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
+ * <xs:complexType name="VirtualDisk">
  * @author Jason King
  */
 public class VirtualDisk {

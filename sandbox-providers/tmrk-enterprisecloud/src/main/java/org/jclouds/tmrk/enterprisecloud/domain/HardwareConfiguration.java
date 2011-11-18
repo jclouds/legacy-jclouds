@@ -32,6 +32,7 @@ import java.util.Set;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * <xs:complexType name="HardwareConfiguration">
  * @author Jason King
  */
 public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
@@ -51,6 +52,7 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
 
    public static class Builder extends BaseResource.Builder<HardwareConfiguration> {
 
+       // TODO Links
        private Set<Action> actions = Sets.newLinkedHashSet();
        private int processorCount;
        private Memory memory;

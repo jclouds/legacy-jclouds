@@ -36,7 +36,7 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * 
+ * <xs:complexType name="VirtualMachine">
  * @author Jason King
  * 
  */
@@ -57,6 +57,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
    }
 
    public static class Builder extends BaseNamedResource.Builder<VirtualMachine> {
+      //TODO There are some more fields
       private Links links = new Links();
       private Actions actions = new Actions();
       private Tasks tasks = new Tasks();

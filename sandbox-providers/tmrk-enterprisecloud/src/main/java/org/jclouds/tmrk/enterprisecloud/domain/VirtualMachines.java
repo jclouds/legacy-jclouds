@@ -29,6 +29,7 @@ import java.util.Set;
 /**
  * Wraps individual VirtualMachine elements.
  * Needed because parsing is done with JAXB and it does not handle Generic collections
+ * <xs:complexType name="VirtualMachines">
  * @author Jason King
  */
 @XmlRootElement(name="VirtualMachines")

@@ -25,6 +25,7 @@ import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 
 /**
+ * <xs:simpleType name="ToolsStatus">
  * @author Jason King
  */
 @XmlEnum

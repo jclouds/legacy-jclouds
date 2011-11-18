@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * 
+ * <xs:complexType name="Task">
  * @author Adrian Cole
  * 
  */
@@ -110,6 +110,7 @@ public class Task extends BaseResource<Task> {
    }
 
    public static class Builder extends BaseResource.Builder<Task> {
+      //TODO There are additional fields
       protected String operation;
       protected Status status;
       protected NamedResource impactedItem;
