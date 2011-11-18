@@ -45,6 +45,23 @@ public class Tasks {
         return Collections.unmodifiableSet(tasks);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Tasks tasks1 = (Tasks) o;
+
+        if (!tasks.equals(tasks1.tasks)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return tasks.hashCode();
+    }
+
     public String toString() {
         return "["+tasks.toString()+"]";
     }

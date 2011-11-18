@@ -27,22 +27,22 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Wraps individual Action elements.
+ * Wraps individual VirtualNic elements.
  * Needed because parsing is done with JAXB and it does not handle Generic collections
  * @author Jason King
  */
-@XmlRootElement(name = "Actions")
-public class Actions {
+@XmlRootElement(name = "Nics")
+public class Nics {
 
-    private LinkedHashSet<Action> actions = Sets.newLinkedHashSet();
+    private LinkedHashSet<VirtualNic> nics = Sets.newLinkedHashSet();
 
-    @XmlElement(name = "Action")
-    void setAction(Action action) {
-        this.actions.add(action);
+    @XmlElement(name = "Nic")
+    void setVirtualNic(VirtualNic nic) {
+        this.nics.add(nic);
     }
 
-    public Set<Action> getActions() {
-        return Collections.unmodifiableSet(actions);
+    public Set<VirtualNic> getVirtualNics() {
+        return Collections.unmodifiableSet(nics);
     }
 
     @Override
@@ -50,20 +50,20 @@ public class Actions {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Actions actions1 = (Actions) o;
+        Nics nics1 = (Nics) o;
 
-        if (!actions.equals(actions1.actions)) return false;
+        if (!nics.equals(nics1.nics)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return actions.hashCode();
+        return nics.hashCode();
     }
 
     public String toString() {
-        return "["+ actions.toString()+"]";
+        return "["+ nics.toString()+"]";
     }
 
 }

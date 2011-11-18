@@ -27,22 +27,22 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Wraps individual Action elements.
+ * Wraps individual Disk elements.
  * Needed because parsing is done with JAXB and it does not handle Generic collections
  * @author Jason King
  */
-@XmlRootElement(name = "Actions")
-public class Actions {
+@XmlRootElement(name = "Disks")
+public class Disks {
 
-    private LinkedHashSet<Action> actions = Sets.newLinkedHashSet();
+    private LinkedHashSet<VirtualDisk> disks = Sets.newLinkedHashSet();
 
-    @XmlElement(name = "Action")
-    void setAction(Action action) {
-        this.actions.add(action);
+    @XmlElement(name = "Disk")
+    public void setVirtualDisk(VirtualDisk disk) {
+        this.disks.add(disk);
     }
 
-    public Set<Action> getActions() {
-        return Collections.unmodifiableSet(actions);
+    public Set<VirtualDisk> getVirtualDisks() {
+        return Collections.unmodifiableSet(disks);
     }
 
     @Override
@@ -50,20 +50,20 @@ public class Actions {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Actions actions1 = (Actions) o;
+        Disks disks1 = (Disks) o;
 
-        if (!actions.equals(actions1.actions)) return false;
+        if (!disks.equals(disks1.disks)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return actions.hashCode();
+        return disks.hashCode();
     }
 
     public String toString() {
-        return "["+ actions.toString()+"]";
+        return "["+ disks.toString()+"]";
     }
 
 }

@@ -70,6 +70,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
       private boolean customizationPending;
       private OperatingSystem operatingSystem;
       private HardwareConfiguration hardwareConfiguration;
+      private VirtualMachineIpAddresses ipAddresses;
 
       /**
        * @see VirtualMachine#getLinks
@@ -179,11 +180,19 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
           return this;
        }
 
+       /**
+        * @see VirtualMachine#getIpAddresses()
+        */
+       public Builder ipAddresses(VirtualMachineIpAddresses ipAddresses) {
+          this.ipAddresses = ipAddresses;
+          return this;
+       }
+
       @Override
       public VirtualMachine build() {
          return new VirtualMachine(href, type, name, tasks, actions, links, description, layout,
                status, poweredOn, toolsStatus, mediaStatus, customizationPending, operatingSystem,
-               hardwareConfiguration);
+               hardwareConfiguration, ipAddresses);
       }
 
       public Builder fromVirtualMachine(VirtualMachine in) {
@@ -199,7 +208,8 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
             .mediaStatus(in.getMediaStatus())
             .customizationPending(in.isCustomizationPending())
             .operatingSystem(in.getOperatingSystem())
-            .hardwareConfiguration(in.getHardwareConfiguration());
+            .hardwareConfiguration(in.getHardwareConfiguration())
+            .ipAddresses(in.getIpAddresses());
       }
 
       /**
@@ -289,9 +299,12 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
    @XmlElement(name = "HardwareConfiguration", required = false)
    private HardwareConfiguration hardwareConfiguation;
 
+   @XmlElement(name = "IpAddresses", required = false)
+   private VirtualMachineIpAddresses ipAddresses;
+
     public VirtualMachine(URI href, String type, String name, Tasks tasks, Actions actions, Links links, String description, @Nullable Layout layout,
                          VirtualMachineStatus status, boolean poweredOn, @Nullable ToolsStatus toolsStatus, @Nullable VirtualMachineMediaStatus mediaStatus, boolean customizationPending,
-                         @Nullable OperatingSystem operatingSystem, @Nullable HardwareConfiguration hardwareConfiguration ) {
+                         @Nullable OperatingSystem operatingSystem, @Nullable HardwareConfiguration hardwareConfiguration, @Nullable VirtualMachineIpAddresses ipAddresses) {
       super(href, type, name);
       this.description = checkNotNull(description, "description");
       this.links = checkNotNull(links, "links");
@@ -306,6 +319,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
       this.customizationPending = customizationPending;
       this.operatingSystem = operatingSystem;
       this.hardwareConfiguation = hardwareConfiguration;
+      this.ipAddresses = ipAddresses;
    }
 
    protected VirtualMachine() {
@@ -379,6 +393,13 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
        return operatingSystem;
    }
 
+    /**
+     * Is optional, so may return null
+     */
+   public VirtualMachineIpAddresses getIpAddresses() {
+       return ipAddresses;
+   }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -392,6 +413,8 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
         if (!actions.equals(that.actions)) return false;
         if (!description.equals(that.description)) return false;
         if (hardwareConfiguation != null ? !hardwareConfiguation.equals(that.hardwareConfiguation) : that.hardwareConfiguation != null)
+            return false;
+        if (ipAddresses != null ? !ipAddresses.equals(that.ipAddresses) : that.ipAddresses != null)
             return false;
         if (layout != null ? !layout.equals(that.layout) : that.layout != null)
             return false;
@@ -421,6 +444,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
         result = 31 * result + (customizationPending ? 1 : 0);
         result = 31 * result + (operatingSystem != null ? operatingSystem.hashCode() : 0);
         result = 31 * result + (hardwareConfiguation != null ? hardwareConfiguation.hashCode() : 0);
+        result = 31 * result + (ipAddresses != null ? ipAddresses.hashCode() : 0);
         return result;
     }
 
@@ -428,7 +452,8 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
    public String string() {
       return super.string()+", links="+links+", tasks="+tasks+", actions="+actions+", description="+description+", layout="+layout+
                             ", status="+status+", poweredOn="+poweredOn+", toolsStatus="+toolsStatus+", mediaStatus="+mediaStatus+
-                            ", customizationPending="+customizationPending+", operatingSystem="+operatingSystem+", hardwareConfiguration="+hardwareConfiguation;
+                            ", customizationPending="+customizationPending+", operatingSystem="+operatingSystem+", hardwareConfiguration="+hardwareConfiguation+
+                            ", ipAddresses="+ipAddresses;
    }
 
    @XmlEnum

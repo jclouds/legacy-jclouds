@@ -27,43 +27,24 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Wraps individual Action elements.
- * Needed because parsing is done with JAXB and it does not handle Generic collections
  * @author Jason King
  */
-@XmlRootElement(name = "Actions")
-public class Actions {
+public class VirtualMachineIpAddresses {
 
-    private LinkedHashSet<Action> actions = Sets.newLinkedHashSet();
+    @XmlElement(name = "AssignedIpAddresses")
+    private AssignedIpAddresses assignedIpAddresses;
 
-    @XmlElement(name = "Action")
-    void setAction(Action action) {
-        this.actions.add(action);
+    protected VirtualMachineIpAddresses() {
+        // For JAXB
     }
 
-    public Set<Action> getActions() {
-        return Collections.unmodifiableSet(actions);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Actions actions1 = (Actions) o;
-
-        if (!actions.equals(actions1.actions)) return false;
-
-        return true;
+    public AssignedIpAddresses getAssignedIpAddresses() {
+        return assignedIpAddresses;
     }
 
     @Override
-    public int hashCode() {
-        return actions.hashCode();
-    }
-
     public String toString() {
-        return "["+ actions.toString()+"]";
+        return "["+assignedIpAddresses+"]";
     }
 
 }
