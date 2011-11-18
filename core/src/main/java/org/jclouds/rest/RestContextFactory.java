@@ -35,6 +35,7 @@ import javax.inject.Inject;
 
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.location.reference.LocationConstants;
+import org.jclouds.util.ClassLoadingUtils;
 import org.jclouds.util.Modules2;
 import org.jclouds.util.Strings2;
 
@@ -303,8 +304,8 @@ public class RestContextFactory {
       try {
          contextBuilderClass = Providers.resolveContextBuilderClass(providerName, props);
          propertiesBuilderClass = Providers.resolvePropertiesBuilderClass(providerName, props);
-         sync = (Class<S>) (syncClassName != null ? Class.forName(syncClassName) : null);
-         async = (Class<A>) (asyncClassName != null ? Class.forName(asyncClassName) : null);
+         sync = (Class<S>) (syncClassName != null ? ClassLoadingUtils.loadClass(getClass(), syncClassName) : null);
+         async = (Class<A>) (asyncClassName != null ? ClassLoadingUtils.loadClass(getClass(), asyncClassName) : null);
       } catch (IllegalArgumentException e) {
          throw new IllegalArgumentException(
                String.format(

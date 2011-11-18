@@ -36,6 +36,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
+import org.jclouds.util.ClassLoadingUtils;
 
 /**
  * Utilities used to build init scripts.
@@ -135,8 +136,8 @@ public class Utils {
 
    public static String writeFunctionFromResource(String function, OsFamily family) {
       try {
-         String toReturn = CharStreams.toString(Resources.newReaderSupplier(Resources.getResource(Utils.class, String
-                  .format("/functions/%s.%s", function, ShellToken.SH.to(family))), Charsets.UTF_8));
+         String toReturn = CharStreams.toString(Resources.newReaderSupplier(ClassLoadingUtils.loadResource(Utils.class, String
+                 .format("/functions/%s.%s", function, ShellToken.SH.to(family))), Charsets.UTF_8));
          String lf = ShellToken.LF.to(family);
          return toReturn.endsWith(lf) ? toReturn : new StringBuilder(toReturn).append(lf).toString();
       } catch (IOException e) {
