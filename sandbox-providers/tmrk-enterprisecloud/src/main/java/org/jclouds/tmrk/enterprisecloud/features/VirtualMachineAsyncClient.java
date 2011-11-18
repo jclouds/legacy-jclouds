@@ -25,6 +25,7 @@ import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.tmrk.enterprisecloud.domain.AssignedIpAddresses;
 import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachine;
 import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachines;
 
@@ -66,5 +67,15 @@ public interface VirtualMachineAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<VirtualMachine> getVirtualMachine(@PathParam("id") long id);
+
+   /**
+    * @see VirtualMachineClient#getVirtualMachine
+    */
+   @GET
+   @Path("/virtualMachines/{id}/assignedIps")
+   @Consumes("application/vnd.tmrk.cloud.virtualMachineAssignedIps")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<AssignedIpAddresses> getAssignedIpAddresses(@PathParam("id") long id);
 
 }

@@ -18,14 +18,19 @@
  */
 package org.jclouds.tmrk.enterprisecloud.features;
 
+import com.google.common.collect.Iterables;
+import org.jclouds.tmrk.enterprisecloud.domain.AssignedIpAddresses;
+import org.jclouds.tmrk.enterprisecloud.domain.DeviceNetwork;
 import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachine;
 import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachines;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import java.net.URI;
+import java.util.Set;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tests behavior of {@code VirtualMachineClient}
@@ -60,6 +65,15 @@ public class VirtualMachineClientLiveTest extends BaseTerremarkEnterpriseCloudCl
        assert null != virtualMachine;
        assertEquals(virtualMachine.getStatus(),VirtualMachine.VirtualMachineStatus.DEPLOYED);
    }
+
+    @Test
+   public void testGetAssignedIpAddresses() throws Exception {
+        AssignedIpAddresses assignedIpAddresses = client.getAssignedIpAddresses(5504);
+        assert null != assignedIpAddresses;
+        DeviceNetwork network = Iterables.getOnlyElement(assignedIpAddresses.getNetworks().getDeviceNetworks());
+        Set<String> ipAddresses = network.getIpAddresses().getIpAddresses();
+        assertTrue(ipAddresses.size()>0, "vm has no assigned ip addresses");
+    }
 
    // TODO: We are not supposed to parse the href's
    // The alternative is to use URI's on the method calls.

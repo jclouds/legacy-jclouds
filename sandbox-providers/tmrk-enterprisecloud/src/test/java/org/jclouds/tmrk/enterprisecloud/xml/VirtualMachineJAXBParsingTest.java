@@ -20,6 +20,7 @@ package org.jclouds.tmrk.enterprisecloud.xml;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -179,7 +180,7 @@ public class VirtualMachineJAXBParsingTest extends BaseRestClientTest {
        Assert.assertNotNull(assignedIpAddresses);
        Set<DeviceNetwork> deviceNetworks = assignedIpAddresses.getNetworks().getDeviceNetworks();
        assertEquals(1,deviceNetworks.size());
-       DeviceNetwork network = deviceNetworks.iterator().next(); //todo use guava instead.
+       DeviceNetwork network = Iterables.getOnlyElement(deviceNetworks);
        Set<String> ips = network.getIpAddresses().getIpAddresses();
        assertEquals(2,ips.size());
        assertTrue(ips.contains("10.146.204.67"));

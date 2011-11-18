@@ -21,6 +21,7 @@ package org.jclouds.tmrk.enterprisecloud.domain;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -28,6 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * @author Jason King
  */
+@XmlRootElement(name="AssignedIpAddresses")
 public class AssignedIpAddresses extends BaseResource<AssignedIpAddresses> {
 
    //TODO builder stuff
