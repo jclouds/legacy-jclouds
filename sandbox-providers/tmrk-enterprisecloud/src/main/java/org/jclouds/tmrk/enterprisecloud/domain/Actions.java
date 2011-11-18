@@ -21,23 +21,24 @@ package org.jclouds.tmrk.enterprisecloud.domain;
 import com.google.common.collect.Sets;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Wraps individual Action elements.
  * Needed because parsing is done with JAXB and it does not handle Generic collections
  * @author Jason King
  */
-@XmlRootElement(name = "Actions")
 public class Actions {
 
     private LinkedHashSet<Action> actions = Sets.newLinkedHashSet();
 
     @XmlElement(name = "Action")
     void setAction(Action action) {
+        checkNotNull(action,"action");
         this.actions.add(action);
     }
 

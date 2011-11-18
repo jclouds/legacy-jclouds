@@ -25,7 +25,11 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Preconditions2.checkNotEmpty;
+
 /**
+ * <xs:complexType name="DeviceIps">
  * Wraps individual IpAddresses
  * @author Jason King
  */
@@ -39,6 +43,8 @@ public class DeviceIps {
 
     @XmlElement(name = "IpAddress")
     void setIpAddress(String ipAddress) {
+        checkNotNull(ipAddress,"ipAddress");
+        checkNotEmpty(ipAddress, "ipAddress");
         this.ipAddresses.add(ipAddress);
     }
 

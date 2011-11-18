@@ -18,22 +18,22 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.net.URI;
-import java.util.Map;
-
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
+import java.net.URI;
+import java.util.Map;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * 
+ * <xs:complexType name="Link">
  * @author Adrian Cole
  * 
  */
-@XmlRootElement(name = "Link")
 public class Link extends BaseNamedResource<Link> {
     @XmlEnum
     public static enum Relationship {

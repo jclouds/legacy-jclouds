@@ -21,12 +21,11 @@ package org.jclouds.tmrk.enterprisecloud.domain;
 import org.jclouds.javax.annotation.Nullable;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * <xs:complexType name="VirtualDisk">
  * @author Jason King
  */
-@XmlRootElement(name = "Disk")
 public class VirtualDisk {
 
    @SuppressWarnings("unchecked")

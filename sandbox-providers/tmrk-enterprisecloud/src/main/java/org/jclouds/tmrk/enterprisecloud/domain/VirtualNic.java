@@ -21,12 +21,11 @@ package org.jclouds.tmrk.enterprisecloud.domain;
 import org.jclouds.javax.annotation.Nullable;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * <xs:complexType name="VirtualNic">
  * @author Jason King
  */
-@XmlRootElement(name = "Nic")
 public class VirtualNic {
 
    @SuppressWarnings("unchecked")

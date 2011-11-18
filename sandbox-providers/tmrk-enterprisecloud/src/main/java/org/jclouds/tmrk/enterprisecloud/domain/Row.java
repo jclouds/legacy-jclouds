@@ -20,12 +20,9 @@ package org.jclouds.tmrk.enterprisecloud.domain;
 
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 /**
  * @author Jason King
  */
-@XmlRootElement(name = "Row")
 public class Row extends BaseNamedResource<Row> {
     public Row() {
         //For JAXB

@@ -21,7 +21,6 @@ package org.jclouds.tmrk.enterprisecloud.domain;
 import com.google.common.collect.Sets;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -29,9 +28,9 @@ import java.util.Set;
 /**
  * Wraps individual VirtualNic elements.
  * Needed because parsing is done with JAXB and it does not handle Generic collections
+ * <xs:complexType name="Nics">
  * @author Jason King
  */
-@XmlRootElement(name = "Nics")
 public class Nics {
 
     private LinkedHashSet<VirtualNic> nics = Sets.newLinkedHashSet();

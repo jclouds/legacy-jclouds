@@ -36,7 +36,7 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * 
+ * <xs:complexType name="VirtualMachine">
  * @author Jason King
  * 
  */
@@ -57,9 +57,10 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
    }
 
    public static class Builder extends BaseNamedResource.Builder<VirtualMachine> {
-      private Links links;
-      private Actions actions;
-      private Tasks tasks;
+      //TODO There are some more fields
+      private Links links = new Links();
+      private Actions actions = new Actions();
+      private Tasks tasks = new Tasks();
       private String description;
       private VirtualMachineStatus status;
 
@@ -70,13 +71,13 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
       private boolean customizationPending;
       private OperatingSystem operatingSystem;
       private HardwareConfiguration hardwareConfiguration;
-      private VirtualMachineIpAddresses ipAddresses;
+      private VirtualMachineIpAddresses ipAddresses = new VirtualMachineIpAddresses();
 
       /**
        * @see VirtualMachine#getLinks
        */
       public Builder links(Set<Link> links) {
-         this.links = new Links();
+         checkNotNull(links,"links");
          for(Link link:links) this.links.setLink(link);
          return this;
       }
@@ -85,7 +86,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
         * @see VirtualMachine#getActions
         */
        public Builder actions(Set<Action> actions) {
-          this.actions = new Actions();
+          checkNotNull(actions,"actions");
           for(Action action:actions) this.actions.setAction(action);
           return this;
        }
@@ -94,7 +95,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
         * @see VirtualMachine#getTasks
         */
        public Builder tasks(Set<Task> tasks) {
-          this.tasks = new Tasks();
+          checkNotNull(tasks,"tasks");
           for(Task task: tasks) this.tasks.setTask(task);
           return this;
        }
@@ -184,7 +185,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
         * @see VirtualMachine#getIpAddresses()
         */
        public Builder ipAddresses(VirtualMachineIpAddresses ipAddresses) {
-          this.ipAddresses = ipAddresses;
+          this.ipAddresses = checkNotNull(ipAddresses,"ipAddresses");
           return this;
        }
 
@@ -264,13 +265,13 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
    }
 
    @XmlElement(name = "Links", required = true)
-   private Links links;
+   private Links links = new Links();
 
    @XmlElement(name = "Tasks", required = true)
-   private Tasks tasks;
+   private Tasks tasks = new Tasks();
 
    @XmlElement(name = "Actions", required = true)
-   private Actions actions;
+   private Actions actions = new Actions();
 
    @XmlElement(name = "Description", required = true)
    private String description;
@@ -300,7 +301,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
    private HardwareConfiguration hardwareConfiguation;
 
    @XmlElement(name = "IpAddresses", required = false)
-   private VirtualMachineIpAddresses ipAddresses;
+   private VirtualMachineIpAddresses ipAddresses = new VirtualMachineIpAddresses();
 
     public VirtualMachine(URI href, String type, String name, Tasks tasks, Actions actions, Links links, String description, @Nullable Layout layout,
                          VirtualMachineStatus status, boolean poweredOn, @Nullable ToolsStatus toolsStatus, @Nullable VirtualMachineMediaStatus mediaStatus, boolean customizationPending,
@@ -319,7 +320,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
       this.customizationPending = customizationPending;
       this.operatingSystem = operatingSystem;
       this.hardwareConfiguation = hardwareConfiguration;
-      this.ipAddresses = ipAddresses;
+      this.ipAddresses = checkNotNull(ipAddresses, "ipAddresses");
    }
 
    protected VirtualMachine() {
@@ -393,9 +394,6 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
        return operatingSystem;
    }
 
-    /**
-     * Is optional, so may return null
-     */
    public VirtualMachineIpAddresses getIpAddresses() {
        return ipAddresses;
    }
@@ -411,11 +409,11 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
         if (customizationPending != that.customizationPending) return false;
         if (poweredOn != that.poweredOn) return false;
         if (!actions.equals(that.actions)) return false;
-        if (!description.equals(that.description)) return false;
+        if (description != null ? !description.equals(that.description) : that.description != null)
+            return false;
         if (hardwareConfiguation != null ? !hardwareConfiguation.equals(that.hardwareConfiguation) : that.hardwareConfiguation != null)
             return false;
-        if (ipAddresses != null ? !ipAddresses.equals(that.ipAddresses) : that.ipAddresses != null)
-            return false;
+        if (!ipAddresses.equals(that.ipAddresses)) return false;
         if (layout != null ? !layout.equals(that.layout) : that.layout != null)
             return false;
         if (!links.equals(that.links)) return false;
@@ -435,16 +433,16 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
         result = 31 * result + links.hashCode();
         result = 31 * result + tasks.hashCode();
         result = 31 * result + actions.hashCode();
-        result = 31 * result + description.hashCode();
+        result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (layout != null ? layout.hashCode() : 0);
-        result = 31 * result + status.hashCode();
+        result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + (poweredOn ? 1 : 0);
         result = 31 * result + (toolsStatus != null ? toolsStatus.hashCode() : 0);
         result = 31 * result + (mediaStatus != null ? mediaStatus.hashCode() : 0);
         result = 31 * result + (customizationPending ? 1 : 0);
         result = 31 * result + (operatingSystem != null ? operatingSystem.hashCode() : 0);
         result = 31 * result + (hardwareConfiguation != null ? hardwareConfiguation.hashCode() : 0);
-        result = 31 * result + (ipAddresses != null ? ipAddresses.hashCode() : 0);
+        result = 31 * result + ipAddresses.hashCode();
         return result;
     }
 

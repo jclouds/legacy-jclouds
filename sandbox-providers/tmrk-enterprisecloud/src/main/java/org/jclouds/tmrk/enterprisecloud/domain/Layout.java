@@ -18,8 +18,9 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain;
 
+import org.jclouds.javax.annotation.Nullable;
+
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Layout is a logical aggregation of virtual machines and physical devices defined by the organization.
@@ -28,9 +29,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  * From the compute pool, only a subset is visible.
  * To appear in a compute pool layout, virtual machines in the rows and groups must be allocated from the compute pool.
  * As physical devices are not allocated from the compute pool, they do not appear on compute pool layouts.
+ * <xs:complexType name="LayoutReference">
  * @author Jason King
  */
-@XmlRootElement(name = "Layout")
 public class Layout {
     @XmlElement(name = "Group")
     private Group group;
@@ -38,7 +39,7 @@ public class Layout {
     @XmlElement(name = "Row")
     private Row row;
 
-    public Layout(Group group, Row row) {
+    public Layout(@Nullable Group group, @Nullable Row row) {
         this.group = group;
         this.row = row;
     }
