@@ -38,7 +38,7 @@ public class VirtualMachineAsyncClientTest extends BaseTerremarkEnterpriseCloudA
 
    public void testGetVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VirtualMachineAsyncClient.class.getMethod("getVirtualMachine", long.class);
-      HttpRequest httpRequest = processor.createRequest(method, 1);
+      HttpRequest httpRequest = processor.createRequest(method,1);
 
       assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/virtualMachines/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/vnd.tmrk.cloud.virtualMachine\nx-tmrk-version: 2011-07-01\n");
@@ -48,7 +48,20 @@ public class VirtualMachineAsyncClientTest extends BaseTerremarkEnterpriseCloudA
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
+   }
 
+   public void testGetVirtualMachines() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VirtualMachineAsyncClient.class.getMethod("getVirtualMachines", long.class);
+      HttpRequest httpRequest = processor.createRequest(method,567);
+
+      assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/virtualMachines/computePools/567 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/vnd.tmrk.cloud.virtualMachine; type=collection\nx-tmrk-version: 2011-07-01\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
    }
 
    @Override
