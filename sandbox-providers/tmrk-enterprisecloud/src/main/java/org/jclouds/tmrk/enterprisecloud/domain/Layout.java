@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
  * From the compute pool, only a subset is visible.
  * To appear in a compute pool layout, virtual machines in the rows and groups must be allocated from the compute pool.
  * As physical devices are not allocated from the compute pool, they do not appear on compute pool layouts.
+ * <xs:complexType name="LayoutReference">
  * @author Jason King
  */
 public class Layout {

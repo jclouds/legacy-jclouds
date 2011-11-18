@@ -29,6 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Container for DeviceNetwork items
+ * <xs:complexType name="DeviceNetworks">
  * @author Jason King
  */
 public class DeviceNetworks {

@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 /**
  * Container for DeviceIps (ipAddresses)
+ *  <xs:complexType name="DeviceNetwork">
  * @author Jason King
  */
 public class DeviceNetwork extends BaseNamedResource<DeviceNetwork> {

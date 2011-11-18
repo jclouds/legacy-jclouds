@@ -27,9 +27,12 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
+ * <xs:complexType name="VirtualMachineIpAddresses">
  * @author Jason King
  */
 public class VirtualMachineIpAddresses {
+
+    //TODO There are more fields
 
     @XmlElement(name = "AssignedIpAddresses")
     private AssignedIpAddresses assignedIpAddresses = new AssignedIpAddresses();

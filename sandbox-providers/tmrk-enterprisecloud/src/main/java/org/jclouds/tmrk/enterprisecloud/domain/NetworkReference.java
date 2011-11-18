@@ -31,7 +31,7 @@ import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 
 /**
- * 
+ * <xs:complexType name="NetworkReference">
  * @author Jason King
  * 
  */

@@ -27,12 +27,13 @@ import java.net.URI;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * <xs:complexType name="AssignedIpAddresses">
  * @author Jason King
  */
 @XmlRootElement(name="AssignedIpAddresses")
 public class AssignedIpAddresses extends BaseResource<AssignedIpAddresses> {
 
-   //TODO builder stuff
+   //TODO links
 
    @XmlElement(name = "Actions", required = true)
    private Actions actions = new Actions();

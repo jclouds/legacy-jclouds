@@ -33,7 +33,7 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * 
+ * <xs:complexType name="Action">
  * @author Adrian Cole
  * 
  */

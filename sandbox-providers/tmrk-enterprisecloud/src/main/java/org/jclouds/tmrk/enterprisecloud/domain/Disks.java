@@ -30,6 +30,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Wraps individual Disk elements.
  * Needed because parsing is done with JAXB and it does not handle Generic collections
+ * <xs:complexType name="Disks">
  * @author Jason King
  */
 public class Disks {

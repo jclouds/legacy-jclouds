@@ -25,11 +25,13 @@ import java.net.URI;
 import java.util.Map;
 
 /**
- * 
+ * <xs:complexType name="OperatingSystem">
  * @author Jason King
  * 
  */
 public class OperatingSystem extends BaseNamedResource<OperatingSystem> {
+
+   //TODO There are other fields
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
