@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Wraps individual Disk elements.
  * Needed because parsing is done with JAXB and it does not handle Generic collections
@@ -38,6 +40,7 @@ public class Disks {
 
     @XmlElement(name = "Disk")
     public void setVirtualDisk(VirtualDisk disk) {
+        checkNotNull(disk,"disk");
         this.disks.add(disk);
     }
 

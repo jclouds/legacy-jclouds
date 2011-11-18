@@ -23,6 +23,8 @@ import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 import javax.xml.bind.annotation.XmlElement;
 import java.net.URI;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * @author Jason King
  */
@@ -31,13 +33,15 @@ public class AssignedIpAddresses extends BaseResource<AssignedIpAddresses> {
    //TODO builder stuff
 
    @XmlElement(name = "Actions", required = true)
-   private Actions actions;
+   private Actions actions = new Actions();
 
    @XmlElement(name = "Networks", required = true)
-   private DeviceNetworks networks;
+   private DeviceNetworks networks = new DeviceNetworks();
 
    public AssignedIpAddresses(URI href, String type, Actions actions, DeviceNetworks networks) {
       super(href, type);
+      checkNotNull(actions,"actions");
+      checkNotNull(networks,"networks");
    }
 
    protected AssignedIpAddresses() {

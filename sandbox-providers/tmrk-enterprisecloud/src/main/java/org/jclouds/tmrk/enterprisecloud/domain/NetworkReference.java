@@ -135,7 +135,7 @@ public class NetworkReference extends BaseNamedResource<NetworkReference> {
    @XmlElement(name = "NetworkType")
    private NetworkType networkType;
 
-   public NetworkReference(URI href, String type, String name, NetworkType networkType) {
+   public NetworkReference(URI href, String type, String name,@Nullable NetworkType networkType) {
       super(href, type, name);
       this.networkType = networkType;
    }

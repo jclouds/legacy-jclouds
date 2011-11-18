@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Wraps individual Task elements.
  * Needed because parsing is done with JAXB and it does not handle Generic collections
@@ -38,6 +40,7 @@ public class Tasks {
 
     @XmlElement(name = "Task")
     public void setTask(Task task) {
+        checkNotNull(task,"task");
         tasks.add(task);
     }
 

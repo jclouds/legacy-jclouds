@@ -51,17 +51,17 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
 
    public static class Builder extends BaseResource.Builder<HardwareConfiguration> {
 
-       private Actions actions;
+       private Actions actions = new Actions();
        private int processorCount;
        private Memory memory;
-       private Disks disks;
-       private Nics nics;
+       private Disks disks = new Disks();
+       private Nics nics = new Nics();
 
        /**
         * @see HardwareConfiguration#getActions
         */
        public Builder actions(Set<Action> actions) {
-          this.actions = new Actions();
+          checkNotNull(actions,"actions");
           for(Action action:actions) this.actions.setAction(action);
           return this;
        }
@@ -86,7 +86,7 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
         * @see HardwareConfiguration#getDisks
         */
        public Builder disks(Disks disks) {
-          this.disks = disks;
+          this.disks = checkNotNull(disks,"disks");;
           return this;
        }
 
@@ -94,7 +94,7 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
         * @see HardwareConfiguration#getDisks
         */
        public Builder nics(Nics nics) {
-          this.nics = nics;
+          this.nics = checkNotNull(nics,"nics");;
           return this;
        }
 
@@ -145,7 +145,7 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
    }
 
    @XmlElement(name = "Actions", required = false)
-   private Actions actions;
+   private Actions actions = new Actions();
 
    @XmlElement(name = "ProcessorCount", required = true)
    private int processorCount;
@@ -154,17 +154,17 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
    private Memory memory;
 
    @XmlElement(name = "Disks", required = false)
-   private Disks disks;
+   private Disks disks = new Disks();
 
    @XmlElement(name = "Nics", required = false)
-   private Nics nics;
+   private Nics nics = new Nics();
 
-   public HardwareConfiguration(@Nullable Actions actions, int processorCount, @Nullable Memory memory, @Nullable Disks disks, @Nullable Nics nics) {
+   public HardwareConfiguration(Actions actions, int processorCount, @Nullable Memory memory, Disks disks, Nics nics) {
        this.actions = checkNotNull(actions, "actions");
        this.processorCount = processorCount;
        this.memory = memory;
-       this.disks = disks;
-       this.nics = nics;
+       this.disks = checkNotNull(disks, "disks");
+       this.nics = checkNotNull(nics, "nics");
    }
 
     protected HardwareConfiguration() {
@@ -200,14 +200,11 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
         HardwareConfiguration that = (HardwareConfiguration) o;
 
         if (processorCount != that.processorCount) return false;
-        if (actions != null ? !actions.equals(that.actions) : that.actions != null)
-            return false;
-        if (disks != null ? !disks.equals(that.disks) : that.disks != null)
-            return false;
+        if (!actions.equals(that.actions)) return false;
+        if (!disks.equals(that.disks)) return false;
         if (memory != null ? !memory.equals(that.memory) : that.memory != null)
             return false;
-        if (nics != null ? !nics.equals(that.nics) : that.nics != null)
-            return false;
+        if (!nics.equals(that.nics)) return false;
 
         return true;
     }
@@ -215,11 +212,11 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (actions != null ? actions.hashCode() : 0);
+        result = 31 * result + actions.hashCode();
         result = 31 * result + processorCount;
         result = 31 * result + (memory != null ? memory.hashCode() : 0);
-        result = 31 * result + (disks != null ? disks.hashCode() : 0);
-        result = 31 * result + (nics != null ? nics.hashCode() : 0);
+        result = 31 * result + disks.hashCode();
+        result = 31 * result + nics.hashCode();
         return result;
     }
 

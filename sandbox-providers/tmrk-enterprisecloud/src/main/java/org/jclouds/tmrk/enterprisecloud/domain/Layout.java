@@ -18,6 +18,8 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain;
 
+import org.jclouds.javax.annotation.Nullable;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -38,7 +40,7 @@ public class Layout {
     @XmlElement(name = "Row")
     private Row row;
 
-    public Layout(Group group, Row row) {
+    public Layout(@Nullable Group group, @Nullable Row row) {
         this.group = group;
         this.row = row;
     }
