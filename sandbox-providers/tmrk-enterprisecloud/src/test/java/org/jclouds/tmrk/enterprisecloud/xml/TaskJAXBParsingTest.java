@@ -130,7 +130,7 @@ public class TaskJAXBParsingTest extends BaseRestClientTest {
    public void testParseTaskWithJAXB() throws Exception {
 
       Method method = TaskAsyncClient.class.getMethod("getTask",URI.class);
-      HttpRequest request = factory(TaskAsyncClient.class).createRequest(method);
+      HttpRequest request = factory(TaskAsyncClient.class).createRequest(method, new URI("/1"));
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
 
       Function<HttpResponse, Task> parser = (Function<HttpResponse, Task>) RestAnnotationProcessor
@@ -144,8 +144,8 @@ public class TaskJAXBParsingTest extends BaseRestClientTest {
    @Test
    public void testParseTasksWithJAXB() throws Exception {
 
-      Method method = TaskAsyncClient.class.getMethod("getTasksInEnvironment",long.class);
-      HttpRequest request = factory(TaskAsyncClient.class).createRequest(method,1);
+      Method method = TaskAsyncClient.class.getMethod("getTasksInEnvironment",URI.class);
+      HttpRequest request = factory(TaskAsyncClient.class).createRequest(method,new URI("/1"));
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
 
       Function<HttpResponse, Tasks> parser = (Function<HttpResponse, Tasks>) RestAnnotationProcessor

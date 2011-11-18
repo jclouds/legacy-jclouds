@@ -23,6 +23,7 @@ import org.jclouds.tmrk.enterprisecloud.domain.AssignedIpAddresses;
 import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachine;
 import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachines;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,25 +41,25 @@ public interface VirtualMachineClient {
 
     /**
      * returns information regarding virtual machines defined in a compute pool
-     * @param id the i of the compute pool
+     * @param uri the uri of the compute pool
      * @return the virtual machines
      */
-   VirtualMachines getVirtualMachines(long id);
+   VirtualMachines getVirtualMachines(URI uri);
 
    /**
     * The Get Virtual Machines by ID call returns information regarding a
     * specified virtual machine defined in an environment.
-    * @param id the id of the virtual machine
+    * @param uri the id of the virtual machine
     * @return the virtual Machine or null if not found
     */
-   VirtualMachine getVirtualMachine(long id);
+   VirtualMachine getVirtualMachine(URI uri);
 
     /**
      * The Get Virtual Machines Assigned IP Addresses call returns information
      * regarding the IP addresses assigned to a specified virtual machine in a compute pool.
-     * @param id the id of the virtual machine
+     * @param uri the assignedIpAddresses call
      * @return the assigned ip addresses
      */
-   AssignedIpAddresses getAssignedIpAddresses(long id);
+   AssignedIpAddresses getAssignedIpAddresses(URI uri);
 
 }
