@@ -40,7 +40,7 @@
         <appengine.sdk.version>1.5.5</appengine.sdk.version>
         <devappserver.address>localhost</devappserver.address>
         <devappserver.port>8088</devappserver.port>
-        <jclouds.tweetstore.container>jclouds-tweetstore-spring</jclouds.tweetstore.container>
+        <jclouds.tweetstore.container>jclouds-gae-tweetstore-spring</jclouds.tweetstore.container>
     </properties>
 
     <dependencies>
@@ -170,7 +170,7 @@
                                         </property>
                                         <property>
                                             <name>jclouds.tweetstore.container</name>
-                                            <value>${jclouds.tweetstore.container}</value>
+                                            <value>test.${jclouds.tweetstore.container}</value>
                                         </property>
                                         <property>
                                             <name>warfile</name>
