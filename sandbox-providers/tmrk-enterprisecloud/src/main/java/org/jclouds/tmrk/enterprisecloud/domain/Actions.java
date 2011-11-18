@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Wraps individual Action elements.
  * Needed because parsing is done with JAXB and it does not handle Generic collections
@@ -38,6 +40,7 @@ public class Actions {
 
     @XmlElement(name = "Action")
     void setAction(Action action) {
+        checkNotNull(action,"action");
         this.actions.add(action);
     }
 

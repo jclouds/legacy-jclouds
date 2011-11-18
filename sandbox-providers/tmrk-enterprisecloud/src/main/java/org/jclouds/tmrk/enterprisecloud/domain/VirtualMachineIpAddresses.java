@@ -32,7 +32,7 @@ import java.util.Set;
 public class VirtualMachineIpAddresses {
 
     @XmlElement(name = "AssignedIpAddresses")
-    private AssignedIpAddresses assignedIpAddresses;
+    private AssignedIpAddresses assignedIpAddresses = new AssignedIpAddresses();
 
     protected VirtualMachineIpAddresses() {
         // For JAXB

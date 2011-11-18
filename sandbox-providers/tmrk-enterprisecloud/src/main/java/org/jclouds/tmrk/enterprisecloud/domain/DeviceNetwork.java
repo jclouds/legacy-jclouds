@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
 public class DeviceNetwork extends BaseNamedResource<DeviceNetwork> {
 
    @XmlElement(name = "IpAddresses")
-   private DeviceIps ipAddresses;
+   private DeviceIps ipAddresses = new DeviceIps();
 
    protected DeviceNetwork() {
        //For JAXB
