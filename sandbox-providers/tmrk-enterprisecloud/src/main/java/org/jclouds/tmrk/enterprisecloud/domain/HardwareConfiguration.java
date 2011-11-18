@@ -18,6 +18,8 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 
@@ -49,18 +51,17 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
 
    public static class Builder extends BaseResource.Builder<HardwareConfiguration> {
 
-       private Actions actions = new Actions();
+       private Set<Action> actions = Sets.newLinkedHashSet();
        private int processorCount;
        private Memory memory;
-       private Disks disks = new Disks();
-       private Nics nics = new Nics();
+       private Set<VirtualDisk> virtualDisks = Sets.newLinkedHashSet();
+       private Set<VirtualNic> virtualNics = Sets.newLinkedHashSet();
 
        /**
         * @see HardwareConfiguration#getActions
         */
        public Builder actions(Set<Action> actions) {
-          checkNotNull(actions,"actions");
-          for(Action action:actions) this.actions.setAction(action);
+          this.actions = ImmutableSet.<Action> copyOf(checkNotNull(actions, "actions"));
           return this;
        }
 
@@ -81,24 +82,25 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
        }
 
        /**
-        * @see HardwareConfiguration#getDisks
+        * @see HardwareConfiguration#getVirtualDisks
         */
-       public Builder disks(Disks disks) {
-          this.disks = checkNotNull(disks,"disks");;
+       public Builder disks(Set<VirtualDisk> virtualDisks) {
+          this.virtualDisks = ImmutableSet.<VirtualDisk> copyOf(checkNotNull(virtualDisks, "virtualDisks"));
           return this;
        }
 
+
        /**
-        * @see HardwareConfiguration#getDisks
+        * @see HardwareConfiguration#getVirtualNics
         */
-       public Builder nics(Nics nics) {
-          this.nics = checkNotNull(nics,"nics");;
+       public Builder nics(Set<VirtualNic> virtualNics) {
+          this.virtualNics = ImmutableSet.<VirtualNic> copyOf(checkNotNull(virtualNics, "virtualNics"));
           return this;
        }
 
        @Override
        public HardwareConfiguration build() {
-           return new HardwareConfiguration(actions, processorCount, memory, disks, nics);
+           return new HardwareConfiguration(actions, processorCount, memory, virtualDisks, virtualNics);
        }
 
       /**
@@ -137,8 +139,8 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
         return fromResource(in).actions(in.getActions())
                                .processorCount(in.getProcessorCount())
                                .memory(in.getMemory())
-                               .disks(in.getDisks())
-                               .nics(in.getNics());
+                               .disks(in.getVirtualDisks())
+                               .nics(in.getVirtualNics());
       }
    }
 
@@ -152,17 +154,18 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
    private Memory memory;
 
    @XmlElement(name = "Disks", required = false)
-   private Disks disks = new Disks();
+   private Disks virtualDisks = new Disks();
 
    @XmlElement(name = "Nics", required = false)
-   private Nics nics = new Nics();
+   private Nics virtualNics = new Nics();
 
-   public HardwareConfiguration(Actions actions, int processorCount, @Nullable Memory memory, Disks disks, Nics nics) {
-       this.actions = checkNotNull(actions, "actions");
+   public HardwareConfiguration(Set<Action> actions, int processorCount, @Nullable Memory memory, Set<VirtualDisk> virtualDisks, Set<VirtualNic> virtualNics) {
+       for( Action action: checkNotNull(actions, "actions")) this.actions.setAction(action);
+       for( VirtualDisk disk: checkNotNull(virtualDisks, "virtualDisks")) this.virtualDisks.setVirtualDisk(disk);
+       for( VirtualNic virtualNic: checkNotNull(virtualNics, "virtualNics")) this.virtualNics.setVirtualNic(virtualNic);
+
        this.processorCount = processorCount;
        this.memory = memory;
-       this.disks = checkNotNull(disks, "disks");
-       this.nics = checkNotNull(nics, "nics");
    }
 
     protected HardwareConfiguration() {
@@ -181,12 +184,12 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
         return memory;
     }
 
-    public Disks getDisks() {
-        return disks;
+    public Set<VirtualDisk> getVirtualDisks() {
+        return Collections.unmodifiableSet(virtualDisks.getVirtualDisks());
     }
 
-    public Nics getNics() {
-        return nics;
+    public Set<VirtualNic> getVirtualNics() {
+        return Collections.unmodifiableSet(virtualNics.getVirtualNics());
     }
 
     @Override
@@ -199,10 +202,10 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
 
         if (processorCount != that.processorCount) return false;
         if (!actions.equals(that.actions)) return false;
-        if (!disks.equals(that.disks)) return false;
+        if (!virtualDisks.equals(that.virtualDisks)) return false;
         if (memory != null ? !memory.equals(that.memory) : that.memory != null)
             return false;
-        if (!nics.equals(that.nics)) return false;
+        if (!virtualNics.equals(that.virtualNics)) return false;
 
         return true;
     }
@@ -213,14 +216,14 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
         result = 31 * result + actions.hashCode();
         result = 31 * result + processorCount;
         result = 31 * result + (memory != null ? memory.hashCode() : 0);
-        result = 31 * result + disks.hashCode();
-        result = 31 * result + nics.hashCode();
+        result = 31 * result + virtualDisks.hashCode();
+        result = 31 * result + virtualNics.hashCode();
         return result;
     }
 
     @Override
     public String string() {
         return super.string()+", actions="+actions+", processorCount="+processorCount+
-              ", memory="+memory+", disks="+disks+", nics="+nics;
+              ", memory="+memory+", disks="+ virtualDisks +", nics="+ virtualNics;
     }
 }
