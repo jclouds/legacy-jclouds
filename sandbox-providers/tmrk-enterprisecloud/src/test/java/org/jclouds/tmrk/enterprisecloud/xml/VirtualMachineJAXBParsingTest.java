@@ -41,7 +41,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.testng.collections.Sets;
 
 import javax.inject.Named;
 import java.io.InputStream;
