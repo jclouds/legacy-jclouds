@@ -21,9 +21,9 @@ package org.jclouds.cloudstack.features;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import org.jclouds.cloudstack.domain.*;
-import org.jclouds.cloudstack.options.CreateTemplateOptions;
-import org.jclouds.cloudstack.options.ListNetworksOptions;
-import org.jclouds.cloudstack.options.ListVolumesOptions;
+import org.jclouds.cloudstack.options.*;
+import org.jclouds.logging.Logger;
+import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
@@ -44,6 +44,7 @@ import static org.testng.Assert.*;
 @Test(groups = "live", singleThreaded = true, testName = "TemplateClientLiveTest")
 public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
 
+   private static final String IMPORT_VHD_URL = "http://www.frontiertown.co.uk/jclouds/openwrt.vhd";
    private VirtualMachine vm;
    private Template template;
 
@@ -140,5 +141,48 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       assertNotNull(extractUrl);
       URI uri = new URI(URLDecoder.decode(extractUrl, "utf-8"));
       assertTrue(context.utils().http().exists(uri), "does not exist: " + uri);
+   }
+
+   @Test(enabled = true)
+   public void testRegisterTemplate() throws Exception {
+      Zone zone = Iterables.getFirst(client.getZoneClient().listZones(), null);
+      assertNotNull(zone);
+      Iterable<Network> networks = client.getNetworkClient().listNetworks(ListNetworksOptions.Builder.zoneId(zone.getId()).isDefault(true));
+      networks = Iterables.filter(networks, new Predicate<Network>() {
+         @Override
+         public boolean apply(@Nullable Network network) {
+            return network != null && network.getState().equals("Implemented");
+         }
+      });
+      assertEquals(Iterables.size(networks), 1);
+      Network network = Iterables.getOnlyElement(networks, null);
+      assertNotNull(network);
+      Set<OSType> osTypes = client.getGuestOSClient().listOSTypes();
+      OSType osType = Iterables.getFirst(osTypes, null);
+
+      // Register a template
+      String tmplName = "jclouds-" + Integer.toHexString(new Random().nextInt());
+      RegisterTemplateOptions options = RegisterTemplateOptions.Builder.bits(32);
+      TemplateMetadata templateMetadata = TemplateMetadata.builder().name(tmplName).osTypeId(osType.getId()).displayText("jclouds live testRegisterTemplate").build();
+      Set<Template> templates = client.getTemplateClient().registerTemplate(templateMetadata, "VHD", "xen", IMPORT_VHD_URL, zone.getId(), options);
+      template = Iterables.getOnlyElement(templates, null);
+      assertNotNull(template);
+
+      // Ensure it is available
+      final long zoneId = zone.getId();
+      Predicate<Template> templateReadyPredicate = new Predicate<Template>() {
+         @Override
+         public boolean apply(@Nullable Template template) {
+            if (template == null) return false;
+            Template t2 = client.getTemplateClient().getTemplateInZone(template.getId(), zoneId);
+            Logger.CONSOLE.info("%s", t2.getStatus());
+            return "Download Complete".equals(t2.getStatus());
+         }
+      };
+      assertTrue(new RetryablePredicate<Template>(templateReadyPredicate, 60000).apply(template));
+
+      // Create a VM that uses this template
+      vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, template.getId(), client, jobComplete, virtualMachineRunning);
+      assertNotNull(vm);
    }
 }
