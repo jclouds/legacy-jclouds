@@ -25,8 +25,11 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Container for DeviceNetwork items
+ * <xs:complexType name="DeviceNetworks">
  * @author Jason King
  */
 public class DeviceNetworks {
@@ -39,6 +42,7 @@ public class DeviceNetworks {
 
     @XmlElement(name = "Network")
     void setDeviceNetwork(DeviceNetwork deviceNetwork) {
+        checkNotNull(deviceNetwork,"deviceNetwork");
         this.deviceNetworks.add(deviceNetwork);
     }
 

@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.tmrk.enterprisecloud.features.TaskClient;
+import org.jclouds.tmrk.enterprisecloud.features.VirtualMachineClient;
 
 /**
  * Provides synchronous access to TerremarkEnterpriseCloud.
@@ -42,4 +43,10 @@ public interface TerremarkEnterpriseCloudClient {
     */
    @Delegate
    TaskClient getTaskClient();
+
+   /**
+    * Provides synchronous access to VirtualMachine features.
+    */
+   @Delegate
+   VirtualMachineClient getVirtualMachineClient();
 }

@@ -26,18 +26,22 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Wraps individual Task elements.
  * Needed because parsing is done with JAXB and it does not handle Generic collections
+ * <xs:complexType name="Tasks">
  * @author Jason King
  */
 @XmlRootElement(name = "Tasks")
 public class Tasks {
-
+     //TODO: There is a total count field
     private LinkedHashSet<Task> tasks = Sets.newLinkedHashSet();
 
     @XmlElement(name = "Task")
     public void setTask(Task task) {
+        checkNotNull(task,"task");
         tasks.add(task);
     }
 

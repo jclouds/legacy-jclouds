@@ -18,13 +18,6 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain;
 
-import static com.google.common.base.CaseFormat.LOWER_CAMEL;
-import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.net.URI;
-import java.util.Map;
-
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
@@ -32,14 +25,18 @@ import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
-import javax.xml.bind.annotation.XmlRootElement;
+import java.net.URI;
+import java.util.Map;
+
+import static com.google.common.base.CaseFormat.LOWER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * 
+ * <xs:complexType name="Action">
  * @author Adrian Cole
  * 
  */
-@XmlRootElement(name = "Action")
 public class Action extends BaseNamedResource<Action> {
     @XmlEnum
     public static enum ActionDisabled {

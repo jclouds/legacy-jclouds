@@ -1,0 +1,19 @@
+<AssignedIpAddresses href="/cloudapi/ecloud/virtualmachines/5504/assignedips"
+                     type="application/vnd.tmrk.cloud.virtualMachineAssignedIps"
+                     xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <Actions>
+        <Action href="/cloudapi/ecloud/virtualmachines/5504/assignedips"
+                name="edit"
+                type="application/vnd.tmrk.cloud.virtualMachineAssignedIps"/>
+    </Actions>
+    <Networks>
+        <Network href="/cloudapi/ecloud/networks/3936"
+                 name="10.146.204.64/28 (INT_202)"
+                 type="application/vnd.tmrk.cloud.network">
+            <IpAddresses>
+                <IpAddress>10.146.204.98</IpAddress>
+                <IpAddress>10.146.204.99</IpAddress>
+            </IpAddresses>
+        </Network>
+    </Networks>
+</AssignedIpAddresses>

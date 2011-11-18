@@ -21,30 +21,29 @@ package org.jclouds.tmrk.enterprisecloud.domain;
 import com.google.common.collect.Sets;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
- * Wraps individual Disk elements.
+ * Wraps individual VirtualMachine elements.
  * Needed because parsing is done with JAXB and it does not handle Generic collections
- * <xs:complexType name="Disks">
+ * <xs:complexType name="VirtualMachines">
  * @author Jason King
  */
-public class Disks {
+@XmlRootElement(name="VirtualMachines")
+public class VirtualMachines {
 
-    private LinkedHashSet<VirtualDisk> disks = Sets.newLinkedHashSet();
+    private LinkedHashSet<VirtualMachine> virtualMachines = Sets.newLinkedHashSet();
 
-    @XmlElement(name = "Disk")
-    public void setVirtualDisk(VirtualDisk disk) {
-        checkNotNull(disk,"disk");
-        this.disks.add(disk);
+    @XmlElement(name = "VirtualMachine")
+    void setVirtualMachine(VirtualMachine nic) {
+        this.virtualMachines.add(nic);
     }
 
-    public Set<VirtualDisk> getVirtualDisks() {
-        return Collections.unmodifiableSet(disks);
+    public Set<VirtualMachine> getVirtualMachines() {
+        return Collections.unmodifiableSet(virtualMachines);
     }
 
     @Override
@@ -52,20 +51,19 @@ public class Disks {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Disks disks1 = (Disks) o;
+        VirtualMachines vms1 = (VirtualMachines) o;
 
-        if (!disks.equals(disks1.disks)) return false;
+        if (!virtualMachines.equals(vms1.virtualMachines)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return disks.hashCode();
+        return virtualMachines.hashCode();
     }
 
     public String toString() {
-        return "["+ disks.toString()+"]";
+        return "["+ virtualMachines.toString()+"]";
     }
-
 }

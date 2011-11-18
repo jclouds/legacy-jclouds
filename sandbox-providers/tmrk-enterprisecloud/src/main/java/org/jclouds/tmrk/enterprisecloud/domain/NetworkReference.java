@@ -25,18 +25,16 @@ import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
 
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 
 /**
- * 
+ * <xs:complexType name="NetworkReference">
  * @author Jason King
  * 
  */
-@XmlRootElement(name = "Network")
 public class NetworkReference extends BaseNamedResource<NetworkReference> {
     @XmlEnum
     public static enum NetworkType {
@@ -135,7 +133,7 @@ public class NetworkReference extends BaseNamedResource<NetworkReference> {
    @XmlElement(name = "NetworkType")
    private NetworkType networkType;
 
-   public NetworkReference(URI href, String type, String name, NetworkType networkType) {
+   public NetworkReference(URI href, String type, String name,@Nullable NetworkType networkType) {
       super(href, type, name);
       this.networkType = networkType;
    }

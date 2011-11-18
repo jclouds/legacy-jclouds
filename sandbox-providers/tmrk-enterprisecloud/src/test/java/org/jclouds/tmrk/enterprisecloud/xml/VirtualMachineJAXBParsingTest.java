@@ -20,6 +20,7 @@ package org.jclouds.tmrk.enterprisecloud.xml;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -38,7 +39,6 @@ import org.jclouds.tmrk.enterprisecloud.domain.*;
 import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachine.VirtualMachineStatus;
 import org.jclouds.tmrk.enterprisecloud.features.VirtualMachineAsyncClient;
 import org.testng.Assert;
-import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -142,18 +142,16 @@ public class VirtualMachineJAXBParsingTest extends BaseRestClientTest {
        assertEquals(1,hardwareConfiguration.getProcessorCount());
        Memory memory = Memory.builder().value(384).unit("MB").build();
        assertEquals(memory,hardwareConfiguration.getMemory());
-       assertDisks(hardwareConfiguration.getDisks());
-       assertNics(hardwareConfiguration.getNics().getVirtualNics());
+       assertDisks(hardwareConfiguration.getVirtualDisks());
+       assertNics(hardwareConfiguration.getVirtualNics());
    }
 
-   private void assertDisks(Disks disks) {
+   private void assertDisks(Set<VirtualDisk> disks) {
        VirtualDisk disk = VirtualDisk.builder().index(0).name("Hard Disk 1")
                                      .size(Size.builder().value(10).unit("GB").build())
                                      .build();
-       Disks expectedDisks = new Disks();
-       expectedDisks.setVirtualDisk(disk);
 
-       assertEquals(expectedDisks, disks);
+       assertEquals(ImmutableSet.of(disk), disks);
    }
 
 
@@ -182,7 +180,7 @@ public class VirtualMachineJAXBParsingTest extends BaseRestClientTest {
        Assert.assertNotNull(assignedIpAddresses);
        Set<DeviceNetwork> deviceNetworks = assignedIpAddresses.getNetworks().getDeviceNetworks();
        assertEquals(1,deviceNetworks.size());
-       DeviceNetwork network = deviceNetworks.iterator().next(); //todo use guava instead.
+       DeviceNetwork network = Iterables.getOnlyElement(deviceNetworks);
        Set<String> ips = network.getIpAddresses().getIpAddresses();
        assertEquals(2,ips.size());
        assertTrue(ips.contains("10.146.204.67"));

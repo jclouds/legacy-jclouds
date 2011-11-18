@@ -19,7 +19,9 @@
 package org.jclouds.tmrk.enterprisecloud.features;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.tmrk.enterprisecloud.domain.AssignedIpAddresses;
 import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachine;
+import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachines;
 
 import java.util.concurrent.TimeUnit;
 
@@ -36,12 +38,27 @@ import java.util.concurrent.TimeUnit;
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface VirtualMachineClient {
 
+    /**
+     * returns information regarding virtual machines defined in a compute pool
+     * @param id the i of the compute pool
+     * @return the virtual machines
+     */
+   VirtualMachines getVirtualMachines(long id);
+
    /**
     * The Get Virtual Machines by ID call returns information regarding a
     * specified virtual machine defined in an environment.
-    *
+    * @param id the id of the virtual machine
     * @return the virtual Machine or null if not found
     */
    VirtualMachine getVirtualMachine(long id);
+
+    /**
+     * The Get Virtual Machines Assigned IP Addresses call returns information
+     * regarding the IP addresses assigned to a specified virtual machine in a compute pool.
+     * @param id the id of the virtual machine
+     * @return the assigned ip addresses
+     */
+   AssignedIpAddresses getAssignedIpAddresses(long id);
 
 }
