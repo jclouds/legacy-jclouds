@@ -26,6 +26,7 @@ import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachine;
+import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachines;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -45,6 +46,16 @@ import javax.ws.rs.PathParam;
 @RequestFilters(BasicAuthentication.class)
 @Headers(keys = "x-tmrk-version", values = "{jclouds.api-version}")
 public interface VirtualMachineAsyncClient {
+
+   /**
+    * @see VirtualMachineClient#getVirtualMachines
+    */
+   @GET
+   @Path("/virtualMachines/computePools/{id}")
+   @Consumes("application/vnd.tmrk.cloud.virtualMachine; type=collection")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<VirtualMachines> getVirtualMachines(@PathParam("id") long id);
 
    /**
     * @see VirtualMachineClient#getVirtualMachine

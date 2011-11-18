@@ -19,8 +19,11 @@
 package org.jclouds.tmrk.enterprisecloud.features;
 
 import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachine;
+import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachines;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
+
+import java.net.URI;
 
 import static org.testng.Assert.assertEquals;
 
@@ -40,10 +43,32 @@ public class VirtualMachineClientLiveTest extends BaseTerremarkEnterpriseCloudCl
    private VirtualMachineClient client;
 
    @Test
-   public void testGetVirtualMachine() {
+   public void testGetVirtualMachines() throws Exception {
+      // TODO: don't hard-code id
+       VirtualMachines virtualMachines = client.getVirtualMachines(89);
+       for( VirtualMachine vm : virtualMachines.getVirtualMachines()) {
+           VirtualMachine virtualMachine = client.getVirtualMachine(parse(vm.getHref()));
+           assert null != virtualMachine;
+           assertEquals(virtualMachine.getStatus(),VirtualMachine.VirtualMachineStatus.DEPLOYED);
+       }
+   }
+
+   @Test
+   public void testGetVirtualMachine() throws Exception {
       // TODO: don't hard-code id
        VirtualMachine virtualMachine = client.getVirtualMachine(5504);
        assert null != virtualMachine;
        assertEquals(virtualMachine.getStatus(),VirtualMachine.VirtualMachineStatus.DEPLOYED);
+   }
+
+   // TODO: We are not supposed to parse the href's
+   // The alternative is to use URI's on the method calls.
+   // But this has the risk of exposing strings like "/virtualmachines/5504" and "/computepools/89" to users
+   // Also - would need to figure out how to configure the tests
+   // to add on the endpoint so that the @EndpointParam is converted into a proper request.
+   private long parse(URI uri) {
+       String path = uri.getPath();
+       path = path.substring(path.lastIndexOf("/")+1);
+       return Long.parseLong(path);
    }
 }
