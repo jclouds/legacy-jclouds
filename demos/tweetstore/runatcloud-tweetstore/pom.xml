@@ -37,7 +37,7 @@
         <bees.apptitle>tweetstore</bees.apptitle>
         <test.bees.address>localhost</test.bees.address>
         <test.bees.port>8088</test.bees.port>
-        <jclouds.tweetstore.container>jclouds-tweetstore-runatcloud</jclouds.tweetstore.container>
+        <jclouds.tweetstore.container>jclouds-runatcloud-tweetstore</jclouds.tweetstore.container>
     </properties>
 
     <dependencies>
@@ -156,7 +156,7 @@
                                         </property>
                                         <property>
                                             <name>jclouds.tweetstore.container</name>
-                                            <value>${jclouds.tweetstore.container}</value>
+                                            <value>test.${jclouds.tweetstore.container}</value>
                                         </property>
                                         <property>
                                             <name>bees.basedir</name>
