@@ -20,12 +20,9 @@ package org.jclouds.tmrk.enterprisecloud.domain;
 
 import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 /**
  * @author Jason King
  */
-@XmlRootElement(name = "Memory")
 public class Memory extends ResourceCapacity<Memory> {
 
    @SuppressWarnings("unchecked")

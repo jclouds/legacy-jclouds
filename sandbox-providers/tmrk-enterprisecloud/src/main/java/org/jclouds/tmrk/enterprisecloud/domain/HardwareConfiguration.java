@@ -22,7 +22,6 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
@@ -33,7 +32,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * @author Jason King
  */
-@XmlRootElement(name = "HardwareConfiguration")
 public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
 
    @SuppressWarnings("unchecked")

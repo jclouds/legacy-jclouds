@@ -25,7 +25,6 @@ import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
 
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
@@ -36,7 +35,6 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
  * @author Jason King
  * 
  */
-@XmlRootElement(name = "Network")
 public class NetworkReference extends BaseNamedResource<NetworkReference> {
     @XmlEnum
     public static enum NetworkType {
