@@ -19,6 +19,7 @@
 package org.jclouds.tmrk.enterprisecloud.features;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.tmrk.enterprisecloud.domain.AssignedIpAddresses;
 import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachine;
 import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachines;
 
@@ -51,5 +52,13 @@ public interface VirtualMachineClient {
     * @return the virtual Machine or null if not found
     */
    VirtualMachine getVirtualMachine(long id);
+
+    /**
+     * The Get Virtual Machines Assigned IP Addresses call returns information
+     * regarding the IP addresses assigned to a specified virtual machine in a compute pool.
+     * @param id the id of the virtual machine
+     * @return the assigned ip addresses
+     */
+   AssignedIpAddresses getAssignedIpAddresses(long id);
 
 }
