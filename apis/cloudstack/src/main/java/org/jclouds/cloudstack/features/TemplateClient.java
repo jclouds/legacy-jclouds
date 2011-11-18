@@ -86,7 +86,7 @@ public interface TemplateClient {
     *           optional arguments
     * @return data about the newly-registered template
     */
-   Template registerTemplate(TemplateMetadata templateMetadata, String format, String hypervisor, String url,
+   Set<Template> registerTemplate(TemplateMetadata templateMetadata, String format, String hypervisor, String url,
          long zoneId, RegisterTemplateOptions... options);
 
    /**
