@@ -39,14 +39,14 @@ public class RetrieveActiveBridgedInterfacesLiveTest extends
    private String guestId = "guest";
    private String hostId = "host";
 
-
    @Test
    public void retrieveAvailableBridgedInterfaceInfoTest() {
       ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest(
             hostId, "localhost", guestId, "localhost", new Credentials("toor",
                   "password"));
-      List<String> bridgedInterface = new RetrieveActiveBridgedInterfaces(localHostContext).apply(hostId);
-      assertFalse(bridgedInterface.isEmpty());   
+      List<String> bridgedInterface = new RetrieveActiveBridgedInterfaces(
+            localHostContext).apply(hostId);
+      assertFalse(bridgedInterface.isEmpty());
    }
 
 }

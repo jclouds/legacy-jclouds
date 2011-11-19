@@ -25,7 +25,8 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-public class RetrieveActiveBridgedInterfaces implements Function<String, List<String>> {
+public class RetrieveActiveBridgedInterfaces implements
+      Function<String, List<String>> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -58,19 +59,21 @@ public class RetrieveActiveBridgedInterfaces implements Function<String, List<St
          Iterable<String> filterdBridgedInterface = null;
          nets = NetworkInterface.getNetworkInterfaces();
          for (NetworkInterface inet : Collections.list(nets)) {
-            filterdBridgedInterface = Iterables.filter(bridgedInterfaces, new IsActiveBridgedInterface(inet));
+            filterdBridgedInterface = Iterables.filter(bridgedInterfaces,
+                  new IsActiveBridgedInterface(inet));
             for (String filterInetName : filterdBridgedInterface) {
                activeNetworkInterfaceNames.add(filterInetName);
             }
          }
       } catch (SocketException e) {
          logger.error(e, "Problem in listing network interfaces.");
-          propagate(e);
+         propagate(e);
       }
       return activeNetworkInterfaceNames;
    }
 
-   protected static List<String> retrieveBridgedInterfaceNames(String bridgedIfBlocks) {
+   protected static List<String> retrieveBridgedInterfaceNames(
+         String bridgedIfBlocks) {
       List<String> bridgedInterfaceNames = Lists.newArrayList();
       // separate the different bridge block
       for (String bridgedIfBlock : Splitter.on(
@@ -84,9 +87,10 @@ public class RetrieveActiveBridgedInterfaces implements Function<String, List<St
             }
          });
          for (String bridgedInterfaceName : bridgedIfName) {
-            for (String string : Splitter.on("Name:").split(bridgedInterfaceName)) {
-               if(!string.isEmpty())
-                  bridgedInterfaceNames.add(string.trim());   
+            for (String string : Splitter.on("Name:").split(
+                  bridgedInterfaceName)) {
+               if (!string.isEmpty())
+                  bridgedInterfaceNames.add(string.trim());
             }
          }
       }
@@ -98,25 +102,28 @@ public class RetrieveActiveBridgedInterfaces implements Function<String, List<St
       assert false;
       return null;
    }
-   
-  private class IsActiveBridgedInterface implements Predicate<String> {
 
-     private NetworkInterface networkInterface;
-     
-     public IsActiveBridgedInterface(NetworkInterface networkInterface) {
-        
-        super();
-        this.networkInterface = networkInterface;
-     }  
+   private class IsActiveBridgedInterface implements Predicate<String> {
+
+      private NetworkInterface networkInterface;
+
+      public IsActiveBridgedInterface(NetworkInterface networkInterface) {
+
+         super();
+         this.networkInterface = networkInterface;
+      }
+
       @Override
       public boolean apply(String bridgedInterfaceName) {
          try {
-            return (bridgedInterfaceName.startsWith(networkInterface.getDisplayName()) && networkInterface.isUp() && !networkInterface.isLoopback());
+            return (bridgedInterfaceName.startsWith(networkInterface
+                  .getDisplayName()) && networkInterface.isUp() && !networkInterface
+                     .isLoopback());
          } catch (SocketException e) {
             logger.error(e, "Problem in listing network interfaces.");
             propagate(e);
-        }
+         }
          return false;
-      }         
-  };
+      }
+   };
 }
