@@ -97,8 +97,8 @@ public class VirtualMachineJAXBParsingTest extends BaseRestClientTest {
    @Test
    public void testParseVirtualMachineWithJAXB() throws Exception {
 
-      Method method = VirtualMachineAsyncClient.class.getMethod("getVirtualMachine", long.class);
-      HttpRequest request = factory(VirtualMachineAsyncClient.class).createRequest(method,1);
+      Method method = VirtualMachineAsyncClient.class.getMethod("getVirtualMachine", URI.class);
+      HttpRequest request = factory(VirtualMachineAsyncClient.class).createRequest(method,new URI("/1"));
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
 
       Function<HttpResponse, VirtualMachine> parser = (Function<HttpResponse, VirtualMachine>) RestAnnotationProcessor

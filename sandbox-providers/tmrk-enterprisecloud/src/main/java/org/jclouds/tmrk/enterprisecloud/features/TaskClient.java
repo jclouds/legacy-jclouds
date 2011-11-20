@@ -44,7 +44,7 @@ public interface TaskClient {
     * 
     * @return a history of changes to the environment.
     */
-   Tasks getTasksInEnvironment(long environmentId);
+   Tasks getTasksInEnvironment(URI environmentUri);
 
    /**
     * The Get Tasks by ID call returns information regarding a specified task in

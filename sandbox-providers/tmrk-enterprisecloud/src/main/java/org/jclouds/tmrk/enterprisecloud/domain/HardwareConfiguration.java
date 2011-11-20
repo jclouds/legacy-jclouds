@@ -162,7 +162,7 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
    private Nics virtualNics = new Nics();
 
    public HardwareConfiguration(Set<Action> actions, int processorCount, @Nullable Memory memory, Set<VirtualDisk> virtualDisks, Set<VirtualNic> virtualNics) {
-       for( Action action: checkNotNull(actions, "actions")) this.actions.setAction(action);
+       for( Action action: checkNotNull(actions, "actions")) this.actions.addAction(action);
        for( VirtualDisk disk: checkNotNull(virtualDisks, "virtualDisks")) this.virtualDisks.setVirtualDisk(disk);
        for( VirtualNic virtualNic: checkNotNull(virtualNics, "virtualNics")) this.virtualNics.setVirtualNic(virtualNic);
 

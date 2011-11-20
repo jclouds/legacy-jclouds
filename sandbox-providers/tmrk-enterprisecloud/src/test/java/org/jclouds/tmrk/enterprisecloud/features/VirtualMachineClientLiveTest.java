@@ -49,10 +49,10 @@ public class VirtualMachineClientLiveTest extends BaseTerremarkEnterpriseCloudCl
 
    @Test
    public void testGetVirtualMachines() throws Exception {
-      // TODO: don't hard-code id
-       VirtualMachines virtualMachines = client.getVirtualMachines(89);
+      // TODO: don't hard-code uri
+       VirtualMachines virtualMachines = client.getVirtualMachines(new URI("/cloudapi/ecloud/virtualMachines/computePools/89"));
        for( VirtualMachine vm : virtualMachines.getVirtualMachines()) {
-           VirtualMachine virtualMachine = client.getVirtualMachine(parse(vm.getHref()));
+           VirtualMachine virtualMachine = client.getVirtualMachine(vm.getHref());
            assert null != virtualMachine;
            assertEquals(virtualMachine.getStatus(),VirtualMachine.VirtualMachineStatus.DEPLOYED);
        }
@@ -60,29 +60,18 @@ public class VirtualMachineClientLiveTest extends BaseTerremarkEnterpriseCloudCl
 
    @Test
    public void testGetVirtualMachine() throws Exception {
-      // TODO: don't hard-code id
-       VirtualMachine virtualMachine = client.getVirtualMachine(5504);
+      // TODO: don't hard-code uri
+       VirtualMachine virtualMachine = client.getVirtualMachine(new URI("/cloudapi/ecloud/virtualMachines/5504"));
        assert null != virtualMachine;
        assertEquals(virtualMachine.getStatus(),VirtualMachine.VirtualMachineStatus.DEPLOYED);
    }
 
     @Test
    public void testGetAssignedIpAddresses() throws Exception {
-        AssignedIpAddresses assignedIpAddresses = client.getAssignedIpAddresses(5504);
+        AssignedIpAddresses assignedIpAddresses = client.getAssignedIpAddresses(new URI("/cloudapi/ecloud/virtualMachines/5504/assignedips"));
         assert null != assignedIpAddresses;
         DeviceNetwork network = Iterables.getOnlyElement(assignedIpAddresses.getNetworks().getDeviceNetworks());
         Set<String> ipAddresses = network.getIpAddresses().getIpAddresses();
         assertTrue(ipAddresses.size()>0, "vm has no assigned ip addresses");
     }
-
-   // TODO: We are not supposed to parse the href's
-   // The alternative is to use URI's on the method calls.
-   // But this has the risk of exposing strings like "/virtualmachines/5504" and "/computepools/89" to users
-   // Also - would need to figure out how to configure the tests
-   // to add on the endpoint so that the @EndpointParam is converted into a proper request.
-   private long parse(URI uri) {
-       String path = uri.getPath();
-       path = path.substring(path.lastIndexOf("/")+1);
-       return Long.parseLong(path);
-   }
 }

@@ -34,10 +34,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class Actions {
 
+    @XmlElement(name = "Action")
     private LinkedHashSet<Action> actions = Sets.newLinkedHashSet();
 
-    @XmlElement(name = "Action")
-    void setAction(Action action) {
+    void addAction(Action action) {
         checkNotNull(action,"action");
         this.actions.add(action);
     }

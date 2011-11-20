@@ -23,6 +23,8 @@ import org.jclouds.tmrk.enterprisecloud.domain.Tasks;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import java.net.URI;
+
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -42,11 +44,11 @@ public class TaskClientLiveTest extends BaseTerremarkEnterpriseCloudClientLiveTe
    private TaskClient client;
 
    @Test
-   public void testGetTasks() {
+   public void testGetTasks() throws Exception {
       // TODO: don't hard-code id
       // TODO: docs say don't parse the href, yet no xml includes "identifier",
       // I suspect we may need to change to URI args as opposed to long
-      Tasks response = client.getTasksInEnvironment(77);
+      Tasks response = client.getTasksInEnvironment(new URI("/cloudapi/ecloud/tasks/environments/77"));
       assert null != response;
 
       assertTrue(response.getTasks().size() >= 0);

@@ -97,8 +97,8 @@ public class AssignedIpAddressesJAXBParsingTest extends BaseRestClientTest {
    @Test
    public void testParseAssignedIpAddressesWithJAXB() throws Exception {
 
-      Method method = VirtualMachineAsyncClient.class.getMethod("getAssignedIpAddresses", long.class);
-      HttpRequest request = factory(VirtualMachineAsyncClient.class).createRequest(method,1);
+      Method method = VirtualMachineAsyncClient.class.getMethod("getAssignedIpAddresses", URI.class);
+      HttpRequest request = factory(VirtualMachineAsyncClient.class).createRequest(method,new URI("/1"));
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
 
       Function<HttpResponse, AssignedIpAddresses> parser = (Function<HttpResponse, AssignedIpAddresses>) RestAnnotationProcessor
