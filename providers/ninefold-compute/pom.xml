@@ -99,6 +99,7 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
+                  <threadCount>1</threadCount>
                   <systemPropertyVariables>
                     <test.ninefold-compute.endpoint>${test.ninefold-compute.endpoint}</test.ninefold-compute.endpoint>
                     <test.ninefold-compute.apiversion>${test.ninefold-compute.apiversion}</test.ninefold-compute.apiversion>
