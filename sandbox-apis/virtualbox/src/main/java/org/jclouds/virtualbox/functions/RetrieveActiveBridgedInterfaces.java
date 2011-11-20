@@ -102,7 +102,7 @@ public class RetrieveActiveBridgedInterfaces implements
       assert false;
       return null;
    }
-
+   
    private class IsActiveBridgedInterface implements Predicate<String> {
 
       private NetworkInterface networkInterface;
