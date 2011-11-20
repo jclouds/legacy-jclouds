@@ -87,7 +87,7 @@ public interface TemplateAsyncClient {
    @QueryParams(keys = "command", values = "registerTemplate")
    @SelectJson("template")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Template> registerTemplate(
+   ListenableFuture<Set<Template>> registerTemplate(
          @BinderParam(BindTemplateMetadataToQueryParams.class) TemplateMetadata templateMetadata,
          @QueryParam("format") String format, @QueryParam("hypervisor") String hypervisor,
          @QueryParam("url") String url, @QueryParam("zoneid") long zoneId, RegisterTemplateOptions... options);
