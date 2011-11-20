@@ -34,6 +34,7 @@ import java.util.Properties;
 import org.jclouds.javax.annotation.Nullable;
 
 import org.jclouds.PropertiesBuilder;
+import org.jclouds.util.ClassLoadingUtils;
 import org.jclouds.util.SaxUtils;
 
 import com.google.common.base.Function;
@@ -90,7 +91,7 @@ public class Providers {
                String provider = get(Splitter.on('.').split(keyString), 0);
                Class<RestContextBuilder<Object, Object>> clazz = Providers.resolveContextBuilderClass(provider,
                      properties);
-               if (type.isAssignableFrom(clazz))
+               if (clazz != null && type.isAssignableFrom(clazz))
                   return provider;
             } catch (ClassNotFoundException e) {
             } catch (Exception e) {
@@ -111,13 +112,18 @@ public class Providers {
       String asyncClassName = properties.getProperty(provider + ".async");
       if (syncClassName != null) {
          checkArgument(asyncClassName != null, "please configure async class for " + syncClassName);
-         Class.forName(syncClassName);
-         Class.forName(asyncClassName);
-         return (Class<RestContextBuilder<S, A>>) (contextBuilderClassName != null ? Class
-               .forName(contextBuilderClassName) : RestContextBuilder.class);
+         if(ClassLoadingUtils.loadClass(Providers.class, syncClassName) == null) {
+             throw new ClassNotFoundException();
+         }
+         if(ClassLoadingUtils.loadClass(Providers.class, asyncClassName) == null) {
+             throw new ClassNotFoundException();
+         }
+         return (Class<RestContextBuilder<S, A>>) (contextBuilderClassName != null ? ClassLoadingUtils.
+                 loadClass(Providers.class, contextBuilderClassName) : RestContextBuilder.class);
       } else {
          checkArgument(contextBuilderClassName != null, "please configure contextbuilder class for " + provider);
-         return (Class<RestContextBuilder<S, A>>) Class.forName(contextBuilderClassName);
+         return (Class<RestContextBuilder<S, A>>)  ClassLoadingUtils.
+                 loadClass(Providers.class, contextBuilderClassName);
       }
    }
 
@@ -142,7 +148,7 @@ public class Providers {
          NoSuchMethodException {
       String propertiesBuilderClassName = props.getProperty(providerName + ".propertiesbuilder", null);
       if (propertiesBuilderClassName != null) {
-         return (Class<PropertiesBuilder>) Class.forName(propertiesBuilderClassName);
+         return (Class<PropertiesBuilder>) ClassLoadingUtils.loadClass(Providers.class, propertiesBuilderClassName);
       } else {
          return PropertiesBuilder.class;
       }
