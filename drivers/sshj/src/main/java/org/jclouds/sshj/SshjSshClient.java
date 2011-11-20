@@ -119,8 +119,8 @@ public class SshjSshClient implements SshClient {
    @Named("jclouds.ssh.retry-predicate")
    // NOTE cannot retry io exceptions, as SSHException is a part of the chain
    private Predicate<Throwable> retryPredicate = or(instanceOf(ConnectionException.class),
-            instanceOf(ConnectException.class), instanceOf(SocketTimeoutException.class),
-            instanceOf(TransportException.class));
+         instanceOf(ConnectException.class), instanceOf(SocketTimeoutException.class),
+         instanceOf(TransportException.class));
 
    @Resource
    @Named("jclouds.ssh")
@@ -133,7 +133,7 @@ public class SshjSshClient implements SshClient {
    private final BackoffLimitedRetryHandler backoffLimitedRetryHandler;
 
    public SshjSshClient(BackoffLimitedRetryHandler backoffLimitedRetryHandler, IPSocket socket, int timeout,
-            String username, String password, byte[] privateKey) {
+         String username, String password, byte[] privateKey) {
       this.host = checkNotNull(socket, "socket").getAddress();
       checkArgument(socket.getPort() > 0, "ssh port must be greater then zero" + socket.getPort());
       checkArgument(password != null || privateKey != null, "you must specify a password or a key");
@@ -149,7 +149,7 @@ public class SshjSshClient implements SshClient {
          String fingerPrint = fingerprintPrivateKey(new String(privateKey));
          String sha1 = sha1PrivateKey(new String(privateKey));
          this.toString = String.format("%s:rsa[fingerprint(%s),sha1(%s)]@%s:%d", username, fingerPrint, sha1, host,
-                  port);
+               port);
       }
    }
 
@@ -222,7 +222,7 @@ public class SshjSshClient implements SshClient {
             return returnVal;
          } catch (Exception from) {
             try {
-               connection.clear();
+               disconnect();
             } catch (Exception e1) {
                logger.warn(from, "<< (%s) error closing connection", toString());
             }
@@ -231,13 +231,15 @@ public class SshjSshClient implements SshClient {
                throw propagate(from, errorMessage);
             } else if (Throwables2.getFirstThrowableOfType(from, IllegalStateException.class) != null) {
                logger.warn(from, "<< " + errorMessage + ": " + from.getMessage());
-               disconnect();
                backoffForAttempt(i + 1, errorMessage + ": " + from.getMessage());
-               connect();
+               if (connection != sshConnection)
+                  connect();
                continue;
             } else if (shouldRetry(from)) {
                logger.warn(from, "<< " + errorMessage + ": " + from.getMessage());
                backoffForAttempt(i + 1, errorMessage + ": " + from.getMessage());
+               if (connection != sshConnection)
+                  connect();
                continue;
             } else {
                logger.error(from, "<< " + errorMessage + ": exception not retryable");
@@ -303,7 +305,7 @@ public class SshjSshClient implements SshClient {
       public Payload create() throws Exception {
          sftp = acquire(sftpConnection);
          return Payloads.newInputStreamPayload(new CloseFtpChannelOnCloseInputStream(sftp.getSFTPEngine().open(path)
-                  .getInputStream(), sftp));
+               .getInputStream(), sftp));
       }
 
       @Override
@@ -397,7 +399,7 @@ public class SshjSshClient implements SshClient {
                @Override
                public boolean apply(Throwable arg0) {
                   return (arg0.toString().indexOf(input) != -1)
-                             || (arg0.getMessage() != null && arg0.getMessage().indexOf(input) != -1);
+                        || (arg0.getMessage() != null && arg0.getMessage().indexOf(input) != -1);
                }
 
             });
@@ -413,7 +415,7 @@ public class SshjSshClient implements SshClient {
       if (e instanceof UserAuthException)
          throw new AuthorizationException("(" + toString() + ") " + message, e);
       throw e instanceof SshException ? SshException.class.cast(e) : new SshException(
-               "(" + toString() + ") " + message, e);
+            "(" + toString() + ") " + message, e);
    }
 
    @Override
