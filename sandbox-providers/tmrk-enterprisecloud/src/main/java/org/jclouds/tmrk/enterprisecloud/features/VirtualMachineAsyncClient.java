@@ -20,10 +20,7 @@ package org.jclouds.tmrk.enterprisecloud.features;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.Headers;
-import org.jclouds.rest.annotations.JAXBResponseParser;
-import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.tmrk.enterprisecloud.domain.AssignedIpAddresses;
 import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachine;
@@ -31,8 +28,7 @@ import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachines;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import java.net.URI;
 
 /**
  * Provides asynchronous access to VirtualMachine via their REST API.
@@ -52,30 +48,27 @@ public interface VirtualMachineAsyncClient {
     * @see VirtualMachineClient#getVirtualMachines
     */
    @GET
-   @Path("/virtualMachines/computePools/{id}")
    @Consumes("application/vnd.tmrk.cloud.virtualMachine; type=collection")
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<VirtualMachines> getVirtualMachines(@PathParam("id") long id);
+   ListenableFuture<VirtualMachines> getVirtualMachines(@EndpointParam URI uri);
 
    /**
     * @see VirtualMachineClient#getVirtualMachine
     */
    @GET
-   @Path("/virtualMachines/{id}")
    @Consumes("application/vnd.tmrk.cloud.virtualMachine")
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<VirtualMachine> getVirtualMachine(@PathParam("id") long id);
+   ListenableFuture<VirtualMachine> getVirtualMachine(@EndpointParam URI uri);
 
    /**
     * @see VirtualMachineClient#getVirtualMachine
     */
    @GET
-   @Path("/virtualMachines/{id}/assignedIps")
    @Consumes("application/vnd.tmrk.cloud.virtualMachineAssignedIps")
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<AssignedIpAddresses> getAssignedIpAddresses(@PathParam("id") long id);
+   ListenableFuture<AssignedIpAddresses> getAssignedIpAddresses(@EndpointParam URI uri);
 
 }

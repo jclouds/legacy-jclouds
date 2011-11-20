@@ -29,6 +29,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Tests annotation parsing of {@code TaskAsyncClient}
@@ -38,9 +39,9 @@ import java.net.URI;
 @Test(groups = "unit", testName = "TaskAsyncClientTest")
 public class TaskAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClientTest<TaskAsyncClient> {
 
-   public void testGetTasksInEnvironment() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TaskAsyncClient.class.getMethod("getTasksInEnvironment", long.class);
-      HttpRequest httpRequest = processor.createRequest(method, 1l);
+   public void testGetTasksInEnvironment() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = TaskAsyncClient.class.getMethod("getTasksInEnvironment", URI.class);
+      HttpRequest httpRequest = processor.createRequest(method, new URI("/cloudapi/ecloud/tasks/environments/1"));
 
       assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/tasks/environments/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest,

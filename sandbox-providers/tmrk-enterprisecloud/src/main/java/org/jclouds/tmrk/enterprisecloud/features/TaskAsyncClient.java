@@ -28,8 +28,6 @@ import org.jclouds.tmrk.enterprisecloud.domain.Tasks;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import java.net.URI;
 
 /**
@@ -44,18 +42,16 @@ import java.net.URI;
  */
 @RequestFilters(BasicAuthentication.class)
 @Headers(keys = "x-tmrk-version", values = "{jclouds.api-version}")
-//@VirtualHost
 public interface TaskAsyncClient {
 
    /**
     * @see TaskClient#getTasksInEnvironment
     */
    @GET
-   @Path("/tasks/environments/{environmentId}")
    @Consumes("application/vnd.tmrk.cloud.task; type=collection")
    @JAXBResponseParser
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Tasks> getTasksInEnvironment(@PathParam("environmentId") long environmentId);
+   ListenableFuture<Tasks> getTasksInEnvironment(@EndpointParam URI environmentId);
 
    /**
     * @see TaskClient#getTask

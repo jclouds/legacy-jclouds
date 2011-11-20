@@ -27,6 +27,8 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Tests annotation parsing of {@code TaskAsyncClient}
@@ -36,9 +38,9 @@ import java.lang.reflect.Method;
 @Test(groups = "unit", testName = "VirtualMachineAsyncClientTest")
 public class VirtualMachineAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClientTest<VirtualMachineAsyncClient> {
 
-   public void testGetVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VirtualMachineAsyncClient.class.getMethod("getVirtualMachine", long.class);
-      HttpRequest httpRequest = processor.createRequest(method,1);
+   public void testGetVirtualMachine() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = VirtualMachineAsyncClient.class.getMethod("getVirtualMachine", URI.class);
+      HttpRequest httpRequest = processor.createRequest(method,new URI("/cloudapi/ecloud/virtualMachines/1"));
 
       assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/virtualMachines/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/vnd.tmrk.cloud.virtualMachine\nx-tmrk-version: 2011-07-01\n");
@@ -50,9 +52,9 @@ public class VirtualMachineAsyncClientTest extends BaseTerremarkEnterpriseCloudA
       checkFilters(httpRequest);
    }
 
-   public void testGetVirtualMachines() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VirtualMachineAsyncClient.class.getMethod("getVirtualMachines", long.class);
-      HttpRequest httpRequest = processor.createRequest(method,567);
+   public void testGetVirtualMachines() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = VirtualMachineAsyncClient.class.getMethod("getVirtualMachines", URI.class);
+      HttpRequest httpRequest = processor.createRequest(method,new URI("/cloudapi/ecloud/virtualMachines/computePools/567"));
 
       assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/virtualMachines/computePools/567 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/vnd.tmrk.cloud.virtualMachine; type=collection\nx-tmrk-version: 2011-07-01\n");
@@ -64,11 +66,11 @@ public class VirtualMachineAsyncClientTest extends BaseTerremarkEnterpriseCloudA
       checkFilters(httpRequest);
    }
 
-   public void testGetAssignedIpAddresses() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VirtualMachineAsyncClient.class.getMethod("getAssignedIpAddresses", long.class);
-      HttpRequest httpRequest = processor.createRequest(method,1);
+   public void testGetAssignedIpAddresses() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = VirtualMachineAsyncClient.class.getMethod("getAssignedIpAddresses", URI.class);
+      HttpRequest httpRequest = processor.createRequest(method,new URI("/cloudapi/ecloud/virtualMachines/1/assignedips"));
 
-      assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/virtualMachines/1/assignedIps HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/virtualMachines/1/assignedips HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/vnd.tmrk.cloud.virtualMachineAssignedIps\nx-tmrk-version: 2011-07-01\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
