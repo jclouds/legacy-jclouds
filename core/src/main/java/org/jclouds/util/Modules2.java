@@ -47,12 +47,10 @@ public class Modules2 {
             @Override
             public Module apply(String from) {
                try {
-                  return (Module) Class.forName(from).newInstance();
+                  return (Module) ClassLoadingUtils.loadClass(Modules2.class, from).newInstance();
                } catch (InstantiationException e) {
                   throw new RuntimeException("error instantiating " + from, e);
                } catch (IllegalAccessException e) {
-                  throw new RuntimeException("error instantiating " + from, e);
-               } catch (ClassNotFoundException e) {
                   throw new RuntimeException("error instantiating " + from, e);
                }
             }
