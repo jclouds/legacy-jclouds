@@ -62,7 +62,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
 
    public static class Builder extends BaseNamedResource.Builder<VirtualMachine> {
       //TODO There are some more fields
-      private Links links = new Links();
+      private Links links = Links.builder().build();
       private Actions actions = Actions.builder().build();
       private Tasks tasks = new Tasks();
       private String description;
@@ -81,8 +81,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
        * @see VirtualMachine#getLinks
        */
       public Builder links(Set<Link> links) {
-         checkNotNull(links,"links");
-         for(Link link:links) this.links.setLink(link);
+         this.links = Links.builder().links(checkNotNull(links,"links")).build();
          return this;
       }
 
@@ -269,7 +268,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
    }
 
    @XmlElement(name = "Links", required = true)
-   private Links links = new Links();
+   private Links links = Links.builder().build();
 
    @XmlElement(name = "Tasks", required = true)
    private Tasks tasks = new Tasks();
