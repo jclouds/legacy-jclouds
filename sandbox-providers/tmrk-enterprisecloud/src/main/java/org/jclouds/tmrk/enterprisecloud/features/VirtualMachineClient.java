@@ -19,9 +19,9 @@
 package org.jclouds.tmrk.enterprisecloud.features;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.tmrk.enterprisecloud.domain.AssignedIpAddresses;
-import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachine;
-import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachines;
+import org.jclouds.tmrk.enterprisecloud.domain.network.AssignedIpAddresses;
+import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachine;
+import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachines;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;

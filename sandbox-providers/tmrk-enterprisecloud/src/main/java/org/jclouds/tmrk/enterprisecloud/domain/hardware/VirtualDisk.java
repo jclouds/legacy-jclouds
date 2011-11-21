@@ -16,9 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.tmrk.enterprisecloud.domain;
+package org.jclouds.tmrk.enterprisecloud.domain.hardware;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.tmrk.enterprisecloud.domain.Size;
 
 import javax.xml.bind.annotation.XmlElement;
 

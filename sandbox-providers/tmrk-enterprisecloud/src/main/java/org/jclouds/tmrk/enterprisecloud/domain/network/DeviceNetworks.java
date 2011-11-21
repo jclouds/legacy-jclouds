@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.tmrk.enterprisecloud.domain;
+package org.jclouds.tmrk.enterprisecloud.domain.network;
 
 import com.google.common.collect.Sets;
 
@@ -25,44 +25,33 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
- * Wraps individual VirtualNic elements.
- * Needed because parsing is done with JAXB and it does not handle Generic collections
- * <xs:complexType name="Nics">
+ * Container for DeviceNetwork items
+ * <xs:complexType name="DeviceNetworks">
  * @author Jason King
  */
-public class Nics {
+public class DeviceNetworks {
 
-    private LinkedHashSet<VirtualNic> nics = Sets.newLinkedHashSet();
+    private LinkedHashSet<DeviceNetwork> deviceNetworks = Sets.newLinkedHashSet();
 
-    @XmlElement(name = "Nic")
-    void setVirtualNic(VirtualNic nic) {
-        this.nics.add(nic);
+    protected DeviceNetworks() {
+        //For JAXB
     }
 
-    public Set<VirtualNic> getVirtualNics() {
-        return Collections.unmodifiableSet(nics);
+    @XmlElement(name = "Network")
+    void setDeviceNetwork(DeviceNetwork deviceNetwork) {
+        checkNotNull(deviceNetwork,"deviceNetwork");
+        this.deviceNetworks.add(deviceNetwork);
     }
 
+    public Set<DeviceNetwork> getDeviceNetworks() {
+        return Collections.unmodifiableSet(deviceNetworks);
+    }
+    
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Nics nics1 = (Nics) o;
-
-        if (!nics.equals(nics1.nics)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return nics.hashCode();
-    }
-
     public String toString() {
-        return "["+ nics.toString()+"]";
+        return "[deviceNetworks="+deviceNetworks+"]";
     }
-
 }

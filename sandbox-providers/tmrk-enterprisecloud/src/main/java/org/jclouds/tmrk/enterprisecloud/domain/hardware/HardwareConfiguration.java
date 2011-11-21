@@ -16,12 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.tmrk.enterprisecloud.domain;
+package org.jclouds.tmrk.enterprisecloud.domain.hardware;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.tmrk.enterprisecloud.domain.Action;
+import org.jclouds.tmrk.enterprisecloud.domain.Actions;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
+import org.jclouds.tmrk.enterprisecloud.domain.network.Nics;
+import org.jclouds.tmrk.enterprisecloud.domain.network.VirtualNic;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.net.URI;
@@ -162,7 +166,7 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
    private Nics virtualNics = new Nics();
 
    public HardwareConfiguration(Set<Action> actions, int processorCount, @Nullable Memory memory, Set<VirtualDisk> virtualDisks, Set<VirtualNic> virtualNics) {
-       for( Action action: checkNotNull(actions, "actions")) this.actions.addAction(action);
+       this.actions = Actions.builder().actions(checkNotNull(actions, "actions")).build();
        for( VirtualDisk disk: checkNotNull(virtualDisks, "virtualDisks")) this.virtualDisks.setVirtualDisk(disk);
        for( VirtualNic virtualNic: checkNotNull(virtualNics, "virtualNics")) this.virtualNics.setVirtualNic(virtualNic);
 
