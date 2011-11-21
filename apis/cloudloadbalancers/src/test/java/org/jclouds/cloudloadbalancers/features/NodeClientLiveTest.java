@@ -21,6 +21,7 @@ package org.jclouds.cloudloadbalancers.features;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -89,8 +90,8 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
             assert n.getAddress() != null : n;
             assert n.getPort() != -1 : n;
             assert n.getStatus() != null : n;
-            // until fixed by rackspace... listNodes gives null weight when loadbalancer algorithm isn't weighted
-//            assert n.getWeight() != null : n; 
+            assert !Arrays.asList(LoadBalancer.WEIGHTED_ALGORITHMS).contains(
+               lb.getTypedAlgorithm()) || n.getWeight() != null : n;
 
             Node getDetails = client.getNodeClient(lb.getRegion()).getNodeInLoadBalancer(n.getId(), lb.getId());
             System.out.println(n.toString());
@@ -100,8 +101,10 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
                assertEquals(getDetails.getAddress(), n.getAddress());
                assertEquals(getDetails.getPort(), n.getPort());
                assertEquals(getDetails.getStatus(), n.getStatus());
-               // see above; getNodes gives valid/default weight which doesn't match
-//               assertEquals(getDetails.getWeight(), n.getWeight());
+               if(Arrays.asList(LoadBalancer.WEIGHTED_ALGORITHMS).contains(
+                     lb.getTypedAlgorithm())) {
+                  assertEquals(getDetails.getWeight(), n.getWeight());
+               }
             } catch (AssertionError e) {
                throw new AssertionError(String.format("%s\n%s - %s", e.getMessage(),getDetails, n));
             }

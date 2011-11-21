@@ -75,6 +75,11 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
          this.status = status;
          return this;
       }
+      
+      public Builder algorithm(Algorithm algorithm) {
+    	  algorithm(algorithm.name());
+    	  return this;
+      }
 
       public Builder virtualIPs(Iterable<VirtualIP> virtualIPs) {
          this.virtualIPs = ImmutableSet.<VirtualIP> copyOf(checkNotNull(virtualIPs, "virtualIPs"));
@@ -207,10 +212,56 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
       }
 
    }
+   
+   /**
+    All load balancers utilize an algorithm that defines how traffic should be directed between 
+    back-end nodes. The default algorithm for newly created load balancers is RANDOM, which can 
+    be overridden at creation time or changed after the load balancer has been initially 
+    provisioned. The algorithm name is to be constant within a major revision of the load 
+    balancing API, though new algorithms may be created with a unique algorithm name within 
+    a given major revision of the service API.
+    */
+   public static enum Algorithm {
+      /**
+       * The node with the lowest number of connections will receive requests.
+       */
+	  LEAST_CONNECTIONS,
+      /**
+       * Back-end servers are selected at random.
+       */
+	  RANDOM,
+      /**
+       * Connections are routed to each of the back-end servers in turn.
+       */
+	  ROUND_ROBIN,
+      /**
+       * Each request will be assigned to a node based on the number of concurrent connections 
+       * to the node and its weight.
+       */
+	  WEIGHTED_LEAST_CONNECTIONS,
+      /**
+       * A round robin algorithm, but with different proportions of traffic being directed to 
+       * the back-end nodes. Weights must be defined as part of the load balancer's node configuration.
+       */
+	  WEIGHTED_ROUND_ROBIN,
+      UNRECOGNIZED;
+
+      public static Algorithm fromValue(String status) {
+         try {
+            return valueOf(checkNotNull(status, "status"));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
+      }
+   }
+   
+   public static Algorithm[] WEIGHTED_ALGORITHMS = {Algorithm.WEIGHTED_LEAST_CONNECTIONS, 
+	   Algorithm.WEIGHTED_ROUND_ROBIN};
 
    private final String region;
    private final int id;
    private final Status status;
+   private final Algorithm algorithm;
    private final Set<VirtualIP> virtualIPs;
    private final String sessionPersistenceType;
    private final String clusterName;
@@ -226,6 +277,7 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
       checkArgument(id != -1, "id must be specified");
       this.id = id;
       this.status = checkNotNull(status, "status");
+      this.algorithm = Algorithm.fromValue(algorithm);
       this.virtualIPs = ImmutableSet.copyOf(checkNotNull(virtualIPs, "virtualIPs"));
       this.sessionPersistenceType = sessionPersistenceType;
       this.clusterName = clusterName;
@@ -244,6 +296,10 @@ public class LoadBalancer extends BaseLoadBalancer<Node, LoadBalancer> {
 
    public Status getStatus() {
       return status;
+   }
+   
+   public Algorithm getTypedAlgorithm() {
+	   return algorithm;
    }
 
    public Set<VirtualIP> getVirtualIPs() {
