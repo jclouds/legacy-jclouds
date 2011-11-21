@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutorService;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.inject.Injector;
 import org.jclouds.Constants;
 import org.jclouds.compute.Utils;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -49,11 +50,11 @@ public class UtilsImpl extends org.jclouds.rest.internal.UtilsImpl implements Ut
    private final Function<NodeMetadata, SshClient> sshForNode;
 
    @Inject
-   UtilsImpl(Json json, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient, Crypto encryption,
+   UtilsImpl(Injector injector, Json json, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient, Crypto encryption,
          DateService date, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
          @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads, LoggerFactory loggerFactory,
          Function<NodeMetadata, SshClient> sshForNode) {
-      super(json, simpleClient, simpleAsyncClient, encryption, date, userThreads, ioThreads, loggerFactory);
+      super(injector, json, simpleClient, simpleAsyncClient, encryption, date, userThreads, ioThreads, loggerFactory);
       this.sshForNode = sshForNode;
    }
 
@@ -71,5 +72,4 @@ public class UtilsImpl extends org.jclouds.rest.internal.UtilsImpl implements Ut
    public Function<NodeMetadata, SshClient> sshForNode() {
       return sshForNode;
    }
-
 }
