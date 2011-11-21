@@ -60,6 +60,7 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
    protected Map<String, Long> ipsToNetworks = Maps.<String, Long>newLinkedHashMap();
    protected String ipOnDefaultNetwork;
    protected String keyPair;
+   protected boolean setupStaticNat = true;
 
    @Override
    public CloudStackTemplateOptions clone() {
@@ -116,6 +117,15 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
 
    public Set<Long> getNetworkIds() {
       return networkIds;
+   }
+
+   public CloudStackTemplateOptions setupStaticNat(boolean setupStaticNat) {
+      this.setupStaticNat = setupStaticNat;
+      return this;
+   }
+
+   public boolean shouldSetupStaticNat() {
+      return this.setupStaticNat;
    }
 
    /**
@@ -204,6 +214,14 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
       public static CloudStackTemplateOptions ipsToNetworks(Map<String, Long> ipToNetworkMap) {
          CloudStackTemplateOptions options = new CloudStackTemplateOptions();
          return options.ipsToNetworks(ipToNetworkMap);
+      }
+
+      /**
+       * @see CloudStackTemplateOptions#setupStaticNat
+       */
+      public static CloudStackTemplateOptions setupStaticNat(boolean setupStaticNat) {
+         CloudStackTemplateOptions options = new CloudStackTemplateOptions();
+         return options.setupStaticNat(setupStaticNat);
       }
 
       /**

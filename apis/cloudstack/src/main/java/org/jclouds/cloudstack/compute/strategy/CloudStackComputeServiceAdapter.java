@@ -168,10 +168,12 @@ public class CloudStackComputeServiceAdapter implements
       } else {
          credentials = credentialStore.get("keypair#" + templateOptions.getKeyPair());
       }
-      // TODO: possibly not all network ids, do we want to do this
-      for (long networkId : options.getNetworkIds()) {
-         // TODO: log this
-         PublicIPAddress ip = staticNATVMInNetwork.create(networks.get(networkId)).apply(vm);
+      if (templateOptions.shouldSetupStaticNat()) {
+         // TODO: possibly not all network ids, do we want to do this
+         for (long networkId : options.getNetworkIds()) {
+            // TODO: log this
+            PublicIPAddress ip = staticNATVMInNetwork.create(networks.get(networkId)).apply(vm);
+         }
       }
       return new NodeAndInitialCredentials<VirtualMachine>(vm, vm.getId() + "", credentials);
    }

@@ -25,7 +25,10 @@ import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.B
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.networkIds;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.securityGroupId;
 import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.securityGroupIds;
+import static org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions.Builder.setupStaticNat;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import org.jclouds.compute.options.TemplateOptions;
 import org.testng.annotations.Test;
@@ -143,6 +146,26 @@ public class CloudStackTemplateOptionsTest {
          .getIpsToNetworks().get("10.0.0.1").longValue(), 5L);
    }
 
+   @Test
+   public void testSetupStaticNatDefaultsTrue() {
+      TemplateOptions options = new CloudStackTemplateOptions();
+      assertTrue(options.as(CloudStackTemplateOptions.class)
+         .shouldSetupStaticNat());
+   }
+
+   @Test
+   public void testSetupStaticNat() {
+      TemplateOptions options = new CloudStackTemplateOptions().setupStaticNat(false);
+      assertFalse(options.as(CloudStackTemplateOptions.class)
+         .shouldSetupStaticNat());
+   }
+
+   @Test
+   public void testSetupStaticNatStatic() {
+      TemplateOptions options = setupStaticNat(false);
+      assertFalse(options.as(CloudStackTemplateOptions.class)
+         .shouldSetupStaticNat());
+   }
 
    @Test
    public void testKeyPair() {
