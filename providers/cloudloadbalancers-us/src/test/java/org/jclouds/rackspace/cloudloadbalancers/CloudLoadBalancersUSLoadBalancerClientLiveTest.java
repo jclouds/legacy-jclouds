@@ -18,7 +18,10 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers;
 
+import static org.testng.Assert.assertEquals;
+
 import org.jclouds.cloudloadbalancers.features.LoadBalancerClientLiveTest;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 /**
@@ -29,5 +32,12 @@ import org.testng.annotations.Test;
 public class CloudLoadBalancersUSLoadBalancerClientLiveTest extends LoadBalancerClientLiveTest {
    public CloudLoadBalancersUSLoadBalancerClientLiveTest() {
       provider = "cloudloadbalancers-us";
+   }
+   
+   @BeforeGroups(groups = "live")
+   protected void setup() {
+	   super.setup();
+	   assertEquals(client.getConfiguredRegions().size(), 
+			   CloudLoadBalancersUSPropertiesBuilder.REGIONS.length);
    }
 }
