@@ -35,9 +35,52 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class Disks {
 
-    private LinkedHashSet<VirtualDisk> disks = Sets.newLinkedHashSet();
+   @SuppressWarnings("unchecked")
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public Builder toBuilder() {
+      return new Builder().fromDisks(this);
+   }
+
+   public static class Builder {
+
+       private Set<VirtualDisk> disks = Sets.newLinkedHashSet();
+
+       /**
+        * @see Disks#getVirtualDisks()
+        */
+       public Builder disks(Set<VirtualDisk> disks) {
+          this.disks = Sets.newLinkedHashSet(checkNotNull(disks, "disks"));
+          return this;
+       }
+
+       public Builder addDisk(VirtualDisk disk) {
+          disks.add(checkNotNull(disk,"disk"));
+          return this;
+       }
+
+       public Disks build() {
+           return new Disks(disks);
+       }
+
+       public Builder fromDisks(Disks in) {
+         return disks(in.getVirtualDisks());
+       }
+   }
 
     @XmlElement(name = "Disk")
+    private LinkedHashSet<VirtualDisk> disks = Sets.newLinkedHashSet();
+
+    private Disks() {
+      //For JAXB and builder use
+    }
+
+    private Disks(Set<VirtualDisk> disks) {
+       this.disks = Sets.newLinkedHashSet(disks);
+    }
+
     public void setVirtualDisk(VirtualDisk disk) {
         checkNotNull(disk,"disk");
         this.disks.add(disk);

@@ -37,7 +37,7 @@ public class AssignedIpAddresses extends BaseResource<AssignedIpAddresses> {
    //TODO links
 
    @XmlElement(name = "Actions", required = true)
-   private Actions actions = new Actions();
+   private Actions actions = Actions.builder().build();
 
    @XmlElement(name = "Networks", required = true)
    private DeviceNetworks networks = new DeviceNetworks();

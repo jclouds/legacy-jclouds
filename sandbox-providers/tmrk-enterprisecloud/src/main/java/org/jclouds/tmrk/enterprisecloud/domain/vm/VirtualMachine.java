@@ -63,7 +63,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
    public static class Builder extends BaseNamedResource.Builder<VirtualMachine> {
       //TODO There are some more fields
       private Links links = new Links();
-      private Actions actions = new Actions();
+      private Actions actions = Actions.builder().build();
       private Tasks tasks = new Tasks();
       private String description;
       private VirtualMachineStatus status;
@@ -275,7 +275,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
    private Tasks tasks = new Tasks();
 
    @XmlElement(name = "Actions", required = true)
-   private Actions actions = new Actions();
+   private Actions actions = Actions.builder().build();
 
    @XmlElement(name = "Description", required = true)
    private String description;

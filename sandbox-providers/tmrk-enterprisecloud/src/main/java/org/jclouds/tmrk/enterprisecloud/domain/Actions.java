@@ -68,7 +68,7 @@ public class Actions {
        }
    }
 
-   public Actions() {
+   private Actions() {
       //For JAXB and builder use
    }
 
