@@ -41,7 +41,7 @@ import com.google.common.base.Joiner;
  * @author Adrian Cole
  */
 public class CloudLoadBalancersUSPropertiesBuilder extends CloudLoadBalancersPropertiesBuilder {
-   public static String[] REGIONS = {ORD, DFW};
+   public static final String[] REGIONS = {ORD, DFW};
 
    @Override
    protected Properties defaultProperties() {

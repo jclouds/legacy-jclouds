@@ -40,7 +40,7 @@ import com.google.common.base.Joiner;
  * @author Dan Lo Bianco
  */
 public class CloudLoadBalancersUKPropertiesBuilder extends CloudLoadBalancersPropertiesBuilder {
-   public static String[] REGIONS = {LON};
+   public static final String[] REGIONS = {LON};
 
    @Override
    protected Properties defaultProperties() {
