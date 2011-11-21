@@ -168,8 +168,7 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
    public HardwareConfiguration(Set<Action> actions, int processorCount, @Nullable Memory memory, Set<VirtualDisk> virtualDisks, Set<VirtualNic> virtualNics) {
        this.actions = Actions.builder().actions(checkNotNull(actions, "actions")).build();
        this.virtualDisks = Disks.builder().disks(checkNotNull(virtualDisks,"virtualDisks")).build();
-       for( VirtualNic virtualNic: checkNotNull(virtualNics, "virtualNics")) this.virtualNics.setVirtualNic(virtualNic);
-
+       this.virtualNics = Nics.builder().nics(checkNotNull(virtualNics, "virtualNics")).build();
        this.processorCount = processorCount;
        this.memory = memory;
    }

@@ -78,12 +78,8 @@ public class Nics {
       this.nics = Sets.newLinkedHashSet(nics);
    }
 
-   private LinkedHashSet<VirtualNic> nics = Sets.newLinkedHashSet();
-
    @XmlElement(name = "Nic")
-   public void setVirtualNic(VirtualNic nic) {
-      this.nics.add(nic);
-   }
+   private LinkedHashSet<VirtualNic> nics = Sets.newLinkedHashSet();
 
    public Set<VirtualNic> getVirtualNics() {
       return Collections.unmodifiableSet(nics);
