@@ -41,11 +41,13 @@ import com.google.common.base.Joiner;
  * @author Adrian Cole
  */
 public class CloudLoadBalancersUSPropertiesBuilder extends CloudLoadBalancersPropertiesBuilder {
+   public static final String[] REGIONS = {ORD, DFW};
+
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ENDPOINT, "https://auth.api.rackspacecloud.com");
-      properties.setProperty(PROPERTY_REGIONS, Joiner.on(',').join(ORD, DFW));
+      properties.setProperty(PROPERTY_REGIONS, Joiner.on(',').join(REGIONS));
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-IL,US-TX");
       
       properties.setProperty(PROPERTY_REGION + "." + ORD + "." + ISO3166_CODES, "US-IL");

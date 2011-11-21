@@ -29,5 +29,6 @@ import org.testng.annotations.Test;
 public class CloudLoadBalancersUSLoadBalancerClientLiveTest extends LoadBalancerClientLiveTest {
    public CloudLoadBalancersUSLoadBalancerClientLiveTest() {
       provider = "cloudloadbalancers-us";
+      regions = CloudLoadBalancersUSPropertiesBuilder.REGIONS;
    }
 }
