@@ -20,6 +20,8 @@ package org.jclouds.rest;
 
 import java.util.concurrent.ExecutorService;
 
+import com.google.common.annotations.Beta;
+import com.google.inject.Injector;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
 import org.jclouds.json.Json;
@@ -92,4 +94,14 @@ public interface Utils {
     * #see #getLoggerFactory
     */
    LoggerFactory loggerFactory();
+
+
+   @Beta
+   Injector getInjector();
+
+   /**
+    * #see #getInjector
+    */
+   @Beta
+   Injector injector();
 }
