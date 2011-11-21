@@ -163,7 +163,7 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
    private Disks virtualDisks = Disks.builder().build();
 
    @XmlElement(name = "Nics", required = false)
-   private Nics virtualNics = new Nics();
+   private Nics virtualNics = Nics.builder().build();
 
    public HardwareConfiguration(Set<Action> actions, int processorCount, @Nullable Memory memory, Set<VirtualDisk> virtualDisks, Set<VirtualNic> virtualNics) {
        this.actions = Actions.builder().actions(checkNotNull(actions, "actions")).build();
