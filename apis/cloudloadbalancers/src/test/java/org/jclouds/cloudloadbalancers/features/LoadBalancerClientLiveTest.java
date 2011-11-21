@@ -21,6 +21,7 @@ package org.jclouds.cloudloadbalancers.features;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -47,7 +48,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudLoadBalancersClientLive
    
    @BeforeGroups(groups = "live")
    protected void setup() {
-	   assertTrue(client.getConfiguredRegions().size() > 0, "Need to have some regions!");
+	   assertEquals(client.getConfiguredRegions(), Arrays.asList(regions));
 	   Logger.getAnonymousLogger().info("running against regions "+client.getConfiguredRegions());
    }
 
