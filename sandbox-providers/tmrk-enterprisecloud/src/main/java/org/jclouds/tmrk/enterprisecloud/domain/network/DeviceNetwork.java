@@ -16,38 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.tmrk.enterprisecloud.domain;
+package org.jclouds.tmrk.enterprisecloud.domain.network;
 
-import com.google.common.collect.Sets;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
- * <xs:complexType name="VirtualMachineIpAddresses">
+ * Container for DeviceIps (ipAddresses)
+ *  <xs:complexType name="DeviceNetwork">
  * @author Jason King
  */
-public class VirtualMachineIpAddresses {
+public class DeviceNetwork extends BaseNamedResource<DeviceNetwork> {
 
-    //TODO There are more fields
+   @XmlElement(name = "IpAddresses")
+   private DeviceIps ipAddresses = new DeviceIps();
 
-    @XmlElement(name = "AssignedIpAddresses")
-    private AssignedIpAddresses assignedIpAddresses = new AssignedIpAddresses();
+   protected DeviceNetwork() {
+       //For JAXB
+   }
 
-    protected VirtualMachineIpAddresses() {
-        // For JAXB
-    }
+   public DeviceIps getIpAddresses() {
+      return ipAddresses;
+   }
 
-    public AssignedIpAddresses getAssignedIpAddresses() {
-        return assignedIpAddresses;
-    }
-
-    @Override
-    public String toString() {
-        return "["+assignedIpAddresses+"]";
-    }
-
+   @Override
+   public String string() {
+      return super.string()+"ipAddresses="+ ipAddresses;
+   }
 }

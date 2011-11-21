@@ -16,11 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.tmrk.enterprisecloud.domain;
+package org.jclouds.tmrk.enterprisecloud.domain.vm;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.tmrk.enterprisecloud.domain.*;
+import org.jclouds.tmrk.enterprisecloud.domain.hardware.HardwareConfiguration;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
+import org.jclouds.tmrk.enterprisecloud.domain.software.OperatingSystem;
+import org.jclouds.tmrk.enterprisecloud.domain.software.ToolsStatus;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlEnum;
@@ -87,7 +91,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
         */
        public Builder actions(Set<Action> actions) {
           checkNotNull(actions,"actions");
-          for(Action action:actions) this.actions.addAction(action);
+          this.actions = Actions.builder().actions(actions).build();
           return this;
        }
 

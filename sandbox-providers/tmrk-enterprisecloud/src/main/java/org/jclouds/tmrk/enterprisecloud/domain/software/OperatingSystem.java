@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.tmrk.enterprisecloud.domain;
+package org.jclouds.tmrk.enterprisecloud.domain.software;
 
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;

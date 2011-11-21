@@ -16,8 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.tmrk.enterprisecloud.domain;
+package org.jclouds.tmrk.enterprisecloud.domain.network;
 
+import org.jclouds.tmrk.enterprisecloud.domain.Actions;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -47,7 +48,7 @@ public class AssignedIpAddresses extends BaseResource<AssignedIpAddresses> {
       checkNotNull(networks,"networks");
    }
 
-   protected AssignedIpAddresses() {
+   public AssignedIpAddresses() {
        //For JAXB
    }
 

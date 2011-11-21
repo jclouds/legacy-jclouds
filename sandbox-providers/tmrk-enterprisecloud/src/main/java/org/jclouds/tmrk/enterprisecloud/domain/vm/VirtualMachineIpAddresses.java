@@ -16,35 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.tmrk.enterprisecloud.domain;
+package org.jclouds.tmrk.enterprisecloud.domain.vm;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
+import org.jclouds.tmrk.enterprisecloud.domain.network.AssignedIpAddresses;
 
-import static com.google.common.base.CaseFormat.LOWER_CAMEL;
-import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
+import javax.xml.bind.annotation.XmlElement;
 
 /**
- * <xs:simpleType name="ToolsStatus">
+ * <xs:complexType name="VirtualMachineIpAddresses">
  * @author Jason King
  */
-@XmlEnum
-public enum ToolsStatus {
-    @XmlEnumValue("NotInstalled")
-    NOT_INSTALLED,
-    @XmlEnumValue("NotRunning")
-    NOT_RUNNING,
-    @XmlEnumValue("OutOfDate")
-    OUT_OF_DATE,
-    @XmlEnumValue("Current")
-    CURRENT;
+public class VirtualMachineIpAddresses {
 
-    public String value() {
-        return UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
+    //TODO There are more fields
+
+    @XmlElement(name = "AssignedIpAddresses")
+    private AssignedIpAddresses assignedIpAddresses = new AssignedIpAddresses();
+
+    protected VirtualMachineIpAddresses() {
+        // For JAXB
+    }
+
+    public AssignedIpAddresses getAssignedIpAddresses() {
+        return assignedIpAddresses;
     }
 
     @Override
     public String toString() {
-        return value();
+        return "["+assignedIpAddresses+"]";
     }
+
 }
