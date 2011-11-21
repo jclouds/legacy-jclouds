@@ -18,31 +18,39 @@
  */
 package org.jclouds.cloudstack.features;
 
-import static com.google.common.collect.Iterables.find;
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertNotSame;
+import static com.google.common.collect.Iterables.*;
+import static org.testng.AssertJUnit.*;
 
 import java.util.Set;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.cloudstack.domain.Snapshot;
 import org.jclouds.cloudstack.domain.Volume;
+import org.jclouds.cloudstack.domain.Zone;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+
 /**
- * Tests behavior of {@code SSHKeyPairClient}
+ * Tests behavior of {@code VolumeClient}
  *
  * @author Vijay Kiran
  */
 @Test(groups = "live", singleThreaded = true, testName = "VolumeClientLiveTest")
 public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
-
    protected String prefix = System.getProperty("user.name");
+
    private long zoneId;
-   private long diskOfferingId;
-   private long snapshotId;
-   private Volume volume;
+
+   @BeforeMethod(groups = "live")
+   public void setZoneId() {
+      Set<Zone> zones = client.getZoneClient().listZones();
+      assertNotNull(zones);
+      assertFalse(zones.isEmpty());
+      zoneId = Iterables.get(zones, 0).getId();
+   }
 
    public void testListVolumes() {
       final Set<Volume> volumes = client.getVolumeClient().listVolumes();
@@ -52,68 +60,66 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    public void testCreateVolumeFromDiskofferingInZoneAndDeleteVolume() {
+      // Pick some disk offering
+      long diskOfferingId = Iterables.get(client.getOfferingClient().listDiskOfferings(), 0).getId();
 
-      zoneId = Iterables.getFirst(client.getZoneClient().listZones(), null).getId();
-      //Pick some disk offering
-      diskOfferingId = Iterables.getFirst(client.getOfferingClient().listDiskOfferings(), null).getId();
-
-
+      Volume volume = null;
       while (volume == null) {
          try {
             AsyncCreateResponse job = client.getVolumeClient().createVolumeFromDiskOfferingInZone(prefix + "-jclouds-volume",
                   diskOfferingId, zoneId);
-            assert jobComplete.apply(job.getJobId());
+            assertTrue(jobComplete.apply(job.getJobId()));
             volume = findVolumeWithId(job.getId());
          } catch (IllegalStateException e) {
-            //TODO volume creation failed - retry?
+            // TODO volume creation failed - retry?
          }
       }
 
       checkVolume(volume);
-      //Delete the volume
+
+      // Delete the volume
       client.getVolumeClient().deleteVolume(volume.getId());
    }
 
    public void testCreateVolumeFromDiskofferingInZoneAndAttachVolumeToVirtualMachineAndDetachAndDelete() {
+      // Pick some disk offering
+      long diskOfferingId = Iterables.get(client.getOfferingClient().listDiskOfferings(), 0).getId();
 
-      zoneId = Iterables.getFirst(client.getZoneClient().listZones(), null).getId();
-      //Pick some disk offering
-      diskOfferingId = Iterables.getFirst(client.getOfferingClient().listDiskOfferings(), null).getId();
-
-
+      Volume volume = null;
       while (volume == null) {
          try {
             AsyncCreateResponse job = client.getVolumeClient().createVolumeFromDiskOfferingInZone(prefix + "-jclouds-volume",
                   diskOfferingId, zoneId);
-            assert jobComplete.apply(job.getJobId());
+            assertTrue(jobComplete.apply(job.getJobId()));
             volume = findVolumeWithId(job.getId());
          } catch (IllegalStateException e) {
-            //TODO volume creation failed - retry?
+            // TODO volume creation failed - retry?
          }
       }
 
       checkVolume(volume);
-      long virtualMachineId = Iterables.getFirst(client.getVirtualMachineClient().listVirtualMachines(), null).getId();
-      //Attach Volume
+      long virtualMachineId = Iterables.get(client.getVirtualMachineClient().listVirtualMachines(), 0).getId();
+
+      // Attach Volume
       Volume attachedVolume = null;
       while (attachedVolume == null) {
          try {
             AsyncCreateResponse job = client.getVolumeClient().attachVolume(volume.getId(), virtualMachineId);
-            assert jobComplete.apply(job.getJobId());
+            assertTrue(jobComplete.apply(job.getJobId()));
             attachedVolume = findVolumeWithId(volume.getId());
-            assert attachedVolume.getVirtualMachineId() == virtualMachineId;
-            assert attachedVolume.getAttached() != null;
+            assertEquals(virtualMachineId, attachedVolume.getVirtualMachineId());
+            assertNotNull(attachedVolume.getAttached());
          } catch (IllegalStateException e) {
-            //TODO volume creation failed - retry?
+            // TODO volume creation failed - retry?
          }
       }
 
-      //Detach Volume
+      // Detach Volume
       Volume detachedVolume = null;
       while (detachedVolume == null) {
          try {
             AsyncCreateResponse job = client.getVolumeClient().detachVolume(volume.getId());
-            assert jobComplete.apply(job.getJobId());
+            assertTrue(jobComplete.apply(job.getJobId()));
             detachedVolume = findVolumeWithId(volume.getId());
             checkVolume(detachedVolume);
          } catch (IllegalStateException e) {
@@ -121,34 +127,33 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
          }
       }
 
-      //Cleanup
+      // Cleanup
       client.getVolumeClient().deleteVolume(volume.getId());
-
    }
 
-
    /*
-   TODO Uncomment this test after SnapshotClient has test coverage.
+   // TODO Uncomment this test after SnapshotClient has test coverage.
    public void testCreateVolumeFromSnapshotInZoneAndDeleteVolume() {
-
-      zoneId = Iterables.getFirst(client.getZoneClient().listZones(), null).getId();
-      final Set<Snapshot> snapshots = client.getSnapshotClient().listSnapshots();
+      Set<Snapshot> snapshots = client.getSnapshotClient().listSnapshots();
       assertNotNull(snapshots);
-      assertNotSame(0, snapshots.size() );
-      snapshotId = Iterables.getFirst(snapshots, null).getId();
+      assertFalse(snapshots.isEmpty());
+      long snapshotId = Iterables.get(snapshots, 0).getId();
+
+      Volume volume = null;
       while (volume == null) {
          try {
             AsyncCreateResponse job = client.getVolumeClient().createVolumeFromSnapshotInZone(prefix + "-jclouds-volume",
                   snapshotId, zoneId);
-            assert jobComplete.apply(job.getJobId());
+            assertTrue(jobComplete.apply(job.getJobId()));
             volume = findVolumeWithId(job.getId());
          } catch (IllegalStateException e) {
-            //TODO volume creation failed - retry?
+            // TODO volume creation failed - retry?
          }
       }
 
       checkVolume(volume);
-      //Delete the volume
+
+      // Delete the volume
       client.getVolumeClient().deleteVolume(volume.getId());
    }
    */
@@ -161,13 +166,10 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
 
    private Volume findVolumeWithId(final long id) {
       return find(client.getVolumeClient().listVolumes(), new Predicate<Volume>() {
-
          @Override
          public boolean apply(Volume arg0) {
             return arg0.getId() == id;
          }
-
       });
    }
-
 }
