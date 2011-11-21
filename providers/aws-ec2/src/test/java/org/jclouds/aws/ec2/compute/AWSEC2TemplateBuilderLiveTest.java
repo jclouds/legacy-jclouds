@@ -68,6 +68,8 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
                return true;
             case DEBIAN:
                return true;
+            case RHEL:
+               return input.version.matches("5.[6]") || input.version.equals("");
             case CENTOS:
                return input.version.matches("5.[246]") || (input.version.equals("5.0") && !input.is64Bit)
                      || input.version.equals("");
