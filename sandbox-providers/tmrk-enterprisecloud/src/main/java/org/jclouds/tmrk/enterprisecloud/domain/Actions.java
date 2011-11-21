@@ -22,7 +22,6 @@ import com.google.common.collect.Sets;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -34,37 +33,74 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class Actions {
 
-    @XmlElement(name = "Action")
-    private LinkedHashSet<Action> actions = Sets.newLinkedHashSet();
+   @SuppressWarnings("unchecked")
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    void addAction(Action action) {
-        checkNotNull(action,"action");
-        this.actions.add(action);
-    }
+   public Builder toBuilder() {
+      return new Builder().fromActions(this);
+   }
 
-    public Set<Action> getActions() {
-        return Collections.unmodifiableSet(actions);
-    }
+   public static class Builder {
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+       private Set<Action> actions = Sets.newLinkedHashSet();
 
-        Actions actions1 = (Actions) o;
+       /**
+        * @see Actions#getActions
+        */
+       public Builder actions(Set<Action> actions) {
+          this.actions = Sets.newLinkedHashSet(checkNotNull(actions, "actions"));
+          return this;
+       }
 
-        if (!actions.equals(actions1.actions)) return false;
+       public Builder addAction(Action action) {
+          actions.add(checkNotNull(action,"action"));
+          return this;
+       }
 
-        return true;
-    }
+       public Actions build() {
+           return new Actions(actions);
+       }
 
-    @Override
-    public int hashCode() {
-        return actions.hashCode();
-    }
+       public Builder fromActions(Actions in) {
+         return actions(in.getActions());
+       }
+   }
 
-    public String toString() {
-        return "["+ actions.toString()+"]";
-    }
+   public Actions() {
+      //For JAXB and builder use
+   }
 
+   private Actions(Set<Action> actions) {
+      this.actions = Sets.newLinkedHashSet(actions);
+   }
+
+   @XmlElement(name = "Action")
+   private Set<Action> actions = Sets.newLinkedHashSet();
+
+   public Set<Action> getActions() {
+      return Collections.unmodifiableSet(actions);
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      Actions actions1 = (Actions) o;
+
+      if (!actions.equals(actions1.actions)) return false;
+
+      return true;
+   }
+
+   @Override
+   public int hashCode() {
+      return actions.hashCode();
+   }
+
+   public String toString() {
+      return "["+ actions.toString()+"]";
+   }
 }

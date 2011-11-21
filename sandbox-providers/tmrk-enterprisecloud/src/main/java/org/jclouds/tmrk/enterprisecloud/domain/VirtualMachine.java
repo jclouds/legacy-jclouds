@@ -87,7 +87,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
         */
        public Builder actions(Set<Action> actions) {
           checkNotNull(actions,"actions");
-          for(Action action:actions) this.actions.addAction(action);
+          this.actions = Actions.builder().actions(actions).build();
           return this;
        }
 
