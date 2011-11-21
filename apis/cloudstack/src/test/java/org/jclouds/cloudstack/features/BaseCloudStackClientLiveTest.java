@@ -31,6 +31,9 @@ import java.util.logging.Logger;
 
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackContext;
+import org.jclouds.cloudstack.CloudStackDomainAsyncClient;
+import org.jclouds.cloudstack.CloudStackDomainClient;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.User;
@@ -45,7 +48,6 @@ import org.jclouds.cloudstack.predicates.UserPredicates;
 import org.jclouds.cloudstack.predicates.VirtualMachineDestroyed;
 import org.jclouds.cloudstack.predicates.VirtualMachineRunning;
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.Credentials;
@@ -126,7 +128,7 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
 
    protected String prefix = System.getProperty("user.name");
 
-   protected ComputeServiceContext computeContext;
+   protected CloudStackContext computeContext;
    protected RestContext<CloudStackClient, CloudStackAsyncClient> context;
    protected CloudStackClient client;
    protected CloudStackClient adminClient;
@@ -139,7 +141,7 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
    protected RetryablePredicate<VirtualMachine> adminVirtualMachineRunning;
    protected RetryablePredicate<VirtualMachine> virtualMachineDestroyed;
    protected RetryablePredicate<VirtualMachine> adminVirtualMachineDestroyed;
-      protected SshClient.Factory sshFactory;
+   protected SshClient.Factory sshFactory;
    protected String password = "password";
 
    protected Injector injector;
@@ -147,8 +149,8 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
    protected ReuseOrAssociateNewPublicIPAddress reuseOrAssociate;
 
    protected boolean domainAdminEnabled;
-   protected ComputeServiceContext domainAdminComputeContext;
-   protected RestContext<CloudStackClient, CloudStackAsyncClient> domainAdminContext;
+   protected CloudStackContext domainAdminComputeContext;
+   protected RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient> domainAdminContext;
    protected CloudStackClient domainAdminClient;
    protected User domainAdminUser;
 
@@ -170,8 +172,8 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
    public void setupClient() {
       setupCredentials();
 
-      computeContext = new ComputeServiceContextFactory().createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), setupProperties());
+      computeContext = CloudStackContext.class.cast(new ComputeServiceContextFactory().createContext(provider,
+            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), setupProperties()));
       context = computeContext.getProviderSpecificContext();
       client = context.getApi();
       user = verifyCurrentUserIsOfType(context, Account.Type.USER);
@@ -179,9 +181,10 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
       domainAdminEnabled = setupAdminProperties() != null;
 
       if (domainAdminEnabled) {
-         domainAdminComputeContext = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), setupAdminProperties());
-         domainAdminContext = domainAdminComputeContext.getProviderSpecificContext();
+         domainAdminComputeContext = CloudStackContext.class.cast(new ComputeServiceContextFactory().createContext(
+               provider, ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()),
+               setupAdminProperties()));
+         domainAdminContext = domainAdminComputeContext.getDomainContext();
          domainAdminClient = domainAdminContext.getApi();
          domainAdminUser = verifyCurrentUserIsOfType(domainAdminContext, Account.Type.DOMAIN_ADMIN);
          adminClient = domainAdminContext.getApi();
@@ -198,21 +201,21 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
       virtualMachineRunning = new RetryablePredicate<VirtualMachine>(new VirtualMachineRunning(client), 600, 5, 5,
             TimeUnit.SECONDS);
       injector.injectMembers(virtualMachineRunning);
-      adminVirtualMachineRunning = new RetryablePredicate<VirtualMachine>(new VirtualMachineRunning(adminClient), 600, 5, 5,
-                  TimeUnit.SECONDS);
+      adminVirtualMachineRunning = new RetryablePredicate<VirtualMachine>(new VirtualMachineRunning(adminClient), 600,
+            5, 5, TimeUnit.SECONDS);
       injector.injectMembers(adminVirtualMachineRunning);
       virtualMachineDestroyed = new RetryablePredicate<VirtualMachine>(new VirtualMachineDestroyed(client), 600, 5, 5,
             TimeUnit.SECONDS);
       injector.injectMembers(virtualMachineDestroyed);
-      adminVirtualMachineDestroyed = new RetryablePredicate<VirtualMachine>(new VirtualMachineDestroyed(adminClient), 600, 5, 5,
-            TimeUnit.SECONDS);
+      adminVirtualMachineDestroyed = new RetryablePredicate<VirtualMachine>(new VirtualMachineDestroyed(adminClient),
+            600, 5, 5, TimeUnit.SECONDS);
       injector.injectMembers(adminVirtualMachineDestroyed);
       reuseOrAssociate = new ReuseOrAssociateNewPublicIPAddress(client, jobComplete);
       injector.injectMembers(reuseOrAssociate);
    }
 
-   protected static User verifyCurrentUserIsOfType(RestContext<CloudStackClient, CloudStackAsyncClient> context,
-         Account.Type type) {
+   protected static User verifyCurrentUserIsOfType(
+         RestContext<? extends CloudStackClient, ? extends CloudStackAsyncClient> context, Account.Type type) {
       Iterable<User> users = Iterables.concat(context.getApi().getAccountClient().listAccounts());
       Predicate<User> apiKeyMatches = UserPredicates.apiKeyEquals(context.getIdentity());
       User currentUser;
@@ -225,7 +228,7 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
 
       if (currentUser.getAccountType() != type) {
          Logger.getAnonymousLogger().warning(
-            String.format("Expecting an user with type %s. Got: %s", type.toString(), currentUser.toString()));
+               String.format("Expecting an user with type %s. Got: %s", type.toString(), currentUser.toString()));
       }
       return currentUser;
    }

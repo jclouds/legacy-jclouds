@@ -21,16 +21,17 @@ package org.jclouds.cloudstack;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-import com.google.inject.TypeLiteral;
 import org.jclouds.cloudstack.features.BaseCloudStackAsyncClientTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.inject.TypeLiteral;
+
 /**
  * Tests behavior of {@code CloudStackAsyncClient}
- *
+ * 
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during
@@ -40,6 +41,10 @@ public class CloudStackAsyncClientTest extends BaseCloudStackAsyncClientTest<Clo
 
    private CloudStackAsyncClient asyncClient;
    private CloudStackClient syncClient;
+   private CloudStackDomainAsyncClient domainAsyncClient;
+   private CloudStackDomainClient domainSyncClient;
+   private CloudStackGlobalAsyncClient globalAsyncClient;
+   private CloudStackGlobalClient globalSyncClient;
 
    public void testSync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
       assert syncClient.getZoneClient() != null;
@@ -64,6 +69,11 @@ public class CloudStackAsyncClientTest extends BaseCloudStackAsyncClientTest<Clo
       assert syncClient.getISOClient() != null;
       assert syncClient.getVolumeClient() != null;
       assert syncClient.getSnapshotClient() != null;
+
+      assert domainSyncClient.getLimitClient() != null;
+      assert domainSyncClient.getAccountClient() != null;
+
+      assert globalSyncClient.getAccountClient() != null;
    }
 
    public void testAsync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
@@ -90,6 +100,10 @@ public class CloudStackAsyncClientTest extends BaseCloudStackAsyncClientTest<Clo
       assert asyncClient.getVolumeClient() != null;
       assert asyncClient.getSnapshotClient() != null;
 
+      assert domainAsyncClient.getLimitClient() != null;
+      assert domainAsyncClient.getAccountClient() != null;
+
+      assert globalAsyncClient.getAccountClient() != null;
    }
 
    @Override
@@ -104,6 +118,10 @@ public class CloudStackAsyncClientTest extends BaseCloudStackAsyncClientTest<Clo
       super.setupFactory();
       asyncClient = injector.getInstance(CloudStackAsyncClient.class);
       syncClient = injector.getInstance(CloudStackClient.class);
+      domainAsyncClient = injector.getInstance(CloudStackDomainAsyncClient.class);
+      domainSyncClient = injector.getInstance(CloudStackDomainClient.class);
+      globalAsyncClient = injector.getInstance(CloudStackGlobalAsyncClient.class);
+      globalSyncClient = injector.getInstance(CloudStackGlobalClient.class);
    }
 
    @Override

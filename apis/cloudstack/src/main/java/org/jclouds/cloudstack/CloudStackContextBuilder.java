@@ -23,6 +23,7 @@ import java.util.Properties;
 
 import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule;
 import org.jclouds.cloudstack.config.CloudStackRestClientModule;
+import org.jclouds.cloudstack.internal.CloudStackContextImpl;
 import org.jclouds.compute.ComputeServiceContextBuilder;
 
 import com.google.inject.Module;
@@ -47,4 +48,8 @@ public class CloudStackContextBuilder extends ComputeServiceContextBuilder<Cloud
       modules.add(new CloudStackRestClientModule());
    }
 
+   @Override
+   public CloudStackContext buildComputeServiceContext() {
+      return buildInjector().getInstance(CloudStackContextImpl.class);
+   }
 }

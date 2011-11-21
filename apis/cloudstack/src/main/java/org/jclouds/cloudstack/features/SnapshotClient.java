@@ -18,6 +18,9 @@
  */
 package org.jclouds.cloudstack.features;
 
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Snapshot;
 import org.jclouds.cloudstack.domain.SnapshotPolicy;
@@ -26,10 +29,6 @@ import org.jclouds.cloudstack.options.CreateSnapshotOptions;
 import org.jclouds.cloudstack.options.ListSnapshotPoliciesOptions;
 import org.jclouds.cloudstack.options.ListSnapshotsOptions;
 import org.jclouds.concurrent.Timeout;
-
-import javax.ws.rs.QueryParam;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to CloudStack Snapshot features.

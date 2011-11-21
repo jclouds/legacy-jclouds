@@ -18,42 +18,40 @@
  */
 package org.jclouds.cloudstack.features;
 
-import java.util.Set;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.cloudstack.binders.ResourceLimitToQueryParams;
 import org.jclouds.cloudstack.domain.ResourceLimit;
 import org.jclouds.cloudstack.filters.QuerySigner;
-import org.jclouds.cloudstack.options.ListResourceLimitsOptions;
-import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Provides asynchronous access to CloudStack SSHKeyPair features.
- *
- * @author Vijay Kiran
- * @see <a
- *      href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html"
+ * Provides asynchronous access to CloudStack Limit features available to Domain
+ * Admin users.
+ * 
+ * @author Adrian Cole
+ * @see <a href=
+ *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Domain_Admin.html"
  *      />
  */
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
-public interface LimitAsyncClient {
+public interface DomainLimitAsyncClient extends LimitAsyncClient {
    /**
-    * @see org.jclouds.cloudstack.features.LimitClient#listResourceLimits
+    * @see DomainLimitClient#updateResourceLimit
     */
    @GET
-   @QueryParams(keys = "command", values = "listResourceLimits")
+   @QueryParams(keys = "command", values = "updateResourceLimit")
    @SelectJson("resourcelimit")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<ResourceLimit>> listResourceLimits(ListResourceLimitsOptions... options);
+   ListenableFuture<ResourceLimit> updateResourceLimit(
+         @BinderParam(ResourceLimitToQueryParams.class) ResourceLimit limit);
 
 }

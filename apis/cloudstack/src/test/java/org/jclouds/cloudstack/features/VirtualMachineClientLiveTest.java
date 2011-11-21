@@ -20,7 +20,6 @@ package org.jclouds.cloudstack.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.in;
-import static com.google.common.base.Predicates.or;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getFirst;
@@ -28,17 +27,14 @@ import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.collect.Sets.filter;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
+import javax.annotation.Nullable;
+
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.AsyncJob;
@@ -62,13 +58,15 @@ import org.jclouds.util.InetAddresses2;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 import com.google.common.net.HostSpecifier;
-
-import javax.annotation.Nullable;
 
 /**
  * Tests behavior of {@code VirtualMachineClientLiveTest}
@@ -175,7 +173,6 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       return vm;
    }
 
-   @SuppressWarnings("unchecked")
    public void testCreateVirtualMachine() throws Exception {
       Long templateId = (imageId != null && !"".equals(imageId)) ? new Long(imageId) : null;
       vm = createVirtualMachine(client, templateId, jobComplete, virtualMachineRunning);
