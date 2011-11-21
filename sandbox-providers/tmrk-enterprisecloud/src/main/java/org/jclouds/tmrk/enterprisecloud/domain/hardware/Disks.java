@@ -16,34 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.tmrk.enterprisecloud.domain;
+package org.jclouds.tmrk.enterprisecloud.domain.hardware;
 
 import com.google.common.collect.Sets;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
- * Wraps individual VirtualMachine elements.
+ * Wraps individual Disk elements.
  * Needed because parsing is done with JAXB and it does not handle Generic collections
- * <xs:complexType name="VirtualMachines">
+ * <xs:complexType name="Disks">
  * @author Jason King
  */
-@XmlRootElement(name="VirtualMachines")
-public class VirtualMachines {
+public class Disks {
 
-    private LinkedHashSet<VirtualMachine> virtualMachines = Sets.newLinkedHashSet();
+    private LinkedHashSet<VirtualDisk> disks = Sets.newLinkedHashSet();
 
-    @XmlElement(name = "VirtualMachine")
-    void setVirtualMachine(VirtualMachine nic) {
-        this.virtualMachines.add(nic);
+    @XmlElement(name = "Disk")
+    public void setVirtualDisk(VirtualDisk disk) {
+        checkNotNull(disk,"disk");
+        this.disks.add(disk);
     }
 
-    public Set<VirtualMachine> getVirtualMachines() {
-        return Collections.unmodifiableSet(virtualMachines);
+    public Set<VirtualDisk> getVirtualDisks() {
+        return Collections.unmodifiableSet(disks);
     }
 
     @Override
@@ -51,19 +52,20 @@ public class VirtualMachines {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        VirtualMachines vms1 = (VirtualMachines) o;
+        Disks disks1 = (Disks) o;
 
-        if (!virtualMachines.equals(vms1.virtualMachines)) return false;
+        if (!disks.equals(disks1.disks)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return virtualMachines.hashCode();
+        return disks.hashCode();
     }
 
     public String toString() {
-        return "["+ virtualMachines.toString()+"]";
+        return "["+ disks.toString()+"]";
     }
+
 }

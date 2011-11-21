@@ -19,10 +19,10 @@
 package org.jclouds.tmrk.enterprisecloud.features;
 
 import com.google.common.collect.Iterables;
-import org.jclouds.tmrk.enterprisecloud.domain.AssignedIpAddresses;
-import org.jclouds.tmrk.enterprisecloud.domain.DeviceNetwork;
-import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachine;
-import org.jclouds.tmrk.enterprisecloud.domain.VirtualMachines;
+import org.jclouds.tmrk.enterprisecloud.domain.network.AssignedIpAddresses;
+import org.jclouds.tmrk.enterprisecloud.domain.network.DeviceNetwork;
+import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachine;
+import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachines;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -63,7 +63,7 @@ public class VirtualMachineClientLiveTest extends BaseTerremarkEnterpriseCloudCl
       // TODO: don't hard-code uri
        VirtualMachine virtualMachine = client.getVirtualMachine(new URI("/cloudapi/ecloud/virtualMachines/5504"));
        assert null != virtualMachine;
-       assertEquals(virtualMachine.getStatus(),VirtualMachine.VirtualMachineStatus.DEPLOYED);
+       assertEquals(virtualMachine.getStatus(), VirtualMachine.VirtualMachineStatus.DEPLOYED);
    }
 
     @Test

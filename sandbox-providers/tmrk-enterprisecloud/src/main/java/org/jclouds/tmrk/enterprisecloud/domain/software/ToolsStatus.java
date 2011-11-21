@@ -16,32 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.tmrk.enterprisecloud.domain;
+package org.jclouds.tmrk.enterprisecloud.domain.software;
 
-import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 
-import javax.xml.bind.annotation.XmlElement;
+import static com.google.common.base.CaseFormat.LOWER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 
 /**
- * Container for DeviceIps (ipAddresses)
- *  <xs:complexType name="DeviceNetwork">
+ * <xs:simpleType name="ToolsStatus">
  * @author Jason King
  */
-public class DeviceNetwork extends BaseNamedResource<DeviceNetwork> {
+@XmlEnum
+public enum ToolsStatus {
+    @XmlEnumValue("NotInstalled")
+    NOT_INSTALLED,
+    @XmlEnumValue("NotRunning")
+    NOT_RUNNING,
+    @XmlEnumValue("OutOfDate")
+    OUT_OF_DATE,
+    @XmlEnumValue("Current")
+    CURRENT;
 
-   @XmlElement(name = "IpAddresses")
-   private DeviceIps ipAddresses = new DeviceIps();
+    public String value() {
+        return UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
+    }
 
-   protected DeviceNetwork() {
-       //For JAXB
-   }
-
-   public DeviceIps getIpAddresses() {
-      return ipAddresses;
-   }
-
-   @Override
-   public String string() {
-      return super.string()+"ipAddresses="+ ipAddresses;
-   }
+    @Override
+    public String toString() {
+        return value();
+    }
 }
