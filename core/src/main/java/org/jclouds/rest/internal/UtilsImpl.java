@@ -23,6 +23,8 @@ import java.util.concurrent.ExecutorService;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.google.common.annotations.Beta;
+import com.google.inject.Injector;
 import org.jclouds.Constants;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
@@ -48,12 +50,14 @@ public class UtilsImpl implements Utils {
    private final ExecutorService userExecutor;
    private final ExecutorService ioExecutor;
    private final LoggerFactory loggerFactory;
+   private Injector injector;
 
    @Inject
-   protected UtilsImpl(Json json, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
+   protected UtilsImpl(Injector injector, Json json, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
          Crypto encryption, DateService date,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
          @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads, LoggerFactory loggerFactory) {
+      this.injector = injector;
       this.json = json;
       this.simpleClient = simpleClient;
       this.simpleAsyncClient = simpleAsyncClient;
@@ -142,6 +146,18 @@ public class UtilsImpl implements Utils {
    @Override
    public Json json() {
       return json;
+   }
+
+   @Override
+   @Beta
+   public Injector getInjector() {
+      return injector;
+   }
+
+   @Override
+   @Beta
+   public Injector injector() {
+      return getInjector();
    }
 
 }
