@@ -36,37 +36,77 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @XmlRootElement(name = "Tasks")
 public class Tasks {
-     //TODO: There is a total count field
-    private LinkedHashSet<Task> tasks = Sets.newLinkedHashSet();
 
-    @XmlElement(name = "Task")
-    public void setTask(Task task) {
-        checkNotNull(task,"task");
-        tasks.add(task);
-    }
+   @SuppressWarnings("unchecked")
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    public Set<Task> getTasks() {
-        return Collections.unmodifiableSet(tasks);
-    }
+   public Builder toBuilder() {
+      return new Builder().fromTasks(this);
+   }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+   public static class Builder {
 
-        Tasks tasks1 = (Tasks) o;
+       private Set<Task> tasks = Sets.newLinkedHashSet();
 
-        if (!tasks.equals(tasks1.tasks)) return false;
+       /**
+        * @see Tasks#getTasks
+        */
+       public Builder tasks(Set<Task> tasks) {
+          this.tasks = Sets.newLinkedHashSet(checkNotNull(tasks, "tasks"));
+          return this;
+       }
 
-        return true;
-    }
+       public Builder addTask(Task task) {
+          tasks.add(checkNotNull(task,"task"));
+          return this;
+       }
 
-    @Override
-    public int hashCode() {
-        return tasks.hashCode();
-    }
+       public Tasks build() {
+           return new Tasks(tasks);
+       }
 
-    public String toString() {
-        return "["+tasks.toString()+"]";
-    }
+       public Builder fromTasks(Tasks in) {
+         return tasks(in.getTasks());
+       }
+   }
+
+   private Tasks() {
+      //For JAXB and builder use
+   }
+
+   private Tasks(Set<Task> tasks) {
+      this.tasks = Sets.newLinkedHashSet(tasks);
+   }
+
+   //TODO: There is a total count field
+
+   @XmlElement(name = "Task")
+   private LinkedHashSet<Task> tasks = Sets.newLinkedHashSet();
+
+   public Set<Task> getTasks() {
+      return Collections.unmodifiableSet(tasks);
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      Tasks tasks1 = (Tasks) o;
+
+      if (!tasks.equals(tasks1.tasks)) return false;
+
+      return true;
+   }
+
+   @Override
+   public int hashCode() {
+      return tasks.hashCode();
+   }
+
+   public String toString() {
+      return "["+tasks.toString()+"]";
+   }
 }

@@ -64,7 +64,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
       //TODO There are some more fields
       private Links links = Links.builder().build();
       private Actions actions = Actions.builder().build();
-      private Tasks tasks = new Tasks();
+      private Tasks tasks = Tasks.builder().build();
       private String description;
       private VirtualMachineStatus status;
 
@@ -98,11 +98,9 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
         * @see VirtualMachine#getTasks
         */
        public Builder tasks(Set<Task> tasks) {
-          checkNotNull(tasks,"tasks");
-          for(Task task: tasks) this.tasks.setTask(task);
+          this.tasks = Tasks.builder().tasks(checkNotNull(tasks,"tasks")).build();
           return this;
        }
-
 
        /**
         * @see VirtualMachine#getDescription
@@ -271,7 +269,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
    private Links links = Links.builder().build();
 
    @XmlElement(name = "Tasks", required = true)
-   private Tasks tasks = new Tasks();
+   private Tasks tasks = Tasks.builder().build();
 
    @XmlElement(name = "Actions", required = true)
    private Actions actions = Actions.builder().build();
