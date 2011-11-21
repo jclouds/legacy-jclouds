@@ -32,16 +32,20 @@ import java.util.Properties;
 
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersPropertiesBuilder;
 
+import com.google.common.base.Joiner;
+
 /**
  * Builds properties used inRackspace Cloud Load Balancers Clients
  * 
  * @author Dan Lo Bianco
  */
 public class CloudLoadBalancersUKPropertiesBuilder extends CloudLoadBalancersPropertiesBuilder {
+   public static final String[] REGIONS = {LON};
+
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_REGIONS, "UK");
+      properties.setProperty(PROPERTY_REGIONS, Joiner.on(',').join(REGIONS));
       properties.setProperty(PROPERTY_ENDPOINT, "https://lon.auth.api.rackspacecloud.com");
       properties.setProperty(PROPERTY_ISO3166_CODES, "GB-SLG");
       
