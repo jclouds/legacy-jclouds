@@ -77,7 +77,7 @@ public class GoGridImageSupplier implements Supplier<Set<? extends Image>> {
          builder.ids(from.getId() + "");
          builder.name(from.getFriendlyName());
          builder.description(from.getDescription());
-         builder.defaultCredentials(authenticator.execute(from));
+         builder.defaultCredentials(authenticator.apply(from));
          builder.operatingSystem(parseOs(from));
          images.add(builder.build());
       }

@@ -31,6 +31,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.InitBuilder;
 import org.jclouds.scriptbuilder.domain.AdminAccessVisitor;
@@ -106,8 +107,8 @@ public class RunScriptOnNodeAsInitScriptUsingSsh extends SudoAwareInitManager im
       if (input.getAdminCredentials() != null && input.shouldGrantSudoToAdminUser()) {
          ssh.disconnect();
          logger.debug(">> reconnecting as %s@%s", input.getAdminCredentials().identity, ssh.getHostAddress());
-         ssh = sshFactory.apply(node = NodeMetadataBuilder.fromNodeMetadata(node).adminPassword(null).credentials(
-                  input.getAdminCredentials()).build());
+         ssh = sshFactory.apply(node = NodeMetadataBuilder.fromNodeMetadata(node).credentials(LoginCredentials.builder(
+                  input.getAdminCredentials()).build()).build());
          ssh.connect();
          setupLinkToInitFile();
       }

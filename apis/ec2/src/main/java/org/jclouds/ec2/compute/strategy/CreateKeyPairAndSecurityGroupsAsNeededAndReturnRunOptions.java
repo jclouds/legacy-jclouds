@@ -122,8 +122,8 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
       if (keyPairName == null && shouldAutomaticallyCreateKeyPair) {
          keyPairName = createOrImportKeyPair(region, group, options);
       } else if (keyPairName != null) {
-         if (options.getOverridingCredentials() != null && options.getOverridingCredentials().credential != null) {
-            String pem = options.getOverridingCredentials().credential;
+         if (options.getLoginPrivateKey() != null) {
+            String pem = options.getLoginPrivateKey();
             KeyPair keyPair = KeyPair.builder().region(region).keyName(keyPairName).fingerprint(
                      fingerprintPrivateKey(pem)).sha1OfPrivateKey(sha1PrivateKey(pem)).keyMaterial(pem).build();
             RegionAndName key = new RegionAndName(region, keyPairName);

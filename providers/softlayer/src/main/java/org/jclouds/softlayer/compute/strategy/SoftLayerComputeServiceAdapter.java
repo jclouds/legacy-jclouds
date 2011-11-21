@@ -46,7 +46,7 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.softlayer.SoftLayerClient;
@@ -141,8 +141,8 @@ public class SoftLayerComputeServiceAdapter implements
       result = client.getVirtualGuestClient().getVirtualGuest(result.getId());
 
       Password pw = get(result.getOperatingSystem().getPasswords(), 0);
-      return new NodeAndInitialCredentials<VirtualGuest>(result, result.getId() + "", new Credentials(pw.getUsername(),
-            pw.getPassword()));
+      return new NodeAndInitialCredentials<VirtualGuest>(result, result.getId() + "", LoginCredentials.builder().user(pw.getUsername()).password(
+            pw.getPassword()).build());
    }
 
    private Iterable<ProductItemPrice> getPrices(Template template) {

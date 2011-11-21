@@ -27,7 +27,7 @@ import org.jclouds.cim.ResourceAllocationSettingData;
 import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
 import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.vcloud.domain.NetworkConnection;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
@@ -35,8 +35,8 @@ import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.ovf.VCloudNetworkAdapter;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -67,23 +67,23 @@ public class VCloudComputeUtils {
       return null;
    }
 
-   public static Credentials getCredentialsFrom(VApp vApp) {
+   public static LoginCredentials getCredentialsFrom(VApp vApp) {
       return vApp.getChildren().size() > 0 ? getCredentialsFrom(Iterables.get(vApp.getChildren(), 0)) : null;
    }
 
-   public static Credentials getCredentialsFrom(VAppTemplate vApp) {
+   public static LoginCredentials getCredentialsFrom(VAppTemplate vApp) {
       return vApp.getChildren().size() > 0 ? getCredentialsFrom(Iterables.get(vApp.getChildren(), 0)) : null;
    }
 
-   public static Credentials getCredentialsFrom(Vm vm) {
-      String user = "root";
+   public static LoginCredentials getCredentialsFrom(Vm vm) {
+      LoginCredentials.Builder builder = LoginCredentials.builder();
+      builder.user("root");
       if (vm.getOperatingSystemSection() != null && vm.getOperatingSystemSection().getDescription() != null
             && vm.getOperatingSystemSection().getDescription().indexOf("Windows") >= 0)
-         user = "Administrator";
-      String password = null;
+         builder.user("Administrator");
       if (vm.getGuestCustomizationSection() != null)
-         password = vm.getGuestCustomizationSection().getAdminPassword();
-      return new Credentials(user, password);
+         builder.password(vm.getGuestCustomizationSection().getAdminPassword());
+      return builder.build();
    }
 
    public static Set<String> getIpsFromVApp(VApp vApp) {

@@ -36,6 +36,7 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.servermanager.Server;
 
 import com.google.common.base.Function;
@@ -86,7 +87,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       builder.state(serverStatusToNodeState.get(from.status));
       builder.publicAddresses(ImmutableSet.<String> of(from.publicAddress));
       builder.privateAddresses(ImmutableSet.<String> of(from.privateAddress));
-      builder.credentials(credentialStore.get(from.id + ""));
+      builder.credentials(LoginCredentials.builder(credentialStore.get(from.id + "")).build());
       return builder.build();
    }
 

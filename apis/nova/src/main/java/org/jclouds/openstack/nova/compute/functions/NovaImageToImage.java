@@ -24,7 +24,6 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.domain.Credentials;
 
 import com.google.common.base.Function;
 
@@ -48,7 +47,6 @@ public class NovaImageToImage implements Function<org.jclouds.openstack.nova.dom
       builder.description(from.getName() != null ? from.getName() : "unspecified");
       builder.version(from.getUpdated() != null ? from.getUpdated().getTime() + "" : "-1");
       builder.operatingSystem(imageToOs.apply(from)); //image name may not represent the OS type
-      builder.defaultCredentials(new Credentials("root", null));
       builder.uri(from.getURI());
       Image image = builder.build();
       return image;

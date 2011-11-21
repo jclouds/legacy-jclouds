@@ -35,8 +35,8 @@ public class Credentials {
    public static final Credentials NO_CREDENTIALS = new Credentials(null, null);
 
    public static class Builder<T extends Credentials> {
-      private String identity;
-      private String credential;
+      protected String identity;
+      protected String credential;
 
       public Builder<T> identity(String identity) {
          this.identity = identity;

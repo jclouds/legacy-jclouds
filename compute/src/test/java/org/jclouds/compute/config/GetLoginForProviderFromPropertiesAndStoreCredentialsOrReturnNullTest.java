@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.testng.annotations.Test;
 
 /**
@@ -45,8 +46,10 @@ public class GetLoginForProviderFromPropertiesAndStoreCredentialsOrReturnNullTes
       ValueOfConfigurationKeyOrNull config = createMock(ValueOfConfigurationKeyOrNull.class);
 
       expect(credstore.containsKey("image")).andReturn(false);
-      expect(config.apply("provider.login-user")).andReturn(null);
-      expect(config.apply("jclouds.login-user")).andReturn(null);
+      expect(config.apply("provider.image.login-user")).andReturn(null);
+      expect(config.apply("jclouds.image.login-user")).andReturn(null);
+      expect(config.apply("provider.image.authenticate-sudo")).andReturn(null);
+      expect(config.apply("jclouds.image.authenticate-sudo")).andReturn(null);
 
       replay(config);
       replay(credstore);
@@ -68,7 +71,9 @@ public class GetLoginForProviderFromPropertiesAndStoreCredentialsOrReturnNullTes
       ValueOfConfigurationKeyOrNull config = createMock(ValueOfConfigurationKeyOrNull.class);
 
       expect(credstore.containsKey("image")).andReturn(false);
-      expect(config.apply("provider.login-user")).andReturn("ubuntu");
+      expect(config.apply("provider.image.login-user")).andReturn("ubuntu");
+      expect(config.apply("provider.image.authenticate-sudo")).andReturn(null);
+      expect(config.apply("jclouds.image.authenticate-sudo")).andReturn(null);
       expect(credstore.put("image", expected)).andReturn(null);
 
       replay(config);
@@ -91,8 +96,10 @@ public class GetLoginForProviderFromPropertiesAndStoreCredentialsOrReturnNullTes
       ValueOfConfigurationKeyOrNull config = createMock(ValueOfConfigurationKeyOrNull.class);
 
       expect(credstore.containsKey("image")).andReturn(false);
-      expect(config.apply("provider.login-user")).andReturn(null);
-      expect(config.apply("jclouds.login-user")).andReturn("ubuntu");
+      expect(config.apply("provider.image.login-user")).andReturn(null);
+      expect(config.apply("jclouds.image.login-user")).andReturn("ubuntu");
+      expect(config.apply("provider.image.authenticate-sudo")).andReturn(null);
+      expect(config.apply("jclouds.image.authenticate-sudo")).andReturn(null);
       expect(credstore.put("image", expected)).andReturn(null);
 
       replay(config);
@@ -137,7 +144,9 @@ public class GetLoginForProviderFromPropertiesAndStoreCredentialsOrReturnNullTes
       ValueOfConfigurationKeyOrNull config = createMock(ValueOfConfigurationKeyOrNull.class);
 
       expect(credstore.containsKey("image")).andReturn(false);
-      expect(config.apply("provider.login-user")).andReturn("ubuntu:password");
+      expect(config.apply("provider.image.login-user")).andReturn("ubuntu:password");
+      expect(config.apply("provider.image.authenticate-sudo")).andReturn(null);
+      expect(config.apply("jclouds.image.authenticate-sudo")).andReturn(null);
       expect(credstore.put("image", expected)).andReturn(null);
 
       replay(config);
@@ -160,8 +169,62 @@ public class GetLoginForProviderFromPropertiesAndStoreCredentialsOrReturnNullTes
       ValueOfConfigurationKeyOrNull config = createMock(ValueOfConfigurationKeyOrNull.class);
 
       expect(credstore.containsKey("image")).andReturn(false);
-      expect(config.apply("provider.login-user")).andReturn(null);
-      expect(config.apply("jclouds.login-user")).andReturn("ubuntu:password");
+      expect(config.apply("provider.image.login-user")).andReturn(null);
+      expect(config.apply("jclouds.image.login-user")).andReturn("ubuntu:password");
+      expect(config.apply("provider.image.authenticate-sudo")).andReturn(null);
+      expect(config.apply("jclouds.image.authenticate-sudo")).andReturn(null);
+      expect(credstore.put("image", expected)).andReturn(null);
+
+      replay(config);
+      replay(credstore);
+
+      GetLoginForProviderFromPropertiesAndStoreCredentialsOrReturnNull fn = new GetLoginForProviderFromPropertiesAndStoreCredentialsOrReturnNull(
+            "provider", config, credstore);
+      assertEquals(fn.get(), expected);
+
+      verify(config);
+      verify(credstore);
+
+   }
+
+   public void testWhenCredentialsNotPresentAndJcloudsPropertyHasUserAndPasswordAndSudo() {
+      @SuppressWarnings("unchecked")
+      Map<String, Credentials> credstore = createMock(Map.class);
+      LoginCredentials expected = LoginCredentials.builder().user("ubuntu").password("password").authenticateSudo(true)
+            .build();
+
+      ValueOfConfigurationKeyOrNull config = createMock(ValueOfConfigurationKeyOrNull.class);
+
+      expect(credstore.containsKey("image")).andReturn(false);
+      expect(config.apply("provider.image.login-user")).andReturn(null);
+      expect(config.apply("jclouds.image.login-user")).andReturn("ubuntu:password");
+      expect(config.apply("provider.image.authenticate-sudo")).andReturn(null);
+      expect(config.apply("jclouds.image.authenticate-sudo")).andReturn("true");
+      expect(credstore.put("image", expected)).andReturn(null);
+
+      replay(config);
+      replay(credstore);
+
+      GetLoginForProviderFromPropertiesAndStoreCredentialsOrReturnNull fn = new GetLoginForProviderFromPropertiesAndStoreCredentialsOrReturnNull(
+            "provider", config, credstore);
+      assertEquals(fn.get(), expected);
+
+      verify(config);
+      verify(credstore);
+
+   }
+
+   public void testWhenCredentialsNotPresentAndProviderPropertyHasUserAndPasswordAndSudo() {
+      @SuppressWarnings("unchecked")
+      Map<String, Credentials> credstore = createMock(Map.class);
+      LoginCredentials expected = LoginCredentials.builder().user("ubuntu").password("password").authenticateSudo(true)
+            .build();
+
+      ValueOfConfigurationKeyOrNull config = createMock(ValueOfConfigurationKeyOrNull.class);
+
+      expect(credstore.containsKey("image")).andReturn(false);
+      expect(config.apply("provider.image.login-user")).andReturn("ubuntu:password");
+      expect(config.apply("provider.image.authenticate-sudo")).andReturn("true");
       expect(credstore.put("image", expected)).andReturn(null);
 
       replay(config);

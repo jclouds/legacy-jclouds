@@ -98,11 +98,6 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
       // nodeMetadataBuilder.imageId("");
       // nodeMetadataBuilder.group("");
 
-      String provider = "virtualbox";
-      String identity = System.getProperty("test." + provider + ".identity", "administrator");
-      String credential = System.getProperty("test." + provider + ".credential", "12345");
-
-      nodeMetadataBuilder.credentials(new Credentials(identity, credential));
       nodeMetadataBuilder.id(vm.getId());
       return nodeMetadataBuilder.build();
    }

@@ -26,7 +26,6 @@ import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.gogrid.compute.config.GoGridComputeServiceContextModule;
 import org.jclouds.gogrid.config.GoGridRestClientModule;
-import org.jclouds.gogrid.config.internal.GoGridResolveImagesModule;
 
 import com.google.inject.Key;
 import com.google.inject.Module;
@@ -50,11 +49,6 @@ public class GoGridContextBuilder extends
    @Override
    protected void addContextModule(List<Module> modules) {
       modules.add(new GoGridComputeServiceContextModule());
-   }
-
-   @Override
-   protected void addImageResolutionModule() {
-      modules.add(new GoGridResolveImagesModule());
    }
 
    @Override

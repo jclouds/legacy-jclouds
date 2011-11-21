@@ -43,7 +43,7 @@ import org.jclouds.deltacloud.domain.TransitionOnAction;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
 import org.jclouds.deltacloud.predicates.InstanceFinished;
 import org.jclouds.deltacloud.predicates.InstanceRunning;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
@@ -86,7 +86,7 @@ public class DeltacloudComputeServiceAdapter implements
          Template template) {
       Instance instance = client.createInstance(template.getImage().getProviderId(), CreateInstanceOptions.Builder
             .named(name).hardwareProfile(template.getHardware().getId()).realm(template.getLocation().getId()));
-      Credentials creds = null;
+      LoginCredentials creds = null;
       if (instance.getAuthentication() != null && instance.getAuthentication() instanceof PasswordAuthentication) {
          creds = PasswordAuthentication.class.cast(instance.getAuthentication()).getLoginCredentials();
       }

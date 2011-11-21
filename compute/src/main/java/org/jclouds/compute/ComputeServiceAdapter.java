@@ -21,7 +21,7 @@ package org.jclouds.compute;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.compute.domain.Template;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 
 /**
@@ -66,9 +66,9 @@ public interface ComputeServiceAdapter<N, H, I, L> {
    public static class NodeAndInitialCredentials<N> {
       private final N node;
       private final String nodeId;
-      private final Credentials credentials;
+      private final LoginCredentials credentials;
 
-      public NodeAndInitialCredentials(N node, String nodeId, @Nullable Credentials credentials) {
+      public NodeAndInitialCredentials(N node, String nodeId, @Nullable LoginCredentials credentials) {
          this.node = checkNotNull(node, "node");
          this.nodeId = checkNotNull(nodeId, "nodeId");
          this.credentials = credentials;
@@ -96,7 +96,7 @@ public interface ComputeServiceAdapter<N, H, I, L> {
        *         information is not available
        */
       @Nullable
-      public Credentials getCredentials() {
+      public LoginCredentials getCredentials() {
          return credentials;
       }
    }

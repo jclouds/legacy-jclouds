@@ -39,7 +39,8 @@
     <test.cloudsigma-zrh.identity>FIXME</test.cloudsigma-zrh.identity>
     <test.cloudsigma-zrh.credential>FIXME</test.cloudsigma-zrh.credential>
     <test.cloudsigma-zrh.image-id></test.cloudsigma-zrh.image-id>
-    <test.cloudsigma-zrh.login-user></test.cloudsigma-zrh.login-user>
+    <test.cloudsigma-zrh.image.login-user></test.cloudsigma-zrh.image.login-user>
+    <test.cloudsigma-zrh.image.authenticate-sudo></test.cloudsigma-zrh.image.authenticate-sudo>
   </properties>
 
   <dependencies>
@@ -105,7 +106,8 @@
                     <test.cloudsigma-zrh.identity>${test.cloudsigma-zrh.identity}</test.cloudsigma-zrh.identity>
                     <test.cloudsigma-zrh.credential>${test.cloudsigma-zrh.credential}</test.cloudsigma-zrh.credential>
                     <test.cloudsigma-zrh.image-id>${test.cloudsigma-zrh.image-id}</test.cloudsigma-zrh.image-id>
-                    <test.cloudsigma-zrh.login-user>${test.cloudsigma-zrh.login-user}</test.cloudsigma-zrh.login-user>
+                    <test.cloudsigma-zrh.image.login-user>${test.cloudsigma-zrh.image.login-user}</test.cloudsigma-zrh.image.login-user>
+                    <test.cloudsigma-zrh.image.authenticate-sudo>${test.cloudsigma-zrh.image.authenticate-sudo}</test.cloudsigma-zrh.image.authenticate-sudo>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

@@ -18,8 +18,6 @@
  */
 package org.jclouds.trmk.vcloud_0_8.internal;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;

@@ -50,8 +50,8 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.location.suppliers.JustProvider;
 import org.jclouds.logging.Logger;
 
@@ -126,8 +126,8 @@ public class CloudSigmaComputeServiceAdapter implements
       logger.debug("<< created server(%s)", from.getUuid());
       logger.debug(">> starting server(%s)", from.getUuid());
       client.startServer(from.getUuid());
-      return new NodeAndInitialCredentials<ServerInfo>(from, from.getUuid(),
-            new Credentials("root", defaultVncPassword));
+      return new NodeAndInitialCredentials<ServerInfo>(from, from.getUuid(), LoginCredentials.builder()
+            .password(defaultVncPassword).authenticateSudo(true).build());
    }
 
    @Override

@@ -40,7 +40,7 @@ import static org.jclouds.compute.RunScriptData.startJBoss;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.nameTask;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
 import static org.jclouds.compute.options.TemplateOptions.Builder.inboundPorts;
-import static org.jclouds.compute.options.TemplateOptions.Builder.overrideCredentialsWith;
+import static org.jclouds.compute.options.TemplateOptions.Builder.overrideLoginCredentials;
 import static org.jclouds.compute.options.TemplateOptions.Builder.runAsRoot;
 import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
 import static org.jclouds.compute.predicates.NodePredicates.all;
@@ -85,6 +85,7 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
@@ -228,13 +229,13 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
       try {
          Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, options);
          NodeMetadata node = get(nodes, 0);
-         Credentials good = node.getCredentials();
+         LoginCredentials good = node.getCredentials();
          assert good.identity != null : nodes;
          assert good.credential != null : nodes;
 
          for (Entry<? extends NodeMetadata, ExecResponse> response : client.runScriptOnNodesMatching(
                runningInGroup(group), Statements.exec("hostname"),
-               wrapInInitScript(false).runAsRoot(false).overrideCredentialsWith(good)).entrySet()) {
+               wrapInInitScript(false).runAsRoot(false).overrideLoginCredentials(good)).entrySet()) {
             checkResponseEqualsHostname(response.getValue(), response.getKey());
          }
 
@@ -281,10 +282,12 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
    @Test(enabled = false)
    protected void tryBadPassword(String group, Credentials good) throws AssertionError {
       try {
-         Map<? extends NodeMetadata, ExecResponse> responses = client.runScriptOnNodesMatching(runningInGroup(group),
+         Map<? extends NodeMetadata, ExecResponse> responses = client.runScriptOnNodesMatching(
+               runningInGroup(group),
                "echo I put a bad password",
-               wrapInInitScript(false).runAsRoot(false)
-                     .overrideCredentialsWith(new Credentials(good.identity, "romeo")));
+               wrapInInitScript(false).runAsRoot(false).overrideLoginCredentials(
+                     LoginCredentials.builder().user(good.identity).credential(null).privateKey(null).password("romeo")
+                           .build()));
          assert responses.size() == 0 : "shouldn't pass with a bad password\n" + responses;
       } catch (AssertionError e) {
          throw e;
@@ -433,8 +436,8 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
    }
 
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String group, OperatingSystem os,
-         Credentials creds) throws RunScriptOnNodesException {
-      return client.runScriptOnNodesMatching(runningInGroup(group), buildScript(os), overrideCredentialsWith(creds)
+         LoginCredentials creds) throws RunScriptOnNodesException {
+      return client.runScriptOnNodesMatching(runningInGroup(group), buildScript(os), overrideLoginCredentials(creds)
             .nameTask("runScriptWithCreds"));
    }
 

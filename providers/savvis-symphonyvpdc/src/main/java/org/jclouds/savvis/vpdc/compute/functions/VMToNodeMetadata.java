@@ -35,7 +35,6 @@ import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.savvis.vpdc.domain.VM;
 import org.jclouds.savvis.vpdc.util.Utils;
@@ -59,11 +58,9 @@ public class VMToNodeMetadata implements Function<VM, NodeMetadata> {
                      NodeState.SUSPENDED).put(VM.Status.UNRESOLVED, NodeState.PENDING).build();
 
    private final FindLocationForVM findLocationForVM;
-   private final Map<String, Credentials> credentialStore;
 
    @Inject
-   VMToNodeMetadata(Map<String, Credentials> credentialStore, FindLocationForVM findLocationForVM) {
-      this.credentialStore = checkNotNull(credentialStore, "credentialStore");
+   VMToNodeMetadata(FindLocationForVM findLocationForVM) {
       this.findLocationForVM = checkNotNull(findLocationForVM, "findLocationForVM");
    }
 
@@ -85,7 +82,6 @@ public class VMToNodeMetadata implements Function<VM, NodeMetadata> {
       Set<String> addresses = Utils.getIpsFromVM(from);
       builder.publicAddresses(filter(addresses, not(IsPrivateIPAddress.INSTANCE)));
       builder.privateAddresses(filter(addresses, IsPrivateIPAddress.INSTANCE));
-      builder.credentials(credentialStore.get(from.getHref().toASCIIString()));
       return builder.build();
    }
 

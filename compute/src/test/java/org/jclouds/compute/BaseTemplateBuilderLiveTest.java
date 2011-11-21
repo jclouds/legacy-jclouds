@@ -37,9 +37,9 @@ import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -257,8 +257,8 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
 
    @Test
    public void testTemplateBuilderWithLoginUserSpecified() throws IOException {
-      tryOverrideUsingPropertyKey("jclouds.login-user");
-      tryOverrideUsingPropertyKey(provider + ".login-user");
+      tryOverrideUsingPropertyKey("jclouds");
+      tryOverrideUsingPropertyKey(provider);
    }
 
    protected void tryOverrideUsingPropertyKey(String propertyKey) {
@@ -266,7 +266,9 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
       try {
          Properties overrides = setupProperties();
          String login = loginUser != null ? loginUser : "foo:bar";
-         overrides.setProperty(propertyKey, login);
+         overrides.setProperty(propertyKey + ".image.login-user", login);
+         boolean auth = authenticateSudo != null ? Boolean.valueOf(authenticateSudo) : true;
+         overrides.setProperty(propertyKey + ".image.authenticate-sudo", auth + "");
 
          context = new ComputeServiceContextFactory().createContext(provider,
                ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
@@ -275,7 +277,7 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
          String user = Iterables.get(userPass, 0);
          String pass = Iterables.size(userPass) > 1 ? Iterables.get(userPass, 1) : null;
          assertEquals(context.getComputeService().templateBuilder().build().getImage().getDefaultCredentials(),
-               new Credentials(user, pass));
+               LoginCredentials.builder().user(user).password(pass).authenticateSudo(auth).build());
       } finally {
          if (context != null)
             context.close();

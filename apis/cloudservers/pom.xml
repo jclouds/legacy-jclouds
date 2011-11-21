@@ -40,7 +40,8 @@
     <test.cloudservers.identity>${test.rackspace.identity}</test.cloudservers.identity>
     <test.cloudservers.credential>${test.rackspace.credential}</test.cloudservers.credential>
     <test.cloudservers.image-id></test.cloudservers.image-id>
-    <test.cloudservers.login-user></test.cloudservers.login-user>
+    <test.cloudservers.image.login-user></test.cloudservers.image.login-user>
+    <test.cloudservers.image.authenticate-sudo></test.cloudservers.image.authenticate-sudo>
   </properties>
 
   <dependencies>
@@ -111,7 +112,8 @@
                     <test.cloudstack.identity>${test.cloudstack.identity}</test.cloudstack.identity>
                     <test.cloudstack.credential>${test.cloudstack.credential}</test.cloudstack.credential>
                     <test.cloudstack.image-id>${test.cloudstack.image-id}</test.cloudstack.image-id>
-                    <test.cloudstack.login-user>${test.cloudstack.login-user}</test.cloudstack.login-user>
+		    <test.cloudstack.image.login-user>${test.cloudstack.image.login-user}</test.cloudstack.image.login-user>
+                    <test.cloudstack.image.authenticate-sudo>${test.cloudstack.image.authenticate-sudo}</test.cloudstack.image.authenticate-sudo>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

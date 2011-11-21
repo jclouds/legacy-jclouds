@@ -102,7 +102,7 @@ public class EC2ImageParser implements Function<org.jclouds.ec2.domain.Image, Im
 
       reviseParsedImage.reviseParsedImage(from, builder, family, osBuilder);
 
-      builder.defaultCredentials(credentialProvider.execute(from));
+      builder.defaultCredentials(credentialProvider.apply(from));
 
       try {
          builder.location(Iterables.find(locations.get(), new Predicate<Location>() {

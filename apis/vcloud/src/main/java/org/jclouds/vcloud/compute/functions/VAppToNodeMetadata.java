@@ -38,6 +38,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.InetAddresses2.IsPrivateIPAddress;
 import org.jclouds.vcloud.domain.Status;
@@ -80,11 +81,11 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
       Set<String> addresses = getIpsFromVApp(from);
       builder.publicAddresses(filter(addresses, not(IsPrivateIPAddress.INSTANCE)));
       builder.privateAddresses(filter(addresses, IsPrivateIPAddress.INSTANCE));
-      builder.credentials(getCredentialsFrom(from));
       Credentials fromApi = getCredentialsFrom(from);
       if (fromApi != null && !credentialStore.containsKey("node#" + from.getHref().toASCIIString()))
          credentialStore.put("node#" + from.getHref().toASCIIString(), fromApi);
-      builder.credentials(credentialStore.get("node#" + from.getHref().toASCIIString()));
+      builder.credentials(LoginCredentials.builder(credentialStore.get("node#" + from.getHref().toASCIIString()))
+            .build());
       return builder.build();
    }
 }

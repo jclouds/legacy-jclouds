@@ -39,7 +39,8 @@
     <test.cloudsigma-lvs.identity>FIXME</test.cloudsigma-lvs.identity>
     <test.cloudsigma-lvs.credential>FIXME</test.cloudsigma-lvs.credential>
     <test.cloudsigma-lvs.image-id></test.cloudsigma-lvs.image-id>
-    <test.cloudsigma-lvs.login-user></test.cloudsigma-lvs.login-user>
+    <test.cloudsigma-lvs.image.login-user></test.cloudsigma-lvs.image.login-user>
+    <test.cloudsigma-lvs.image.authenticate-sudo></test.cloudsigma-lvs.image.authenticate-sudo>
   </properties>
 
   <dependencies>
@@ -105,7 +106,8 @@
                     <test.cloudsigma-lvs.identity>${test.cloudsigma-lvs.identity}</test.cloudsigma-lvs.identity>
                     <test.cloudsigma-lvs.credential>${test.cloudsigma-lvs.credential}</test.cloudsigma-lvs.credential>
                     <test.cloudsigma-lvs.image-id>${test.cloudsigma-lvs.image-id}</test.cloudsigma-lvs.image-id>
-                    <test.cloudsigma-lvs.login-user>${test.cloudsigma-lvs.login-user}</test.cloudsigma-lvs.login-user>
+                    <test.cloudsigma-lvs.image.login-user>${test.cloudsigma-lvs.image.login-user}</test.cloudsigma-lvs.image.login-user>
+                    <test.cloudsigma-lvs.image.authenticate-sudo>${test.cloudsigma-lvs.image.authenticate-sudo}</test.cloudsigma-lvs.image.authenticate-sudo>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

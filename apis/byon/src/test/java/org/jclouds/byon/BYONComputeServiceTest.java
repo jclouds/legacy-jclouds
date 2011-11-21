@@ -30,13 +30,16 @@ import org.jclouds.byon.config.CacheNodeStoreModule;
 import org.jclouds.byon.functions.NodesFromYamlTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LoginCredentials;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.cache.Cache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.inject.Module;
 
 /**
@@ -83,8 +86,8 @@ public class BYONComputeServiceTest {
          assertEquals(supplier.get().asMap(),
                ImmutableMap.<String, Node> of(NodesFromYamlTest.TEST1.getId(), NodesFromYamlTest.TEST1));
 
-         assertEquals(context.getComputeService().listNodes(),
-               ImmutableSet.of(expectedNodeMetadataFromResource(endpoint)));
+         assertEquals(context.getComputeService().listNodes().toString(),
+               ImmutableSet.of(expectedNodeMetadataFromResource(endpoint)).toString());
          assertEquals(context.getComputeService().listAssignableLocations(), ImmutableSet.of(providerLocation));
       } finally {
          if (context != null)
@@ -98,8 +101,8 @@ public class BYONComputeServiceTest {
          String endpoint = "file://" + getClass().getResource("/test_location.yaml").getPath();
          Properties props = new Properties();
          props.setProperty("byon.endpoint", endpoint);
-         context = new ComputeServiceContextFactory().createContext("byon", "foo", "bar",
-               ImmutableSet.<Module> of(), props);
+         context = new ComputeServiceContextFactory().createContext("byon", "foo", "bar", ImmutableSet.<Module> of(),
+               props);
 
          assertEquals(context.getProviderSpecificContext().getEndpoint(), URI.create(endpoint));
 
@@ -115,9 +118,26 @@ public class BYONComputeServiceTest {
          Location virginia = zoneCalled("virginia", providerLocation);
          Location maryland = zoneCalled("maryland", providerLocation);
 
-         assertEquals(context.getComputeService().listNodes(), ImmutableSet.of(
-               expectedNodeMetadataFromResource(1, endpoint, virginia),
-               expectedNodeMetadataFromResource(2, endpoint, maryland, 2022)));
+         assertEquals(
+               context.getComputeService().listNodes().toString(),
+               ImmutableSet.of(expectedNodeMetadataFromResource(1, endpoint, virginia),
+                     expectedNodeMetadataFromResource(2, endpoint, maryland, 2022)).toString());
+
+         assertEquals(NodeMetadata.class.cast(Iterables.get(context.getComputeService().listNodes(), 0))
+               .getCredentials(),
+               LoginCredentials
+                     .builder()
+                     .user("myUser")
+                     .password("happy bear")
+                     .authenticateSudo(true)
+                     .privateKey(
+                           "-----BEGIN RSA PRIVATE KEY-----\n"
+                                 + "MIIEowIBAAKCAQEAuzaE6azgUxwESX1rCGdJ5xpdrc1XC311bOGZBCE8NA+CpFh2\n"
+                                 + "u01Vfv68NC4u6LFgdXSY1vQt6hiA5TNqQk0TyVfFAunbXgTekF6XqDPQUf1nq9aZ\n"
+                                 + "lMvo4vlaLDKBkhG5HJE/pIa0iB+RMZLS0GhxsIWerEDmYdHKM25o\n"
+                                 + "-----END RSA PRIVATE KEY-----\n").build()
+
+         );
 
          assertEquals(context.getComputeService().listAssignableLocations(), ImmutableSet.of(virginia, maryland));
       } finally {

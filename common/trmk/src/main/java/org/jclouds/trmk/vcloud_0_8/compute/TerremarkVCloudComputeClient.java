@@ -29,7 +29,6 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -40,6 +39,8 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
 import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
@@ -134,7 +135,7 @@ public class TerremarkVCloudComputeClient {
          password = passwordGenerator.get();
          options.getProperties().put("password", password);
       }
-      Credentials defaultCredentials = credentialsProvider.execute(template);
+      LoginCredentials defaultCredentials = credentialsProvider.apply(template);
       checkNotNull(options, "options");
       logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) options(%s) ", VDC, templateId, name, options);
 

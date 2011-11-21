@@ -39,7 +39,8 @@
     <test.ec2.identity>${test.aws.identity}</test.ec2.identity>
     <test.ec2.credential>${test.aws.credential}</test.ec2.credential>
     <test.ec2.image-id></test.ec2.image-id>
-    <test.ec2.login-user></test.ec2.login-user>
+    <test.ec2.image.login-user></test.ec2.image.login-user>
+    <test.ec2.image.authenticate-sudo></test.ec2.image.authenticate-sudo>
   </properties>
 
   <dependencies>
@@ -105,7 +106,8 @@
                     <test.ec2.identity>${test.ec2.identity}</test.ec2.identity>
                     <test.ec2.credential>${test.ec2.credential}</test.ec2.credential>
                     <test.ec2.image-id>${test.ec2.image-id}</test.ec2.image-id>
-                    <test.ec2.login-user>${test.ec2.login-user}</test.ec2.login-user>
+                    <test.ec2.image.login-user>${test.ec2.image.login-user}</test.ec2.image.login-user>
+                    <test.ec2.image.authenticate-sudo>${test.ec2.image.authenticate-sudo}</test.ec2.image.authenticate-sudo>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

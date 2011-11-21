@@ -55,6 +55,7 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
@@ -161,12 +162,12 @@ public class CloudStackComputeServiceAdapter implements
             private static final long serialVersionUID = 4371112085613620239L;
          });
       VirtualMachine vm = jobWithResult.getResult();
-      Credentials credentials = null;
+      LoginCredentials credentials = null;
       if (vm.isPasswordEnabled()) {
          assert vm.getPassword() != null : vm;
-         credentials = new Credentials(null, vm.getPassword());
+         credentials = LoginCredentials.builder().password(vm.getPassword()).build();
       } else {
-         credentials = credentialStore.get("keypair#" + templateOptions.getKeyPair());
+         credentials = LoginCredentials.builder(credentialStore.get("keypair#" + templateOptions.getKeyPair())).build();
       }
       if (templateOptions.shouldSetupStaticNat()) {
          // TODO: possibly not all network ids, do we want to do this

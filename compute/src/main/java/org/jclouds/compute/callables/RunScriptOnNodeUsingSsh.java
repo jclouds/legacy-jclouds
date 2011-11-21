@@ -59,7 +59,7 @@ public class RunScriptOnNodeUsingSsh implements RunScriptOnNode {
 
    @AssistedInject
    public RunScriptOnNodeUsingSsh(Function<NodeMetadata, SshClient> sshFactory, @Assisted NodeMetadata node,
-            @Assisted Statement statement, @Assisted RunScriptOptions options) {
+         @Assisted Statement statement, @Assisted RunScriptOptions options) {
       this.sshFactory = checkNotNull(sshFactory, "sshFactory");
       this.node = checkNotNull(node, "node");
       this.statement = checkNotNull(statement, "statement");
@@ -73,7 +73,7 @@ public class RunScriptOnNodeUsingSsh implements RunScriptOnNode {
          ssh.connect();
          ExecResponse returnVal;
          String command = (runAsRoot) ? execAsRoot(statement.render(OsFamily.UNIX)) : execScriptAsDefaultUser(statement
-                  .render(OsFamily.UNIX));
+               .render(OsFamily.UNIX));
          returnVal = runCommand(command);
          if (logger.isTraceEnabled())
             logger.trace("<< %s[%s]", statement, returnVal);
@@ -94,8 +94,8 @@ public class RunScriptOnNodeUsingSsh implements RunScriptOnNode {
 
    protected ExecResponse runCommand(String command) {
       ExecResponse returnVal;
-      logger.debug(">> running [%s] as %s@%s", command.replace(node.getAdminPassword() != null ? node
-               .getAdminPassword() : "XXXXX", "XXXXX"), ssh.getUsername(), ssh.getHostAddress());
+      logger.debug(">> running [%s] as %s@%s", command.replace(node.getCredentials().getPassword() != null ? node
+            .getCredentials().getPassword() : "XXXXX", "XXXXX"), ssh.getUsername(), ssh.getHostAddress());
       returnVal = ssh.exec(command);
       return returnVal;
    }
@@ -103,10 +103,10 @@ public class RunScriptOnNodeUsingSsh implements RunScriptOnNode {
    @VisibleForTesting
    public String execAsRoot(String command) {
       if (node.getCredentials().identity.equals("root")) {
-      } else if (node.getAdminPassword() != null) {
-          command = String.format("sudo -S sh <<'%s'\n%s\n%s%s\n", MARKER, node.getAdminPassword(), command, MARKER);
+      } else if (node.getCredentials().shouldAuthenticateSudo()) {
+         command = String.format("sudo -S sh <<'%s'\n%s\n%s%s\n", MARKER, node.getCredentials().getPassword(), command, MARKER);
       } else {
-          command = String.format("sudo sh <<'%s'\n%s%s\n", MARKER, command, MARKER);
+         command = String.format("sudo sh <<'%s'\n%s%s\n", MARKER, command, MARKER);
       }
       return command;
    }
@@ -122,7 +122,7 @@ public class RunScriptOnNodeUsingSsh implements RunScriptOnNode {
    @Override
    public String toString() {
       return Objects.toStringHelper(this).add("node", node).add("name", statement).add("runAsRoot", runAsRoot)
-               .toString();
+            .toString();
    }
 
    @Override

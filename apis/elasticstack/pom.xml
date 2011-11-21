@@ -53,7 +53,8 @@
     <test.elasticstack.identity>FIXME</test.elasticstack.identity>
     <test.elasticstack.credential>FIXME</test.elasticstack.credential>
     <test.elasticstack.image-id></test.elasticstack.image-id>
-    <test.elasticstack.login-user></test.elasticstack.login-user>
+    <test.elasticstack.image.login-user></test.elasticstack.image.login-user>
+    <test.elasticstack.image.authenticate-sudo></test.elasticstack.image.authenticate-sudo>
   </properties>
   <dependencies>
     <dependency>
@@ -110,7 +111,8 @@
                     <test.elasticstack.identity>${test.elasticstack.identity}</test.elasticstack.identity>
                     <test.elasticstack.credential>${test.elasticstack.credential}</test.elasticstack.credential>
                     <test.elasticstack.image-id>${test.elasticstack.image-id}</test.elasticstack.image-id>
-                    <test.elasticstack.login-user>${test.elasticstack.login-user}</test.elasticstack.login-user>
+                    <test.elasticstack.image.login-user>${test.elasticstack.image.login-user}</test.elasticstack.image.login-user>
+                    <test.elasticstack.image.authenticate-sudo>${test.elasticstack.image.authenticate-sudo}</test.elasticstack.image.authenticate-sudo>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

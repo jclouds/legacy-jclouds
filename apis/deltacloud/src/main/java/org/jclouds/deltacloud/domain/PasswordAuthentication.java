@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
 
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 
 /**
  * 
@@ -32,13 +32,13 @@ public class PasswordAuthentication implements Instance.Authentication, Serializ
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 7669076186483470376L;
-   private final Credentials login;
+   private final LoginCredentials login;
 
-   public PasswordAuthentication(Credentials login) {
+   public PasswordAuthentication(LoginCredentials login) {
       this.login = checkNotNull(login, "login");
    }
 
-   public Credentials getLoginCredentials() {
+   public LoginCredentials getLoginCredentials() {
       return login;
    }
 

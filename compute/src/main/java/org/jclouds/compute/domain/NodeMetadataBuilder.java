@@ -29,6 +29,8 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LoginCredentials;
+import org.jclouds.domain.LoginCredentials.Builder;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -41,9 +43,7 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
    private Set<String> publicAddresses = Sets.newLinkedHashSet();
    private Set<String> privateAddresses = Sets.newLinkedHashSet();
    @Nullable
-   private String adminPassword;
-   @Nullable
-   private Credentials credentials;
+   private LoginCredentials credentials;
    @Nullable
    private String group;
    private int loginPort = 22;
@@ -80,15 +80,33 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
       return this;
    }
 
+   /**
+    * <h4>will be removed in jclouds 1.4.0</h4>
+    * 
+    * @see LoginCredentials#shouldAuthenticateSudo
+    */
+   @Deprecated
+   public NodeMetadataBuilder adminPassword(@Nullable String adminPassword) {
+      if (adminPassword != null) {
+         Builder builder = credentials != null ? credentials.toBuilder() : LoginCredentials
+               .builder();
+         builder.authenticateSudo(true);
+         builder.password(adminPassword);
+         this.credentials = builder.build();
+      }
+      return this;
+   }
+
+   @Deprecated
    public NodeMetadataBuilder credentials(@Nullable Credentials credentials) {
+      return credentials(LoginCredentials.builder(credentials).build());
+   }
+   
+   public NodeMetadataBuilder credentials(@Nullable LoginCredentials credentials) {
       this.credentials = credentials;
       return this;
    }
 
-   public NodeMetadataBuilder adminPassword(@Nullable String adminPassword) {
-      this.adminPassword = adminPassword;
-      return this;
-   }
 
    public NodeMetadataBuilder group(@Nullable String group) {
       this.group = group;
@@ -158,7 +176,7 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
    @Override
    public NodeMetadata build() {
       return new NodeMetadataImpl(providerId, name, id, location, uri, userMetadata, tags, group, hardware, imageId,
-               os, state, loginPort, publicAddresses, privateAddresses, adminPassword, credentials, hostname);
+               os, state, loginPort, publicAddresses, privateAddresses,  credentials, hostname);
    }
 
    public static NodeMetadataBuilder fromNodeMetadata(NodeMetadata node) {
@@ -166,8 +184,7 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
                node.getLocation()).uri(node.getUri()).userMetadata(node.getUserMetadata()).tags(node.getTags()).group(
                node.getGroup()).hardware(node.getHardware()).imageId(node.getImageId()).operatingSystem(
                node.getOperatingSystem()).state(node.getState()).loginPort(node.getLoginPort()).publicAddresses(
-               node.getPublicAddresses()).privateAddresses(node.getPrivateAddresses()).adminPassword(
-               node.getAdminPassword()).credentials(node.getCredentials()).hostname(node.getHostname());
+               node.getPublicAddresses()).privateAddresses(node.getPrivateAddresses()).credentials(node.getCredentials()).hostname(node.getHostname());
    }
 
 }

@@ -38,6 +38,7 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.slicehost.domain.Slice;
 
@@ -125,7 +126,7 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
          }
 
       }));
-      builder.credentials(credentialStore.get("node#" + from.getId()));
+      builder.credentials(LoginCredentials.builder(credentialStore.get("node#" + from.getId())).build());
       return builder.build();
    }
 

@@ -30,9 +30,9 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.BlockDevice;
@@ -123,7 +123,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          
          // pass in the private key, so that we can run a script with it
          assert result.getKeyMaterial() != null : result;
-         options.overrideLoginCredentialWith(result.getKeyMaterial());
+         options.overrideLoginPrivateKey(result.getKeyMaterial());
          
          // an arbitrary command to run
          options.runScript(Statements.exec("find /usr"));
@@ -149,8 +149,9 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          assert secgroup.getIpPermissions().size() == 0 : secgroup;
 
          // try to run a script with the original keyPair
-         runScriptWithCreds(group, first.getOperatingSystem(), new Credentials(first.getCredentials().identity, result
-                  .getKeyMaterial()));
+         runScriptWithCreds(group, first.getOperatingSystem(),
+               LoginCredentials.builder().user(first.getCredentials().identity).privateKey(result.getKeyMaterial())
+                     .build());
 
       } finally {
          client.destroyNodesMatching(NodePredicates.inGroup(group));

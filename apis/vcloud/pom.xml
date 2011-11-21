@@ -39,7 +39,8 @@
     <test.vcloud.identity>FIXME</test.vcloud.identity>
     <test.vcloud.credential>FIXME</test.vcloud.credential>
     <test.vcloud.image-id></test.vcloud.image-id>
-    <test.vcloud.login-user></test.vcloud.login-user>
+    <test.vcloud.image.login-user></test.vcloud.image.login-user>
+    <test.vcloud.image.authenticate-sudo></test.vcloud.image.authenticate-sudo>
   </properties>
 
   <dependencies>
@@ -108,7 +109,8 @@
                     <test.vcloud.identity>${test.vcloud.identity}</test.vcloud.identity>
                     <test.vcloud.credential>${test.vcloud.credential}</test.vcloud.credential>
                     <test.vcloud.image-id>${test.vcloud.image-id}</test.vcloud.image-id>
-                    <test.vcloud.login-user>${test.vcloud.login-user}</test.vcloud.login-user>
+                    <test.vcloud.image.login-user>${test.vcloud.image.login-user}</test.vcloud.image.login-user>
+                    <test.vcloud.image.authenticate-sudo>${test.vcloud.image.authenticate-sudo}</test.vcloud.image.authenticate-sudo>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

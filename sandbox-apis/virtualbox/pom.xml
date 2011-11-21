@@ -39,7 +39,8 @@
     <test.virtualbox.identity>administrator</test.virtualbox.identity>
     <test.virtualbox.credential>12345</test.virtualbox.credential>
     <test.virtualbox.image-id></test.virtualbox.image-id>
-    <test.virtualbox.login-user></test.virtualbox.login-user>
+    <test.virtualbox.image.login-user></test.virtualbox.image.login-user>
+    <test.virtualbox.image.authenticate-sudo></test.virtualbox.image.authenticate-sudo>
   </properties>
 
   <dependencies>
@@ -144,7 +145,8 @@
                     <test.virtualbox.identity>${test.virtualbox.identity}</test.virtualbox.identity>
                     <test.virtualbox.credential>${test.virtualbox.credential}</test.virtualbox.credential>
                     <test.virtualbox.image-id>${test.virtualbox.image-id}</test.virtualbox.image-id>
-                    <test.virtualbox.login-user>${test.virtualbox.login-user}</test.virtualbox.login-user>
+                    <test.virtualbox.image.login-user>${test.virtualbox.image.login-user}</test.virtualbox.image.login-user>
+                    <test.virtualbox.image.authenticate-sudo>${test.virtualbox.image.authenticate-sudo}</test.virtualbox.image.authenticate-sudo>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

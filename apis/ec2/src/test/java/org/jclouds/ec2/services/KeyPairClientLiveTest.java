@@ -121,7 +121,7 @@ public class KeyPairClientLiveTest {
       KeyPair result = client.createKeyPairInRegion(null, keyName);
       assertNotNull(result);
       assertNotNull(result.getKeyMaterial());
-      assertNotNull(result.getKeyFingerprint());
+      assertNotNull(result.getSha1OfPrivateKey());
       assertEquals(result.getKeyName(), keyName);
 
       Set<KeyPair> twoResults = Sets.newLinkedHashSet(client.describeKeyPairsInRegion(null, keyName));
@@ -129,7 +129,7 @@ public class KeyPairClientLiveTest {
       assertEquals(twoResults.size(), 1);
       KeyPair listPair = twoResults.iterator().next();
       assertEquals(listPair.getKeyName(), result.getKeyName());
-      assertEquals(listPair.getKeyFingerprint(), result.getKeyFingerprint());
+      assertEquals(listPair.getSha1OfPrivateKey(), result.getSha1OfPrivateKey());
    }
 
    @AfterTest

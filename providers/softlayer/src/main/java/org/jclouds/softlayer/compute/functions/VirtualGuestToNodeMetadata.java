@@ -34,7 +34,6 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.domain.Datacenter;
@@ -56,20 +55,17 @@ import com.google.common.collect.Iterables;
 public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMetadata> {
 
    public static final Map<VirtualGuest.State, NodeState> serverStateToNodeState = ImmutableMap
-            .<VirtualGuest.State, NodeState> builder().put(VirtualGuest.State.HALTED, NodeState.PENDING).put(
-                     VirtualGuest.State.PAUSED, NodeState.SUSPENDED).put(VirtualGuest.State.RUNNING, NodeState.RUNNING)
-            .put(VirtualGuest.State.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
+         .<VirtualGuest.State, NodeState> builder().put(VirtualGuest.State.HALTED, NodeState.PENDING)
+         .put(VirtualGuest.State.PAUSED, NodeState.SUSPENDED).put(VirtualGuest.State.RUNNING, NodeState.RUNNING)
+         .put(VirtualGuest.State.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
 
-   private final Map<String, Credentials> credentialStore;
    private final FindLocationForVirtualGuest findLocationForVirtualGuest;
    private final GetHardwareForVirtualGuest getHardwareForVirtualGuest;
    private final GetImageForVirtualGuest getImageForVirtualGuest;
 
    @Inject
-   VirtualGuestToNodeMetadata(Map<String, Credentials> credentialStore,
-            FindLocationForVirtualGuest findLocationForVirtualGuest,
-            GetHardwareForVirtualGuest getHardwareForVirtualGuest, GetImageForVirtualGuest getImageForVirtualGuest) {
-      this.credentialStore = checkNotNull(credentialStore, "credentialStore");
+   VirtualGuestToNodeMetadata(FindLocationForVirtualGuest findLocationForVirtualGuest,
+         GetHardwareForVirtualGuest getHardwareForVirtualGuest, GetImageForVirtualGuest getImageForVirtualGuest) {
       this.findLocationForVirtualGuest = checkNotNull(findLocationForVirtualGuest, "findLocationForVirtualGuest");
       this.getHardwareForVirtualGuest = checkNotNull(getHardwareForVirtualGuest, "getHardwareForVirtualGuest");
       this.getImageForVirtualGuest = checkNotNull(getImageForVirtualGuest, "getImageForVirtualGuest");
@@ -102,8 +98,6 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
          builder.publicAddresses(ImmutableSet.<String> of(from.getPrimaryIpAddress()));
       if (from.getPrimaryBackendIpAddress() != null)
          builder.privateAddresses(ImmutableSet.<String> of(from.getPrimaryBackendIpAddress()));
-
-      builder.credentials(credentialStore.get("node#" + from.getId()));
       return builder.build();
    }
 
@@ -132,7 +126,7 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
 
       @Inject
       public GetHardwareForVirtualGuest(SoftLayerClient client,
-               Function<Iterable<ProductItem>, Hardware> productItemsToHardware) {
+            Function<Iterable<ProductItem>, Hardware> productItemsToHardware) {
          this.client = checkNotNull(client, "client");
          this.productItemsToHardware = checkNotNull(productItemsToHardware, "productItemsToHardware");
 

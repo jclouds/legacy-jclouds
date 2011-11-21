@@ -39,6 +39,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.slicehost.compute.config.SlicehostComputeServiceDependenciesModule;
 import org.jclouds.slicehost.domain.Slice;
 import org.jclouds.slicehost.xml.SliceHandlerTest;
@@ -58,7 +59,7 @@ public class SliceToNodeMetadataTest {
 
    @Test
    public void testApplyWhereImageAndHardwareNotFoundButCredentialsFound() throws UnknownHostException {
-      Credentials creds = new Credentials("root", "abdce");
+      LoginCredentials creds = LoginCredentials.builder().user("root").password("abdce").build();
       Map<Slice.Status, NodeState> sliceStateToNodeState = SlicehostComputeServiceDependenciesModule.sliceStatusToNodeState;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of();
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();

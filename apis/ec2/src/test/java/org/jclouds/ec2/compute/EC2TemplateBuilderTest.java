@@ -48,10 +48,10 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.LoginCredentials;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -153,11 +153,11 @@ public class EC2TemplateBuilderTest {
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(
                new ImageBuilder().providerId("cc-image").name("image").id("us-east-1/cc-image").location(location)
                         .operatingSystem(new OperatingSystem(OsFamily.UBUNTU, null, "1.0", "hvm", "ubuntu", true))
-                        .description("description").version("1.0").defaultCredentials(new Credentials("root", null))
+                        .description("description").version("1.0").defaultCredentials(new LoginCredentials("root", null, null, false))
                         .build(), new ImageBuilder().providerId("normal-image").name("image").id("us-east-1/cc-image")
                         .location(location).operatingSystem(
                                  new OperatingSystem(OsFamily.UBUNTU, null, "1.0", "paravirtual", "ubuntu", true))
-                        .description("description").version("1.0").defaultCredentials(new Credentials("root", null))
+                        .description("description").version("1.0").defaultCredentials(new LoginCredentials("root", null, null, false))
                         .build()));
       Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
                .<Hardware> of(t1_micro().build(), c1_medium().build(), c1_xlarge().build(), m1_large().build(),

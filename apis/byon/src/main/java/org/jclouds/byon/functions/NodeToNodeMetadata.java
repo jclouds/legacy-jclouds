@@ -42,6 +42,8 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LoginCredentials;
+import org.jclouds.domain.LoginCredentials.Builder;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Strings2;
 
@@ -92,24 +94,25 @@ public class NodeToNodeMetadata implements Function<Node, NodeMetadata> {
       builder.publicAddresses(ImmutableSet.<String> of(from.getHostname()));
 
       if (from.getUsername() != null) {
-         Credentials creds = null;
+         Builder credBuilder = LoginCredentials.builder().user(from.getUsername());
          if (from.getCredentialUrl() != null) {
             try {
-               creds = new Credentials(from.getUsername(), Strings2.toStringAndClose(slurp.apply(from
-                        .getCredentialUrl())));
+               credBuilder.credential(Strings2.toStringAndClose(slurp.apply(from.getCredentialUrl())));
             } catch (IOException e) {
                logger.error(e, "URI could not be read: %s", from.getCredentialUrl());
             }
          } else if (from.getCredential() != null) {
-            creds = new Credentials(from.getUsername(), from.getCredential());
+            credBuilder.credential(from.getCredential());
          }
-         if (creds != null)
-            builder.credentials(creds);
+         if (from.getSudoPassword() != null){
+            credBuilder.password(from.getSudoPassword());
+            credBuilder.authenticateSudo(true);
+         }
+         LoginCredentials creds = credBuilder.build();
+         builder.credentials(creds);
          credentialStore.put("node#" + from.getId(), creds);
       }
 
-      if (from.getSudoPassword() != null)
-         builder.adminPassword(from.getSudoPassword());
       return builder.build();
    }
 

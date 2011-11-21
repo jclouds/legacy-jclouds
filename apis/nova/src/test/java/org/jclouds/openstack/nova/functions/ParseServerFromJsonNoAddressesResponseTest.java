@@ -18,10 +18,13 @@
  */
 package org.jclouds.openstack.nova.functions;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
+import java.io.InputStream;
+import java.net.UnknownHostException;
+import java.text.ParseException;
+
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.io.Payloads;
@@ -30,12 +33,10 @@ import org.jclouds.openstack.nova.domain.Server;
 import org.jclouds.openstack.nova.domain.ServerStatus;
 import org.testng.annotations.Test;
 
-import java.io.InputStream;
-import java.net.UnknownHostException;
-import java.text.ParseException;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 @Test(groups = "unit")
 public class ParseServerFromJsonNoAddressesResponseTest {

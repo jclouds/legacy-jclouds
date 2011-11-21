@@ -323,7 +323,7 @@ public class GoGridLiveTestDisabled {
     */
    @Test(enabled = true)
    public void testImageLifecycle() {
-      GetImageListOptions options = new GetImageListOptions.Builder().publicDatabaseServers();
+      GetImageListOptions options = GetImageListOptions.Builder.publicDatabaseServers();
       Set<ServerImage> images = client.getImageServices().getImageList(options);
 
       Predicate<ServerImage> isDatabaseServer = new Predicate<ServerImage>() {

@@ -33,7 +33,7 @@ import org.testng.annotations.BeforeClass;
  */
 public abstract class BaseVersionedServiceLiveTest {
    protected String prefix = System.getProperty("user.name");
-   
+
    protected String provider;
    protected String identity;
    protected String credential;
@@ -41,6 +41,7 @@ public abstract class BaseVersionedServiceLiveTest {
    protected String apiversion;
    protected String imageId;
    protected String loginUser;
+   protected String authenticateSudo;
 
    protected Properties setupRestProperties() {
       return RestContextFactory.getPropertiesFromResource("/rest.properties");
@@ -68,7 +69,9 @@ public abstract class BaseVersionedServiceLiveTest {
       if (imageId != null)
          overrides.setProperty(provider + ".image-id", imageId);
       if (loginUser != null)
-         overrides.setProperty(provider + ".login-user", loginUser);
+         overrides.setProperty(provider + ".image.login-user", loginUser);
+      if (authenticateSudo != null)
+         overrides.setProperty(provider + ".image.authenticate-sudo", authenticateSudo);
 
       return overrides;
    }
@@ -80,7 +83,8 @@ public abstract class BaseVersionedServiceLiveTest {
       endpoint = System.getProperty("test." + provider + ".endpoint");
       apiversion = System.getProperty("test." + provider + ".apiversion");
       imageId = System.getProperty("test." + provider + ".image-id");
-      loginUser = System.getProperty("test." + provider + ".login-user");
+      loginUser = System.getProperty("test." + provider + ".image.login-user");
+      authenticateSudo = System.getProperty("test." + provider + ".image.authenticate-sudo");
    }
 
 }

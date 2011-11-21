@@ -29,6 +29,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.testng.annotations.Test;
 
 /**
@@ -61,7 +62,7 @@ public class PrioritizeCredentialsFromTemplateTest {
    }
 
    public void testWhenCredentialsNotPresentInImageTemplateOptionsReturnsFromParameter() {
-      Credentials expected = new Credentials("foo", "bar");
+      LoginCredentials expected = new LoginCredentials("foo", "bar", null, false);
 
       Image image = createMock(Image.class);
       Template template = createMock(Template.class);
@@ -81,19 +82,19 @@ public class PrioritizeCredentialsFromTemplateTest {
    }
 
    public void testWhenCredentialsNotPresentInImageReturnsOneInTemplateOptionsAndNotParameter() {
-      Credentials expected = new Credentials("ubuntu", "password");
+      LoginCredentials expected = new LoginCredentials("ubuntu", "password", null, false);
 
       Image image = createMock(Image.class);
       Template template = createMock(Template.class);
 
       expect(template.getImage()).andReturn(image);
       expect(image.getDefaultCredentials()).andReturn(null);
-      expect(template.getOptions()).andReturn(TemplateOptions.Builder.overrideCredentialsWith(expected));
+      expect(template.getOptions()).andReturn(TemplateOptions.Builder.overrideLoginCredentials(expected));
 
       replay(template);
       replay(image);
 
-      assertEquals(fn.apply(template, new Credentials("foo", "bar")), expected);
+      assertEquals(fn.apply(template, new LoginCredentials("foo", "bar", null, false)), expected);
 
       verify(template);
       verify(image);
@@ -108,12 +109,12 @@ public class PrioritizeCredentialsFromTemplateTest {
 
       expect(template.getImage()).andReturn(image);
       expect(image.getDefaultCredentials()).andReturn(null);
-      expect(template.getOptions()).andReturn(TemplateOptions.Builder.overrideLoginUserWith("ubuntu"));
+      expect(template.getOptions()).andReturn(TemplateOptions.Builder.overrideLoginUser("ubuntu"));
 
       replay(template);
       replay(image);
 
-      assertEquals(fn.apply(template, new Credentials("foo", "password")), expected);
+      assertEquals(fn.apply(template, new LoginCredentials("foo", "password", null, false)), expected);
 
       verify(template);
       verify(image);
@@ -121,7 +122,7 @@ public class PrioritizeCredentialsFromTemplateTest {
    }
 
    public void testWhenCredentialsNotPresentInTemplateOptionsReturnsOneInImageAndNotParameter() {
-      Credentials expected = new Credentials("ubuntu", "password");
+      LoginCredentials expected = new LoginCredentials("ubuntu", "password", null, false);
 
       Image image = createMock(Image.class);
       Template template = createMock(Template.class);
@@ -133,7 +134,7 @@ public class PrioritizeCredentialsFromTemplateTest {
       replay(template);
       replay(image);
 
-      assertEquals(fn.apply(template, new Credentials("foo", "bar")), expected);
+      assertEquals(fn.apply(template, new LoginCredentials("foo", "bar", null, false)), expected);
 
       verify(template);
       verify(image);
@@ -147,13 +148,13 @@ public class PrioritizeCredentialsFromTemplateTest {
       Template template = createMock(Template.class);
 
       expect(template.getImage()).andReturn(image);
-      expect(image.getDefaultCredentials()).andReturn(new Credentials("user", "password"));
-      expect(template.getOptions()).andReturn(TemplateOptions.Builder.overrideLoginUserWith("ubuntu"));
+      expect(image.getDefaultCredentials()).andReturn(new LoginCredentials("user", "password", null, false));
+      expect(template.getOptions()).andReturn(TemplateOptions.Builder.overrideLoginUser("ubuntu"));
 
       replay(template);
       replay(image);
 
-      assertEquals(fn.apply(template, new Credentials("foo", "bar")), expected);
+      assertEquals(fn.apply(template, new LoginCredentials("foo", "bar", null, false)), expected);
 
       verify(template);
       verify(image);
@@ -161,19 +162,19 @@ public class PrioritizeCredentialsFromTemplateTest {
    }
 
    public void testWhenCredentialsPresentInImageOverridesCredentialFromCredentialsInTemplateOptionsAndNotParameter() {
-      Credentials expected = new Credentials("ubuntu", "password");
+      LoginCredentials expected = new LoginCredentials("ubuntu", "password", null, false);
 
       Image image = createMock(Image.class);
       Template template = createMock(Template.class);
 
       expect(template.getImage()).andReturn(image);
-      expect(image.getDefaultCredentials()).andReturn(new Credentials("ubuntu", "password2"));
-      expect(template.getOptions()).andReturn(TemplateOptions.Builder.overrideLoginCredentialWith("password"));
+      expect(image.getDefaultCredentials()).andReturn(new LoginCredentials("ubuntu", "password2", null, false));
+      expect(template.getOptions()).andReturn(TemplateOptions.Builder.overrideLoginPassword("password"));
 
       replay(template);
       replay(image);
 
-      assertEquals(fn.apply(template, new Credentials("foo", "bar")), expected);
+      assertEquals(fn.apply(template, new LoginCredentials("foo", "bar", null, false)), expected);
 
       verify(template);
       verify(image);

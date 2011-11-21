@@ -54,7 +54,7 @@ public class SudoAwareInitManager {
    protected SshClient ssh;
 
    public SudoAwareInitManager(Function<NodeMetadata, SshClient> sshFactory, boolean runAsRoot, NodeMetadata node,
-            InitBuilder init) {
+         InitBuilder init) {
       this.sshFactory = checkNotNull(sshFactory, "sshFactory");
       this.runAsRoot = runAsRoot;
       this.node = checkNotNull(node, "node");
@@ -81,7 +81,7 @@ public class SudoAwareInitManager {
    public ExecResponse runAction(String action) {
       ExecResponse returnVal;
       String command = (runAsRoot && Predicates.in(ImmutableSet.of("start", "stop", "run")).apply(action)) ? execScriptAsRoot(action)
-               : execScriptAsDefaultUser(action);
+            : execScriptAsDefaultUser(action);
       returnVal = runCommand(command);
       if ("status".equals(action))
          logger.trace("<< %s(%d)", action, returnVal.getExitCode());
@@ -94,8 +94,8 @@ public class SudoAwareInitManager {
 
    ExecResponse runCommand(String command) {
       String statement = String.format(">> running [%s] as %s@%s", command.replace(
-               node.getAdminPassword() != null ? node.getAdminPassword() : "XXXXX", "XXXXX"), ssh.getUsername(), ssh
-               .getHostAddress());
+            node.getCredentials().getPassword() != null ? node.getCredentials().getPassword() : "XXXXX", "XXXXX"), ssh
+            .getUsername(), ssh.getHostAddress());
       if (command.endsWith("status"))
          logger.trace(statement);
       else
@@ -108,8 +108,9 @@ public class SudoAwareInitManager {
       String command;
       if (node.getCredentials().identity.equals("root")) {
          command = "./" + init.getInstanceName() + " " + action;
-      } else if (node.getAdminPassword() != null) {
-         command = String.format("echo '%s'|sudo -S ./%s %s", node.getAdminPassword(), init.getInstanceName(), action);
+      } else if (node.getCredentials().shouldAuthenticateSudo()) {
+         command = String.format("echo '%s'|sudo -S ./%s %s", node.getCredentials().getPassword(),
+               init.getInstanceName(), action);
       } else {
          command = "sudo ./" + init.getInstanceName() + " " + action;
       }
@@ -126,8 +127,8 @@ public class SudoAwareInitManager {
 
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).add("node", node).add("name", init.getInstanceName()).add("runAsRoot",
-               runAsRoot).toString();
+      return Objects.toStringHelper(this).add("node", node).add("name", init.getInstanceName())
+            .add("runAsRoot", runAsRoot).toString();
    }
 
    public InitBuilder getStatement() {

@@ -30,6 +30,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.collect.TransformingMap;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.CopyInputStreamInputSupplierMap;
 import org.jclouds.json.Json;
 import org.jclouds.logging.Logger;
@@ -90,8 +91,26 @@ public class CredentialStoreModule extends AbstractModule {
 
       @Override
       public InputStream apply(Credentials from) {
-         return Strings2.toInputStream(json.toJson(checkNotNull(from)));
+         checkNotNull(from, "inputCredentials");
+         if (from instanceof LoginCredentials) {
+            LoginCredentials login = LoginCredentials.class.cast(from);
+            JsonLoginCredentials val = new JsonLoginCredentials();
+            val.user = login.getUser();
+            val.password = login.getPassword();
+            val.privateKey = login.getPrivateKey();
+            if (login.shouldAuthenticateSudo())
+               val.authenticateSudo = login.shouldAuthenticateSudo();
+            return Strings2.toInputStream(json.toJson(val));
+         }
+         return Strings2.toInputStream(json.toJson(from));
       }
+   }
+
+   static class JsonLoginCredentials {
+      private String user;
+      private String password;
+      private String privateKey;
+      private Boolean authenticateSudo;
    }
 
    @Singleton
@@ -106,17 +125,17 @@ public class CredentialStoreModule extends AbstractModule {
          this.json = json;
       }
 
-      private static class PrivateCredentials {
-         String identity;
-         String credential;
-      }
-
       @Override
       public Credentials apply(InputStream from) {
          try {
-            PrivateCredentials credentials = json.fromJson(Strings2.toStringAndClose(checkNotNull(from)),
-                  PrivateCredentials.class);
-            return new Credentials(credentials.identity, credentials.credential);
+            String creds = Strings2.toStringAndClose(checkNotNull(from));
+            if (creds.indexOf("\"user\":") == -1) {
+               return json.fromJson(creds, Credentials.class);
+            } else {
+               JsonLoginCredentials val = json.fromJson(creds, JsonLoginCredentials.class);
+               return LoginCredentials.builder().user(val.user).password(val.password).privateKey(val.privateKey)
+                     .authenticateSudo(Boolean.TRUE.equals(val.authenticateSudo)).build();
+            }
          } catch (Exception e) {
             logger.warn(e, "ignoring problem retrieving credentials");
             return null;

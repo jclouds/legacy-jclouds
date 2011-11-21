@@ -96,7 +96,12 @@ public class TagClientLiveTest {
                new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
       context = computeContext.getProviderSpecificContext();
       client = context.getApi().getTagServices();
-      testGroup = context.getApi().getSecurityGroupServices().createSecurityGroupInRegionAndReturnId(null, "test-group", "test-group");
+      try {
+         testGroup = context.getApi().getSecurityGroupServices()
+               .createSecurityGroupInRegionAndReturnId(null, "test-group", "test-group");
+      } catch (IllegalStateException e) {
+         // already exists
+      }
    }
 
    @AfterGroups(groups = { "live" })

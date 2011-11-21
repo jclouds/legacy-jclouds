@@ -52,7 +52,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
 import org.jclouds.compute.strategy.InitializeRunScriptOnNodeOrPlaceInBadMap;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.json.Json;
 import org.jclouds.location.Provider;
 import org.jclouds.location.config.LocationModule;
@@ -87,9 +87,9 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       }).to(CreateSshClientOncePortIsListeningOnNode.class);
       bind(new TypeLiteral<Function<TemplateOptions, Statement>>() {
       }).to(TemplateOptionsToStatement.class);
-      bind(Credentials.class).annotatedWith(Names.named("image")).toProvider(
+      bind(LoginCredentials.class).annotatedWith(Names.named("image")).toProvider(
             GetLoginForProviderFromPropertiesAndStoreCredentialsOrReturnNull.class);
-      bind(new TypeLiteral<Function<Template, Credentials>>() {
+      bind(new TypeLiteral<Function<Template, LoginCredentials>>() {
       }).to(DefaultCredentialsFromImageOrOverridingCredentials.class);
       
       install(new FactoryModuleBuilder()

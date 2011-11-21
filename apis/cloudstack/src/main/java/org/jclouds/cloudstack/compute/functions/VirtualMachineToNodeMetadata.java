@@ -36,7 +36,6 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.InetAddresses2;
@@ -68,19 +67,16 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
          .put(VirtualMachine.State.SHUTDOWNED, NodeState.PENDING)
          .put(VirtualMachine.State.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
 
-   private final Map<String, Credentials> credentialStore;
    private final FindLocationForVirtualMachine findLocationForVirtualMachine;
    private final FindHardwareForVirtualMachine findHardwareForVirtualMachine;
    private final FindImageForVirtualMachine findImageForVirtualMachine;
    private final Cache<Long, IPForwardingRule> getIPForwardingRuleByVirtualMachine;
 
    @Inject
-   VirtualMachineToNodeMetadata(Map<String, Credentials> credentialStore,
-         FindLocationForVirtualMachine findLocationForVirtualMachine,
+   VirtualMachineToNodeMetadata(FindLocationForVirtualMachine findLocationForVirtualMachine,
          FindHardwareForVirtualMachine findHardwareForVirtualMachine,
          FindImageForVirtualMachine findImageForVirtualMachine,
          Cache<Long, IPForwardingRule> getIPForwardingRuleByVirtualMachine) {
-      this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.findLocationForVirtualMachine = checkNotNull(findLocationForVirtualMachine, "findLocationForVirtualMachine");
       this.findHardwareForVirtualMachine = checkNotNull(findHardwareForVirtualMachine, "findHardwareForVirtualMachine");
       this.findImageForVirtualMachine = checkNotNull(findImageForVirtualMachine, "findImageForVirtualMachine");
@@ -127,7 +123,6 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
             throw e;
          }
       }
-      builder.credentials(credentialStore.get("node#" + from.getId()));
       return builder.build();
    }
 

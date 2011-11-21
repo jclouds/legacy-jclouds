@@ -20,10 +20,9 @@ package org.jclouds.compute.domain;
 
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.inject.ImplementedBy;
 
@@ -92,21 +91,25 @@ public interface NodeMetadata extends ComputeMetadata {
    int getLoginPort();
 
    /**
+    * <h4>will be removed in jclouds 1.4.0</h4>
+    * 
     * secures access to root with a password. This password is required to access either the console
     * or run sudo as root.
     * <p/>
     * ex. {@code echo 'password' |sudo -S command}
     * 
     * @return root or console password, if configured, or null.
+    * @see LoginCredentials#shouldAuthenticateSudo
     */
    @Nullable
+   @Deprecated
    String getAdminPassword();
 
    /**
     * If possible, these are returned upon all detail requests. However, it is often the case that
     * credentials are only available at "run" time.
     */
-   Credentials getCredentials();
+   LoginCredentials getCredentials();
 
    /**
     * All public IP addresses, potentially including shared ips.

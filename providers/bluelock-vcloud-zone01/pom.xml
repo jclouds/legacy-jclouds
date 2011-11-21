@@ -39,7 +39,8 @@
     <test.bluelock-vcloud-zone01.identity>FIXME_IDENTITY</test.bluelock-vcloud-zone01.identity>
     <test.bluelock-vcloud-zone01.credential>FIXME_CREDENTIAL</test.bluelock-vcloud-zone01.credential>
     <test.bluelock-vcloud-zone01.image-id></test.bluelock-vcloud-zone01.image-id>
-    <test.bluelock-vcloud-zone01.login-user></test.bluelock-vcloud-zone01.login-user>
+    <test.bluelock-vcloud-zone01.image.login-user></test.bluelock-vcloud-zone01.image.login-user>
+    <test.bluelock-vcloud-zone01.image.authenticate-sudo></test.bluelock-vcloud-zone01.image.authenticate-sudo>
   </properties>
 
   <dependencies>
@@ -105,7 +106,8 @@
                     <test.bluelock-vcloud-zone01.identity>${test.bluelock-vcloud-zone01.identity}</test.bluelock-vcloud-zone01.identity>
                     <test.bluelock-vcloud-zone01.credential>${test.bluelock-vcloud-zone01.credential}</test.bluelock-vcloud-zone01.credential>
                     <test.bluelock-vcloud-zone01.image-id>${test.bluelock-vcloud-zone01.image-id}</test.bluelock-vcloud-zone01.image-id>
-                    <test.bluelock-vcloud-zone01.login-user>${test.bluelock-vcloud-zone01.login-user}</test.bluelock-vcloud-zone01.login-user>
+                    <test.bluelock-vcloud-zone01.image.login-user>${test.bluelock-vcloud-zone01.image.login-user}</test.bluelock-vcloud-zone01.image.login-user>
+                    <test.bluelock-vcloud-zone01.image.authenticate-sudo>${test.bluelock-vcloud-zone01.image.authenticate-sudo}</test.bluelock-vcloud-zone01.image.authenticate-sudo>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

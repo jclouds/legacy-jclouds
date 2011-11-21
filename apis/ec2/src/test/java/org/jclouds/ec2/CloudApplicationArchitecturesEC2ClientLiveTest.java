@@ -165,7 +165,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       keyPair = client.getKeyPairServices().createKeyPairInRegion(null, keyName);
       assertNotNull(keyPair);
       assertNotNull(keyPair.getKeyMaterial());
-      assertNotNull(keyPair.getKeyFingerprint());
+      assertNotNull(keyPair.getSha1OfPrivateKey());
       assertEquals(keyPair.getKeyName(), keyName);
    }
 

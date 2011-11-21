@@ -53,7 +53,8 @@
     <test.softlayer.identity>FIXME</test.softlayer.identity>
     <test.softlayer.credential>FIXME</test.softlayer.credential>
     <test.softlayer.image-id></test.softlayer.image-id>
-    <test.softlayer.login-user></test.softlayer.login-user>
+    <test.softlayer.image.login-user></test.softlayer.image.login-user>
+    <test.softlayer.image.authenticate-sudo></test.softlayer.image.authenticate-sudo>
   </properties>
   <dependencies>
     <dependency>
@@ -110,7 +111,8 @@
                     <test.softlayer.identity>${test.softlayer.identity}</test.softlayer.identity>
                     <test.softlayer.credential>${test.softlayer.credential}</test.softlayer.credential>
                     <test.softlayer.image-id>${test.softlayer.image-id}</test.softlayer.image-id>
-                    <test.softlayer.login-user>${test.softlayer.login-user}</test.softlayer.login-user>
+                    <test.softlayer.image.login-user>${test.softlayer.image.login-user}</test.softlayer.image.login-user>
+                    <test.softlayer.image.authenticate-sudo>${test.softlayer.image.authenticate-sudo}</test.softlayer.image.authenticate-sudo>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

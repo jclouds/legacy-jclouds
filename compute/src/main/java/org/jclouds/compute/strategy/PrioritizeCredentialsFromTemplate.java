@@ -19,13 +19,13 @@
 package org.jclouds.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.domain.Credentials.NO_CREDENTIALS;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Template;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
+import org.jclouds.domain.LoginCredentials.Builder;
 
 import com.google.common.base.Function;
 
@@ -35,25 +35,29 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class PrioritizeCredentialsFromTemplate {
-   private final Function<Template, Credentials> credentialsFromImageOrTemplateOptions;
+   private final Function<Template, LoginCredentials> credentialsFromImageOrTemplateOptions;
 
    @Inject
-   public PrioritizeCredentialsFromTemplate(Function<Template, Credentials> credentialsFromImageOrTemplateOptions) {
+   public PrioritizeCredentialsFromTemplate(Function<Template, LoginCredentials> credentialsFromImageOrTemplateOptions) {
       this.credentialsFromImageOrTemplateOptions = checkNotNull(credentialsFromImageOrTemplateOptions,
             "credentialsFromImageOrTemplateOptions");
    }
 
-   public Credentials apply(Template template, Credentials fromNode) {
-      Credentials creds = (fromNode != null) ? fromNode : NO_CREDENTIALS;
-      Credentials credsFromParameters = credentialsFromImageOrTemplateOptions.apply(template);
+   public LoginCredentials apply(Template template, LoginCredentials fromNode) {
+      LoginCredentials creds = fromNode;
+      LoginCredentials credsFromParameters = credentialsFromImageOrTemplateOptions.apply(template);
       if (credsFromParameters != null) {
-         if (credsFromParameters.identity != null)
-            creds = creds.toBuilder().identity(credsFromParameters.identity).build();
-         if (credsFromParameters.credential != null)
-            creds = creds.toBuilder().credential(credsFromParameters.credential).build();
+         Builder builder = LoginCredentials.builder(creds);
+         if (credsFromParameters.getUser() != null)
+            builder.user(credsFromParameters.getUser());
+         if (credsFromParameters.getPassword() != null)
+            builder.password(credsFromParameters.getPassword());
+         if (credsFromParameters.getPrivateKey() != null)
+            builder.privateKey(credsFromParameters.getPrivateKey());
+         if (credsFromParameters.shouldAuthenticateSudo())
+            builder.authenticateSudo(true);
+         creds = builder.build();
       }
-      if (creds.equals(NO_CREDENTIALS))
-         creds = null;
       return creds;
    }
 

@@ -23,11 +23,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LoginCredentials;
+import org.jclouds.domain.LoginCredentials.Builder;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * @author Adrian Cole
@@ -36,9 +37,7 @@ public class ImageBuilder extends ComputeMetadataBuilder {
    private OperatingSystem operatingSystem;
    private String version;
    private String description;
-   @Nullable
-   private String adminPassword;
-   private Credentials defaultCredentials;
+   private LoginCredentials defaultLoginCredentials;
 
    public ImageBuilder() {
       super(ComputeType.IMAGE);
@@ -59,13 +58,30 @@ public class ImageBuilder extends ComputeMetadataBuilder {
       return this;
    }
 
+   /**
+    * <h4>will be removed in jclouds 1.4.0</h4>
+    * 
+    * @see LoginCredentials#shouldAuthenticateSudo
+    */
+   @Deprecated
    public ImageBuilder adminPassword(@Nullable String adminPassword) {
-      this.adminPassword = adminPassword;
+      if (adminPassword != null) {
+         Builder builder = defaultLoginCredentials != null ? defaultLoginCredentials.toBuilder() : LoginCredentials
+               .builder();
+         builder.authenticateSudo(true);
+         builder.password(adminPassword);
+         this.defaultLoginCredentials = builder.build();
+      }
       return this;
    }
 
-   public ImageBuilder defaultCredentials(@Nullable Credentials defaultCredentials) {
-      this.defaultCredentials = defaultCredentials;
+   @Deprecated
+   public ImageBuilder defaultCredentials(@Nullable Credentials defaultLoginCredentials) {
+      return defaultCredentials(LoginCredentials.builder(defaultLoginCredentials).build());
+   }
+   
+   public ImageBuilder defaultCredentials(@Nullable LoginCredentials defaultLoginCredentials) {
+      this.defaultLoginCredentials = defaultLoginCredentials;
       return this;
    }
 
@@ -73,7 +89,7 @@ public class ImageBuilder extends ComputeMetadataBuilder {
    public ImageBuilder id(String id) {
       return ImageBuilder.class.cast(super.id(id));
    }
-   
+
    public ImageBuilder tags(Iterable<String> tags) {
       return ImageBuilder.class.cast(super.tags(tags));
    }
@@ -110,15 +126,15 @@ public class ImageBuilder extends ComputeMetadataBuilder {
 
    @Override
    public Image build() {
-      return new ImageImpl(providerId, name, id, location, uri, userMetadata, tags, operatingSystem, description, version,
-               adminPassword, defaultCredentials);
+      return new ImageImpl(providerId, name, id, location, uri, userMetadata, tags, operatingSystem, description,
+            version, defaultLoginCredentials);
    }
 
    public static ImageBuilder fromImage(Image image) {
-      return new ImageBuilder().providerId(image.getProviderId()).name(image.getName()).id(image.getId()).location(
-               image.getLocation()).uri(image.getUri()).userMetadata(image.getUserMetadata()).tags(image.getTags()).version(
-               image.getVersion()).description(image.getDescription()).operatingSystem(image.getOperatingSystem())
-               .adminPassword(image.getAdminPassword()).defaultCredentials(image.getDefaultCredentials());
+      return new ImageBuilder().providerId(image.getProviderId()).name(image.getName()).id(image.getId())
+            .location(image.getLocation()).uri(image.getUri()).userMetadata(image.getUserMetadata())
+            .tags(image.getTags()).version(image.getVersion()).description(image.getDescription())
+            .operatingSystem(image.getOperatingSystem()).defaultCredentials(image.getDefaultCredentials());
    }
 
 }

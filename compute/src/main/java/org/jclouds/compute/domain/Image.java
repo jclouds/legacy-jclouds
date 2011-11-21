@@ -18,10 +18,9 @@
  */
 package org.jclouds.compute.domain;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.compute.domain.internal.ImageImpl;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
 import com.google.inject.ImplementedBy;
@@ -50,19 +49,24 @@ public interface Image extends ComputeMetadata {
    String getDescription();
 
    /**
+    * <h4>will be removed in jclouds 1.4.0</h4>
+    * 
     * secures access to root with a password. This password is required to access either the console
     * or run sudo as root.
     * <p/>
     * ex. {@code echo 'password' |sudo -S command}
     * 
+    * 
     * @return root or console password, if configured, or null.
+    * @see LoginCredentials#shouldAuthenticateSudo
     */
    @Nullable
+   @Deprecated
    String getAdminPassword();
 
    /**
     * Default credentials for the current image
     */
-   Credentials getDefaultCredentials();
+   LoginCredentials getDefaultCredentials();
 
 }

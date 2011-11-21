@@ -32,6 +32,7 @@ import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.predicates.NodePredicates;
@@ -45,9 +46,11 @@ import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
@@ -76,8 +79,24 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements CreateNodeW
       this.prioritizeCredentialsFromTemplate = checkNotNull(prioritizeCredentialsFromTemplate,
             "prioritizeCredentialsFromTemplate");
       this.client = checkNotNull(client, "client");
-      this.nodeMetadataAdapter = checkNotNull(nodeMetadataAdapter, "nodeMetadataAdapter");
+      this.nodeMetadataAdapter = Functions.compose(addLoginCredentials,
+            checkNotNull(nodeMetadataAdapter, "nodeMetadataAdapter"));
    }
+
+   private final Function<NodeMetadata, NodeMetadata> addLoginCredentials = new Function<NodeMetadata, NodeMetadata>() {
+
+      @Override
+      public NodeMetadata apply(NodeMetadata arg0) {
+         return credentialStore.containsKey("node#" + arg0.getId()) ? NodeMetadataBuilder.fromNodeMetadata(arg0)
+               .credentials(LoginCredentials.builder(credentialStore.get("node#" + arg0.getId())).build()).build()
+               : arg0;
+      }
+
+      @Override
+      public String toString() {
+         return "addLoginCredentialsFromCredentialStore()";
+      }
+   };
 
    @Override
    public Iterable<? extends ComputeMetadata> listNodes() {
@@ -92,7 +111,9 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements CreateNodeW
    @Override
    public NodeMetadata getNode(String id) {
       N node = client.getNode(checkNotNull(id, "id"));
-      return node == null ? null : nodeMetadataAdapter.apply(node);
+      if (node == null)
+         return null;
+      return nodeMetadataAdapter.apply(node);
    }
 
    @Override
@@ -141,8 +162,8 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements CreateNodeW
       checkState(template != null, "template must be specified");
 
       NodeAndInitialCredentials<N> from = client.createNodeWithGroupEncodedIntoName(group, name, template);
-      Credentials fromNode = from.getCredentials();
-      Credentials creds = prioritizeCredentialsFromTemplate.apply(template, fromNode);
+      LoginCredentials fromNode = from.getCredentials();
+      LoginCredentials creds = prioritizeCredentialsFromTemplate.apply(template, fromNode);
       if (creds != null)
          credentialStore.put("node#" + from.getNodeId(), creds);
       NodeMetadata node = nodeMetadataAdapter.apply(from.getNode());

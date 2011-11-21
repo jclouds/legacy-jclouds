@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.Payload;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
@@ -82,8 +83,14 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
          to.blockUntilRunning(false);
       if (!this.shouldBlockOnComplete())
          to.blockOnComplete(false);
-      if (this.getOverridingCredentials() != null)
-         to.overrideCredentialsWith(this.getOverridingCredentials());
+      if (this.getLoginUser() != null)
+         to.overrideLoginUser(this.getLoginUser());
+      if (this.getLoginPassword() != null)
+         to.overrideLoginPassword(this.getLoginPassword());
+      if (this.getLoginPrivateKey() != null)
+         to.overrideLoginPrivateKey(this.getLoginPrivateKey());
+      if (this.shouldAuthenticateSudo() != null)
+         to.overrideAuthenticateSudo(this.shouldAuthenticateSudo());
       if (this.getTaskName() != null)
          to.nameTask(this.getTaskName());
    }
@@ -111,11 +118,6 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       @Override
       public int getSeconds() {
          return delegate.getSeconds();
-      }
-
-      @Override
-      public Credentials getOverridingCredentials() {
-         return delegate.getOverridingCredentials();
       }
 
       @Override
@@ -192,21 +194,6 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       }
 
       @Override
-      public TemplateOptions overrideCredentialsWith(Credentials overridingCredentials) {
-         throw new IllegalArgumentException("credentials are immutable");
-      }
-
-      @Override
-      public TemplateOptions overrideLoginUserWith(String loginUser) {
-         throw new IllegalArgumentException("credentials are immutable");
-      }
-
-      @Override
-      public TemplateOptions overrideLoginCredentialWith(String loginCredential) {
-         throw new IllegalArgumentException("credentials are immutable");
-      }
-
-      @Override
       public TemplateOptions wrapInInitScript(boolean wrapInInitScript) {
          throw new IllegalArgumentException("wrapInInitScript is immutable");
       }
@@ -214,6 +201,68 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       @Override
       public TemplateOptions blockOnComplete(boolean blockOnComplete) {
          throw new IllegalArgumentException("blockOnComplete is immutable");
+      }
+
+      @Override
+      public TemplateOptions overrideLoginCredentials(LoginCredentials overridingCredentials) {
+         throw new IllegalArgumentException("overridingCredentials is immutable");
+      }
+
+      @Override
+      public TemplateOptions overrideLoginPassword(String password) {
+         throw new IllegalArgumentException("password is immutable");
+      }
+
+      @Override
+      public TemplateOptions overrideLoginPrivateKey(String privateKey) {
+         throw new IllegalArgumentException("privateKey is immutable");
+      }
+
+      @Override
+      public TemplateOptions overrideAuthenticateSudo(boolean authenticateSudo) {
+         throw new IllegalArgumentException("authenticateSudo is immutable");
+      }
+
+      @Override
+      public String getLoginUser() {
+         return delegate.getLoginUser();
+      }
+
+      @Override
+      public Boolean shouldAuthenticateSudo() {
+         return delegate.shouldAuthenticateSudo();
+      }
+
+      @Override
+      public String getLoginPassword() {
+         return delegate.getLoginPassword();
+      }
+
+      @Override
+      public String getLoginPrivateKey() {
+         return delegate.getLoginPrivateKey();
+      }
+
+      @Deprecated
+      @Override
+      public TemplateOptions overrideCredentialsWith(Credentials overridingCredentials) {
+         throw new IllegalArgumentException("overridingCredentials is immutable");
+      }
+
+      @Deprecated
+      @Override
+      public TemplateOptions overrideLoginUserWith(String loginUser) {
+         throw new IllegalArgumentException("loginUser is immutable");
+      }
+
+      @Override
+      public TemplateOptions overrideLoginUser(String loginUser) {
+         throw new IllegalArgumentException("loginUser is immutable");
+      }
+
+      @Override
+      public TemplateOptions overrideLoginCredentialWith(String loginCredential) {
+         throw new IllegalArgumentException("loginCredential is immutable");
       }
 
       @Override
@@ -465,19 +514,47 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
          return options.nameTask(name);
       }
 
+      @Deprecated
       public static TemplateOptions overrideLoginUserWith(String user) {
          TemplateOptions options = new TemplateOptions();
          return options.overrideLoginUserWith(user);
       }
 
+      public static TemplateOptions overrideLoginUser(String user) {
+         TemplateOptions options = new TemplateOptions();
+         return options.overrideLoginUser(user);
+      }
+
+      public static TemplateOptions overrideLoginPassword(String password) {
+         TemplateOptions options = new TemplateOptions();
+         return options.overrideLoginPassword(password);
+      }
+
+      public static TemplateOptions overrideLoginPrivateKey(String privateKey) {
+         TemplateOptions options = new TemplateOptions();
+         return options.overrideLoginPrivateKey(privateKey);
+      }
+
+      public static TemplateOptions overrideAuthenticateSudo(boolean authenticateSudo) {
+         TemplateOptions options = new TemplateOptions();
+         return options.overrideAuthenticateSudo(authenticateSudo);
+      }
+
+      @Deprecated
       public static TemplateOptions overrideLoginCredentialWith(String credential) {
          TemplateOptions options = new TemplateOptions();
          return options.overrideLoginCredentialWith(credential);
       }
 
+      @Deprecated
       public static TemplateOptions overrideCredentialsWith(Credentials credentials) {
          TemplateOptions options = new TemplateOptions();
          return options.overrideCredentialsWith(credentials);
+      }
+
+      public static TemplateOptions overrideLoginCredentials(LoginCredentials credentials) {
+         TemplateOptions options = new TemplateOptions();
+         return options.overrideLoginCredentials(credentials);
       }
 
       public static TemplateOptions runAsRoot(boolean value) {
@@ -737,21 +814,6 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
    }
 
    @Override
-   public TemplateOptions overrideCredentialsWith(Credentials overridingCredentials) {
-      return TemplateOptions.class.cast(super.overrideCredentialsWith(overridingCredentials));
-   }
-
-   @Override
-   public TemplateOptions overrideLoginUserWith(String loginUser) {
-      return TemplateOptions.class.cast(super.overrideLoginUserWith(loginUser));
-   }
-
-   @Override
-   public TemplateOptions overrideLoginCredentialWith(String loginCredential) {
-      return TemplateOptions.class.cast(super.overrideLoginCredentialWith(loginCredential));
-   }
-
-   @Override
    public TemplateOptions wrapInInitScript(boolean wrapInInitScript) {
       return TemplateOptions.class.cast(super.wrapInInitScript(wrapInInitScript));
    }
@@ -760,4 +822,48 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
    public TemplateOptions blockOnComplete(boolean blockOnComplete) {
       return TemplateOptions.class.cast(super.blockOnComplete(blockOnComplete));
    }
+
+   @Deprecated
+   @Override
+   public TemplateOptions overrideCredentialsWith(Credentials overridingCredentials) {
+      return TemplateOptions.class.cast(super.overrideCredentialsWith(overridingCredentials));
+   }
+
+   @Deprecated
+   @Override
+   public TemplateOptions overrideLoginUserWith(String loginUser) {
+      return TemplateOptions.class.cast(super.overrideLoginUserWith(loginUser));
+   }
+
+   @Deprecated
+   @Override
+   public TemplateOptions overrideLoginCredentialWith(String loginCredential) {
+      return TemplateOptions.class.cast(super.overrideLoginCredentialWith(loginCredential));
+   }
+
+   @Override
+   public TemplateOptions overrideLoginCredentials(LoginCredentials overridingCredentials) {
+      return TemplateOptions.class.cast(super.overrideLoginCredentials(overridingCredentials));
+   }
+
+   @Override
+   public TemplateOptions overrideLoginPassword(String password) {
+      return TemplateOptions.class.cast(super.overrideLoginPassword(password));
+   }
+
+   @Override
+   public TemplateOptions overrideLoginPrivateKey(String privateKey) {
+      return TemplateOptions.class.cast(super.overrideLoginPrivateKey(privateKey));
+   }
+
+   @Override
+   public TemplateOptions overrideLoginUser(String loginUser) {
+      return TemplateOptions.class.cast(super.overrideLoginUser(loginUser));
+   }
+
+   @Override
+   public TemplateOptions overrideAuthenticateSudo(boolean authenticateSudo) {
+      return TemplateOptions.class.cast(super.overrideAuthenticateSudo(authenticateSudo));
+   }
+
 }

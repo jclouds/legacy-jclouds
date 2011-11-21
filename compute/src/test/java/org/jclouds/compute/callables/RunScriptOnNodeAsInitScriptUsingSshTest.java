@@ -30,7 +30,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.options.RunScriptOptions;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.scriptbuilder.InitBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
@@ -51,7 +51,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshTest {
    public void testWithoutInitThrowsIllegalStateException() {
       Statement command = exec("doFoo");
       NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING).credentials(
-               new Credentials("tester", "notalot")).build();
+               LoginCredentials.builder().user("tester").password("notalot").build()).build();
 
       SshClient sshClient = createMock(SshClient.class);
 
@@ -67,7 +67,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshTest {
    public void testDefault() {
       Statement command = exec("doFoo");
       NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING).credentials(
-               new Credentials("tester", "notalot")).build();
+            LoginCredentials.builder().user("tester").password("notalot").build()).build();
 
       SshClient sshClient = createMock(SshClient.class);
 
@@ -108,7 +108,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshTest {
    public void testWithSudoPassword() {
       Statement command = exec("doFoo");
       NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING).credentials(
-               new Credentials("tester", "notalot")).adminPassword("rootme").build();
+            LoginCredentials.builder().user("tester").password("notalot").authenticateSudo(true).build()).build();
 
       SshClient sshClient = createMock(SshClient.class);
 
@@ -126,7 +126,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshTest {
       expect(sshClient.exec("./jclouds-script-0 init")).andReturn(new ExecResponse("", "", 0));
       
       // since there's an adminPassword we must pass this in
-      expect(sshClient.exec("echo 'rootme'|sudo -S ./jclouds-script-0 start")).andReturn(new ExecResponse("", "", 0));
+      expect(sshClient.exec("echo 'notalot'|sudo -S ./jclouds-script-0 start")).andReturn(new ExecResponse("", "", 0));
 
       
       sshClient.disconnect();
@@ -150,7 +150,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshTest {
    public void testNotRoot() {
       Statement command = exec("doFoo");
       NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING).credentials(
-               new Credentials("tester", "notalot")).adminPassword("rootme").build();
+            LoginCredentials.builder().user("tester").password("notalot").authenticateSudo(true).build()).build();
 
       SshClient sshClient = createMock(SshClient.class);
 

@@ -28,10 +28,10 @@ import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.strategy.EC2PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.ec2.compute.strategy.ReviseParsedImage;
 import org.jclouds.ec2.domain.Image;
@@ -61,14 +61,14 @@ public class EC2ImageParserTest {
       assertEquals(Iterables.get(result, 0), new ImageBuilder().operatingSystem(
                new OperatingSystem.Builder().family(OsFamily.UNRECOGNIZED).arch("paravirtual").version("").description(
                         "137112412989/amzn-ami-0.9.7-beta.i386-ebs").is64Bit(false).build()).description("Amazon")
-               .defaultCredentials(new Credentials("ec2-user", null)).id("us-east-1/ami-82e4b5c7").providerId(
+               .defaultCredentials(new LoginCredentials("ec2-user", null, null, false)).id("us-east-1/ami-82e4b5c7").providerId(
                         "ami-82e4b5c7").location(defaultLocation).userMetadata(
                         ImmutableMap.of("owner", "137112412989", "rootDeviceType", "ebs")).build());
 
       assertEquals(Iterables.get(result, 3), new ImageBuilder().operatingSystem(
                new OperatingSystem.Builder().family(OsFamily.UNRECOGNIZED).arch("paravirtual").version("").description(
                         "amzn-ami-us-west-1/amzn-ami-0.9.7-beta.x86_64.manifest.xml").is64Bit(true).build())
-               .description("Amazon Linux AMI x86_64 S3").defaultCredentials(new Credentials("ec2-user", null)).id(
+               .description("Amazon Linux AMI x86_64 S3").defaultCredentials(new LoginCredentials("ec2-user", null, null, false)).id(
                         "us-east-1/ami-f2e4b5b7").providerId("ami-f2e4b5b7").location(defaultLocation).userMetadata(
                         ImmutableMap.of("owner", "137112412989", "rootDeviceType", "ebs")).build());
    }

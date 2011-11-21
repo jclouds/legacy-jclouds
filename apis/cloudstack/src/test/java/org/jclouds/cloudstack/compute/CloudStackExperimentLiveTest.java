@@ -19,14 +19,12 @@
 package org.jclouds.cloudstack.compute;
 
 import static com.google.common.collect.Iterables.concat;
-import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Sets.newTreeSet;
 import static org.jclouds.cloudstack.options.CreateNetworkOptions.Builder.vlan;
 import static org.jclouds.cloudstack.options.ListNetworkOfferingsOptions.Builder.specifyVLAN;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;

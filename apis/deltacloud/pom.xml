@@ -53,7 +53,8 @@
     <test.deltacloud.identity>mockuser</test.deltacloud.identity>
     <test.deltacloud.credential>mockpassword</test.deltacloud.credential>
     <test.deltacloud.image-id></test.deltacloud.image-id>
-    <test.deltacloud.login-user></test.deltacloud.login-user>
+    <test.deltacloud.image.login-user></test.deltacloud.image.login-user>
+    <test.deltacloud.image.authenticate-sudo></test.deltacloud.image.authenticate-sudo>
   </properties>
   <dependencies>
     <dependency>
@@ -110,7 +111,8 @@
                     <test.deltacloud.identity>${test.deltacloud.identity}</test.deltacloud.identity>
                     <test.deltacloud.credential>${test.deltacloud.credential}</test.deltacloud.credential>
                     <test.deltacloud.image-id>${test.deltacloud.image-id}</test.deltacloud.image-id>
-                    <test.deltacloud.login-user>${test.deltacloud.login-user}</test.deltacloud.login-user>
+                    <test.deltacloud.image.login-user>${test.deltacloud.image.login-user}</test.deltacloud.image.login-user>
+                    <test.deltacloud.image.authenticate-sudo>${test.deltacloud.image.authenticate-sudo}</test.deltacloud.image.authenticate-sudo>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

@@ -39,7 +39,8 @@
     <test.eucalyptus.identity>FIXME_IDENTITY</test.eucalyptus.identity>
     <test.eucalyptus.credential>FIXME_CREDENTIAL</test.eucalyptus.credential>
     <test.eucalyptus.image-id></test.eucalyptus.image-id>
-    <test.eucalyptus.login-user></test.eucalyptus.login-user>
+    <test.eucalyptus.image.login-user></test.eucalyptus.image.login-user>
+    <test.eucalyptus.image.authenticate-sudo></test.eucalyptus.image.authenticate-sudo>
   </properties>
 
   <dependencies>
@@ -105,7 +106,8 @@
                     <test.eucalyptus.identity>${test.eucalyptus.identity}</test.eucalyptus.identity>
                     <test.eucalyptus.credential>${test.eucalyptus.credential}</test.eucalyptus.credential>
                     <test.eucalyptus.image-id>${test.eucalyptus.image-id}</test.eucalyptus.image-id>
-                    <test.eucalyptus.login-user>${test.eucalyptus.login-user}</test.eucalyptus.login-user>
+                    <test.eucalyptus.image.login-user>${test.eucalyptus.image.login-user}</test.eucalyptus.image.login-user>
+                    <test.eucalyptus.image.authenticate-sudo>${test.eucalyptus.image.authenticate-sudo}</test.eucalyptus.image.authenticate-sudo>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

@@ -25,7 +25,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.strategy.impl.ReturnCredentialsBoundToImage;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
+import org.jclouds.domain.LoginCredentials.Builder;
 import org.jclouds.ec2.domain.Image;
 import org.jclouds.javax.annotation.Nullable;
 
@@ -39,15 +40,15 @@ public class EC2PopulateDefaultLoginCredentialsForImageStrategy extends ReturnCr
    }
 
    @Inject
-   public EC2PopulateDefaultLoginCredentialsForImageStrategy(@Nullable @Named("image") Credentials creds) {
+   public EC2PopulateDefaultLoginCredentialsForImageStrategy(@Nullable @Named("image") LoginCredentials creds) {
       super(creds);
    }
 
    @Override
-   public Credentials execute(Object resourceToAuthenticate) {
+   public LoginCredentials apply(Object resourceToAuthenticate) {
       if (creds != null)
          return creds;
-      Credentials credentials = new Credentials("root", null);
+      Builder credentials = LoginCredentials.builder().user("root");
       if (resourceToAuthenticate != null) {
          String owner = null;
          if (resourceToAuthenticate instanceof Image) {
@@ -58,12 +59,12 @@ public class EC2PopulateDefaultLoginCredentialsForImageStrategy extends ReturnCr
          checkArgument(owner != null, "Resource must be an image (for EC2)");
          // canonical/alestic images use the ubuntu user to login
          if (owner.matches("063491364108|099720109477")) {
-            credentials = new Credentials("ubuntu", null);
+            credentials.user("ubuntu");
             // http://typepad.com/2010/09/introducing-amazon-linux-ami.html
          } else if (owner.equals("137112412989")) {
-            credentials = new Credentials("ec2-user", null);
+            credentials.user("ec2-user");
          }
       }
-      return credentials;
+      return credentials.build();
    }
 }

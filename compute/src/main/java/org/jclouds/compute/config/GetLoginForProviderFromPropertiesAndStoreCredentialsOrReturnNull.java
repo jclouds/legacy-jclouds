@@ -26,6 +26,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
+import org.jclouds.domain.LoginCredentials.Builder;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Provider;
 
@@ -36,7 +38,7 @@ import com.google.inject.Inject;
  */
 @Singleton
 public class GetLoginForProviderFromPropertiesAndStoreCredentialsOrReturnNull implements
-      javax.inject.Provider<Credentials> {
+      javax.inject.Provider<LoginCredentials> {
    private final ValueOfConfigurationKeyOrNull config;
    private final String provider;
    private final Map<String, Credentials> credentialStore;
@@ -51,22 +53,33 @@ public class GetLoginForProviderFromPropertiesAndStoreCredentialsOrReturnNull im
 
    @Override
    @Nullable
-   public Credentials get() {
-      if (credentialStore.containsKey("image"))
-         return credentialStore.get("image");
-      Credentials creds = null;
-      String loginUser = config.apply(provider + ".login-user");
+   public LoginCredentials get() {
+      if (credentialStore.containsKey("image")) {
+         return LoginCredentials.builder(credentialStore.get("image")).build();
+      }
+      Builder builder = LoginCredentials.builder();
+
+      String loginUser = config.apply(provider + ".image.login-user");
       if (loginUser == null)
-         loginUser = config.apply("jclouds.login-user");
+         loginUser = config.apply("jclouds.image.login-user");
       if (loginUser != null) {
          int pos = loginUser.indexOf(':');
          if (pos != -1) {
-            creds = new Credentials(loginUser.substring(0, pos), loginUser.substring(pos + 1));
+            builder.user(loginUser.substring(0, pos)).password(loginUser.substring(pos + 1));
          } else
-            creds = new Credentials(loginUser, null);
-         credentialStore.put("image", creds);
+            builder.user(loginUser);
       }
+
+      String authenticateSudo = config.apply(provider + ".image.authenticate-sudo");
+      if (authenticateSudo == null)
+         authenticateSudo = config.apply("jclouds.image.authenticate-sudo");
+      if (authenticateSudo != null) {
+         builder.authenticateSudo(Boolean.valueOf(authenticateSudo));
+      }
+
+      LoginCredentials creds = builder.build();
+      if (creds != null)
+         credentialStore.put("image", creds);
       return creds;
    }
-
 }

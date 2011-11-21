@@ -33,7 +33,6 @@ import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductItemPrice;
@@ -76,7 +75,6 @@ public class ProductItemToImage implements Function<ProductItem, Image> {
       return new ImageBuilder()
             .ids(imageId().apply(productItem))
             .description(productItem.getDescription())
-            .defaultCredentials(new Credentials("root", null))
             .operatingSystem(os)
             .build();
    }

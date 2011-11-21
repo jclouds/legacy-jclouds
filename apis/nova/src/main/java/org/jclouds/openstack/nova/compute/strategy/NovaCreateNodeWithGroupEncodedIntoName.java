@@ -30,6 +30,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.openstack.nova.NovaClient;
 import org.jclouds.openstack.nova.domain.Server;
 
@@ -56,7 +57,7 @@ public class NovaCreateNodeWithGroupEncodedIntoName implements CreateNodeWithGro
    public NodeMetadata createNodeWithGroupEncodedIntoName(String group, String name, Template template) {
       Server from = client.createServer(name, template.getImage().getId(), template.getHardware().getId(),
             withMetadata(template.getOptions().getUserMetadata()));
-      credentialStore.put("node#" + from.getId(), new Credentials("root", from.getAdminPass()));
+      credentialStore.put("node#" + from.getId(), LoginCredentials.builder().password(from.getAdminPass()).build());
       return serverToNodeMetadata.apply(from);
    }
 

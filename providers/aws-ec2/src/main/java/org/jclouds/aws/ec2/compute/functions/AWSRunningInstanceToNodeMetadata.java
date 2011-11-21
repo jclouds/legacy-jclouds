@@ -18,8 +18,9 @@
  */
 package org.jclouds.aws.ec2.compute.functions;
 
-import static com.google.common.base.Predicates.*;
-import static com.google.common.collect.Maps.*;
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Predicates.not;
+import static com.google.common.collect.Maps.filterValues;
 
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +36,7 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.ec2.domain.InstanceState;
@@ -58,10 +60,12 @@ public class AWSRunningInstanceToNodeMetadata extends RunningInstanceToNodeMetad
 
    @Override
    protected void addCredentialsForInstance(NodeMetadataBuilder builder, RunningInstance instance) {
-      Credentials creds = credentialStore.get("node#" + instance.getRegion() + "/" + instance.getId());
+      LoginCredentials creds = LoginCredentials.builder(
+            credentialStore.get("node#" + instance.getRegion() + "/" + instance.getId())).build();
       String spotRequestId = AWSRunningInstance.class.cast(instance).getSpotInstanceRequestId();
       if (creds == null && spotRequestId != null) {
-         creds = credentialStore.get("node#" + instance.getRegion() + "/" + spotRequestId);
+         creds = LoginCredentials.builder(credentialStore.get("node#" + instance.getRegion() + "/" + spotRequestId))
+               .build();
          if (creds != null)
             credentialStore.put("node#" + instance.getRegion() + "/" + instance.getId(), creds);
       }

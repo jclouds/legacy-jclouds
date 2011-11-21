@@ -70,6 +70,7 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.scriptbuilder.domain.Statements;
@@ -85,7 +86,7 @@ import com.google.inject.Module;
 
 /**
  * Generally disabled, as it incurs higher fees.
- *
+ * 
  * @author Adrian Cole
  */
 @Test(groups = "novalive", enabled = true, sequential = true)
@@ -93,26 +94,24 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
 
    private static String group = "compute service test group";
 
-
    protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String tag) throws IOException {
       for (NodeMetadata node : nodes) {
          assertNotNull(node.getProviderId());
          assertNotNull(node.getGroup());
          assertEquals(node.getGroup(), group);
-         //assertEquals(node.getState(), NodeState.RUNNING);
+         // assertEquals(node.getState(), NodeState.RUNNING);
          Credentials fromStore = context.getCredentialStore().get("node#" + node.getId());
          assertEquals(fromStore, node.getCredentials());
          assert node.getPublicAddresses().size() >= 1 || node.getPrivateAddresses().size() >= 1 : "no ips in" + node;
-//         assertNotNull(node.getCredentials());
-//         if (node.getCredentials().identity != null) {
-//            assertNotNull(node.getCredentials().identity);
-//            assertNotNull(node.getCredentials().credential);
-//            doCheckJavaIsInstalledViaSsh(node);
-//         }
+         // assertNotNull(node.getCredentials());
+         // if (node.getCredentials().identity != null) {
+         // assertNotNull(node.getCredentials().identity);
+         // assertNotNull(node.getCredentials().credential);
+         // doCheckJavaIsInstalledViaSsh(node);
+         // }
          assertEquals(node.getLocation().getScope(), LocationScope.HOST);
       }
    }
-
 
    @BeforeTest
    @Override
@@ -128,8 +127,8 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       properties.remove(provider + ".identity");
       ComputeServiceContext context = null;
       try {
-         context = new ComputeServiceContextFactory().createContext(provider, "MOMMA", "MIA", ImmutableSet
-               .<Module>of(new SLF4JLoggingModule()), properties);
+         context = new ComputeServiceContextFactory().createContext(provider, "MOMMA", "MIA",
+               ImmutableSet.<Module> of(new SLF4JLoggingModule()), properties);
          context.getComputeService().listNodes();
       } finally {
          if (context != null)
@@ -148,8 +147,8 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
 
    @Test(enabled = true, expectedExceptions = NoSuchElementException.class, timeOut = 60000)
    public void testCorrectExceptionRunningNodesNotFound() throws Exception {
-      computeService.runScriptOnNodesMatching(runningInGroup("zebras-are-awesome"), buildScript(new OperatingSystem.Builder()
-            .family(OsFamily.UBUNTU).description("ffoo").build()));
+      computeService.runScriptOnNodesMatching(runningInGroup("zebras-are-awesome"),
+            buildScript(new OperatingSystem.Builder().family(OsFamily.UBUNTU).description("ffoo").build()));
    }
 
    @Test(expectedExceptions = UserAuthException.class, timeOut = 240000)
@@ -160,35 +159,38 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       OperatingSystem os = node.getOperatingSystem();
       try {
          @SuppressWarnings("unused")
-         Map<? extends NodeMetadata, ExecResponse> responses = runJavaInstallationScriptWithCreds(group, os, new Credentials(
-               "root", "romeo"));
+         Map<? extends NodeMetadata, ExecResponse> responses = runJavaInstallationScriptWithCreds(group, os,
+               LoginCredentials.builder().user("root").password("romeo").build());
       } catch (RunScriptOnNodesException e) {
          throw e.getNodeErrors().values().iterator().next().getCause();
       }
    }
 
    @Test(timeOut = 240000)
-   public void testScriptExecutionAfterBootWithBasicTemplate() throws InterruptedException, RunNodesException, RunScriptOnNodesException, URISyntaxException, IOException {
+   public void testScriptExecutionAfterBootWithBasicTemplate() throws InterruptedException, RunNodesException,
+         RunScriptOnNodesException, URISyntaxException, IOException {
 
       NodeMetadata node = getDefaultNodeImmediately(group);
       String address = awaitForStartup(node.getId());
       awaitForSshPort(address, new Credentials("root", keyPair.get("private")));
       for (Map.Entry<? extends NodeMetadata, ExecResponse> response : computeService.runScriptOnNodesMatching(
-            runningInGroup(group), Statements.exec("echo hello"),
-            overrideCredentialsWith(new Credentials("root", keyPair.get("private"))).wrapInInitScript(false).runAsRoot(false)).entrySet())
-         assert response.getValue().getOutput().trim().equals("hello") : response.getKey() + ": "
-               + response.getValue();
+            runningInGroup(group),
+            Statements.exec("echo hello"),
+            overrideCredentialsWith(LoginCredentials.builder().user("root").privateKey(keyPair.get("private")).build())
+                  .wrapInInitScript(false).runAsRoot(false)).entrySet())
+         assert response.getValue().getOutput().trim().equals("hello") : response.getKey() + ": " + response.getValue();
 
-      //TODO runJavaInstallationScriptWithCreds(group, os, new Credentials("root", keyPair.get("private")));
-      //TODO no response? if os is null (ZYPPER)
+      // TODO runJavaInstallationScriptWithCreds(group, os, new
+      // Credentials("root", keyPair.get("private")));
+      // TODO no response? if os is null (ZYPPER)
 
       node = computeService.getNodeMetadata(node.getId());
       checkNodes(Sets.newHashSet(node), group);
 
       @SuppressWarnings("unused")
       Credentials good = node.getCredentials();
-      //TODO check good is being private key .overrideCredentialsWith
-      //TODO test for .blockOnPort
+      // TODO check good is being private key .overrideCredentialsWith
+      // TODO test for .blockOnPort
    }
 
    @Test(timeOut = 60000)
@@ -198,9 +200,9 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       assertEquals(toMatch.getImage(), template.getImage());
    }
 
-//   protected void checkHttpGet(NodeMetadata node) {
-//      ComputeTestUtils.checkHttpGet(context.utils().http(), node, 8080);
-//   }
+   // protected void checkHttpGet(NodeMetadata node) {
+   // ComputeTestUtils.checkHttpGet(context.utils().http(), node, 8080);
+   // }
 
    @Test(timeOut = 60000)
    public void testCreateTwoNodesWithRunScript() throws Exception {
@@ -219,18 +221,21 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       assertLocationSameOrChild(node2.getLocation(), template.getLocation());
       assertEquals(node1.getImageId(), template.getImage().getId());
       assertEquals(node2.getImageId(), template.getImage().getId());
-//      checkOsMatchesTemplate(node1);
-//      checkOsMatchesTemplate(node2);
-      //TODO add with script;
+      // checkOsMatchesTemplate(node1);
+      // checkOsMatchesTemplate(node2);
+      // TODO add with script;
    }
 
-//   protected void checkOsMatchesTemplate(NodeMetadata node) {
-//      if (node.getOperatingSystem() != null)
-//         assert node.getOperatingSystem().getFamily().equals(getDefaultTemplateBuilder().build().getImage().getOperatingSystem().getFamily()) : String
-//               .format("expecting family %s but got %s", getDefaultTemplateBuilder().build().getImage().getOperatingSystem().getFamily(), node
-//                     .getOperatingSystem());
-//   }
-
+   // protected void checkOsMatchesTemplate(NodeMetadata node) {
+   // if (node.getOperatingSystem() != null)
+   // assert
+   // node.getOperatingSystem().getFamily().equals(getDefaultTemplateBuilder().build().getImage().getOperatingSystem().getFamily())
+   // : String
+   // .format("expecting family %s but got %s",
+   // getDefaultTemplateBuilder().build().getImage().getOperatingSystem().getFamily(),
+   // node
+   // .getOperatingSystem());
+   // }
 
    @Test(timeOut = 60000)
    public void testCreateAnotherNodeWithNewContextToEnsureSharedMemIsntRequired() throws Exception {
@@ -238,9 +243,9 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       initializeContextAndComputeService(overrides);
 
       NodeMetadata node = createDefaultNode(TemplateOptions.Builder.blockUntilRunning(true), group);
-      checkNodes(Sets.<NodeMetadata>newHashSet(node), group);
+      checkNodes(Sets.<NodeMetadata> newHashSet(node), group);
       assertLocationSameOrChild(node.getLocation(), getDefaultTemplateBuilder().build().getLocation());
-//      checkOsMatchesTemplate(node);
+      // checkOsMatchesTemplate(node);
    }
 
    @Test(timeOut = 60000)
@@ -254,13 +259,12 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
          assert (context.getCredentialStore().get("node#" + node.getId()) != null) : "credentials for " + node.getId();
    }
 
-   protected Map<? extends NodeMetadata, ExecResponse> runJavaInstallationScriptWithCreds(final String group, OperatingSystem os,
-                                                                                          Credentials creds) throws RunScriptOnNodesException {
-      return computeService.runScriptOnNodesMatching(runningInGroup(group), buildScript(os), overrideCredentialsWith(creds)
-            .nameTask("runJavaInstallationScriptWithCreds"));
+   protected Map<? extends NodeMetadata, ExecResponse> runJavaInstallationScriptWithCreds(final String group,
+         OperatingSystem os, LoginCredentials creds) throws RunScriptOnNodesException {
+      return computeService.runScriptOnNodesMatching(runningInGroup(group), buildScript(os),
+            overrideCredentialsWith(creds).nameTask("runJavaInstallationScriptWithCreds"));
 
    }
-
 
    protected Template buildTemplate(TemplateBuilder templateBuilder) {
       return templateBuilder.build();
@@ -269,8 +273,8 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
    @Test(timeOut = 120000)
    public void testGetNodeMetadata() throws Exception {
       Set<NodeMetadata> nodes = Sets.newHashSet(getDefaultNodeImmediately(group));
-      Map<String, ? extends NodeMetadata> metadataMap = newLinkedHashMap(uniqueIndex(filter(computeService
-            .listNodesDetailsMatching(all()), and(inGroup(group), not(TERMINATED))),
+      Map<String, ? extends NodeMetadata> metadataMap = newLinkedHashMap(uniqueIndex(
+            filter(computeService.listNodesDetailsMatching(all()), and(inGroup(group), not(TERMINATED))),
             new Function<NodeMetadata, String>() {
 
                @Override
@@ -288,7 +292,7 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
          assertEquals(nodeMetadata.getGroup(), node.getGroup());
          assertLocationSameOrChild(nodeMetadata.getLocation(), getDefaultTemplateBuilder().build().getLocation());
          assertEquals(nodeMetadata.getImageId(), getDefaultTemplateBuilder().build().getImage().getId());
-//         checkOsMatchesTemplate(metadata);
+         // checkOsMatchesTemplate(metadata);
          assertEquals(nodeMetadata.getState(), NodeState.RUNNING);
          // due to DHCP the addresses can actually change in-between runs.
          assertTrue(nodeMetadata.getPrivateAddresses().size() > 0);
@@ -297,12 +301,10 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       assertNodeZero(metadataMap.values(), nodes);
    }
 
-
    protected void assertNodeZero(Collection<? extends NodeMetadata> metadataSet, Set<NodeMetadata> nodes) {
       assert metadataSet.size() == 0 : String.format("nodes left in set: [%s] which didn't match set: [%s]",
             metadataSet, nodes);
    }
-
 
    @Test(timeOut = 60000)
    public void testListNodes() throws Exception {
@@ -323,7 +325,8 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
          // nullable
          // assert nodeMetadata.getImage() != null : node;
          // user specified name is not always supported
-         // assert nodeMetadata.getName().parseGroupFromName() != null : nodeMetadata;
+         // assert nodeMetadata.getName().parseGroupFromName() != null :
+         // nodeMetadata;
 
          if (node.getState() == NodeState.RUNNING) {
             assert node.getPublicAddresses() != null : node;
@@ -344,15 +347,14 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       }
    }
 
-
    @Test(timeOut = 60000)
    public void testCreateAndRunService() throws Exception {
       @SuppressWarnings("unused")
       NodeMetadata node = getDefaultNodeImmediately(group);
-      //TODO .inboundPorts
-      //checkHttpGet(node);
+      // TODO .inboundPorts
+      // checkHttpGet(node);
    }
-   
+
    public void testListImages() throws Exception {
       for (Image image : computeService.listImages()) {
          assert image.getProviderId() != null : image;
@@ -369,35 +371,37 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
          assert location != location.getParent() : location;
          assert location.getScope() != null : location;
          switch (location.getScope()) {
-            case PROVIDER:
-               assertProvider(location);
-               break;
-            case REGION:
-               assertProvider(location.getParent());
-               break;
-            case ZONE:
-               Location provider = location.getParent().getParent();
-               // zone can be a direct descendant of provider
-               if (provider == null)
-                  provider = location.getParent();
-               assertProvider(provider);
-               break;
-            case HOST:
-               Location provider2 = location.getParent().getParent().getParent();
-               // zone can be a direct descendant of provider
-               if (provider2 == null)
-                  provider2 = location.getParent().getParent();
-               assertProvider(provider2);
-               break;
+         case PROVIDER:
+            assertProvider(location);
+            break;
+         case REGION:
+            assertProvider(location.getParent());
+            break;
+         case ZONE:
+            Location provider = location.getParent().getParent();
+            // zone can be a direct descendant of provider
+            if (provider == null)
+               provider = location.getParent();
+            assertProvider(provider);
+            break;
+         case HOST:
+            Location provider2 = location.getParent().getParent().getParent();
+            // zone can be a direct descendant of provider
+            if (provider2 == null)
+               provider2 = location.getParent().getParent();
+            assertProvider(provider2);
+            break;
          }
       }
    }
 
    public void testOptionToNotBlock() throws Exception {
-      //TODO no inbound ports
-      //TemplateOptions options = computeService.templateOptions().blockUntilRunning(false).inboundPorts();
+      // TODO no inbound ports
+      // TemplateOptions options =
+      // computeService.templateOptions().blockUntilRunning(false).inboundPorts();
       long time = System.currentTimeMillis();
-      NodeMetadata node = getOnlyElement(computeService.createNodesInGroup(group, 1, getDefaultTemplateBuilder().build()));
+      NodeMetadata node = getOnlyElement(computeService.createNodesInGroup(group, 1, getDefaultTemplateBuilder()
+            .build()));
       assert node.getState() != NodeState.RUNNING;
       long duration = System.currentTimeMillis() - time;
       assert duration < 30 * 1000 : "duration longer than 30 seconds!:  " + duration / 1000;
@@ -410,7 +414,7 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
 
    @Test(timeOut = 60000, enabled = false)
    public void testListHardwareProfiles() throws Exception {
-      //TODO: failing, OpenStack returns a hardware with 0 CPU cores
+      // TODO: failing, OpenStack returns a hardware with 0 CPU cores
       for (Hardware hardware : computeService.listHardwareProfiles()) {
          assert hardware.getProviderId() != null;
          assert getCores(hardware) > 0;
@@ -419,7 +423,6 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
          assertEquals(hardware.getType(), ComputeType.HARDWARE);
       }
    }
-
 
    @Test(timeOut = 60000)
    public void testCompareSizes() throws Exception {
@@ -446,7 +449,6 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       assert getCores(fastest) >= getCores(biggest);
       assert getCores(fastest) >= getCores(smallest);
    }
-
 
    protected void doCheckJavaIsInstalledViaSsh(NodeMetadata node) throws IOException {
 

@@ -20,12 +20,12 @@ package org.jclouds.compute.config;
 
 import java.util.Map;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.internal.PersistNodeCredentials;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.functions.CredentialsFromAdminAccess;
 
@@ -60,7 +60,8 @@ public class PersistNodeCredentialsModule extends AbstractModule {
             return input;
          Credentials credentials = CredentialsFromAdminAccess.INSTANCE.apply(statement);
          if (credentials != null) {
-            input = NodeMetadataBuilder.fromNodeMetadata(input).credentials(credentials).build();
+            LoginCredentials creds = LoginCredentials.builder(credentials).build();
+            input = NodeMetadataBuilder.fromNodeMetadata(input).credentials(creds).build();
             credentialStore.put("node#" + input.getId(), input.getCredentials());
          }
          return input;

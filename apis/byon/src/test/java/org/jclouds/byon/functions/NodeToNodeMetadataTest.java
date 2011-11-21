@@ -34,6 +34,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.LoginCredentials;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Suppliers;
@@ -86,11 +87,15 @@ public class NodeToNodeMetadataTest {
             .hostname("cluster-" + id + ".mydomain.com")
             .location(location)
             .userMetadata(ImmutableMap.of("Name", "foo"))
+            .tags(ImmutableSet.of("vanilla"))
             .state(NodeState.RUNNING)
             .operatingSystem(
                   OperatingSystem.builder().description("redhat").family(OsFamily.RHEL).arch("x86").version("5.3")
-                        .build()).publicAddresses(ImmutableSet.of("cluster-" + id + ".mydomain.com"))
-            .credentials(new Credentials("myUser", NodesFromYamlTest.key)).adminPassword("happy bear").build();
+                        .build())
+            .publicAddresses(ImmutableSet.of("cluster-" + id + ".mydomain.com"))
+            .credentials(
+                  LoginCredentials.builder().user("myUser").privateKey(NodesFromYamlTest.key).password("happy bear")
+                        .authenticateSudo(true).build()).build();
    }
 
    @Test

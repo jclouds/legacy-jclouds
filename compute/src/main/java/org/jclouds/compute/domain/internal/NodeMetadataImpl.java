@@ -33,6 +33,8 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LoginCredentials;
+import org.jclouds.domain.LoginCredentials.Builder;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -50,9 +52,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    private final Set<String> publicAddresses;
    private final Set<String> privateAddresses;
    @Nullable
-   private final String adminPassword;
-   @Nullable
-   private final Credentials credentials;
+   private final LoginCredentials credentials;
    @Nullable
    private final String group;
    @Nullable
@@ -63,12 +63,16 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    private final OperatingSystem os;
    @Nullable
    private final String hostname;
-   
+
+   /**
+    * <h4>will be removed in jclouds 1.4.0</h4>
+    */
+   @Deprecated
    public NodeMetadataImpl(String providerId, String name, String id, Location location, URI uri,
-            Map<String, String> userMetadata, Set<String> tags, @Nullable String group, @Nullable Hardware hardware,
-            @Nullable String imageId, @Nullable OperatingSystem os, NodeState state, int loginPort,
-            Iterable<String> publicAddresses, Iterable<String> privateAddresses, @Nullable String adminPassword,
-            @Nullable Credentials credentials, String hostname) {
+         Map<String, String> userMetadata, Set<String> tags, @Nullable String group, @Nullable Hardware hardware,
+         @Nullable String imageId, @Nullable OperatingSystem os, NodeState state, int loginPort,
+         Iterable<String> publicAddresses, Iterable<String> privateAddresses, @Nullable String adminPassword,
+         @Nullable Credentials credentials, String hostname) {
       super(ComputeType.NODE, providerId, name, id, location, uri, userMetadata, tags);
       this.group = group;
       this.hardware = hardware;
@@ -78,7 +82,29 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       this.loginPort = loginPort;
       this.publicAddresses = ImmutableSet.copyOf(checkNotNull(publicAddresses, "publicAddresses"));
       this.privateAddresses = ImmutableSet.copyOf(checkNotNull(privateAddresses, "privateAddresses"));
-      this.adminPassword = adminPassword;
+      this.hostname = hostname;
+      Builder builder = LoginCredentials.builder(credentials);
+      if (adminPassword != null) {
+         builder.authenticateSudo(true);
+         builder.password(adminPassword);
+      }
+      this.credentials = builder.build();
+   }
+
+   public NodeMetadataImpl(String providerId, String name, String id, Location location, URI uri,
+         Map<String, String> userMetadata, Set<String> tags, @Nullable String group, @Nullable Hardware hardware,
+         @Nullable String imageId, @Nullable OperatingSystem os, NodeState state, int loginPort,
+         Iterable<String> publicAddresses, Iterable<String> privateAddresses, @Nullable LoginCredentials credentials,
+         String hostname) {
+      super(ComputeType.NODE, providerId, name, id, location, uri, userMetadata, tags);
+      this.group = group;
+      this.hardware = hardware;
+      this.imageId = imageId;
+      this.os = os;
+      this.state = checkNotNull(state, "state");
+      this.loginPort = loginPort;
+      this.publicAddresses = ImmutableSet.copyOf(checkNotNull(publicAddresses, "publicAddresses"));
+      this.privateAddresses = ImmutableSet.copyOf(checkNotNull(privateAddresses, "privateAddresses"));
       this.credentials = credentials;
       this.hostname = hostname;
    }
@@ -111,15 +137,16 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
     * {@inheritDoc}
     */
    @Override
+   @Deprecated
    public String getAdminPassword() {
-      return adminPassword;
+      return (credentials != null && credentials.shouldAuthenticateSudo()) ? credentials.getPassword() : null;
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public Credentials getCredentials() {
+   public LoginCredentials getCredentials() {
       return credentials;
    }
 
@@ -178,7 +205,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    public String getHostname() {
       return hostname;
    }
-   
+
    @Override
    public String toString() {
       return "[id=" + getId() + ", providerId=" + getProviderId() + ", group=" + getTag() + ", name=" + getName()
@@ -201,7 +228,6 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((hardware == null) ? 0 : hardware.hashCode());
       result = prime * result + ((os == null) ? 0 : os.hashCode());
-      result = prime * result + ((adminPassword == null) ? 0 : adminPassword.hashCode());
       result = prime * result + ((credentials == null) ? 0 : credentials.hashCode());
       return result;
    }
@@ -251,11 +277,6 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
          if (other.os != null)
             return false;
       } else if (!os.equals(other.os))
-         return false;
-      if (adminPassword == null) {
-         if (other.adminPassword != null)
-            return false;
-      } else if (!adminPassword.equals(other.adminPassword))
          return false;
       if (credentials == null) {
          if (other.credentials != null)

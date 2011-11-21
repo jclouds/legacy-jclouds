@@ -41,6 +41,7 @@ import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.InstanceState;
@@ -125,7 +126,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    }
 
    protected void addCredentialsForInstance(NodeMetadataBuilder builder, RunningInstance instance) {
-      builder.credentials(credentialStore.get("node#" + instance.getRegion() + "/" + instance.getId()));
+      builder.credentials(LoginCredentials.builder(credentialStore.get("node#" + instance.getRegion() + "/" + instance.getId())).build());
    }
 
    protected Hardware parseHardware(final RunningInstance instance) {

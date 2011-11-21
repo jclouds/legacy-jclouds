@@ -20,26 +20,39 @@ package org.jclouds.compute.strategy;
 
 import org.jclouds.compute.strategy.impl.ReturnCredentialsBoundToImage;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 
+import com.google.common.base.Function;
 import com.google.inject.ImplementedBy;
 
 /**
  * @author Oleksiy Yarmula
  */
 @ImplementedBy(ReturnCredentialsBoundToImage.class)
-public interface PopulateDefaultLoginCredentialsForImageStrategy {
+public interface PopulateDefaultLoginCredentialsForImageStrategy extends Function<Object, LoginCredentials> {
 
-    /**
-     * Processes the resource to determine credentials.
-     *
-     * @param resourceToAuthenticate
-     *                  this can be any resource, such as an image,
-     *                  running server instance or other. It's the
-     *                  responsibility of an implementation to apply
-     *                  the cloud-specific logic.
-     * @return credentials object. Note: the key
-     *                  may not be set, but the identity must be set
-     */
-    Credentials execute(Object resourceToAuthenticate);
-
+   /**
+    * <h4>will be removed in jclouds 1.4.0</h4> <br/>
+    * 
+    * Processes the resource to determine credentials.
+    * 
+    * @param resourceToAuthenticate
+    *           this can be any resource, such as an image, running server
+    *           instance or other. It's the responsibility of an implementation
+    *           to apply the cloud-specific logic.
+    * @return credentials object. Note: the key may not be set, but the identity
+    *         must be set
+    */
+   @Deprecated
+   Credentials execute(Object resourceToAuthenticate);
+   
+   /**
+    * 
+    * Processes the cloud-specific resources to determine the login credentials.
+    * 
+    * @param resourceToAuthenticate
+    *           this is the cloud-specific representation of the image object.
+    * @return credentials parsed from the image if not null
+    */
+   LoginCredentials apply(Object image);
 }

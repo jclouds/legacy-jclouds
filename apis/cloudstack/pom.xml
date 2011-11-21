@@ -55,7 +55,8 @@
     <test.cloudstack.domainAdminIdentity></test.cloudstack.domainAdminIdentity>
     <test.cloudstack.domainAdminCredential></test.cloudstack.domainAdminCredential>
     <test.cloudstack.image-id></test.cloudstack.image-id>
-    <test.cloudstack.login-user></test.cloudstack.login-user>
+    <test.cloudstack.image.login-user></test.cloudstack.image.login-user>
+    <test.cloudstack.image.authenticate-sudo></test.cloudstack.image.authenticate-sudo>
   </properties>
   <dependencies>
     <dependency>
@@ -119,7 +120,8 @@
                     <test.cloudstack.identity>${test.cloudstack.identity}</test.cloudstack.identity>
                     <test.cloudstack.credential>${test.cloudstack.credential}</test.cloudstack.credential>
                     <test.cloudstack.image-id>${test.cloudstack.image-id}</test.cloudstack.image-id>
-                    <test.cloudstack.login-user>${test.cloudstack.login-user}</test.cloudstack.login-user>
+                    <test.cloudstack.image.login-user>${test.cloudstack.image.login-user}</test.cloudstack.image.login-user>
+                    <test.cloudstack.image.authenticate-sudo>${test.cloudstack.image.authenticate-sudo}</test.cloudstack.image.authenticate-sudo>
                     <test.cloudstack.domainAdminIdentity>${test.cloudstack.domainAdminIdentity}</test.cloudstack.domainAdminIdentity>
                     <test.cloudstack.domainAdminCredential>${test.cloudstack.domainAdminCredential}</test.cloudstack.domainAdminCredential>
                   </systemPropertyVariables>

@@ -65,7 +65,7 @@ public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
       builder.description(from.getDescription() != null ? from.getDescription() : from.getName());
       Envelope ovf = client.getVAppTemplateClient().getOvfEnvelopeForVAppTemplate(from.getHref());
       builder.operatingSystem(CIMOperatingSystem.toComputeOs(ovf));
-      builder.defaultCredentials(credentialsProvider.execute(from));
+      builder.defaultCredentials(credentialsProvider.apply(from));
       return builder.build();
    }
 

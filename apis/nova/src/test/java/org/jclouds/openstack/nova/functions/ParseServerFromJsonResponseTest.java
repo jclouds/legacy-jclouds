@@ -18,22 +18,7 @@
  */
 package org.jclouds.openstack.nova.functions;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.io.Payloads;
-import org.jclouds.json.config.GsonModule;
-import org.jclouds.openstack.nova.domain.Address;
-import org.jclouds.openstack.nova.domain.Addresses;
-import org.jclouds.openstack.nova.domain.Server;
-import org.jclouds.openstack.nova.domain.ServerStatus;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.UnknownHostException;
@@ -44,7 +29,23 @@ import java.util.List;
 import java.util.Locale;
 import java.util.SimpleTimeZone;
 
-import static org.testng.Assert.assertEquals;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.functions.UnwrapOnlyJsonValue;
+import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
+import org.jclouds.openstack.nova.domain.Address;
+import org.jclouds.openstack.nova.domain.Addresses;
+import org.jclouds.openstack.nova.domain.Server;
+import org.jclouds.openstack.nova.domain.ServerStatus;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseServerFromJsonResponse}

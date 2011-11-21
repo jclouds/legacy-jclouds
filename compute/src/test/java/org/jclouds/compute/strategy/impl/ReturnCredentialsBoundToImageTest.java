@@ -28,6 +28,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.testng.annotations.Test;
 
 /**
@@ -41,7 +42,7 @@ public class ReturnCredentialsBoundToImageTest {
       Image image = createMock(Image.class);
       replay(image);
 
-      Credentials creds = new Credentials("ubuntu", "foo");
+      LoginCredentials creds = new LoginCredentials("ubuntu", "foo", null, false);
       assertEquals(new ReturnCredentialsBoundToImage(creds).execute(image), creds);
 
       verify(image);

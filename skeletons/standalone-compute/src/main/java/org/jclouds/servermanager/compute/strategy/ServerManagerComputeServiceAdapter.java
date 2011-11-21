@@ -26,7 +26,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.servermanager.Datacenter;
 import org.jclouds.servermanager.Hardware;
 import org.jclouds.servermanager.Image;
@@ -55,7 +55,8 @@ public class ServerManagerComputeServiceAdapter implements ComputeServiceAdapter
       Server from = client.createServerInDC(template.getLocation().getId(), name,
             Integer.parseInt(template.getImage().getProviderId()),
             Integer.parseInt(template.getHardware().getProviderId()));
-      return new NodeAndInitialCredentials<Server>(from, from.id + "", new Credentials(from.loginUser, from.password));
+      return new NodeAndInitialCredentials<Server>(from, from.id + "", LoginCredentials.builder().user(from.loginUser)
+            .password(from.password).build());
    }
 
    @Override

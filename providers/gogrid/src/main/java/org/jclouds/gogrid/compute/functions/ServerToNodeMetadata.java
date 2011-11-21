@@ -35,7 +35,6 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.domain.ServerState;
@@ -59,7 +58,6 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    private final Supplier<Set<? extends Image>> images;
    private final Supplier<Set<? extends Hardware>> hardwares;
    private final Supplier<Map<String, ? extends Location>> locations;
-   private final Map<String, Credentials> credentialStore;
 
    static class FindImageForServer implements Predicate<Image> {
       private final Server instance;
@@ -92,11 +90,10 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    }
 
    @Inject
-   ServerToNodeMetadata(Map<ServerState, NodeState> serverStateToNodeState,  Map<String, Credentials> credentialStore,
-            @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwares,
-            Supplier<Map<String, ? extends Location>> locations) {
+   ServerToNodeMetadata(Map<ServerState, NodeState> serverStateToNodeState,
+         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwares,
+         Supplier<Map<String, ? extends Location>> locations) {
       this.serverStateToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
-      this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.images = checkNotNull(images, "images");
       this.hardwares = checkNotNull(hardwares, "hardwares");
       this.locations = checkNotNull(locations, "locations");
@@ -118,7 +115,6 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
       builder.state(serverStateToNodeState.get(from.getState()));
       builder.publicAddresses(ImmutableSet.of(from.getIp().getIp()));
-      builder.credentials(credentialStore.get("node#" + from.getId()));
       return builder.build();
    }
 

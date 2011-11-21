@@ -18,13 +18,12 @@
  */
 package org.jclouds.compute.functions;
 
-import static org.jclouds.domain.Credentials.NO_CREDENTIALS;
-
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
+import org.jclouds.domain.LoginCredentials.Builder;
 
 import com.google.common.base.Function;
 
@@ -33,21 +32,21 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class DefaultCredentialsFromImageOrOverridingCredentials implements Function<Template, Credentials> {
+public class DefaultCredentialsFromImageOrOverridingCredentials implements Function<Template, LoginCredentials> {
 
    @Override
-   public Credentials apply(Template template) {
+   public LoginCredentials apply(Template template) {
       TemplateOptions options = template.getOptions();
-      Credentials creds = template.getImage().getDefaultCredentials();
-      Credentials overridingCredentials = options.getOverridingCredentials();
-      Credentials overrideCreds = (overridingCredentials != null) ? overridingCredentials : NO_CREDENTIALS;
-      if (creds == null)
-         creds = overrideCreds;
-      if (overrideCreds.identity != null)
-         creds = creds.toBuilder().identity(overrideCreds.identity).build();
-      if (overrideCreds.credential != null)
-         creds = creds.toBuilder().credential(overrideCreds.credential).build();
-      return creds.equals(NO_CREDENTIALS) ? null : creds;
+      Builder builder = LoginCredentials.builder(template.getImage().getDefaultCredentials());
+      if (options.getLoginUser() != null)
+         builder.user(options.getLoginUser());
+      if (options.getLoginPassword() != null)
+         builder.password(options.getLoginPassword());
+      if (options.getLoginPrivateKey() != null)
+         builder.privateKey(options.getLoginPrivateKey());
+      if (options.shouldAuthenticateSudo() != null)
+         builder.authenticateSudo(true);
+      return builder.build();
    }
 
 }

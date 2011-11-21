@@ -27,10 +27,11 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.jclouds.deltacloud.domain.Instance;
+import org.jclouds.deltacloud.domain.Instance.Authentication;
 import org.jclouds.deltacloud.domain.KeyAuthentication;
 import org.jclouds.deltacloud.domain.PasswordAuthentication;
-import org.jclouds.deltacloud.domain.Instance.Authentication;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
+import org.jclouds.domain.LoginCredentials.Builder;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
@@ -67,7 +68,7 @@ public class InstanceHandler extends ParseSax.HandlerWithResult<Instance> {
 
    private Instance instance;
 
-   private Credentials.Builder<Credentials> credentialsBuilder = new Credentials.Builder<Credentials>();
+   private Builder credentialsBuilder = LoginCredentials.builder();
    private String keyName;
    private Authentication authentication;
 
@@ -125,19 +126,19 @@ public class InstanceHandler extends ParseSax.HandlerWithResult<Instance> {
       } else if (qName.equalsIgnoreCase("keyname")) {
          this.keyName = currentOrNull(currentText);
       } else if (qName.equalsIgnoreCase("username")) {
-         this.credentialsBuilder.identity(currentOrNull(currentText));
+         this.credentialsBuilder.user(currentOrNull(currentText));
       } else if (qName.equalsIgnoreCase("password")) {
-         this.credentialsBuilder.credential(currentOrNull(currentText));
+         this.credentialsBuilder.password(currentOrNull(currentText));
       } else if (qName.equalsIgnoreCase("authentication")) {
          if (keyName != null) {
             this.authentication = new KeyAuthentication(keyName);
          } else {
-            Credentials creds = credentialsBuilder.build();
-            if (creds.identity != null)
+            LoginCredentials creds = credentialsBuilder.build();
+            if (creds != null && creds.identity != null)
                this.authentication = new PasswordAuthentication(creds);
          }
          this.keyName = null;
-         this.credentialsBuilder = new Credentials.Builder<Credentials>();
+         this.credentialsBuilder = LoginCredentials.builder();
       } else if (qName.equalsIgnoreCase("state")) {
          this.state = Instance.State.fromValue(currentOrNull(currentText));
       } else if (qName.equalsIgnoreCase("address")) {

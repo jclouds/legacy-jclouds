@@ -46,10 +46,12 @@ public class CredentialUtils {
    }
 
    public static boolean isPrivateKeyCredential(Credentials credentials) {
-      return credentials != null
-            && credentials.credential != null
-            && (credentials.credential.startsWith(Pems.PRIVATE_PKCS1_MARKER) || credentials.credential
-                  .startsWith(Pems.PRIVATE_PKCS8_MARKER));
+      return credentials != null && isPrivateKeyCredential(credentials.credential);
+   }
+
+   public static boolean isPrivateKeyCredential(String credential) {
+      return credential != null
+            && (credential.startsWith(Pems.PRIVATE_PKCS1_MARKER) || credential.startsWith(Pems.PRIVATE_PKCS8_MARKER));
    }
 
    public static boolean isPrivateKeyEncrypted(byte[] privateKey) {

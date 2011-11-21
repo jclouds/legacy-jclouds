@@ -38,8 +38,8 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.location.suppliers.JustProvider;
 import org.jclouds.rest.ResourceNotFoundException;
 
@@ -63,14 +63,12 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
    private final String passwordPrefix;
    private final Supplier<Set<? extends Location>> locationSupplier;
    private final Map<OsFamily, Map<String, String>> osToVersionMap;
-   private final Map<String, Credentials> credentialStore;
 
    @Inject
    public StubComputeServiceAdapter(ConcurrentMap<String, NodeMetadata> nodes, Supplier<Location> location,
          @Named("NODE_ID") Provider<Integer> idProvider, @Named("PUBLIC_IP_PREFIX") String publicIpPrefix,
          @Named("PRIVATE_IP_PREFIX") String privateIpPrefix, @Named("PASSWORD_PREFIX") String passwordPrefix,
-         JustProvider locationSupplier, Map<OsFamily, Map<String, String>> osToVersionMap,
-         Map<String, Credentials> credentialStore) {
+         JustProvider locationSupplier, Map<OsFamily, Map<String, String>> osToVersionMap) {
       this.nodes = nodes;
       this.location = location;
       this.idProvider = idProvider;
@@ -79,7 +77,6 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       this.passwordPrefix = passwordPrefix;
       this.locationSupplier = locationSupplier;
       this.osToVersionMap = osToVersionMap;
-      this.credentialStore = credentialStore;
    }
 
    @Override
@@ -99,9 +96,8 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       builder.state(NodeState.PENDING);
       builder.publicAddresses(ImmutableSet.<String> of(publicIpPrefix + id));
       builder.privateAddresses(ImmutableSet.<String> of(privateIpPrefix + id));
-      builder.credentials(new Credentials(null, passwordPrefix + id));
+      builder.credentials(LoginCredentials.builder().user("root").password(passwordPrefix + id).build());
       NodeMetadata node = builder.build();
-      credentialStore.put("node#" + node.getId(), node.getCredentials());
       nodes.put(node.getId(), node);
       StubComputeServiceDependenciesModule.setState(node, NodeState.RUNNING, 100);
       return new NodeWithInitialCredentials(node);
@@ -116,7 +112,6 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
 
    @Override
    public Iterable<Image> listImages() {
-      Credentials defaultCredentials = new Credentials("root", null);
       // initializing as a List, as ImmutableSet does not allow you to put
       // duplicates
       Builder<Image> images = ImmutableList.<Image> builder();
@@ -127,7 +122,7 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
                String desc = String.format("stub %s %s", osVersions.getKey(), is64Bit);
                images.add(new ImageBuilder().ids(id++ + "").name(osVersions.getKey().name()).location(location.get())
                      .operatingSystem(new OperatingSystem(osVersions.getKey(), desc, version, null, desc, is64Bit))
-                     .description(desc).defaultCredentials(defaultCredentials).build());
+                     .description(desc).build());
             }
          }
       return images.build();
@@ -146,9 +141,7 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
 
    @Override
    public NodeMetadata getNode(String id) {
-      NodeMetadata node = nodes.get(id);
-      return node == null ? null : NodeMetadataBuilder.fromNodeMetadata(node)
-            .credentials(credentialStore.get("node#" + node.getId())).build();
+      return nodes.get(id);
    }
 
    @Override

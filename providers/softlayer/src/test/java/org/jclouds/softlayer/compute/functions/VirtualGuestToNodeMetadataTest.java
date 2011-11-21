@@ -21,8 +21,6 @@ package org.jclouds.softlayer.compute.functions;
 import static org.easymock.classextension.EasyMock.createNiceMock;
 import static org.testng.Assert.assertEquals;
 
-import java.net.UnknownHostException;
-import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.compute.domain.Hardware;
@@ -33,11 +31,9 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadata.FindLocationForVirtualGuest;
-import org.jclouds.softlayer.domain.Password;
 import org.jclouds.softlayer.domain.VirtualGuest;
 import org.jclouds.softlayer.parse.ParseBadVirtualGuest;
 import org.jclouds.softlayer.parse.ParseVirtualGuestHaltedTest;
@@ -49,9 +45,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
@@ -60,166 +54,139 @@ import com.google.common.collect.Iterables;
 public class VirtualGuestToNodeMetadataTest {
 
    @Test
-   public void testApplyWhereVirtualGuestWithNoPassword() throws UnknownHostException {
+   public void testApplyWhereVirtualGuestWithNoPassword() {
 
       // notice if we've already parsed this properly here, we can rely on it.
       VirtualGuest guest = new ParseVirtualGuestWithNoPasswordTest().expected();
 
-      // note we are testing when no credentials are here. otherwise would be ("node#416696", new
-      // Credentials("root", "password"))
-      Map<String, Credentials> credentialStore = ImmutableMap.<String, Credentials> of();
-
       // setup so that we have an expected Location to be parsed from the guest.
       Location expectedLocation = DatacenterToLocationTest.function.apply(guest.getDatacenter());
       Supplier<Set<? extends Location>> locationSupplier = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of(expectedLocation));
+            .<Location> of(expectedLocation));
 
-      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(credentialStore,
-               new FindLocationForVirtualGuest(locationSupplier),new GetHardwareForVirtualGuestMock(),new GetImageForVirtualGuestMock());
+      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(new FindLocationForVirtualGuest(
+            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock());
 
       NodeMetadata node = parser.apply(guest);
 
-      assertEquals(node, new NodeMetadataBuilder().ids("416788")
-            .name("node1000360500").hostname("node1000360500")
-            .location(expectedLocation).state(NodeState.PENDING)
-            .publicAddresses(ImmutableSet.of("173.192.29.186")).privateAddresses(ImmutableSet.of("10.37.102.194"))
-            .hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
-            .imageId(new GetImageForVirtualGuestMock().getImage(guest).getId())
-            .operatingSystem(new GetImageForVirtualGuestMock().getImage(guest).getOperatingSystem())
-            .build());
+      assertEquals(
+            node,
+            new NodeMetadataBuilder().ids("416788").name("node1000360500").hostname("node1000360500")
+                  .location(expectedLocation).state(NodeState.PENDING)
+                  .publicAddresses(ImmutableSet.of("173.192.29.186"))
+                  .privateAddresses(ImmutableSet.of("10.37.102.194"))
+                  .hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
+                  .imageId(new GetImageForVirtualGuestMock().getImage(guest).getId())
+                  .operatingSystem(new GetImageForVirtualGuestMock().getImage(guest).getOperatingSystem()).build());
 
-      // because it wasn't present in the credential store.
-      assertEquals(node.getCredentials(), null);
    }
 
    @Test
-   public void testApplyWhereVirtualIsBad() throws UnknownHostException {
+   public void testApplyWhereVirtualIsBad() {
 
       // notice if we've already parsed this properly here, we can rely on it.
       VirtualGuest guest = new ParseBadVirtualGuest().expected();
 
-      // note we are testing when no credentials are here. otherwise would be ("node#416696", new
-      // Credentials("root", "password"))
-      Map<String, Credentials> credentialStore = ImmutableMap.<String, Credentials> of();
-
       // no location here
       Supplier<Set<? extends Location>> locationSupplier = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of());
+            .<Location> of());
 
-      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(credentialStore,
-               new FindLocationForVirtualGuest(locationSupplier),new GetHardwareForVirtualGuestMock(),new GetImageForVirtualGuestMock());
+      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(new FindLocationForVirtualGuest(
+            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock());
 
       NodeMetadata node = parser.apply(guest);
 
-      assertEquals(node, new NodeMetadataBuilder().ids("413348")
-            .name("foo-ef4").hostname("foo-ef4").group("foo")
-            .state(NodeState.PENDING)
-            .hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
-            .imageId(new GetImageForVirtualGuestMock().getImage(guest).getId())
-            .operatingSystem(new GetImageForVirtualGuestMock().getImage(guest).getOperatingSystem())
-            .build());
+      assertEquals(
+            node,
+            new NodeMetadataBuilder().ids("413348").name("foo-ef4").hostname("foo-ef4").group("foo")
+                  .state(NodeState.PENDING).hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
+                  .imageId(new GetImageForVirtualGuestMock().getImage(guest).getId())
+                  .operatingSystem(new GetImageForVirtualGuestMock().getImage(guest).getOperatingSystem()).build());
 
-      // because it wasn't present in the credential store.
-      assertEquals(node.getCredentials(), null);
    }
 
    @Test
-   public void testApplyWhereVirtualGuestIsHalted() throws UnknownHostException {
+   public void testApplyWhereVirtualGuestIsHalted() {
 
       // notice if we've already parsed this properly here, we can rely on it.
       VirtualGuest guest = new ParseVirtualGuestHaltedTest().expected();
 
-      Password password = Iterables.get(guest.getOperatingSystem().getPasswords(), 0);
-      Credentials credentials = new Credentials(password.getUsername(),password.getPassword());
-      Map<String, Credentials> credentialStore = ImmutableMap.<String, Credentials> of("node#416700",credentials);
-
       // setup so that we have an expected Location to be parsed from the guest.
       Location expectedLocation = DatacenterToLocationTest.function.apply(guest.getDatacenter());
       Supplier<Set<? extends Location>> locationSupplier = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of(expectedLocation));
+            .<Location> of(expectedLocation));
 
-      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(credentialStore,
-               new FindLocationForVirtualGuest(locationSupplier),new GetHardwareForVirtualGuestMock(),new GetImageForVirtualGuestMock());
+      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(new FindLocationForVirtualGuest(
+            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock());
 
       NodeMetadata node = parser.apply(guest);
 
-      assertEquals(node, new NodeMetadataBuilder().ids("416700")
-            .name("node1703810489").hostname("node1703810489")
-            .location(expectedLocation).state(NodeState.PENDING).credentials(credentials)
-            .publicAddresses(ImmutableSet.of("173.192.29.187")).privateAddresses(ImmutableSet.of("10.37.102.195"))
-            .hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
-            .imageId(new GetImageForVirtualGuestMock().getImage(guest).getId())
-            .operatingSystem(new GetImageForVirtualGuestMock().getImage(guest).getOperatingSystem())
-            .build());
+      assertEquals(
+            node,
+            new NodeMetadataBuilder().ids("416700").name("node1703810489").hostname("node1703810489")
+                  .location(expectedLocation).state(NodeState.PENDING)
+                  .publicAddresses(ImmutableSet.of("173.192.29.187"))
+                  .privateAddresses(ImmutableSet.of("10.37.102.195"))
+                  .hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
+                  .imageId(new GetImageForVirtualGuestMock().getImage(guest).getId())
+                  .operatingSystem(new GetImageForVirtualGuestMock().getImage(guest).getOperatingSystem()).build());
 
-      // because it wasn't present in the credential store.
-      assertEquals(node.getCredentials(), credentials);
    }
 
    @Test
-   public void testApplyWhereVirtualGuestIsPaused() throws UnknownHostException {
+   public void testApplyWhereVirtualGuestIsPaused() {
 
       // notice if we've already parsed this properly here, we can rely on it.
       VirtualGuest guest = new ParseVirtualGuestPausedTest().expected();
 
-      Password password = Iterables.get(guest.getOperatingSystem().getPasswords(),0);
-      Credentials credentials = new Credentials(password.getUsername(),password.getPassword());
-      Map<String, Credentials> credentialStore = ImmutableMap.<String, Credentials> of("node#416700",credentials);
-
       // setup so that we have an expected Location to be parsed from the guest.
       Location expectedLocation = DatacenterToLocationTest.function.apply(guest.getDatacenter());
       Supplier<Set<? extends Location>> locationSupplier = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of(expectedLocation));
+            .<Location> of(expectedLocation));
 
-      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(credentialStore,
-               new FindLocationForVirtualGuest(locationSupplier),new GetHardwareForVirtualGuestMock(),new GetImageForVirtualGuestMock());
+      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(new FindLocationForVirtualGuest(
+            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock());
 
       NodeMetadata node = parser.apply(guest);
 
-      assertEquals(node, new NodeMetadataBuilder().ids("416700")
-            .name("node1703810489").hostname("node1703810489")
-            .location(expectedLocation).state(NodeState.SUSPENDED).credentials(credentials)
-            .publicAddresses(ImmutableSet.of("173.192.29.187")).privateAddresses(ImmutableSet.of("10.37.102.195"))
-            .hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
-            .imageId(new GetImageForVirtualGuestMock().getImage(guest).getId())
-            .operatingSystem(new GetImageForVirtualGuestMock().getImage(guest).getOperatingSystem())
-            .build());
+      assertEquals(
+            node,
+            new NodeMetadataBuilder().ids("416700").name("node1703810489").hostname("node1703810489")
+                  .location(expectedLocation).state(NodeState.SUSPENDED)
+                  .publicAddresses(ImmutableSet.of("173.192.29.187"))
+                  .privateAddresses(ImmutableSet.of("10.37.102.195"))
+                  .hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
+                  .imageId(new GetImageForVirtualGuestMock().getImage(guest).getId())
+                  .operatingSystem(new GetImageForVirtualGuestMock().getImage(guest).getOperatingSystem()).build());
 
-      // because it wasn't present in the credential store.
-      assertEquals(node.getCredentials(), credentials);
    }
 
    @Test
-   public void testApplyWhereVirtualGuestIsRunning() throws UnknownHostException {
+   public void testApplyWhereVirtualGuestIsRunning() {
 
       // notice if we've already parsed this properly here, we can rely on it.
       VirtualGuest guest = new ParseVirtualGuestRunningTest().expected();
 
-      Password password = Iterables.get(guest.getOperatingSystem().getPasswords(),0);
-      Credentials credentials = new Credentials(password.getUsername(),password.getPassword());
-      Map<String, Credentials> credentialStore = ImmutableMap.<String, Credentials> of("node#416700",credentials);
-
       // setup so that we have an expected Location to be parsed from the guest.
       Location expectedLocation = DatacenterToLocationTest.function.apply(guest.getDatacenter());
       Supplier<Set<? extends Location>> locationSupplier = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of(expectedLocation));
+            .<Location> of(expectedLocation));
 
-      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(credentialStore,
-               new FindLocationForVirtualGuest(locationSupplier),new GetHardwareForVirtualGuestMock(),new GetImageForVirtualGuestMock());
+      VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(new FindLocationForVirtualGuest(
+            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock());
 
       NodeMetadata node = parser.apply(guest);
 
-      assertEquals(node, new NodeMetadataBuilder().ids("416700")
-            .name("node1703810489").hostname("node1703810489")
-            .location(expectedLocation).state(NodeState.RUNNING).credentials(credentials)
-            .publicAddresses(ImmutableSet.of("173.192.29.187")).privateAddresses(ImmutableSet.of("10.37.102.195"))
-            .hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
-            .imageId(new GetImageForVirtualGuestMock().getImage(guest).getId())
-            .operatingSystem(new GetImageForVirtualGuestMock().getImage(guest).getOperatingSystem())
-            .build());
+      assertEquals(
+            node,
+            new NodeMetadataBuilder().ids("416700").name("node1703810489").hostname("node1703810489")
+                  .location(expectedLocation).state(NodeState.RUNNING)
+                  .publicAddresses(ImmutableSet.of("173.192.29.187"))
+                  .privateAddresses(ImmutableSet.of("10.37.102.195"))
+                  .hardware(new GetHardwareForVirtualGuestMock().getHardware(guest))
+                  .imageId(new GetImageForVirtualGuestMock().getImage(guest).getId())
+                  .operatingSystem(new GetImageForVirtualGuestMock().getImage(guest).getOperatingSystem()).build());
 
-      // because it wasn't present in the credential store.
-      assertEquals(node.getCredentials(), credentials);
    }
 
    private static class GetHardwareForVirtualGuestMock extends VirtualGuestToNodeMetadata.GetHardwareForVirtualGuest {
@@ -242,8 +209,7 @@ public class VirtualGuestToNodeMetadataTest {
       @Override
       public Image getImage(VirtualGuest guest) {
          return new ImageBuilder().ids("123").description("mocked image")
-               .operatingSystem(OperatingSystem.builder().description("foo os").build())
-               .build();
+               .operatingSystem(OperatingSystem.builder().description("foo os").build()).build();
       }
    }
 }

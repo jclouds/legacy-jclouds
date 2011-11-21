@@ -24,10 +24,10 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.jclouds.deltacloud.domain.Instance;
+import org.jclouds.deltacloud.domain.Instance.Authentication;
 import org.jclouds.deltacloud.domain.KeyAuthentication;
 import org.jclouds.deltacloud.domain.PasswordAuthentication;
-import org.jclouds.deltacloud.domain.Instance.Authentication;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
@@ -49,7 +49,7 @@ public class InstanceHandlerTest {
    static ParseSax<Instance> createParser() {
       Injector injector = Guice.createInjector(new SaxParserModule());
       ParseSax<Instance> parser = injector.getInstance(ParseSax.Factory.class).create(
-               injector.getInstance(InstanceHandler.class));
+            injector.getInstance(InstanceHandler.class));
       return parser;
    }
 
@@ -68,7 +68,8 @@ public class InstanceHandlerTest {
    }
 
    public void testWithPasswordAuthentication() {
-      Instance expects = instanceWithAuthentication(new PasswordAuthentication(new Credentials("root", "FOO")));
+      Instance expects = instanceWithAuthentication(new PasswordAuthentication(LoginCredentials.builder().user("root")
+            .password("FOO").build()));
       assertEquals(parseInstance("/test_get_instance_pw.xml").toString(), expects.toString());
    }
 
@@ -84,15 +85,15 @@ public class InstanceHandlerTest {
 
    private Instance instanceWithAuthentication(Authentication authentication) {
       return new Instance(URI.create("http://fancycloudprovider.com/api/instances/inst1"), "inst1", "larry",
-               "Production JBoss Instance", URI.create("http://fancycloudprovider.com/api/images/img3"), URI
-                        .create("http://fancycloudprovider.com/api/hardware_profiles/m1-small"), URI
-                        .create("http://fancycloudprovider.com/api/realms/us"), Instance.State.RUNNING, ImmutableMap
-                        .of(Instance.Action.REBOOT, new HttpRequest("POST", URI
-                                 .create("http://fancycloudprovider.com/api/instances/inst1/reboot")),
-                                 Instance.Action.STOP, new HttpRequest("POST", URI
-                                          .create("http://fancycloudprovider.com/api/instances/inst1/stop"))),
-               authentication, ImmutableSet.of("inst1.larry.fancycloudprovider.com"), ImmutableSet
-                        .of("inst1.larry.internal"));
+            "Production JBoss Instance", URI.create("http://fancycloudprovider.com/api/images/img3"),
+            URI.create("http://fancycloudprovider.com/api/hardware_profiles/m1-small"),
+            URI.create("http://fancycloudprovider.com/api/realms/us"), Instance.State.RUNNING, ImmutableMap.of(
+                  Instance.Action.REBOOT,
+                  new HttpRequest("POST", URI.create("http://fancycloudprovider.com/api/instances/inst1/reboot")),
+                  Instance.Action.STOP,
+                  new HttpRequest("POST", URI.create("http://fancycloudprovider.com/api/instances/inst1/stop"))),
+            authentication, ImmutableSet.of("inst1.larry.fancycloudprovider.com"),
+            ImmutableSet.of("inst1.larry.internal"));
    }
 
 }

@@ -35,7 +35,7 @@ import org.jclouds.aws.domain.Region;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.domain.EC2HardwareBuilder;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
@@ -58,33 +58,36 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit", singleThreaded = true, testName = "CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest")
 public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
 
-   public static final Credentials CREDENTIALS = new Credentials(null, "-----BEGIN RSA PRIVATE KEY-----\n"
-            + "MIIEowIBAAKCAQEA0CbFlhSdbMdad2ux2BVqk6Ut5fLKb0CdbqubGcEBfwsSz9Rp4Ile76P90MpV\n"
-            + "W1BGKL5V4MO+flG6dZnRWPVmgrNVyDTmEsALiMGjfEwbACEZ1A8C6mPa36wWO7MlxuyMjg8OczTB\n"
-            + "EXnHNDpxE5a6KowJtzFlmgjHk2Y+Q42UIqPx47lQUv5bdMDCnfNNomSzTVRjOZLUkDja+ybCKdux\n"
-            + "gqTsuInhuBRMx+wxff8Z43ECdJV6UPoXK3der1dlZunxGCFkCeYq0kCX7FZ7PV35X744jqhD8P+7\n"
-            + "y5prO4W+M3DWgChUx0OlbDbSHtDVlcfdbj/+4AKYKU6rQOqh+4DPDQIDAQABAoIBAHjQuEiXKJSV\n"
-            + "1U2RZcVtENInws9AL/2I/Jfa5Qh6vTqXG9EjklywfzkK72x7tDVvD3ngmAoAs5WwLFDL+fXvYhOk\n"
-            + "sbql8ZCahVdYRWME7XsSu2IZYHDZipXe1XzLS7b9X8uos5Ns4E8bZuNKtI1RJDdD1vPMqRNR2z0T\n"
-            + "0Dn3eC7t+t+t7PWaK5AXu2ot7DoOeG1QhqJbwd5pMkIn2ydBILytgmDk/2P3EtJGePIJIeQBicmw\n"
-            + "Z0KrJFa/K2cC8AtmMJUoZMo+mh1yemDbDLCZW30PjFHbZtcszS2cydAgq/HDFkZynvZG0zhbx/To\n"
-            + "jzcNza1AyypYwOwb2/9/ulXZp0UCgYEA+QFgWDfYLH2zwjU5b6e0UbIyd/X/yRZ+L8lOEBd0Bbu8\n"
-            + "qO3txaDbwi7o2mG7pJENHJ3u62CHjgTGDNW9V9Q8eNoGtj3uHvMvi7FdDEK8B6izdZyR7hmZmQ/5\n"
-            + "MIldelyiGZlz1KBSoy4FsCpA7hV7cI6H6x+Im24NxG90/wd/EgMCgYEA1f+cUyUisIO3yKOCf0hQ\n"
-            + "aL289q2//F2cbvBxtki6I8JzTg1H3oTO2WVrXQeCA3a/yiuRUatgGH4mxrpCF6byVJyqrEWAj4kU\n"
-            + "uTbhMgIYhLGoaF1e+vMirCRXUXox0i5X976ASzHn64V9JSd1B+UbKfpcFTYYnChmrRDzmhKN1a8C\n"
-            + "gYBTvIHAyO7ab18/BRUOllAOVSWhr8lXv0eqHEEzKh/rOaoFCRY3qpOcZpgJsGogumK1Z+sLnoeX\n"
-            + "W8WaVVp6KbY4UeGF8aedItyvVnLbB6ohzTqkZ4Wvk05S6cs75kXYO0SL5U3NiCiiFXz2NA9nwTOk\n"
-            + "s1nD2PPgiQ76Kx0mEkhKLwKBgFhHEJqv+AZu37Kx2NRe5WS/2KK9/DPD/hM5tv7mM3sq7Nvm2J3v\n"
-            + "lVDS6J5AyZ5aLzXcER9qncKcz6wtC7SsFs1Wr4VPSoBroRPikrVJbgnXK8yZr+O/xq7Scv7WdJTq\n"
-            + "rzkw6cWbObvLnltkUn/GQBVqBPBvF2nbtLdyBbuqKb5bAoGBAI1+aoJnvXEXxT4UHrMkQcY0eXRz\n"
-            + "3UdbzJmtjMW9CR6l9s11mV6PcZP4qnODp3nd6a+lPeL3wVYQ47DsTJ/Bx5dI17zA5mU57n6mV0a3\n"
-            + "DbSoPKSdaKTQdo2THnVE9P9sPKZWueAcsE4Yw/qcTjoxrtUnAH/AXN250v0tkKIOvMhu\n"
-            + "-----END RSA PRIVATE KEY-----");
+   public static final LoginCredentials CREDENTIALS = LoginCredentials
+         .builder()
+         .privateKey(
+               "-----BEGIN RSA PRIVATE KEY-----\n"
+                     + "MIIEowIBAAKCAQEA0CbFlhSdbMdad2ux2BVqk6Ut5fLKb0CdbqubGcEBfwsSz9Rp4Ile76P90MpV\n"
+                     + "W1BGKL5V4MO+flG6dZnRWPVmgrNVyDTmEsALiMGjfEwbACEZ1A8C6mPa36wWO7MlxuyMjg8OczTB\n"
+                     + "EXnHNDpxE5a6KowJtzFlmgjHk2Y+Q42UIqPx47lQUv5bdMDCnfNNomSzTVRjOZLUkDja+ybCKdux\n"
+                     + "gqTsuInhuBRMx+wxff8Z43ECdJV6UPoXK3der1dlZunxGCFkCeYq0kCX7FZ7PV35X744jqhD8P+7\n"
+                     + "y5prO4W+M3DWgChUx0OlbDbSHtDVlcfdbj/+4AKYKU6rQOqh+4DPDQIDAQABAoIBAHjQuEiXKJSV\n"
+                     + "1U2RZcVtENInws9AL/2I/Jfa5Qh6vTqXG9EjklywfzkK72x7tDVvD3ngmAoAs5WwLFDL+fXvYhOk\n"
+                     + "sbql8ZCahVdYRWME7XsSu2IZYHDZipXe1XzLS7b9X8uos5Ns4E8bZuNKtI1RJDdD1vPMqRNR2z0T\n"
+                     + "0Dn3eC7t+t+t7PWaK5AXu2ot7DoOeG1QhqJbwd5pMkIn2ydBILytgmDk/2P3EtJGePIJIeQBicmw\n"
+                     + "Z0KrJFa/K2cC8AtmMJUoZMo+mh1yemDbDLCZW30PjFHbZtcszS2cydAgq/HDFkZynvZG0zhbx/To\n"
+                     + "jzcNza1AyypYwOwb2/9/ulXZp0UCgYEA+QFgWDfYLH2zwjU5b6e0UbIyd/X/yRZ+L8lOEBd0Bbu8\n"
+                     + "qO3txaDbwi7o2mG7pJENHJ3u62CHjgTGDNW9V9Q8eNoGtj3uHvMvi7FdDEK8B6izdZyR7hmZmQ/5\n"
+                     + "MIldelyiGZlz1KBSoy4FsCpA7hV7cI6H6x+Im24NxG90/wd/EgMCgYEA1f+cUyUisIO3yKOCf0hQ\n"
+                     + "aL289q2//F2cbvBxtki6I8JzTg1H3oTO2WVrXQeCA3a/yiuRUatgGH4mxrpCF6byVJyqrEWAj4kU\n"
+                     + "uTbhMgIYhLGoaF1e+vMirCRXUXox0i5X976ASzHn64V9JSd1B+UbKfpcFTYYnChmrRDzmhKN1a8C\n"
+                     + "gYBTvIHAyO7ab18/BRUOllAOVSWhr8lXv0eqHEEzKh/rOaoFCRY3qpOcZpgJsGogumK1Z+sLnoeX\n"
+                     + "W8WaVVp6KbY4UeGF8aedItyvVnLbB6ohzTqkZ4Wvk05S6cs75kXYO0SL5U3NiCiiFXz2NA9nwTOk\n"
+                     + "s1nD2PPgiQ76Kx0mEkhKLwKBgFhHEJqv+AZu37Kx2NRe5WS/2KK9/DPD/hM5tv7mM3sq7Nvm2J3v\n"
+                     + "lVDS6J5AyZ5aLzXcER9qncKcz6wtC7SsFs1Wr4VPSoBroRPikrVJbgnXK8yZr+O/xq7Scv7WdJTq\n"
+                     + "rzkw6cWbObvLnltkUn/GQBVqBPBvF2nbtLdyBbuqKb5bAoGBAI1+aoJnvXEXxT4UHrMkQcY0eXRz\n"
+                     + "3UdbzJmtjMW9CR6l9s11mV6PcZP4qnODp3nd6a+lPeL3wVYQ47DsTJ/Bx5dI17zA5mU57n6mV0a3\n"
+                     + "DbSoPKSdaKTQdo2THnVE9P9sPKZWueAcsE4Yw/qcTjoxrtUnAH/AXN250v0tkKIOvMhu\n"
+                     + "-----END RSA PRIVATE KEY-----").build();
 
    public static final KeyPair KEYPAIR = KeyPair.builder().region(Region.AP_SOUTHEAST_1).keyName("myKeyPair")
-            .sha1OfPrivateKey("13:36:74:b9:56:bb:07:96:c0:19:ab:00:7f:9f:06:d2:16:a0:45:32").fingerprint(
-                     "60:15:d1:f1:d9:e2:3c:e2:ee:a9:64:6a:42:a7:34:0c").keyMaterial(CREDENTIALS.credential).build();
+         .sha1OfPrivateKey("13:36:74:b9:56:bb:07:96:c0:19:ab:00:7f:9f:06:d2:16:a0:45:32")
+         .fingerprint("60:15:d1:f1:d9:e2:3c:e2:ee:a9:64:6a:42:a7:34:0c").keyMaterial(CREDENTIALS.credential).build();
 
    private static final Provider<RunInstancesOptions> OPTIONS_PROVIDER = new javax.inject.Provider<RunInstancesOptions>() {
 
@@ -106,15 +109,15 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
 
       // create mocks
       CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions strategy = createMock(
-               CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class, new Method[] {
-                        CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class
-                                 .getDeclaredMethod("getOptionsProvider"),
-                        CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class.getDeclaredMethod(
-                                 "createNewKeyPairUnlessUserSpecifiedOtherwise", String.class, String.class,
-                                 TemplateOptions.class),
-                        CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class
-                                 .getDeclaredMethod("getSecurityGroupsForTagAndOptions", String.class, String.class,
-                                          TemplateOptions.class) });
+            CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class,
+            new Method[] {
+                  CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class
+                        .getDeclaredMethod("getOptionsProvider"),
+                  CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class.getDeclaredMethod(
+                        "createNewKeyPairUnlessUserSpecifiedOtherwise", String.class, String.class,
+                        TemplateOptions.class),
+                  CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class.getDeclaredMethod(
+                        "getSecurityGroupsForTagAndOptions", String.class, String.class, TemplateOptions.class) });
 
       EC2TemplateOptions options = createMock(EC2TemplateOptions.class);
       Template template = createMock(Template.class);
@@ -125,7 +128,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       expect(template.getOptions()).andReturn(options).atLeastOnce();
       expect(options.getBlockDeviceMappings()).andReturn(ImmutableSet.<BlockDeviceMapping> of()).atLeastOnce();
       expect(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, group, options)).andReturn(
-               systemGeneratedKeyPairName);
+            systemGeneratedKeyPairName);
       expect(strategy.getSecurityGroupsForTagAndOptions(region, group, options)).andReturn(generatedGroups);
       expect(options.getUserData()).andReturn(null);
 
@@ -137,9 +140,10 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       // run
       RunInstancesOptions customize = strategy.execute(region, group, template);
       assertEquals(customize.buildQueryParameters(), ImmutableMultimap.<String, String> of());
-      assertEquals(customize.buildFormParameters().entries(), ImmutableMultimap.<String, String> of("InstanceType",
-               size.getProviderId(), "SecurityGroup.1", generatedGroup, "KeyName", systemGeneratedKeyPairName)
-               .entries());
+      assertEquals(
+            customize.buildFormParameters().entries(),
+            ImmutableMultimap.<String, String> of("InstanceType", size.getProviderId(), "SecurityGroup.1",
+                  generatedGroup, "KeyName", systemGeneratedKeyPairName).entries());
       assertEquals(customize.buildMatrixParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(customize.buildRequestHeaders(), ImmutableMultimap.<String, String> of());
       assertEquals(customize.buildStringPayload(), null);
@@ -161,15 +165,15 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
 
       // create mocks
       CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions strategy = createMock(
-               CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class, new Method[] {
-                        CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class
-                                 .getDeclaredMethod("getOptionsProvider"),
-                        CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class.getDeclaredMethod(
-                                 "createNewKeyPairUnlessUserSpecifiedOtherwise", String.class, String.class,
-                                 TemplateOptions.class),
-                        CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class
-                                 .getDeclaredMethod("getSecurityGroupsForTagAndOptions", String.class, String.class,
-                                          TemplateOptions.class) });
+            CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class,
+            new Method[] {
+                  CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class
+                        .getDeclaredMethod("getOptionsProvider"),
+                  CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class.getDeclaredMethod(
+                        "createNewKeyPairUnlessUserSpecifiedOtherwise", String.class, String.class,
+                        TemplateOptions.class),
+                  CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class.getDeclaredMethod(
+                        "getSecurityGroupsForTagAndOptions", String.class, String.class, TemplateOptions.class) });
 
       EC2TemplateOptions options = createMock(EC2TemplateOptions.class);
       Template template = createMock(Template.class);
@@ -180,7 +184,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       expect(template.getOptions()).andReturn(options).atLeastOnce();
       expect(options.getBlockDeviceMappings()).andReturn(ImmutableSet.<BlockDeviceMapping> of()).atLeastOnce();
       expect(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, group, options)).andReturn(
-               systemGeneratedKeyPairName);
+            systemGeneratedKeyPairName);
       expect(strategy.getSecurityGroupsForTagAndOptions(region, group, options)).andReturn(generatedGroups);
       expect(options.getUserData()).andReturn("hello".getBytes());
 
@@ -192,9 +196,10 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       // run
       RunInstancesOptions customize = strategy.execute(region, group, template);
       assertEquals(customize.buildQueryParameters(), ImmutableMultimap.<String, String> of());
-      assertEquals(customize.buildFormParameters().entries(), ImmutableMultimap.<String, String> of("InstanceType",
-               size.getProviderId(), "SecurityGroup.1", "group", "KeyName", systemGeneratedKeyPairName, "UserData",
-               Base64.encodeBytes("hello".getBytes())).entries());
+      assertEquals(
+            customize.buildFormParameters().entries(),
+            ImmutableMultimap.<String, String> of("InstanceType", size.getProviderId(), "SecurityGroup.1", "group",
+                  "KeyName", systemGeneratedKeyPairName, "UserData", Base64.encodeBytes("hello".getBytes())).entries());
       assertEquals(customize.buildMatrixParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(customize.buildRequestHeaders(), ImmutableMultimap.<String, String> of());
       assertEquals(customize.buildStringPayload(), null);
@@ -218,7 +223,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
 
       // setup expectations
       expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
-      expect(options.getOverridingCredentials()).andReturn(null);
+      expect(options.getLoginPrivateKey()).andReturn(null);
       expect(options.getRunScript()).andReturn(null);
 
       // replay mocks
@@ -249,7 +254,10 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
 
       // setup expectations
       expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
-      expect(options.getOverridingCredentials()).andReturn(null);
+      expect(options.getLoginUser()).andReturn(null);
+      expect(options.getLoginPassword()).andReturn(null);
+      expect(options.getLoginPrivateKey()).andReturn(null);
+      expect(options.shouldAuthenticateSudo()).andReturn(null);
       expect(options.getRunScript()).andReturn(Statements.exec("echo foo"));
 
       expect(strategy.credentialsMap.containsKey(new RegionAndName(region, userSuppliedKeyPair))).andReturn(false);
@@ -281,7 +289,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
 
       // setup expectations
       expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
-      expect(options.getOverridingCredentials()).andReturn(null);
+      expect(options.getLoginPrivateKey()).andReturn(null);
       expect(options.getRunScript()).andReturn(Statements.exec("echo foo"));
 
       expect(strategy.credentialsMap.containsKey(new RegionAndName(region, userSuppliedKeyPair))).andReturn(true);
@@ -313,7 +321,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
 
       // setup expectations
       expect(options.getKeyPair()).andReturn(userSuppliedKeyPair);
-      expect(options.getOverridingCredentials()).andReturn(CREDENTIALS).atLeastOnce();
+      expect(options.getLoginPrivateKey()).andReturn(CREDENTIALS.getPrivateKey()).atLeastOnce();
 
       // Notice that the fingerprint and sha1 generated
       expect(strategy.credentialsMap.put(new RegionAndName(region, userSuppliedKeyPair), KEYPAIR)).andReturn(null);
@@ -335,7 +343,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
    }
 
    public void testCreateNewKeyPairUnlessUserSpecifiedOtherwise_createsNewKeyPairAndReturnsItsNameByDefault()
-            throws ExecutionException {
+         throws ExecutionException {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String group = "group";
@@ -363,7 +371,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
 
       // run
       assertEquals(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, group, options),
-               systemGeneratedKeyPairName);
+            systemGeneratedKeyPairName);
 
       // verify mocks
       verify(options);
@@ -404,7 +412,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
    }
 
    public void testGetSecurityGroupsForTagAndOptions_createsNewGroupByDefaultWhenNoPortsAreSpecifiedWhenDoesntExist()
-            throws ExecutionException {
+         throws ExecutionException {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String group = "group";
@@ -422,7 +430,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       expect(options.getGroups()).andReturn(groupIds).atLeastOnce();
       expect(options.getInboundPorts()).andReturn(ports).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
-               ports, shouldAuthorizeSelf);
+            ports, shouldAuthorizeSelf);
       expect(strategy.securityGroupMap.getUnchecked(regionNameAndIngressRules)).andReturn(group);
 
       // replay mocks
@@ -438,7 +446,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
    }
 
    public void testGetSecurityGroupsForTagAndOptions_createsNewGroupByDefaultWhenPortsAreSpecifiedWhenDoesntExist()
-            throws ExecutionException {
+         throws ExecutionException {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String group = "group";
@@ -456,7 +464,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       expect(options.getGroups()).andReturn(groupIds).atLeastOnce();
       expect(options.getInboundPorts()).andReturn(ports).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
-               ports, shouldAuthorizeSelf);
+            ports, shouldAuthorizeSelf);
       expect(strategy.securityGroupMap.getUnchecked(regionNameAndIngressRules)).andReturn(generatedMarkerGroup);
 
       // replay mocks
@@ -472,7 +480,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
    }
 
    public void testGetSecurityGroupsForTagAndOptions_reusesGroupByDefaultWhenNoPortsAreSpecifiedWhenDoesExist()
-            throws ExecutionException {
+         throws ExecutionException {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String group = "group";
@@ -490,7 +498,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       expect(options.getGroups()).andReturn(groupIds).atLeastOnce();
       expect(options.getInboundPorts()).andReturn(ports).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
-               ports, shouldAuthorizeSelf);
+            ports, shouldAuthorizeSelf);
       expect(strategy.securityGroupMap.getUnchecked(regionNameAndIngressRules)).andReturn(generatedMarkerGroup);
 
       // replay mocks
@@ -523,10 +531,10 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       // setup expectations
       expect(options.getGroups()).andReturn(groupIds).atLeastOnce();
       RegionNameAndIngressRules regionNameAndIngressRules = new RegionNameAndIngressRules(region, generatedMarkerGroup,
-               ports, shouldAuthorizeSelf);
+            ports, shouldAuthorizeSelf);
 
       expect(strategy.securityGroupMap.getUnchecked(regionNameAndIngressRules))
-               .andReturn(groupExisted ? "group" : null);
+            .andReturn(groupExisted ? "group" : null);
 
       // replay mocks
       replay(options);
@@ -552,7 +560,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       ConcurrentMap<RegionAndName, KeyPair> credentialsMap = createMock(ConcurrentMap.class);
       Cache<RegionAndName, String> securityGroupMap = createMock(Cache.class);
       return new CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions(makeKeyPair, credentialsMap,
-               securityGroupMap, OPTIONS_PROVIDER);
+            securityGroupMap, OPTIONS_PROVIDER);
    }
 
    private void replayStrategy(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions strategy) {

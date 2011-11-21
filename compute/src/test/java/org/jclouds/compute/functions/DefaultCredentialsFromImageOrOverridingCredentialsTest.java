@@ -27,19 +27,19 @@ import static org.testng.Assert.assertEquals;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "DefaultCredentialsFromImageOrOverridingCredentialsTest")
+@Test(groups = "unit", testName = "DefaultLoginCredentialsFromImageOrOverridingLoginCredentialsTest")
 public class DefaultCredentialsFromImageOrOverridingCredentialsTest {
    private static final DefaultCredentialsFromImageOrOverridingCredentials fn = new DefaultCredentialsFromImageOrOverridingCredentials();
 
-   public void testWhenCredentialsNotPresentInImageOrTemplateOptionsReturnNull() {
-      Credentials expected = null;
+   public void testWhenLoginCredentialsNotPresentInImageOrTemplateOptionsReturnNull() {
+      LoginCredentials expected = null;
 
       Image image = createMock(Image.class);
       Template template = createMock(Template.class);
@@ -58,15 +58,15 @@ public class DefaultCredentialsFromImageOrOverridingCredentialsTest {
 
    }
 
-   public void testWhenCredentialsNotPresentInImageReturnsOneInTemplateOptions() {
-      Credentials expected = new Credentials("ubuntu", "password");
+   public void testWhenLoginCredentialsNotPresentInImageReturnsOneInTemplateOptions() {
+      LoginCredentials expected = new LoginCredentials("ubuntu", "password", null, false);
 
       Image image = createMock(Image.class);
       Template template = createMock(Template.class);
 
       expect(template.getImage()).andReturn(image);
       expect(image.getDefaultCredentials()).andReturn(null);
-      expect(template.getOptions()).andReturn(TemplateOptions.Builder.overrideCredentialsWith(expected));
+      expect(template.getOptions()).andReturn(TemplateOptions.Builder.overrideLoginCredentials(expected));
 
       replay(template);
       replay(image);
@@ -78,8 +78,8 @@ public class DefaultCredentialsFromImageOrOverridingCredentialsTest {
 
    }
 
-   public void testWhenCredentialsNotPresentInTemplateOptionsReturnsOneInImage() {
-      Credentials expected = new Credentials("ubuntu", "password");
+   public void testWhenLoginCredentialsNotPresentInTemplateOptionsReturnsOneInImage() {
+      LoginCredentials expected = new LoginCredentials("ubuntu", "password", null, false);
 
       Image image = createMock(Image.class);
       Template template = createMock(Template.class);
@@ -98,15 +98,15 @@ public class DefaultCredentialsFromImageOrOverridingCredentialsTest {
 
    }
 
-   public void testWhenCredentialsPresentInImageOverridesIdentityFromCredentialsInTemplateOptions() {
-      Credentials expected = new Credentials("ubuntu", "password");
+   public void testWhenLoginCredentialsPresentInImageOverridesIdentityFromLoginCredentialsInTemplateOptions() {
+      LoginCredentials expected = new LoginCredentials("ubuntu", "password", null, false);
 
       Image image = createMock(Image.class);
       Template template = createMock(Template.class);
 
       expect(template.getImage()).andReturn(image);
-      expect(image.getDefaultCredentials()).andReturn(new Credentials("user", "password"));
-      expect(template.getOptions()).andReturn(TemplateOptions.Builder.overrideLoginUserWith("ubuntu"));
+      expect(image.getDefaultCredentials()).andReturn(new LoginCredentials("user", "password", null, false));
+      expect(template.getOptions()).andReturn(TemplateOptions.Builder.overrideLoginUser("ubuntu"));
 
       replay(template);
       replay(image);
@@ -118,15 +118,15 @@ public class DefaultCredentialsFromImageOrOverridingCredentialsTest {
 
    }
 
-   public void testWhenCredentialsPresentInImageOverridesCredentialFromCredentialsInTemplateOptions() {
-      Credentials expected = new Credentials("ubuntu", "password");
+   public void testWhenLoginCredentialsPresentInImageOverridesCredentialFromLoginCredentialsInTemplateOptions() {
+      LoginCredentials expected = new LoginCredentials("ubuntu", "password", null, false);
 
       Image image = createMock(Image.class);
       Template template = createMock(Template.class);
 
       expect(template.getImage()).andReturn(image);
-      expect(image.getDefaultCredentials()).andReturn(new Credentials("ubuntu", "password2"));
-      expect(template.getOptions()).andReturn(TemplateOptions.Builder.overrideLoginCredentialWith("password"));
+      expect(image.getDefaultCredentials()).andReturn(new LoginCredentials("ubuntu", "password2", null, false));
+      expect(template.getOptions()).andReturn(TemplateOptions.Builder.overrideLoginPassword("password"));
 
       replay(template);
       replay(image);

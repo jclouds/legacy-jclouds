@@ -38,6 +38,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import junit.framework.Assert;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.BlobRequestSigner;
@@ -46,7 +47,6 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
@@ -66,6 +66,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.inject.CreationException;
+import com.google.inject.Module;
 
 /**
  * Test class for {@link FilesystemAsyncBlobStore} class
@@ -95,7 +96,7 @@ public class FilesystemAsyncBlobStoreTest {
         // create context for filesystem container
         Properties prop = new Properties();
         prop.setProperty(FilesystemConstants.PROPERTY_BASEDIR, TestUtils.TARGET_BASE_DIR);
-        context = (BlobStoreContext) new BlobStoreContextFactory().createContext(PROVIDER, "identity", "credential", Collections.EMPTY_LIST, prop);
+        context = (BlobStoreContext) new BlobStoreContextFactory().createContext(PROVIDER, "identity", "credential", Collections.<Module>emptyList(), prop);
         // create a container in the default location
         blobStore = context.getBlobStore();
 

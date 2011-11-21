@@ -31,7 +31,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.impl.ReturnCredentialsBoundToImage;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
@@ -42,7 +42,7 @@ import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
 @Singleton
 public class ParseVAppTemplateDescriptionToGetDefaultLoginCredentials extends ReturnCredentialsBoundToImage {
    @Inject
-   public ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(@Nullable @Named("image") Credentials creds) {
+   public ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(@Nullable @Named("image") LoginCredentials creds) {
       super(creds);
    }
 
@@ -54,7 +54,7 @@ public class ParseVAppTemplateDescriptionToGetDefaultLoginCredentials extends Re
          .compile(".*[Uu]sername: ([a-z]+) ?.*\n[Pp]assword: ([^ \n\r]+) ?\r?\n.*");
 
    @Override
-   public Credentials execute(Object resourceToAuthenticate) {
+   public LoginCredentials apply(Object resourceToAuthenticate) {
       if (creds != null)
          return creds;
       checkNotNull(resourceToAuthenticate);
@@ -62,11 +62,11 @@ public class ParseVAppTemplateDescriptionToGetDefaultLoginCredentials extends Re
       VAppTemplate template = (VAppTemplate) resourceToAuthenticate;
       String search = template.getDescription() != null ? template.getDescription() : template.getName();
       if (search.indexOf("Windows") >= 0) {
-         return new Credentials("Administrator", null);
+         return LoginCredentials.builder().user("Administrator").build();
       } else {
          Matcher matcher = USER_PASSWORD_PATTERN.matcher(search);
          if (matcher.find()) {
-            return new Credentials(matcher.group(1), matcher.group(2));
+            return LoginCredentials.builder().user(matcher.group(1)).password(matcher.group(2)).build();
          } else {
             logger.warn("could not parse username/password for image: " + template.getHref() + "\n" + search);
             return null;

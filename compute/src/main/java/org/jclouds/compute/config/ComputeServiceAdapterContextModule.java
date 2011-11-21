@@ -39,8 +39,8 @@ import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.compute.strategy.impl.AdaptingComputeServiceStrategies;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LoginCredentials;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
@@ -126,7 +126,7 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
 
       @Override
       public Image apply(Image arg0) {
-         Credentials credentials = credsForImage.execute(arg0);
+         LoginCredentials credentials = credsForImage.apply(arg0);
          return credentials != null ? ImageBuilder.fromImage(arg0).defaultCredentials(credentials).build() : arg0;
       }
 

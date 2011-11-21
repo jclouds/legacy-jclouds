@@ -44,7 +44,6 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 
@@ -73,15 +72,12 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
 
    private final Function<Server, String> getImageIdFromServer;
    private final Function<String, Image> findImageForId;
-   private final Map<String, Credentials> credentialStore;
    private final Supplier<Location> locationSupplier;
    private final Function<Device, Volume> deviceToVolume;
 
    @Inject
-   ServerInfoToNodeMetadata(Map<String, Credentials> credentialStore, Function<Server, String> getImageIdFromServer,
-         Function<String, Image> findImageForId, Function<Device, Volume> deviceToVolume,
-         Supplier<Location> locationSupplier) {
-      this.credentialStore = checkNotNull(credentialStore, "credentialStore");
+   ServerInfoToNodeMetadata(Function<Server, String> getImageIdFromServer, Function<String, Image> findImageForId,
+         Function<Device, Volume> deviceToVolume, Supplier<Location> locationSupplier) {
       this.locationSupplier = checkNotNull(locationSupplier, "locationSupplier");
       this.deviceToVolume = checkNotNull(deviceToVolume, "deviceToVolume");
       this.findImageForId = checkNotNull(findImageForId, "findImageForId");
@@ -102,7 +98,6 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
          Image image = findImageForId.apply(imageId);
          if (image != null) {
             builder.operatingSystem(image.getOperatingSystem());
-            builder.adminPassword(image.getAdminPassword());
          }
       }
       builder.hardware(new HardwareBuilder().ids(from.getUuid())
@@ -111,7 +106,6 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
       builder.state(serverStatusToNodeState.get(from.getStatus()));
       builder.publicAddresses(ImmutableSet.<String> of(from.getVnc().getIp()));
       builder.privateAddresses(ImmutableSet.<String> of());
-      builder.credentials(credentialStore.get("node#"+ from.getUuid()));
       return builder.build();
    }
 
@@ -144,8 +138,8 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
    }
 
    /**
-    * When we create the boot drive of the server, by convention we set the name to the image it
-    * came from.
+    * When we create the boot drive of the server, by convention we set the name
+    * to the image it came from.
     * 
     * @author Adrian Cole
     * 

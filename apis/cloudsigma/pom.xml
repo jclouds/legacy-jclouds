@@ -39,7 +39,8 @@
     <test.cloudsigma.identity>FIXME</test.cloudsigma.identity>
     <test.cloudsigma.credential>FIXME</test.cloudsigma.credential>
     <test.cloudsigma.image-id></test.cloudsigma.image-id>
-    <test.cloudsigma.login-user></test.cloudsigma.login-user>
+    <test.cloudsigma.image.login-user></test.cloudsigma.image.login-user>
+    <test.cloudsigma.image.authenticate-sudo></test.cloudsigma.image.authenticate-sudo>
   </properties>
 
   <dependencies>
@@ -97,7 +98,8 @@
                     <test.cloudsigma.identity>${test.cloudsigma.identity}</test.cloudsigma.identity>
                     <test.cloudsigma.credential>${test.cloudsigma.credential}</test.cloudsigma.credential>
                     <test.cloudsigma.image-id>${test.cloudsigma.image-id}</test.cloudsigma.image-id>
-                    <test.cloudsigma.login-user>${test.cloudsigma.login-user}</test.cloudsigma.login-user>
+                    <test.cloudsigma.image.login-user>${test.cloudsigma.image.login-user}</test.cloudsigma.image.login-user>
+                    <test.cloudsigma.image.authenticate-sudo>${test.cloudsigma.image.authenticate-sudo}</test.cloudsigma.image.authenticate-sudo>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

@@ -27,7 +27,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.strategy.impl.ReturnCredentialsBoundToImage;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
@@ -37,12 +37,12 @@ import org.jclouds.vcloud.domain.VAppTemplate;
 @Singleton
 public class GetLoginCredentialsFromGuestConfiguration extends ReturnCredentialsBoundToImage {
    @Inject
-   public GetLoginCredentialsFromGuestConfiguration(@Nullable @Named("image") Credentials creds) {
+   public GetLoginCredentialsFromGuestConfiguration(@Nullable @Named("image") LoginCredentials creds) {
       super(creds);
    }
 
    @Override
-   public Credentials execute(Object resourceToAuthenticate) {
+   public LoginCredentials apply(Object resourceToAuthenticate) {
       if (creds != null)
          return creds;
       checkNotNull(resourceToAuthenticate);

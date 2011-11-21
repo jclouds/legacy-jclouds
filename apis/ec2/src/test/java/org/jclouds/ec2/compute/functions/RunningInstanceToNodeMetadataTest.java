@@ -36,6 +36,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.config.EC2ComputeServiceDependenciesModule;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.domain.InstanceState;
@@ -75,7 +76,7 @@ public class RunningInstanceToNodeMetadataTest {
    @Test
    public void testApplyWhereTagDoesntMatchAndImageHardwareAndLocationNotFoundButCredentialsFound()
             throws UnknownHostException {
-      Credentials creds = new Credentials("root", "abdce");
+      LoginCredentials creds = LoginCredentials.builder().user("root").password("abdce").build();
 
       RunningInstanceToNodeMetadata parser = createNodeParser(ImmutableSet.<Hardware> of(), ImmutableSet
                .<Location> of(), ImmutableSet.<Image> of(), ImmutableMap.<String, Credentials> of(

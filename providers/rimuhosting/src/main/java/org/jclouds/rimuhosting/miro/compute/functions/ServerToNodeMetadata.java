@@ -35,7 +35,6 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.rimuhosting.miro.domain.Server;
@@ -55,7 +54,6 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
    @Resource
    protected Logger logger = Logger.NULL;
-   protected final Map<String, Credentials> credentialStore;
    protected final Supplier<Set<? extends Location>> locations;
    protected final Function<Server, Iterable<String>> getPublicAddresses;
    protected final Map<RunningState, NodeState> runningStateToNodeState;
@@ -73,18 +71,17 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       @Override
       public boolean apply(Image input) {
          return input.getProviderId().equals(instance.getImageId())
-                  && (input.getLocation() == null || input.getLocation().equals(location) || input.getLocation()
-                           .equals(location.getParent()));
+               && (input.getLocation() == null || input.getLocation().equals(location) || input.getLocation().equals(
+                     location.getParent()));
       }
    }
 
    @Inject
    ServerToNodeMetadata(Function<Server, Iterable<String>> getPublicAddresses,
-            @Memoized Supplier<Set<? extends Location>> locations, Map<String, Credentials> credentialStore,
-            Map<RunningState, NodeState> runningStateToNodeState, @Memoized Supplier<Set<? extends Image>> images) {
+         @Memoized Supplier<Set<? extends Location>> locations, Map<RunningState, NodeState> runningStateToNodeState,
+         @Memoized Supplier<Set<? extends Image>> images) {
       this.getPublicAddresses = checkNotNull(getPublicAddresses, "serverStateToNodeState");
       this.locations = checkNotNull(locations, "locations");
-      this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.runningStateToNodeState = checkNotNull(runningStateToNodeState, "serverStateToNodeState");
       this.images = checkNotNull(images, "images");
    }
@@ -102,12 +99,11 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       builder.operatingSystem(parseOperatingSystem(from, location));
       builder.hardware(null);// TODO
       if (from.getBillingData() != null && from.getBillingData().getDateCancelled() != null
-               && RunningState.NOTRUNNING == from.getState())
+            && RunningState.NOTRUNNING == from.getState())
          builder.state(NodeState.TERMINATED);
       else
          builder.state(runningStateToNodeState.get(from.getState()));
       builder.publicAddresses(getPublicAddresses.apply(from));
-      builder.credentials(credentialStore.get("node#" + from.getId()));
       return builder.build();
    }
 

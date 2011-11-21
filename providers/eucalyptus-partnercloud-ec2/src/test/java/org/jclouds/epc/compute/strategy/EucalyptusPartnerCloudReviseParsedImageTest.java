@@ -28,10 +28,10 @@ import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.functions.EC2ImageParser;
 import org.jclouds.ec2.compute.strategy.EC2PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.ec2.domain.Image;
@@ -60,32 +60,53 @@ public class EucalyptusPartnerCloudReviseParsedImageTest {
       Set<org.jclouds.compute.domain.Image> result = convertImages("/eucalyptus_images.xml");
       assertEquals(result.size(), 3);
 
-      assertEquals(Iterables.get(result, 0).toString(), new ImageBuilder().operatingSystem(
-               OperatingSystem.builder().family(OsFamily.DEBIAN).arch("paravirtual").version("6.0").description(
-                        "debian-6.0-x86_64/debian.6-0.x86-64.img.manifest.xml").is64Bit(true).build()).description(
-               "debian-6.0-x86_64/debian.6-0.x86-64.img.manifest.xml")
-               .defaultCredentials(new Credentials("root", null)).id("us-east-1/emi-892C130F").providerId(
-                        "emi-892C130F").location(defaultLocation).userMetadata(
+      assertEquals(
+            Iterables.get(result, 0).toString(),
+            new ImageBuilder()
+                  .operatingSystem(
+                        OperatingSystem.builder().family(OsFamily.DEBIAN).arch("paravirtual").version("6.0")
+                              .description("debian-6.0-x86_64/debian.6-0.x86-64.img.manifest.xml").is64Bit(true)
+                              .build())
+                  .description("debian-6.0-x86_64/debian.6-0.x86-64.img.manifest.xml")
+                  .defaultCredentials(new LoginCredentials("root", null, null, false))
+                  .id("us-east-1/emi-892C130F")
+                  .providerId("emi-892C130F")
+                  .location(defaultLocation)
+                  .userMetadata(
                         ImmutableMap.of("owner", "admin", "rootDeviceType", "instance-store", "virtualizationType",
-                                 "paravirtual", "hypervisor", "xen")).build().toString());
+                              "paravirtual", "hypervisor", "xen")).build().toString());
 
-      assertEquals(Iterables.get(result, 1).toString(), new ImageBuilder().operatingSystem(
-               OperatingSystem.builder().family(OsFamily.CENTOS).arch("paravirtual").version("5.5").description(
-                        "centos-5.5-x86_64/centos.5-5.x86-64.img.manifest.xml").is64Bit(true).build()).description(
-               "centos-5.5-x86_64/centos.5-5.x86-64.img.manifest.xml")
-               .defaultCredentials(new Credentials("root", null)).id("us-east-1/emi-9B751369").providerId(
-                        "emi-9B751369").location(defaultLocation).userMetadata(
+      assertEquals(
+            Iterables.get(result, 1).toString(),
+            new ImageBuilder()
+                  .operatingSystem(
+                        OperatingSystem.builder().family(OsFamily.CENTOS).arch("paravirtual").version("5.5")
+                              .description("centos-5.5-x86_64/centos.5-5.x86-64.img.manifest.xml").is64Bit(true)
+                              .build())
+                  .description("centos-5.5-x86_64/centos.5-5.x86-64.img.manifest.xml")
+                  .defaultCredentials(new LoginCredentials("root", null, null, false))
+                  .id("us-east-1/emi-9B751369")
+                  .providerId("emi-9B751369")
+                  .location(defaultLocation)
+                  .userMetadata(
                         ImmutableMap.of("owner", "admin", "rootDeviceType", "instance-store", "virtualizationType",
-                                 "paravirtual", "hypervisor", "xen")).build().toString());
+                              "paravirtual", "hypervisor", "xen")).build().toString());
 
-      assertEquals(Iterables.get(result, 2).toString(), new ImageBuilder().operatingSystem(
-               OperatingSystem.builder().family(OsFamily.UBUNTU).arch("paravirtual").version("10.04").description(
-                        "ubuntu-10.04-x86_64/ubuntu.10-04.x86-64.img.manifest.xml").is64Bit(true).build()).description(
-               "ubuntu-10.04-x86_64/ubuntu.10-04.x86-64.img.manifest.xml").defaultCredentials(
-               new Credentials("root", null)).id("us-east-1/emi-E0641459").providerId("emi-E0641459").location(
-               defaultLocation).userMetadata(
-               ImmutableMap.of("owner", "admin", "rootDeviceType", "instance-store", "virtualizationType",
-                        "paravirtual", "hypervisor", "xen")).build().toString());
+      assertEquals(
+            Iterables.get(result, 2).toString(),
+            new ImageBuilder()
+                  .operatingSystem(
+                        OperatingSystem.builder().family(OsFamily.UBUNTU).arch("paravirtual").version("10.04")
+                              .description("ubuntu-10.04-x86_64/ubuntu.10-04.x86-64.img.manifest.xml").is64Bit(true)
+                              .build())
+                  .description("ubuntu-10.04-x86_64/ubuntu.10-04.x86-64.img.manifest.xml")
+                  .defaultCredentials(new LoginCredentials("root", null, null, false))
+                  .id("us-east-1/emi-E0641459")
+                  .providerId("emi-E0641459")
+                  .location(defaultLocation)
+                  .userMetadata(
+                        ImmutableMap.of("owner", "admin", "rootDeviceType", "instance-store", "virtualizationType",
+                              "paravirtual", "hypervisor", "xen")).build().toString());
 
    }
 

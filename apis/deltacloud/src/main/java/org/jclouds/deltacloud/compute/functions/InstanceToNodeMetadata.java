@@ -39,7 +39,6 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.deltacloud.domain.Instance;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 
@@ -56,16 +55,15 @@ import com.google.common.collect.Iterables;
 public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> {
 
    public static final Map<Instance.State, NodeState> instanceToNodeState = ImmutableMap
-            .<Instance.State, NodeState> builder().put(Instance.State.STOPPED, NodeState.SUSPENDED).put(
-                     Instance.State.RUNNING, NodeState.RUNNING).put(Instance.State.PENDING, NodeState.PENDING).put(
-                     Instance.State.UNRECOGNIZED, NodeState.UNRECOGNIZED).put(Instance.State.SHUTTING_DOWN,
-                     NodeState.PENDING).put(Instance.State.START, NodeState.PENDING).build();
+         .<Instance.State, NodeState> builder().put(Instance.State.STOPPED, NodeState.SUSPENDED)
+         .put(Instance.State.RUNNING, NodeState.RUNNING).put(Instance.State.PENDING, NodeState.PENDING)
+         .put(Instance.State.UNRECOGNIZED, NodeState.UNRECOGNIZED).put(Instance.State.SHUTTING_DOWN, NodeState.PENDING)
+         .put(Instance.State.START, NodeState.PENDING).build();
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   protected final Map<String, Credentials> credentialStore;
    protected final Supplier<Set<? extends Location>> locations;
    protected final Supplier<Set<? extends Image>> images;
    protected final Supplier<Set<? extends Hardware>> hardwares;
@@ -137,10 +135,8 @@ public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> 
    }
 
    @Inject
-   InstanceToNodeMetadata(Map<String, Credentials> credentialStore,
-            @Memoized Supplier<Set<? extends Location>> locations, @Memoized Supplier<Set<? extends Image>> images,
-            @Memoized Supplier<Set<? extends Hardware>> hardwares) {
-      this.credentialStore = checkNotNull(credentialStore, "credentialStore");
+   InstanceToNodeMetadata(@Memoized Supplier<Set<? extends Location>> locations,
+         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwares) {
       this.images = checkNotNull(images, "images");
       this.locations = checkNotNull(locations, "locations");
       this.hardwares = checkNotNull(hardwares, "hardwares");
@@ -159,7 +155,6 @@ public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> 
       builder.state(instanceToNodeState.get(from.getState()));
       builder.publicAddresses(from.getPublicAddresses());
       builder.privateAddresses(from.getPrivateAddresses());
-      builder.credentials(credentialStore.get(from.getHref().toASCIIString()));
       return builder.build();
    }
 }

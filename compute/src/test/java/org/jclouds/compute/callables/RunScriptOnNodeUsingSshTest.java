@@ -26,7 +26,7 @@ import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.scriptbuilder.statements.login.UserAdd;
 import org.jclouds.ssh.SshClient;
@@ -38,104 +38,98 @@ import com.google.common.base.Function;
 /**
  * @author Adam Lowe
  */
-@Test(groups={"unit"}, singleThreaded = true)
-public class RunScriptOnNodeUsingSshTest  {
-    private SshClient sshClient;
-    private NodeMetadata node;
-    private Function<NodeMetadata, SshClient> sshFactory;
+@Test(groups = { "unit" }, singleThreaded = true)
+public class RunScriptOnNodeUsingSshTest {
+   private SshClient sshClient;
+   private NodeMetadata node;
+   private Function<NodeMetadata, SshClient> sshFactory;
 
-    @BeforeMethod(groups={"unit"})
-    public void init() {
-        sshClient = createMock(SshClient.class);
-        sshFactory = new Function<NodeMetadata, SshClient>() {
-            @Override
-            public SshClient apply(@Nullable NodeMetadata nodeMetadata) {
-                return sshClient;
-            }
-        };
-        node = createMock(NodeMetadata.class);
-        expect(node.getCredentials()).andReturn(new Credentials("tester", "notalot"));
-        expect(node.getAdminPassword()).andReturn(null).atLeastOnce();
-        replay(node);
-    }
+   @BeforeMethod(groups = { "unit" })
+   public void init() {
+      sshClient = createMock(SshClient.class);
+      sshFactory = new Function<NodeMetadata, SshClient>() {
+         @Override
+         public SshClient apply(@Nullable NodeMetadata nodeMetadata) {
+            return sshClient;
+         }
+      };
+      node = createMock(NodeMetadata.class);
+      expect(node.getCredentials()).andReturn(new LoginCredentials("tester", "notalot", null, false)).atLeastOnce();
+      replay(node);
+   }
 
-    public void simpleTest() {
-        RunScriptOnNodeUsingSsh testMe = new RunScriptOnNodeUsingSsh(sshFactory, node, exec("echo $USER\necho $USER"),
-                wrapInInitScript(false).runAsRoot(false));
+   public void simpleTest() {
+      RunScriptOnNodeUsingSsh testMe = new RunScriptOnNodeUsingSsh(sshFactory, node, exec("echo $USER\necho $USER"),
+            wrapInInitScript(false).runAsRoot(false));
 
-        testMe.init();
+      testMe.init();
 
-        sshClient.connect();
-        expect(sshClient.getUsername()).andReturn("tester");
-        expect(sshClient.getHostAddress()).andReturn("somewhere.example.com");
-        expect(sshClient.exec("echo $USER\n" +
-            "echo $USER\n")).andReturn(new ExecResponse("tester\ntester\n", null, 0));
-        sshClient.disconnect();
-        replay(sshClient);
+      sshClient.connect();
+      expect(sshClient.getUsername()).andReturn("tester");
+      expect(sshClient.getHostAddress()).andReturn("somewhere.example.com");
+      expect(sshClient.exec("echo $USER\n" + "echo $USER\n")).andReturn(new ExecResponse("tester\ntester\n", null, 0));
+      sshClient.disconnect();
+      replay(sshClient);
 
-        testMe.call();
-    }
+      testMe.call();
+   }
 
-    public void simpleRootTest() {
-        RunScriptOnNodeUsingSsh testMe = new RunScriptOnNodeUsingSsh(sshFactory, node, exec("echo $USER\necho $USER"),
-                wrapInInitScript(false).runAsRoot(true));
+   public void simpleRootTest() {
+      RunScriptOnNodeUsingSsh testMe = new RunScriptOnNodeUsingSsh(sshFactory, node, exec("echo $USER\necho $USER"),
+            wrapInInitScript(false).runAsRoot(true));
 
-        testMe.init();
+      testMe.init();
 
-        sshClient.connect();
-        expect(sshClient.getUsername()).andReturn("tester");
-        expect(sshClient.getHostAddress()).andReturn("somewhere.example.com");
-        expect(sshClient.exec("sudo sh <<'RUN_SCRIPT_AS_ROOT_SSH'\n" +
-                "echo $USER\n" +
-                "echo $USER\n" +
-                "RUN_SCRIPT_AS_ROOT_SSH\n")).andReturn(new ExecResponse("root\nroot\n", null, 0));
-        sshClient.disconnect();
-        replay(sshClient);
+      sshClient.connect();
+      expect(sshClient.getUsername()).andReturn("tester");
+      expect(sshClient.getHostAddress()).andReturn("somewhere.example.com");
+      expect(
+            sshClient.exec("sudo sh <<'RUN_SCRIPT_AS_ROOT_SSH'\n" + "echo $USER\n" + "echo $USER\n"
+                  + "RUN_SCRIPT_AS_ROOT_SSH\n")).andReturn(new ExecResponse("root\nroot\n", null, 0));
+      sshClient.disconnect();
+      replay(sshClient);
 
-        testMe.call();
-    }
+      testMe.call();
+   }
 
-    public void simpleRootTestWithSudoPassword() {
-        node = createMock(NodeMetadata.class);
-        expect(node.getCredentials()).andReturn(new Credentials("tester", "notalot"));
-        expect(node.getAdminPassword()).andReturn("testpassword!").atLeastOnce();
-        replay(node);
-        RunScriptOnNodeUsingSsh testMe = new RunScriptOnNodeUsingSsh(sshFactory, node, exec("echo $USER\necho $USER"),
-                wrapInInitScript(false).runAsRoot(true));
-        testMe.init();
+   public void simpleRootTestWithSudoPassword() {
+      node = createMock(NodeMetadata.class);
+      expect(node.getCredentials()).andReturn(new LoginCredentials("tester", "testpassword!", null, true))
+            .atLeastOnce();
+      replay(node);
+      RunScriptOnNodeUsingSsh testMe = new RunScriptOnNodeUsingSsh(sshFactory, node, exec("echo $USER\necho $USER"),
+            wrapInInitScript(false).runAsRoot(true));
+      testMe.init();
 
-        sshClient.connect();
-        expect(sshClient.getUsername()).andReturn("tester");
-        expect(sshClient.getHostAddress()).andReturn("somewhere.example.com");
-        expect(sshClient.exec("sudo -S sh <<'RUN_SCRIPT_AS_ROOT_SSH'\n" +
-                "testpassword!\n" +
-                "echo $USER\n" +
-                "echo $USER\n" +
-                "RUN_SCRIPT_AS_ROOT_SSH\n")).andReturn(new ExecResponse("root\nroot\n", null, 0));
-        sshClient.disconnect();
-        replay(sshClient);
+      sshClient.connect();
+      expect(sshClient.getUsername()).andReturn("tester");
+      expect(sshClient.getHostAddress()).andReturn("somewhere.example.com");
+      expect(
+            sshClient.exec("sudo -S sh <<'RUN_SCRIPT_AS_ROOT_SSH'\n" + "testpassword!\n" + "echo $USER\n"
+                  + "echo $USER\n" + "RUN_SCRIPT_AS_ROOT_SSH\n")).andReturn(new ExecResponse("root\nroot\n", null, 0));
+      sshClient.disconnect();
+      replay(sshClient);
 
-        testMe.call();
-    }
+      testMe.call();
+   }
 
-    public void testUserAddAsRoot() {
-        RunScriptOnNodeUsingSsh testMe = new RunScriptOnNodeUsingSsh(sshFactory, node,
-                UserAdd.builder().login("testuser").build(),
-                wrapInInitScript(false).runAsRoot(true).overrideLoginCredentialWith("test"));
+   public void testUserAddAsRoot() {
+      RunScriptOnNodeUsingSsh testMe = new RunScriptOnNodeUsingSsh(sshFactory, node, UserAdd.builder()
+            .login("testuser").build(), wrapInInitScript(false).runAsRoot(true).overrideLoginPassword("test"));
 
-        testMe.init();
+      testMe.init();
 
-        sshClient.connect();
-        expect(sshClient.getUsername()).andReturn("tester");
-        expect(sshClient.getHostAddress()).andReturn("somewhere.example.com");
-        expect(sshClient.exec("sudo sh <<'RUN_SCRIPT_AS_ROOT_SSH'\n" +
-                "mkdir -p /home/users\n" +
-                "useradd -s /bin/bash -m  -d /home/users/testuser testuser\n" +
-                "chown -R testuser /home/users/testuser\n" +
-                "RUN_SCRIPT_AS_ROOT_SSH\n")).andReturn(new ExecResponse("done", null, 0));
-        sshClient.disconnect();
-        replay(sshClient);
+      sshClient.connect();
+      expect(sshClient.getUsername()).andReturn("tester");
+      expect(sshClient.getHostAddress()).andReturn("somewhere.example.com");
+      expect(
+            sshClient.exec("sudo sh <<'RUN_SCRIPT_AS_ROOT_SSH'\n" + "mkdir -p /home/users\n"
+                  + "useradd -s /bin/bash -m  -d /home/users/testuser testuser\n"
+                  + "chown -R testuser /home/users/testuser\n" + "RUN_SCRIPT_AS_ROOT_SSH\n")).andReturn(
+            new ExecResponse("done", null, 0));
+      sshClient.disconnect();
+      replay(sshClient);
 
-        testMe.call();
-    }
+      testMe.call();
+   }
 }

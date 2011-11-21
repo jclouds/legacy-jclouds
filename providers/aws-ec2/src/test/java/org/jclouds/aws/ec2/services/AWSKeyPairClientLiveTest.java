@@ -48,7 +48,7 @@ import org.jclouds.compute.ComputeTestUtils;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
@@ -141,12 +141,12 @@ public class AWSKeyPairClientLiveTest {
          assertEquals(instance.getKeyName(), "jclouds#" + group);
 
          Map<? extends NodeMetadata, ExecResponse> responses = computeContext.getComputeService()
-                  .runScriptOnNodesMatching(
-                           runningInGroup(group),
-                           exec("echo hello"),
-                           overrideCredentialsWith(
-                                    new Credentials(first.getCredentials().identity, keyPair.get("private")))
-                                    .wrapInInitScript(false).runAsRoot(false));
+               .runScriptOnNodesMatching(
+                     runningInGroup(group),
+                     exec("echo hello"),
+                     overrideCredentialsWith(
+                           LoginCredentials.builder().user(first.getCredentials().identity)
+                                 .privateKey(keyPair.get("private")).build()).wrapInInitScript(false).runAsRoot(false));
 
          ExecResponse hello = getOnlyElement(responses.values());
          assertEquals(hello.getOutput().trim(), "hello");
@@ -223,7 +223,7 @@ public class AWSKeyPairClientLiveTest {
 
    protected void checkKeyPair(String keyName, KeyPair keyPair) {
       assertNotNull(keyPair);
-      assertNotNull(keyPair.getKeyFingerprint());
+      assertNotNull(keyPair.getSha1OfPrivateKey());
       assertEquals(keyPair.getKeyName(), keyName);
 
       Set<KeyPair> twoResults = client.describeKeyPairsInRegion(null, keyName);
@@ -231,7 +231,7 @@ public class AWSKeyPairClientLiveTest {
       assertEquals(twoResults.size(), 1);
       KeyPair listPair = twoResults.iterator().next();
       assertEquals(listPair.getKeyName(), keyPair.getKeyName());
-      assertEquals(listPair.getKeyFingerprint(), keyPair.getKeyFingerprint());
+      assertEquals(listPair.getSha1OfPrivateKey(), keyPair.getSha1OfPrivateKey());
    }
 
    protected AWSRunningInstance getInstance(AWSInstanceClient instanceClient, String id) {

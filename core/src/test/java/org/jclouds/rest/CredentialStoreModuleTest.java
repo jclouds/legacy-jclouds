@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.jclouds.crypto.PemsTest;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.CopyInputStreamInputSupplierMap;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
@@ -60,7 +61,7 @@ public class CredentialStoreModuleTest {
    public void deleteObject(String identity, String credential) throws InterruptedException, IOException {
       Injector injector = createInjector();
       Map<String, InputStream> map = getMap(injector);
-      check(map, getStore(injector), "i-20312", identity, credential);
+      check(map, getStore(injector), "i-20312", new Credentials(identity, credential));
    }
 
    public void testProvidedMapWithValue() throws IOException {
@@ -68,8 +69,8 @@ public class CredentialStoreModuleTest {
             new ConcurrentHashMap<String, InputSupplier<InputStream>>());
 
       map.put("test", new ByteArrayInputStream(json.toJson(new Credentials("user", "pass")).getBytes()));
-      checkConsistent(map, getStore(createInjectorWithProvidedMap(map)), "test", "user", "pass");
-      checkConsistent(map, getStore(createInjectorWithProvidedMap(map)), "test", "user", "pass");
+      checkConsistent(map, getStore(createInjectorWithProvidedMap(map)), "test", new Credentials("user", "pass"));
+      checkConsistent(map, getStore(createInjectorWithProvidedMap(map)), "test", new Credentials("user", "pass"));
       remove(map, getStore(createInjectorWithProvidedMap(map)), "test");
 
    }
@@ -84,7 +85,7 @@ public class CredentialStoreModuleTest {
       Map<String, Credentials> store = getStore(injector);
 
       for (int i = 0; i < 10; i++)
-         check(map, store, "test" + i, "user" + i, "pass" + i);
+         check(map, store, "test" + i, new Credentials("user" + i, "pass" + i));
 
    }
 
@@ -92,9 +93,9 @@ public class CredentialStoreModuleTest {
       Map<String, InputStream> map = new CopyInputStreamInputSupplierMap(
             new ConcurrentHashMap<String, InputSupplier<InputStream>>());
 
-      put(map, getStore(createInjectorWithProvidedMap(map)), "test", "user", "pass");
-      checkConsistent(map, getStore(createInjectorWithProvidedMap(map)), "test", "user", "pass");
-      checkConsistent(map, getStore(createInjectorWithProvidedMap(map)), "test", "user", "pass");
+      put(map, getStore(createInjectorWithProvidedMap(map)), "test", new Credentials("user", "pass"));
+      checkConsistent(map, getStore(createInjectorWithProvidedMap(map)), "test", new Credentials("user", "pass"));
+      checkConsistent(map, getStore(createInjectorWithProvidedMap(map)), "test", new Credentials("user", "pass"));
       remove(map, getStore(createInjectorWithProvidedMap(map)), "test");
 
    }
@@ -102,11 +103,31 @@ public class CredentialStoreModuleTest {
    public void testDefaultConsistentAcrossMultipleInjectors() throws IOException {
       Map<String, InputStream> map = getMap(createInjector());
 
-      put(map, getStore(createInjector()), "test", "user", "pass");
-      checkConsistent(map, getStore(createInjector()), "test", "user", "pass");
-      checkConsistent(map, getStore(createInjector()), "test", "user", "pass");
+      put(map, getStore(createInjector()), "test", new Credentials("user", "pass"));
+      checkConsistent(map, getStore(createInjector()), "test", new Credentials("user", "pass"));
+      checkConsistent(map, getStore(createInjector()), "test", new Credentials("user", "pass"));
       remove(map, getStore(createInjector()), "test");
 
+   }
+
+   public void testLoginConsistentAcrossMultipleInjectorsAndLooksNice() throws IOException {
+      Map<String, InputStream> map = getMap(createInjector());
+      LoginCredentials creds = LoginCredentials.builder().user("user").password("pass").build();
+      put(map, getStore(createInjector()), "test", creds);
+      checkConsistent(map, getStore(createInjector()), "test", creds, "{\"user\":\"user\",\"password\":\"pass\"}");
+      checkConsistent(map, getStore(createInjector()), "test", creds, "{\"user\":\"user\",\"password\":\"pass\"}");
+      remove(map, getStore(createInjector()), "test");
+   }
+
+   public void testLoginConsistentAcrossMultipleInjectorsAndLooksNiceWithSudo() throws IOException {
+      Map<String, InputStream> map = getMap(createInjector());
+      LoginCredentials creds = LoginCredentials.builder().user("user").password("pass").authenticateSudo(true).build();
+      put(map, getStore(createInjector()), "test", creds);
+      checkConsistent(map, getStore(createInjector()), "test", creds,
+            "{\"user\":\"user\",\"password\":\"pass\",\"authenticateSudo\":true}");
+      checkConsistent(map, getStore(createInjector()), "test", creds,
+            "{\"user\":\"user\",\"password\":\"pass\",\"authenticateSudo\":true}");
+      remove(map, getStore(createInjector()), "test");
    }
 
    protected Map<String, Credentials> getStore(Injector injector) {
@@ -127,10 +148,10 @@ public class CredentialStoreModuleTest {
       return Guice.createInjector(new CredentialStoreModule(), new GsonModule());
    }
 
-   protected void check(Map<String, InputStream> map, Map<String, Credentials> store, String key, String identity,
-         String credential) throws IOException {
-      put(map, store, key, identity, credential);
-      checkConsistent(map, store, key, identity, credential);
+   protected void check(Map<String, InputStream> map, Map<String, Credentials> store, String key, Credentials creds)
+         throws IOException {
+      put(map, store, key, creds);
+      checkConsistent(map, store, key, creds);
       remove(map, store, key);
    }
 
@@ -143,26 +164,29 @@ public class CredentialStoreModuleTest {
    }
 
    protected void checkConsistent(Map<String, InputStream> map, Map<String, Credentials> store, String key,
-         String identity, String credential) throws IOException {
+         Credentials creds) throws IOException {
+      checkConsistent(map, store, key, creds, json.toJson(creds));
+   }
+
+   protected void checkConsistent(Map<String, InputStream> map, Map<String, Credentials> store, String key,
+         Credentials creds, String expected) throws IOException {
       assertEquals(store.size(), 1);
       assertEquals(map.size(), 1);
       // checkRepeatedRead
-      assertEquals(store.get(key), new Credentials(identity, credential));
-      assertEquals(store.get(key), new Credentials(identity, credential));
+      assertEquals(store.get(key), creds);
+      assertEquals(store.get(key), creds);
       // checkRepeatedRead
-      checkToJson(map, key, identity, credential);
-      checkToJson(map, key, identity, credential);
+      checkToJson(map, key, expected);
+      checkToJson(map, key, expected);
    }
 
-   protected void checkToJson(Map<String, InputStream> map, String key, String identity, String credential)
-         throws IOException {
-      assertEquals(Strings2.toStringAndClose(map.get(key)), json.toJson(new Credentials(identity, credential)));
+   protected void checkToJson(Map<String, InputStream> map, String key, String expected) throws IOException {
+      assertEquals(Strings2.toStringAndClose(map.get(key)), expected);
    }
 
-   protected void put(Map<String, InputStream> map, Map<String, Credentials> store, String key, String identity,
-         String credential) {
+   protected void put(Map<String, InputStream> map, Map<String, Credentials> store, String key, Credentials creds) {
       assertEquals(store.size(), 0);
       assertEquals(map.size(), 0);
-      store.put(key, new Credentials(identity, credential));
+      store.put(key, creds);
    }
 }

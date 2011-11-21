@@ -28,6 +28,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 
 /**
@@ -36,23 +37,28 @@ import org.jclouds.javax.annotation.Nullable;
 @Singleton
 public class ReturnCredentialsBoundToImage implements PopulateDefaultLoginCredentialsForImageStrategy {
 
-   protected final Credentials creds;
+   protected final LoginCredentials creds;
 
    @Inject
-   public ReturnCredentialsBoundToImage(@Nullable @Named("image") Credentials creds) {
+   public ReturnCredentialsBoundToImage(@Nullable @Named("image") LoginCredentials creds) {
       this.creds = creds;
    }
 
    @Override
-   public Credentials execute(Object resourceToAuthenticate) {
+   public LoginCredentials apply(Object resourceToAuthenticate) {
       checkState(resourceToAuthenticate instanceof Image, "this is only valid for images");
       if (creds != null)
          return creds;
       Image image = Image.class.cast(resourceToAuthenticate);
       if (image.getOperatingSystem() != null && OsFamily.WINDOWS.equals(image.getOperatingSystem().getFamily())) {
-         return new Credentials("Administrator", null);
+         return LoginCredentials.builder().user("Administrator").build();
       } else {
-         return new Credentials("root", null);
+         return LoginCredentials.builder().user("root").build();
       }
+   }
+
+   @Override
+   public Credentials execute(Object resourceToAuthenticate) {
+      return apply(resourceToAuthenticate);
    }
 }

@@ -27,8 +27,8 @@ import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OperatingSystem.Builder;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LoginCredentials;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -59,9 +59,10 @@ public class PreinstalledDiskToImage implements Function<DriveInfo, Image> {
       builder.name(drive.getName()).description(description)
             .is64Bit(drive.getBits() != null ? drive.getBits() == 64 : parsed.is64Bit).version(parsed.version)
             .family(parsed.family);
-      return new ImageBuilder().ids(drive.getUuid()).adminPassword("cloudsigma")
+      return new ImageBuilder().ids(drive.getUuid())
             .userMetadata(ImmutableMap.<String, String> of("size", drive.getSize() / 1024 / 1024 / 1024 + ""))
-            .defaultCredentials(new Credentials("cloudsigma", null)).location(locationSupplier.get())
-            .name(drive.getName()).description(description).operatingSystem(builder.build()).version("").build();
+            .defaultCredentials(new LoginCredentials("cloudsigma", "cloudsigma", null, true))
+            .location(locationSupplier.get()).name(drive.getName()).description(description)
+            .operatingSystem(builder.build()).version("").build();
    }
 }

@@ -33,6 +33,7 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.internal.PersistNodeCredentials;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.testng.annotations.Test;
 
@@ -83,7 +84,7 @@ public class PersistNodeCredentialsTest {
    public void testRefreshCredentialsForNodeWhenStatementIsNullSameCredentialsAndDoesCache() {
       @SuppressWarnings("unchecked")
       Map<String, Credentials> credstore = createMock(Map.class);
-      Credentials credentials = createMock(Credentials.class);
+      LoginCredentials credentials = createMock(LoginCredentials.class);
 
       expect(credstore.put("node#id", credentials)).andReturn(null);
 
@@ -102,7 +103,7 @@ public class PersistNodeCredentialsTest {
       Map<String, Credentials> credstore = createMock(Map.class);
 
       AdminAccess statement = createMock(AdminAccess.class);
-      Credentials credentials = createMock(Credentials.class);
+      LoginCredentials credentials = LoginCredentials.builder().user("foo").build();
 
       expect(statement.getAdminCredentials()).andReturn(credentials).atLeastOnce();
       expect(credstore.put("node#id", credentials)).andReturn(null);
@@ -125,7 +126,7 @@ public class PersistNodeCredentialsTest {
       Map<String, Credentials> credstore = createMock(Map.class);
 
       AdminAccess statement = createMock(AdminAccess.class);
-      Credentials credentials = createMock(Credentials.class);
+      LoginCredentials credentials = LoginCredentials.builder().user("foo").build();
       expect(statement.getAdminCredentials()).andReturn(credentials).atLeastOnce();
       expect(credstore.put("node#id", credentials)).andReturn(null);
       expect(credstore.put("node#id", credentials)).andReturn(null); // TODO

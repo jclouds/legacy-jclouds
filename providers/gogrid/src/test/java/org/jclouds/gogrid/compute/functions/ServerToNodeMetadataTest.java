@@ -24,7 +24,6 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
-import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,7 +32,6 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
@@ -58,7 +56,7 @@ public class ServerToNodeMetadataTest {
 
    @SuppressWarnings("unchecked")
    @Test
-   public void testApplySetsTagFromNameAndCredentialsFromName() throws UnknownHostException {
+   public void testApplySetsTagFromNameAndCredentialsFromName() {
 
       Map<ServerState, NodeState> serverStateToNodeState = createMock(Map.class);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
@@ -77,9 +75,6 @@ public class ServerToNodeMetadataTest {
       Location location = new LocationBuilder().scope(LocationScope.ZONE).id("1").description("US-West-1").build();
       Map<String, ? extends Location> locations = ImmutableMap.<String, Location> of("1", location);
 
-      Map<String, Credentials> credentialsMap = createMock(Map.class);
-      expect(credentialsMap.get("node#1000")).andReturn(new Credentials("user", "pass"));
-
       expect(server.getIp()).andReturn(new Ip("127.0.0.1"));
 
       ServerImage image = createMock(ServerImage.class);
@@ -95,9 +90,8 @@ public class ServerToNodeMetadataTest {
       replay(server);
       replay(image);
       replay(jcImage);
-      replay(credentialsMap);
 
-      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, credentialsMap, Suppliers
+      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, Suppliers
                .<Set<? extends Image>> ofInstance(images), Suppliers
                .<Set<? extends Hardware>> ofInstance(GoGridHardwareSupplier.H_ALL), Suppliers
                .<Map<String, ? extends Location>> ofInstance(locations));
@@ -106,11 +100,9 @@ public class ServerToNodeMetadataTest {
       assertEquals(metadata.getLocation(), location);
       assertEquals(metadata.getImageId(), "2000");
       assertEquals(metadata.getGroup(), "group");
-      assertEquals(metadata.getCredentials(), new Credentials("user", "pass"));
 
       verify(serverStateToNodeState);
       verify(image);
-      verify(credentialsMap);
       verify(server);
       verify(jcImage);
 

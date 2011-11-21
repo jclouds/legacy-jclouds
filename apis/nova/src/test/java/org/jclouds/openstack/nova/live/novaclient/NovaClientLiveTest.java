@@ -18,23 +18,31 @@
  */
 package org.jclouds.openstack.nova.live.novaclient;
 
-import com.google.common.collect.Iterables;
+import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
+import java.io.IOException;
+import java.util.Set;
+
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payload;
 import org.jclouds.net.IPSocket;
-import org.jclouds.openstack.nova.domain.*;
+import org.jclouds.openstack.nova.domain.Flavor;
+import org.jclouds.openstack.nova.domain.Image;
+import org.jclouds.openstack.nova.domain.ImageStatus;
+import org.jclouds.openstack.nova.domain.RebootType;
+import org.jclouds.openstack.nova.domain.Server;
+import org.jclouds.openstack.nova.domain.ServerStatus;
 import org.jclouds.openstack.nova.options.RebuildServerOptions;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.util.Set;
-
-import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
-import static org.testng.Assert.*;
+import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code NovaClient}
