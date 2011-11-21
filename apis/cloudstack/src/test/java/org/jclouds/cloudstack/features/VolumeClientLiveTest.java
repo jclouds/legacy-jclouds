@@ -23,15 +23,19 @@ import static org.testng.AssertJUnit.*;
 
 import java.util.Set;
 
+import com.google.common.base.Function;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Snapshot;
 import org.jclouds.cloudstack.domain.Volume;
 import org.jclouds.cloudstack.domain.Zone;
+import org.jclouds.cloudstack.options.ListVolumesOptions;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+
+import javax.annotation.Nullable;
 
 /**
  * Tests behavior of {@code VolumeClient}
@@ -53,9 +57,54 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    public void testListVolumes() {
-      final Set<Volume> volumes = client.getVolumeClient().listVolumes();
+      Set<Volume> volumes = client.getVolumeClient().listVolumes();
+      assertNotNull(volumes);
+      assertFalse(volumes.isEmpty());
+
       for (Volume volume : volumes) {
          checkVolume(volume);
+      }
+   }
+
+   public void testListVolumesById() {
+      Iterable<Long> volumeIds = Iterables.transform(client.getVolumeClient().listVolumes(), new Function<Volume, Long>() {
+                  public Long apply(Volume input) {
+                      return input.getId();
+                  }
+              });
+      assertNotNull(volumeIds);
+      assertFalse(Iterables.isEmpty(volumeIds));
+
+      for (Long id : volumeIds) {
+         Set<Volume> found = client.getVolumeClient().listVolumes(ListVolumesOptions.Builder.id(id));
+         assertNotNull(found);
+         assertEquals(1, found.size());
+         Volume volume = Iterables.getOnlyElement(found);
+         assertEquals(id.longValue(), volume.getId());
+         checkVolume(volume);
+      }
+   }
+
+   public void testListVolumesNonexistantId() {
+      Set<Volume> found = client.getVolumeClient().listVolumes(ListVolumesOptions.Builder.id(-1));
+      assertNotNull(found);
+      assertTrue(found.isEmpty());
+   }
+
+   public void testGetVolumeById() {
+      Iterable<Long> volumeIds = Iterables.transform(client.getVolumeClient().listVolumes(), new Function<Volume, Long>() {
+                  public Long apply(Volume input) {
+                      return input.getId();
+                  }
+              });
+      assertNotNull(volumeIds);
+      assertFalse(Iterables.isEmpty(volumeIds));
+
+      for (Long id : volumeIds) {
+         Volume found = client.getVolumeClient().getVolume(id);
+         assertNotNull(found);
+         assertEquals(id.longValue(), found.getId());
+         checkVolume(found);
       }
    }
 

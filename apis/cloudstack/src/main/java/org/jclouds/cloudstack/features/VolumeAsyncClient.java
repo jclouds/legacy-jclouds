@@ -29,12 +29,9 @@ import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Volume;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.ListVolumesOptions;
-import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.QueryParams;
-import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 /**
@@ -57,6 +54,17 @@ public interface VolumeAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<Volume>> listVolumes(ListVolumesOptions... options);
+
+   /**
+    * @see VolumeClient#getVolume(long)
+    */
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @QueryParams(keys = "command", values = "listVolumes")
+   @SelectJson("volume")
+   @OnlyElement
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Volume> getVolume(@QueryParam("id") long id);
 
 
    /**
