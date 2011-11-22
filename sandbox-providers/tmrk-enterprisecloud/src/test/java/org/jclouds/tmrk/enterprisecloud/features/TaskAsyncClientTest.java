@@ -52,12 +52,11 @@ public class TaskAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClient
       assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
-
    }
 
    public void testGetTask() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TaskAsyncClient.class.getMethod("getTask", URI.class);
-      HttpRequest httpRequest = processor.createRequest(method, URI.create("https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/tasks/1"));
+      HttpRequest httpRequest = processor.createRequest(method, URI.create("/cloudapi/ecloud/tasks/1"));
 
       assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/tasks/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/vnd.tmrk.cloud.task\nx-tmrk-version: 2011-07-01\n");
@@ -67,7 +66,20 @@ public class TaskAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClient
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
+   }
 
+   public void testGetTasksByVirtualMachine() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TaskAsyncClient.class.getMethod("getTasksByVirtualMachine", URI.class);
+      HttpRequest httpRequest = processor.createRequest(method, URI.create("/cloudapi/ecloud/tasks/virtualmachines/5504"));
+
+      assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/tasks/virtualmachines/5504 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/vnd.tmrk.cloud.task; type=collection\nx-tmrk-version: 2011-07-01\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
    }
 
    @Override

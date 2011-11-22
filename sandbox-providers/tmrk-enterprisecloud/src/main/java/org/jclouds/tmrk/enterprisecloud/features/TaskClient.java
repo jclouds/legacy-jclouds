@@ -52,6 +52,14 @@ public interface TaskClient {
     * 
     * @return the task or null if not found
     */
-   Task getTask(URI taskId);
+   Task getTask(URI taskUri);
+
+   /**
+    * The Get Tasks by Virtual Machine call returns information regarding tasks
+    * for a specified virtual machine in an environment.
+    * @param uri The uri corresponding to the tasks. e.g. /cloudapi/ecloud/tasks/virtualmachines/{id}
+    * @return Tasks
+    */
+   Tasks getTasksByVirtualMachine(URI uri);
 
 }
