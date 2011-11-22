@@ -34,15 +34,15 @@ import com.google.common.base.Function;
 public class AttachMediumToMachineIfNotAlreadyAttached implements Function<IMachine, Void> {
 
    private String controllerIDE;
-   private IMedium hardDisk;
+   private IMedium medium;
    private int controllerPort;
    private int device;
    private DeviceType deviceType;
 
-   public AttachMediumToMachineIfNotAlreadyAttached(String controllerIDE, IMedium hardDisk, int controllerPort,
+   public AttachMediumToMachineIfNotAlreadyAttached(String controllerIDE, IMedium medium, int controllerPort,
          int device, DeviceType deviceType) {
       this.controllerIDE = controllerIDE;
-      this.hardDisk = hardDisk;
+      this.medium = medium;
       this.controllerPort = controllerPort;
       this.device = device;
       this.deviceType = deviceType;
@@ -50,9 +50,8 @@ public class AttachMediumToMachineIfNotAlreadyAttached implements Function<IMach
 
    @Override
    public Void apply(@Nullable IMachine machine) {
-      // Create and attach medium
       try {
-         machine.attachDevice(controllerIDE, controllerPort, device, deviceType, hardDisk);
+         machine.attachDevice(controllerIDE, controllerPort, device, deviceType, medium);
          machine.saveSettings();
       } catch (VBoxException e) {
          if (!alreadyAttached(e))
@@ -62,7 +61,7 @@ public class AttachMediumToMachineIfNotAlreadyAttached implements Function<IMach
    }
 
    private boolean alreadyAttached(VBoxException e) {
-      return e.getMessage().indexOf("is already attached to port") != -1;
+      return e.getMessage().contains("is already attached to port");
    }
 
 }
