@@ -29,6 +29,7 @@ import static org.jclouds.cloudstack.predicates.NetworkPredicates.supportsStatic
 import static org.jclouds.cloudstack.predicates.TemplatePredicates.isReady;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
@@ -214,9 +215,11 @@ public class CloudStackComputeServiceAdapter implements
       long guestId = Long.parseLong(id);
       Long job = client.getVirtualMachineClient().destroyVirtualMachine(guestId);
       boolean completed = jobComplete.apply(job);
-      IPForwardingRule forwardingRule = client.getNATClient().getIPForwardingRuleForVirtualMachine(guestId);
-      if (forwardingRule != null)
-         client.getNATClient().disableStaticNat(forwardingRule.getIPAddressId());
+      Set<IPForwardingRule> forwardingRules = client.getNATClient().getIPForwardingRulesForVirtualMachine(guestId);
+      for(IPForwardingRule rule : forwardingRules) {
+         job = client.getNATClient().deleteIPForwardingRule(rule.getId());
+         jobComplete.apply(job);
+      }
    }
 
    @Override
