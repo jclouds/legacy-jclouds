@@ -62,4 +62,13 @@ public interface TaskAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Task> getTask(@EndpointParam URI taskId);
 
+   /**
+    * @see TaskClient#getTasksByVirtualMachine
+    */
+   @GET
+   @Consumes("application/vnd.tmrk.cloud.task; type=collection")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Tasks> getTasksByVirtualMachine(@EndpointParam URI uri);
+
 }
