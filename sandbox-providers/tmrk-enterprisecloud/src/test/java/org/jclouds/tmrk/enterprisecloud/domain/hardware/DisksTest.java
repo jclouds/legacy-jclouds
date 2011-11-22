@@ -18,7 +18,7 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain.hardware;
 
-import org.jclouds.tmrk.enterprisecloud.domain.Size;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -39,13 +39,13 @@ public class DisksTest {
 
    @BeforeMethod()
    public void setUp() throws URISyntaxException {
-      disk = VirtualDisk.builder().index(0).name("test disk").size(Size.builder().value(1).unit("GB").build()).build();
+      disk = VirtualDisk.builder().index(0).name("test disk").size(ResourceCapacity.builder().value(1).unit("GB").build()).build();
       disks = Disks.builder().addDisk(disk).build();
    }
 
    @Test
    public void testAddDisk() throws URISyntaxException {
-      VirtualDisk disk2 = VirtualDisk.builder().index(1).name("test disk 1").size(Size.builder().value(1).unit("GB").build()).build();
+      VirtualDisk disk2 = VirtualDisk.builder().index(1).name("test disk 1").size(ResourceCapacity.builder().value(1).unit("GB").build()).build();
       Disks twoDisks = disks.toBuilder().addDisk(disk2).build();
       Set<VirtualDisk> virtualDisks = twoDisks.getVirtualDisks();
 

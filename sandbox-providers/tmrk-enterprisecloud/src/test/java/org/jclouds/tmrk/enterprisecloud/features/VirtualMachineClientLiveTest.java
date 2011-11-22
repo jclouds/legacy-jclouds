@@ -22,6 +22,7 @@ import com.google.common.collect.Iterables;
 import org.jclouds.tmrk.enterprisecloud.domain.network.AssignedIpAddresses;
 import org.jclouds.tmrk.enterprisecloud.domain.network.DeviceNetwork;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachine;
+import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachineConfigurationOptions;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachines;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -30,11 +31,12 @@ import java.net.URI;
 import java.util.Set;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 /**
  * Tests behavior of {@code VirtualMachineClient}
- * 
+ * TODO: don't hard-code uri's it should be possible to determine them but that means chaining the tests potentially.
  * @author Jason King
  */
 @Test(groups = "live", testName = "VirtualMachineClientLiveTest")
@@ -47,31 +49,31 @@ public class VirtualMachineClientLiveTest extends BaseTerremarkEnterpriseCloudCl
 
    private VirtualMachineClient client;
 
-   @Test
    public void testGetVirtualMachines() throws Exception {
-      // TODO: don't hard-code uri
        VirtualMachines virtualMachines = client.getVirtualMachines(new URI("/cloudapi/ecloud/virtualMachines/computePools/89"));
        for( VirtualMachine vm : virtualMachines.getVirtualMachines()) {
            VirtualMachine virtualMachine = client.getVirtualMachine(vm.getHref());
-           assert null != virtualMachine;
+           assertNotNull(virtualMachine,"virtualMachine should not be null");
            assertEquals(virtualMachine.getStatus(),VirtualMachine.VirtualMachineStatus.DEPLOYED);
        }
    }
 
-   @Test
    public void testGetVirtualMachine() throws Exception {
-      // TODO: don't hard-code uri
        VirtualMachine virtualMachine = client.getVirtualMachine(new URI("/cloudapi/ecloud/virtualMachines/5504"));
-       assert null != virtualMachine;
+       assertNotNull(virtualMachine,"virtualMachine should not be null");
        assertEquals(virtualMachine.getStatus(), VirtualMachine.VirtualMachineStatus.DEPLOYED);
    }
 
-    @Test
    public void testGetAssignedIpAddresses() throws Exception {
         AssignedIpAddresses assignedIpAddresses = client.getAssignedIpAddresses(new URI("/cloudapi/ecloud/virtualMachines/5504/assignedips"));
-        assert null != assignedIpAddresses;
+        assertNotNull(assignedIpAddresses,"assignedIpAddresses should not be null");
         DeviceNetwork network = Iterables.getOnlyElement(assignedIpAddresses.getNetworks().getDeviceNetworks());
         Set<String> ipAddresses = network.getIpAddresses().getIpAddresses();
         assertTrue(ipAddresses.size()>0, "vm has no assigned ip addresses");
-    }
+   }
+
+   public void testGetVirtualMachineConfigurationOptions() throws Exception {
+      VirtualMachineConfigurationOptions virtualMachineConfigurationOptions = client.getVirtualMachineConfigurationOptions(new URI("/cloudapi/ecloud/virtualmachines/5504/configurationoptions"));
+      assertNotNull(virtualMachineConfigurationOptions,"options should not be null");
+   }
 }

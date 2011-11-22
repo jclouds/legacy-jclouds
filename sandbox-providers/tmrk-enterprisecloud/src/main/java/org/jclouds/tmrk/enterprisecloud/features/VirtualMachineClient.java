@@ -21,6 +21,7 @@ package org.jclouds.tmrk.enterprisecloud.features;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.tmrk.enterprisecloud.domain.network.AssignedIpAddresses;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachine;
+import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachineConfigurationOptions;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachines;
 
 import java.net.URI;
@@ -61,5 +62,13 @@ public interface VirtualMachineClient {
      * @return the assigned ip addresses
      */
    AssignedIpAddresses getAssignedIpAddresses(URI uri);
+
+   /**
+    * The Get Virtual Machines Configuration Options call returns information
+    * regarding the configuration options of a specified virtual machine in a compute pool.
+    * @param uri the uri for the configuration options. e.g. /cloudapi/ecloud/virtualmachines/{id}/configurationoptions
+    * @return the configuration options
+    */
+   VirtualMachineConfigurationOptions getVirtualMachineConfigurationOptions(URI uri);
 
 }
