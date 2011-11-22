@@ -108,6 +108,11 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
       }
    }
 
+   public void testGetVolumeNonexistantId() {
+      Volume found = client.getVolumeClient().getVolume(-1);
+      assertNull(found);
+   }
+
    public void testCreateVolumeFromDiskofferingInZoneAndDeleteVolume() {
       // Pick some disk offering
       long diskOfferingId = Iterables.get(client.getOfferingClient().listDiskOfferings(), 0).getId();
