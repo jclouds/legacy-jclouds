@@ -59,9 +59,17 @@ public interface VolumeClient {
    /**
     * List volumes
     *
-    * @return volume list or null if not found
+    * @return volume list, empty if not found
     */
    Set<Volume> listVolumes(ListVolumesOptions... options);
+
+   /**
+    * Get volume by id
+    *
+    * @param id the volume id to retrieve
+    * @return volume or null if not found
+    */
+   Volume getVolume(long id);
 
    /**
     * Deletes a attached disk volume

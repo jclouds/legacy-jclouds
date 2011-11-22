@@ -25,6 +25,7 @@ import com.google.inject.TypeLiteral;
 import org.jclouds.cloudstack.options.ListVolumesOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
@@ -50,6 +51,22 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
 
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testGetVolume() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VolumeAsyncClient.class.getMethod("getVolume", long.class);
+      HttpRequest httpRequest = processor.createRequest(method, 111L);
+
+      assertRequestLineEquals(httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=listVolumes&id=111 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -119,10 +136,10 @@ public class VolumeAsyncClientTest extends BaseCloudStackAsyncClientTest<VolumeA
 
    public void testDeleteVolume() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VolumeAsyncClient.class.getMethod("deleteVolume", long.class);
-      HttpRequest httpRequest = processor.createRequest(method, "jclouds-volume");
+      HttpRequest httpRequest = processor.createRequest(method, 111L);
 
       assertRequestLineEquals(httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=deleteVolume&id=jclouds-volume HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=deleteVolume&id=111 HTTP/1.1");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertSaxResponseParserClassEquals(method, null);
