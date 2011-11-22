@@ -123,7 +123,7 @@ public class Link extends BaseNamedResource<Link> {
 
       @Override
       public Link build() {
-         return new Link(href, name, type, rel);
+         return new Link(href, type, name, rel);
       }
 
       public Builder fromLink(Link in) {

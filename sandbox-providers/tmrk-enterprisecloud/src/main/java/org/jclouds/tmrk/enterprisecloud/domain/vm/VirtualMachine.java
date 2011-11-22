@@ -62,9 +62,9 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
 
    public static class Builder extends BaseNamedResource.Builder<VirtualMachine> {
       //TODO There are some more fields
-      private Links links = new Links();
-      private Actions actions = new Actions();
-      private Tasks tasks = new Tasks();
+      private Links links = Links.builder().build();
+      private Actions actions = Actions.builder().build();
+      private Tasks tasks = Tasks.builder().build();
       private String description;
       private VirtualMachineStatus status;
 
@@ -81,8 +81,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
        * @see VirtualMachine#getLinks
        */
       public Builder links(Set<Link> links) {
-         checkNotNull(links,"links");
-         for(Link link:links) this.links.setLink(link);
+         this.links = Links.builder().links(checkNotNull(links,"links")).build();
          return this;
       }
 
@@ -99,11 +98,9 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
         * @see VirtualMachine#getTasks
         */
        public Builder tasks(Set<Task> tasks) {
-          checkNotNull(tasks,"tasks");
-          for(Task task: tasks) this.tasks.setTask(task);
+          this.tasks = Tasks.builder().tasks(checkNotNull(tasks,"tasks")).build();
           return this;
        }
-
 
        /**
         * @see VirtualMachine#getDescription
@@ -269,13 +266,13 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
    }
 
    @XmlElement(name = "Links", required = true)
-   private Links links = new Links();
+   private Links links = Links.builder().build();
 
    @XmlElement(name = "Tasks", required = true)
-   private Tasks tasks = new Tasks();
+   private Tasks tasks = Tasks.builder().build();
 
    @XmlElement(name = "Actions", required = true)
-   private Actions actions = new Actions();
+   private Actions actions = Actions.builder().build();
 
    @XmlElement(name = "Description", required = true)
    private String description;
@@ -316,6 +313,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
       this.tasks = checkNotNull(tasks, "tasks");
       this.actions = checkNotNull(actions, "actions");
       this.status = checkNotNull(status, "status");
+      this.ipAddresses = checkNotNull(ipAddresses, "ipAddresses");
 
       this.layout = layout;
       this.poweredOn = poweredOn;
@@ -324,7 +322,6 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
       this.customizationPending = customizationPending;
       this.operatingSystem = operatingSystem;
       this.hardwareConfiguation = hardwareConfiguration;
-      this.ipAddresses = checkNotNull(ipAddresses, "ipAddresses");
    }
 
    protected VirtualMachine() {
