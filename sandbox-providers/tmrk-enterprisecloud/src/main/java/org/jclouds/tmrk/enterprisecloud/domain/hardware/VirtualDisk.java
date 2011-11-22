@@ -19,7 +19,7 @@
 package org.jclouds.tmrk.enterprisecloud.domain.hardware;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.tmrk.enterprisecloud.domain.Size;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
 
 import javax.xml.bind.annotation.XmlElement;
 
@@ -44,7 +44,7 @@ public class VirtualDisk {
    public static class Builder {
 
        private String name;
-       private Size size;
+       private ResourceCapacity size;
        private int index;
 
        /**
@@ -58,7 +58,7 @@ public class VirtualDisk {
        /**
         * @see VirtualDisk#getSize
         */
-       public Builder size(Size size) {
+       public Builder size(ResourceCapacity size) {
           this.size = size;
           return this;
        }
@@ -86,12 +86,12 @@ public class VirtualDisk {
    private String name;
 
    @XmlElement(name = "Size", required = false)
-   private Size size;
+   private ResourceCapacity size;
 
    @XmlElement(name = "Index", required = false)
    private int index;
 
-   public VirtualDisk(@Nullable String name, @Nullable Size size, int index) {
+   public VirtualDisk(@Nullable String name, @Nullable ResourceCapacity size, int index) {
        this.name = name;
        this.size = size;
        this.index = index;
@@ -105,7 +105,7 @@ public class VirtualDisk {
         return name;
     }
 
-    public Size getSize() {
+    public ResourceCapacity getSize() {
         return size;
     }
 

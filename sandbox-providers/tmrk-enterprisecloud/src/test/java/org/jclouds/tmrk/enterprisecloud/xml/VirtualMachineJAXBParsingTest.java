@@ -35,18 +35,18 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.BaseRestClientTest;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.tmrk.enterprisecloud.domain.*;
+import org.jclouds.tmrk.enterprisecloud.domain.Layout;
 import org.jclouds.tmrk.enterprisecloud.domain.hardware.HardwareConfiguration;
-import org.jclouds.tmrk.enterprisecloud.domain.hardware.Memory;
 import org.jclouds.tmrk.enterprisecloud.domain.hardware.VirtualDisk;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
 import org.jclouds.tmrk.enterprisecloud.domain.network.AssignedIpAddresses;
 import org.jclouds.tmrk.enterprisecloud.domain.network.DeviceNetwork;
 import org.jclouds.tmrk.enterprisecloud.domain.network.NetworkReference;
 import org.jclouds.tmrk.enterprisecloud.domain.network.VirtualNic;
 import org.jclouds.tmrk.enterprisecloud.domain.software.OperatingSystem;
 import org.jclouds.tmrk.enterprisecloud.domain.software.ToolsStatus;
-import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachine.VirtualMachineStatus;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachine;
+import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachine.VirtualMachineStatus;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachineIpAddresses;
 import org.jclouds.tmrk.enterprisecloud.features.VirtualMachineAsyncClient;
 import org.testng.Assert;
@@ -151,7 +151,7 @@ public class VirtualMachineJAXBParsingTest extends BaseRestClientTest {
    private void assertHardwareConfiguration(HardwareConfiguration hardwareConfiguration) throws Exception {
        assertEquals(1,hardwareConfiguration.getActions().size());
        assertEquals(1,hardwareConfiguration.getProcessorCount());
-       Memory memory = Memory.builder().value(384).unit("MB").build();
+       ResourceCapacity memory = ResourceCapacity.builder().value(384).unit("MB").build();
        assertEquals(memory,hardwareConfiguration.getMemory());
        assertDisks(hardwareConfiguration.getVirtualDisks());
        assertNics(hardwareConfiguration.getVirtualNics());
@@ -159,7 +159,7 @@ public class VirtualMachineJAXBParsingTest extends BaseRestClientTest {
 
    private void assertDisks(Set<VirtualDisk> disks) {
        VirtualDisk disk = VirtualDisk.builder().index(0).name("Hard Disk 1")
-                                     .size(Size.builder().value(10).unit("GB").build())
+                                     .size(ResourceCapacity.builder().value(10).unit("GB").build())
                                      .build();
 
        assertEquals(ImmutableSet.of(disk), disks);
