@@ -313,6 +313,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
       this.tasks = checkNotNull(tasks, "tasks");
       this.actions = checkNotNull(actions, "actions");
       this.status = checkNotNull(status, "status");
+      this.ipAddresses = checkNotNull(ipAddresses, "ipAddresses");
 
       this.layout = layout;
       this.poweredOn = poweredOn;
@@ -321,7 +322,6 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
       this.customizationPending = customizationPending;
       this.operatingSystem = operatingSystem;
       this.hardwareConfiguation = hardwareConfiguration;
-      this.ipAddresses = checkNotNull(ipAddresses, "ipAddresses");
    }
 
    protected VirtualMachine() {
