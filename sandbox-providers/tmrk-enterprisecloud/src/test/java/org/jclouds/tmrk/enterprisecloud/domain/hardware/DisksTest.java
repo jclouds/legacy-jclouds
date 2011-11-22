@@ -16,11 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.tmrk.enterprisecloud.hardware;
+package org.jclouds.tmrk.enterprisecloud.domain.hardware;
 
 import org.jclouds.tmrk.enterprisecloud.domain.Size;
-import org.jclouds.tmrk.enterprisecloud.domain.hardware.Disks;
-import org.jclouds.tmrk.enterprisecloud.domain.hardware.VirtualDisk;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
