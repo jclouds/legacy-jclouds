@@ -183,8 +183,6 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
       client.getVolumeClient().deleteVolume(volume.getId());
    }
 
-   /*
-   // TODO Uncomment this test after SnapshotClient has test coverage.
    public void testCreateVolumeFromSnapshotInZoneAndDeleteVolume() {
       Set<Snapshot> snapshots = client.getSnapshotClient().listSnapshots();
       assertNotNull(snapshots);
@@ -208,7 +206,6 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
       // Delete the volume
       client.getVolumeClient().deleteVolume(volume.getId());
    }
-   */
 
    private void checkVolume(final Volume volume) {
       assertNotNull(volume.getId());

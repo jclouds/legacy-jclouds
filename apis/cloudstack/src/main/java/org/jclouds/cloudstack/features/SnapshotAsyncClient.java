@@ -80,6 +80,7 @@ public interface SnapshotAsyncClient {
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "command", values = "listSnapshots")
+   @SelectJson("snapshot")
    @Unwrap
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<Snapshot>> listSnapshots(ListSnapshotsOptions... options);
@@ -162,5 +163,4 @@ public interface SnapshotAsyncClient {
    @Unwrap
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<SnapshotPolicy>> listSnapshotPolicies(@QueryParam("volumeid") long volumeId, ListSnapshotPoliciesOptions... options);
-
 }
