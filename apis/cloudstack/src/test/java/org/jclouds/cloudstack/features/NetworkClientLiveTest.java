@@ -121,9 +121,9 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
          Logger.getAnonymousLogger().log(Level.SEVERE, "couldn't create a network, skipping test", e);
       } finally {
          if (network != null) {
-            Long jobId = client.getNetworkClient().deleteNetwork(network.getId());
+            Long jobId = adminClient.getNetworkClient().deleteNetwork(network.getId());
             if (jobId != null)
-               jobComplete.apply(jobId);
+               adminJobComplete.apply(jobId);
          }
       }
    }
