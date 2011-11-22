@@ -18,9 +18,8 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.base.Functions;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.TypeLiteral;
+import java.lang.reflect.Method;
+
 import org.jclouds.cloudstack.domain.Snapshot;
 import org.jclouds.cloudstack.domain.SnapshotPolicySchedule;
 import org.jclouds.cloudstack.options.CreateSnapshotOptions;
@@ -29,6 +28,7 @@ import org.jclouds.cloudstack.options.ListSnapshotsOptions;
 import org.jclouds.cloudstack.util.SnapshotPolicySchedules;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
@@ -38,7 +38,9 @@ import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
-import java.lang.reflect.Method;
+import com.google.common.base.Functions;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests the behaviour of SnapshotAsyncClient.
@@ -92,7 +94,7 @@ public class SnapshotAsyncClientTest extends BaseCloudStackAsyncClientTest<Snaps
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
@@ -125,7 +127,7 @@ public class SnapshotAsyncClientTest extends BaseCloudStackAsyncClientTest<Snaps
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
