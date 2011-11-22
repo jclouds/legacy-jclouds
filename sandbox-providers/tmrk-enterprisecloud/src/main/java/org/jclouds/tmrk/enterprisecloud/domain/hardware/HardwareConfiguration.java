@@ -151,7 +151,7 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
    }
 
    @XmlElement(name = "Actions", required = false)
-   private Actions actions = new Actions();
+   private Actions actions = Actions.builder().build();
 
    @XmlElement(name = "ProcessorCount", required = true)
    private int processorCount;
@@ -160,16 +160,15 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
    private Memory memory;
 
    @XmlElement(name = "Disks", required = false)
-   private Disks virtualDisks = new Disks();
+   private Disks virtualDisks = Disks.builder().build();
 
    @XmlElement(name = "Nics", required = false)
-   private Nics virtualNics = new Nics();
+   private Nics virtualNics = Nics.builder().build();
 
    public HardwareConfiguration(Set<Action> actions, int processorCount, @Nullable Memory memory, Set<VirtualDisk> virtualDisks, Set<VirtualNic> virtualNics) {
        this.actions = Actions.builder().actions(checkNotNull(actions, "actions")).build();
-       for( VirtualDisk disk: checkNotNull(virtualDisks, "virtualDisks")) this.virtualDisks.setVirtualDisk(disk);
-       for( VirtualNic virtualNic: checkNotNull(virtualNics, "virtualNics")) this.virtualNics.setVirtualNic(virtualNic);
-
+       this.virtualDisks = Disks.builder().disks(checkNotNull(virtualDisks,"virtualDisks")).build();
+       this.virtualNics = Nics.builder().nics(checkNotNull(virtualNics, "virtualNics")).build();
        this.processorCount = processorCount;
        this.memory = memory;
    }

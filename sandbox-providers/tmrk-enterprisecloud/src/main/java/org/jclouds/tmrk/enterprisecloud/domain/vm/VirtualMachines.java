@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Wraps individual VirtualMachine elements.
  * Needed because parsing is done with JAXB and it does not handle Generic collections
@@ -35,35 +37,74 @@ import java.util.Set;
 @XmlRootElement(name="VirtualMachines")
 public class VirtualMachines {
 
-    private LinkedHashSet<VirtualMachine> virtualMachines = Sets.newLinkedHashSet();
+   @SuppressWarnings("unchecked")
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    @XmlElement(name = "VirtualMachine")
-    void setVirtualMachine(VirtualMachine nic) {
-        this.virtualMachines.add(nic);
-    }
+   public Builder toBuilder() {
+      return new Builder().fromVirtualMachines(this);
+   }
 
-    public Set<VirtualMachine> getVirtualMachines() {
-        return Collections.unmodifiableSet(virtualMachines);
-    }
+   public static class Builder {
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+       private Set<VirtualMachine> virtualMachines = Sets.newLinkedHashSet();
 
-        VirtualMachines vms1 = (VirtualMachines) o;
+       /**
+        * @see VirtualMachines#getVirtualMachines
+        */
+       public Builder virtualMachines(Set<VirtualMachine> virtualMachines) {
+          this.virtualMachines = Sets.newLinkedHashSet(checkNotNull(virtualMachines, "virtualMachines"));
+          return this;
+       }
 
-        if (!virtualMachines.equals(vms1.virtualMachines)) return false;
+       public Builder addVirtualMachine(VirtualMachine virtualMachine) {
+          virtualMachines.add(checkNotNull(virtualMachine,"virtualMachine"));
+          return this;
+       }
 
-        return true;
-    }
+       public VirtualMachines build() {
+           return new VirtualMachines(virtualMachines);
+       }
 
-    @Override
-    public int hashCode() {
-        return virtualMachines.hashCode();
-    }
+       public Builder fromVirtualMachines(VirtualMachines in) {
+         return virtualMachines(in.getVirtualMachines());
+       }
+   }
 
-    public String toString() {
-        return "["+ virtualMachines.toString()+"]";
-    }
+   private VirtualMachines() {
+      //For JAXB and builder use
+   }
+
+   private VirtualMachines(Set<VirtualMachine> virtualMachines) {
+      this.virtualMachines = Sets.newLinkedHashSet(virtualMachines);
+   }
+
+   @XmlElement(name = "VirtualMachine")
+   private LinkedHashSet<VirtualMachine> virtualMachines = Sets.newLinkedHashSet();
+   
+   public Set<VirtualMachine> getVirtualMachines() {
+      return Collections.unmodifiableSet(virtualMachines);
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      VirtualMachines vms1 = (VirtualMachines) o;
+
+      if (!virtualMachines.equals(vms1.virtualMachines)) return false;
+
+      return true;
+   }
+
+   @Override
+   public int hashCode() {
+      return virtualMachines.hashCode();
+   }
+
+   public String toString() {
+      return "["+ virtualMachines.toString()+"]";
+   }
 }

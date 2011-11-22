@@ -25,6 +25,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Wraps individual Link elements.
  * Needed because parsing is done with JAXB and it does not handle Generic collections
@@ -32,36 +34,75 @@ import java.util.Set;
  */
 public class Links {
 
-    private LinkedHashSet<Link> links = Sets.newLinkedHashSet();
+   @SuppressWarnings("unchecked")
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    @XmlElement(name = "Link")
-    public void setLink(Link link) {
-        this.links.add(link);
-    }
+   public Builder toBuilder() {
+      return new Builder().fromLinks(this);
+   }
 
-    public Set<Link> getLinks() {
-        return Collections.unmodifiableSet(links);
-    }
+   public static class Builder {
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+       private Set<Link> links = Sets.newLinkedHashSet();
 
-        Links links1 = (Links) o;
+       /**
+        * @see Links#getLinks
+        */
+       public Builder links(Set<Link> links) {
+          this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
+          return this;
+       }
 
-        if (!links.equals(links1.links)) return false;
+       public Builder addLink(Link link) {
+          links.add(checkNotNull(link,"link"));
+          return this;
+       }
 
-        return true;
-    }
+       public Links build() {
+           return new Links(links);
+       }
 
-    @Override
-    public int hashCode() {
-        return links.hashCode();
-    }
+       public Builder fromLinks(Links in) {
+         return links(in.getLinks());
+       }
+   }
 
-    public String toString() {
-        return "["+ links.toString()+"]";
-    }
+   @XmlElement(name = "Link")
+   private LinkedHashSet<Link> links = Sets.newLinkedHashSet();
+
+   private Links() {
+      //For JAXB
+   }
+
+   private Links(Set<Link> links) {
+      this.links = Sets.newLinkedHashSet(links);
+   }
+
+   public Set<Link> getLinks() {
+      return Collections.unmodifiableSet(links);
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      Links links1 = (Links) o;
+
+      if (!links.equals(links1.links)) return false;
+
+      return true;
+   }
+
+   @Override
+   public int hashCode() {
+      return links.hashCode();
+   }
+
+   public String toString() {
+      return "["+ links.toString()+"]";
+   }
 
 }

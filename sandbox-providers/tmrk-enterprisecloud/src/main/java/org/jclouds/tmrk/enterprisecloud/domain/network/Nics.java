@@ -25,6 +25,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Wraps individual VirtualNic elements.
  * Needed because parsing is done with JAXB and it does not handle Generic collections
@@ -33,36 +35,74 @@ import java.util.Set;
  */
 public class Nics {
 
-    private LinkedHashSet<VirtualNic> nics = Sets.newLinkedHashSet();
+   @SuppressWarnings("unchecked")
+   public static Builder builder() {
+      return new Builder();
+   }
 
-    @XmlElement(name = "Nic")
-    public void setVirtualNic(VirtualNic nic) {
-        this.nics.add(nic);
-    }
+   public Builder toBuilder() {
+      return new Builder().fromNics(this);
+   }
 
-    public Set<VirtualNic> getVirtualNics() {
-        return Collections.unmodifiableSet(nics);
-    }
+   public static class Builder {
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+       private Set<VirtualNic> nics = Sets.newLinkedHashSet();
 
-        Nics nics1 = (Nics) o;
+       /**
+        * @see Nics#getVirtualNics()
+        */
+       public Builder nics(Set<VirtualNic> nics) {
+          this.nics = Sets.newLinkedHashSet(checkNotNull(nics, "nics"));
+          return this;
+       }
 
-        if (!nics.equals(nics1.nics)) return false;
+       public Builder addVirtualNic(VirtualNic nic) {
+          nics.add(checkNotNull(nic,"nic"));
+          return this;
+       }
 
-        return true;
-    }
+       public Nics build() {
+           return new Nics(nics);
+       }
 
-    @Override
-    public int hashCode() {
-        return nics.hashCode();
-    }
+       public Builder fromNics(Nics in) {
+         return nics(in.getVirtualNics());
+       }
+   }
 
-    public String toString() {
-        return "["+ nics.toString()+"]";
-    }
+   private Nics() {
+      //For JAXB and builder use
+   }
 
+   private Nics(Set<VirtualNic> nics) {
+      this.nics = Sets.newLinkedHashSet(nics);
+   }
+
+   @XmlElement(name = "Nic")
+   private LinkedHashSet<VirtualNic> nics = Sets.newLinkedHashSet();
+
+   public Set<VirtualNic> getVirtualNics() {
+      return Collections.unmodifiableSet(nics);
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      Nics nics1 = (Nics) o;
+
+      if (!nics.equals(nics1.nics)) return false;
+
+      return true;
+   }
+
+   @Override
+   public int hashCode() {
+      return nics.hashCode();
+   }
+
+   public String toString() {
+      return "["+ nics.toString()+"]";
+   }
 }
