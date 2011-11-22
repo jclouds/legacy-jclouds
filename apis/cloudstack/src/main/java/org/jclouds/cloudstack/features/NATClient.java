@@ -59,22 +59,22 @@ public interface NATClient {
    IPForwardingRule getIPForwardingRule(long id);
 
    /**
-    * get a specific IPForwardingRule by ipaddress id
+    * get a set of IPForwardingRules by ipaddress id
     * 
     * @param id
     *           IPAddress of rule to get
-    * @return IPForwardingRule or null if not found
+    * @return IPForwardingRule matching query or empty if not found
     */
-   IPForwardingRule getIPForwardingRuleForIPAddress(long id);
+   Set<IPForwardingRule> getIPForwardingRulesForIPAddress(long id);
 
    /**
-    * get a specific IPForwardingRule by virtual machine id
+    * get a set of IPForwardingRules by virtual machine id
     * 
     * @param id
     *           virtual machine of rule to get
-    * @return IPForwardingRule or null if not found
+    * @return IPForwardingRule matching query or empty set if not found
     */
-   IPForwardingRule getIPForwardingRuleForVirtualMachine(long id);
+   Set<IPForwardingRule> getIPForwardingRulesForVirtualMachine(long id);
 
    /**
     * Creates an ip forwarding rule

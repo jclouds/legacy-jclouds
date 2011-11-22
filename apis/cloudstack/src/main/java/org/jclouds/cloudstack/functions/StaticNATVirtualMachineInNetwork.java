@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkState;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.AsyncJob;
@@ -36,6 +37,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.cache.Cache;
 import com.google.inject.assistedinject.Assisted;
+
+import java.util.Set;
 
 /**
  * 
@@ -51,17 +54,17 @@ public class StaticNATVirtualMachineInNetwork implements Function<VirtualMachine
    private final ReuseOrAssociateNewPublicIPAddress reuseOrAssociate;
    private final Network network;
    private final Predicate<Long> jobComplete;
-   private final Cache<Long, IPForwardingRule> getIPForwardingRuleByVirtualMachine;
+   private final Cache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine;
 
    @Inject
    public StaticNATVirtualMachineInNetwork(CloudStackClient client,
          ReuseOrAssociateNewPublicIPAddress reuseOrAssociate, Predicate<Long> jobComplete,
-         Cache<Long, IPForwardingRule> getIPForwardingRuleByVirtualMachine, @Assisted Network network) {
+         Cache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine, @Assisted Network network) {
       this.client = checkNotNull(client, "client");
       this.reuseOrAssociate = checkNotNull(reuseOrAssociate, "reuseOrAssociate");
       this.jobComplete = checkNotNull(jobComplete, "jobComplete");
-      this.getIPForwardingRuleByVirtualMachine = checkNotNull(getIPForwardingRuleByVirtualMachine,
-            "getIPForwardingRuleByVirtualMachine");
+      this.getIPForwardingRulesByVirtualMachine = checkNotNull(getIPForwardingRulesByVirtualMachine,
+            "getIPForwardingRulesByVirtualMachine");
       this.network = checkNotNull(network, "network");
    }
 
@@ -86,7 +89,7 @@ public class StaticNATVirtualMachineInNetwork implements Function<VirtualMachine
       checkState(jobComplete.apply(job.getJobId()), "Timeout creating IP forwarding rule: ", job);
       AsyncJob<IPForwardingRule> response = client.getAsyncJobClient().getAsyncJob(job.getJobId());
       checkState(response.getResult() != null, "No result after creating IP forwarding rule: ", response);
-      getIPForwardingRuleByVirtualMachine.asMap().put(vm.getId(), response.getResult());
+      getIPForwardingRulesByVirtualMachine.asMap().put(vm.getId(), ImmutableSet.of(response.getResult()));
       return ip;
    }
 }
