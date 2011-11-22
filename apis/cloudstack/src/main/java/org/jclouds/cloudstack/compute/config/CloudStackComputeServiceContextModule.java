@@ -22,12 +22,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.compute.functions.ServiceOfferingToHardware;
@@ -104,8 +106,8 @@ public class CloudStackComputeServiceContextModule
       bind(new TypeLiteral<Function<Template, OperatingSystem>>() {
       }).to(TemplateToOperatingSystem.class);
       install(new FactoryModuleBuilder().build(StaticNATVirtualMachineInNetwork.Factory.class));
-      bind(new TypeLiteral<CacheLoader<Long, IPForwardingRule>>() {
-      }).to(GetIPForwardingRuleByVirtualMachine.class);
+      bind(new TypeLiteral<CacheLoader<Long, Set<IPForwardingRule>>>() {
+      }).to(GetIPForwardingRulesByVirtualMachine.class);
    }
 
    @Provides
@@ -171,17 +173,17 @@ public class CloudStackComputeServiceContextModule
 
    @Provides
    @Singleton
-   protected Cache<Long, IPForwardingRule> getIPForwardingRuleByVirtualMachine(
-         CacheLoader<Long, IPForwardingRule> getIPForwardingRule) {
-      return CacheBuilder.newBuilder().build(getIPForwardingRule);
+   protected Cache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine(
+      CacheLoader<Long, Set<IPForwardingRule>> getIPForwardingRules) {
+      return CacheBuilder.newBuilder().build(getIPForwardingRules);
    }
 
    @Singleton
-   public static class GetIPForwardingRuleByVirtualMachine extends CacheLoader<Long, IPForwardingRule> {
+   public static class GetIPForwardingRulesByVirtualMachine extends CacheLoader<Long, Set<IPForwardingRule>> {
       private final CloudStackClient client;
 
       @Inject
-      public GetIPForwardingRuleByVirtualMachine(CloudStackClient client) {
+      public GetIPForwardingRulesByVirtualMachine(CloudStackClient client) {
          this.client = checkNotNull(client, "client");
       }
 
@@ -190,11 +192,9 @@ public class CloudStackComputeServiceContextModule
        *            when there is no ip forwarding rule available for the VM
        */
       @Override
-      public IPForwardingRule load(Long input) {
-         IPForwardingRule rule = client.getNATClient().getIPForwardingRuleForVirtualMachine(input);
-         if (rule == null)
-            throw new ResourceNotFoundException("no ip forwarding rule for: " + input);
-         return rule;
+      public Set<IPForwardingRule> load(Long input) {
+         Set<IPForwardingRule> rules = client.getNATClient().getIPForwardingRulesForVirtualMachine(input);
+         return rules != null ? rules : ImmutableSet.<IPForwardingRule>of();
       }
    }
 

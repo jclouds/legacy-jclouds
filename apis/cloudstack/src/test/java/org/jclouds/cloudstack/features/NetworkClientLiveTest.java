@@ -115,7 +115,7 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
                .getNetworkClient()
                // startIP/endIP/netmask/gateway must be specified together
                .createNetworkInZone(zone.getId(), offering.getId(), name, name,
-                     vlan("2").startIP("192.168.1.2").netmask("255.255.255.0").gateway("192.168.1.1"));
+                     vlan("65").startIP("192.168.1.2").netmask("255.255.255.0").gateway("192.168.1.1"));
          checkNetwork(network);
       } catch (IllegalStateException e) {
          Logger.getAnonymousLogger().log(Level.SEVERE, "couldn't create a network, skipping test", e);
@@ -173,7 +173,7 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
          break;
       case DIRECT:
          // TODO: I've found a network that doesn't have a netmask associated
-         // assert network.getNetmask() != null : network;
+         assert network.getNetmask() != null : network;
          assert network.getGateway() != null : network;
          assert network.getVLAN() != null : network;
          assertEquals(network.getBroadcastURI(), URI.create("vlan://" + network.getVLAN()));

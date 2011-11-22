@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.compute;
 
+import static com.google.common.collect.Iterables.getFirst;
 import static com.google.inject.name.Names.bindProperties;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -26,12 +27,13 @@ import static org.testng.Assert.fail;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
 import org.jclouds.cloudstack.CloudStackClient;
-import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule.GetIPForwardingRuleByVirtualMachine;
+import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule.GetIPForwardingRulesByVirtualMachine;
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.compute.strategy.CloudStackComputeServiceAdapter;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
@@ -117,8 +119,8 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
          @SuppressWarnings("unused")
          @Provides
          @Singleton
-         protected Cache<Long, IPForwardingRule> getIPForwardingRuleByVirtualMachine(
-               GetIPForwardingRuleByVirtualMachine getIPForwardingRule) {
+         protected Cache<Long, Set<IPForwardingRule>> getIPForwardingRuleByVirtualMachine(
+               GetIPForwardingRulesByVirtualMachine getIPForwardingRule) {
             return CacheBuilder.newBuilder().build(getIPForwardingRule);
          }
       };
@@ -160,7 +162,8 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
       assertEquals(vm.getNode().getDisplayName(), name);
       // check to see if we setup a NAT rule (conceding we could check this from
       // cache)
-      IPForwardingRule rule = client.getNATClient().getIPForwardingRuleForVirtualMachine(vm.getNode().getId());
+      IPForwardingRule rule = getFirst(
+         client.getNATClient().getIPForwardingRulesForVirtualMachine(vm.getNode().getId()), null);
 
       String address = rule != null ? rule.getIPAddress() : vm.getNode().getIPAddress();
 
