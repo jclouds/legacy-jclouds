@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -37,7 +37,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * @author Andrea Turli
  */
-public class GetIPAdressFromMAC implements Statement {
+public class GetIPAddressFromMAC implements Statement {
 
    public static final Map<OsFamily, String> OS_TO_ARP = ImmutableMap
          .of(OsFamily.UNIX,
@@ -47,12 +47,12 @@ public class GetIPAdressFromMAC implements Statement {
    private String macAddress;
    private String macAddressBsd; 
 
-   public GetIPAdressFromMAC(String macAddress) {
+   public GetIPAddressFromMAC(String macAddress) {
    	this(Joiner.on(":").join(Splitter.fixedLength(2).split(macAddress)).toLowerCase(),
    	      MacAddressToBSD.INSTANCE.apply(Joiner.on(":").join(Splitter.fixedLength(2).split(macAddress)).toLowerCase()));
    }
    
-   public GetIPAdressFromMAC(String macAddress, String macAddressBsd) {
+   public GetIPAddressFromMAC(String macAddress, String macAddressBsd) {
       checkNotNull(macAddress, "macAddress");
       checkArgument(macAddress.length() == 17);
       this.macAddress = macAddress;

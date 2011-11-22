@@ -37,13 +37,13 @@ public class GetIPAddressFromMACTest {
    private static final String bsdMacAddressWith0c = "8:11:27:1a:98:6";
 
    public void testGetIPAdressFromMacAddressUnix() {
-      GetIPAdressFromMAC statement = new GetIPAdressFromMAC(macAddressWith00);
+      GetIPAddressFromMAC statement = new GetIPAddressFromMAC(macAddressWith00);
       assertEquals(statement.render(OsFamily.UNIX), "MAC="
             + unixMacAddressWith00
             + " && [[ `uname -s` = \"Darwin\" ]] && MAC=" + bsdMacAddressWith00
             + "\n arp -an | grep $MAC\n");
 
-      statement = new GetIPAdressFromMAC(macAddressWith0c);
+      statement = new GetIPAddressFromMAC(macAddressWith0c);
       assertEquals(statement.render(OsFamily.UNIX), "MAC="
             + unixMacAddressWith0c
             + " && [[ `uname -s` = \"Darwin\" ]] && MAC=" + bsdMacAddressWith0c
