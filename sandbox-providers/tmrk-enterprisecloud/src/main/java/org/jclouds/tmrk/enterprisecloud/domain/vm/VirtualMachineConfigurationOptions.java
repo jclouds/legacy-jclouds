@@ -19,7 +19,8 @@
 package org.jclouds.tmrk.enterprisecloud.domain.vm;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.tmrk.enterprisecloud.domain.ResourceCapacityRange;
+import org.jclouds.tmrk.enterprisecloud.domain.*;
+import org.jclouds.tmrk.enterprisecloud.domain.hardware.DiskConfigurationOption;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -48,8 +49,21 @@ public class VirtualMachineConfigurationOptions extends BaseResource<VirtualMach
    }
 
    public static class Builder extends BaseResource.Builder<VirtualMachineConfigurationOptions> {
-      //TODO There are additional fields
+
+      protected ConfigurationOptionRange processor;
       protected ResourceCapacityRange memory;
+      protected DiskConfigurationOption disk;
+      protected ConfigurationOptionRange networkAdapter;
+      protected CustomizationOption customization;
+      //TODO ComputeMatrix field
+
+      /**
+       * @see VirtualMachineConfigurationOptions#getProcessor
+       */
+      public Builder processor(ConfigurationOptionRange processor) {
+         this.processor = processor;
+         return this;
+      }
 
       /**
        * @see VirtualMachineConfigurationOptions#getMemory
@@ -59,13 +73,41 @@ public class VirtualMachineConfigurationOptions extends BaseResource<VirtualMach
          return this;
       }
 
+      /**
+       * @see VirtualMachineConfigurationOptions#getDisk
+       */
+      public Builder disk(DiskConfigurationOption disk) {
+         this.disk = disk;
+         return this;
+      }
+
+      /**
+       * @see VirtualMachineConfigurationOptions#getNetworkAdapter
+       */
+      public Builder networkAdapter(ConfigurationOptionRange networkAdapter) {
+         this.networkAdapter = networkAdapter;
+         return this;
+      }
+
+      /**
+       * @see VirtualMachineConfigurationOptions#getCustomization
+       */
+      public Builder customization(CustomizationOption customization) {
+         this.customization = customization;
+         return this;
+      }
+
       @Override
       public VirtualMachineConfigurationOptions build() {
-         return new VirtualMachineConfigurationOptions(href, type, memory);
+         return new VirtualMachineConfigurationOptions(href, type, processor, memory, disk, networkAdapter, customization);
       }
 
       public Builder fromVirtualMachineConfigurationOptions(VirtualMachineConfigurationOptions in) {
-         return fromResource(in).memory(in.getMemory());
+         return fromResource(in).processor(in.getProcessor())
+                                .memory(in.getMemory())
+                                .disk(in.getDisk())
+                                .networkAdapter(in.getNetworkAdapter())
+                                .customization(in.getCustomization());
       }
 
       /**
@@ -94,12 +136,29 @@ public class VirtualMachineConfigurationOptions extends BaseResource<VirtualMach
 
    }
 
+   @XmlElement(name = "Processor", required = false)
+   private ConfigurationOptionRange processor;
+
    @XmlElement(name = "Memory", required = false)
    private ResourceCapacityRange memory;
 
-   private VirtualMachineConfigurationOptions(URI href, String type, @Nullable ResourceCapacityRange memory) {
+   @XmlElement(name = "Disk", required = false)
+   private DiskConfigurationOption disk;
+
+   @XmlElement(name = "NetworkAdapter", required = false)
+   private ConfigurationOptionRange networkAdapter;
+
+   @XmlElement(name = "Customization", required = false)
+   private CustomizationOption customization;
+
+   private VirtualMachineConfigurationOptions(URI href, String type, @Nullable ConfigurationOptionRange processor, @Nullable ResourceCapacityRange memory,
+                                              @Nullable DiskConfigurationOption disk, @Nullable ConfigurationOptionRange networkAdapter, @Nullable CustomizationOption customization) {
       super(href, type);
+      this.processor = processor;
       this.memory = memory;
+      this.disk = disk;
+      this.networkAdapter = networkAdapter;
+      this.customization = customization;
    }
 
    private VirtualMachineConfigurationOptions() {
@@ -108,10 +167,42 @@ public class VirtualMachineConfigurationOptions extends BaseResource<VirtualMach
 
    /**
     *
-    * @return memory capacity range
+    * @return processor configuration option range
+    */
+   public ConfigurationOptionRange getProcessor() {
+      return processor;
+   }
+
+   /**
+    *
+    * @return memory capacity configuration range
     */
    public ResourceCapacityRange getMemory() {
       return memory;
+   }
+
+   /**
+    *
+    * @return disk configuration option
+    */
+   public DiskConfigurationOption getDisk() {
+      return disk;
+   }
+
+   /**
+    *
+    * @return network adapter configuration range
+    */
+   public ConfigurationOptionRange getNetworkAdapter() {
+      return networkAdapter;
+   }
+
+   /**
+    *
+    * @return customization option
+    */
+   public CustomizationOption getCustomization() {
+      return customization;
    }
 
    @Override
@@ -122,7 +213,15 @@ public class VirtualMachineConfigurationOptions extends BaseResource<VirtualMach
 
       VirtualMachineConfigurationOptions that = (VirtualMachineConfigurationOptions) o;
 
+      if (customization != null ? !customization.equals(that.customization) : that.customization != null)
+         return false;
+      if (disk != null ? !disk.equals(that.disk) : that.disk != null)
+         return false;
       if (memory != null ? !memory.equals(that.memory) : that.memory != null)
+         return false;
+      if (networkAdapter != null ? !networkAdapter.equals(that.networkAdapter) : that.networkAdapter != null)
+         return false;
+      if (processor != null ? !processor.equals(that.processor) : that.processor != null)
          return false;
 
       return true;
@@ -131,12 +230,16 @@ public class VirtualMachineConfigurationOptions extends BaseResource<VirtualMach
    @Override
    public int hashCode() {
       int result = super.hashCode();
+      result = 31 * result + (processor != null ? processor.hashCode() : 0);
       result = 31 * result + (memory != null ? memory.hashCode() : 0);
+      result = 31 * result + (disk != null ? disk.hashCode() : 0);
+      result = 31 * result + (networkAdapter != null ? networkAdapter.hashCode() : 0);
+      result = 31 * result + (customization != null ? customization.hashCode() : 0);
       return result;
    }
 
    @Override
    public String string() {
-      return super.string()+", memory="+memory;
+      return super.string()+", memory="+memory+", disk="+disk+", processor="+processor+", networkAdapter="+networkAdapter+", customization="+customization;
    }
 }

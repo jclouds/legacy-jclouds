@@ -29,6 +29,7 @@ import org.jclouds.tmrk.enterprisecloud.domain.network.Nics;
 import org.jclouds.tmrk.enterprisecloud.domain.network.VirtualNic;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
@@ -40,6 +41,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * <xs:complexType name="HardwareConfiguration">
  * @author Jason King
  */
+@XmlRootElement(name = "HardwareConfiguration")
 public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
 
    @SuppressWarnings("unchecked")
