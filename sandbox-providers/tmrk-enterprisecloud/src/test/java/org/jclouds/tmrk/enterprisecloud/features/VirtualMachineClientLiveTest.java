@@ -86,7 +86,7 @@ public class VirtualMachineClientLiveTest extends BaseTerremarkEnterpriseCloudCl
    }
 
    public void testGetVirtualMachineConfigurationOptions() throws Exception {
-      VirtualMachineConfigurationOptions virtualMachineConfigurationOptions = client.getVirtualMachineConfigurationOptions(new URI("/cloudapi/ecloud/virtualmachines/5504/configurationoptions"));
+      VirtualMachineConfigurationOptions virtualMachineConfigurationOptions = client.getConfigurationOptions(new URI("/cloudapi/ecloud/virtualmachines/5504/configurationoptions"));
       assertNotNull(virtualMachineConfigurationOptions);
    }
 }

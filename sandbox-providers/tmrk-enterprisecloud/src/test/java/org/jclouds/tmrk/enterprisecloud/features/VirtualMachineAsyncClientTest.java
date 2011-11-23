@@ -82,7 +82,7 @@ public class VirtualMachineAsyncClientTest extends BaseTerremarkEnterpriseCloudA
    }
 
    public void testGetVirtualMachineConfigurationOptions() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
-      Method method = VirtualMachineAsyncClient.class.getMethod("getVirtualMachineConfigurationOptions", URI.class);
+      Method method = VirtualMachineAsyncClient.class.getMethod("getConfigurationOptions", URI.class);
       HttpRequest httpRequest = processor.createRequest(method,new URI("/cloudapi/ecloud/virtualmachines/5504/configurationoptions"));
 
       assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/virtualmachines/5504/configurationoptions HTTP/1.1");

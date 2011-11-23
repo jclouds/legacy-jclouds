@@ -69,6 +69,6 @@ public interface VirtualMachineClient {
     * @param uri the uri for the configuration options. e.g. /cloudapi/ecloud/virtualmachines/{id}/configurationoptions
     * @return the configuration options
     */
-   VirtualMachineConfigurationOptions getVirtualMachineConfigurationOptions(URI uri);
+   VirtualMachineConfigurationOptions getConfigurationOptions(URI uri);
 
 }

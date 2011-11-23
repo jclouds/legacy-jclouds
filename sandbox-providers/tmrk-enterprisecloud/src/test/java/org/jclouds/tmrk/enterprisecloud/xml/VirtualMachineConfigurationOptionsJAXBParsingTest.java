@@ -89,7 +89,7 @@ public class VirtualMachineConfigurationOptionsJAXBParsingTest extends BaseRestC
    @Test
    public void testParseVirtualMachineWithJAXB() throws Exception {
 
-      Method method = VirtualMachineAsyncClient.class.getMethod("getVirtualMachineConfigurationOptions", URI.class);
+      Method method = VirtualMachineAsyncClient.class.getMethod("getConfigurationOptions", URI.class);
       HttpRequest request = factory(VirtualMachineAsyncClient.class).createRequest(method,new URI("/1"));
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
 
@@ -97,13 +97,13 @@ public class VirtualMachineConfigurationOptionsJAXBParsingTest extends BaseRestC
             .createResponseParser(parserFactory, injector, method, request);
 
       InputStream is = getClass().getResourceAsStream("/virtualMachineConfigurationOptions.xml");
-      VirtualMachineConfigurationOptions virtualMachineConfigurationOptions = parser.apply(new HttpResponse(200, "ok", newInputStreamPayload(is)));
+      VirtualMachineConfigurationOptions configurationOptions = parser.apply(new HttpResponse(200, "ok", newInputStreamPayload(is)));
 
-      assertProcessorOptions(virtualMachineConfigurationOptions.getProcessor());
-      assertMemoryOptions(virtualMachineConfigurationOptions.getMemory());
-      assertDiskConfigurationOption(virtualMachineConfigurationOptions.getDisk());
-      assertNetworkAdapterOptions(virtualMachineConfigurationOptions.getNetworkAdapter());
-      assertCustomizationOption(virtualMachineConfigurationOptions.getCustomization());
+      assertProcessorOptions(configurationOptions.getProcessor());
+      assertMemoryOptions(configurationOptions.getMemory());
+      assertDiskConfigurationOption(configurationOptions.getDisk());
+      assertNetworkAdapterOptions(configurationOptions.getNetworkAdapter());
+      assertCustomizationOption(configurationOptions.getCustomization());
    }
 
    private void assertProcessorOptions(ConfigurationOptionRange processor) {

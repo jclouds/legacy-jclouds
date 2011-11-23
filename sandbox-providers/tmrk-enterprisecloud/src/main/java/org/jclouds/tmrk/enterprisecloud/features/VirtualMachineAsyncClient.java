@@ -74,11 +74,11 @@ public interface VirtualMachineAsyncClient {
    ListenableFuture<AssignedIpAddresses> getAssignedIpAddresses(@EndpointParam URI uri);
 
    /**
-    * @see VirtualMachineClient#getVirtualMachineConfigurationOptions
+    * @see VirtualMachineClient#getConfigurationOptions
     */
    @GET
    @Consumes("application/vnd.tmrk.cloud.virtualMachineConfigurationOptions")
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<VirtualMachineConfigurationOptions> getVirtualMachineConfigurationOptions(@EndpointParam URI uri);
+   ListenableFuture<VirtualMachineConfigurationOptions> getConfigurationOptions(@EndpointParam URI uri);
 }
