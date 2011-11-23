@@ -48,6 +48,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
    private VirtualMachine vm;
    private Template template;
 
+   @Test
    public void testListTemplates() throws Exception {
       Set<Template> response = client.getTemplateClient().listTemplates();
       assert null != response;
@@ -56,6 +57,8 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       for (Template template : response) {
          Template newDetails = Iterables.getOnlyElement(client.getTemplateClient().listTemplates(
                zoneId(template.getZoneId()).id(template.getId())));
+         Logger.CONSOLE.info("Checking template: " + template);
+
          assertEquals(template, newDetails);
          assertEquals(template, client.getTemplateClient().getTemplateInZone(template.getId(), template.getZoneId()));
          assert template.getId() > 0 : template;
@@ -68,7 +71,8 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
          assert template.getAccount() != null : template;
          assert template.getZone() != null : template;
          assert template.getZoneId() > 0 : template;
-         assert template.getStatus() == null : template;
+         assert (template.getStatus() == null ||
+            template.getStatus().equals("Download Complete")) : template;
          assert template.getType() != null && template.getType() != Template.Type.UNRECOGNIZED : template;
          assert template.getHypervisor() != null : template;
          assert template.getDomain() != null : template;
@@ -110,19 +114,6 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
 
       // Assertions
       assertNotNull(template);
-   }
-
-   @AfterGroups(groups = "live")
-   protected void tearDown() {
-      if (vm != null) {
-         assert jobComplete.apply(client.getVirtualMachineClient().stopVirtualMachine(vm.getId())) : vm;
-         assert jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vm.getId())) : vm;
-         assert virtualMachineDestroyed.apply(vm);
-      }
-      if (template != null) {
-         client.getTemplateClient().deleteTemplate(template.getId());
-      }
-      super.tearDown();
    }
 
    @Test(enabled = true, dependsOnMethods = "testCreateTemplate")
@@ -185,4 +176,19 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, template.getId(), client, jobComplete, virtualMachineRunning);
       assertNotNull(vm);
    }
+
+
+   @AfterGroups(groups = "live")
+   protected void tearDown() {
+      if (vm != null) {
+         assert jobComplete.apply(client.getVirtualMachineClient().stopVirtualMachine(vm.getId())) : vm;
+         assert jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vm.getId())) : vm;
+         assert virtualMachineDestroyed.apply(vm);
+      }
+      if (template != null) {
+         client.getTemplateClient().deleteTemplate(template.getId());
+      }
+      super.tearDown();
+   }
+
 }
