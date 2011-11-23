@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
@@ -151,6 +152,11 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
          return this;
       }
 
+      public TemplateExtraction build() {
+         return new TemplateExtraction(id, accountId, created, extractId,
+            extractMode, name, state, status, storageType, uploadPercentage,
+            url,zoneId, zoneName);
+      }
    }
 
    private long id;
@@ -169,8 +175,32 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
    private String url;
    @SerializedName("zoneid")
    private long zoneId;
+
+   /**
+    *  Construct a new TemplateExtraction instance
+    */
+   public TemplateExtraction(long id, long accountId, Date created, long extractId,
+                             ExtractMode extractMode, String name, String state, String status,
+                             String storageType, int uploadPercentage, String url,
+                             long zoneId, String zoneName) {
+      this.id = id;
+      this.accountId = accountId;
+      this.created = created;
+      this.extractId = extractId;
+      this.extractMode = extractMode;
+      this.name = name;
+      this.state = state;
+      this.status = status;
+      this.storageType = storageType;
+      this.uploadPercentage = uploadPercentage;
+      this.url = url;
+      this.zoneId = zoneId;
+      this.zoneName = zoneName;
+   }
+
    @SerializedName("zonename")
    private String zoneName;
+
 
    /**
     * present only for serializer
@@ -270,23 +300,48 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
    }
 
    @Override
-   public boolean equals(Object o) {
-      throw new RuntimeException("FIXME: Implement me");
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+
+      TemplateExtraction other = (TemplateExtraction) obj;
+      return id == other.id
+         && accountId == other.accountId
+         && Objects.equal(created, other.created)
+         && extractId == other.extractId
+         && Objects.equal(extractMode, other.extractMode)
+         && Objects.equal(name, other.name)
+         && Objects.equal(state, other.state)
+         && Objects.equal(status, other.status)
+         && Objects.equal(storageType, other.storageType)
+         && uploadPercentage == other.uploadPercentage
+         && Objects.equal(url, other.url)
+         && zoneId == other.zoneId
+         && Objects.equal(zoneName, other.zoneName);
    }
 
    @Override
    public int hashCode() {
-      throw new RuntimeException("FIXME: Implement me");
+      return Objects.hashCode(id, accountId, created, extractId, extractMode,
+         name, state, status, storageType, uploadPercentage, url, zoneId, zoneName);
    }
 
    @Override
    public String toString() {
-      throw new RuntimeException("FIXME: Implement me");
+      return "[id=" + id + ", accountId=" + accountId + ", created=" + created
+         + ", extractId=" + extractId + ", extractMode=" + extractMode
+         + ", name=" + name + ", state=" + state + ", status=" + status
+         + ", storageType=" + storageType + ", uploadPercentage=" + uploadPercentage
+         + ", url=" + url + ", zoneId=" + zoneId + ", zoneName=" + zoneName;
    }
 
    @Override
    public int compareTo(TemplateExtraction other) {
-      throw new RuntimeException("FIXME: Implement me");
+      return new Long(id).compareTo(other.id);
    }
 
 }
