@@ -33,7 +33,9 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.BaseRestClientTest;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.tmrk.enterprisecloud.domain.ResourceCapacityRange;
+   import org.jclouds.tmrk.enterprisecloud.domain.*;
+import org.jclouds.tmrk.enterprisecloud.domain.hardware.DiskConfigurationOption;
+import org.jclouds.tmrk.enterprisecloud.domain.hardware.DiskConfigurationOptionRange;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachineConfigurationOptions;
 import org.jclouds.tmrk.enterprisecloud.features.VirtualMachineAsyncClient;
@@ -50,6 +52,8 @@ import static org.jclouds.io.Payloads.newInputStreamPayload;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tests behavior of JAXB parsing for VirtualMachineConfigurationOptions
@@ -95,7 +99,17 @@ public class VirtualMachineConfigurationOptionsJAXBParsingTest extends BaseRestC
       InputStream is = getClass().getResourceAsStream("/virtualMachineConfigurationOptions.xml");
       VirtualMachineConfigurationOptions virtualMachineConfigurationOptions = parser.apply(new HttpResponse(200, "ok", newInputStreamPayload(is)));
 
+      assertProcessorOptions(virtualMachineConfigurationOptions.getProcessor());
       assertMemoryOptions(virtualMachineConfigurationOptions.getMemory());
+      assertDiskConfigurationOption(virtualMachineConfigurationOptions.getDisk());
+      assertNetworkAdapterOptions(virtualMachineConfigurationOptions.getNetworkAdapter());
+      assertCustomizationOption(virtualMachineConfigurationOptions.getCustomization());
+   }
+
+   private void assertProcessorOptions(ConfigurationOptionRange processor) {
+      assertEquals(processor.getMinimum(),1);
+      assertEquals(processor.getMaximum(),8);
+      assertEquals(processor.getStepFactor(),1);
    }
 
    private void assertMemoryOptions(ResourceCapacityRange memory) {
@@ -103,4 +117,38 @@ public class VirtualMachineConfigurationOptionsJAXBParsingTest extends BaseRestC
       assertEquals(memory.getMaximumSize(), ResourceCapacity.builder().value(261120).unit("MB").build());
       assertEquals(memory.getStepFactor(), ResourceCapacity.builder().value(4).unit("MB").build());
    }
+
+   private void assertNetworkAdapterOptions(ConfigurationOptionRange networkAdapter) {
+      assertEquals(networkAdapter.getMinimum(),1);
+      assertEquals(networkAdapter.getMaximum(),4);
+      assertEquals(networkAdapter.getStepFactor(),1);
+   }
+
+   private void assertCustomizationOption(CustomizationOption customization) {
+      assertEquals(customization.getType(), CustomizationOption.CustomizationType.LINUX);
+      assertFalse(customization.canPowerOn());
+      assertFalse(customization.isPasswordRequired());
+      assertTrue(customization.isSshKeyRequired());
+   }
+
+   private void assertDiskConfigurationOption(DiskConfigurationOption diskConfigurationOption) {
+      assertEquals(diskConfigurationOption.getMinimum(),1);
+      assertEquals(diskConfigurationOption.getMaximum(), 15);
+
+      ResourceCapacityRange systemDiskRange = ResourceCapacityRange.builder()
+            .minimumSize(ResourceCapacity.builder().value(1).unit("GB").build())
+            .maximumSize(ResourceCapacity.builder().value(512).unit("GB").build())
+            .stepFactor(ResourceCapacity.builder().value(1).unit("GB").build())
+            .build();
+      assertEquals(diskConfigurationOption.getSystemDisk(), DiskConfigurationOptionRange.builder().resourceCapacityRange(systemDiskRange).monthlyCost(0).build());
+
+      ResourceCapacityRange dataDiskRange = ResourceCapacityRange.builder()
+            .minimumSize(ResourceCapacity.builder().value(1).unit("GB").build())
+            .maximumSize(ResourceCapacity.builder().value(512).unit("GB").build())
+            .stepFactor(ResourceCapacity.builder().value(2).unit("GB").build())
+            .build();
+
+      assertEquals(diskConfigurationOption.getDataDisk(), DiskConfigurationOptionRange.builder().resourceCapacityRange(dataDiskRange).monthlyCost(0).build());
+   }
+
 }
