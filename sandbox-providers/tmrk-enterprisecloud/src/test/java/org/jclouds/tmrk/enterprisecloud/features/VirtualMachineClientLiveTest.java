@@ -19,6 +19,7 @@
 package org.jclouds.tmrk.enterprisecloud.features;
 
 import com.google.common.collect.Iterables;
+import org.jclouds.tmrk.enterprisecloud.domain.hardware.HardwareConfiguration;
 import org.jclouds.tmrk.enterprisecloud.domain.network.AssignedIpAddresses;
 import org.jclouds.tmrk.enterprisecloud.domain.network.DeviceNetwork;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachine;
@@ -85,8 +86,19 @@ public class VirtualMachineClientLiveTest extends BaseTerremarkEnterpriseCloudCl
         assertNull(assignedIpAddresses);
    }
 
-   public void testGetVirtualMachineConfigurationOptions() throws Exception {
-      VirtualMachineConfigurationOptions virtualMachineConfigurationOptions = client.getConfigurationOptions(new URI("/cloudapi/ecloud/virtualmachines/5504/configurationoptions"));
-      assertNotNull(virtualMachineConfigurationOptions);
+   public void testGetConfigurationOptions() throws Exception {
+      VirtualMachineConfigurationOptions configurationOptions = client.getConfigurationOptions(new URI("/cloudapi/ecloud/virtualmachines/5504/configurationoptions"));
+      assertNotNull(configurationOptions);
    }
+
+   public void testGetHardwareConfiguration() throws Exception {
+      HardwareConfiguration hardwareConfiguration = client.getHardwareConfiguration(new URI("/cloudapi/ecloud/virtualmachines/5504/hardwareconfiguration"));
+      assertNotNull(hardwareConfiguration);
+   }
+
+   public void testGetHardwareConfigurationWhenMissing() throws Exception {
+      HardwareConfiguration result = client.getHardwareConfiguration(new URI("/cloudapi/ecloud/virtualmachines/-1/hardwareconfiguration"));
+      assertNull(result);
+   }
+
 }

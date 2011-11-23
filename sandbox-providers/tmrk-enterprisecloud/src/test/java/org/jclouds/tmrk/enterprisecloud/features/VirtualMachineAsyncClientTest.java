@@ -81,12 +81,26 @@ public class VirtualMachineAsyncClientTest extends BaseTerremarkEnterpriseCloudA
       checkFilters(httpRequest);
    }
 
-   public void testGetVirtualMachineConfigurationOptions() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+   public void testGetConfigurationOptions() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
       Method method = VirtualMachineAsyncClient.class.getMethod("getConfigurationOptions", URI.class);
       HttpRequest httpRequest = processor.createRequest(method,new URI("/cloudapi/ecloud/virtualmachines/5504/configurationoptions"));
 
       assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/virtualmachines/5504/configurationoptions HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/vnd.tmrk.cloud.virtualMachineConfigurationOptions\nx-tmrk-version: 2011-07-01\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testGetHardwareConfiguration() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = VirtualMachineAsyncClient.class.getMethod("getHardwareConfiguration", URI.class);
+      HttpRequest httpRequest = processor.createRequest(method,new URI("/cloudapi/ecloud/virtualmachines/5504/hardwareconfiguration"));
+
+      assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/virtualmachines/5504/hardwareconfiguration HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/vnd.tmrk.cloud.virtualMachineHardware\nx-tmrk-version: 2011-07-01\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);

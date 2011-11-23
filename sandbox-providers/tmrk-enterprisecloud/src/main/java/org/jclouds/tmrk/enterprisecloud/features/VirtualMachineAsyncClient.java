@@ -22,6 +22,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.tmrk.enterprisecloud.domain.hardware.HardwareConfiguration;
 import org.jclouds.tmrk.enterprisecloud.domain.network.AssignedIpAddresses;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachine;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachineConfigurationOptions;
@@ -81,4 +82,13 @@ public interface VirtualMachineAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<VirtualMachineConfigurationOptions> getConfigurationOptions(@EndpointParam URI uri);
+
+   /**
+    * @see VirtualMachineClient#getHardwareConfiguration
+    */
+   @GET
+   @Consumes("application/vnd.tmrk.cloud.virtualMachineHardware")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<HardwareConfiguration> getHardwareConfiguration(@EndpointParam URI uri);
 }
