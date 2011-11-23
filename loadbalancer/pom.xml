@@ -91,7 +91,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package>org.jclouds.loadbalancer.*;version="${project.version}"</Export-Package>
                         <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
-                        <Fragment-Host>jclouds-core;version="${project.version}"</Fragment-Host>
+                        <Fragment-Host>jclouds-core;bundle-version="[1.3,2)"</Fragment-Host>
                     </instructions>
                 </configuration>
             </plugin>
