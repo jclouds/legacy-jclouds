@@ -23,6 +23,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.tmrk.enterprisecloud.functions.ReturnEmptyVirtualMachinesOnNotFoundOr404;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -61,7 +62,7 @@ public class VirtualMachineAsyncClientTest extends BaseTerremarkEnterpriseCloudA
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertExceptionParserClassEquals(method, ReturnEmptyVirtualMachinesOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
    }
