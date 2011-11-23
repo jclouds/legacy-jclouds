@@ -1,0 +1,37 @@
+<HardwareConfiguration
+        href="/cloudapi/ecloud/virtualmachines/5504/hardwareconfiguration"
+        type="application/vnd.tmrk.cloud.virtualMachineHardware"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <Actions>
+        <Action href="/cloudapi/ecloud/virtualmachines/5504/hardwareconfiguration"
+                name="edit"
+                type="application/vnd.tmrk.cloud.virtualMachineHardware"/>
+    </Actions>
+    <ProcessorCount>1</ProcessorCount>
+    <Memory>
+        <Unit>MB</Unit>
+        <Value>384</Value>
+    </Memory>
+    <Disks>
+        <Disk>
+            <Index>0</Index>
+            <Size>
+                <Unit>GB</Unit>
+                <Value>10</Value>
+            </Size>
+            <Name>Hard Disk 1</Name>
+        </Disk>
+    </Disks>
+    <Nics>
+        <Nic>
+            <UnitNumber>7</UnitNumber>
+            <Name>Network adapter 1</Name>
+            <MacAddress>00:50:56:b8:00:58</MacAddress>
+            <Network href="/cloudapi/ecloud/networks/3936"
+                     name="10.146.204.64/28"
+                     type="application/vnd.tmrk.cloud.network">
+                <NetworkType>Internal</NetworkType>
+            </Network>
+        </Nic>
+    </Nics>
+</HardwareConfiguration>

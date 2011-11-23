@@ -19,6 +19,7 @@
 package org.jclouds.tmrk.enterprisecloud.features;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.tmrk.enterprisecloud.domain.hardware.HardwareConfiguration;
 import org.jclouds.tmrk.enterprisecloud.domain.network.AssignedIpAddresses;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachine;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachineConfigurationOptions;
@@ -69,6 +70,14 @@ public interface VirtualMachineClient {
     * @param uri the uri for the configuration options. e.g. /cloudapi/ecloud/virtualmachines/{id}/configurationoptions
     * @return the configuration options
     */
-   VirtualMachineConfigurationOptions getVirtualMachineConfigurationOptions(URI uri);
+   VirtualMachineConfigurationOptions getConfigurationOptions(URI uri);
+
+   /**
+    * The Get Virtual Machines Hardware Configuration call returns information
+    * regarding the hardware configuration of a specified virtual machine in a compute pool.
+    * @param uri the uri for the hardware configuration e.g. /cloudapi/ecloud/virtualmachines/{id}/hardwareconfiguration
+    * @return
+    */
+   HardwareConfiguration getHardwareConfiguration(URI uri);
 
 }

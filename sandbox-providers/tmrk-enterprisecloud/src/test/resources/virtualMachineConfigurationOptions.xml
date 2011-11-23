@@ -53,7 +53,7 @@
                 </MaximumSize>
                 <StepFactor>
                     <Unit>GB</Unit>
-                    <Value>1</Value>
+                    <Value>2</Value>
                 </StepFactor>
             </ResourceCapacityRange>
             <MonthlyCost>0</MonthlyCost>
