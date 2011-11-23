@@ -37,9 +37,7 @@ import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExists;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
@@ -82,7 +80,7 @@ public class IsoToIMachineLiveTest extends BaseVirtualBoxClientLiveTest {
       ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId,
             "localhost", new Credentials("toor", "password"));
       IMachine imageMachine = new IsoToIMachine(manager, adminDisk, diskFormat, settingsFile, vmName, osTypeId, vmId,
-            forceOverwrite, controllerIDE, localHostContext, hostId, guestId, new Credentials("toor", "password"))
+            forceOverwrite, controllerIDE, localHostContext, hostId, guestId)
             .apply("ubuntu-11.04-server-i386.iso");
 
       IMachineToImage iMachineToImage = new IMachineToImage(manager, map);

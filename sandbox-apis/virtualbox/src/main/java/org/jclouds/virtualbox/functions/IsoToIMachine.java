@@ -19,6 +19,23 @@
 
 package org.jclouds.virtualbox.functions;
 
+import com.google.common.base.Function;
+import com.google.inject.Inject;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.options.RunScriptOptions;
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.logging.Logger;
+import org.jclouds.ssh.SshException;
+import org.jclouds.virtualbox.domain.ExecutionType;
+import org.jclouds.virtualbox.settings.KeyboardScancodes;
+import org.virtualbox_4_1.*;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
+import java.io.File;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
@@ -29,34 +46,6 @@ import static org.virtualbox_4_1.DeviceType.DVD;
 import static org.virtualbox_4_1.DeviceType.HardDisk;
 import static org.virtualbox_4_1.LockType.Shared;
 import static org.virtualbox_4_1.LockType.Write;
-
-import java.io.File;
-
-import javax.annotation.Resource;
-import javax.inject.Named;
-
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.compute.options.RunScriptOptions;
-import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.Credentials;
-import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.logging.Logger;
-import org.jclouds.ssh.SshException;
-import org.jclouds.virtualbox.domain.ExecutionType;
-import org.jclouds.virtualbox.settings.KeyboardScancodes;
-import org.virtualbox_4_1.AccessMode;
-import org.virtualbox_4_1.DeviceType;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMedium;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.LockType;
-import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.VirtualBoxManager;
-
-import com.google.common.base.Function;
-import com.google.inject.Inject;
 
 public class IsoToIMachine implements Function<String, IMachine> {
 
@@ -76,12 +65,11 @@ public class IsoToIMachine implements Function<String, IMachine> {
    private ComputeServiceContext context;
    private String hostId;
    private String guestId;
-   private Credentials credentials;
 
    @Inject
    public IsoToIMachine(VirtualBoxManager manager, String adminDisk, String diskFormat, String settingsFile,
-         String vmName, String osTypeId, String vmId, boolean forceOverwrite, String controllerIDE,
-         ComputeServiceContext context, String hostId, String guestId, Credentials credentials) {
+                        String vmName, String osTypeId, String vmId, boolean forceOverwrite, String controllerIDE,
+                        ComputeServiceContext context, String hostId, String guestId) {
       super();
       this.manager = manager;
       this.adminDisk = adminDisk;
@@ -95,24 +83,18 @@ public class IsoToIMachine implements Function<String, IMachine> {
       this.context = context;
       this.hostId = hostId;
       this.guestId = guestId;
-      this.credentials = credentials;
    }
 
    @Override
    public IMachine apply(@Nullable String isoName) {
 
-      // TODO: WTF :) this is a prerequisite, so check state as opposed to
-      // starting.
-      // ex checkState(endpoint accessible, "please start jetty on %s",
-      // endpoint)
-      // Server server = new
-      // StartJettyIfNotAlreadyRunning(port).apply(baseResource);
+      // TODO: Check Web Server is started and provides a preseed.cfg
 
-      IMachine vm = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(settingsFile, osTypeId, vmId, forceOverwrite,
-            manager).apply(vmName);
+      final IMachine vm = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(settingsFile, osTypeId, vmId, forceOverwrite,
+              manager).apply(vmName);
 
-      String defaultWorkingDir = System.getProperty("user.home") + "/jclouds-virtualbox-test";
-      String workingDir = System.getProperty(VIRTUALBOX_WORKINGDIR, defaultWorkingDir);
+      final String defaultWorkingDir = System.getProperty("user.home") + "/jclouds-virtualbox-test";
+      final String workingDir = System.getProperty(VIRTUALBOX_WORKINGDIR, defaultWorkingDir);
 
       // Change RAM
       ensureMachineHasMemory(vmName, 1024l);
@@ -124,13 +106,16 @@ public class IsoToIMachine implements Function<String, IMachine> {
       ensureMachineHasAttachedDistroMedium(isoName, workingDir, controllerIDE);
 
       // DISK
-      String adminDiskPath = workingDir + "/" + adminDisk;
+      final String adminDiskPath = workingDir + "/" + adminDisk;
       if (new File(adminDiskPath).exists()) {
-         new File(adminDiskPath).delete();
+         boolean deleted = new File(adminDiskPath).delete();
+         if (!deleted) {
+            logger.error(String.format("File %s could not be deleted.", adminDiskPath));
+         }
       }
 
       // Create hard disk
-      IMedium hardDisk = new CreateMediumIfNotAlreadyExists(manager, diskFormat, true).apply(adminDiskPath);
+      final IMedium hardDisk = new CreateMediumIfNotAlreadyExists(manager, diskFormat, true).apply(adminDiskPath);
 
       // Attach hard disk to machine
       ensureMachineHasHardDiskAttached(vmName, hardDisk);
@@ -138,9 +123,9 @@ public class IsoToIMachine implements Function<String, IMachine> {
       // NAT
       ensureNATNetworkingIsAppliedToMachine(vmName);
 
-      String guestAdditionsDvd = workingDir + "/VBoxGuestAdditions_4.1.2.iso";
+      final String guestAdditionsDvd = workingDir + "/VBoxGuestAdditions_4.1.2.iso";
       final IMedium guestAdditionsDvdMedium = manager.getVBox().openMedium(guestAdditionsDvd, DeviceType.DVD,
-            AccessMode.ReadOnly, forceOverwrite);
+              AccessMode.ReadOnly, forceOverwrite);
 
       // Guest additions
       ensureGuestAdditionsMediumIsAttached(vmName, guestAdditionsDvdMedium);
@@ -148,7 +133,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
       // Launch machine and wait for it to come online
       ensureMachineIsLaunched(vmName);
 
-      String installKeySequence = System.getProperty(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE, defaultInstallSequence());
+      final String installKeySequence = System.getProperty(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE, defaultInstallSequence());
       sendKeyboardSequence(installKeySequence);
 
       boolean sshDeamonIsRunning = false;
@@ -174,18 +159,6 @@ public class IsoToIMachine implements Function<String, IMachine> {
          }
 
       });
-      // TODO: See above.
-      // if you want to manage jetty, do it outside this class as it
-      // has too many responsibilities otherwise. Allow this class to focus
-      // solely on making an IMachine
-      //
-      // try {
-      // logger.debug("Stopping Jetty server...");
-      // server.stop();
-      // logger.debug("Jetty server stopped.");
-      // } catch (Exception e) {
-      // logger.error(e, "Could not stop Jetty server.");
-      // }
       return vm;
    }
 
@@ -195,12 +168,12 @@ public class IsoToIMachine implements Function<String, IMachine> {
 
    private void ensureGuestAdditionsMediumIsAttached(String vmName, final IMedium guestAdditionsDvdMedium) {
       lockMachineAndApply(manager, Write, vmName, new AttachMediumToMachineIfNotAlreadyAttached(controllerIDE,
-            guestAdditionsDvdMedium, 1, 1, DeviceType.DVD));
+              guestAdditionsDvdMedium, 1, 1, DeviceType.DVD));
    }
 
    private void ensureMachineHasHardDiskAttached(String vmName, IMedium hardDisk) {
       lockMachineAndApply(manager, Write, vmName, new AttachMediumToMachineIfNotAlreadyAttached(controllerIDE,
-            hardDisk, 0, 1, HardDisk));
+              hardDisk, 0, 1, HardDisk));
    }
 
    private void ensureMachineHasMemory(String vmName, final long memorySize) {
@@ -215,11 +188,11 @@ public class IsoToIMachine implements Function<String, IMachine> {
       final String pathToIsoFile = checkFileExists(workingDir + "/" + isoName);
       final IMedium distroMedium = manager.getVBox().openMedium(pathToIsoFile, DVD, ReadOnly, forceOverwrite);
       lockMachineAndApply(
-            manager,
-            Write,
-            vmName,
-            new AttachDistroMediumToMachine(checkNotNull(controllerIDE, "controllerIDE"), checkNotNull(distroMedium,
-                  "distroMedium")));
+              manager,
+              Write,
+              vmName,
+              new AttachDistroMediumToMachine(checkNotNull(controllerIDE, "controllerIDE"), checkNotNull(distroMedium,
+                      "distroMedium")));
    }
 
    public static String checkFileExists(String filePath) {
@@ -231,7 +204,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
 
    public void ensureMachineHasIDEControllerNamed(String vmName, String controllerIDE) {
       lockMachineAndApply(manager, Write, checkNotNull(vmName, "vmName"),
-            new AddIDEControllerIfNotExists(checkNotNull(controllerIDE, "controllerIDE")));
+              new AddIDEControllerIfNotExists(checkNotNull(controllerIDE, "controllerIDE")));
    }
 
    private <T> T applyForMachine(VirtualBoxManager manager, final String machineId, final Function<IMachine, T> function) {
@@ -250,7 +223,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
    }
 
    public static <T> T lockMachineAndApply(VirtualBoxManager manager, final LockType type, final String machineId,
-         final Function<IMachine, T> function) {
+                                           final Function<IMachine, T> function) {
       return lockSessionOnMachineAndApply(manager, type, machineId, new Function<ISession, T>() {
 
          @Override
@@ -268,7 +241,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
    }
 
    public static <T> T lockSessionOnMachineAndApply(VirtualBoxManager manager, LockType type, String machineId,
-         Function<ISession, T> function) {
+                                                    Function<ISession, T> function) {
       try {
          ISession session = manager.getSessionObject();
          IMachine immutableMachine = manager.getVBox().findMachine(machineId);
@@ -280,26 +253,26 @@ public class IsoToIMachine implements Function<String, IMachine> {
          }
       } catch (VBoxException e) {
          throw new RuntimeException(String.format("error applying %s to %s with %s lock: %s", function, machineId,
-               type, e.getMessage()), e);
+                 type, e.getMessage()), e);
       }
    }
 
    private String defaultInstallSequence() {
       return "<Esc><Esc><Enter> "
-            + "/install/vmlinuz noapic preseed/url=http://10.0.2.2:8080/src/test/resources/preseed.cfg "
-            + "debian-installer=en_US auto locale=en_US kbd-chooser/method=us " + "hostname=" + vmName + " "
-            + "fb=false debconf/frontend=noninteractive "
-            + "keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false "
-            + "initrd=/install/initrd.gz -- <Enter>";
+              + "/install/vmlinuz noapic preseed/url=http://10.0.2.2:8080/src/test/resources/preseed.cfg "
+              + "debian-installer=en_US auto locale=en_US kbd-chooser/method=us " + "hostname=" + vmName + " "
+              + "fb=false debconf/frontend=noninteractive "
+              + "keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false "
+              + "initrd=/install/initrd.gz -- <Enter>";
    }
 
    private void sendKeyboardSequence(String keyboardSequence) {
-      String[] sequenceSplited = keyboardSequence.split(" ");
+      String[] splitSequence = keyboardSequence.split(" ");
       StringBuilder sb = new StringBuilder();
-      for (String line : sequenceSplited) {
+      for (String line : splitSequence) {
          String converted = stringToKeycode(line);
          for (String word : converted.split("  ")) {
-            sb.append("vboxmanage controlvm " + vmName + " keyboardputscancode " + word + "; ");
+            sb.append("vboxmanage controlvm ").append(vmName).append(" keyboardputscancode ").append(word).append("; ");
             if (word.endsWith(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<Enter>"))) {
                runScriptOnNode(hostId, sb.toString(), runAsRoot(false).wrapInInitScript(false));
                sb.delete(0, sb.length() - 1);
@@ -308,7 +281,6 @@ public class IsoToIMachine implements Function<String, IMachine> {
                runScriptOnNode(hostId, sb.toString(), runAsRoot(false).wrapInInitScript(false));
                sb.delete(0, sb.length() - 1);
             }
-
          }
       }
    }
@@ -318,7 +290,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
       if (s.startsWith("<")) {
          String[] specials = s.split("<");
          for (int i = 1; i < specials.length; i++) {
-            keycodes.append(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<" + specials[i]) + "  ");
+            keycodes.append(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<" + specials[i])).append("  ");
          }
          return keycodes.toString();
       }
@@ -327,12 +299,12 @@ public class IsoToIMachine implements Function<String, IMachine> {
       while (i < s.length()) {
          String digit = s.substring(i, i + 1);
          String hex = KeyboardScancodes.NORMAL_KEYBOARD_BUTTON_MAP.get(digit);
-         keycodes.append(hex + " ");
+         keycodes.append(hex).append(" ");
          if (i != 0 && i % 14 == 0)
             keycodes.append(" ");
          i++;
       }
-      keycodes.append(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<Spacebar>") + " ");
+      keycodes.append(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<Spacebar>")).append(" ");
 
       return keycodes.toString();
    }
