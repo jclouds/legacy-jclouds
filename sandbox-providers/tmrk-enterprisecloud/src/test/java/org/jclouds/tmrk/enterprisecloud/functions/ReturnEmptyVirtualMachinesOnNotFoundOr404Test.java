@@ -45,17 +45,14 @@ public class ReturnEmptyVirtualMachinesOnNotFoundOr404Test {
    }
 
    public void testOn404() {
-      VirtualMachines expected = VirtualMachines.builder().build();
       assertEquals(function.apply(new HttpResponseException("response exception", null, new HttpResponse(404, "404 message", null))), expected);
    }
 
    public void testOnNotFound() {
-      VirtualMachines expected = VirtualMachines.builder().build();
       assertEquals(function.apply(new ResourceNotFoundException()),expected);
    }
 
    public void testOnNotFoundChained() {
-      VirtualMachines expected = VirtualMachines.builder().build();
       assertEquals(function.apply(new RuntimeException(new ResourceNotFoundException())),expected);
    }
 
