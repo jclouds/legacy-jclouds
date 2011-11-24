@@ -141,4 +141,10 @@ public interface VirtualMachineClient {
     */
    Task unmountTools(URI uri);
 
+   /**
+    *  * The Action Virtual Machines Remove call removes a specified virtual machine from the compute pool.
+    * If successful, the call returns the task that removed the virtual machine.
+    * Note: To remove a virtual machine requires a Status value of Deployed and a PoweredOn value of false.
+    */
+   Task remove(URI uri);
 }

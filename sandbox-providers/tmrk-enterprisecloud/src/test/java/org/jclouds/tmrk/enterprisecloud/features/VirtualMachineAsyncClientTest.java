@@ -193,6 +193,20 @@ public class VirtualMachineAsyncClientTest extends BaseTerremarkEnterpriseCloudA
       checkFilters(httpRequest);
    }
 
+   public void testRemove() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = VirtualMachineAsyncClient.class.getMethod("remove", URI.class);
+      HttpRequest httpRequest = processor.createRequest(method,new URI("/cloudapi/ecloud/virtualmachines/5504"));
+
+      assertRequestLineEquals(httpRequest, "DELETE https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/virtualmachines/5504 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/vnd.tmrk.cloud.task\nx-tmrk-version: 2011-07-01\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
    @Override
    protected TypeLiteral<RestAnnotationProcessor<VirtualMachineAsyncClient>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<VirtualMachineAsyncClient>>() {

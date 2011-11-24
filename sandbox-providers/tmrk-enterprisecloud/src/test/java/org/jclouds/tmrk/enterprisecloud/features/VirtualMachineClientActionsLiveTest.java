@@ -26,7 +26,6 @@ import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachine;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import javax.annotation.Nullable;
 import java.net.URI;
 
 import static org.testng.Assert.*;
@@ -126,6 +125,19 @@ public class VirtualMachineClientActionsLiveTest extends BaseTerremarkEnterprise
       vm = client.getVirtualMachine(vm.getHref());
       assertFalse(vm.isPoweredOn());
    }
+
+   /* TODO: Not ready to delete the 5504 VM until I can create one.
+   @Test(dependsOnMethods = "testPowerOff")
+   public void testRemove() throws URISyntaxException {
+      // Don't want to delete quite yet!
+      RetryablePredicate retryablePredicate = new RetryablePredicate(taskFinished(), 1000*60);
+      if (!retryablePredicate.apply(client.remove(vm.getHref()))) {
+         fail("Did not manage to finish remove task");
+      }
+
+      assertNull(client.getVirtualMachine(vm.getHref()));
+   }
+   */
 
    private boolean mountTools(URI uri) {
       // Wait for task to finish AND tools to get into currentOrOutOfDate state

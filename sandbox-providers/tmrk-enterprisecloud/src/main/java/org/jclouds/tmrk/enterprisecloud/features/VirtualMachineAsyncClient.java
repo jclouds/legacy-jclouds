@@ -30,10 +30,7 @@ import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachineConfigurationOpt
 import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachines;
 import org.jclouds.tmrk.enterprisecloud.functions.ReturnEmptyVirtualMachinesOnNotFoundOr404;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import java.net.URI;
 
 /**
@@ -135,7 +132,7 @@ public interface VirtualMachineAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Task> shutdown(@EndpointParam URI uri);
 
-/**
+   /**
     * @see VirtualMachineClient#mountTools
     */
    @POST
@@ -145,7 +142,7 @@ public interface VirtualMachineAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Task> mountTools(@EndpointParam URI uri);
 
-/**
+   /**
     * @see VirtualMachineClient#unmountTools
     */
    @POST
@@ -154,4 +151,13 @@ public interface VirtualMachineAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Task> unmountTools(@EndpointParam URI uri);
+
+   /**
+    * @see VirtualMachineClient#remove
+    */
+   @DELETE
+   @Consumes("application/vnd.tmrk.cloud.task")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Task> remove(@EndpointParam URI uri);
 }
