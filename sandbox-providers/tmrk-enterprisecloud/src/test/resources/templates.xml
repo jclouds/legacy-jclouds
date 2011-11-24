@@ -1,0 +1,55 @@
+<Templates href="/cloudapi/ecloud/templates/computepools/89"
+           type="application/vnd.tmrk.cloud.template; type=collection"
+           xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <Links>
+        <Link href="/cloudapi/ecloud/computepools/89"
+              name="Default Compute Pool"
+              type="application/vnd.tmrk.cloud.computePool" rel="up"/>
+    </Links>
+    <Families>
+        <Family>
+            <Name>Standard Templates</Name>
+            <Categories>
+                <Category>
+                    <Name>OS Only</Name>
+                    <OperatingSystems>
+                        <OperatingSystem>
+                            <Name>Windows</Name>
+                            <Templates>
+                                <Template
+                                        href="/cloudapi/ecloud/templates/2/computepools/89"
+                                        name="Windows Server 2003 R2 Standard x86 SP2"
+                                        type="application/vnd.tmrk.cloud.template"/>
+                                <Template
+                                        href="/cloudapi/ecloud/templates/10/computepools/89"
+                                        name="Windows Server 2008 Standard SP2 x86"
+                                        type="application/vnd.tmrk.cloud.template"/>
+                                <Template
+                                        href="/cloudapi/ecloud/templates/1/computepools/89"
+                                        name="Windows Server 2008 R2 Standard x64 RTM"
+                                        type="application/vnd.tmrk.cloud.template"/>
+                                <Template
+                                        href="/cloudapi/ecloud/templates/9/computepools/89"
+                                        name="Windows Server 2008 Standard SP2 x64"
+                                        type="application/vnd.tmrk.cloud.template"/>
+                            </Templates>
+                        </OperatingSystem>
+                        <OperatingSystem>
+                            <Name>Linux</Name>
+                            <Templates>
+                                <Template
+                                        href="/cloudapi/ecloud/templates/5/computepools/89"
+                                        name="CentOS 5.5 x32"
+                                        type="application/vnd.tmrk.cloud.template"/>
+                                <Template
+                                        href="/cloudapi/ecloud/templates/6/computepools/89"
+                                        name="CentOS 5.5 x64"
+                                        type="application/vnd.tmrk.cloud.template"/>
+                            </Templates>
+                        </OperatingSystem>
+                    </OperatingSystems>
+                </Category>
+            </Categories>
+        </Family>
+    </Families>
+</Templates>
