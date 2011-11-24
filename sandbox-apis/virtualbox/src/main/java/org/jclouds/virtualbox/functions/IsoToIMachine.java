@@ -70,7 +70,6 @@ public class IsoToIMachine implements Function<String, IMachine> {
    public IsoToIMachine(VirtualBoxManager manager, String adminDisk, String diskFormat, String settingsFile,
                         String vmName, String osTypeId, String vmId, boolean forceOverwrite, String controllerIDE,
                         ComputeServiceContext context, String hostId, String guestId) {
-      super();
       this.manager = manager;
       this.adminDisk = adminDisk;
       this.diskFormat = diskFormat;
