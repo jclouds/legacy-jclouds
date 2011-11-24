@@ -55,9 +55,7 @@ public class ScanNetworkWithPing implements Statement {
    public String render(OsFamily family) {
       network = network.substring(0, network.lastIndexOf("."));
       StringBuilder arp = new StringBuilder();
-      arp.append(Utils.replaceTokens(OS_TO_PING.get(family), ImmutableMap.of(
-            "network", network)));
-
+      arp.append(Utils.replaceTokens(OS_TO_PING.get(family), ImmutableMap.of("network", network)));
       return arp.toString();
    }
 
