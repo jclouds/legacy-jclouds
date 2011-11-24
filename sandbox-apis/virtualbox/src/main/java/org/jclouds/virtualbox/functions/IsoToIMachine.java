@@ -20,6 +20,7 @@
 package org.jclouds.virtualbox.functions;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.inject.Inject;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
@@ -27,6 +28,7 @@ import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
+import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshException;
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.settings.KeyboardScancodes;
@@ -65,11 +67,15 @@ public class IsoToIMachine implements Function<String, IMachine> {
    private ComputeServiceContext context;
    private String hostId;
    private String guestId;
+   private Predicate<IPSocket> socketTester;
+   private String webServerHost;
+   private int webServerPort;
 
    @Inject
    public IsoToIMachine(VirtualBoxManager manager, String adminDisk, String diskFormat, String settingsFile,
                         String vmName, String osTypeId, String vmId, boolean forceOverwrite, String controllerIDE,
-                        ComputeServiceContext context, String hostId, String guestId) {
+                        ComputeServiceContext context, String hostId, String guestId, Predicate<IPSocket> socketTester,
+                        String webServerHost, int webServerPort) {
       this.manager = manager;
       this.adminDisk = adminDisk;
       this.diskFormat = diskFormat;
@@ -82,12 +88,15 @@ public class IsoToIMachine implements Function<String, IMachine> {
       this.context = context;
       this.hostId = hostId;
       this.guestId = guestId;
+      this.socketTester = socketTester;
+      this.webServerHost = webServerHost;
+      this.webServerPort = webServerPort;
    }
 
    @Override
    public IMachine apply(@Nullable String isoName) {
 
-      // TODO: Check Web Server is started and provides a preseed.cfg
+      ensureWebServerIsRunning();
 
       final IMachine vm = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(settingsFile, osTypeId, vmId, forceOverwrite,
               manager).apply(vmName);
@@ -159,6 +168,13 @@ public class IsoToIMachine implements Function<String, IMachine> {
 
       });
       return vm;
+   }
+
+   private void ensureWebServerIsRunning() {
+      final IPSocket webServerSocket = new IPSocket(webServerHost, webServerPort);
+      if (!socketTester.apply(webServerSocket)) {
+         throw new IllegalStateException(String.format("Web server is not running on host %s:%s which is needed to serve preseed.cfg.", webServerHost, webServerPort));
+      }
    }
 
    private void ensureMachineIsLaunched(String vmName) {
@@ -258,7 +274,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
 
    private String defaultInstallSequence() {
       return "<Esc><Esc><Enter> "
-              + "/install/vmlinuz noapic preseed/url=http://10.0.2.2:8080/src/test/resources/preseed.cfg "
+              + "/install/vmlinuz noapic preseed/url=http://10.0.2.2:" + webServerPort + "/src/test/resources/preseed.cfg "
               + "debian-installer=en_US auto locale=en_US kbd-chooser/method=us " + "hostname=" + vmName + " "
               + "fb=false debconf/frontend=noninteractive "
               + "keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false "
@@ -272,15 +288,16 @@ public class IsoToIMachine implements Function<String, IMachine> {
          String converted = stringToKeycode(line);
          for (String word : converted.split("  ")) {
             sb.append("vboxmanage controlvm ").append(vmName).append(" keyboardputscancode ").append(word).append("; ");
-            if (word.endsWith(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<Enter>"))) {
-               runScriptOnNode(hostId, sb.toString(), runAsRoot(false).wrapInInitScript(false));
-               sb.delete(0, sb.length() - 1);
-            }
-            if (word.endsWith(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<Return>"))) {
-               runScriptOnNode(hostId, sb.toString(), runAsRoot(false).wrapInInitScript(false));
-               sb.delete(0, sb.length() - 1);
-            }
+            runScriptIfWordEndsWith(sb, word, "<Enter>");
+            runScriptIfWordEndsWith(sb, word, "<Return>");
          }
+      }
+   }
+
+   private void runScriptIfWordEndsWith(StringBuilder sb, String word, String key) {
+      if (word.endsWith(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get(key))) {
+         runScriptOnNode(hostId, sb.toString(), runAsRoot(false).wrapInInitScript(false));
+         sb.delete(0, sb.length() - 1);
       }
    }
 
