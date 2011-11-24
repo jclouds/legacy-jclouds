@@ -84,7 +84,7 @@ public interface VirtualMachineClient {
    /**
     * The Action Virtual Machines Power On call powers on a specified virtual machine.
     * If successful, the call returns the task that powered on the virtual machine.
-    * Note: To power on requires a <PoweredOn> value of false.
+    * Note: To power on requires a PoweredOn value of false.
     * @param uri the uri of the virtual machine
     * @return Task
     */
@@ -96,7 +96,7 @@ public interface VirtualMachineClient {
     * shutdown requests the virtual machine to end all processes and turn itself off
     * when all processes complete.
     * If successful, the call returns the task that powered off the virtual machine.
-    *  Note: To power off requires a <PoweredOn> value of true.
+    * Note: To power off requires a PoweredOn value of true.
     * @param uri the uri of the virtual machine
     * @return Task
     */
@@ -105,7 +105,7 @@ public interface VirtualMachineClient {
    /**
     * The Action Virtual Machines Power Reboot call reboots a specified virtual machine.
     * If successful, the call returns the task that rebooted the virtual machine.
-    * Note: To reboot requires a <ToolsStatus> value of Current or OutOfDate and a <PoweredOn> value of true.
+    * Note: To reboot requires a ToolsStatus value of Current or OutOfDate and a PoweredOn value of true.
     * @param uri the uri of the virtual machine
     * @return Task
     */
@@ -115,10 +115,30 @@ public interface VirtualMachineClient {
     * The Action Virtual Machines Power Shutdown call shuts down a specified virtual machine.
     * Shutdown requests the virtual machine to end all processes and turn itself off when all processes complete whereas power off simply terminates the virtual machine.
     * If successful, the call returns the task that shut down the virtual machine.
-    * Note: To shutdown requires a <ToolsStatus> value of Current or OutOfDate and a <PoweredOn> value of true.
+    * Note: To shutdown requires a ToolsStatus value of Current or OutOfDate and a PoweredOn value of true.
     * @param uri the uri of the virtual machine
     * @return Task
     */
    Task shutdown(URI uri);
+
+   /**
+    * The Action Virtual Machines Tools Mount call mounts the virtual volume
+    * for VMware Tools on a specified virtual machine.
+    * If successful, the call returns the task that mounted the tools.
+    * Note: To mount VMware Tools requires a PoweredOn value of true.
+    * @param uri the uri of the virtual machine
+    * @return Task
+    */
+   Task mountTools(URI uri);
+
+   /**
+    * The Action Virtual Machines Tools Unmount call unmounts the virtual volume for VMware Tools
+    * on a specified virtual machine.
+    * If successful, the call returns the task that unmounted the tools.
+    * Note: To unmount VMware Tools requires a PoweredOn value of true.
+    * @param uri the uri of the virtual machine
+    * @return Task
+    */
+   Task unmountTools(URI uri);
 
 }

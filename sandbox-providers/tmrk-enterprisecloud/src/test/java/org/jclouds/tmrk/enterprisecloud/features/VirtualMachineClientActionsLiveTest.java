@@ -21,6 +21,7 @@ package org.jclouds.tmrk.enterprisecloud.features;
 import com.google.common.base.Predicate;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.tmrk.enterprisecloud.domain.Task;
+import org.jclouds.tmrk.enterprisecloud.domain.software.ToolsStatus;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachine;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -51,10 +52,10 @@ public class VirtualMachineClientActionsLiveTest extends BaseTerremarkEnterprise
    public void testPowerOn() throws Exception {
       vm = client.getVirtualMachine(new URI(vmURI));
       assertFalse(vm.isPoweredOn());
-      Task task = client.powerOn(vm.getHref());
+
       RetryablePredicate retryablePredicate = new RetryablePredicate(taskFinished(), 1000*60);
-      if (!retryablePredicate.apply(task)) {
-         fail("Did not manage to powerOn VM within timeout");
+      if (!retryablePredicate.apply(client.powerOn(vm.getHref()))) {
+         fail("Did not manage to finish powerOn task");
       }
 
       vm = client.getVirtualMachine(vm.getHref());
@@ -62,46 +63,84 @@ public class VirtualMachineClientActionsLiveTest extends BaseTerremarkEnterprise
    }
 
    @Test(dependsOnMethods = "testPowerOn")
-   public void testShutdown() {
-      //System.out.println("shutdown");
-      //Needs tool status Current/OutOfDate
-      //check state
-      //shutdown
-      //wait until done
-      //power on
+   public void testMountTools() {
+      if (!mountTools(vm.getHref())) {
+         fail("Did not manage to finish mount tools task");
+      }
    }
 
-   @Test(dependsOnMethods = "testShutdown")
-   public void testReboot() {
-      //System.out.println("reboot");
-      //Needs tool status Current/OutOfDate
-      //check state
-      //reboot
-      //wait until done
-   }
-
-   //@Test(dependsOnMethods = "testReboot")
-   @Test(dependsOnMethods = "testPowerOn")
-   public void testPowerOff() {
-      Task task = client.powerOff(vm.getHref());
+   @Test(dependsOnMethods = "testMountTools")
+   public void testUnmountTools() {
       RetryablePredicate retryablePredicate = new RetryablePredicate(taskFinished(), 1000*60);
-      if (!retryablePredicate.apply(task)) {
-         fail("Did not manage to powerOff VM within timeout");
+      if (!retryablePredicate.apply(client.unmountTools(vm.getHref()))) {
+         fail("Did not manage finish unmount tools task");
+      }
+      //ToolsStatus remains in 'OutOfDate' after un-mounting.
+      //There is no way to tell, other than to try un-mounting again.
+   }
+
+   @Test(dependsOnMethods = "testUnmountTools")
+   public void testShutdown() {
+      //Seems to work as ToolsStatus remains in OutOfDate state
+      RetryablePredicate retryablePredicate = new RetryablePredicate(taskFinished(), 1000*60);
+      if (!retryablePredicate.apply(client.shutdown(vm.getHref()))) {
+         fail("Did not manage to finish shutdown task");
+      }
+      // Takes a while to powerOff
+      retryablePredicate = new RetryablePredicate(poweredOff(), 1000*60);
+      if (!retryablePredicate.apply(vm.getHref())) {
+         fail("Did not manage to powerOff after shutdown");
       }
 
       vm = client.getVirtualMachine(vm.getHref());
       assertFalse(vm.isPoweredOn());
    }
 
+   @Test(dependsOnMethods = "testShutdown")
+   public void testReboot() {
+      RetryablePredicate retryablePredicate = new RetryablePredicate(taskFinished(), 1000*60);
+      if (!retryablePredicate.apply(client.powerOn(vm.getHref()))) {
+         fail("Did not manage to finish powerOn task");
+      }
+
+      if (!mountTools(vm.getHref())) {
+         fail("Did not manage to mount tools");
+      }
+
+      retryablePredicate = new RetryablePredicate(taskFinished(), 1000*60);
+      if (!retryablePredicate.apply(client.reboot(vm.getHref()))) {
+         fail("Did not manage to finish reboot task");
+      }
+
+      vm = client.getVirtualMachine(vm.getHref());
+      assertTrue(vm.isPoweredOn());
+   }
+
+   @Test(dependsOnMethods = "testReboot")
+   public void testPowerOff() {
+      RetryablePredicate retryablePredicate = new RetryablePredicate(taskFinished(), 1000*60);
+      if (!retryablePredicate.apply(client.powerOff(vm.getHref()))) {
+         fail("Did not manage to finish powerOff task");
+      }
+
+      vm = client.getVirtualMachine(vm.getHref());
+      assertFalse(vm.isPoweredOn());
+   }
+
+   private boolean mountTools(URI uri) {
+      // Wait for task to finish AND tools to get into currentOrOutOfDate state
+      return new RetryablePredicate(taskFinished(), 1000*60).apply(client.mountTools(uri)) &&
+             new RetryablePredicate(toolsCurrentOrOutOfDate(), 1000*60).apply(uri);
+   }
+
    // Probably generally useful
    private Predicate taskFinished() {
       return new Predicate<Task>() {
          @Override
-         public boolean apply(@Nullable Task task) {
+         public boolean apply(Task task) {
             TaskClient taskClient = context.getApi().getTaskClient();
             task = taskClient.getTask(task.getHref());
-            Task.Status status = task.getStatus();
-            switch(status) {
+            switch(task.getStatus()) {
                case QUEUED:
                case RUNNING:
                   return false;
@@ -109,10 +148,40 @@ public class VirtualMachineClientActionsLiveTest extends BaseTerremarkEnterprise
                case SUCCESS:
                   return true;
                default:
-                  throw new RuntimeException("Task Failed:"+task.getHref()+", Status:"+status);
+                  throw new RuntimeException("Task Failed:"+task.getHref()+", Status:"+task.getStatus());
             }
          }
       };
    }
 
+   // Probably generally useful
+   private Predicate toolsCurrentOrOutOfDate() {
+      return new Predicate<URI>() {
+         @Override
+         public boolean apply(URI uri) {
+            VirtualMachine virtualMachine = client.getVirtualMachine(uri);
+            ToolsStatus toolsStatus = virtualMachine.getToolsStatus();
+            switch(toolsStatus) {
+               case NOT_INSTALLED:
+               case NOT_RUNNING:
+                  return false;
+               case CURRENT:
+               case OUT_OF_DATE:
+                  return true;
+               default:
+                  throw new RuntimeException("Unable to determine toolsStatus for:"+uri+", ToolsStatus:"+toolsStatus);
+            }
+         }
+      };
+   }
+
+   private Predicate poweredOff() {
+      return new Predicate<URI>() {
+         @Override
+         public boolean apply(URI uri) {
+            VirtualMachine virtualMachine = client.getVirtualMachine(uri);
+            return !virtualMachine.isPoweredOn();
+         }
+      };
+   }
 }

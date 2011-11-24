@@ -165,6 +165,34 @@ public class VirtualMachineAsyncClientTest extends BaseTerremarkEnterpriseCloudA
       checkFilters(httpRequest);
    }
 
+   public void testMountTools() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = VirtualMachineAsyncClient.class.getMethod("mountTools", URI.class);
+      HttpRequest httpRequest = processor.createRequest(method,new URI("/cloudapi/ecloud/virtualmachines/5504"));
+
+      assertRequestLineEquals(httpRequest, "POST https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/virtualmachines/5504/tools/action/mount HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/vnd.tmrk.cloud.task\nx-tmrk-version: 2011-07-01\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testUnmountTools() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = VirtualMachineAsyncClient.class.getMethod("unmountTools", URI.class);
+      HttpRequest httpRequest = processor.createRequest(method,new URI("/cloudapi/ecloud/virtualmachines/5504"));
+
+      assertRequestLineEquals(httpRequest, "POST https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/virtualmachines/5504/tools/action/unmount HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/vnd.tmrk.cloud.task\nx-tmrk-version: 2011-07-01\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
    @Override
    protected TypeLiteral<RestAnnotationProcessor<VirtualMachineAsyncClient>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<VirtualMachineAsyncClient>>() {

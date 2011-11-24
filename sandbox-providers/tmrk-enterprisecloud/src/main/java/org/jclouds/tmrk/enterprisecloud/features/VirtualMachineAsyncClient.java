@@ -134,4 +134,24 @@ public interface VirtualMachineAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Task> shutdown(@EndpointParam URI uri);
+
+/**
+    * @see VirtualMachineClient#mountTools
+    */
+   @POST
+   @Path("/tools/action/mount")
+   @Consumes("application/vnd.tmrk.cloud.task")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Task> mountTools(@EndpointParam URI uri);
+
+/**
+    * @see VirtualMachineClient#unmountTools
+    */
+   @POST
+   @Path("/tools/action/unmount")
+   @Consumes("application/vnd.tmrk.cloud.task")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Task> unmountTools(@EndpointParam URI uri);
 }
