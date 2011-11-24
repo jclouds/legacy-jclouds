@@ -86,6 +86,7 @@ public class TakeSnapshotIfNotAlreadyAttachedTest {
       expect(machine.getCurrentSnapshot()).andReturn(null).anyTimes();
       expect(manager.openMachineSession(machine)).andReturn(session);
 
+      expect(machine.getName()).andReturn("machine").anyTimes();
       expect(session.getConsole()).andReturn(console);
       expect(console.takeSnapshot(snapshotName, snapshotDesc)).andReturn(
             progress);
