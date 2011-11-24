@@ -20,7 +20,9 @@
 package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Predicates.in;
 import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
 import static org.testng.Assert.assertTrue;
 
@@ -28,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
@@ -51,6 +54,8 @@ import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.inject.Guice;
+
+import javax.annotation.Nullable;
 
 /**
  * @author Andrea Turli, Mattias Holmqvist
@@ -96,9 +101,20 @@ public class IsoToIMachineLiveTest extends BaseVirtualBoxClientLiveTest {
       // TODO add the description to the cache of the images or serialize to
       // YAML the image desc
       Set<? extends Image> images = context.getComputeService().listImages();
+      Iterable<String> imageIds = transform(images, extractId());
 
-      assertTrue(any(images, equalTo(newImage)));
+      assertTrue(any(imageIds, equalTo(newImage.getId())));
 
+   }
+
+   private Function<Image, String> extractId() {
+      return new Function<Image, String>() {
+
+         @Override
+         public String apply(@Nullable Image input) {
+            return input.getId();
+         }
+      };
    }
 
 }
