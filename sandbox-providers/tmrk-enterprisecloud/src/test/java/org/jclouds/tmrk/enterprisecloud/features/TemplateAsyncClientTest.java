@@ -38,6 +38,21 @@ import java.net.URISyntaxException;
 @Test(groups = "unit", testName = "TemplateAsyncClientTest")
 public class TemplateAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClientTest<TemplateAsyncClient> {
 
+   public void testGetTemplates() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = TemplateAsyncClient.class.getMethod("getTemplates", URI.class);
+      HttpRequest httpRequest = processor.createRequest(method, new URI("/cloudapi/ecloud/templates/computepools/89"));
+
+      assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/templates/computepools/89 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest,
+            "Accept: application/vnd.tmrk.cloud.template; type=collection\nx-tmrk-version: 2011-07-01\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
    public void testGetTemplate() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
       Method method = TemplateAsyncClient.class.getMethod("getTemplate", URI.class);
       HttpRequest httpRequest = processor.createRequest(method, new URI("/cloudapi/ecloud/templates/6/computepools/89"));

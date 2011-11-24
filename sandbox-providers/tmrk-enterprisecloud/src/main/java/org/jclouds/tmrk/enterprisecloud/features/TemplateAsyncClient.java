@@ -23,6 +23,7 @@ import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.tmrk.enterprisecloud.domain.template.Template;
+import org.jclouds.tmrk.enterprisecloud.domain.template.Templates;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -41,6 +42,15 @@ import java.net.URI;
 @RequestFilters(BasicAuthentication.class)
 @Headers(keys = "x-tmrk-version", values = "{jclouds.api-version}")
 public interface TemplateAsyncClient {
+
+   /**
+    * @see org.jclouds.tmrk.enterprisecloud.features.TemplateClient#getTemplates
+    */
+   @GET
+   @Consumes("application/vnd.tmrk.cloud.template; type=collection")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Templates> getTemplates(@EndpointParam URI uri);
 
    /**
     * @see org.jclouds.tmrk.enterprisecloud.features.TemplateClient#getTemplate

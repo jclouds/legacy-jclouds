@@ -20,6 +20,7 @@ package org.jclouds.tmrk.enterprisecloud.features;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.tmrk.enterprisecloud.domain.template.Template;
+import org.jclouds.tmrk.enterprisecloud.domain.template.Templates;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +37,15 @@ import java.util.concurrent.TimeUnit;
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface TemplateClient {
+
+   /**
+    * The Get Templates call returns information regarding templates defined in a compute pool.
+    * Note that Templates are not a simple wrapper around template objects.
+    * Once the desired template is located getTemplate must be called to retrieve all the attached information
+    * @param uri compute pool identifier
+    * @return the templates
+    */
+   Templates getTemplates(URI uri);
 
    /**
     * The Get Templates by ID call returns information regarding a specified template defined in a compute pool
