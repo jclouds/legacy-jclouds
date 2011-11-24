@@ -19,14 +19,19 @@
 package org.jclouds.cloudstack.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.collect.FindResourceInSet;
@@ -56,32 +61,32 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, NodeMetadata> {
 
    public static final Map<VirtualMachine.State, NodeState> vmStateToNodeState = ImmutableMap
-         .<VirtualMachine.State, NodeState> builder().put(VirtualMachine.State.STARTING, NodeState.PENDING)
-         .put(VirtualMachine.State.RUNNING, NodeState.RUNNING).put(VirtualMachine.State.STOPPING, NodeState.SUSPENDED)
-         .put(VirtualMachine.State.STOPPED, NodeState.PENDING)
-         .put(VirtualMachine.State.DESTROYED, NodeState.TERMINATED)
-         .put(VirtualMachine.State.EXPUNGING, NodeState.TERMINATED)
-         .put(VirtualMachine.State.MIGRATING, NodeState.PENDING).put(VirtualMachine.State.ERROR, NodeState.ERROR)
-         .put(VirtualMachine.State.UNKNOWN, NodeState.UNRECOGNIZED)
+      .<VirtualMachine.State, NodeState>builder().put(VirtualMachine.State.STARTING, NodeState.PENDING)
+      .put(VirtualMachine.State.RUNNING, NodeState.RUNNING).put(VirtualMachine.State.STOPPING, NodeState.SUSPENDED)
+      .put(VirtualMachine.State.STOPPED, NodeState.PENDING)
+      .put(VirtualMachine.State.DESTROYED, NodeState.TERMINATED)
+      .put(VirtualMachine.State.EXPUNGING, NodeState.TERMINATED)
+      .put(VirtualMachine.State.MIGRATING, NodeState.PENDING).put(VirtualMachine.State.ERROR, NodeState.ERROR)
+      .put(VirtualMachine.State.UNKNOWN, NodeState.UNRECOGNIZED)
          // TODO: is this really a state?
-         .put(VirtualMachine.State.SHUTDOWNED, NodeState.PENDING)
-         .put(VirtualMachine.State.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
+      .put(VirtualMachine.State.SHUTDOWNED, NodeState.PENDING)
+      .put(VirtualMachine.State.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
 
    private final FindLocationForVirtualMachine findLocationForVirtualMachine;
    private final FindHardwareForVirtualMachine findHardwareForVirtualMachine;
    private final FindImageForVirtualMachine findImageForVirtualMachine;
-   private final Cache<Long, IPForwardingRule> getIPForwardingRuleByVirtualMachine;
+   private final Cache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine;
 
    @Inject
    VirtualMachineToNodeMetadata(FindLocationForVirtualMachine findLocationForVirtualMachine,
-         FindHardwareForVirtualMachine findHardwareForVirtualMachine,
-         FindImageForVirtualMachine findImageForVirtualMachine,
-         Cache<Long, IPForwardingRule> getIPForwardingRuleByVirtualMachine) {
+                                FindHardwareForVirtualMachine findHardwareForVirtualMachine,
+                                FindImageForVirtualMachine findImageForVirtualMachine,
+                                Cache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine) {
       this.findLocationForVirtualMachine = checkNotNull(findLocationForVirtualMachine, "findLocationForVirtualMachine");
       this.findHardwareForVirtualMachine = checkNotNull(findHardwareForVirtualMachine, "findHardwareForVirtualMachine");
       this.findImageForVirtualMachine = checkNotNull(findImageForVirtualMachine, "findImageForVirtualMachine");
-      this.getIPForwardingRuleByVirtualMachine = checkNotNull(getIPForwardingRuleByVirtualMachine,
-            "getIPForwardingRuleByVirtualMachine");
+      this.getIPForwardingRulesByVirtualMachine = checkNotNull(getIPForwardingRulesByVirtualMachine,
+         "getIPForwardingRulesByVirtualMachine");
    }
 
    @Override
@@ -108,15 +113,27 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
       // TODO: check to see public or private
       if (from.getIPAddress() != null) {
          boolean isPrivate = InetAddresses2.isPrivateIPAddress(from.getIPAddress());
-         Set<String> addresses = ImmutableSet.<String> of(from.getIPAddress());
+         Set<String> addresses = ImmutableSet.<String>of(from.getIPAddress());
          if (isPrivate)
             builder.privateAddresses(addresses);
          else
             builder.publicAddresses(addresses);
       }
       try {
-         IPForwardingRule rule = getIPForwardingRuleByVirtualMachine.getUnchecked(from.getId());
-         builder.publicAddresses(ImmutableSet.<String> of(rule.getIPAddress()));
+
+         builder.publicAddresses(transform(filter(getIPForwardingRulesByVirtualMachine.getUnchecked(from.getId()),
+            new Predicate<IPForwardingRule>() {
+               @Override
+               public boolean apply(@Nullable IPForwardingRule rule) {
+                  return !"Deleting".equals(rule.getState());
+               }
+            }),
+            new Function<IPForwardingRule, String>() {
+               @Override
+               public String apply(@Nullable IPForwardingRule rule) {
+                  return rule.getIPAddress();
+               }
+            }));
       } catch (UncheckedExecutionException e) {
          if (Throwables2.getFirstThrowableOfType(e, ResourceNotFoundException.class) == null) {
             Throwables.propagateIfPossible(e.getCause());
@@ -165,9 +182,9 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
       @Override
       public boolean matches(VirtualMachine from, Image input) {
          return input.getProviderId().equals(from.getTemplateId() + "")
-         // either location free image (location is null)
-         // or in the same zone as the VM
-               && (input.getLocation() == null || input.getId().equals(from.getZoneId() + ""));
+            // either location free image (location is null)
+            // or in the same zone as the VM
+            && (input.getLocation() == null || input.getId().equals(from.getZoneId() + ""));
       }
    }
 

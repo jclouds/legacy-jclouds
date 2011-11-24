@@ -21,54 +21,43 @@ package org.jclouds.tmrk.enterprisecloud.features;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.*;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.tmrk.enterprisecloud.domain.Task;
-import org.jclouds.tmrk.enterprisecloud.domain.Tasks;
+import org.jclouds.tmrk.enterprisecloud.domain.template.Template;
+import org.jclouds.tmrk.enterprisecloud.domain.template.Templates;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import java.net.URI;
 
 /**
- * Provides asynchronous access to Task via their REST API.
+ * Provides asynchronous access to Templates(s) via their REST API.
  * <p/>
  * 
- * @see TaskClient
+ * @see org.jclouds.tmrk.enterprisecloud.features.TemplateClient
  * @see <a href=
  *      "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID="
  *      />
- * @author Adrian Cole
+ * @author Jason King
  */
 @RequestFilters(BasicAuthentication.class)
 @Headers(keys = "x-tmrk-version", values = "{jclouds.api-version}")
-public interface TaskAsyncClient {
+public interface TemplateAsyncClient {
 
    /**
-    * @see TaskClient#getTasksInEnvironment
+    * @see org.jclouds.tmrk.enterprisecloud.features.TemplateClient#getTemplates
     */
    @GET
-   @Consumes("application/vnd.tmrk.cloud.task; type=collection")
-   @JAXBResponseParser
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Tasks> getTasksInEnvironment(@EndpointParam URI environmentId);
-
-   /**
-    * @see TaskClient#getTask
-    */
-   @GET
-   @Consumes("application/vnd.tmrk.cloud.task")
+   @Consumes("application/vnd.tmrk.cloud.template; type=collection")
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Task> getTask(@EndpointParam URI taskId);
+   ListenableFuture<Templates> getTemplates(@EndpointParam URI uri);
 
    /**
-    * @see TaskClient#getTasksByVirtualMachine
+    * @see org.jclouds.tmrk.enterprisecloud.features.TemplateClient#getTemplate
     */
    @GET
-   @Consumes("application/vnd.tmrk.cloud.task; type=collection")
+   @Consumes("application/vnd.tmrk.cloud.template")
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Tasks> getTasksByVirtualMachine(@EndpointParam URI uri);
-
+   ListenableFuture<Template> getTemplate(@EndpointParam URI uri);
 }

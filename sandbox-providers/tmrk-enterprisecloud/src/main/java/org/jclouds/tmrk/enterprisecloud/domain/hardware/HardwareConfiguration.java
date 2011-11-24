@@ -24,10 +24,12 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.tmrk.enterprisecloud.domain.Action;
 import org.jclouds.tmrk.enterprisecloud.domain.Actions;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
 import org.jclouds.tmrk.enterprisecloud.domain.network.Nics;
 import org.jclouds.tmrk.enterprisecloud.domain.network.VirtualNic;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
@@ -39,6 +41,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * <xs:complexType name="HardwareConfiguration">
  * @author Jason King
  */
+@XmlRootElement(name = "HardwareConfiguration")
 public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
 
    @SuppressWarnings("unchecked")
@@ -59,7 +62,7 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
        // TODO Links
        private Set<Action> actions = Sets.newLinkedHashSet();
        private int processorCount;
-       private Memory memory;
+       private ResourceCapacity memory;
        private Set<VirtualDisk> virtualDisks = Sets.newLinkedHashSet();
        private Set<VirtualNic> virtualNics = Sets.newLinkedHashSet();
 
@@ -82,7 +85,7 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
        /**
         * @see HardwareConfiguration#getMemory
         */
-       public Builder memory(Memory memory) {
+       public Builder memory(ResourceCapacity memory) {
           this.memory = memory;
           return this;
        }
@@ -157,7 +160,7 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
    private int processorCount;
 
    @XmlElement(name = "Memory", required = false)
-   private Memory memory;
+   private ResourceCapacity memory;
 
    @XmlElement(name = "Disks", required = false)
    private Disks virtualDisks = Disks.builder().build();
@@ -165,7 +168,7 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
    @XmlElement(name = "Nics", required = false)
    private Nics virtualNics = Nics.builder().build();
 
-   public HardwareConfiguration(Set<Action> actions, int processorCount, @Nullable Memory memory, Set<VirtualDisk> virtualDisks, Set<VirtualNic> virtualNics) {
+   public HardwareConfiguration(Set<Action> actions, int processorCount, @Nullable ResourceCapacity memory, Set<VirtualDisk> virtualDisks, Set<VirtualNic> virtualNics) {
        this.actions = Actions.builder().actions(checkNotNull(actions, "actions")).build();
        this.virtualDisks = Disks.builder().disks(checkNotNull(virtualDisks,"virtualDisks")).build();
        this.virtualNics = Nics.builder().nics(checkNotNull(virtualNics, "virtualNics")).build();
@@ -185,7 +188,7 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
         return processorCount;
     }
 
-    public Memory getMemory() {
+    public ResourceCapacity getMemory() {
         return memory;
     }
 

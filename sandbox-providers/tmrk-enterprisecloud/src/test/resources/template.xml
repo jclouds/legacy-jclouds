@@ -1,0 +1,46 @@
+<Template href="/cloudapi/ecloud/templates/6/computepools/89"
+          name="CentOS 5.5 x64" type="application/vnd.tmrk.cloud.template"
+          xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <Links>
+        <Link href="/cloudapi/ecloud/computepools/89"
+              name="Default Compute Pool"
+              type="application/vnd.tmrk.cloud.computePool" rel="up"/>
+    </Links>
+    <OperatingSystem
+            href="/cloudapi/ecloud/operatingsystems/rhel5_64guest/computepools/89"
+            name="Red Hat Enterprise Linux 5 (64-bit)"
+            type="application/vnd.tmrk.cloud.operatingSystem"/>
+    <Description/>
+    <Processor>
+        <Minimum>1</Minimum>
+        <Maximum>8</Maximum>
+        <StepFactor>1</StepFactor>
+    </Processor>
+    <Memory>
+        <MinimumSize>
+            <Unit>MB</Unit>
+            <Value>256</Value>
+        </MinimumSize>
+        <MaximumSize>
+            <Unit>MB</Unit>
+            <Value>261120</Value>
+        </MaximumSize>
+        <StepFactor>
+            <Unit>MB</Unit>
+            <Value>4</Value>
+        </StepFactor>
+    </Memory>
+    <Storage>
+        <Size>
+            <Unit>GB</Unit>
+            <Value>10</Value>
+        </Size>
+    </Storage>
+    <NetworkAdapters>1</NetworkAdapters>
+    <Customization>
+        <Type>Linux</Type>
+        <CanPowerOn>false</CanPowerOn>
+        <PasswordRequired>false</PasswordRequired>
+        <SshKeyRequired>true</SshKeyRequired>
+    </Customization>
+</Template>

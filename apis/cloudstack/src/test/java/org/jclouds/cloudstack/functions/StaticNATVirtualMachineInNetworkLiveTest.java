@@ -18,12 +18,16 @@
  */
 package org.jclouds.cloudstack.functions;
 
+import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
+import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.testng.Assert.assertEquals;
 
 import java.util.NoSuchElementException;
+import java.util.Set;
 
-import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule.GetIPForwardingRuleByVirtualMachine;
+import com.google.common.base.Predicate;
+import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule.GetIPForwardingRulesByVirtualMachine;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
@@ -40,6 +44,8 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.cache.CacheBuilder;
+
+import javax.annotation.Nullable;
 
 /**
  * Tests behavior of {@code StaticNATVirtualMachineInNetwork}
@@ -75,9 +81,15 @@ public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest 
       if (networksDisabled)
          return;
       ip = new StaticNATVirtualMachineInNetwork(client, reuseOrAssociate, jobComplete, CacheBuilder.newBuilder()
-            .<Long, IPForwardingRule> build(new GetIPForwardingRuleByVirtualMachine(client)), network).apply(vm);
+            .<Long, Set<IPForwardingRule>>build(new GetIPForwardingRulesByVirtualMachine(client)), network).apply(vm);
 
-      rule = client.getNATClient().getIPForwardingRuleForIPAddress(ip.getId());
+      rule = getOnlyElement(filter(client.getNATClient().getIPForwardingRulesForIPAddress(ip.getId()),
+         new Predicate<IPForwardingRule>() {
+            @Override
+            public boolean apply(@Nullable IPForwardingRule rule) {
+               return rule != null && rule.getStartPort() == 22;
+            }
+         }));
       assertEquals(rule.getIPAddressId(), ip.getId());
       assertEquals(rule.getVirtualMachineId(), vm.getId());
       assertEquals(rule.getStartPort(), 22);

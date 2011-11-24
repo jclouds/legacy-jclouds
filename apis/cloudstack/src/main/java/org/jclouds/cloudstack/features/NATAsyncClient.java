@@ -78,26 +78,24 @@ public interface NATAsyncClient {
    ListenableFuture<IPForwardingRule> getIPForwardingRule(@QueryParam("id") long id);
 
    /**
-    * @see NATClient#getIPForwardingRuleForIPAddress
+    * @see NATClient#getIPForwardingRulesForIPAddress
     */
    @GET
    @QueryParams(keys = "command", values = "listIpForwardingRules")
    @SelectJson("ipforwardingrule")
-   @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<IPForwardingRule> getIPForwardingRuleForIPAddress(@QueryParam("ipaddressid") long id);
+   ListenableFuture<Set<IPForwardingRule>> getIPForwardingRulesForIPAddress(@QueryParam("ipaddressid") long id);
 
    /**
-    * @see NATClient#getIPForwardingRuleForVirtualMachine
+    * @see NATClient#getIPForwardingRulesForVirtualMachine
     */
    @GET
    @QueryParams(keys = "command", values = "listIpForwardingRules")
    @SelectJson("ipforwardingrule")
-   @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<IPForwardingRule> getIPForwardingRuleForVirtualMachine(@QueryParam("virtualmachineid") long id);
+   ListenableFuture<Set<IPForwardingRule>> getIPForwardingRulesForVirtualMachine(@QueryParam("virtualmachineid") long id);
 
    /**
     * @see NATClient#createIPForwardingRule

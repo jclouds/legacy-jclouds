@@ -81,11 +81,6 @@ public class Disks {
        this.disks = Sets.newLinkedHashSet(disks);
     }
 
-    public void setVirtualDisk(VirtualDisk disk) {
-        checkNotNull(disk,"disk");
-        this.disks.add(disk);
-    }
-
     public Set<VirtualDisk> getVirtualDisks() {
         return Collections.unmodifiableSet(disks);
     }

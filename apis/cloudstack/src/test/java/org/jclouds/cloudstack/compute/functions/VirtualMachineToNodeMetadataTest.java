@@ -64,12 +64,12 @@ public class VirtualMachineToNodeMetadataTest {
             .<Image> of(TemplateToImageTest.one, TemplateToImageTest.two));
       VirtualMachineToNodeMetadata parser = new VirtualMachineToNodeMetadata(new FindLocationForVirtualMachine(
             locationSupplier), new FindHardwareForVirtualMachine(hardwareSupplier), new FindImageForVirtualMachine(
-            imageSupplier), CacheBuilder.newBuilder().<Long, IPForwardingRule> build(
-            new CacheLoader<Long, IPForwardingRule>() {
+            imageSupplier), CacheBuilder.newBuilder().<Long, Set<IPForwardingRule>> build(
+            new CacheLoader<Long, Set<IPForwardingRule>>() {
 
                @Override
-               public IPForwardingRule load(Long arg0) throws Exception {
-                  return IPForwardingRule.builder().id(1234l).IPAddress("1.1.1.1").build();
+               public Set<IPForwardingRule> load(Long arg0) throws Exception {
+                  return ImmutableSet.of(IPForwardingRule.builder().id(1234l).IPAddress("1.1.1.1").build());
                }
 
             }));
@@ -102,11 +102,11 @@ public class VirtualMachineToNodeMetadataTest {
             .<Image> of(TemplateToImageTest.one, TemplateToImageTest.two));
       VirtualMachineToNodeMetadata parser = new VirtualMachineToNodeMetadata(new FindLocationForVirtualMachine(
             locationSupplier), new FindHardwareForVirtualMachine(hardwareSupplier), new FindImageForVirtualMachine(
-            imageSupplier), CacheBuilder.newBuilder().<Long, IPForwardingRule> build(
-            new CacheLoader<Long, IPForwardingRule>() {
+            imageSupplier), CacheBuilder.newBuilder().<Long, Set<IPForwardingRule>> build(
+            new CacheLoader<Long, Set<IPForwardingRule>>() {
 
                @Override
-               public IPForwardingRule load(Long arg0) throws Exception {
+               public Set<IPForwardingRule> load(Long arg0) throws Exception {
                   throw new ResourceNotFoundException("no ip forwarding rule for: " + arg0);
                }
 

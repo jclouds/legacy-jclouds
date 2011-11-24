@@ -25,42 +25,42 @@ import javax.xml.bind.annotation.XmlElement;
 /**
  * @author Jason King
  */
-public class ResourceCapacity<T extends ResourceCapacity<T>> {
+public class ResourceCapacity {
 
-   public static <T extends ResourceCapacity<T>> Builder<T> builder() {
-      return new Builder<T>();
+   public static Builder builder() {
+      return new Builder();
    }
 
-   public Builder<T> toBuilder() {
-      return new Builder<T>().fromResource(this);
+   public Builder toBuilder() {
+      return new Builder().fromResource(this);
    }
 
-   public static class Builder<T extends ResourceCapacity<T>> {
+   public static class Builder {
 
        protected double value; //mandatory
        protected String unit;  //optional
 
       /**
-       * @see ResourceCapacity#getValue
+       * @see org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity#getValue
        */
-      public Builder<T> value(double value) {
+      public Builder value(double value) {
          this.value = value;
          return this;
       }
 
       /**
-       * @see ResourceCapacity#getUnit
+       * @see org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity#getUnit
        */
-      public Builder<T> unit(String unit) {
+      public Builder unit(String unit) {
          this.unit = unit;
          return this;
       }
 
-      public ResourceCapacity<T> build() {
-         return new ResourceCapacity<T>(value, unit);
+      public ResourceCapacity build() {
+         return new ResourceCapacity(value, unit);
       }
 
-      public Builder<T> fromResource(ResourceCapacity<T> in) {
+      public Builder fromResource(ResourceCapacity in) {
          return value(in.getValue()).unit(in.getUnit());
       }
    }
@@ -91,36 +91,32 @@ public class ResourceCapacity<T extends ResourceCapacity<T>> {
       return unit;
    }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ResourceCapacity that = (ResourceCapacity) o;
-
-        if (Double.compare(that.value, value) != 0) return false;
-        if (unit != null ? !unit.equals(that.unit) : that.unit != null)
-            return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result;
-        long temp;
-        temp = value != +0.0d ? Double.doubleToLongBits(value) : 0L;
-        result = (int) (temp ^ (temp >>> 32));
-        result = 31 * result + (unit != null ? unit.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-   public String toString() {
-      return String.format("[%s]",string());
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+   
+      ResourceCapacity that = (ResourceCapacity) o;
+   
+      if (Double.compare(that.value, value) != 0) return false;
+      if (unit != null ? !unit.equals(that.unit) : that.unit != null)
+         return false;
+   
+      return true;
+   }
+   
+   @Override
+   public int hashCode() {
+      int result;
+      long temp;
+      temp = value != +0.0d ? Double.doubleToLongBits(value) : 0L;
+      result = (int) (temp ^ (temp >>> 32));
+      result = 31 * result + (unit != null ? unit.hashCode() : 0);
+      return result;
    }
 
-   protected String string() {
-       return "value="+value+", unit="+unit;
+   @Override
+   public String toString() {
+      return "[value="+value+", unit="+unit+"]";
    }
 }

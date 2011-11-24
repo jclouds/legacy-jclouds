@@ -19,47 +19,39 @@
 package org.jclouds.tmrk.enterprisecloud.features;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.tmrk.enterprisecloud.domain.Task;
-import org.jclouds.tmrk.enterprisecloud.domain.Tasks;
+import org.jclouds.tmrk.enterprisecloud.domain.template.Template;
+import org.jclouds.tmrk.enterprisecloud.domain.template.Templates;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Provides synchronous access to Task.
+ * Provides synchronous access to Template(s).
  * <p/>
  * 
- * @see TaskAsyncClient
+ * @see org.jclouds.tmrk.enterprisecloud.features.TemplateAsyncClient
  * @see <a href=
  *      "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID="
  *      />
- * @author Adrian Cole
+ * @author Jason King
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface TaskClient {
+public interface TemplateClient {
 
    /**
-    * The Get Tasks call returns information regarding the tasks in an
-    * environment. The task list is a history of changes to the environment.
-    * 
-    * @return a history of changes to the environment.
+    * The Get Templates call returns information regarding templates defined in a compute pool.
+    * Note that Templates are not a simple wrapper around template objects.
+    * Once the desired template is located getTemplate must be called to retrieve all the attached information
+    * @param uri compute pool identifier
+    * @return the templates
     */
-   Tasks getTasksInEnvironment(URI environmentUri);
+   Templates getTemplates(URI uri);
 
    /**
-    * The Get Tasks by ID call returns information regarding a specified task in
-    * an environment.
-    * 
-    * @return the task or null if not found
+    * The Get Templates by ID call returns information regarding a specified template defined in a compute pool
+    * @param uri the uri of the template
+    * @return the template
     */
-   Task getTask(URI taskUri);
-
-   /**
-    * The Get Tasks by Virtual Machine call returns information regarding tasks
-    * for a specified virtual machine in an environment.
-    * @param uri The uri corresponding to the tasks. e.g. /cloudapi/ecloud/tasks/virtualmachines/{id}
-    * @return Tasks
-    */
-   Tasks getTasksByVirtualMachine(URI uri);
+   Template getTemplate(URI uri);
 
 }

@@ -43,18 +43,26 @@ public class TaskClientLiveTest extends BaseTerremarkEnterpriseCloudClientLiveTe
 
    private TaskClient client;
 
-   @Test
    public void testGetTasks() throws Exception {
       // TODO: don't hard-code id
-      // TODO: docs say don't parse the href, yet no xml includes "identifier",
-      // I suspect we may need to change to URI args as opposed to long
       Tasks response = client.getTasksInEnvironment(new URI("/cloudapi/ecloud/tasks/environments/77"));
-      assert null != response;
+      assertTasks(response);
+   }
 
-      assertTrue(response.getTasks().size() >= 0);
-      for (Task task : response.getTasks()) {
+   public void testGetTasksByVirtualMachine() throws Exception {
+      // TODO: don't hard-code id
+      Tasks response = client.getTasksByVirtualMachine(URI.create("/cloudapi/ecloud/tasks/virtualmachines/5504"));
+      assertTasks(response);
+   }
+
+   private void assertTasks(final Tasks tasks) {
+      assert null != tasks;
+
+      assertTrue(tasks.getTasks().size() >= 0);
+      for (Task task : tasks.getTasks()) {
          assertEquals(client.getTask(task.getHref()), task);
-         assert task.getStatus() != Task.Status.UNRECOGNIZED : response;
+         assert task.getStatus() != Task.Status.UNRECOGNIZED : tasks;
       }
    }
+
 }

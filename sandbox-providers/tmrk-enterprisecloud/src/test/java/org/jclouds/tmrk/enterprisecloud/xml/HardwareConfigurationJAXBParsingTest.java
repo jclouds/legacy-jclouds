@@ -20,12 +20,10 @@ package org.jclouds.tmrk.enterprisecloud.xml;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import org.jclouds.crypto.Crypto;
-import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseSax;
@@ -35,23 +33,13 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.BaseRestClientTest;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.tmrk.enterprisecloud.domain.Layout;
 import org.jclouds.tmrk.enterprisecloud.domain.hardware.HardwareConfiguration;
 import org.jclouds.tmrk.enterprisecloud.domain.hardware.VirtualDisk;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
-import org.jclouds.tmrk.enterprisecloud.domain.network.AssignedIpAddresses;
-import org.jclouds.tmrk.enterprisecloud.domain.network.DeviceNetwork;
 import org.jclouds.tmrk.enterprisecloud.domain.network.NetworkReference;
 import org.jclouds.tmrk.enterprisecloud.domain.network.VirtualNic;
-import org.jclouds.tmrk.enterprisecloud.domain.software.OperatingSystem;
-import org.jclouds.tmrk.enterprisecloud.domain.software.ToolsStatus;
-import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachine;
-import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachine.VirtualMachineStatus;
-import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachineIpAddresses;
 import org.jclouds.tmrk.enterprisecloud.features.VirtualMachineAsyncClient;
-import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Named;
@@ -70,17 +58,10 @@ import static org.testng.AssertJUnit.assertNotNull;
 
 /**
  * Tests behavior of JAXB parsing for VirtualMachines
- * 
- * @author Adrian Cole
+ * @author Jason King
+ *
  */
-@Test(groups = "unit", testName = "VirtualMachineJAXBParsingTest")
-public class VirtualMachineJAXBParsingTest extends BaseRestClientTest {
-   private SimpleDateFormatDateService dateService;
-
-  @BeforeMethod
-  public void setUp() {
-     dateService = new SimpleDateFormatDateService();
-  }
+public class HardwareConfigurationJAXBParsingTest extends BaseRestClientTest {
 
    @BeforeClass
    void setupFactory() {
@@ -105,47 +86,20 @@ public class VirtualMachineJAXBParsingTest extends BaseRestClientTest {
       crypto = injector.getInstance(Crypto.class);
    }
 
-   @Test
-   public void testParseVirtualMachineWithJAXB() throws Exception {
+   @Test(groups = "unit", testName = "HardwareConfigurationJAXBParsingTest")
+   public void testParse() throws Exception {
 
-      Method method = VirtualMachineAsyncClient.class.getMethod("getVirtualMachine", URI.class);
+      Method method = VirtualMachineAsyncClient.class.getMethod("getHardwareConfiguration", URI.class);
       HttpRequest request = factory(VirtualMachineAsyncClient.class).createRequest(method,new URI("/1"));
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
 
-      Function<HttpResponse, VirtualMachine> parser = (Function<HttpResponse, VirtualMachine>) RestAnnotationProcessor
+      Function<HttpResponse, HardwareConfiguration> parser = (Function<HttpResponse, HardwareConfiguration>) RestAnnotationProcessor
             .createResponseParser(parserFactory, injector, method, request);
 
-      InputStream is = getClass().getResourceAsStream("/virtualMachine.xml");
-      VirtualMachine virtualMachine = parser.apply(new HttpResponse(200, "ok", newInputStreamPayload(is)));
+      InputStream is = getClass().getResourceAsStream("/hardwareConfiguration.xml");
+      HardwareConfiguration hardwareConfiguration = parser.apply(new HttpResponse(200, "ok", newInputStreamPayload(is)));
 
-      assertEquals("My first terremark server",virtualMachine.getDescription());
-      assertEquals(6,virtualMachine.getLinks().size());
-      assertEquals(11,virtualMachine.getActions().size());
-      assertEquals(1,virtualMachine.getTasks().size());
-
-      assertLayout(virtualMachine.getLayout());
-      assertEquals(VirtualMachineStatus.DEPLOYED, virtualMachine.getStatus());
-      assertFalse(virtualMachine.isPoweredOn(),"virtual machine is not powered on");
-      assertEquals(ToolsStatus.NOT_RUNNING, virtualMachine.getToolsStatus());
-      assertEquals(VirtualMachine.VirtualMachineMediaStatus.UNMOUNTED, virtualMachine.getMediaStatus());
-      assertTrue(virtualMachine.isCustomizationPending(),"virtual machine is pending customization");
-      assertOperatingSystem(virtualMachine.getOperatingSystem());
-      assertHardwareConfiguration(virtualMachine.getHardwareConfiguration());
-      assertIpAddresses(virtualMachine.getIpAddresses());
-   }
-
-   private void assertLayout(Layout layout) {
-      assertNotNull(layout);
-      assertEquals("test row", layout.getRow().getName());
-      assertEquals("test group",layout.getGroup().getName());
-   }
-
-   private void assertOperatingSystem(OperatingSystem operatingSystem) throws Exception {
-       String href = "/cloudapi/ecloud/operatingsystems/rhel5_64guest/computepools/89";
-       String name = "Red Hat Enterprise Linux 5 (64-bit)";
-       String type = "application/vnd.tmrk.cloud.operatingSystem";
-       OperatingSystem os = OperatingSystem.builder().href(new URI(href)).name(name).type(type).build();
-       Assert.assertEquals(os, operatingSystem);
+      assertHardwareConfiguration(hardwareConfiguration);
    }
 
    private void assertHardwareConfiguration(HardwareConfiguration hardwareConfiguration) throws Exception {
@@ -184,17 +138,5 @@ public class VirtualMachineJAXBParsingTest extends BaseRestClientTest {
              .unitNumber(7)
              .build();
        assertEquals(nic,nics.iterator().next());
-   }
-
-   private void assertIpAddresses(VirtualMachineIpAddresses ipAddresses) {
-       AssignedIpAddresses assignedIpAddresses = ipAddresses.getAssignedIpAddresses();
-       Assert.assertNotNull(assignedIpAddresses);
-       Set<DeviceNetwork> deviceNetworks = assignedIpAddresses.getNetworks().getDeviceNetworks();
-       assertEquals(1,deviceNetworks.size());
-       DeviceNetwork network = Iterables.getOnlyElement(deviceNetworks);
-       Set<String> ips = network.getIpAddresses().getIpAddresses();
-       assertEquals(2,ips.size());
-       assertTrue(ips.contains("10.146.204.67"));
-       assertTrue(ips.contains("10.146.204.68"));
    }
 }

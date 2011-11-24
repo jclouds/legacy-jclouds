@@ -22,12 +22,15 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.tmrk.enterprisecloud.domain.Task;
+import org.jclouds.tmrk.enterprisecloud.domain.hardware.HardwareConfiguration;
 import org.jclouds.tmrk.enterprisecloud.domain.network.AssignedIpAddresses;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachine;
+import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachineConfigurationOptions;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachines;
+import org.jclouds.tmrk.enterprisecloud.functions.ReturnEmptyVirtualMachinesOnNotFoundOr404;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
+import javax.ws.rs.*;
 import java.net.URI;
 
 /**
@@ -50,7 +53,7 @@ public interface VirtualMachineAsyncClient {
    @GET
    @Consumes("application/vnd.tmrk.cloud.virtualMachine; type=collection")
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @ExceptionParser(ReturnEmptyVirtualMachinesOnNotFoundOr404.class)
    ListenableFuture<VirtualMachines> getVirtualMachines(@EndpointParam URI uri);
 
    /**
@@ -71,4 +74,90 @@ public interface VirtualMachineAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<AssignedIpAddresses> getAssignedIpAddresses(@EndpointParam URI uri);
 
+   /**
+    * @see VirtualMachineClient#getConfigurationOptions
+    */
+   @GET
+   @Consumes("application/vnd.tmrk.cloud.virtualMachineConfigurationOptions")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<VirtualMachineConfigurationOptions> getConfigurationOptions(@EndpointParam URI uri);
+
+   /**
+    * @see VirtualMachineClient#getHardwareConfiguration
+    */
+   @GET
+   @Consumes("application/vnd.tmrk.cloud.virtualMachineHardware")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<HardwareConfiguration> getHardwareConfiguration(@EndpointParam URI uri);
+
+   /**
+    * @see VirtualMachineClient#powerOn
+    */
+   @POST
+   @Path("/action/powerOn")
+   @Consumes("application/vnd.tmrk.cloud.task")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Task> powerOn(@EndpointParam URI uri);
+
+   /**
+    * @see VirtualMachineClient#powerOff
+    */
+   @POST
+   @Path("/action/powerOff")
+   @Consumes("application/vnd.tmrk.cloud.task")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Task> powerOff(@EndpointParam URI uri);
+
+   /**
+    * @see VirtualMachineClient#reboot
+    */
+   @POST
+   @Path("/action/reboot")
+   @Consumes("application/vnd.tmrk.cloud.task")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Task> reboot(@EndpointParam URI uri);
+
+   /**
+    * @see VirtualMachineClient#shutdown
+    */
+   @POST
+   @Path("/action/shutdown")
+   @Consumes("application/vnd.tmrk.cloud.task")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Task> shutdown(@EndpointParam URI uri);
+
+   /**
+    * @see VirtualMachineClient#mountTools
+    */
+   @POST
+   @Path("/tools/action/mount")
+   @Consumes("application/vnd.tmrk.cloud.task")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Task> mountTools(@EndpointParam URI uri);
+
+   /**
+    * @see VirtualMachineClient#unmountTools
+    */
+   @POST
+   @Path("/tools/action/unmount")
+   @Consumes("application/vnd.tmrk.cloud.task")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Task> unmountTools(@EndpointParam URI uri);
+
+   /**
+    * @see VirtualMachineClient#remove
+    */
+   @DELETE
+   @Consumes("application/vnd.tmrk.cloud.task")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Task> remove(@EndpointParam URI uri);
 }
