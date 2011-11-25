@@ -40,7 +40,7 @@ public interface TemplateClient {
 
    /**
     * The Get Templates call returns information regarding templates defined in a compute pool.
-    * Note that Templates are not a simple wrapper around template objects.
+    * Note that Templates are not a simple wrapper around template objects, so if not found returns null.
     * Once the desired template is located getTemplate must be called to retrieve all the attached information
     * @param uri compute pool identifier
     * @return the templates
