@@ -11,4 +11,5 @@ bin/
 *.eml
 *.ipr
 *.iws
+*.DS_STORE
 TAGS
