@@ -41,6 +41,7 @@ import java.io.File;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
+import static org.jclouds.virtualbox.MachineUtils.*;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKINGDIR;
 import static org.virtualbox_4_1.AccessMode.ReadOnly;
@@ -222,55 +223,6 @@ public class IsoToIMachine implements Function<String, IMachine> {
               new AddIDEControllerIfNotExists(checkNotNull(controllerIDE, "controllerIDE")));
    }
 
-   private <T> T applyForMachine(VirtualBoxManager manager, final String machineId, final Function<IMachine, T> function) {
-      final IMachine immutableMachine = manager.getVBox().findMachine(machineId);
-      return new Function<IMachine, T>() {
-         @Override
-         public T apply(IMachine machine) {
-            return function.apply(machine);
-         }
-
-         @Override
-         public String toString() {
-            return function.toString();
-         }
-      }.apply(immutableMachine);
-   }
-
-   public static <T> T lockMachineAndApply(VirtualBoxManager manager, final LockType type, final String machineId,
-                                           final Function<IMachine, T> function) {
-      return lockSessionOnMachineAndApply(manager, type, machineId, new Function<ISession, T>() {
-
-         @Override
-         public T apply(ISession session) {
-            return function.apply(session.getMachine());
-         }
-
-         @Override
-         public String toString() {
-            return function.toString();
-         }
-
-      });
-
-   }
-
-   public static <T> T lockSessionOnMachineAndApply(VirtualBoxManager manager, LockType type, String machineId,
-                                                    Function<ISession, T> function) {
-      try {
-         ISession session = manager.getSessionObject();
-         IMachine immutableMachine = manager.getVBox().findMachine(machineId);
-         immutableMachine.lockMachine(session, type);
-         try {
-            return function.apply(session);
-         } finally {
-            session.unlockMachine();
-         }
-      } catch (VBoxException e) {
-         throw new RuntimeException(String.format("error applying %s to %s with %s lock: %s", function, machineId,
-                 type, e.getMessage()), e);
-      }
-   }
 
    private String defaultInstallSequence() {
       return "<Esc><Esc><Enter> "
