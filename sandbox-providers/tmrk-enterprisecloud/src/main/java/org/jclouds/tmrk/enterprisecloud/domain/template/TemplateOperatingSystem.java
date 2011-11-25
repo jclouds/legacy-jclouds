@@ -20,6 +20,7 @@ package org.jclouds.tmrk.enterprisecloud.domain.template;
 
 import com.google.common.collect.Sets;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.tmrk.enterprisecloud.domain.NamedResource;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.util.Set;
@@ -44,12 +45,12 @@ public class TemplateOperatingSystem {
    public static class Builder {
 
       private String name;
-      private Set<TemplateReference> templates = Sets.newLinkedHashSet();
+      private Set<NamedResource> templates = Sets.newLinkedHashSet();
 
       /**
        * @see TemplateOperatingSystem#getTemplates
        */
-      public Builder templates(Set<TemplateReference> templates) {
+      public Builder templates(Set<NamedResource> templates) {
         this.templates = Sets.newLinkedHashSet(checkNotNull(templates, "templates"));
         return this;
       }
@@ -77,7 +78,7 @@ public class TemplateOperatingSystem {
    @XmlElement(name = "Templates", required = false)
    private TemplateReferences templates = TemplateReferences.builder().build();
 
-   private TemplateOperatingSystem(@Nullable String name, Set<TemplateReference> templates) {
+   private TemplateOperatingSystem(@Nullable String name, Set<NamedResource> templates) {
       this.name = name;
       this.templates = TemplateReferences.builder().templateReferences(checkNotNull(templates,"templates")).build();
    }
@@ -91,7 +92,7 @@ public class TemplateOperatingSystem {
        return name;
    }
 
-   public Set<TemplateReference> getTemplates() {
+   public Set<NamedResource> getTemplates() {
        return templates.getTemplateReferences();
    }
 

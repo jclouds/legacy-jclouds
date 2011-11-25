@@ -25,6 +25,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
@@ -186,7 +187,7 @@ public class Task extends BaseResource<Task> {
 
       @Override
       public Task build() {
-         return new Task(href, type, operation, status, impactedItem, startTime, completedTime, notes, errorMessage,
+         return new Task(href, type, links, actions, operation, status, impactedItem, startTime, completedTime, notes, errorMessage,
                initiatedBy);
       }
 
@@ -224,6 +225,22 @@ public class Task extends BaseResource<Task> {
        * {@inheritDoc}
        */
       @Override
+      public Builder links(Set<Link> links) {
+         return Builder.class.cast(super.links(links));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder actions(Set<Action> actions) {
+         return Builder.class.cast(super.actions(actions));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
       public Builder fromAttributes(Map<String, String> attributes) {
          return Builder.class.cast(super.fromAttributes(attributes));
       }
@@ -254,9 +271,9 @@ public class Task extends BaseResource<Task> {
    @XmlElement(name = "InitiatedBy", required = true)
    protected NamedResource initiatedBy;
 
-   public Task(URI href, String type, String operation, Status status, NamedResource impactedItem, Date startTime,
+   private Task(URI href, String type, Set<Link> links, Set<Action> actions, String operation, Status status, NamedResource impactedItem, Date startTime,
          @Nullable Date completedTime, @Nullable String notes, @Nullable String errorMessage, NamedResource initiatedBy) {
-      super(href, type);
+      super(href, type, links, actions);
       this.operation = checkNotNull(operation, "operation");
       this.status = checkNotNull(status, "status");
       this.impactedItem = checkNotNull(impactedItem, "impactedItem");
@@ -267,7 +284,7 @@ public class Task extends BaseResource<Task> {
       this.initiatedBy = checkNotNull(initiatedBy, "initiatedBy");
    }
 
-   protected Task() {
+   private Task() {
        //For JAXB
    }
 

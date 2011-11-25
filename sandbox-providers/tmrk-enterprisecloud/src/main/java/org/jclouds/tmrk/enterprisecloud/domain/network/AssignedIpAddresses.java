@@ -18,7 +18,9 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain.network;
 
+import com.google.common.collect.Sets;
 import org.jclouds.tmrk.enterprisecloud.domain.Actions;
+import org.jclouds.tmrk.enterprisecloud.domain.Link;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -34,26 +36,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @XmlRootElement(name="AssignedIpAddresses")
 public class AssignedIpAddresses extends BaseResource<AssignedIpAddresses> {
 
-   //TODO links
-
-   @XmlElement(name = "Actions", required = true)
-   private Actions actions = Actions.builder().build();
-
    @XmlElement(name = "Networks", required = true)
    private DeviceNetworks networks = new DeviceNetworks();
 
    public AssignedIpAddresses(URI href, String type, Actions actions, DeviceNetworks networks) {
-      super(href, type);
-      checkNotNull(actions,"actions");
+      super(href, type, Sets.<Link>newIdentityHashSet(), actions.getActions());
       checkNotNull(networks,"networks");
    }
 
    public AssignedIpAddresses() {
        //For JAXB
-   }
-
-   public Actions getActions() {
-       return actions;
    }
 
    public DeviceNetworks getNetworks() {
@@ -68,7 +60,6 @@ public class AssignedIpAddresses extends BaseResource<AssignedIpAddresses> {
 
         AssignedIpAddresses that = (AssignedIpAddresses) o;
 
-        if (!actions.equals(that.actions)) return false;
         if (!networks.equals(that.networks)) return false;
 
         return true;
@@ -77,14 +68,13 @@ public class AssignedIpAddresses extends BaseResource<AssignedIpAddresses> {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + actions.hashCode();
         result = 31 * result + networks.hashCode();
         return result;
     }
 
     @Override
     public String string() {
-       return super.string()+", actions="+actions+", networks="+networks;
+       return super.string()+", networks="+networks;
     }
 
 }

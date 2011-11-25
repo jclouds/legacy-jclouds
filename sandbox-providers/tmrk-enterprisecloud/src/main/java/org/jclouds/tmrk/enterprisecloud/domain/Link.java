@@ -18,6 +18,7 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain;
 
+import com.google.common.collect.Sets;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 
@@ -26,6 +27,7 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -174,6 +176,22 @@ public class Link extends BaseNamedResource<Link> {
        * {@inheritDoc}
        */
       @Override
+      public Builder links(Set<Link> links) {
+         throw new UnsupportedOperationException("links is not valid for Link");
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder actions(Set<Action> actions) {
+         throw new UnsupportedOperationException("actions is not valid for Link");
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
       public Builder fromAttributes(Map<String, String> attributes) {
          super.fromAttributes(attributes);
          if (attributes.containsKey("rel"))
@@ -185,12 +203,12 @@ public class Link extends BaseNamedResource<Link> {
    @XmlAttribute
    protected Relationship rel;
 
-   public Link(URI href, String type, String name, Relationship rel) {
-      super(href, type, name);
+   private Link(URI href, String type, String name, Relationship rel) {
+      super(href, type, Sets.<Link>newLinkedHashSet(), Sets.<Action>newLinkedHashSet(), name);
       this.rel = checkNotNull(rel, "rel");
    }
 
-   protected Link() {
+   private Link() {
        //For JAXB
    }
 

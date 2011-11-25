@@ -18,6 +18,7 @@
  */
 package org.jclouds.tmrk.enterprisecloud.features;
 
+import org.jclouds.tmrk.enterprisecloud.domain.NamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.template.*;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -46,7 +47,7 @@ public class TemplateClientLiveTest extends BaseTerremarkEnterpriseCloudClientLi
       for(TemplateFamily family: templates.getTemplateFamilies()) {
          for(TemplateCategory category: family.getTemplateCategories()) {
             for(TemplateOperatingSystem os: category.getTemplateOperatingSystems()) {
-               for(TemplateReference templateReference: os.getTemplates()) {
+               for(NamedResource templateReference: os.getTemplates()) {
                   testTemplate(templateReference);
                }
             }
@@ -54,7 +55,7 @@ public class TemplateClientLiveTest extends BaseTerremarkEnterpriseCloudClientLi
       }
    }
 
-   private void testTemplate(TemplateReference templateReference) {
+   private void testTemplate(NamedResource templateReference) {
       Template template = client.getTemplate(templateReference.getHref());
       assertNotNull(template);
       assertNotNull(template.getDescription());

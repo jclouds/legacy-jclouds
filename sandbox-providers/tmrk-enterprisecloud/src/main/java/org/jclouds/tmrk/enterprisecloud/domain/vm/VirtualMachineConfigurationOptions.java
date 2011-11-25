@@ -26,6 +26,8 @@ import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <xs:complexType name="VirtualMachineConfigurationOptions">
@@ -99,7 +101,7 @@ public class VirtualMachineConfigurationOptions extends BaseResource<VirtualMach
 
       @Override
       public VirtualMachineConfigurationOptions build() {
-         return new VirtualMachineConfigurationOptions(href, type, processor, memory, disk, networkAdapter, customization);
+         return new VirtualMachineConfigurationOptions(href, type, links, actions, processor, memory, disk, networkAdapter, customization);
       }
 
       public Builder fromVirtualMachineConfigurationOptions(VirtualMachineConfigurationOptions in) {
@@ -134,6 +136,29 @@ public class VirtualMachineConfigurationOptions extends BaseResource<VirtualMach
          return Builder.class.cast(super.href(href));
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromAttributes(Map<String, String> attributes) {
+         return Builder.class.cast(super.fromAttributes(attributes));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder links(Set<Link> links) {
+         return Builder.class.cast(super.links(links));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder actions(Set<Action> actions) {
+         return Builder.class.cast(super.actions(actions));
+      }
    }
 
    @XmlElement(name = "Processor", required = false)
@@ -151,9 +176,9 @@ public class VirtualMachineConfigurationOptions extends BaseResource<VirtualMach
    @XmlElement(name = "Customization", required = false)
    private CustomizationOption customization;
 
-   private VirtualMachineConfigurationOptions(URI href, String type, @Nullable ConfigurationOptionRange processor, @Nullable ResourceCapacityRange memory,
+   private VirtualMachineConfigurationOptions(URI href, String type, Set<Link> links, Set<Action> actions, @Nullable ConfigurationOptionRange processor, @Nullable ResourceCapacityRange memory,
                                               @Nullable DiskConfigurationOption disk, @Nullable ConfigurationOptionRange networkAdapter, @Nullable CustomizationOption customization) {
-      super(href, type);
+      super(href, type, links, actions);
       this.processor = processor;
       this.memory = memory;
       this.disk = disk;

@@ -18,12 +18,16 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain.internal;
 
+import org.jclouds.tmrk.enterprisecloud.domain.Action;
+import org.jclouds.tmrk.enterprisecloud.domain.Link;
+
 import javax.xml.bind.annotation.XmlAttribute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Location of a Rest resource
@@ -54,7 +58,7 @@ public class BaseNamedResource<T extends BaseNamedResource<T>> extends BaseResou
       }
 
       public BaseNamedResource<T> build() {
-         return new BaseNamedResource<T>(href, type, name);
+         return new BaseNamedResource<T>(href, type, links, actions, name);
       }
 
       /**
@@ -82,8 +86,8 @@ public class BaseNamedResource<T extends BaseNamedResource<T>> extends BaseResou
    @XmlAttribute
    protected String name;
 
-   public BaseNamedResource(URI href, String type, String name) {
-      super(href, type);
+   protected BaseNamedResource(URI href, String type, Set<Link> links, Set<Action> actions, String name) {
+      super(href, type, links, actions);
       this.name = checkNotNull(name, "name");
    }
 

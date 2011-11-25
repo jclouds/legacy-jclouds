@@ -19,6 +19,7 @@
 package org.jclouds.tmrk.enterprisecloud.domain.template;
 
 import com.google.common.collect.Sets;
+import org.jclouds.tmrk.enterprisecloud.domain.NamedResource;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.util.Collections;
@@ -45,17 +46,17 @@ public class TemplateReferences {
 
    public static class Builder {
 
-       private Set<TemplateReference> templateReferences = Sets.newLinkedHashSet();
+       private Set<NamedResource> templateReferences = Sets.newLinkedHashSet();
 
        /**
         * @see org.jclouds.tmrk.enterprisecloud.domain.template.TemplateReferences#getTemplateReferences()
         */
-       public Builder templateReferences(Set<TemplateReference> templateReferences) {
+       public Builder templateReferences(Set<NamedResource> templateReferences) {
           this.templateReferences = Sets.newLinkedHashSet(checkNotNull(templateReferences, "templateReferences"));
           return this;
        }
 
-       public Builder addTemplateReference(TemplateReference templateReference) {
+       public Builder addTemplateReference(NamedResource templateReference) {
           templateReferences.add(checkNotNull(templateReference,"templateReference"));
           return this;
        }
@@ -73,14 +74,14 @@ public class TemplateReferences {
       //For JAXB and builder use
    }
 
-   private TemplateReferences(Set<TemplateReference> templateReferences) {
+   private TemplateReferences(Set<NamedResource> templateReferences) {
       this.templateReferences = Sets.newLinkedHashSet(templateReferences);
    }
 
    @XmlElement(name = "Template")
-   private Set<TemplateReference> templateReferences = Sets.newLinkedHashSet();
+   private Set<NamedResource> templateReferences = Sets.newLinkedHashSet();
 
-   public Set<TemplateReference> getTemplateReferences() {
+   public Set<NamedResource> getTemplateReferences() {
       return Collections.unmodifiableSet(templateReferences);
    }
 

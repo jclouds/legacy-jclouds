@@ -62,8 +62,6 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
 
    public static class Builder extends BaseNamedResource.Builder<VirtualMachine> {
       //TODO There are some more fields
-      private Links links = Links.builder().build();
-      private Actions actions = Actions.builder().build();
       private Tasks tasks = Tasks.builder().build();
       private String description;
       private VirtualMachineStatus status;
@@ -76,23 +74,6 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
       private OperatingSystem operatingSystem;
       private HardwareConfiguration hardwareConfiguration;
       private VirtualMachineIpAddresses ipAddresses = new VirtualMachineIpAddresses();
-
-      /**
-       * @see VirtualMachine#getLinks
-       */
-      public Builder links(Set<Link> links) {
-         this.links = Links.builder().links(checkNotNull(links,"links")).build();
-         return this;
-      }
-
-       /**
-        * @see VirtualMachine#getActions
-        */
-       public Builder actions(Set<Action> actions) {
-          checkNotNull(actions,"actions");
-          this.actions = Actions.builder().actions(actions).build();
-          return this;
-       }
 
        /**
         * @see VirtualMachine#getTasks
@@ -199,9 +180,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
 
       public Builder fromVirtualMachine(VirtualMachine in) {
         return fromNamedResource(in)
-            .links(in.getLinks())
             .tasks(in.getTasks())
-            .actions(in.getActions())
             .description(in.getDescription())
             .layout(in.getLayout())
             .status(in.getStatus())
@@ -250,6 +229,22 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
        * {@inheritDoc}
        */
       @Override
+      public Builder links(Set<Link> links) {
+         return Builder.class.cast(super.links(links));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder actions(Set<Action> actions) {
+         return Builder.class.cast(super.actions(actions));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
       public Builder name(String name) {
          return Builder.class.cast(super.name(name));
       }
@@ -259,20 +254,16 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
        */
       @Override
       public Builder fromAttributes(Map<String, String> attributes) {
-         return Builder.class.cast(super.fromAttributes(attributes));
-          // TODO Other fields?
+         super.fromAttributes(attributes);
+         if (attributes.containsKey("description"))
+            description(attributes.get("description"));
+         return this;
       }
 
    }
 
-   @XmlElement(name = "Links", required = true)
-   private Links links = Links.builder().build();
-
    @XmlElement(name = "Tasks", required = true)
    private Tasks tasks = Tasks.builder().build();
-
-   @XmlElement(name = "Actions", required = true)
-   private Actions actions = Actions.builder().build();
 
    @XmlElement(name = "Description", required = true)
    private String description;
@@ -304,14 +295,12 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
    @XmlElement(name = "IpAddresses", required = false)
    private VirtualMachineIpAddresses ipAddresses = new VirtualMachineIpAddresses();
 
-    public VirtualMachine(URI href, String type, String name, Tasks tasks, Actions actions, Links links, String description, @Nullable Layout layout,
+    private VirtualMachine(URI href, String type, String name, Tasks tasks, Set<Action> actions, Set<Link> links, String description, @Nullable Layout layout,
                          VirtualMachineStatus status, boolean poweredOn, @Nullable ToolsStatus toolsStatus, @Nullable VirtualMachineMediaStatus mediaStatus, boolean customizationPending,
                          @Nullable OperatingSystem operatingSystem, @Nullable HardwareConfiguration hardwareConfiguration, @Nullable VirtualMachineIpAddresses ipAddresses) {
-      super(href, type, name);
+      super(href, type, links, actions, name);
       this.description = checkNotNull(description, "description");
-      this.links = checkNotNull(links, "links");
       this.tasks = checkNotNull(tasks, "tasks");
-      this.actions = checkNotNull(actions, "actions");
       this.status = checkNotNull(status, "status");
       this.ipAddresses = checkNotNull(ipAddresses, "ipAddresses");
 
@@ -324,27 +313,18 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
       this.hardwareConfiguation = hardwareConfiguration;
    }
 
-   protected VirtualMachine() {
+   private VirtualMachine() {
         //For JAXB
    }
 
-
-   public Set<Link> getLinks() {
-       return Collections.unmodifiableSet(links.getLinks());
-   }
-
-    /**
-     * refers to tasks regarding the virtual machine.
-     * Only the most recent tasks, up to twenty, are returned.
-     * Use the href to retrieve the complete list of tasks.
-     * @return most recent tasks
-     */
+   /**
+    * refers to tasks regarding the virtual machine.
+    * Only the most recent tasks, up to twenty, are returned.
+    * Use the href to retrieve the complete list of tasks.
+    * @return most recent tasks
+    */
    public Set<Task> getTasks() {
        return Collections.unmodifiableSet(tasks.getTasks());
-   }
-
-   public Set<Action> getActions() {
-       return Collections.unmodifiableSet(actions.getActions());
    }
 
    public String getDescription() {
@@ -409,7 +389,6 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
 
         if (customizationPending != that.customizationPending) return false;
         if (poweredOn != that.poweredOn) return false;
-        if (!actions.equals(that.actions)) return false;
         if (description != null ? !description.equals(that.description) : that.description != null)
             return false;
         if (hardwareConfiguation != null ? !hardwareConfiguation.equals(that.hardwareConfiguation) : that.hardwareConfiguation != null)
@@ -417,7 +396,6 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
         if (!ipAddresses.equals(that.ipAddresses)) return false;
         if (layout != null ? !layout.equals(that.layout) : that.layout != null)
             return false;
-        if (!links.equals(that.links)) return false;
         if (mediaStatus != that.mediaStatus) return false;
         if (operatingSystem != null ? !operatingSystem.equals(that.operatingSystem) : that.operatingSystem != null)
             return false;
@@ -431,9 +409,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + links.hashCode();
         result = 31 * result + tasks.hashCode();
-        result = 31 * result + actions.hashCode();
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (layout != null ? layout.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
@@ -449,7 +425,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
 
     @Override
    public String string() {
-      return super.string()+", links="+links+", tasks="+tasks+", actions="+actions+", description="+description+", layout="+layout+
+      return super.string()+", tasks="+tasks+", description="+description+", layout="+layout+
                             ", status="+status+", poweredOn="+poweredOn+", toolsStatus="+toolsStatus+", mediaStatus="+mediaStatus+
                             ", customizationPending="+customizationPending+", operatingSystem="+operatingSystem+", hardwareConfiguration="+hardwareConfiguation+
                             ", ipAddresses="+ipAddresses;

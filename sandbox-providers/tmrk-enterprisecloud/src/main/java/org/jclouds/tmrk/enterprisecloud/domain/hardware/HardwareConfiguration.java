@@ -22,7 +22,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.tmrk.enterprisecloud.domain.Action;
-import org.jclouds.tmrk.enterprisecloud.domain.Actions;
+import org.jclouds.tmrk.enterprisecloud.domain.Link;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
 import org.jclouds.tmrk.enterprisecloud.domain.network.Nics;
@@ -59,20 +59,10 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
 
    public static class Builder extends BaseResource.Builder<HardwareConfiguration> {
 
-       // TODO Links
-       private Set<Action> actions = Sets.newLinkedHashSet();
        private int processorCount;
        private ResourceCapacity memory;
        private Set<VirtualDisk> virtualDisks = Sets.newLinkedHashSet();
        private Set<VirtualNic> virtualNics = Sets.newLinkedHashSet();
-
-       /**
-        * @see HardwareConfiguration#getActions
-        */
-       public Builder actions(Set<Action> actions) {
-          this.actions = ImmutableSet.<Action> copyOf(checkNotNull(actions, "actions"));
-          return this;
-       }
 
        /**
         * @see HardwareConfiguration#getProcessorCount
@@ -109,7 +99,7 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
 
        @Override
        public HardwareConfiguration build() {
-           return new HardwareConfiguration(actions, processorCount, memory, virtualDisks, virtualNics);
+           return new HardwareConfiguration(processorCount, memory, virtualDisks, virtualNics);
        }
 
       /**
@@ -136,6 +126,22 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
          return Builder.class.cast(super.href(href));
       }
 
+/**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder links(Set<Link> links) {
+         return Builder.class.cast(super.links(links));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder actions(Set<Action> actions) {
+         return Builder.class.cast(super.actions(actions));
+      }
+
       /**
        * {@inheritDoc}
        */
@@ -145,16 +151,12 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
       }
 
       public Builder fromHardwareConfiguration(HardwareConfiguration in) {
-        return fromResource(in).actions(in.getActions())
-                               .processorCount(in.getProcessorCount())
+        return fromResource(in).processorCount(in.getProcessorCount())
                                .memory(in.getMemory())
                                .disks(in.getVirtualDisks())
                                .nics(in.getVirtualNics());
       }
    }
-
-   @XmlElement(name = "Actions", required = false)
-   private Actions actions = Actions.builder().build();
 
    @XmlElement(name = "ProcessorCount", required = true)
    private int processorCount;
@@ -168,20 +170,15 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
    @XmlElement(name = "Nics", required = false)
    private Nics virtualNics = Nics.builder().build();
 
-   public HardwareConfiguration(Set<Action> actions, int processorCount, @Nullable ResourceCapacity memory, Set<VirtualDisk> virtualDisks, Set<VirtualNic> virtualNics) {
-       this.actions = Actions.builder().actions(checkNotNull(actions, "actions")).build();
+   private HardwareConfiguration(int processorCount, @Nullable ResourceCapacity memory, Set<VirtualDisk> virtualDisks, Set<VirtualNic> virtualNics) {
        this.virtualDisks = Disks.builder().disks(checkNotNull(virtualDisks,"virtualDisks")).build();
        this.virtualNics = Nics.builder().nics(checkNotNull(virtualNics, "virtualNics")).build();
        this.processorCount = processorCount;
        this.memory = memory;
    }
 
-    protected HardwareConfiguration() {
+    private HardwareConfiguration() {
         //For JAXB
-    }
-
-    public Set<Action> getActions() {
-       return Collections.unmodifiableSet(actions.getActions());
     }
 
     public int getProcessorCount() {
@@ -209,7 +206,6 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
         HardwareConfiguration that = (HardwareConfiguration) o;
 
         if (processorCount != that.processorCount) return false;
-        if (!actions.equals(that.actions)) return false;
         if (!virtualDisks.equals(that.virtualDisks)) return false;
         if (memory != null ? !memory.equals(that.memory) : that.memory != null)
             return false;
@@ -221,7 +217,6 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + actions.hashCode();
         result = 31 * result + processorCount;
         result = 31 * result + (memory != null ? memory.hashCode() : 0);
         result = 31 * result + virtualDisks.hashCode();
@@ -231,7 +226,7 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
 
     @Override
     public String string() {
-        return super.string()+", actions="+actions+", processorCount="+processorCount+
+        return super.string()+", processorCount="+processorCount+
               ", memory="+memory+", disks="+ virtualDisks +", nics="+ virtualNics;
     }
 }

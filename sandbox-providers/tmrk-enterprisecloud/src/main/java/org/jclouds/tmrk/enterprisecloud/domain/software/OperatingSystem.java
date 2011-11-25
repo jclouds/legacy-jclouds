@@ -18,11 +18,14 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain.software;
 
+import org.jclouds.tmrk.enterprisecloud.domain.Action;
+import org.jclouds.tmrk.enterprisecloud.domain.Link;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * <xs:complexType name="OperatingSystem">
@@ -53,7 +56,7 @@ public class OperatingSystem extends BaseNamedResource<OperatingSystem> {
        */
       @Override
       public OperatingSystem build() {
-         return new OperatingSystem(href, type, name);
+         return new OperatingSystem(href, type, links, actions, name);
       }
 
       /**
@@ -96,6 +99,22 @@ public class OperatingSystem extends BaseNamedResource<OperatingSystem> {
          return Builder.class.cast(super.type(type));
       }
 
+       /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder links(Set<Link> links) {
+         return Builder.class.cast(super.links(links));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder actions(Set<Action> actions) {
+         return Builder.class.cast(super.actions(actions));
+      }
+
       /**
        * {@inheritDoc}
        */
@@ -106,11 +125,11 @@ public class OperatingSystem extends BaseNamedResource<OperatingSystem> {
 
    }
 
-   public OperatingSystem(URI href, String type, String name) {
-      super(href, type, name);
+   private OperatingSystem(URI href, String type, Set<Link> links, Set<Action> actions, String name) {
+      super(href, type, links, actions, name);
    }
 
-   protected OperatingSystem() {
+   private OperatingSystem() {
       //For JAXB
    }
 }

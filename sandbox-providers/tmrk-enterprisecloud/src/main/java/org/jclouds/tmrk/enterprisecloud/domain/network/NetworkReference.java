@@ -19,6 +19,8 @@
 package org.jclouds.tmrk.enterprisecloud.domain.network;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.tmrk.enterprisecloud.domain.Action;
+import org.jclouds.tmrk.enterprisecloud.domain.Link;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 
@@ -26,6 +28,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import java.net.URI;
+import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
@@ -82,7 +86,7 @@ public class NetworkReference extends BaseNamedResource<NetworkReference> {
 
       @Override
       public NetworkReference build() {
-         return new NetworkReference(href, type, name, networkType);
+         return new NetworkReference(href, type, links, actions, name, networkType);
       }
 
       public Builder fromNetworkReference(NetworkReference in) {
@@ -128,17 +132,41 @@ public class NetworkReference extends BaseNamedResource<NetworkReference> {
       public Builder type(String type) {
          return Builder.class.cast(super.type(type));
       }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromAttributes(Map<String, String> attributes) {
+         return Builder.class.cast(super.fromAttributes(attributes));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder links(Set<Link> links) {
+         return Builder.class.cast(super.links(links));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder actions(Set<Action> actions) {
+         return Builder.class.cast(super.actions(actions));
+      }
    }
 
    @XmlElement(name = "NetworkType")
    private NetworkType networkType;
 
-   public NetworkReference(URI href, String type, String name,@Nullable NetworkType networkType) {
-      super(href, type, name);
+   private NetworkReference(URI href, String type, Set<Link> links, Set<Action> actions, String name,@Nullable NetworkType networkType) {
+      super(href, type, links, actions, name);
       this.networkType = networkType;
    }
 
-   protected NetworkReference() {
+   private NetworkReference() {
        //For JAXB
    }
 

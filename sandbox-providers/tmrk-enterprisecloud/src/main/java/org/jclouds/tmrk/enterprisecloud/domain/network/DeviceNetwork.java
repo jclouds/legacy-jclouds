@@ -32,7 +32,7 @@ public class DeviceNetwork extends BaseNamedResource<DeviceNetwork> {
    @XmlElement(name = "IpAddresses")
    private DeviceIps ipAddresses = new DeviceIps();
 
-   protected DeviceNetwork() {
+   private DeviceNetwork() {
        //For JAXB
    }
 

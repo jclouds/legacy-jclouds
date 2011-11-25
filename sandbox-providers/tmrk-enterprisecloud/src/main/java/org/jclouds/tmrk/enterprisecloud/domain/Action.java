@@ -18,6 +18,7 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain;
 
+import com.google.common.collect.Sets;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
@@ -27,6 +28,7 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
@@ -159,6 +161,22 @@ public class Action extends BaseNamedResource<Action> {
        * {@inheritDoc}
        */
       @Override
+      public Builder links(Set<Link> links) {
+         throw new UnsupportedOperationException("links is not valid for Action");
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder actions(Set<Action> actions) {
+         throw new UnsupportedOperationException("actions is not valid for Action");
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
       public Builder fromAttributes(Map<String, String> attributes) {
          super.fromAttributes(attributes);
          if (attributes.containsKey("actionDisabled"))
@@ -171,14 +189,15 @@ public class Action extends BaseNamedResource<Action> {
    @XmlAttribute
    protected ActionDisabled actionDisabled;
 
-   public Action(URI href, String type, String name, @Nullable ActionDisabled actionDisabled) {
-      super(href, type, name);
+   private Action(URI href, String type, String name, @Nullable ActionDisabled actionDisabled) {
+      super(href, type, Sets.<Link>newLinkedHashSet(), Sets.<Action>newLinkedHashSet(), name);
       this.actionDisabled = actionDisabled;
    }
 
-   protected Action() {
+   private Action() {
        //For JAXB
    }
+
    /**
     * The attribute actionDisabled appears only when the example has an action
     * disabled for business rules.
