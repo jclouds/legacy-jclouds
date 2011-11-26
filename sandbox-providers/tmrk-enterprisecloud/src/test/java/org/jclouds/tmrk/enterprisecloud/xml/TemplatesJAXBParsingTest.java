@@ -40,8 +40,7 @@ import org.jclouds.tmrk.enterprisecloud.domain.Link;
 import org.jclouds.tmrk.enterprisecloud.domain.ResourceCapacityRange;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
 import org.jclouds.tmrk.enterprisecloud.domain.software.OperatingSystem;
-import org.jclouds.tmrk.enterprisecloud.domain.template.Template;
-import org.jclouds.tmrk.enterprisecloud.domain.template.TemplateStorage;
+import org.jclouds.tmrk.enterprisecloud.domain.template.*;
 import org.jclouds.tmrk.enterprisecloud.features.TemplateAsyncClient;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -63,52 +62,47 @@ import static org.testng.Assert.assertEquals;
  * 
  * @author Jason King
  */
-@Test(groups = "unit", testName = "TemplateJAXBParsingTest")
-public class TemplateJAXBParsingTest extends BaseRestClientTest {
+@Test(groups = "unit", testName = "TemplatesJAXBParsingTest")
+public class TemplatesJAXBParsingTest extends BaseRestClientTest {
 
    @BeforeClass
    void setupFactory() {
    RestContextSpec<String, Integer> contextSpec = contextSpec("test", "http://localhost:9999", "1", "", "userfoo",
-        "credentialFoo", String.class, Integer.class,
-        ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule(), new AbstractModule() {
+         "credentialFoo", String.class, Integer.class,
+         ImmutableSet.<Module>of(new MockModule(), new NullLoggingModule(), new AbstractModule() {
 
             @Override
-            protected void configure() {}
+            protected void configure() {
+            }
 
             @SuppressWarnings("unused")
             @Provides
             @Named("exception")
             Set<String> exception() {
-                throw new AuthorizationException();
+               throw new AuthorizationException();
             }
 
-        }));
+         }));
 
       injector = createContextBuilder(contextSpec).buildInjector();
       parserFactory = injector.getInstance(ParseSax.Factory.class);
       crypto = injector.getInstance(Crypto.class);
    }
 
-   public void testParseTemplate() throws Exception {
+   public void testParseTemplates() throws Exception {
 
-      Method method = TemplateAsyncClient.class.getMethod("getTemplate", URI.class);
+      Method method = TemplateAsyncClient.class.getMethod("getTemplates", URI.class);
       HttpRequest request = factory(TemplateAsyncClient.class).createRequest(method,new URI("/1"));
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
 
-      Function<HttpResponse, Template> parser = (Function<HttpResponse, Template>) RestAnnotationProcessor
+      Function<HttpResponse, Templates> parser = (Function<HttpResponse, Templates>) RestAnnotationProcessor
             .createResponseParser(parserFactory, injector, method, request);
 
-      InputStream is = getClass().getResourceAsStream("/template.xml");
-      Template template = parser.apply(new HttpResponse(200, "ok", newInputStreamPayload(is)));
+      InputStream is = getClass().getResourceAsStream("/templates.xml");
+      Templates templates = parser.apply(new HttpResponse(200, "ok", newInputStreamPayload(is)));
 
-      assertLinks(template.getLinks());
-      assertOperatingSystem(template.getOperatingSystem());
-      assertEquals(template.getDescription(),"");
-      assertProcessor(template.getProcessor());
-      assertMemory(template.getMemory());
-      assertStorage(template.getStorage());
-      assertEquals(template.getNetworkAdapters(),1);
-      assertCustomization(template.getCustomization());
+      assertLinks(templates.getLinks());
+      assertFamilies(templates.getTemplateFamilies());
    }
 
    private void assertLinks(Set<Link> links) {
@@ -117,46 +111,28 @@ public class TemplateJAXBParsingTest extends BaseRestClientTest {
       assertEquals(link.getName(),"Default Compute Pool");
    }
 
-   private void assertOperatingSystem(OperatingSystem os) throws URISyntaxException {
-      OperatingSystem expected = OperatingSystem.builder()
-            .href(new URI("/cloudapi/ecloud/operatingsystems/rhel5_64guest/computepools/89"))
-            .name("Red Hat Enterprise Linux 5 (64-bit)")
-            .type("application/vnd.tmrk.cloud.operatingSystem")
-            .build();
-
-      assertEquals(os,expected);
+   private void assertFamilies(Set<TemplateFamily> families) {
+      assertEquals(families.size(),1);
+      TemplateFamily family = Iterables.getOnlyElement(families);
+      assertEquals(family.getName(),"Standard Templates");
+      assertCategories(family.getTemplateCategories());
    }
 
-   private void assertProcessor(ConfigurationOptionRange configuration) {
-      ConfigurationOptionRange expected = ConfigurationOptionRange.builder()
-            .minimum(1).maximum(8).stepFactor(1).build();
-      assertEquals(configuration, expected);
+   private void assertCategories(Set<TemplateCategory> categories) {
+      assertEquals(categories.size(),1);
+      TemplateCategory category = Iterables.getOnlyElement(categories);
+      assertEquals(category.getName(),"OS Only");
+      assertOperatingSystems(category.getTemplateOperatingSystems());
    }
 
-   private void assertMemory(ResourceCapacityRange memory) {
-      ResourceCapacity min = ResourceCapacity.builder().value(256).unit("MB").build();
-      ResourceCapacity max = ResourceCapacity.builder().value(261120).unit("MB").build();
-      ResourceCapacity step = ResourceCapacity.builder().value(4).unit("MB").build();
-      ResourceCapacityRange expected = ResourceCapacityRange.builder()
-            .minimumSize(min).maximumSize(max).stepFactor(step).build();
+   private void assertOperatingSystems(Set<TemplateOperatingSystem> operatingSystems) {
+      assertEquals(operatingSystems.size(),2);
+      TemplateOperatingSystem windows = Iterables.get(operatingSystems, 0);
+      assertEquals(windows.getName(),"Windows");
+      assertEquals(windows.getTemplates().size(),4);
 
-      assertEquals(memory, expected);
-   }
-
-   private void assertStorage(TemplateStorage storage) {
-      ResourceCapacity size = ResourceCapacity.builder().value(10).unit("GB").build();
-      TemplateStorage expected = TemplateStorage.builder().size(size).build();
-      assertEquals(storage, expected);
-   }
-
-   private void assertCustomization(CustomizationOption customization) {
-      CustomizationOption expected = CustomizationOption.builder()
-            .canPowerOn(false)
-            .passwordRequired(false)
-            .sshKeyRequired(true)
-            .type(CustomizationOption.CustomizationType.LINUX)
-            .build();
-
-      assertEquals(customization, expected);
+      TemplateOperatingSystem linux = Iterables.get(operatingSystems, 1);
+      assertEquals(linux.getName(),"Linux");
+      assertEquals(linux.getTemplates().size(),2);
    }
 }

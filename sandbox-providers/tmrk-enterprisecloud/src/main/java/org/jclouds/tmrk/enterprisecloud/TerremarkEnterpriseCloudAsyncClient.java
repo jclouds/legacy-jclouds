@@ -20,6 +20,7 @@ package org.jclouds.tmrk.enterprisecloud;
 
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.tmrk.enterprisecloud.features.TaskAsyncClient;
+import org.jclouds.tmrk.enterprisecloud.features.TemplateAsyncClient;
 import org.jclouds.tmrk.enterprisecloud.features.VirtualMachineAsyncClient;
 
 /**
@@ -45,4 +46,10 @@ public interface TerremarkEnterpriseCloudAsyncClient {
     */
    @Delegate
    VirtualMachineAsyncClient getVirtualMachineClient();
+
+   /**
+    * Provides asynchronous access to Template features.
+    */
+   @Delegate
+   TemplateAsyncClient getTemplateClient();
 }

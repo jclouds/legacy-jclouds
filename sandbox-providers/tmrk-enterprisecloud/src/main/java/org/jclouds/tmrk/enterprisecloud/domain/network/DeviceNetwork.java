@@ -18,7 +18,7 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain.network;
 
-import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.Resource;
 
 import javax.xml.bind.annotation.XmlElement;
 
@@ -27,12 +27,14 @@ import javax.xml.bind.annotation.XmlElement;
  *  <xs:complexType name="DeviceNetwork">
  * @author Jason King
  */
-public class DeviceNetwork extends BaseNamedResource<DeviceNetwork> {
+public class DeviceNetwork extends Resource<DeviceNetwork> {
+
+   //TODO: Builder
 
    @XmlElement(name = "IpAddresses")
    private DeviceIps ipAddresses = new DeviceIps();
 
-   protected DeviceNetwork() {
+   private DeviceNetwork() {
        //For JAXB
    }
 
