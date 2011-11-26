@@ -18,6 +18,7 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain;
 
+import com.google.common.collect.Sets;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 
@@ -26,6 +27,7 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -134,8 +136,8 @@ public class Link extends BaseNamedResource<Link> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResource(BaseResource<Link> in) {
-         return Builder.class.cast(super.fromResource(in));
+      public Builder fromBaseResource(BaseResource<Link> in) {
+         return Builder.class.cast(super.fromBaseResource(in));
       }
 
       /**
@@ -185,12 +187,12 @@ public class Link extends BaseNamedResource<Link> {
    @XmlAttribute
    protected Relationship rel;
 
-   public Link(URI href, String type, String name, Relationship rel) {
+   private Link(URI href, String type, String name, Relationship rel) {
       super(href, type, name);
       this.rel = checkNotNull(rel, "rel");
    }
 
-   protected Link() {
+   private Link() {
        //For JAXB
    }
 

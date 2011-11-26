@@ -34,12 +34,12 @@ import javax.xml.bind.annotation.XmlElement;
  */
 public class Layout {
     @XmlElement(name = "Group")
-    private Group group;
+    private NamedResource group;
 
     @XmlElement(name = "Row")
-    private Row row;
+    private NamedResource row;
 
-    public Layout(@Nullable Group group, @Nullable Row row) {
+    public Layout(@Nullable NamedResource group, @Nullable NamedResource row) {
         this.group = group;
         this.row = row;
     }
@@ -48,11 +48,11 @@ public class Layout {
         //For JAXB
     }
 
-    public Group getGroup() {
+    public NamedResource getGroup() {
         return group;
     }
 
-    public Row getRow() {
+    public NamedResource getRow() {
         return row;
     }
 

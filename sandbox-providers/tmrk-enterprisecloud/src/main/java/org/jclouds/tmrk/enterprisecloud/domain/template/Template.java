@@ -19,17 +19,16 @@
 package org.jclouds.tmrk.enterprisecloud.domain.template;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.tmrk.enterprisecloud.domain.ConfigurationOptionRange;
-import org.jclouds.tmrk.enterprisecloud.domain.CustomizationOption;
-import org.jclouds.tmrk.enterprisecloud.domain.Links;
-import org.jclouds.tmrk.enterprisecloud.domain.ResourceCapacityRange;
-import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
+import org.jclouds.tmrk.enterprisecloud.domain.*;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.Resource;
 import org.jclouds.tmrk.enterprisecloud.domain.software.OperatingSystem;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <xs:complexType name="Template">
@@ -37,7 +36,7 @@ import java.net.URI;
  * 
  */
 @XmlRootElement(name = "Template")
-public class Template extends BaseNamedResource<Template> {
+public class Template extends Resource<Template> {
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -52,9 +51,8 @@ public class Template extends BaseNamedResource<Template> {
       return new Builder().fromTask(this);
    }
 
-   public static class Builder extends BaseNamedResource.Builder<Template> {
+   public static class Builder extends Resource.Builder<Template> {
       //TODO There are additional fields
-      protected Links links;
       protected OperatingSystem operatingSystem;
       protected String description;
       //protected ComputeMatrix computeMatrix;
@@ -64,14 +62,6 @@ public class Template extends BaseNamedResource<Template> {
       protected int networkAdapters;
       protected CustomizationOption customization;
       //protected DeviceLicensedSoftware licensedSoftware;
-
-      /**
-       * @see org.jclouds.tmrk.enterprisecloud.domain.template.Template#getLinks
-       */
-      public Builder links(Links links) {
-         this.links = links;
-         return this;
-      }
 
       /**
        * @see org.jclouds.tmrk.enterprisecloud.domain.template.Template#getOperatingSystem
@@ -131,18 +121,29 @@ public class Template extends BaseNamedResource<Template> {
 
       @Override
       public Template build() {
-         return new Template(href, type, name, links, operatingSystem, description, processor, memory, storage, networkAdapters, customization);
+         return new Template(href, type, links, actions, name, operatingSystem, description, processor, memory, storage, networkAdapters, customization);
       }
 
       public Builder fromTask(Template in) {
-         return fromResource(in).description(in.getDescription());
+         return fromResource(in).description(in.getDescription())
+                 .operatingSystem(in.getOperatingSystem()).processor(in.getProcessor())
+                 .memory(in.getMemory()).storage(in.getStorage()).networkAdapters(in.getNetworkAdapters())
+                 .customization(in.getCustomization());
       }
 
       /**
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResource(BaseResource<Template> in) {
+      public Builder fromBaseResource(BaseResource<Template> in) {
+         return Builder.class.cast(super.fromBaseResource(in));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromResource(Resource<Template> in) {
          return Builder.class.cast(super.fromResource(in));
       }
 
@@ -166,13 +167,34 @@ public class Template extends BaseNamedResource<Template> {
        * {@inheritDoc}
        */
       @Override
+      public Builder links(Set<Link> links) {
+         return Builder.class.cast(super.links(links));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder actions(Set<Action> actions) {
+         return Builder.class.cast(super.actions(actions));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
       public Builder href(URI href) {
          return Builder.class.cast(super.href(href));
       }
-   }
 
-   @XmlElement(name = "Links", required = false)
-   protected Links links;
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromAttributes(Map<String, String> attributes) {
+         return Builder.class.cast(super.fromAttributes(attributes));
+      }
+   }
 
    @XmlElement(name = "OperatingSystem", required = false)
    protected OperatingSystem operatingSystem;
@@ -199,11 +221,10 @@ public class Template extends BaseNamedResource<Template> {
 
    //protected DeviceLicensedSoftware licensedSoftware;
 
-   private Template(URI href, String type, String name, @Nullable Links links, @Nullable OperatingSystem operatingSystem, @Nullable String description,
+   private Template(URI href, String type, Set<Link> links, Set<Action> actions,  String name, @Nullable OperatingSystem operatingSystem, @Nullable String description,
                     @Nullable ConfigurationOptionRange processor, @Nullable ResourceCapacityRange memory,
                     @Nullable TemplateStorage storage, @Nullable int networkAdapters, @Nullable CustomizationOption customization) {
-      super(href, type, name);
-      this.links = links;
+      super(href, type, name, links, actions);
       this.operatingSystem = operatingSystem;
       this.description = description;
       this.processor = processor;
@@ -215,10 +236,6 @@ public class Template extends BaseNamedResource<Template> {
 
    private Template() {
        //For JAXB
-   }
-
-   public Links getLinks() {
-      return links;
    }
 
    public String getDescription() {
@@ -262,8 +279,6 @@ public class Template extends BaseNamedResource<Template> {
          return false;
       if (description != null ? !description.equals(template.description) : template.description != null)
          return false;
-      if (links != null ? !links.equals(template.links) : template.links != null)
-         return false;
       if (memory != null ? !memory.equals(template.memory) : template.memory != null)
          return false;
       if (operatingSystem != null ? !operatingSystem.equals(template.operatingSystem) : template.operatingSystem != null)
@@ -279,7 +294,6 @@ public class Template extends BaseNamedResource<Template> {
    @Override
    public int hashCode() {
       int result = super.hashCode();
-      result = 31 * result + (links != null ? links.hashCode() : 0);
       result = 31 * result + (operatingSystem != null ? operatingSystem.hashCode() : 0);
       result = 31 * result + (description != null ? description.hashCode() : 0);
       result = 31 * result + (processor != null ? processor.hashCode() : 0);
@@ -292,7 +306,7 @@ public class Template extends BaseNamedResource<Template> {
 
    @Override
    public String string() {
-      return super.string()+", links="+ links+", operatingSystem="+ operatingSystem+
+      return super.string()+", operatingSystem="+ operatingSystem+
             ", description="+ description+", processor="+ processor+
             ", memory="+ memory+", storage="+ storage+
             ", networkAdapters="+ networkAdapters+", customization="+ customization;

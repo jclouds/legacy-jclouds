@@ -20,6 +20,7 @@ package org.jclouds.tmrk.enterprisecloud.domain;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
 
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
@@ -58,8 +59,8 @@ public class NamedResource extends BaseNamedResource<NamedResource> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResource(BaseResource<NamedResource> in) {
-         return Builder.class.cast(super.fromResource(in));
+      public Builder fromBaseResource(BaseResource<NamedResource> in) {
+         return Builder.class.cast(super.fromBaseResource(in));
       }
 
       /**
@@ -104,7 +105,7 @@ public class NamedResource extends BaseNamedResource<NamedResource> {
 
    }
 
-   public NamedResource(URI href, String type, String name) {
+   private NamedResource(URI href, String type, String name) {
       super(href, type, name);
    }
 
