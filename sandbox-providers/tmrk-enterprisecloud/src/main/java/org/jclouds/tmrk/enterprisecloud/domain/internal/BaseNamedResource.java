@@ -18,16 +18,11 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain.internal;
 
-import org.jclouds.tmrk.enterprisecloud.domain.Action;
-import org.jclouds.tmrk.enterprisecloud.domain.Link;
-
 import javax.xml.bind.annotation.XmlAttribute;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.net.URI;
 import java.util.Map;
-import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Location of a Rest resource
@@ -58,7 +53,7 @@ public class BaseNamedResource<T extends BaseNamedResource<T>> extends BaseResou
       }
 
       public BaseNamedResource<T> build() {
-         return new BaseNamedResource<T>(href, type, links, actions, name);
+         return new BaseNamedResource<T>(href, type, name);
       }
 
       /**
@@ -66,12 +61,12 @@ public class BaseNamedResource<T extends BaseNamedResource<T>> extends BaseResou
        */
       @SuppressWarnings("unchecked")
       @Override
-      public Builder<T> fromResource(BaseResource<T> in) {
-         return Builder.class.cast(super.fromResource(in));
+      public Builder<T> fromBaseResource(BaseResource<T> in) {
+         return Builder.class.cast(super.fromBaseResource(in));
       }
 
       public Builder<T> fromNamedResource(BaseNamedResource<T> in) {
-         return fromResource(in).name(in.getName());
+         return fromBaseResource(in).name(in.getName());
       }
 
       /**
@@ -86,8 +81,8 @@ public class BaseNamedResource<T extends BaseNamedResource<T>> extends BaseResou
    @XmlAttribute
    protected String name;
 
-   protected BaseNamedResource(URI href, String type, Set<Link> links, Set<Action> actions, String name) {
-      super(href, type, links, actions);
+   protected BaseNamedResource(URI href, String type, String name) {
+      super(href, type);
       this.name = checkNotNull(name, "name");
    }
 

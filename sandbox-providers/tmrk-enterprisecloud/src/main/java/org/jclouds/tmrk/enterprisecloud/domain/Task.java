@@ -18,22 +18,22 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain;
 
-import static com.google.common.base.CaseFormat.UPPER_CAMEL;
-import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.net.URI;
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
-
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.Resource;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.net.URI;
+import java.util.Date;
+import java.util.Map;
+import java.util.Set;
+
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * <xs:complexType name="Task">
@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  */
 @XmlRootElement(name = "Task")
-public class Task extends BaseResource<Task> {
+public class Task extends Resource<Task> {
     @XmlEnum
     public static enum Status {
       /**
@@ -110,7 +110,7 @@ public class Task extends BaseResource<Task> {
       return new Builder().fromTask(this);
    }
 
-   public static class Builder extends BaseResource.Builder<Task> {
+   public static class Builder extends Resource.Builder<Task> {
       //TODO There are additional fields
       protected String operation;
       protected Status status;
@@ -187,8 +187,8 @@ public class Task extends BaseResource<Task> {
 
       @Override
       public Task build() {
-         return new Task(href, type, links, actions, operation, status, impactedItem, startTime, completedTime, notes, errorMessage,
-               initiatedBy);
+         return new Task(href, type, name, links,
+               actions, operation, status, impactedItem, startTime, completedTime, notes, errorMessage, initiatedBy);
       }
 
       public Builder fromTask(Task in) {
@@ -201,7 +201,15 @@ public class Task extends BaseResource<Task> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResource(BaseResource<Task> in) {
+      public Builder fromBaseResource(BaseResource<Task> in) {
+         return Builder.class.cast(super.fromBaseResource(in));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromResource(Resource<Task> in) {
          return Builder.class.cast(super.fromResource(in));
       }
 
@@ -219,6 +227,14 @@ public class Task extends BaseResource<Task> {
       @Override
       public Builder href(URI href) {
          return Builder.class.cast(super.href(href));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder name(String name) {
+         return Builder.class.cast(super.name(name));
       }
 
       /**
@@ -271,9 +287,9 @@ public class Task extends BaseResource<Task> {
    @XmlElement(name = "InitiatedBy", required = true)
    protected NamedResource initiatedBy;
 
-   private Task(URI href, String type, Set<Link> links, Set<Action> actions, String operation, Status status, NamedResource impactedItem, Date startTime,
+   private Task(URI href, String type, String name, Set<Link> links, Set<Action> actions, String operation, Status status, NamedResource impactedItem, Date startTime,
          @Nullable Date completedTime, @Nullable String notes, @Nullable String errorMessage, NamedResource initiatedBy) {
-      super(href, type, links, actions);
+      super(href, type, name, links, actions);
       this.operation = checkNotNull(operation, "operation");
       this.status = checkNotNull(status, "status");
       this.impactedItem = checkNotNull(impactedItem, "impactedItem");

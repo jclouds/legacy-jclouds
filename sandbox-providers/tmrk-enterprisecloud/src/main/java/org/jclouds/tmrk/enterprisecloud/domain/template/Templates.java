@@ -22,6 +22,7 @@ import com.google.common.collect.Sets;
 import org.jclouds.tmrk.enterprisecloud.domain.Action;
 import org.jclouds.tmrk.enterprisecloud.domain.Link;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.Resource;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -39,8 +40,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * 
  */
 @XmlRootElement(name = "Templates")
-public class Templates extends BaseResource<Templates> {
-
+public class Templates extends Resource<Templates> {
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -55,7 +55,7 @@ public class Templates extends BaseResource<Templates> {
       return new Builder().fromTemplates(this);
    }
 
-   public static class Builder extends BaseResource.Builder<Templates> {
+   public static class Builder extends Resource.Builder<Templates> {
       private Set<TemplateFamily> families = Sets.newLinkedHashSet();
 
       /**
@@ -68,7 +68,7 @@ public class Templates extends BaseResource<Templates> {
 
       @Override
       public Templates build() {
-         return new Templates(href, type, links, actions, families);
+         return new Templates(href, type, name, links, actions, families);
       }
 
       public Builder fromTemplates(Templates in) {
@@ -79,7 +79,15 @@ public class Templates extends BaseResource<Templates> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResource(BaseResource<Templates> in) {
+      public Builder fromBaseResource(BaseResource<Templates> in) {
+         return Builder.class.cast(super.fromBaseResource(in));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromResource(Resource<Templates> in) {
          return Builder.class.cast(super.fromResource(in));
       }
 
@@ -97,6 +105,14 @@ public class Templates extends BaseResource<Templates> {
       @Override
       public Builder href(URI href) {
          return Builder.class.cast(super.href(href));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder name(String name) {
+         return Builder.class.cast(super.name(name));
       }
 
       /**
@@ -128,8 +144,8 @@ public class Templates extends BaseResource<Templates> {
    @XmlElement(name = "Families", required = false)
    private TemplateFamilies families;
 
-   private Templates(URI href, String type, Set<Link> links, Set<Action> actions, Set<TemplateFamily> families) {
-      super(href, type, links, actions);
+   private Templates(URI href, String type, String name, Set<Link> links, Set<Action> actions, Set<TemplateFamily> families) {
+      super(href, type, name, links, actions);
       this.families = TemplateFamilies.builder().families(families).build();
    }
 

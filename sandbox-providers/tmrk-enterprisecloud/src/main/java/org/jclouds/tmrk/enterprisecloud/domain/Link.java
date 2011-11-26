@@ -136,8 +136,8 @@ public class Link extends BaseNamedResource<Link> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResource(BaseResource<Link> in) {
-         return Builder.class.cast(super.fromResource(in));
+      public Builder fromBaseResource(BaseResource<Link> in) {
+         return Builder.class.cast(super.fromBaseResource(in));
       }
 
       /**
@@ -176,22 +176,6 @@ public class Link extends BaseNamedResource<Link> {
        * {@inheritDoc}
        */
       @Override
-      public Builder links(Set<Link> links) {
-         throw new UnsupportedOperationException("links is not valid for Link");
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder actions(Set<Action> actions) {
-         throw new UnsupportedOperationException("actions is not valid for Link");
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
       public Builder fromAttributes(Map<String, String> attributes) {
          super.fromAttributes(attributes);
          if (attributes.containsKey("rel"))
@@ -204,7 +188,7 @@ public class Link extends BaseNamedResource<Link> {
    protected Relationship rel;
 
    private Link(URI href, String type, String name, Relationship rel) {
-      super(href, type, Sets.<Link>newLinkedHashSet(), Sets.<Action>newLinkedHashSet(), name);
+      super(href, type, name);
       this.rel = checkNotNull(rel, "rel");
    }
 

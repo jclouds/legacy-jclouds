@@ -20,8 +20,8 @@ package org.jclouds.tmrk.enterprisecloud.domain.template;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.tmrk.enterprisecloud.domain.*;
-import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.Resource;
 import org.jclouds.tmrk.enterprisecloud.domain.software.OperatingSystem;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -36,7 +36,7 @@ import java.util.Set;
  * 
  */
 @XmlRootElement(name = "Template")
-public class Template extends BaseNamedResource<Template> {
+public class Template extends Resource<Template> {
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -51,7 +51,7 @@ public class Template extends BaseNamedResource<Template> {
       return new Builder().fromTask(this);
    }
 
-   public static class Builder extends BaseNamedResource.Builder<Template> {
+   public static class Builder extends Resource.Builder<Template> {
       //TODO There are additional fields
       protected OperatingSystem operatingSystem;
       protected String description;
@@ -125,14 +125,25 @@ public class Template extends BaseNamedResource<Template> {
       }
 
       public Builder fromTask(Template in) {
-         return fromResource(in).description(in.getDescription());
+         return fromResource(in).description(in.getDescription())
+                 .operatingSystem(in.getOperatingSystem()).processor(in.getProcessor())
+                 .memory(in.getMemory()).storage(in.getStorage()).networkAdapters(in.getNetworkAdapters())
+                 .customization(in.getCustomization());
       }
 
       /**
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResource(BaseResource<Template> in) {
+      public Builder fromBaseResource(BaseResource<Template> in) {
+         return Builder.class.cast(super.fromBaseResource(in));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromResource(Resource<Template> in) {
          return Builder.class.cast(super.fromResource(in));
       }
 
@@ -213,7 +224,7 @@ public class Template extends BaseNamedResource<Template> {
    private Template(URI href, String type, Set<Link> links, Set<Action> actions,  String name, @Nullable OperatingSystem operatingSystem, @Nullable String description,
                     @Nullable ConfigurationOptionRange processor, @Nullable ResourceCapacityRange memory,
                     @Nullable TemplateStorage storage, @Nullable int networkAdapters, @Nullable CustomizationOption customization) {
-      super(href, type, links, actions, name);
+      super(href, type, name, links, actions);
       this.operatingSystem = operatingSystem;
       this.description = description;
       this.processor = processor;

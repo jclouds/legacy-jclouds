@@ -86,7 +86,7 @@ public class NetworkReference extends BaseNamedResource<NetworkReference> {
 
       @Override
       public NetworkReference build() {
-         return new NetworkReference(href, type, links, actions, name, networkType);
+         return new NetworkReference(href, type, name, networkType);
       }
 
       public Builder fromNetworkReference(NetworkReference in) {
@@ -97,8 +97,8 @@ public class NetworkReference extends BaseNamedResource<NetworkReference> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResource(BaseResource<NetworkReference> in) {
-         return Builder.class.cast(super.fromResource(in));
+      public Builder fromBaseResource(BaseResource<NetworkReference> in) {
+         return Builder.class.cast(super.fromBaseResource(in));
       }
 
       /**
@@ -140,29 +140,13 @@ public class NetworkReference extends BaseNamedResource<NetworkReference> {
       public Builder fromAttributes(Map<String, String> attributes) {
          return Builder.class.cast(super.fromAttributes(attributes));
       }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder actions(Set<Action> actions) {
-         return Builder.class.cast(super.actions(actions));
-      }
    }
 
    @XmlElement(name = "NetworkType")
    private NetworkType networkType;
 
-   private NetworkReference(URI href, String type, Set<Link> links, Set<Action> actions, String name,@Nullable NetworkType networkType) {
-      super(href, type, links, actions, name);
+   private NetworkReference(URI href, String type, String name,@Nullable NetworkType networkType) {
+      super(href, type, name);
       this.networkType = networkType;
    }
 

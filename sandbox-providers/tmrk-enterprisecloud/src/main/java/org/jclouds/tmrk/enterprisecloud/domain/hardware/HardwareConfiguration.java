@@ -24,6 +24,7 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.tmrk.enterprisecloud.domain.Action;
 import org.jclouds.tmrk.enterprisecloud.domain.Link;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.Resource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
 import org.jclouds.tmrk.enterprisecloud.domain.network.Nics;
 import org.jclouds.tmrk.enterprisecloud.domain.network.VirtualNic;
@@ -42,7 +43,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Jason King
  */
 @XmlRootElement(name = "HardwareConfiguration")
-public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
+public class HardwareConfiguration extends Resource<HardwareConfiguration> {
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -57,7 +58,7 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
       return new Builder().fromHardwareConfiguration(this);
    }
 
-   public static class Builder extends BaseResource.Builder<HardwareConfiguration> {
+   public static class Builder extends Resource.Builder<HardwareConfiguration> {
 
        private int processorCount;
        private ResourceCapacity memory;
@@ -106,7 +107,15 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResource(BaseResource<HardwareConfiguration> in) {
+      public Builder fromBaseResource(BaseResource<HardwareConfiguration> in) {
+         return Builder.class.cast(super.fromBaseResource(in));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromResource(Resource<HardwareConfiguration> in) {
          return Builder.class.cast(super.fromResource(in));
       }
 
@@ -126,7 +135,15 @@ public class HardwareConfiguration extends BaseResource<HardwareConfiguration> {
          return Builder.class.cast(super.href(href));
       }
 
-/**
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder name(String name) {
+         return Builder.class.cast(super.name(name));
+      }
+
+      /**
        * {@inheritDoc}
        */
       @Override

@@ -52,15 +52,15 @@ public class NamedResource extends BaseNamedResource<NamedResource> {
        */
       @Override
       public NamedResource build() {
-         return new NamedResource(href, type, links, actions, name);
+         return new NamedResource(href, type, name);
       }
 
       /**
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResource(BaseResource<NamedResource> in) {
-         return Builder.class.cast(super.fromResource(in));
+      public Builder fromBaseResource(BaseResource<NamedResource> in) {
+         return Builder.class.cast(super.fromBaseResource(in));
       }
 
       /**
@@ -99,30 +99,14 @@ public class NamedResource extends BaseNamedResource<NamedResource> {
        * {@inheritDoc}
        */
       @Override
-      public Builder links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder actions(Set<Action> actions) {
-         return Builder.class.cast(super.actions(actions));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
       public Builder fromAttributes(Map<String, String> in) {
          return Builder.class.cast(super.fromAttributes(in));
       }
 
    }
 
-   private NamedResource(URI href, String type, Set<Link> links, Set<Action> actions, String name) {
-      super(href, type, links, actions, name);
+   private NamedResource(URI href, String type, String name) {
+      super(href, type, name);
    }
 
    protected NamedResource() {

@@ -21,7 +21,7 @@ package org.jclouds.tmrk.enterprisecloud.domain.network;
 import com.google.common.collect.Sets;
 import org.jclouds.tmrk.enterprisecloud.domain.Actions;
 import org.jclouds.tmrk.enterprisecloud.domain.Link;
-import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.Resource;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -34,13 +34,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Jason King
  */
 @XmlRootElement(name="AssignedIpAddresses")
-public class AssignedIpAddresses extends BaseResource<AssignedIpAddresses> {
+public class AssignedIpAddresses extends Resource<AssignedIpAddresses> {
 
    @XmlElement(name = "Networks", required = true)
    private DeviceNetworks networks = new DeviceNetworks();
 
-   public AssignedIpAddresses(URI href, String type, Actions actions, DeviceNetworks networks) {
-      super(href, type, Sets.<Link>newIdentityHashSet(), actions.getActions());
+   public AssignedIpAddresses(URI href, String type, String name, Actions actions, DeviceNetworks networks) {
+      super(href, type, name, Sets.<Link>newIdentityHashSet(), actions.getActions());
       checkNotNull(networks,"networks");
    }
 

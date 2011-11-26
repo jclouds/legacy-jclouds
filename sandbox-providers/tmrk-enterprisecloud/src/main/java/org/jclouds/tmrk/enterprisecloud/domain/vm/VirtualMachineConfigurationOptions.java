@@ -22,6 +22,7 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.tmrk.enterprisecloud.domain.*;
 import org.jclouds.tmrk.enterprisecloud.domain.hardware.DiskConfigurationOption;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.Resource;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -35,7 +36,7 @@ import java.util.Set;
  * 
  */
 @XmlRootElement(name = "VirtualMachineConfigurationOptions")
-public class VirtualMachineConfigurationOptions extends BaseResource<VirtualMachineConfigurationOptions> {
+public class VirtualMachineConfigurationOptions extends Resource<VirtualMachineConfigurationOptions> {
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -50,7 +51,7 @@ public class VirtualMachineConfigurationOptions extends BaseResource<VirtualMach
       return new Builder().fromVirtualMachineConfigurationOptions(this);
    }
 
-   public static class Builder extends BaseResource.Builder<VirtualMachineConfigurationOptions> {
+   public static class Builder extends Resource.Builder<VirtualMachineConfigurationOptions> {
 
       protected ConfigurationOptionRange processor;
       protected ResourceCapacityRange memory;
@@ -101,7 +102,7 @@ public class VirtualMachineConfigurationOptions extends BaseResource<VirtualMach
 
       @Override
       public VirtualMachineConfigurationOptions build() {
-         return new VirtualMachineConfigurationOptions(href, type, links, actions, processor, memory, disk, networkAdapter, customization);
+         return new VirtualMachineConfigurationOptions(href, type, name, links, actions, processor, memory, disk, networkAdapter, customization);
       }
 
       public Builder fromVirtualMachineConfigurationOptions(VirtualMachineConfigurationOptions in) {
@@ -116,8 +117,16 @@ public class VirtualMachineConfigurationOptions extends BaseResource<VirtualMach
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResource(BaseResource<VirtualMachineConfigurationOptions> in) {
+      public Builder fromResource(Resource<VirtualMachineConfigurationOptions> in) {
          return Builder.class.cast(super.fromResource(in));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromBaseResource(BaseResource<VirtualMachineConfigurationOptions> in) {
+         return Builder.class.cast(super.fromBaseResource(in));
       }
 
       /**
@@ -176,9 +185,9 @@ public class VirtualMachineConfigurationOptions extends BaseResource<VirtualMach
    @XmlElement(name = "Customization", required = false)
    private CustomizationOption customization;
 
-   private VirtualMachineConfigurationOptions(URI href, String type, Set<Link> links, Set<Action> actions, @Nullable ConfigurationOptionRange processor, @Nullable ResourceCapacityRange memory,
+   private VirtualMachineConfigurationOptions(URI href, String type, String name, Set<Link> links, Set<Action> actions, @Nullable ConfigurationOptionRange processor, @Nullable ResourceCapacityRange memory,
                                               @Nullable DiskConfigurationOption disk, @Nullable ConfigurationOptionRange networkAdapter, @Nullable CustomizationOption customization) {
-      super(href, type, links, actions);
+      super(href, type, name, links, actions);
       this.processor = processor;
       this.memory = memory;
       this.disk = disk;

@@ -18,21 +18,11 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain.internal;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import org.jclouds.tmrk.enterprisecloud.domain.Action;
-import org.jclouds.tmrk.enterprisecloud.domain.Actions;
-import org.jclouds.tmrk.enterprisecloud.domain.Link;
-import org.jclouds.tmrk.enterprisecloud.domain.Links;
-
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.net.URI;
 import java.util.Map;
-import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Location of a Rest resource
@@ -47,15 +37,13 @@ public class BaseResource<T extends BaseResource<T>> {
    }
 
    public Builder<T> toBuilder() {
-      return new Builder<T>().fromResource(this);
+      return new Builder<T>().fromBaseResource(this);
    }
 
    public static class Builder<T extends BaseResource<T>> {
 
       protected String type;
       protected URI href;
-      protected Set<Link> links = Sets.newLinkedHashSet();
-      protected Set<Action> actions = Sets.newLinkedHashSet();
 
       /**
        * @see BaseResource#getType
@@ -73,31 +61,15 @@ public class BaseResource<T extends BaseResource<T>> {
          return this;
       }
 
-      /**
-       * @see BaseResource#getLinks
-       */
-      public Builder links(Set<Link> links) {
-         this.links = ImmutableSet.<Link> copyOf(checkNotNull(links, "links"));
-         return this;
-      }
-
-      /**
-       * @see BaseResource#getActions
-       */
-      public Builder actions(Set<Action> actions) {
-         this.actions = ImmutableSet.<Action> copyOf(checkNotNull(actions, "actions"));
-         return this;
-      }
-
       public BaseResource<T> build() {
-         return new BaseResource<T>(href, type, links, actions);
+         return new BaseResource<T>(href, type);
       }
 
-      public Builder<T> fromResource(BaseResource<T> in) {
-         return type(in.getType()).href(in.getHref()).links(in.getLinks()).actions(in.getActions());
+      protected Builder<T> fromBaseResource(BaseResource<T> in) {
+         return type(in.getType()).href(in.getHref());
       }
 
-      public Builder<T> fromAttributes(Map<String, String> attributes) {
+      protected Builder<T> fromAttributes(Map<String, String> attributes) {
          return href(URI.create(attributes.get("href"))).type(attributes.get("type"));
       }
       
@@ -109,17 +81,9 @@ public class BaseResource<T extends BaseResource<T>> {
    @XmlAttribute
    protected URI href;
 
-   @XmlElement(name = "Links", required = false)
-   protected Links links = Links.builder().build();
-
-   @XmlElement(name = "Actions", required = false)
-   protected Actions actions = Actions.builder().build();
-
-   public BaseResource(URI href, String type, Set<Link> links, Set<Action> actions) {
+   protected BaseResource(URI href, String type) {
       this.type = checkNotNull(type, "type");
       this.href = checkNotNull(href, "href");
-      this.links = Links.builder().links(checkNotNull(links,"links")).build();
-      this.actions = Actions.builder().actions(checkNotNull(actions, "actions")).build();
    }
 
    protected BaseResource() {
@@ -142,20 +106,6 @@ public class BaseResource<T extends BaseResource<T>> {
       return href;
    }
 
-   /**
-    * @return the links related to this object
-    */
-   public Set<Link> getLinks() {
-      return links.getLinks();
-   }
-
-   /**
-    * @return the actions available from this object
-    */
-   public Set<Action> getActions() {
-      return actions.getActions();
-   }
-
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;
@@ -163,11 +113,7 @@ public class BaseResource<T extends BaseResource<T>> {
 
       BaseResource that = (BaseResource) o;
 
-      if (actions != null ? !actions.equals(that.actions) : that.actions != null)
-         return false;
       if (href != null ? !href.equals(that.href) : that.href != null)
-         return false;
-      if (links != null ? !links.equals(that.links) : that.links != null)
          return false;
       if (type != null ? !type.equals(that.type) : that.type != null)
          return false;
@@ -179,8 +125,6 @@ public class BaseResource<T extends BaseResource<T>> {
    public int hashCode() {
       int result = type != null ? type.hashCode() : 0;
       result = 31 * result + (href != null ? href.hashCode() : 0);
-      result = 31 * result + (links != null ? links.hashCode() : 0);
-      result = 31 * result + (actions != null ? actions.hashCode() : 0);
       return result;
    }
 
@@ -190,6 +134,6 @@ public class BaseResource<T extends BaseResource<T>> {
    }
 
    protected String string() {
-       return "href="+href+", type="+type+", links="+links+", actions="+actions;
+       return "href="+href+", type="+type;
    }
 }

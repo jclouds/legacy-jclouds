@@ -21,8 +21,8 @@ package org.jclouds.tmrk.enterprisecloud.domain.vm;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.tmrk.enterprisecloud.domain.*;
 import org.jclouds.tmrk.enterprisecloud.domain.hardware.HardwareConfiguration;
-import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.Resource;
 import org.jclouds.tmrk.enterprisecloud.domain.software.OperatingSystem;
 import org.jclouds.tmrk.enterprisecloud.domain.software.ToolsStatus;
 
@@ -45,7 +45,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * 
  */
 @XmlRootElement(name = "VirtualMachine")
-public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
+public class VirtualMachine extends Resource<VirtualMachine> {
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -60,7 +60,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
       return new Builder().fromVirtualMachine(this);
    }
 
-   public static class Builder extends BaseNamedResource.Builder<VirtualMachine> {
+   public static class Builder extends Resource.Builder<VirtualMachine> {
       //TODO There are some more fields
       private Tasks tasks = Tasks.builder().build();
       private String description;
@@ -179,7 +179,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
       }
 
       public Builder fromVirtualMachine(VirtualMachine in) {
-        return fromNamedResource(in)
+        return fromResource(in)
             .tasks(in.getTasks())
             .description(in.getDescription())
             .layout(in.getLayout())
@@ -197,16 +197,16 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResource(BaseResource<VirtualMachine> in) {
-         return Builder.class.cast(super.fromResource(in));
+      public Builder fromBaseResource(BaseResource<VirtualMachine> in) {
+         return Builder.class.cast(super.fromBaseResource(in));
       }
 
       /**
        * {@inheritDoc}
        */
       @Override
-      public Builder fromNamedResource(BaseNamedResource<VirtualMachine> in) {
-         return Builder.class.cast(super.fromNamedResource(in));
+      public Builder fromResource(Resource<VirtualMachine> in) {
+         return Builder.class.cast(super.fromResource(in));
       }
 
       /**
@@ -298,7 +298,7 @@ public class VirtualMachine extends BaseNamedResource<VirtualMachine> {
     private VirtualMachine(URI href, String type, String name, Tasks tasks, Set<Action> actions, Set<Link> links, String description, @Nullable Layout layout,
                          VirtualMachineStatus status, boolean poweredOn, @Nullable ToolsStatus toolsStatus, @Nullable VirtualMachineMediaStatus mediaStatus, boolean customizationPending,
                          @Nullable OperatingSystem operatingSystem, @Nullable HardwareConfiguration hardwareConfiguration, @Nullable VirtualMachineIpAddresses ipAddresses) {
-      super(href, type, links, actions, name);
+      super(href, type, name, links, actions);
       this.description = checkNotNull(description, "description");
       this.tasks = checkNotNull(tasks, "tasks");
       this.status = checkNotNull(status, "status");
