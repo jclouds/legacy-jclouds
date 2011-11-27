@@ -1,6 +1,25 @@
+/**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 
 import java.net.NetworkInterface;
@@ -25,8 +44,10 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-public class RetrieveActiveBridgedInterfaces implements
-      Function<String, List<String>> {
+/**
+ * @author Andrea Turli
+ */
+public class RetrieveActiveBridgedInterfaces implements Function<String, List<String>> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -36,7 +57,6 @@ public class RetrieveActiveBridgedInterfaces implements
 
    @Inject
    public RetrieveActiveBridgedInterfaces(ComputeServiceContext context) {
-      super();
       this.context = context;
    }
 
@@ -45,25 +65,20 @@ public class RetrieveActiveBridgedInterfaces implements
       // Bridged Network
       String command = "vboxmanage list bridgedifs";
       String bridgedIfBlocks = context
-            .getComputeService()
-            .runScriptOnNode(hostId, command,
-                  runAsRoot(false).wrapInInitScript(false)).getOutput();
+              .getComputeService()
+              .runScriptOnNode(hostId, command,
+                      runAsRoot(false).wrapInInitScript(false)).getOutput();
 
       List<String> bridgedInterfaces = retrieveBridgedInterfaceNames(bridgedIfBlocks);
       checkNotNull(bridgedInterfaces);
 
       // union of bridgedNetwork with inet up and !loopback
       List<String> activeNetworkInterfaceNames = Lists.newArrayList();
-      Enumeration<NetworkInterface> nets;
       try {
-         Iterable<String> filterdBridgedInterface = null;
-         nets = NetworkInterface.getNetworkInterfaces();
+         Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
          for (NetworkInterface inet : Collections.list(nets)) {
-            filterdBridgedInterface = Iterables.filter(bridgedInterfaces,
-                  new IsActiveBridgedInterface(inet));
-            for (String filterInetName : filterdBridgedInterface) {
-               activeNetworkInterfaceNames.add(filterInetName);
-            }
+            Iterable<String> filteredBridgedInterface = filter(bridgedInterfaces, new IsActiveBridgedInterface(inet));
+            Iterables.addAll(activeNetworkInterfaceNames, filteredBridgedInterface);
          }
       } catch (SocketException e) {
          logger.error(e, "Problem in listing network interfaces.");
@@ -72,23 +87,19 @@ public class RetrieveActiveBridgedInterfaces implements
       return activeNetworkInterfaceNames;
    }
 
-   protected static List<String> retrieveBridgedInterfaceNames(
-         String bridgedIfBlocks) {
+   protected static List<String> retrieveBridgedInterfaceNames(String bridgedIfBlocks) {
       List<String> bridgedInterfaceNames = Lists.newArrayList();
       // separate the different bridge block
-      for (String bridgedIfBlock : Splitter.on(
-            Pattern.compile("(?m)^[ \t]*\r?\n")).split(bridgedIfBlocks)) {
+      for (String bridgedIfBlock : Splitter.on(Pattern.compile("(?m)^[ \t]*\r?\n")).split(bridgedIfBlocks)) {
 
-         Iterable<String> bridgedIfName = Iterables.filter(Splitter.on("\n")
-               .split(bridgedIfBlock), new Predicate<String>() {
+         Iterable<String> bridgedIfName = filter(Splitter.on("\n").split(bridgedIfBlock), new Predicate<String>() {
             @Override
             public boolean apply(String arg0) {
                return arg0.startsWith("Name:");
             }
          });
          for (String bridgedInterfaceName : bridgedIfName) {
-            for (String string : Splitter.on("Name:").split(
-                  bridgedInterfaceName)) {
+            for (String string : Splitter.on("Name:").split(bridgedInterfaceName)) {
                if (!string.isEmpty())
                   bridgedInterfaceNames.add(string.trim());
             }
@@ -102,14 +113,12 @@ public class RetrieveActiveBridgedInterfaces implements
       assert false;
       return null;
    }
-   
+
    private class IsActiveBridgedInterface implements Predicate<String> {
 
       private NetworkInterface networkInterface;
 
       public IsActiveBridgedInterface(NetworkInterface networkInterface) {
-
-         super();
          this.networkInterface = networkInterface;
       }
 
@@ -117,13 +126,13 @@ public class RetrieveActiveBridgedInterfaces implements
       public boolean apply(String bridgedInterfaceName) {
          try {
             return (bridgedInterfaceName.startsWith(networkInterface
-                  .getDisplayName()) && networkInterface.isUp() && !networkInterface
-                     .isLoopback());
+                    .getDisplayName()) && networkInterface.isUp() && !networkInterface
+                    .isLoopback());
          } catch (SocketException e) {
             logger.error(e, "Problem in listing network interfaces.");
             propagate(e);
          }
          return false;
       }
-   };
+   }
 }

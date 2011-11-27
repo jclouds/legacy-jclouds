@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -37,8 +37,7 @@ import com.google.common.collect.ImmutableList;
  * @author Andrea Turli
  */
 @Test(groups = "live", singleThreaded = true, testName = "RetrieveActiveBridgedInterfacesLiveTest")
-public class RetrieveActiveBridgedInterfacesLiveTest extends
-      BaseVirtualBoxClientLiveTest {
+public class RetrieveActiveBridgedInterfacesLiveTest extends BaseVirtualBoxClientLiveTest {
    
    public static final String TEST1 = "Name:            eth0\n"
          + "GUID:            30687465-0000-4000-8000-00261834d0cb\n"
@@ -80,8 +79,7 @@ public class RetrieveActiveBridgedInterfacesLiveTest extends
       ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest(
             hostId, "localhost", guestId, "localhost", new Credentials("toor",
                   "password"));
-      List<String> bridgedInterface = new RetrieveActiveBridgedInterfaces(
-            localHostContext).apply(hostId);
+      List<String> bridgedInterface = new RetrieveActiveBridgedInterfaces(localHostContext).apply(hostId);
       assertFalse(bridgedInterface.isEmpty());
    }
 
