@@ -64,7 +64,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
    }
 
    private boolean machineNotFoundException(VBoxException e) {
-      return e.getMessage().indexOf("VirtualBox error: Could not find a registered machine named ") != -1;
+      return e.getMessage().contains("VirtualBox error: Could not find a registered machine named ");
    }
 
    private IMachine createMachine(IVirtualBox vBox, String vmName) {
