@@ -38,6 +38,9 @@ public class NinefoldComputePropertiesBuilder extends CloudStackPropertiesBuilde
       properties.setProperty(PROPERTY_ISO3166_CODES, "AU-NSW");
       properties.setProperty(PROPERTY_ENDPOINT, "https://api.ninefold.com/compute/v1.0/");
       properties.setProperty(PROPERTY_API_VERSION, "2.2.8");
+      properties.setProperty("ninefold-compute.image-id", "575");
+      properties.setProperty("ninefold-compute.image.login-user", "user:Password01");
+      properties.setProperty("ninefold-compute.image.authenticate-sudo", "true");
       return properties;
    }
 

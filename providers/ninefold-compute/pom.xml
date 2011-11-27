@@ -40,7 +40,7 @@
     <test.ninefold-compute.credential>FIXME_CREDENTIAL</test.ninefold-compute.credential>
     <test.ninefold-compute.image-id>575</test.ninefold-compute.image-id>
     <test.ninefold-compute.image.login-user>user:Password01</test.ninefold-compute.image.login-user>
-    <test.ninefold-compute.image.authenticate-sudo>user:Password01</test.ninefold-compute.image.authenticate-sudo>
+    <test.ninefold-compute.image.authenticate-sudo>true</test.ninefold-compute.image.authenticate-sudo>
   </properties>
 
   <dependencies>
