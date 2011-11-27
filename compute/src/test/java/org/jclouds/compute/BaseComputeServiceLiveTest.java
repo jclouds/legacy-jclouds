@@ -594,11 +594,11 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
       watch.reset().start();
 
       IPSocket socket = new IPSocket(Iterables.get(node.getPublicAddresses(), 0), 8080);
-      assert preciseSocketTester.apply(socket) : String.format("failed to open socket %s on node %s", socket, node);
+      assert preciseSocketTester.apply(socket) : String.format("failed to open socket %s on node %s:%n%s%s", socket,
+            node, init(node, processName, "tail"), init(node, processName, "tailerr"));
       stats.socketOpenMilliseconds = watch.elapsedTime(TimeUnit.MILLISECONDS);
 
-      exec = client.runScriptOnNode(node.getId(), "./" + processName + " tail", runAsRoot(false)
-            .wrapInInitScript(false));
+      exec = init(node, processName, "tail");
 
       Matcher matcher = parseReported.matcher(exec.getOutput());
       if (matcher.find())
@@ -606,6 +606,11 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
       getAnonymousLogger().info(format("<< %s on node(%s) %s", bgProcess, node.getId(), stats));
       return stats;
+   }
+
+   public ExecResponse init(NodeMetadata node, String processName, String command) {
+      return client.runScriptOnNode(node.getId(), "./" + processName + " "+command, runAsRoot(false)
+            .wrapInInitScript(false));
    }
 
    // started in 6462ms -
