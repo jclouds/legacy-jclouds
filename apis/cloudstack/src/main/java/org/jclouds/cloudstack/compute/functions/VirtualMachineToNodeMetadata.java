@@ -30,8 +30,6 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.collect.FindResourceInSet;
@@ -47,6 +45,7 @@ import org.jclouds.util.InetAddresses2;
 import org.jclouds.util.Throwables2;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.cache.Cache;
@@ -62,8 +61,8 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
 
    public static final Map<VirtualMachine.State, NodeState> vmStateToNodeState = ImmutableMap
       .<VirtualMachine.State, NodeState>builder().put(VirtualMachine.State.STARTING, NodeState.PENDING)
-      .put(VirtualMachine.State.RUNNING, NodeState.RUNNING).put(VirtualMachine.State.STOPPING, NodeState.SUSPENDED)
-      .put(VirtualMachine.State.STOPPED, NodeState.PENDING)
+      .put(VirtualMachine.State.RUNNING, NodeState.RUNNING).put(VirtualMachine.State.STOPPING, NodeState.PENDING)
+      .put(VirtualMachine.State.STOPPED, NodeState.SUSPENDED)
       .put(VirtualMachine.State.DESTROYED, NodeState.TERMINATED)
       .put(VirtualMachine.State.EXPUNGING, NodeState.TERMINATED)
       .put(VirtualMachine.State.MIGRATING, NodeState.PENDING).put(VirtualMachine.State.ERROR, NodeState.ERROR)
