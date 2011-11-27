@@ -19,7 +19,6 @@
 package org.jclouds.cloudstack.options;
 
 import com.google.common.collect.ImmutableSet;
-import org.jclouds.http.options.BaseHttpRequestOptions;
 
 /**
  * Options for the ISO registerISO method.

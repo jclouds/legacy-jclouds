@@ -63,6 +63,7 @@ public class Volume implements Comparable<Volume> {
       private long snapshotId;
       private String state;
       private String storage;
+      // TODO enum
       private String storageType;
       private VolumeType type;
       private long virtualMachineId;
@@ -223,11 +224,10 @@ public class Volume implements Comparable<Volume> {
       }
 
       public Volume build() {
-         return new Volume(id, attached, created, destroyed, deviceId, diskOfferingDisplayText,
-               diskOfferingId, diskOfferingName, domain, domainId, hypervisor, isExtractable,
-               jobId, jobStatus, name, serviceOfferingDisplayText, serviceOfferingId,
-               serviceOfferingName, size, snapshotId, state, storage, storage, type, virtualMachineId,
-               vmDisplayName, vmName, vmState, zoneId, zoneName);
+         return new Volume(id, attached, created, destroyed, deviceId, diskOfferingDisplayText, diskOfferingId,
+               diskOfferingName, domain, domainId, hypervisor, isExtractable, jobId, jobStatus, name,
+               serviceOfferingDisplayText, serviceOfferingId, serviceOfferingName, size, snapshotId, state, storage,
+               storageType, type, virtualMachineId, vmDisplayName, vmName, vmState, zoneId, zoneName);
       }
    }
 
