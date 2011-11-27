@@ -31,6 +31,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshException;
 import org.jclouds.virtualbox.domain.ExecutionType;
+import org.jclouds.virtualbox.domain.RedirectRule;
 import org.jclouds.virtualbox.settings.KeyboardScancodes;
 import org.virtualbox_4_1.*;
 
@@ -49,6 +50,7 @@ import static org.virtualbox_4_1.DeviceType.DVD;
 import static org.virtualbox_4_1.DeviceType.HardDisk;
 import static org.virtualbox_4_1.LockType.Shared;
 import static org.virtualbox_4_1.LockType.Write;
+import static org.virtualbox_4_1.NATProtocol.TCP;
 
 public class IsoToIMachine implements Function<String, IMachine> {
 
@@ -197,7 +199,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
    }
 
    private void ensureNATNetworkingIsAppliedToMachine(String vmName) {
-      lockMachineAndApply(manager, Write, vmName, new AttachNATRedirectRuleToMachine(0l));
+      lockMachineAndApply(manager, Write, vmName, new AttachNATRedirectRuleToMachine(0l, new RedirectRule(TCP, "127.0.0.1", 2222, "", 22)));
    }
 
    private void ensureMachineHasAttachedDistroMedium(String isoName, String workingDir, String controllerIDE) {

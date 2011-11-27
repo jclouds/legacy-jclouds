@@ -24,6 +24,7 @@ import static org.virtualbox_4_1.NetworkAttachmentType.NAT;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.virtualbox.domain.RedirectRule;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
 
@@ -35,16 +36,23 @@ import com.google.common.base.Function;
 public class AttachNATRedirectRuleToMachine implements Function<IMachine, Void> {
 
    private long adapterIndex;
+   private RedirectRule redirectRule;
 
-   public AttachNATRedirectRuleToMachine(long adapterSlot) {
+   public AttachNATRedirectRuleToMachine(long adapterSlot, RedirectRule redirectRule) {
       this.adapterIndex = adapterSlot;
+      this.redirectRule = redirectRule;
    }
 
    @Override
    public Void apply(@Nullable IMachine machine) {
       INetworkAdapter networkAdapter = machine.getNetworkAdapter(adapterIndex);
       networkAdapter.setAttachmentType(NAT);
-      networkAdapter.getNatDriver().addRedirect("guestssh", TCP, "127.0.0.1", 2222, "", 22);
+      networkAdapter.getNatDriver().addRedirect("guestssh",
+              redirectRule.getProtocol(),
+              redirectRule.getHost(),
+              redirectRule.getHostPort(),
+              redirectRule.getGuest(),
+              redirectRule.getGuestPort());
       networkAdapter.setEnabled(true);
       machine.saveSettings();
       return null;
