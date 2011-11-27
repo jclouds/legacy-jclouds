@@ -31,8 +31,8 @@ import org.virtualbox_4_1.VBoxException;
 /**
  * @author Andrea Turli
  */
-@Test(groups = "unit", testName = "DetachDistroMediumToMachineTest")
-public class DetachDistroMediumToMachineTest {
+@Test(groups = "unit", testName = "DetachDistroMediumFromMachineTest")
+public class DetachDistroMediumFromMachineTest {
 
    @Test
    public void testDetachDistroMedium() throws Exception {
@@ -40,12 +40,15 @@ public class DetachDistroMediumToMachineTest {
       String controller = "IDE Controller";
       IMachine machine = createMock(IMachine.class);
 
+      int controllerPort = 0;
+      int device = 1;
+
       machine.saveSettings();
-      machine.detachDevice(controller, 0, 0);
+      machine.detachDevice(controller, controllerPort, device);
 
       replay(machine);
 
-      new DetachDistroMediumToMachine(controller).apply(machine);
+      new DetachDistroMediumFromMachine(controller, controllerPort, device).apply(machine);
 
       verify(machine);
 
@@ -65,14 +68,16 @@ public class DetachDistroMediumToMachineTest {
       errorBuilder.append("of this virtual machine (0x80BB000C)");
       String isoAlreadyAttachedException = errorBuilder.toString();
 
-      VBoxException isoAttachedException = new VBoxException(createNiceMock(Throwable.class),
-            isoAlreadyAttachedException);
-      machine.detachDevice(controller, 0, 0);
+      int controllerPort = 0;
+      int device = 1;
+
+      VBoxException isoAttachedException = new VBoxException(createNiceMock(Throwable.class), isoAlreadyAttachedException);
+      machine.detachDevice(controller, controllerPort, device);
       expectLastCall().andThrow(isoAttachedException);
 
       replay(machine);
 
-      new DetachDistroMediumToMachine(controller).apply(machine);
+      new DetachDistroMediumFromMachine(controller, controllerPort, device).apply(machine);
 
       verify(machine);
 
@@ -81,7 +86,7 @@ public class DetachDistroMediumToMachineTest {
    @Test(expectedExceptions = VBoxException.class)
    public void testFailOnOtherVBoxErrors() throws Exception {
 
-      String controller = "IDE Controller";
+      String controllerName = "IDE Controller";
 
       IMachine machine = createNiceMock(IMachine.class);
 
@@ -90,14 +95,16 @@ public class DetachDistroMediumToMachineTest {
       errorBuilder.append("Some other VBox error");
       String isoAlreadyAttachedException = errorBuilder.toString();
 
-      VBoxException isoAttachedException = new VBoxException(createNiceMock(Throwable.class),
-            isoAlreadyAttachedException);
-      machine.detachDevice(controller, 0, 0);
+      int controllerPort = 0;
+      int device = 1;
+
+      VBoxException isoAttachedException = new VBoxException(createNiceMock(Throwable.class), isoAlreadyAttachedException);
+      machine.detachDevice(controllerName, controllerPort, device);
       expectLastCall().andThrow(isoAttachedException);
 
       replay(machine);
 
-      new DetachDistroMediumToMachine(controller).apply(machine);
+      new DetachDistroMediumFromMachine(controllerName, controllerPort, device).apply(machine);
 
    }
 

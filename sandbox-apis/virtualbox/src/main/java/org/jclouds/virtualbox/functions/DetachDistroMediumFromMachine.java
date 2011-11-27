@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -29,19 +29,21 @@ import com.google.common.base.Function;
 /**
  * @author Andrea Turli
  */
-public class DetachDistroMediumToMachine implements Function<IMachine, Void> {
+public class DetachDistroMediumFromMachine implements Function<IMachine, Void> {
 
    private final String controller;
+   private int controllerPort;
+   private int device;
 
-   public DetachDistroMediumToMachine(String controller) {
+   public DetachDistroMediumFromMachine(String controller, int controllerPort, int device) {
       this.controller = controller;
+      this.controllerPort = controllerPort;
+      this.device = device;
    }
 
    @Override
    public Void apply(@Nullable IMachine machine) {
       try {
-         int controllerPort = 0;
-         int device = 0;
          machine.detachDevice(controller, controllerPort, device);
          machine.saveSettings();
       } catch (VBoxException e) {
@@ -52,7 +54,7 @@ public class DetachDistroMediumToMachine implements Function<IMachine, Void> {
    }
 
    private boolean alreadyDetached(VBoxException e) {
-      return e.getMessage().indexOf("is already detached from port") != -1;
+      return e.getMessage().contains("is already detached from port");
    }
 
 }
