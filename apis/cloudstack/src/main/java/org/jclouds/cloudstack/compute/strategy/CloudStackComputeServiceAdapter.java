@@ -228,11 +228,10 @@ public class CloudStackComputeServiceAdapter implements
    }
 
    public void deleteIPForwardingRuleAndDisableStaticNAT(IPForwardingRule rule) {
-      boolean completed;
       Long job = client.getNATClient().deleteIPForwardingRule(rule.getId());
       if (job != null) {
          logger.debug(">> deleting IPForwardingRule(%s)", rule.getId());
-         completed = jobComplete.apply(job);
+         boolean completed = jobComplete.apply(job);
          logger.trace("<< IPForwardingRule(%s) deleted(%s)", rule.getId(), completed);
          disableStaticNATOnPublicIP(rule.getIPAddressId());
       }
@@ -242,7 +241,8 @@ public class CloudStackComputeServiceAdapter implements
       Long job = client.getNATClient().disableStaticNATOnPublicIP(IPAddressId);
       if (job != null) {
          logger.debug(">> disabling static nat IPAddress(%s)", IPAddressId);
-         logger.trace("<< IPAddress(%s) static nat disabled", IPAddressId);
+         boolean completed = jobComplete.apply(job);
+         logger.trace("<< IPAddress(%s) static nat disabled(%s)", IPAddressId, completed);
       }
    }
 
