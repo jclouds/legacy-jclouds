@@ -214,11 +214,35 @@ public class CloudStackComputeServiceAdapter implements
    public void destroyNode(String id) {
       long guestId = Long.parseLong(id);
       Long job = client.getVirtualMachineClient().destroyVirtualMachine(guestId);
-      boolean completed = jobComplete.apply(job);
-      Set<IPForwardingRule> forwardingRules = client.getNATClient().getIPForwardingRulesForVirtualMachine(guestId);
-      for(IPForwardingRule rule : forwardingRules) {
-         job = client.getNATClient().deleteIPForwardingRule(rule.getId());
-         jobComplete.apply(job);
+      if (job != null) {
+         logger.debug(">> destroying virtualMachine(%s)", guestId);
+         boolean completed = jobComplete.apply(job);
+         logger.trace("<< virtualMachine(%s) destroyed(%s)", guestId, completed);
+         Set<IPForwardingRule> forwardingRules = client.getNATClient().getIPForwardingRulesForVirtualMachine(guestId);
+         for (IPForwardingRule rule : forwardingRules) {
+            deleteIPForwardingRuleAndDisableStaticNAT(rule);
+         }
+      } else {
+         logger.trace("<< virtualMachine(%s) not found", guestId);
+      }
+   }
+
+   public void deleteIPForwardingRuleAndDisableStaticNAT(IPForwardingRule rule) {
+      boolean completed;
+      Long job = client.getNATClient().deleteIPForwardingRule(rule.getId());
+      if (job != null) {
+         logger.debug(">> deleting IPForwardingRule(%s)", rule.getId());
+         completed = jobComplete.apply(job);
+         logger.trace("<< IPForwardingRule(%s) deleted(%s)", rule.getId(), completed);
+         disableStaticNATOnPublicIP(rule.getIPAddressId());
+      }
+   }
+
+   public void disableStaticNATOnPublicIP(Long IPAddressId) {
+      Long job = client.getNATClient().disableStaticNATOnPublicIP(IPAddressId);
+      if (job != null) {
+         logger.debug(">> disabling static nat IPAddress(%s)", IPAddressId);
+         logger.trace("<< IPAddress(%s) static nat disabled", IPAddressId);
       }
    }
 

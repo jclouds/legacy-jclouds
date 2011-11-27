@@ -106,7 +106,7 @@ public interface NATClient {
     * 
     * @param IPAddressId
     *           the public IP address id for which static nat feature is being
-    *           disableed
+    *           disabled
     */
-   void disableStaticNat(long IPAddressId);
+   Long disableStaticNATOnPublicIP(long IPAddressId);
 }
