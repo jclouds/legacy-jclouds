@@ -33,7 +33,7 @@ public class CloudSigmaZurichPropertiesBuilder extends CloudSigmaPropertiesBuild
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ISO3166_CODES, "CH-ZH");
-      properties.setProperty(PROPERTY_ENDPOINT, "https://api.cloudsigma.com");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://api.zrh.cloudsigma.com");
       return properties;
    }
 

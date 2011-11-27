@@ -37,6 +37,10 @@ public class CloudSigmaPropertiesBuilder extends PropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_API_VERSION, "1.0");
       properties.setProperty(PROPERTY_VNC_PASSWORD, "IL9vs34d");
+      // passwords are set post-boot, so auth failures are possible
+      // from a race condition applying the password set script
+      properties.setProperty("jclouds.ssh.max-retries", "7");
+      properties.setProperty("jclouds.ssh.retry-auth", "true");
       return properties;
    }
 

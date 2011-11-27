@@ -86,7 +86,7 @@ public class CloudSigmaZurichProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getConsole() {
-      return URI.create("https://cs.cloudsigma.com/");
+      return URI.create("https://gui.zrh.cloudsigma.com/");
    }
    /**
     * {@inheritDoc}

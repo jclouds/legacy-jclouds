@@ -34,7 +34,7 @@
   <packaging>bundle</packaging>
 
   <properties>
-    <test.cloudsigma-zrh.endpoint>https://api.cloudsigma.com</test.cloudsigma-zrh.endpoint>
+    <test.cloudsigma-zrh.endpoint>https://api.zrh.cloudsigma.com</test.cloudsigma-zrh.endpoint>
     <test.cloudsigma-zrh.apiversion>1.0</test.cloudsigma-zrh.apiversion>
     <test.cloudsigma-zrh.identity>FIXME</test.cloudsigma-zrh.identity>
     <test.cloudsigma-zrh.credential>FIXME</test.cloudsigma-zrh.credential>
