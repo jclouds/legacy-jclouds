@@ -41,7 +41,7 @@ import java.io.File;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
-import static org.jclouds.virtualbox.MachineUtils.*;
+import static org.jclouds.virtualbox.util.MachineUtils.*;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKINGDIR;
 import static org.virtualbox_4_1.AccessMode.ReadOnly;

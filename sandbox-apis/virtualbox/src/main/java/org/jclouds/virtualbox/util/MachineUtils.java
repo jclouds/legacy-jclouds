@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jclouds.virtualbox;
+package org.jclouds.virtualbox.util;
 
 import com.google.common.base.Function;
 import org.virtualbox_4_1.*;

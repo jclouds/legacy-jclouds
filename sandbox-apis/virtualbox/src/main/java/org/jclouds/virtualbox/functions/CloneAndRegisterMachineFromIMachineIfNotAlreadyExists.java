@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.virtualbox.MachineUtils.lockMachineAndApply;
+import static org.jclouds.virtualbox.util.MachineUtils.lockMachineAndApply;
 import static org.virtualbox_4_1.LockType.Write;
 
 /**
