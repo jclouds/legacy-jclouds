@@ -19,26 +19,23 @@
 package org.jclouds.cloudstack.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
-import org.jclouds.cloudstack.domain.AsyncJob;
-import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.cache.Cache;
 import com.google.inject.assistedinject.Assisted;
-
-import java.util.Set;
 
 /**
  * 
@@ -50,21 +47,23 @@ public class StaticNATVirtualMachineInNetwork implements Function<VirtualMachine
       StaticNATVirtualMachineInNetwork create(Network in);
    }
 
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
+
    private final CloudStackClient client;
+   private final BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult;
    private final ReuseOrAssociateNewPublicIPAddress reuseOrAssociate;
    private final Network network;
-   private final Predicate<Long> jobComplete;
-   private final Cache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine;
 
    @Inject
    public StaticNATVirtualMachineInNetwork(CloudStackClient client,
-         ReuseOrAssociateNewPublicIPAddress reuseOrAssociate, Predicate<Long> jobComplete,
-         Cache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine, @Assisted Network network) {
+         BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult,
+         ReuseOrAssociateNewPublicIPAddress reuseOrAssociate, @Assisted Network network) {
       this.client = checkNotNull(client, "client");
+      this.blockUntilJobCompletesAndReturnResult = checkNotNull(blockUntilJobCompletesAndReturnResult,
+            "blockUntilJobCompletesAndReturnResult");
       this.reuseOrAssociate = checkNotNull(reuseOrAssociate, "reuseOrAssociate");
-      this.jobComplete = checkNotNull(jobComplete, "jobComplete");
-      this.getIPForwardingRulesByVirtualMachine = checkNotNull(getIPForwardingRulesByVirtualMachine,
-            "getIPForwardingRulesByVirtualMachine");
       this.network = checkNotNull(network, "network");
    }
 
@@ -76,8 +75,16 @@ public class StaticNATVirtualMachineInNetwork implements Function<VirtualMachine
          if (ip.getVirtualMachineId() > 0 && ip.getVirtualMachineId() != vm.getId())
             continue;
          try {
-            client.getNATClient().enableStaticNATForVirtualMachine(vm.getId(), ip.getId());
-            ip = client.getAddressClient().getPublicIPAddress(ip.getId());
+            AsyncCreateResponse response = client.getNATClient().enableStaticNATForVirtualMachine(vm.getId(),
+                  ip.getId());
+            logger.debug(">> static NATing IPAddress(%s) to virtualMachine(%s); response(%s)", ip.getId(), vm.getId(),
+                  response);
+            // cloudstack 2.2.8 doesn't return an async job. replace this with
+            // an assertion when we stop supporting 2.2.8
+            if (AsyncCreateResponse.UNINITIALIZED.equals(response))
+               ip = client.getAddressClient().getPublicIPAddress(ip.getId());
+            else
+               ip = blockUntilJobCompletesAndReturnResult.<PublicIPAddress> apply(response);
             if (ip.isStaticNAT() && ip.getVirtualMachineId() == vm.getId())
                break;
          } catch (IllegalStateException e) {
@@ -85,11 +92,6 @@ public class StaticNATVirtualMachineInNetwork implements Function<VirtualMachine
          }
          return ip;
       }
-      AsyncCreateResponse job = client.getNATClient().createIPForwardingRule(ip.getId(), "tcp", 22);
-      checkState(jobComplete.apply(job.getJobId()), "Timeout creating IP forwarding rule: ", job);
-      AsyncJob<IPForwardingRule> response = client.getAsyncJobClient().getAsyncJob(job.getJobId());
-      checkState(response.getResult() != null, "No result after creating IP forwarding rule: ", response);
-      getIPForwardingRulesByVirtualMachine.asMap().put(vm.getId(), ImmutableSet.of(response.getResult()));
       return ip;
    }
 }

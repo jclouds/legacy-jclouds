@@ -26,7 +26,8 @@ import static org.testng.Assert.assertEquals;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import com.google.common.base.Predicate;
+import javax.annotation.Nullable;
+
 import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule.GetIPForwardingRulesByVirtualMachine;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
@@ -35,6 +36,7 @@ import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.features.NATClientLiveTest;
 import org.jclouds.cloudstack.features.VirtualMachineClientLiveTest;
 import org.jclouds.cloudstack.predicates.NetworkPredicates;
+import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
@@ -43,9 +45,9 @@ import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.cache.CacheBuilder;
-
-import javax.annotation.Nullable;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@code StaticNATVirtualMachineInNetwork}
@@ -80,16 +82,29 @@ public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest 
    public void testCreateIPForwardingRule() throws Exception {
       if (networksDisabled)
          return;
-      ip = new StaticNATVirtualMachineInNetwork(client, reuseOrAssociate, jobComplete, CacheBuilder.newBuilder()
-            .<Long, Set<IPForwardingRule>>build(new GetIPForwardingRulesByVirtualMachine(client)), network).apply(vm);
+      BlockUntilJobCompletesAndReturnResult blocker = new BlockUntilJobCompletesAndReturnResult(client, jobComplete);
+      StaticNATVirtualMachineInNetwork fn = new StaticNATVirtualMachineInNetwork(client, blocker, reuseOrAssociate,
+            network);
+      CreatePortForwardingRulesForIP createPortForwardingRulesForIP = new CreatePortForwardingRulesForIP(client,
+            blocker, CacheBuilder.newBuilder().<Long, Set<IPForwardingRule>> build(
+                  new GetIPForwardingRulesByVirtualMachine(client)));
 
+      // logger
+      injector.injectMembers(blocker);
+      injector.injectMembers(fn);
+      injector.injectMembers(createPortForwardingRulesForIP);
+
+      ip = fn.apply(vm);
+
+      createPortForwardingRulesForIP.apply(ip, ImmutableSet.of(22));
+      
       rule = getOnlyElement(filter(client.getNATClient().getIPForwardingRulesForIPAddress(ip.getId()),
-         new Predicate<IPForwardingRule>() {
-            @Override
-            public boolean apply(@Nullable IPForwardingRule rule) {
-               return rule != null && rule.getStartPort() == 22;
-            }
-         }));
+            new Predicate<IPForwardingRule>() {
+               @Override
+               public boolean apply(@Nullable IPForwardingRule rule) {
+                  return rule != null && rule.getStartPort() == 22;
+               }
+            }));
       assertEquals(rule.getIPAddressId(), ip.getId());
       assertEquals(rule.getVirtualMachineId(), vm.getId());
       assertEquals(rule.getStartPort(), 22);

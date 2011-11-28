@@ -28,15 +28,12 @@ import static org.testng.Assert.assertEquals;
 
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
-import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.features.AddressClient;
-import org.jclouds.cloudstack.features.AsyncJobClient;
+import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -54,7 +51,7 @@ public class ReuseOrAssociateNewPublicIPAddressTest {
 
       // create mocks
       CloudStackClient client = createMock(CloudStackClient.class);
-      Predicate<Long> jobComplete = Predicates.alwaysTrue();
+      BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult = createMock(BlockUntilJobCompletesAndReturnResult.class);
       AddressClient addressClient = createMock(AddressClient.class);
       expect(client.getAddressClient()).andReturn(addressClient).atLeastOnce();
 
@@ -62,28 +59,25 @@ public class ReuseOrAssociateNewPublicIPAddressTest {
       expect(addressClient.listPublicIPAddresses(allocatedOnly(true).networkId(networkId))).andReturn(
             ImmutableSet.<PublicIPAddress> of(address));
 
-      // replay mocks
       replay(client);
+      replay(blockUntilJobCompletesAndReturnResult);
       replay(addressClient);
 
-      // run
       assertEquals(
-            new ReuseOrAssociateNewPublicIPAddress(client, jobComplete).apply(Network.builder().id(networkId)
-                  .zoneId(zoneId).build()), address);
+            new ReuseOrAssociateNewPublicIPAddress(client, blockUntilJobCompletesAndReturnResult).apply(Network
+                  .builder().id(networkId).zoneId(zoneId).build()), address);
 
-      // verify mocks
       verify(client);
+      verify(blockUntilJobCompletesAndReturnResult);
       verify(addressClient);
 
    }
 
    public void testAssociateWorks() throws SecurityException, NoSuchMethodException {
-      long networkId = 99l;
-      long zoneId = 100l;
 
       // create mocks
       CloudStackClient client = createMock(CloudStackClient.class);
-      Predicate<Long> jobComplete = Predicates.alwaysTrue();
+      BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult = createMock(BlockUntilJobCompletesAndReturnResult.class);
       AddressClient addressClient = createMock(AddressClient.class);
       expect(client.getAddressClient()).andReturn(addressClient).atLeastOnce();
 
@@ -95,61 +89,19 @@ public class ReuseOrAssociateNewPublicIPAddressTest {
       // make sure we created the job relating to a new ip
       expect(addressClient.associateIPAddressInZone(zoneId, networkId(networkId))).andReturn(job);
 
-      AsyncJobClient jobClient = createMock(AsyncJobClient.class);
-      expect(client.getAsyncJobClient()).andReturn(jobClient).atLeastOnce();
+      expect(blockUntilJobCompletesAndReturnResult.apply(job)).andReturn(address);
 
-      expect(jobClient.getAsyncJob(2)).andReturn(AsyncJob.builder().result(address).build());
-
-      // replay mocks
       replay(client);
       replay(addressClient);
-      replay(jobClient);
+      replay(blockUntilJobCompletesAndReturnResult);
 
-      // run
       assertEquals(
-            new ReuseOrAssociateNewPublicIPAddress(client, jobComplete).apply(Network.builder().id(networkId)
-                  .zoneId(zoneId).build()), address);
+            new ReuseOrAssociateNewPublicIPAddress(client, blockUntilJobCompletesAndReturnResult).apply(Network
+                  .builder().id(networkId).zoneId(zoneId).build()), address);
 
-      // verify mocks
       verify(client);
       verify(addressClient);
-      verify(jobClient);
-
-   }
-
-   @Test(expectedExceptions = IllegalStateException.class)
-   public void testJobDoesntCompleteThrowsIllegalStateException() throws SecurityException, NoSuchMethodException {
-      long networkId = 99l;
-      long zoneId = 100l;
-
-      // create mocks
-      CloudStackClient client = createMock(CloudStackClient.class);
-      Predicate<Long> jobComplete = Predicates.alwaysFalse();
-      AddressClient addressClient = createMock(AddressClient.class);
-      expect(client.getAddressClient()).andReturn(addressClient).atLeastOnce();
-
-      // no ip addresses available
-      expect(addressClient.listPublicIPAddresses(allocatedOnly(true).networkId(networkId))).andReturn(
-            ImmutableSet.<PublicIPAddress> of());
-
-      AsyncCreateResponse job = new AsyncCreateResponse(1, 2);
-      // make sure we created the job relating to a new ip
-      expect(addressClient.associateIPAddressInZone(zoneId, networkId(networkId))).andReturn(job);
-
-      // the alwaysfalse predicate above should blow up with
-      // IllegalStateException
-
-      // replay mocks
-      replay(client);
-      replay(addressClient);
-
-      // run
-      new ReuseOrAssociateNewPublicIPAddress(client, jobComplete).apply(Network.builder().id(networkId).zoneId(zoneId)
-            .build());
-
-      // verify mocks
-      verify(client);
-      verify(addressClient);
+      verify(blockUntilJobCompletesAndReturnResult);
 
    }
 

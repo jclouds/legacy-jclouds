@@ -25,9 +25,11 @@ import com.google.gson.annotations.SerializedName;
  * @author Adrian Cole
  */
 public class AsyncCreateResponse {
-   private long id;
+   public static final AsyncCreateResponse UNINITIALIZED = new AsyncCreateResponse();
+   
+   private long id = -1;
    @SerializedName("jobid")
-   private long jobId;
+   private long jobId = -1;
 
    /**
     * present only for serializer

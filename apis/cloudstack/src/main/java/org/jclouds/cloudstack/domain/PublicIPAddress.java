@@ -49,7 +49,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
       private long networkId;
       private State state;
       private String virtualMachineDisplayName;
-      private long virtualMachineId;
+      private long virtualMachineId = -1;
       private String virtualMachineName;
       private long VLANId;
       private String VLANName;
@@ -180,7 +180,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    @SerializedName("virtualmachinedisplayname")
    private String virtualMachineDisplayName;
    @SerializedName("virtualmachineid")
-   private long virtualMachineId;
+   private long virtualMachineId = -1;
    @SerializedName("virtualmachinename")
    private String virtualMachineName;
    @SerializedName("VLANid")
