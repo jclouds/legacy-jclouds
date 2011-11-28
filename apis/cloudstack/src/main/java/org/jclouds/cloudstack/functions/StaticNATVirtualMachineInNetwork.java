@@ -79,8 +79,8 @@ public class StaticNATVirtualMachineInNetwork implements Function<VirtualMachine
                   ip.getId());
             logger.debug(">> static NATing IPAddress(%s) to virtualMachine(%s); response(%s)", ip.getId(), vm.getId(),
                   response);
-            // cloudstack 2.2.8 doesn't return an async job. replace this with
-            // an assertion when we stop supporting 2.2.8
+            // TODO: asked citrix for clarity as to whether this is supposed to
+            // return an async job or not; awaiting their response.
             if (AsyncCreateResponse.UNINITIALIZED.equals(response))
                ip = client.getAddressClient().getPublicIPAddress(ip.getId());
             else

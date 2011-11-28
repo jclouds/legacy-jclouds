@@ -35,7 +35,7 @@
 
   <properties>
     <test.ninefold-compute.endpoint>https://api.ninefold.com/compute/v1.0/</test.ninefold-compute.endpoint>
-    <test.ninefold-compute.apiversion>2.2.8</test.ninefold-compute.apiversion>
+    <test.ninefold-compute.apiversion>2.2.12</test.ninefold-compute.apiversion>
     <test.ninefold-compute.identity>FIXME_IDENTITY</test.ninefold-compute.identity>
     <test.ninefold-compute.credential>FIXME_CREDENTIAL</test.ninefold-compute.credential>
     <test.ninefold-compute.image-id>575</test.ninefold-compute.image-id>
