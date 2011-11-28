@@ -112,9 +112,8 @@ public interface NATAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "enableStaticNat")
-   @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> enableStaticNATForVirtualMachine(
+   ListenableFuture<Void> enableStaticNATForVirtualMachine(
          @QueryParam("virtualmachineid") long virtualMachineId, @QueryParam("ipaddressid") long IPAddressId);
 
    /**

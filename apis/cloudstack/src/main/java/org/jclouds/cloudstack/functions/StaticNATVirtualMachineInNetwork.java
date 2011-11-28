@@ -26,11 +26,9 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.cloudstack.CloudStackClient;
-import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
-import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 
@@ -52,17 +50,13 @@ public class StaticNATVirtualMachineInNetwork implements Function<VirtualMachine
    protected Logger logger = Logger.NULL;
 
    private final CloudStackClient client;
-   private final BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult;
    private final ReuseOrAssociateNewPublicIPAddress reuseOrAssociate;
    private final Network network;
 
    @Inject
    public StaticNATVirtualMachineInNetwork(CloudStackClient client,
-         BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult,
          ReuseOrAssociateNewPublicIPAddress reuseOrAssociate, @Assisted Network network) {
       this.client = checkNotNull(client, "client");
-      this.blockUntilJobCompletesAndReturnResult = checkNotNull(blockUntilJobCompletesAndReturnResult,
-            "blockUntilJobCompletesAndReturnResult");
       this.reuseOrAssociate = checkNotNull(reuseOrAssociate, "reuseOrAssociate");
       this.network = checkNotNull(network, "network");
    }
@@ -75,16 +69,9 @@ public class StaticNATVirtualMachineInNetwork implements Function<VirtualMachine
          if (ip.getVirtualMachineId() > 0 && ip.getVirtualMachineId() != vm.getId())
             continue;
          try {
-            AsyncCreateResponse response = client.getNATClient().enableStaticNATForVirtualMachine(vm.getId(),
-                  ip.getId());
-            logger.debug(">> static NATing IPAddress(%s) to virtualMachine(%s); response(%s)", ip.getId(), vm.getId(),
-                  response);
-            // TODO: asked citrix for clarity as to whether this is supposed to
-            // return an async job or not; awaiting their response.
-            if (AsyncCreateResponse.UNINITIALIZED.equals(response))
-               ip = client.getAddressClient().getPublicIPAddress(ip.getId());
-            else
-               ip = blockUntilJobCompletesAndReturnResult.<PublicIPAddress> apply(response);
+            logger.debug(">> static NATing IPAddress(%s) to virtualMachine(%s)", ip.getId(), vm.getId());
+            client.getNATClient().enableStaticNATForVirtualMachine(vm.getId(), ip.getId());
+            ip = client.getAddressClient().getPublicIPAddress(ip.getId());
             if (ip.isStaticNAT() && ip.getVirtualMachineId() == vm.getId())
                break;
          } catch (IllegalStateException e) {

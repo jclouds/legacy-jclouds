@@ -225,31 +225,53 @@ public class CloudStackComputeServiceAdapter implements
    @Override
    public void destroyNode(String id) {
       long virtualMachineId = Long.parseLong(id);
-      Builder<Long> jobsToTrack = ImmutableSet.<Long> builder();
-      
-      Set<Long> ipAddresses = deleteIPForwardingRulesForVMAndReturnDistinctIPs(virtualMachineId, jobsToTrack);
-      disableStaticNATOnIPAddresses(jobsToTrack, ipAddresses);
-      destroyVirtualMachine(virtualMachineId, jobsToTrack);
-      
-      ImmutableSet<Long> jobs = jobsToTrack.build();
-      logger.debug(">> awaiting completion of jobs(%s)", jobs);
-      for (long job : jobsToTrack.build())
-         awaitCompletion(job);
-      logger.trace("<< completed jobs(%s)", jobs);
+      // There was a bug in 2.2.12 release happening when static nat IP address
+      // was being released, and corresponding firewall rules were left behind.
+      // So next time the same IP is allocated, it might be not be static nat
+      // enabled, but there are still rules associated with it. And when you try
+      // to release this IP, the release will fail.
+      //
+      // The bug was fixed in 2.2.13 release only, and the current system wasn't
+      // updated yet.
+      //
+      // To avoid the issue, every time you release a static nat ip address, do
+      // the following:
+
+      // 1) Delete IP forwarding rules associated with IP.
+      Set<Long> ipAddresses = deleteIPForwardingRulesForVMAndReturnDistinctIPs(virtualMachineId);
+
+      // 2) Disable static nat rule for the IP.
+      disableStaticNATOnIPAddresses(ipAddresses);
+
+      // 3) Only after 1 and 2 release the IP address.
+      disassociateIPAddresses(ipAddresses);
+
+      destroyVirtualMachine(virtualMachineId);
+
       vmToRules.invalidate(virtualMachineId);
    }
 
-   public void destroyVirtualMachine(long virtualMachineId, Builder<Long> jobsToTrack) {
-      Long destroyVirtualMachine = client.getVirtualMachineClient().destroyVirtualMachine(virtualMachineId);
-      if (destroyVirtualMachine != null) {
-         logger.debug(">> destroying virtualMachine(%s) job(%s)", virtualMachineId, destroyVirtualMachine);
-         jobsToTrack.add(destroyVirtualMachine);
-      } else {
-         logger.trace("<< virtualMachine(%s) not found", virtualMachineId);
+   public void disassociateIPAddresses(Set<Long> ipAddresses) {
+      for (long ipAddress : ipAddresses) {
+         logger.debug(">> disassociating IPAddress(%s)", ipAddress);
+         client.getAddressClient().disassociateIPAddress(ipAddress);
       }
    }
 
-   public void disableStaticNATOnIPAddresses(Builder<Long> jobsToTrack, Set<Long> ipAddresses) {
+   public void destroyVirtualMachine(long virtualMachineId) {
+
+      Long destroyVirtualMachine = client.getVirtualMachineClient().destroyVirtualMachine(virtualMachineId);
+      if (destroyVirtualMachine != null) {
+         logger.debug(">> destroying virtualMachine(%s) job(%s)", virtualMachineId, destroyVirtualMachine);
+         awaitCompletion(destroyVirtualMachine);
+      } else {
+         logger.trace("<< virtualMachine(%s) not found", virtualMachineId);
+      }
+
+   }
+
+   public void disableStaticNATOnIPAddresses(Set<Long> ipAddresses) {
+      Builder<Long> jobsToTrack = ImmutableSet.<Long> builder();
       for (Long ipAddress : ipAddresses) {
          Long disableStaticNAT = client.getNATClient().disableStaticNATOnPublicIP(ipAddress);
          if (disableStaticNAT != null) {
@@ -257,9 +279,12 @@ public class CloudStackComputeServiceAdapter implements
             jobsToTrack.add(disableStaticNAT);
          }
       }
+      awaitCompletion(jobsToTrack.build());
    }
 
-   public Set<Long> deleteIPForwardingRulesForVMAndReturnDistinctIPs(long virtualMachineId, Builder<Long> jobsToTrack) {
+   public Set<Long> deleteIPForwardingRulesForVMAndReturnDistinctIPs(long virtualMachineId) {
+      Builder<Long> jobsToTrack = ImmutableSet.<Long> builder();
+
       // immutable doesn't permit duplicates
       Set<Long> ipAddresses = Sets.newLinkedHashSet();
 
@@ -275,7 +300,15 @@ public class CloudStackComputeServiceAdapter implements
             }
          }
       }
+      awaitCompletion(jobsToTrack.build());
       return ipAddresses;
+   }
+
+   public void awaitCompletion(Iterable<Long> jobs) {
+      logger.debug(">> awaiting completion of jobs(%s)", jobs);
+      for (long job : jobs)
+         awaitCompletion(job);
+      logger.trace("<< completed jobs(%s)", jobs);
    }
 
    public void awaitCompletion(long job) {

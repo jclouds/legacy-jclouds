@@ -99,7 +99,8 @@ public interface NATClient {
     */
    Long deleteIPForwardingRule(long id);
 
-   AsyncCreateResponse enableStaticNATForVirtualMachine(long virtualMachineId, long IPAddressId);
+   @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
+   void enableStaticNATForVirtualMachine(long virtualMachineId, long IPAddressId);
 
    /**
     * Disables static rule for given ip address

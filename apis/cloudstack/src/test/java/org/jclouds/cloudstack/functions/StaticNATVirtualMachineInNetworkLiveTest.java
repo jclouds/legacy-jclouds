@@ -83,8 +83,7 @@ public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest 
       if (networksDisabled)
          return;
       BlockUntilJobCompletesAndReturnResult blocker = new BlockUntilJobCompletesAndReturnResult(client, jobComplete);
-      StaticNATVirtualMachineInNetwork fn = new StaticNATVirtualMachineInNetwork(client, blocker, reuseOrAssociate,
-            network);
+      StaticNATVirtualMachineInNetwork fn = new StaticNATVirtualMachineInNetwork(client, reuseOrAssociate, network);
       CreatePortForwardingRulesForIP createPortForwardingRulesForIP = new CreatePortForwardingRulesForIP(client,
             blocker, CacheBuilder.newBuilder().<Long, Set<IPForwardingRule>> build(
                   new GetIPForwardingRulesByVirtualMachine(client)));
@@ -97,7 +96,7 @@ public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest 
       ip = fn.apply(vm);
 
       createPortForwardingRulesForIP.apply(ip, ImmutableSet.of(22));
-      
+
       rule = getOnlyElement(filter(client.getNATClient().getIPForwardingRulesForIPAddress(ip.getId()),
             new Predicate<IPForwardingRule>() {
                @Override
