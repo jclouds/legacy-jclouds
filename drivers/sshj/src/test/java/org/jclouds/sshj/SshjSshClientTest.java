@@ -19,12 +19,18 @@
 package org.jclouds.sshj;
 
 import static com.google.inject.name.Names.bindProperties;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.verify;
 
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.util.Properties;
 
+import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.SSHException;
 import net.schmizz.sshj.connection.ConnectionException;
 import net.schmizz.sshj.transport.TransportException;
@@ -73,7 +79,7 @@ public class SshjSshClientTest {
       }, new SLF4JLoggingModule());
       SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
       SshjSshClient ssh = SshjSshClient.class.cast(factory.create(new IPSocket("localhost", 22), new Credentials(
-               "username", "password")));
+            "username", "password")));
       return ssh;
    }
 
@@ -120,14 +126,13 @@ public class SshjSshClientTest {
 
    public void testCausalChainHasMessageContaining() {
       assert ssh.causalChainHasMessageContaining(
-               new SSHException("Session.connect: java.io.IOException: End of IO Stream Read")).apply(
-               " End of IO Stream Read");
+            new SSHException("Session.connect: java.io.IOException: End of IO Stream Read")).apply(
+            " End of IO Stream Read");
       assert ssh.causalChainHasMessageContaining(
-               new SSHException("Session.connect: java.net.SocketException: Connection reset"))
-               .apply("java.net.Socket");
+            new SSHException("Session.connect: java.net.SocketException: Connection reset")).apply("java.net.Socket");
       assert !ssh.causalChainHasMessageContaining(new NullPointerException()).apply(" End of IO Stream Read");
    }
-   
+
    public void testRetryOnToStringNpe() {
       Exception nex = new NullPointerException();
       Properties props = new Properties();
@@ -140,7 +145,10 @@ public class SshjSshClientTest {
    private static class ExceptionWithStrangeToString extends RuntimeException {
       private static final long serialVersionUID = 1L;
       private static final String MESSAGE = "foo-bar-exception-tostring";
-      public String toString() { return MESSAGE; }
+
+      public String toString() {
+         return MESSAGE;
+      }
    }
 
    public void testRetryOnToStringCustom() {
@@ -149,6 +157,18 @@ public class SshjSshClientTest {
       props.setProperty("jclouds.ssh.retryable-messages", "foo-bar");
       SshjSshClient ssh1 = createClient(props);
       assert ssh1.shouldRetry(new RuntimeException(nex));
+   }
+
+   public void testDontThrowIOExceptionOnClear() throws Exception {
+      SshjSshClient ssh1 = createClient();
+      SSHClient ssh = createMock(SSHClient.class);
+      expect(ssh.isConnected()).andReturn(true);
+      ssh.disconnect();
+      expectLastCall().andThrow(new ConnectionException("disconnected"));
+      replay(ssh);
+      ssh1.ssh = ssh;
+      ssh1.sshConnection.clear();
+      verify(ssh);
    }
 
    public void testRetryNotOnToStringCustomMismatch() {
