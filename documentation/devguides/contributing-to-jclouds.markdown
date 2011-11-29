@@ -14,7 +14,7 @@ title: Contributing to jclouds
 *  `git remote add jclouds git://github.com/jclouds/jclouds.git`
 
 ### pulling changes from master
-*  `git pull jclouds master`
+*  `git pull --rebase jclouds master`
 
 ## Creating new providers with maven archetypes
 
