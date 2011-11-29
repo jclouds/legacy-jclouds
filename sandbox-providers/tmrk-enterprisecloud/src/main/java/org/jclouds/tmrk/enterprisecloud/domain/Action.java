@@ -119,8 +119,8 @@ public class Action extends BaseNamedResource<Action> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResource(BaseResource<Action> in) {
-         return Builder.class.cast(super.fromResource(in));
+      public Builder fromBaseResource(BaseResource<Action> in) {
+         return Builder.class.cast(super.fromBaseResource(in));
       }
 
       /**
@@ -171,14 +171,15 @@ public class Action extends BaseNamedResource<Action> {
    @XmlAttribute
    protected ActionDisabled actionDisabled;
 
-   public Action(URI href, String type, String name, @Nullable ActionDisabled actionDisabled) {
+   private Action(URI href, String type, String name, @Nullable ActionDisabled actionDisabled) {
       super(href, type, name);
       this.actionDisabled = actionDisabled;
    }
 
-   protected Action() {
+   private Action() {
        //For JAXB
    }
+
    /**
     * The attribute actionDisabled appears only when the example has an action
     * disabled for business rules.

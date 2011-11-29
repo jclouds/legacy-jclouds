@@ -18,18 +18,21 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain.software;
 
-import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
+import org.jclouds.tmrk.enterprisecloud.domain.Action;
+import org.jclouds.tmrk.enterprisecloud.domain.Link;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.Resource;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * <xs:complexType name="OperatingSystem">
  * @author Jason King
  * 
  */
-public class OperatingSystem extends BaseNamedResource<OperatingSystem> {
+public class OperatingSystem extends Resource<OperatingSystem> {
 
    //TODO There are other fields
 
@@ -43,24 +46,24 @@ public class OperatingSystem extends BaseNamedResource<OperatingSystem> {
     */
    @Override
    public Builder toBuilder() {
-      return new Builder().fromNamedResource(this);
+      return new Builder().fromOperatingSystem(this);
    }
 
-   public static class Builder extends BaseNamedResource.Builder<OperatingSystem> {
+   public static class Builder extends Resource.Builder<OperatingSystem> {
 
       /**
        * {@inheritDoc}
        */
       @Override
       public OperatingSystem build() {
-         return new OperatingSystem(href, type, name);
+         return new OperatingSystem(href, type, links, actions, name);
       }
 
       /**
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResource(BaseResource<OperatingSystem> in) {
+      public Builder fromResource(Resource<OperatingSystem> in) {
          return Builder.class.cast(super.fromResource(in));
       }
 
@@ -68,8 +71,12 @@ public class OperatingSystem extends BaseNamedResource<OperatingSystem> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromNamedResource(BaseNamedResource<OperatingSystem> in) {
-         return Builder.class.cast(super.fromNamedResource(in));
+      public Builder fromBaseResource(BaseResource<OperatingSystem> in) {
+         return Builder.class.cast(super.fromBaseResource(in));
+      }
+
+      public Builder fromOperatingSystem(OperatingSystem in) {
+         return fromResource(in);
       }
 
       /**
@@ -96,6 +103,22 @@ public class OperatingSystem extends BaseNamedResource<OperatingSystem> {
          return Builder.class.cast(super.type(type));
       }
 
+       /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder links(Set<Link> links) {
+         return Builder.class.cast(super.links(links));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder actions(Set<Action> actions) {
+         return Builder.class.cast(super.actions(actions));
+      }
+
       /**
        * {@inheritDoc}
        */
@@ -106,11 +129,11 @@ public class OperatingSystem extends BaseNamedResource<OperatingSystem> {
 
    }
 
-   public OperatingSystem(URI href, String type, String name) {
-      super(href, type, name);
+   private OperatingSystem(URI href, String type, Set<Link> links, Set<Action> actions, String name) {
+      super(href, type, name, links, actions);
    }
 
-   protected OperatingSystem() {
+   private OperatingSystem() {
       //For JAXB
    }
 }

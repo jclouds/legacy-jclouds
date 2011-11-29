@@ -47,6 +47,7 @@ import org.jclouds.cloudstack.predicates.TemplatePredicates;
 import org.jclouds.cloudstack.predicates.UserPredicates;
 import org.jclouds.cloudstack.predicates.VirtualMachineDestroyed;
 import org.jclouds.cloudstack.predicates.VirtualMachineRunning;
+import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ExecResponse;
@@ -210,7 +211,8 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
       adminVirtualMachineDestroyed = new RetryablePredicate<VirtualMachine>(new VirtualMachineDestroyed(adminClient),
             600, 5, 5, TimeUnit.SECONDS);
       injector.injectMembers(adminVirtualMachineDestroyed);
-      reuseOrAssociate = new ReuseOrAssociateNewPublicIPAddress(client, jobComplete);
+      reuseOrAssociate = new ReuseOrAssociateNewPublicIPAddress(client, new BlockUntilJobCompletesAndReturnResult(
+            client, jobComplete));
       injector.injectMembers(reuseOrAssociate);
    }
 

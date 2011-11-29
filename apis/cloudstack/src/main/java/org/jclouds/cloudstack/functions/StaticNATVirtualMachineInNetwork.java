@@ -19,26 +19,21 @@
 package org.jclouds.cloudstack.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.CloudStackClient;
-import org.jclouds.cloudstack.domain.AsyncCreateResponse;
-import org.jclouds.cloudstack.domain.AsyncJob;
-import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.cache.Cache;
 import com.google.inject.assistedinject.Assisted;
-
-import java.util.Set;
 
 /**
  * 
@@ -50,21 +45,19 @@ public class StaticNATVirtualMachineInNetwork implements Function<VirtualMachine
       StaticNATVirtualMachineInNetwork create(Network in);
    }
 
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
+
    private final CloudStackClient client;
    private final ReuseOrAssociateNewPublicIPAddress reuseOrAssociate;
    private final Network network;
-   private final Predicate<Long> jobComplete;
-   private final Cache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine;
 
    @Inject
    public StaticNATVirtualMachineInNetwork(CloudStackClient client,
-         ReuseOrAssociateNewPublicIPAddress reuseOrAssociate, Predicate<Long> jobComplete,
-         Cache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine, @Assisted Network network) {
+         ReuseOrAssociateNewPublicIPAddress reuseOrAssociate, @Assisted Network network) {
       this.client = checkNotNull(client, "client");
       this.reuseOrAssociate = checkNotNull(reuseOrAssociate, "reuseOrAssociate");
-      this.jobComplete = checkNotNull(jobComplete, "jobComplete");
-      this.getIPForwardingRulesByVirtualMachine = checkNotNull(getIPForwardingRulesByVirtualMachine,
-            "getIPForwardingRulesByVirtualMachine");
       this.network = checkNotNull(network, "network");
    }
 
@@ -76,6 +69,7 @@ public class StaticNATVirtualMachineInNetwork implements Function<VirtualMachine
          if (ip.getVirtualMachineId() > 0 && ip.getVirtualMachineId() != vm.getId())
             continue;
          try {
+            logger.debug(">> static NATing IPAddress(%s) to virtualMachine(%s)", ip.getId(), vm.getId());
             client.getNATClient().enableStaticNATForVirtualMachine(vm.getId(), ip.getId());
             ip = client.getAddressClient().getPublicIPAddress(ip.getId());
             if (ip.isStaticNAT() && ip.getVirtualMachineId() == vm.getId())
@@ -85,11 +79,6 @@ public class StaticNATVirtualMachineInNetwork implements Function<VirtualMachine
          }
          return ip;
       }
-      AsyncCreateResponse job = client.getNATClient().createIPForwardingRule(ip.getId(), "tcp", 22);
-      checkState(jobComplete.apply(job.getJobId()), "Timeout creating IP forwarding rule: ", job);
-      AsyncJob<IPForwardingRule> response = client.getAsyncJobClient().getAsyncJob(job.getJobId());
-      checkState(response.getResult() != null, "No result after creating IP forwarding rule: ", response);
-      getIPForwardingRulesByVirtualMachine.asMap().put(vm.getId(), ImmutableSet.of(response.getResult()));
       return ip;
    }
 }

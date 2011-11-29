@@ -38,7 +38,6 @@ import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -113,9 +112,8 @@ public interface NATAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "enableStaticNat")
-   @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> enableStaticNATForVirtualMachine(
+   ListenableFuture<Void> enableStaticNATForVirtualMachine(
          @QueryParam("virtualmachineid") long virtualMachineId, @QueryParam("ipaddressid") long IPAddressId);
 
    /**
@@ -123,18 +121,19 @@ public interface NATAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "deleteIpForwardingRule")
-   @Unwrap(depth = 2)
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Long> deleteIPForwardingRule(@QueryParam("id") long id);
 
    /**
-    * @see NATClient#disableStaticNat
+    * @see NATClient#disableStaticNATOnPublicIP
     */
    @GET
    @QueryParams(keys = "command", values = "disableStaticNat")
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> disableStaticNat(@QueryParam("ipaddressid") long IPAddressId);
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Long> disableStaticNATOnPublicIP(@QueryParam("ipaddressid") long IPAddressId);
 
 }

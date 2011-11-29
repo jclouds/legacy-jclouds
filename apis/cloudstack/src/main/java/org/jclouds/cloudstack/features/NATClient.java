@@ -99,14 +99,15 @@ public interface NATClient {
     */
    Long deleteIPForwardingRule(long id);
 
-   AsyncCreateResponse enableStaticNATForVirtualMachine(long virtualMachineId, long IPAddressId);
+   @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
+   void enableStaticNATForVirtualMachine(long virtualMachineId, long IPAddressId);
 
    /**
     * Disables static rule for given ip address
     * 
     * @param IPAddressId
     *           the public IP address id for which static nat feature is being
-    *           disableed
+    *           disabled
     */
-   void disableStaticNat(long IPAddressId);
+   Long disableStaticNATOnPublicIP(long IPAddressId);
 }

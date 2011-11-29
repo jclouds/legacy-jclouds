@@ -147,7 +147,7 @@ public class ListVolumesOptions extends AccountInDomainOptions {
        */
       public static ListVolumesOptions isRecursive(boolean recursive) {
          ListVolumesOptions options = new ListVolumesOptions();
-         return isRecursive(recursive);
+         return options.isRecursive(recursive);
       }
 
       /**

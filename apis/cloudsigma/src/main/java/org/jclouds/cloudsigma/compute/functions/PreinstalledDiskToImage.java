@@ -28,7 +28,6 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OperatingSystem.Builder;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.domain.Location;
-import org.jclouds.domain.LoginCredentials;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -61,7 +60,6 @@ public class PreinstalledDiskToImage implements Function<DriveInfo, Image> {
             .family(parsed.family);
       return new ImageBuilder().ids(drive.getUuid())
             .userMetadata(ImmutableMap.<String, String> of("size", drive.getSize() / 1024 / 1024 / 1024 + ""))
-            .defaultCredentials(new LoginCredentials("cloudsigma", "cloudsigma", null, true))
             .location(locationSupplier.get()).name(drive.getName()).description(description)
             .operatingSystem(builder.build()).version("").build();
    }

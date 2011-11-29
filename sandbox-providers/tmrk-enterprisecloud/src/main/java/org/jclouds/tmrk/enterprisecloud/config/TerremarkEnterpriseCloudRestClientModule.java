@@ -31,10 +31,7 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.tmrk.enterprisecloud.TerremarkEnterpriseCloudAsyncClient;
 import org.jclouds.tmrk.enterprisecloud.TerremarkEnterpriseCloudClient;
-import org.jclouds.tmrk.enterprisecloud.features.TaskAsyncClient;
-import org.jclouds.tmrk.enterprisecloud.features.TaskClient;
-import org.jclouds.tmrk.enterprisecloud.features.VirtualMachineAsyncClient;
-import org.jclouds.tmrk.enterprisecloud.features.VirtualMachineClient;
+import org.jclouds.tmrk.enterprisecloud.features.*;
 import org.jclouds.tmrk.enterprisecloud.handlers.TerremarkEnterpriseCloudErrorHandler;
 
 import com.google.common.collect.ImmutableMap;
@@ -52,6 +49,7 @@ public class TerremarkEnterpriseCloudRestClientModule extends
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
          .put(TaskClient.class, TaskAsyncClient.class)
          .put(VirtualMachineClient.class, VirtualMachineAsyncClient.class)
+         .put(TemplateClient.class, TemplateAsyncClient.class)
          .build();
 
    public TerremarkEnterpriseCloudRestClientModule() {

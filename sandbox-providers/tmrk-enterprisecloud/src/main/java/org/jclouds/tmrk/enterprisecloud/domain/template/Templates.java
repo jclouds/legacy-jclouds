@@ -18,9 +18,11 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain.template;
 
+import com.google.common.collect.Sets;
+import org.jclouds.tmrk.enterprisecloud.domain.Action;
 import org.jclouds.tmrk.enterprisecloud.domain.Link;
-import org.jclouds.tmrk.enterprisecloud.domain.Links;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.Resource;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -32,13 +34,13 @@ import java.util.Set;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * Templates is more than a simple wrapper as it extends BaseResource.
  * <xs:complexType name="Templates">
  * @author Jason King
  * 
  */
 @XmlRootElement(name = "Templates")
-public class Templates extends BaseResource<Templates> {
-
+public class Templates extends Resource<Templates> {
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -53,31 +55,39 @@ public class Templates extends BaseResource<Templates> {
       return new Builder().fromTemplates(this);
    }
 
-   public static class Builder extends BaseResource.Builder<Templates> {
-     private Links links = Links.builder().build();
+   public static class Builder extends Resource.Builder<Templates> {
+      private Set<TemplateFamily> families = Sets.newLinkedHashSet();
 
       /**
-       * @see Templates#getLinks
+       * @see Templates#getTemplateFamilies
        */
-      public Builder links(Set<Link> links) {
-         this.links = Links.builder().links(checkNotNull(links,"links")).build();
+      public Builder families(Set<TemplateFamily> families) {
+         this.families =(checkNotNull(families,"families"));
          return this;
       }
 
       @Override
       public Templates build() {
-         return new Templates(href, type, links);
+         return new Templates(href, type, name, links, actions, families);
       }
 
       public Builder fromTemplates(Templates in) {
-         return fromResource(in).links(in.getLinks());
+         return fromResource(in).families(in.getTemplateFamilies());
       }
 
       /**
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResource(BaseResource<Templates> in) {
+      public Builder fromBaseResource(BaseResource<Templates> in) {
+         return Builder.class.cast(super.fromBaseResource(in));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromResource(Resource<Templates> in) {
          return Builder.class.cast(super.fromResource(in));
       }
 
@@ -101,21 +111,45 @@ public class Templates extends BaseResource<Templates> {
        * {@inheritDoc}
        */
       @Override
+      public Builder name(String name) {
+         return Builder.class.cast(super.name(name));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder links(Set<Link> links) {
+         return Builder.class.cast(super.links(links));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder actions(Set<Action> actions) {
+         return Builder.class.cast(super.actions(actions));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
       public Builder fromAttributes(Map<String, String> attributes) {
          return Builder.class.cast(super.fromAttributes(attributes));
       }
 
    }
 
-   @XmlElement(name = "Links", required = true)
-   private Links links = Links.builder().build();
+   @XmlElement(name = "Families", required = false)
+   private TemplateFamilies families;
 
-   public Templates(URI href, String type, Links links ) {
-      super(href, type);
-      this.links = checkNotNull(links, "links");
+   private Templates(URI href, String type, String name, Set<Link> links, Set<Action> actions, Set<TemplateFamily> families) {
+      super(href, type, name, links, actions);
+      this.families = TemplateFamilies.builder().families(families).build();
    }
 
-   protected Templates() {
+   private Templates() {
        //For JAXB
    }
 
@@ -123,8 +157,33 @@ public class Templates extends BaseResource<Templates> {
        return Collections.unmodifiableSet(links.getLinks());
    }
 
+   public Set<TemplateFamily> getTemplateFamilies() {
+      return families.getTemplateFamilies();
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      if (!super.equals(o)) return false;
+
+      Templates templates = (Templates) o;
+
+      if (families != null ? !families.equals(templates.families) : templates.families != null)
+         return false;
+
+      return true;
+   }
+
+   @Override
+   public int hashCode() {
+      int result = super.hashCode();
+      result = 31 * result + (families != null ? families.hashCode() : 0);
+      return result;
+   }
+
    @Override
    public String string() {
-      return super.string()+", links="+links;
+      return super.string()+", families="+families;
    }
 }

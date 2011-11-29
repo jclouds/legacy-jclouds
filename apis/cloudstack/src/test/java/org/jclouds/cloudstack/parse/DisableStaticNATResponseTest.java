@@ -16,15 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.tmrk.enterprisecloud.domain;
+package org.jclouds.cloudstack.parse;
 
-import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
+import org.jclouds.json.BaseItemParserTest;
+import org.jclouds.rest.annotations.SelectJson;
+import org.testng.annotations.Test;
 
 /**
- * @author Jason King
+ * 
+ * @author Adrian Cole
  */
-public class Row extends BaseNamedResource<Row> {
-    public Row() {
-        //For JAXB
-    }
+@Test(groups = "unit", testName = "DisableStaticNATResponseTest")
+public class DisableStaticNATResponseTest extends BaseItemParserTest<Long> {
+
+   @Override
+   public String resource() {
+      return "/disablestaticnatresponse.json";
+   }
+
+   @Override
+   @SelectJson("jobid")
+   public Long expected() {
+      return 50006l;
+   }
+
 }

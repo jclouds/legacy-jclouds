@@ -75,7 +75,11 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
       if (to instanceof CloudStackTemplateOptions) {
          CloudStackTemplateOptions eTo = CloudStackTemplateOptions.class.cast(to);
          eTo.securityGroupIds(this.securityGroupIds);
+         eTo.networkIds(this.networkIds);
+         eTo.ipsToNetworks(this.ipsToNetworks);
+         eTo.ipOnDefaultNetwork(this.ipOnDefaultNetwork);
          eTo.keyPair(this.keyPair);
+         eTo.setupStaticNat(setupStaticNat);
       }
    }
 

@@ -16,16 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.tmrk.enterprisecloud.domain;
+package org.jclouds.glesys;
 
-import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
+import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.ProviderMetadata;
+import org.testng.annotations.Test;
 
 /**
- * @author Jason King
+ * 
+ * @author Adrian Cole
  */
-public class Group extends BaseNamedResource<Group> {
+@Test(groups = "unit", testName = "GleSYSProviderTest")
+public class GleSYSProviderTest extends BaseProviderMetadataTest {
 
-    public Group() {
-        //For JAXB
-    }
+   public GleSYSProviderTest() {
+      super(new GleSYSProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+   }
 }

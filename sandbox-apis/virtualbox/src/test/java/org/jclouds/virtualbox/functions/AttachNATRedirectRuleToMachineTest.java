@@ -27,6 +27,7 @@ import static org.easymock.classextension.EasyMock.verify;
 import static org.virtualbox_4_1.NATProtocol.TCP;
 import static org.virtualbox_4_1.NetworkAttachmentType.NAT;
 
+import org.jclouds.virtualbox.domain.RedirectRule;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INATEngine;
@@ -55,7 +56,7 @@ public class AttachNATRedirectRuleToMachineTest {
 
       replay(machine, networkAdapter, natEngine);
 
-      new AttachNATRedirectRuleToMachine(adapterId).apply(machine);
+      new AttachNATRedirectRuleToMachine(adapterId, new RedirectRule(TCP, "127.0.0.1", 2222, "", 22)).apply(machine);
 
       verify(machine, networkAdapter, natEngine);
    }
@@ -75,7 +76,7 @@ public class AttachNATRedirectRuleToMachineTest {
 
       replay(machine, networkAdapter, natEngine);
 
-      new AttachNATRedirectRuleToMachine(adapterId).apply(machine);
+      new AttachNATRedirectRuleToMachine(adapterId, new RedirectRule(TCP, "127.0.0.1", 2222, "", 22)).apply(machine);
 
       verify(machine, networkAdapter, natEngine);
    }

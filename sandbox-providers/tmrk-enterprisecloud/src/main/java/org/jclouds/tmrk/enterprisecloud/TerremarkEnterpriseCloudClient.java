@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.tmrk.enterprisecloud.features.TaskClient;
+import org.jclouds.tmrk.enterprisecloud.features.TemplateClient;
 import org.jclouds.tmrk.enterprisecloud.features.VirtualMachineClient;
 
 /**
@@ -49,4 +50,10 @@ public interface TerremarkEnterpriseCloudClient {
     */
    @Delegate
    VirtualMachineClient getVirtualMachineClient();
+
+   /**
+    * Provides synchronous access to Template features.
+    */
+   @Delegate
+   TemplateClient getTemplateClient();
 }

@@ -48,6 +48,8 @@ import java.util.Map;
 // surefire
 @Test(groups = "unit", testName = "CloudStackTemplateOptionsTest")
 public class CloudStackTemplateOptionsTest {
+   //TODO: test clone();
+   
    @Test
    public void testAs() {
       TemplateOptions options = new CloudStackTemplateOptions();

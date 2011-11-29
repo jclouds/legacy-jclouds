@@ -39,6 +39,7 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
+import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.IOUtils;
 import net.schmizz.sshj.connection.ConnectionException;
 import net.schmizz.sshj.connection.channel.direct.Session;
@@ -126,7 +127,8 @@ public class SshjSshClient implements SshClient {
    @Named("jclouds.ssh")
    protected Logger logger = Logger.NULL;
 
-   private net.schmizz.sshj.SSHClient ssh;
+   @VisibleForTesting
+   SSHClient ssh;
    private final byte[] privateKey;
    final byte[] emptyPassPhrase = new byte[0];
    private final int timeoutMillis;
@@ -176,7 +178,7 @@ public class SshjSshClient implements SshClient {
             try {
                ssh.disconnect();
             } catch (IOException e) {
-               Throwables.propagate(e);
+               logger.warn(e, "<< exception disconnecting from %s: %s", e, e.getMessage());
             }
             ssh = null;
          }

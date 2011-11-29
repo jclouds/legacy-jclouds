@@ -40,15 +40,14 @@ public enum MacAddressToBSD implements Function<String, String> {
               Iterables.transform(Splitter.on(":").split(macAddress),
                       new Function<String, String>() {
                          @Override
-                         public String apply(String arg0) {
-                            if (arg0.equals("00"))
+                         public String apply(String addressPart) {
+                            if (addressPart.equals("00"))
                                return "0";
-                            if (arg0.startsWith("0"))
-                               return arg0.substring(1);
+                            if (addressPart.startsWith("0"))
+                               return addressPart.substring(1);
 
-                            return arg0;
+                            return addressPart;
                          }
                       }));
    }
-
 }

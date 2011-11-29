@@ -101,7 +101,7 @@ public class TemplateJAXBParsingTest extends BaseRestClientTest {
       InputStream is = getClass().getResourceAsStream("/template.xml");
       Template template = parser.apply(new HttpResponse(200, "ok", newInputStreamPayload(is)));
 
-      assertLinks(template.getLinks().getLinks());
+      assertLinks(template.getLinks());
       assertOperatingSystem(template.getOperatingSystem());
       assertEquals(template.getDescription(),"");
       assertProcessor(template.getProcessor());

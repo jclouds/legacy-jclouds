@@ -19,6 +19,8 @@
 package org.jclouds.tmrk.enterprisecloud.domain.network;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.tmrk.enterprisecloud.domain.Action;
+import org.jclouds.tmrk.enterprisecloud.domain.Link;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseNamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 
@@ -26,6 +28,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import java.net.URI;
+import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
@@ -93,8 +97,8 @@ public class NetworkReference extends BaseNamedResource<NetworkReference> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResource(BaseResource<NetworkReference> in) {
-         return Builder.class.cast(super.fromResource(in));
+      public Builder fromBaseResource(BaseResource<NetworkReference> in) {
+         return Builder.class.cast(super.fromBaseResource(in));
       }
 
       /**
@@ -128,17 +132,25 @@ public class NetworkReference extends BaseNamedResource<NetworkReference> {
       public Builder type(String type) {
          return Builder.class.cast(super.type(type));
       }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromAttributes(Map<String, String> attributes) {
+         return Builder.class.cast(super.fromAttributes(attributes));
+      }
    }
 
    @XmlElement(name = "NetworkType")
    private NetworkType networkType;
 
-   public NetworkReference(URI href, String type, String name,@Nullable NetworkType networkType) {
+   private NetworkReference(URI href, String type, String name,@Nullable NetworkType networkType) {
       super(href, type, name);
       this.networkType = networkType;
    }
 
-   protected NetworkReference() {
+   private NetworkReference() {
        //For JAXB
    }
 

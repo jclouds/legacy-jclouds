@@ -19,7 +19,6 @@
 package org.jclouds.cloudstack.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.collect.Iterables.find;
 import static org.jclouds.cloudstack.options.AssociateIPAddressOptions.Builder.networkId;
@@ -40,10 +39,10 @@ import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.features.AddressClient;
+import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 
 /**
  * 
@@ -52,15 +51,17 @@ import com.google.common.base.Predicate;
 @Singleton
 public class ReuseOrAssociateNewPublicIPAddress implements Function<Network, PublicIPAddress> {
    private final CloudStackClient client;
-   private final Predicate<Long> jobComplete;
+   private final BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult;
    @Resource
    @Named(COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public ReuseOrAssociateNewPublicIPAddress(CloudStackClient client, Predicate<Long> jobComplete) {
+   public ReuseOrAssociateNewPublicIPAddress(CloudStackClient client,
+         BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult) {
       this.client = checkNotNull(client, "client");
-      this.jobComplete = checkNotNull(jobComplete, "jobComplete");
+      this.blockUntilJobCompletesAndReturnResult = checkNotNull(blockUntilJobCompletesAndReturnResult,
+            "blockUntilJobCompletesAndReturnResult");
    }
 
    /**
@@ -81,11 +82,10 @@ public class ReuseOrAssociateNewPublicIPAddress implements Function<Network, Pub
    }
 
    public static PublicIPAddress associateIPAddressInNetwork(Network network, CloudStackClient client,
-         Predicate<Long> jobComplete) {
+         BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult) {
       AsyncCreateResponse job = client.getAddressClient().associateIPAddressInZone(network.getZoneId(),
             networkId(network.getId()));
-      checkState(jobComplete.apply(job.getJobId()), "job %d failed to complete", job.getJobId());
-      PublicIPAddress ip = client.getAsyncJobClient().<PublicIPAddress> getAsyncJob(job.getJobId()).getResult();
+      PublicIPAddress ip = blockUntilJobCompletesAndReturnResult.<PublicIPAddress> apply(job);
       assert ip.getZoneId() == network.getZoneId();
       return ip;
    }
@@ -93,14 +93,14 @@ public class ReuseOrAssociateNewPublicIPAddress implements Function<Network, Pub
    @Override
    public PublicIPAddress apply(Network input) {
       try {
-         logger.debug(">> looking for existing address in network %d", input.getId());
+         logger.debug(">> looking for existing address in network(%d)", input.getId());
          PublicIPAddress returnVal = findAvailableAndAssociatedWithNetwork(input.getId(), client.getAddressClient());
-         logger.debug("<< address(%d)", returnVal.getId());
+         logger.debug("<< reused address(%d)", returnVal.getId());
          return returnVal;
       } catch (NoSuchElementException e) {
-         logger.debug(">> associating new address in network %d", input.getId());
-         PublicIPAddress returnVal = associateIPAddressInNetwork(input, client, jobComplete);
-         logger.debug("<< address(%d)", returnVal.getId());
+         logger.debug(">> associating new address in network(%d)", input.getId());
+         PublicIPAddress returnVal = associateIPAddressInNetwork(input, client, blockUntilJobCompletesAndReturnResult);
+         logger.debug("<< associated address(%d)", returnVal.getId());
          return returnVal;
       }
    }

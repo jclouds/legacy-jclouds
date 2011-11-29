@@ -18,9 +18,9 @@
    */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.domain.ISO;
-import org.jclouds.http.options.BaseHttpRequestOptions;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Options for the ISO listISOs method.

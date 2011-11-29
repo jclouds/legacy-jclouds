@@ -18,10 +18,9 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.cloudstack.domain.NetworkType;
-import org.jclouds.cloudstack.domain.TrafficType;
 import org.jclouds.http.options.BaseHttpRequestOptions;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Options used to control what VMGroups information is returned

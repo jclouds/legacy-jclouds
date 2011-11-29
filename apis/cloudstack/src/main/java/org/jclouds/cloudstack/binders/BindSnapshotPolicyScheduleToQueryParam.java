@@ -44,11 +44,10 @@ public class BindSnapshotPolicyScheduleToQueryParam implements Binder {
       this.uriBuilderProvider = checkNotNull(uriBuilderProvider, "uriBuilderProvider");
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(input instanceof SnapshotPolicySchedule, "this binder is only valid for SnapshotPolicySchedule");
-      SnapshotPolicySchedule schedule = (SnapshotPolicySchedule) input;
+      SnapshotPolicySchedule schedule = SnapshotPolicySchedule.class.cast(input);
       R modifiedResult = ModifyRequest.addQueryParam(request, "intervaltype", schedule.getInterval(), uriBuilderProvider.get());
       modifiedResult = ModifyRequest.addQueryParam(modifiedResult, "schedule", schedule.getTime(), uriBuilderProvider.get());
       return modifiedResult;

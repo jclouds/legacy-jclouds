@@ -52,19 +52,17 @@ public class CloudSigmaZurichTemplateBuilderLiveTest extends BaseTemplateBuilder
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
             case UBUNTU:
-               return (input.version.equals("11.04") || input.version.equals("10.04") && !input.is64Bit)
-                     || (input.version.equals("10.10") && input.is64Bit) || input.version.equals("");
+               return (input.version.equals("") || input.version.matches("1[01].04") || input.version.equals("10.10"))
+                     && input.is64Bit;
             case SOLARIS:
-               return !input.is64Bit;
+               return input.version.equals("") && input.is64Bit;
             case DEBIAN:
-               return input.is64Bit;
+               return (input.version.equals("") || input.version.equals("5.0")) && input.is64Bit;
             case CENTOS:
-               return input.version.equals("5.5") || input.version.equals("")
-                     || (input.version.matches("5.0") && input.is64Bit)
-                     || (input.version.matches("6.0") && !input.is64Bit);
+               return input.version.equals("") || (input.version.equals("5.7") && input.is64Bit);
             case WINDOWS:
-               return input.version.equals("2008 R2") || (input.version.equals("2008") && !input.is64Bit)
-                     || input.version.equals("") || (input.version.equals("2003"));
+               return input.version.equals("")
+                     || ((input.version.equals("2008") || input.version.equals("2003")) && !input.is64Bit);
             default:
                return false;
             }
@@ -78,9 +76,9 @@ public class CloudSigmaZurichTemplateBuilderLiveTest extends BaseTemplateBuilder
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getId(), "7fad4fe1-daf3-4cb8-a847-082aae4d8506");
+      assertEquals(defaultTemplate.getImage().getId(), "331f8cff-99c9-4fa9-9069-8f699795ef7e");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getImage().getDefaultCredentials().identity, "cloudsigma");
+      assertEquals(defaultTemplate.getImage().getDefaultCredentials().identity, "root");
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 

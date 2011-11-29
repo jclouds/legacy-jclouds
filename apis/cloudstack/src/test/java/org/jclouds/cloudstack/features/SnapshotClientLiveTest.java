@@ -18,22 +18,24 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static com.google.common.collect.Iterables.find;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertNotSame;
+import static org.testng.AssertJUnit.assertNull;
+import static org.testng.AssertJUnit.assertTrue;
+
+import java.util.Set;
+
+import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.cloudstack.domain.Snapshot;
+import org.jclouds.cloudstack.options.ListSnapshotsOptions;
+import org.testng.annotations.Test;
+
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import org.jclouds.cloudstack.domain.AsyncCreateResponse;
-import org.jclouds.cloudstack.domain.Snapshot;
-import org.jclouds.cloudstack.domain.Volume;
-import org.jclouds.cloudstack.domain.Zone;
-import org.jclouds.cloudstack.options.ListSnapshotsOptions;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import javax.annotation.Nullable;
-import java.util.Set;
-
-import static com.google.common.collect.Iterables.find;
-import static org.testng.AssertJUnit.*;
 
 /**
  * Tests behavior of {@code SnapshotClient}
@@ -42,17 +44,6 @@ import static org.testng.AssertJUnit.*;
  */
 @Test(groups = "live", singleThreaded = true, testName = "SnapshotClientLiveTest")
 public class SnapshotClientLiveTest extends BaseCloudStackClientLiveTest {
-   protected String prefix = System.getProperty("user.name");
-
-   private long zoneId;
-
-   @BeforeMethod(groups = "live")
-   public void setZoneId() {
-      Set<Zone> zones = client.getZoneClient().listZones();
-      assertNotNull(zones);
-      assertFalse(zones.isEmpty());
-      zoneId = Iterables.get(zones, 0).getId();
-   }
 
    public void testListSnapshots() {
       Set<Snapshot> snapshots = client.getSnapshotClient().listSnapshots();
