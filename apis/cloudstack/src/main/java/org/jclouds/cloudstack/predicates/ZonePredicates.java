@@ -39,13 +39,13 @@ public class ZonePredicates {
       return new Predicate<Zone>() {
 
          @Override
-         public boolean apply(Zone input) {
-            return NetworkType.ADVANCED.equals(checkNotNull(input, "zone").getNetworkType());
+         public boolean apply(Zone zone) {
+            return NetworkType.ADVANCED.equals(checkNotNull(zone, "zone").getNetworkType());
          }
 
          @Override
          public String toString() {
-            return "supportsAvancedNetworks()";
+            return "supportsAdvancedNetworks()";
          }
       };
    }

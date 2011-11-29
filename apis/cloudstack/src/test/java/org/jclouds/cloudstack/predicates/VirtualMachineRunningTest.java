@@ -23,20 +23,21 @@ import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.features.VirtualMachineClient;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.jclouds.cloudstack.domain.VirtualMachine.State;
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author Andrei Savu
  */
-@Test(groups = "unit", testName = "VirtualMachineExpungedTest")
-public class VirtualMachineExpungedTest {
+@Test(groups = "unit", testName = "VirtualMachineRunningTest")
+public class VirtualMachineRunningTest {
 
    CloudStackClient client;
    VirtualMachineClient virtualMachineClient;
@@ -45,26 +46,43 @@ public class VirtualMachineExpungedTest {
    public void setUp() {
       client = createMock(CloudStackClient.class);
       virtualMachineClient = createMock(VirtualMachineClient.class);
+
       expect(client.getVirtualMachineClient()).andReturn(virtualMachineClient);
    }
 
-   @Test
-   public void testWaitForVirtualMachineToBeExpunged() {
-      VirtualMachine virtualMachine = VirtualMachine.builder().id(229L).build();
-      expect(virtualMachineClient.getVirtualMachine(virtualMachine.getId())).andReturn(null);
-
-      replay(client, virtualMachineClient);
-      assertTrue(new VirtualMachineExpunged(client).apply(virtualMachine));
-      verify(client, virtualMachineClient);
+   @DataProvider(name = "virtualMachineStates")
+   public Object[][] virtualMachineStates() {
+      return new Object[][]{
+         {State.RUNNING, true},
+         {State.STARTING, false},
+         {State.STOPPING, false},
+         {State.STOPPED, false},
+         {State.SHUTDOWNED, false},
+         {State.DESTROYED, false},
+         {State.EXPUNGING, false},
+         {State.MIGRATING, false}
+      };
    }
 
-   @Test
-   public void testNoRemovedYet() {
-      VirtualMachine virtualMachine = VirtualMachine.builder().id(229L).build();
-      expect(virtualMachineClient.getVirtualMachine(virtualMachine.getId())).andReturn(virtualMachine);
+   @Test(dataProvider = "virtualMachineStates")
+   public void testWaitForVirtualMachineToBeRunning(State state, boolean expected) {
+      assertPredicateResult(state, expected);
+   }
 
+   @Test(expectedExceptions = IllegalStateException.class)
+   public void testThrowExceptionOnErrorState() {
+      assertPredicateResult(State.ERROR, true);
+   }
+
+   private void assertPredicateResult(State state, boolean expected) {
+      long virtualMachineId = 229;
+      VirtualMachine virtualMachine = VirtualMachine.builder().
+         id(virtualMachineId).state(state).build();
+
+      expect(virtualMachineClient.getVirtualMachine(virtualMachineId)).andReturn(virtualMachine);
       replay(client, virtualMachineClient);
-      assertFalse(new VirtualMachineExpunged(client).apply(virtualMachine));
+
+      assertEquals(new VirtualMachineRunning(client).apply(virtualMachine), expected);
       verify(client, virtualMachineClient);
    }
 }

@@ -60,14 +60,7 @@ public class UserPredicates {
 
    /**
     * 
-    * @return true, if the account has user privileges
-    */
-   public static Predicate<User> isUserAccount() {
-      return accountTypeEquals(Account.Type.USER);
-   }
-   /**
-    * 
-    * @return true, if the user's apiKey is the following
+    * @return true, if the user's account type is the following
     */
    public static Predicate<User> accountTypeEquals(Account.Type type) {
       return new AccountTypeEquals(type);
@@ -90,12 +83,27 @@ public class UserPredicates {
          return "accountTypeEquals(" + type + ")";
       }
    }
+
+   /**
+    *
+    * @return true, if the account has user privileges
+    */
+   public static Predicate<User> isUserAccount() {
+      return accountTypeEquals(Account.Type.USER);
+   }
+
+   /**
+    * @return true, is the user is a domain admin
+    */
+   public static Predicate<User> isDomainAdminAccount() {
+      return accountTypeEquals(Type.DOMAIN_ADMIN);
+   }
+
    /**
     * 
-    * @return true, if the user's apiKey is the following
+    * @return true, if the user is a global admin
     */
    public static Predicate<User> isAdminAccount() {
       return accountTypeEquals(Account.Type.ADMIN);
    }
-
 }
