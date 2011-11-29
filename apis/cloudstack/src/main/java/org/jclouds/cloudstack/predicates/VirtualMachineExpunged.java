@@ -34,7 +34,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * 
  * Tests to see if a virtualMachine is expunged from the system
  * 
- * @author Adrian Cole
+ * @author Andrei Savu
  */
 @Singleton
 public class VirtualMachineExpunged implements Predicate<VirtualMachine> {
