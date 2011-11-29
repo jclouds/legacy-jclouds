@@ -21,7 +21,6 @@ package org.jclouds.glesys.features;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-import org.jclouds.glesys.functions.MergeArgumentsAndReturnServerDetails;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
@@ -64,7 +63,7 @@ public class ServerAsyncClientTest extends BaseGleSYSAsyncClientTest<ServerAsync
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, MergeArgumentsAndReturnServerDetails.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 

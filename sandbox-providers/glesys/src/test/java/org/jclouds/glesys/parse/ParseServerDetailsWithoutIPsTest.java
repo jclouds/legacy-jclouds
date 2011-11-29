@@ -25,10 +25,9 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.glesys.config.GleSYSParserModule;
 import org.jclouds.glesys.domain.ServerDetails;
-import org.jclouds.glesys.functions.MergeArgumentsAndReturnServerDetails;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -47,7 +46,7 @@ public class ParseServerDetailsWithoutIPsTest extends BaseItemParserTest<ServerD
    }
 
    @Override
-   @ResponseParser(MergeArgumentsAndReturnServerDetails.class)
+   @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
    public ServerDetails expected() {
       return ServerDetails.builder().id("vz1541880").hostname("mammamia").datacenter("Falkenberg").platform("OpenVZ")
