@@ -22,6 +22,8 @@ import java.util.Map;
 
 import org.jclouds.glesys.GleSYSAsyncClient;
 import org.jclouds.glesys.GleSYSClient;
+import org.jclouds.glesys.features.IpAsyncClient;
+import org.jclouds.glesys.features.IpClient;
 import org.jclouds.glesys.features.ServerAsyncClient;
 import org.jclouds.glesys.features.ServerClient;
 import org.jclouds.glesys.handlers.GleSYSErrorHandler;
@@ -48,6 +50,7 @@ public class GleSYSRestClientModule extends RestClientModule<GleSYSClient, GleSY
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
          .put(ServerClient.class, ServerAsyncClient.class)//
+         .put(IpClient.class, IpAsyncClient.class)//
          .build();
 
    public GleSYSRestClientModule() {

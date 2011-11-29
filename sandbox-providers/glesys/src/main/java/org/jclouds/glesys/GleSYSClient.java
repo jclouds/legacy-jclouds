@@ -21,6 +21,7 @@ package org.jclouds.glesys;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.glesys.features.IpClient;
 import org.jclouds.glesys.features.ServerClient;
 import org.jclouds.rest.annotations.Delegate;
 
@@ -41,4 +42,9 @@ public interface GleSYSClient {
    @Delegate
    ServerClient getServerClient();
 
+   /**
+    * Provides synchronous access to Ip Address features.
+    */
+   @Delegate
+   IpClient getIpClient();
 }

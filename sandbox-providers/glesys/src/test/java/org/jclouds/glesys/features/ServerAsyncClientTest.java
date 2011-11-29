@@ -35,7 +35,7 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "ServerAsyncClientTest")
 public class ServerAsyncClientTest extends BaseGleSYSAsyncClientTest<ServerAsyncClient> {
 
    public void testListServers() throws SecurityException, NoSuchMethodException, IOException {

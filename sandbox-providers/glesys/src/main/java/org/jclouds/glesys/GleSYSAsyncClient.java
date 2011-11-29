@@ -18,6 +18,7 @@
  */
 package org.jclouds.glesys;
 
+import org.jclouds.glesys.features.IpAsyncClient;
 import org.jclouds.glesys.features.ServerAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 
@@ -37,4 +38,9 @@ public interface GleSYSAsyncClient {
    @Delegate
    ServerAsyncClient getServerClient();
 
+   /**
+    * Provides asynchronous access to Ip Address features.
+    */
+   @Delegate
+   IpAsyncClient getIpClient();
 }
