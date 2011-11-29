@@ -28,6 +28,7 @@ import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VBoxException;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 /**
  * @author Mattias Holmqvist
@@ -50,6 +51,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends B
       try {
          new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(null, "SomeWeirdUnknownOs", "jclouds-test-create-2", true, manager)
                  .apply("jclouds-test-create-2-node");
+         fail();
       } catch (VBoxException e) {
          ErrorCode errorCode = ErrorCode.valueOf(e);
          // According to the documentation VBOX_E_OBJECT_NOT_FOUND
