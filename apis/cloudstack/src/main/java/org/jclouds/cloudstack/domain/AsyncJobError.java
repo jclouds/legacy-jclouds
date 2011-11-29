@@ -25,6 +25,30 @@ import com.google.gson.annotations.SerializedName;
  * @author Adrian Cole
  */
 public class AsyncJobError {
+
+   /**
+    * Error codes for job errors
+    */
+   public static enum Code {
+      INTERNAL_ERROR (530),
+      ACCOUNT_ERROR (531),
+      ACCOUNT_RESOURCE_LIMIT_ERROR(532),
+      INSUFFICIENT_CAPACITY_ERROR (533),
+      RESOURCE_UNAVAILABLE_ERROR (534),
+      RESOURCE_ALLOCATION_ERROR (535),
+      RESOURCE_IN_USE_ERROR (536),
+      NETWORK_RULE_CONFLICT_ERROR (537),
+      UNKNOWN (-1);
+
+      private final int code;
+
+      private Code(int code) {
+         this.code = code;
+      }
+
+      public int code() { return this.code; }
+   }
+
    @SerializedName("errorcode")
    private int errorCode;
    @SerializedName("errortext")

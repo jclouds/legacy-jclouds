@@ -28,6 +28,41 @@ import com.google.gson.annotations.SerializedName;
  */
 public class AsyncJob<T> {
 
+   /**
+    * Valid job result codes
+    */
+   public static enum ResultCode {
+      SUCCESS (0),
+      FAIL (530),
+      UNKNOWN (-1);
+
+      private final int code;
+
+      private ResultCode(int code) {
+         this.code = code;
+      }
+
+      public int code() { return this.code; }
+   }
+
+   /**
+    * Valid async job statuses
+    */
+   public static enum Status {
+      IN_PROGRESS (0),
+      SUCCEEDED (1),
+      FAILED (2),
+      UNKNOWN (-1);
+
+      private final int code;
+
+      private Status(int code) {
+         this.code = code;
+      }
+
+      public int code() { return this.code; }
+   }
+
    public static <T> Builder<T> builder() {
       return new Builder<T>();
    }

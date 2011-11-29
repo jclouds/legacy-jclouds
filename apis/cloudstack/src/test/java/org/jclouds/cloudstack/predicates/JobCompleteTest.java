@@ -27,12 +27,14 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.jclouds.cloudstack.domain.AsyncJob.ResultCode.SUCCESS;
+import static org.jclouds.cloudstack.domain.AsyncJob.Status.SUCCEEDED;
 import static org.testng.Assert.assertTrue;
 
 /**
  * @author Andrei Savu
  */
-@Test(groups = "unit")
+@Test(groups = "unit", singleThreaded = true)
 public class JobCompleteTest {
 
    @Test
@@ -42,7 +44,8 @@ public class JobCompleteTest {
 
       expect(client.getAsyncJobClient()).andReturn(asyncJobClient);
 
-      AsyncJob job = AsyncJob.builder().id(100L).status(1).build();
+      AsyncJob job = AsyncJob.builder().id(100L)
+         .status(SUCCEEDED.code()).resultCode(SUCCESS.code()).build();
       expect(asyncJobClient.getAsyncJob(job.getId())).andReturn(job);
 
       replay(client, asyncJobClient);
