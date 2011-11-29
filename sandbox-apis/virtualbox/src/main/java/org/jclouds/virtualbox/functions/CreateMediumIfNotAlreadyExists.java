@@ -71,7 +71,7 @@ public class CreateMediumIfNotAlreadyExists implements Function<String, IMedium>
    }
 
    private boolean notFoundException(VBoxException e) {
-      return e.getMessage().indexOf("Could not find an open hard disk with location ") != -1;
+      return e.getMessage().contains("Could not find an open hard disk with location ");
    }
 
    private void createBaseStorage(IMedium hardDisk) {
@@ -95,12 +95,12 @@ public class CreateMediumIfNotAlreadyExists implements Function<String, IMedium>
    }
 
    private boolean fileNotFoundException(VBoxException e) {
-      return e.getMessage().indexOf("VERR_FILE_NOT_FOUND") != -1;
+      return e.getMessage().contains("VERR_FILE_NOT_FOUND");
    }
 
    private boolean storageAlreadyExists(VBoxException e) {
-      return e.getMessage().indexOf("VirtualBox error: Storage for the medium ") != -1
-            && e.getMessage().indexOf("is already created") != -1;
+      return e.getMessage().contains("VirtualBox error: Storage for the medium ")
+            && e.getMessage().contains("is already created");
    }
 
 }
