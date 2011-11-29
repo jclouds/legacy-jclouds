@@ -15,6 +15,7 @@ title: Contributing to jclouds
 
 ### pulling changes from master
 *  `git pull --rebase jclouds master`
+*  [why rebase](http://stackoverflow.com/questions/5968964/avoid-unwanted-merge-commits-and-other-commits-when-doing-pull-request-in-github)
 
 ## Creating new providers with maven archetypes
 
