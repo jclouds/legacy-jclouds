@@ -22,12 +22,14 @@ package org.jclouds.cloudstack.predicates;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.features.VirtualMachineClient;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -36,21 +38,33 @@ import static org.testng.Assert.assertTrue;
 @Test(groups = "unit", testName = "VirtualMachineExpungedTest")
 public class VirtualMachineExpungedTest {
 
+   CloudStackClient client;
+   VirtualMachineClient virtualMachineClient;
+
+   @BeforeMethod
+   public void setUp() {
+      client = createMock(CloudStackClient.class);
+      virtualMachineClient = createMock(VirtualMachineClient.class);
+      expect(client.getVirtualMachineClient()).andReturn(virtualMachineClient);
+   }
+
    @Test
    public void testWaitForVirtualMachineToBeExpunged() {
-      CloudStackClient client = createMock(CloudStackClient.class);
-      VirtualMachineClient virtualMachineClient = createMock(VirtualMachineClient.class);
-
-      long virtualMachineId = 229;
-      VirtualMachine virtualMachine = VirtualMachine.builder().id(virtualMachineId).build();
-
-      expect(client.getVirtualMachineClient()).andReturn(virtualMachineClient);
-      expect(virtualMachineClient.getVirtualMachine(virtualMachineId)).andReturn(null);
+      VirtualMachine virtualMachine = VirtualMachine.builder().id(229L).build();
+      expect(virtualMachineClient.getVirtualMachine(virtualMachine.getId())).andReturn(null);
 
       replay(client, virtualMachineClient);
-
       assertTrue(new VirtualMachineExpunged(client).apply(virtualMachine));
+      verify(client, virtualMachineClient);
+   }
 
+   @Test
+   public void testNoRemovedYet() {
+      VirtualMachine virtualMachine = VirtualMachine.builder().id(229L).build();
+      expect(virtualMachineClient.getVirtualMachine(virtualMachine.getId())).andReturn(virtualMachine);
+
+      replay(client, virtualMachineClient);
+      assertFalse(new VirtualMachineExpunged(client).apply(virtualMachine));
       verify(client, virtualMachineClient);
    }
 }

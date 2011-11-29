@@ -22,12 +22,14 @@ package org.jclouds.cloudstack.predicates;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.features.VirtualMachineClient;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -36,22 +38,37 @@ import static org.testng.Assert.assertTrue;
 @Test(groups = "unit", testName = "VirtualMachineDestroyedTest")
 public class VirtualMachineDestroyedTest {
 
-   @Test
-   public void testWaitForVirtualMachineToBeDestroyed() {
-      CloudStackClient client = createMock(CloudStackClient.class);
-      VirtualMachineClient virtualMachineClient = createMock(VirtualMachineClient.class);
+   CloudStackClient client;
+   VirtualMachineClient virtualMachineClient;
 
-      long virtualMachineId = 229;
-      VirtualMachine virtualMachine = VirtualMachine.builder().
-         id(virtualMachineId).state(VirtualMachine.State.DESTROYED).build();
-
+   @BeforeMethod
+   public void setUp() {
+      client = createMock(CloudStackClient.class);
+      virtualMachineClient = createMock(VirtualMachineClient.class);
       expect(client.getVirtualMachineClient()).andReturn(virtualMachineClient);
-      expect(virtualMachineClient.getVirtualMachine(virtualMachineId)).andReturn(virtualMachine);
+   }
+
+   @Test
+   public void testIsDestroyed() {
+      VirtualMachine virtualMachine = VirtualMachine.builder().
+         id(229).state(VirtualMachine.State.DESTROYED).build();
+
+      expect(virtualMachineClient.getVirtualMachine(virtualMachine.getId())).andReturn(virtualMachine);
 
       replay(client, virtualMachineClient);
-
       assertTrue(new VirtualMachineDestroyed(client).apply(virtualMachine));
+      verify(client, virtualMachineClient);
+   }
 
+   @Test
+   public void testStillRunning() {
+      VirtualMachine virtualMachine = VirtualMachine.builder().
+         id(229).state(VirtualMachine.State.RUNNING).build();
+
+      expect(virtualMachineClient.getVirtualMachine(virtualMachine.getId())).andReturn(virtualMachine);
+
+      replay(client, virtualMachineClient);
+      assertFalse(new VirtualMachineDestroyed(client).apply(virtualMachine));
       verify(client, virtualMachineClient);
    }
 }
