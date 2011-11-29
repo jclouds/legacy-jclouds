@@ -35,8 +35,8 @@ import static org.testng.Assert.assertTrue;
 /**
  * @author Andrei Savu
  */
-@Test(groups = "unit", testName = "VirtualMachineExpungedTest")
-public class VirtualMachineExpungedTest {
+@Test(groups = "unit", testName = "VirtualMachineDestroyedTest")
+public class VirtualMachineDestroyedTest {
 
    CloudStackClient client;
    VirtualMachineClient virtualMachineClient;
@@ -49,22 +49,26 @@ public class VirtualMachineExpungedTest {
    }
 
    @Test
-   public void testWaitForVirtualMachineToBeExpunged() {
-      VirtualMachine virtualMachine = VirtualMachine.builder().id(229L).build();
-      expect(virtualMachineClient.getVirtualMachine(virtualMachine.getId())).andReturn(null);
+   public void testIsDestroyed() {
+      VirtualMachine virtualMachine = VirtualMachine.builder().
+         id(229).state(VirtualMachine.State.DESTROYED).build();
+
+      expect(virtualMachineClient.getVirtualMachine(virtualMachine.getId())).andReturn(virtualMachine);
 
       replay(client, virtualMachineClient);
-      assertTrue(new VirtualMachineExpunged(client).apply(virtualMachine));
+      assertTrue(new VirtualMachineDestroyed(client).apply(virtualMachine));
       verify(client, virtualMachineClient);
    }
 
    @Test
-   public void testNoRemovedYet() {
-      VirtualMachine virtualMachine = VirtualMachine.builder().id(229L).build();
+   public void testStillRunning() {
+      VirtualMachine virtualMachine = VirtualMachine.builder().
+         id(229).state(VirtualMachine.State.RUNNING).build();
+
       expect(virtualMachineClient.getVirtualMachine(virtualMachine.getId())).andReturn(virtualMachine);
 
       replay(client, virtualMachineClient);
-      assertFalse(new VirtualMachineExpunged(client).apply(virtualMachine));
+      assertFalse(new VirtualMachineDestroyed(client).apply(virtualMachine));
       verify(client, virtualMachineClient);
    }
 }
