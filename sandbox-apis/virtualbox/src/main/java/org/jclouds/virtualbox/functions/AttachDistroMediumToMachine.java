@@ -56,7 +56,7 @@ public class AttachDistroMediumToMachine implements Function<IMachine, Void> {
    }
 
    private boolean alreadyAttached(VBoxException e) {
-      return e.getMessage().indexOf("is already attached to port") != -1;
+      return e.getMessage().contains("is already attached to port");
    }
 
 }
