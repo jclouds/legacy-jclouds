@@ -54,15 +54,15 @@ public class AsyncJobClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    private void checkJob(AsyncJob<?> query) {
-      assert query.getStatus() >= 0 : query;
-      assert query.getResultCode() >= 0 : query;
+      assert query.getStatus().code() >= 0 : query;
+      assert query.getResultCode().code() >= 0 : query;
       assert query.getProgress() >= 0 : query;
-      if (query.getResultCode() == 0) {
+      if (query.getResultCode().code() == 0) {
          if (query.getResult() != null)// null is ok for result of success =
                                        // true
             // ensure we parsed properly
             assert (query.getResult().getClass().getPackage().equals(AsyncJob.class.getPackage())) : query;
-      } else if (query.getResultCode() > 400) {
+      } else if (query.getResultCode().code() > 400) {
          assert query.getResult() == null : query;
          assert query.getError() != null : query;
       } else {

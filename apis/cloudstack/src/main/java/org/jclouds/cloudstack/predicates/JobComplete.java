@@ -19,10 +19,15 @@
 package org.jclouds.cloudstack.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.cloudstack.domain.AsyncJob.ResultCode.FAIL;
+import static org.jclouds.cloudstack.domain.AsyncJob.ResultCode.SUCCESS;
+import static org.jclouds.cloudstack.domain.AsyncJob.Status.FAILED;
+import static org.jclouds.cloudstack.domain.AsyncJob.Status.SUCCEEDED;
 
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
+import org.jclouds.cloudstack.AsyncJobException;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.logging.Logger;
@@ -50,17 +55,18 @@ public class JobComplete implements Predicate<Long> {
    }
 
    public boolean apply(Long jobId) {
-      logger.trace("looking for status on job %s", checkNotNull(jobId, "jobId"));
+      logger.trace(">> looking for status on job %s", checkNotNull(jobId, "jobId"));
       AsyncJob<?> job = refresh(jobId);
-      if (job == null)
+      if (job == null) {
          return false;
-      logger.trace("%s: looking for job status %s: currently: %s", job.getId(), 1, job.getStatus());
-      if (job.getError() != null) {
-         // TODO: create a typed error
-         throw new RuntimeException(String.format("job %s failed with exception %s", job.getId(), job.getError()
-               .toString()));
       }
-      return job.getStatus() > 0;
+      logger.trace("%s: looking for job status %s: currently: %s", job.getId(), 1, job.getStatus());
+      if (job.hasFailed()) {
+
+         throw new AsyncJobException(String.format("job %s failed with exception %s",
+            job.toString(), job.getError().toString()));
+      }
+      return job.hasSucceed();
    }
 
    private AsyncJob<?> refresh(Long jobId) {

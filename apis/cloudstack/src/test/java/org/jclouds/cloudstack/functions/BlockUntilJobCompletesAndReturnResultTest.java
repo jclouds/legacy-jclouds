@@ -22,6 +22,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+import static org.jclouds.cloudstack.domain.AsyncJobError.ErrorCode;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.cloudstack.CloudStackClient;
@@ -101,7 +102,8 @@ public class BlockUntilJobCompletesAndReturnResultTest {
 
       expect(client.getAsyncJobClient()).andReturn(jobClient).atLeastOnce();
       expect(jobClient.getAsyncJob(jobId)).andReturn(
-            AsyncJob.builder().id(jobId).error(new AsyncJobError(1, "ERRROR")).result("foo").build()).atLeastOnce();
+            AsyncJob.builder().id(jobId).error(
+               new AsyncJobError(ErrorCode.INTERNAL_ERROR, "ERRROR")).result("foo").build()).atLeastOnce();
 
       replay(client);
       replay(jobClient);
