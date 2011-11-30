@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -45,7 +45,7 @@ public class AddIDEControllerIfNotExists implements Function<IMachine, Void> {
          machine.addStorageController(controllerName, StorageBus.IDE);
          machine.saveSettings();
       } catch (VBoxException e) {
-         if (e.getMessage().indexOf("already exists") == -1)
+         if (!e.getMessage().contains("already exists"))
             throw e;
       }
       return null;
