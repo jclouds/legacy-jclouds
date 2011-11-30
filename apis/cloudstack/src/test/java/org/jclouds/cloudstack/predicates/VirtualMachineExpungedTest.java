@@ -35,7 +35,7 @@ import static org.testng.Assert.assertTrue;
 /**
  * @author Andrei Savu
  */
-@Test(groups = "unit", singleThreaded=true, testName = "VirtualMachineExpungedTest")
+@Test(groups = "unit", singleThreaded = true, testName = "VirtualMachineExpungedTest")
 public class VirtualMachineExpungedTest {
 
    CloudStackClient client;

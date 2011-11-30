@@ -36,7 +36,7 @@ import static org.testng.Assert.assertEquals;
 /**
  * @author Andrei Savu
  */
-@Test(groups = "unit", singleThreaded=true, testName = "VirtualMachineRunningTest")
+@Test(groups = "unit", singleThreaded = true, testName = "VirtualMachineRunningTest")
 public class VirtualMachineRunningTest {
 
    CloudStackClient client;

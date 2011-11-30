@@ -61,15 +61,12 @@ public class JobComplete implements Predicate<Long> {
          return false;
       }
       logger.trace("%s: looking for job status %s: currently: %s", job.getId(), 1, job.getStatus());
-      if (job.getError() != null ||
-         job.getStatus() == FAILED.code() ||
-         job.getResultCode() == FAIL.code()) {
+      if (job.hasFailed()) {
 
          throw new AsyncJobException(String.format("job %s failed with exception %s",
             job.toString(), job.getError().toString()));
       }
-      return job.getStatus() == SUCCEEDED.code() &&
-         job.getResultCode() == SUCCESS.code();
+      return job.hasSucceed();
    }
 
    private AsyncJob<?> refresh(Long jobId) {

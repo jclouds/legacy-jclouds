@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.cloudstack.domain.AsyncJobError.ErrorCode;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -50,7 +51,6 @@ import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 
 /**
- * 
  * @author Adrian Cole
  */
 @Singleton
@@ -61,10 +61,13 @@ public class ParseTypedAsyncJob implements Function<AsyncJob<Map<String, JsonBal
    @Inject(optional = true)
    @VisibleForTesting
    @Named("jclouds.cloudstack.jobresult-type-map")
-   Map<String, Class<?>> typeMap = ImmutableMap.<String, Class<?>> builder().put("securitygroup", SecurityGroup.class)
-         .put("portforwardingrule", PortForwardingRule.class).put("ipforwardingrule", IPForwardingRule.class)
-         .put("network", Network.class).put("ipaddress", PublicIPAddress.class)
-         .put("virtualmachine", VirtualMachine.class).build();
+   Map<String, Class<?>> typeMap = ImmutableMap.<String, Class<?>>builder()
+      .put("securitygroup", SecurityGroup.class)
+      .put("portforwardingrule", PortForwardingRule.class)
+      .put("ipforwardingrule", IPForwardingRule.class)
+      .put("network", Network.class)
+      .put("ipaddress", PublicIPAddress.class)
+      .put("virtualmachine", VirtualMachine.class).build();
    private final Json json;
 
    @Inject
@@ -76,7 +79,7 @@ public class ParseTypedAsyncJob implements Function<AsyncJob<Map<String, JsonBal
       AsyncJob<?> result = toParse;
       if (toParse.getResult() != null) {
          if (toParse.getResult().size() == 1) {
-            @SuppressWarnings({ "unchecked", "rawtypes" })
+            @SuppressWarnings({"unchecked", "rawtypes"})
             Builder<Object> builder = AsyncJob.Builder.fromAsyncJobUntyped((AsyncJob) toParse);
             if (toParse.getResult().containsKey("success")) {
                builder.result(null);
@@ -94,23 +97,23 @@ public class ParseTypedAsyncJob implements Function<AsyncJob<Map<String, JsonBal
                   builder.result(json.fromJson(entry.getValue().toString(), typeMap.get(entry.getKey())));
                } else {
                   logger.warn(
-                        "type key %s not configured.  please override default for Map<String, Class<?>> bound to name jclouds.cloudstack.jobresult-type-map",
-                        entry.getKey());
+                     "type key %s not configured.  please override default for Map<String, Class<?>> bound to name jclouds.cloudstack.jobresult-type-map",
+                     entry.getKey());
                   builder.result(entry.getValue().toString());
                }
             }
             result = builder.build();
          } else if (toParse.getResult().containsKey("errorcode")) {
-            @SuppressWarnings({ "unchecked", "rawtypes" })
+            @SuppressWarnings({"unchecked", "rawtypes"})
             Builder<Object> builder = AsyncJob.Builder.fromAsyncJobUntyped((AsyncJob) toParse);
             builder.result(null);// avoid classcastexceptions
-            builder.error(new AsyncJobError(Integer.parseInt(toParse.getResult().get("errorcode").toString()), toParse
-                  .getResult().containsKey("errortext") ? toParse.getResult().get("errortext").toString()
-                  .replace("\"", "") : null));
+            builder.error(new AsyncJobError(ErrorCode.fromValue(toParse.getResult().get("errorcode").toString()), toParse
+               .getResult().containsKey("errortext") ? toParse.getResult().get("errortext").toString()
+               .replace("\"", "") : null));
             result = builder.build();
          } else if (toParse.getResult().size() > 1) {
             logger.warn("unexpected size of async job result; expecting a map with a single element",
-                  toParse.getResult());
+               toParse.getResult());
          }
       }
       return result;

@@ -29,7 +29,7 @@ public class AsyncJobError {
    /**
     * Error codes for job errors
     */
-   public static enum Code {
+   public static enum ErrorCode {
       INTERNAL_ERROR (530),
       ACCOUNT_ERROR (531),
       ACCOUNT_RESOURCE_LIMIT_ERROR(532),
@@ -42,15 +42,30 @@ public class AsyncJobError {
 
       private final int code;
 
-      private Code(int code) {
+      private ErrorCode(int code) {
          this.code = code;
       }
 
       public int code() { return this.code; }
+
+      public static ErrorCode fromValue(String value) {
+         try {
+            int errorCode = Integer.parseInt(value);
+            for(ErrorCode candidate : values()) {
+               if (candidate.code() == errorCode) {
+                  return candidate;
+               }
+            }
+            return UNKNOWN;
+
+         } catch(NumberFormatException e) {
+            return UNKNOWN;
+         }
+      }
    }
 
    @SerializedName("errorcode")
-   private int errorCode;
+   private ErrorCode errorCode;
    @SerializedName("errortext")
    private String errorText;
 
@@ -62,12 +77,12 @@ public class AsyncJobError {
 
    }
 
-   public AsyncJobError(int errorCode, String errorText) {
+   public AsyncJobError(ErrorCode errorCode, String errorText) {
       this.errorCode = errorCode;
       this.errorText = errorText;
    }
 
-   public int getErrorCode() {
+   public ErrorCode getErrorCode() {
       return errorCode;
    }
 
@@ -79,7 +94,7 @@ public class AsyncJobError {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + errorCode;
+      result = prime * result + errorCode.code();
       result = prime * result + ((errorText == null) ? 0 : errorText.hashCode());
       return result;
    }

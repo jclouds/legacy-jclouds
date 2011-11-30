@@ -43,6 +43,22 @@ public class AsyncJob<T> {
       }
 
       public int code() { return this.code; }
+
+      public static ResultCode fromValue(String value) {
+         try {
+            int resultCode = Integer.parseInt(value);
+            switch (resultCode) {
+               case 0:
+                  return SUCCESS;
+               case 530:
+                  return FAIL;
+               default:
+                  return UNKNOWN;
+            }
+         } catch(NumberFormatException e) {
+            return UNKNOWN;
+         }
+      }
    }
 
    /**
@@ -61,6 +77,24 @@ public class AsyncJob<T> {
       }
 
       public int code() { return this.code; }
+
+      public static Status fromValue(String value) {
+         try {
+            int statusCode = Integer.parseInt(value);
+            switch (statusCode) {
+               case 0:
+                  return IN_PROGRESS;
+               case 1:
+                  return SUCCEEDED;
+               case 2:
+                  return FAILED;
+               default:
+                  return UNKNOWN;
+            }
+         } catch (NumberFormatException e) {
+            return UNKNOWN;
+         }
+      }
    }
 
    public static <T> Builder<T> builder() {
@@ -76,10 +110,10 @@ public class AsyncJob<T> {
       private String instanceType;
       private int progress = -1;
       private T result;
-      private int resultCode = -1;
+      private ResultCode resultCode = ResultCode.UNKNOWN;
       private String resultType;
       private AsyncJobError error;
-      private int status = -1;
+      private Status status = Status.UNKNOWN;
       private int userId = -1;
 
       public Builder<T> accountId(long accountId) {
@@ -127,7 +161,7 @@ public class AsyncJob<T> {
          return this;
       }
 
-      public Builder<T> resultCode(int resultCode) {
+      public Builder<T> resultCode(ResultCode resultCode) {
          this.resultCode = resultCode;
          return this;
       }
@@ -137,7 +171,7 @@ public class AsyncJob<T> {
          return this;
       }
 
-      public Builder<T> status(int status) {
+      public Builder<T> status(Status status) {
          this.status = status;
          return this;
       }
@@ -174,17 +208,17 @@ public class AsyncJob<T> {
    @SerializedName("jobresult")
    private T result;
    @SerializedName("jobresultcode")
-   private int resultCode = -1;
+   private ResultCode resultCode = ResultCode.UNKNOWN;
    @SerializedName("jobresulttype")
    private String resultType;
    @SerializedName("jobstatus")
-   private int status = -1;
+   private Status status = Status.UNKNOWN;
    @SerializedName("userid")
    private int userId = -1;
    private AsyncJobError error;
 
    public AsyncJob(long accountId, String cmd, Date created, long id, long instanceId, String instanceType,
-         int progress, T result, int resultCode, String resultType, int status, int userId, AsyncJobError error) {
+         int progress, T result, ResultCode resultCode, String resultType, Status status, int userId, AsyncJobError error) {
       this.accountId = accountId;
       this.cmd = cmd;
       this.created = created;
@@ -267,7 +301,7 @@ public class AsyncJob<T> {
    /**
     * @return the result code for the job
     */
-   public int getResultCode() {
+   public ResultCode getResultCode() {
       return resultCode;
    }
 
@@ -281,7 +315,7 @@ public class AsyncJob<T> {
    /**
     * @return the current job status-should be 0 for PENDING
     */
-   public int getStatus() {
+   public Status getStatus() {
       return status;
    }
 
@@ -302,6 +336,14 @@ public class AsyncJob<T> {
       return error;
    }
 
+   public boolean hasFailed() {
+      return getError() != null || getResultCode() == ResultCode.FAIL || getStatus() == Status.FAILED;
+   }
+
+   public boolean hasSucceed() {
+      return getError() == null && getResultCode() == ResultCode.SUCCESS && getStatus() == Status.SUCCEEDED;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -315,9 +357,9 @@ public class AsyncJob<T> {
       result = prime * result + ((error == null) ? 0 : error.hashCode());
       result = prime * result + progress;
       result = prime * result + ((this.result == null) ? 0 : this.result.hashCode());
-      result = prime * result + resultCode;
+      result = prime * result + resultCode.code();
       result = prime * result + ((resultType == null) ? 0 : resultType.hashCode());
-      result = prime * result + status;
+      result = prime * result + status.code();
       result = prime * result + userId;
       return result;
    }

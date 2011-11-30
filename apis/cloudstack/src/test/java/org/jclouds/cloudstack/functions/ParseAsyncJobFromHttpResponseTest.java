@@ -18,6 +18,9 @@
  */
 package org.jclouds.cloudstack.functions;
 
+import static org.jclouds.cloudstack.domain.AsyncJob.ResultCode;
+import static org.jclouds.cloudstack.domain.AsyncJob.Status;
+import static org.jclouds.cloudstack.domain.AsyncJobError.ErrorCode;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -41,7 +44,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
- * 
  * @author Adrian Cole
  */
 @Test(groups = "unit")
@@ -60,13 +62,16 @@ public class ParseAsyncJobFromHttpResponseTest {
    public void testWithNoResult() {
       String input = "{ \"queryasyncjobresultresponse\" : {\"jobid\":860,\"jobstatus\":0,\"jobprocstatus\":0,\"jobresultcode\":0} }";
 
-      AsyncJob<PublicIPAddress> expects = AsyncJob.<PublicIPAddress> builder().id(860).status(0).progress(0)
-            .resultCode(0).build();
+      AsyncJob<PublicIPAddress> expects = AsyncJob.<PublicIPAddress>builder()
+         .id(860)
+         .status(Status.IN_PROGRESS)
+         .progress(0)
+         .resultCode(ResultCode.SUCCESS).build();
 
       ParseAsyncJobFromHttpResponse parser = i.getInstance(ParseAsyncJobFromHttpResponse.class);
       @SuppressWarnings("unchecked")
       AsyncJob<PublicIPAddress> response = (AsyncJob<PublicIPAddress>) parser.apply(new HttpResponse(200, "ok",
-            Payloads.newStringPayload(input)));
+         Payloads.newStringPayload(input)));
 
       assertEquals(response, expects);
    }
@@ -74,13 +79,17 @@ public class ParseAsyncJobFromHttpResponseTest {
    public void testWithSuccessTrueResultSetsNullResult() {
       String input = "{ \"queryasyncjobresultresponse\" : {\"jobid\":1138,\"jobstatus\":1,\"jobprocstatus\":0,\"jobresultcode\":0,\"jobresulttype\":\"object\",\"jobresult\":{\"success\":true}} }";
 
-      AsyncJob<PublicIPAddress> expects = AsyncJob.<PublicIPAddress> builder().id(1138).status(1).progress(0)
-            .resultType("object").resultCode(0).build();
+      AsyncJob<PublicIPAddress> expects = AsyncJob.<PublicIPAddress>builder()
+         .id(1138)
+         .status(Status.SUCCEEDED)
+         .progress(0)
+         .resultType("object")
+         .resultCode(ResultCode.SUCCESS).build();
 
       ParseAsyncJobFromHttpResponse parser = i.getInstance(ParseAsyncJobFromHttpResponse.class);
       @SuppressWarnings("unchecked")
       AsyncJob<PublicIPAddress> response = (AsyncJob<PublicIPAddress>) parser.apply(new HttpResponse(200, "ok",
-            Payloads.newStringPayload(input)));
+         Payloads.newStringPayload(input)));
 
       assertEquals(response, expects);
    }
@@ -89,18 +98,19 @@ public class ParseAsyncJobFromHttpResponseTest {
       String input = "{ \"queryasyncjobresultresponse\" : {\"jobid\":1103,\"jobstatus\":2,\"jobprocstatus\":0,\"jobresultcode\":530,\"jobresulttype\":\"object\",\"jobresult\":{\"errorcode\":530,\"errortext\":\"Internal error executing command, please contact your system administrator\"}} }";
 
       AsyncJob<PublicIPAddress> expects = AsyncJob
-            .<PublicIPAddress> builder()
-            .id(1103)
-            .status(2)
-            .progress(0)
-            .resultType("object")
-            .error(new AsyncJobError(530, "Internal error executing command, please contact your system administrator"))
-            .resultCode(530).build();
+         .<PublicIPAddress>builder()
+         .id(1103)
+         .status(Status.FAILED)
+         .progress(0)
+         .resultType("object")
+         .error(new AsyncJobError(ErrorCode.INTERNAL_ERROR, "Internal error executing " +
+            "command, please contact your system administrator"))
+         .resultCode(ResultCode.FAIL).build();
 
       ParseAsyncJobFromHttpResponse parser = i.getInstance(ParseAsyncJobFromHttpResponse.class);
       @SuppressWarnings("unchecked")
       AsyncJob<PublicIPAddress> response = (AsyncJob<PublicIPAddress>) parser.apply(new HttpResponse(200, "ok",
-            Payloads.newStringPayload(input)));
+         Payloads.newStringPayload(input)));
 
       assertEquals(response, expects);
    }
@@ -108,13 +118,18 @@ public class ParseAsyncJobFromHttpResponseTest {
    public void testWithUnknownResultReturnsStringifiedJson() {
       String input = "{ \"queryasyncjobresultresponse\" : {\"jobid\":860,\"jobstatus\":0,\"jobprocstatus\":0,\"jobresultcode\":0,\"jobresult\":{\"foo\":{\"bar\":1}}}}";
 
-      AsyncJob<?> expects = AsyncJob.builder().id(860).status(0).progress(0).resultCode(0).result("{\"bar\":1}")
-            .build();
+      AsyncJob<?> expects = AsyncJob.builder()
+         .id(860)
+         .status(Status.IN_PROGRESS)
+         .progress(0)
+         .resultCode(ResultCode.SUCCESS)
+         .result("{\"bar\":1}")
+         .build();
 
       ParseAsyncJobFromHttpResponse parser = i.getInstance(ParseAsyncJobFromHttpResponse.class);
       @SuppressWarnings("unchecked")
       AsyncJob<PublicIPAddress> response = (AsyncJob<PublicIPAddress>) parser.apply(new HttpResponse(200, "ok",
-            Payloads.newStringPayload(input)));
+         Payloads.newStringPayload(input)));
 
       assertEquals(response, expects);
    }
@@ -127,13 +142,17 @@ public class ParseAsyncJobFromHttpResponseTest {
       // thrown in case they change their minds.
       String input = "{ \"queryasyncjobresultresponse\" : {\"jobid\":860,\"jobstatus\":0,\"jobprocstatus\":0,\"jobresultcode\":0,\"jobresult\":{\"foo\":{\"bar\":1},\"foo2\":{\"bar2\":2}}}}";
 
-      AsyncJob<?> expects = AsyncJob.builder().id(860).status(0).progress(0).resultCode(0)
-            .result(ImmutableMap.of("foo", new JsonBall("{\"bar\":1}"), "foo2", new JsonBall("{\"bar2\":2}"))).build();
+      AsyncJob<?> expects = AsyncJob.builder()
+         .id(860)
+         .status(Status.IN_PROGRESS)
+         .progress(0)
+         .resultCode(ResultCode.SUCCESS)
+         .result(ImmutableMap.of("foo", new JsonBall("{\"bar\":1}"), "foo2", new JsonBall("{\"bar2\":2}"))).build();
 
       ParseAsyncJobFromHttpResponse parser = i.getInstance(ParseAsyncJobFromHttpResponse.class);
       @SuppressWarnings("unchecked")
       AsyncJob<PublicIPAddress> response = (AsyncJob<PublicIPAddress>) parser.apply(new HttpResponse(200, "ok",
-            Payloads.newStringPayload(input)));
+         Payloads.newStringPayload(input)));
 
       assertEquals(response, expects);
    }
@@ -141,29 +160,29 @@ public class ParseAsyncJobFromHttpResponseTest {
    public void testPublicIPAddress() {
       InputStream is = getClass().getResourceAsStream("/queryasyncjobresultresponse-ipaddress.json");
       AsyncJob<PublicIPAddress> expects = AsyncJob
-            .<PublicIPAddress> builder()
-            .id(860)
-            .status(1)
-            .progress(0)
-            .resultType("object")
-            .resultCode(0)
-            .result(
-                  PublicIPAddress
-                        .builder()
-                        .id(6)
-                        .IPAddress("72.52.126.35")
-                        .allocated(
-                              new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-02-23T20:15:01-0800"))
-                        .zoneId(1).zoneName("San Jose 1").isSourceNAT(false).account("adrian").domainId(1)
-                        .domain("ROOT").usesVirtualNetwork(true).isStaticNAT(false).associatedNetworkId(204)
-                        .networkId(200).state(PublicIPAddress.State.ALLOCATING).build()
+         .<PublicIPAddress>builder()
+         .id(860)
+         .status(Status.SUCCEEDED)
+         .progress(0)
+         .resultType("object")
+         .resultCode(ResultCode.SUCCESS)
+         .result(
+            PublicIPAddress
+               .builder()
+               .id(6)
+               .IPAddress("72.52.126.35")
+               .allocated(
+                  new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-02-23T20:15:01-0800"))
+               .zoneId(1).zoneName("San Jose 1").isSourceNAT(false).account("adrian").domainId(1)
+               .domain("ROOT").usesVirtualNetwork(true).isStaticNAT(false).associatedNetworkId(204)
+               .networkId(200).state(PublicIPAddress.State.ALLOCATING).build()
 
-            ).build();
+         ).build();
 
       ParseAsyncJobFromHttpResponse parser = i.getInstance(ParseAsyncJobFromHttpResponse.class);
       @SuppressWarnings("unchecked")
       AsyncJob<PublicIPAddress> response = (AsyncJob<PublicIPAddress>) parser.apply(new HttpResponse(200, "ok",
-            Payloads.newInputStreamPayload(is)));
+         Payloads.newInputStreamPayload(is)));
 
       assertEquals(response, expects);
    }
@@ -171,21 +190,21 @@ public class ParseAsyncJobFromHttpResponseTest {
    public void testIPForwardingRule() {
       InputStream is = getClass().getResourceAsStream("/queryasyncjobresultresponse-ipforwardingrule.json");
       AsyncJob<IPForwardingRule> expects = AsyncJob
-            .<IPForwardingRule> builder()
-            .id(1133)
-            .status(1)
-            .progress(0)
-            .resultType("object")
-            .resultCode(0)
-            .result(
-                  IPForwardingRule.builder().id(109).protocol("tcp").virtualMachineId(226)
-                        .virtualMachineName("i-3-226-VM").IPAddressId(36).IPAddress("72.52.126.65").startPort(22)
-                        .endPort(22).state("Active").build()).build();
+         .<IPForwardingRule>builder()
+         .id(1133)
+         .status(Status.SUCCEEDED)
+         .progress(0)
+         .resultType("object")
+         .resultCode(ResultCode.SUCCESS)
+         .result(
+            IPForwardingRule.builder().id(109).protocol("tcp").virtualMachineId(226)
+               .virtualMachineName("i-3-226-VM").IPAddressId(36).IPAddress("72.52.126.65").startPort(22)
+               .endPort(22).state("Active").build()).build();
 
       ParseAsyncJobFromHttpResponse parser = i.getInstance(ParseAsyncJobFromHttpResponse.class);
       @SuppressWarnings("unchecked")
       AsyncJob<IPForwardingRule> response = (AsyncJob<IPForwardingRule>) parser.apply(new HttpResponse(200, "ok",
-            Payloads.newInputStreamPayload(is)));
+         Payloads.newInputStreamPayload(is)));
 
       assertEquals(response, expects);
    }
@@ -194,10 +213,10 @@ public class ParseAsyncJobFromHttpResponseTest {
       InputStream is = getClass().getResourceAsStream("/queryasyncjobresultresponse-createtemplate.json");
       ParseAsyncJobFromHttpResponse parser = i.getInstance(ParseAsyncJobFromHttpResponse.class);
       AsyncJob<?> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
-      assertTrue(response.getResult() instanceof Template, "response expected to be Template, actually is "+response.getResult().getClass());
+      assertTrue(response.getResult() instanceof Template, "response expected to be Template, actually is " + response.getResult().getClass());
 
       is = getClass().getResourceAsStream("/queryasyncjobresultresponse-extracttemplate.json");
       response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
-      assertTrue(response.getResult() instanceof TemplateExtraction, "response expected to be TemplateExtraction, actually is "+response.getResult().getClass());
+      assertTrue(response.getResult() instanceof TemplateExtraction, "response expected to be TemplateExtraction, actually is " + response.getResult().getClass());
    }
 }
