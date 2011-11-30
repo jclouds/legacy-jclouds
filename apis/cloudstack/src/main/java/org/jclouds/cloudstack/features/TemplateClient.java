@@ -130,7 +130,7 @@ public interface TemplateClient {
     * @param options
     *           optional arguments
     */
-   void deleteTemplate(long id, DeleteTemplateOptions... options);
+   AsyncCreateResponse deleteTemplate(long id, DeleteTemplateOptions... options);
 
    /**
     * List all executable templates.

@@ -116,8 +116,9 @@ public interface TemplateAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "deleteTemplate")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteTemplate(@QueryParam("id") long id, DeleteTemplateOptions... options);
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<AsyncCreateResponse> deleteTemplate(@QueryParam("id") long id, DeleteTemplateOptions... options);
 
    /**
     * @see TemplateClient#listTemplates
