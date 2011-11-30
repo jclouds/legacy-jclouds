@@ -231,13 +231,8 @@ public class SshjSshClient implements SshClient {
             if (i + 1 == sshRetries) {
                logger.error(from, "<< " + errorMessage + ": out of retries %d", sshRetries);
                throw propagate(from, errorMessage);
-            } else if (Throwables2.getFirstThrowableOfType(from, IllegalStateException.class) != null) {
-               logger.warn(from, "<< " + errorMessage + ": " + from.getMessage());
-               backoffForAttempt(i + 1, errorMessage + ": " + from.getMessage());
-               if (connection != sshConnection)
-                  connect();
-               continue;
-            } else if (shouldRetry(from)) {
+            } else if (shouldRetry(from) ||
+                  (Throwables2.getFirstThrowableOfType(from, IllegalStateException.class) != null)) {
                logger.warn(from, "<< " + errorMessage + ": " + from.getMessage());
                backoffForAttempt(i + 1, errorMessage + ": " + from.getMessage());
                if (connection != sshConnection)
