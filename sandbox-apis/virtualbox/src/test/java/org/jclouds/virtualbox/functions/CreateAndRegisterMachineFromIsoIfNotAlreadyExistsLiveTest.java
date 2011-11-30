@@ -38,7 +38,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends B
    @Test
    public void testCreateNewMachine() throws Exception {
       new UnregisterMachineIfExists(manager, CleanupMode.Full).apply("jclouds-test-create-1-node");
-      IMachine debianNode = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(null, "Debian", "jclouds-test-create-1", true, manager)
+      IMachine debianNode = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists("Debian", "jclouds-test-create-1", true, manager)
               .apply("jclouds-test-create-1-node");
       IMachine machine = manager.getVBox().findMachine("jclouds-test-create-1-node");
       assertEquals(debianNode.getName(), machine.getName());
@@ -49,7 +49,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends B
    public void testCreateNewMachineWithBadOsType() throws Exception {
       new UnregisterMachineIfExists(manager, CleanupMode.Full).apply("jclouds-test-create-2-node");
       try {
-         new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(null, "SomeWeirdUnknownOs", "jclouds-test-create-2", true, manager)
+         new CreateAndRegisterMachineFromIsoIfNotAlreadyExists("SomeWeirdUnknownOs", "jclouds-test-create-2", true, manager)
                  .apply("jclouds-test-create-2-node");
          fail();
       } catch (VBoxException e) {

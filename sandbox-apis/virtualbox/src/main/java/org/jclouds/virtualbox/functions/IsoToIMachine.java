@@ -61,7 +61,6 @@ public class IsoToIMachine implements Function<String, IMachine> {
    private VirtualBoxManager manager;
    private String adminDisk;
    private String diskFormat;
-   private String settingsFile;
    private String vmName;
    private String osTypeId;
    private String vmId;
@@ -75,14 +74,13 @@ public class IsoToIMachine implements Function<String, IMachine> {
    private int webServerPort;
 
    @Inject
-   public IsoToIMachine(VirtualBoxManager manager, String adminDisk, String diskFormat, String settingsFile,
+   public IsoToIMachine(VirtualBoxManager manager, String adminDisk, String diskFormat,
                         String vmName, String osTypeId, String vmId, boolean forceOverwrite, String controllerIDE,
                         ComputeServiceContext context, String hostId, String guestId, Predicate<IPSocket> socketTester,
                         String webServerHost, int webServerPort) {
       this.manager = manager;
       this.adminDisk = adminDisk;
       this.diskFormat = diskFormat;
-      this.settingsFile = settingsFile;
       this.vmName = vmName;
       this.osTypeId = osTypeId;
       this.vmId = vmId;
@@ -101,7 +99,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
 
       ensureWebServerIsRunning();
 
-      final IMachine vm = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(settingsFile, osTypeId, vmId, forceOverwrite,
+      final IMachine vm = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(osTypeId, vmId, forceOverwrite,
               manager).apply(vmName);
 
       final String defaultWorkingDir = System.getProperty("user.home") + "/jclouds-virtualbox-test";

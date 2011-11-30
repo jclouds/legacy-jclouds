@@ -85,7 +85,7 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends Ba
       try {
          Predicate<IPSocket> socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 10, 1, TimeUnit.SECONDS);
          return new IsoToIMachine(manager, adminDisk, diskFormat,
-                 settingsFile, vmName, osTypeId, vmId, forceOverwrite,
+                 vmName, osTypeId, vmId, forceOverwrite,
                  controllerIDE, localHostContext, hostId, guestId, socketTester,
                  "127.0.0.1", 8080).apply(isoName);
       } catch (IllegalStateException e) {

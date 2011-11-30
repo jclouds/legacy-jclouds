@@ -19,29 +19,26 @@
 
 package org.jclouds.virtualbox.functions;
 
-import javax.annotation.Nullable;
-
+import com.google.common.base.Function;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import com.google.common.base.Function;
+import javax.annotation.Nullable;
 
 /**
  * @author Mattias Holmqvist
  */
 public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Function<String, IMachine> {
 
-   private String settingsFile;
    private String osTypeId;
    private String vmId;
    private boolean forceOverwrite;
    private VirtualBoxManager manager;
 
-   public CreateAndRegisterMachineFromIsoIfNotAlreadyExists(String settingsFile, String osTypeId, String vmId,
-         boolean forceOverwrite, VirtualBoxManager manager) {
-      this.settingsFile = settingsFile;
+   public CreateAndRegisterMachineFromIsoIfNotAlreadyExists(String osTypeId, String vmId,
+                                                            boolean forceOverwrite, VirtualBoxManager manager) {
       this.osTypeId = osTypeId;
       this.vmId = vmId;
       this.forceOverwrite = forceOverwrite;
@@ -68,7 +65,9 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
    }
 
    private IMachine createMachine(IVirtualBox vBox, String vmName) {
-      IMachine newMachine = vBox.createMachine(settingsFile, vmName, osTypeId, vmId, forceOverwrite);
+      // TODO: add support for settingsfile
+      String settingsFile1 = null;
+      IMachine newMachine = vBox.createMachine(settingsFile1, vmName, osTypeId, vmId, forceOverwrite);
       manager.getVBox().registerMachine(newMachine);
       return newMachine;
    }

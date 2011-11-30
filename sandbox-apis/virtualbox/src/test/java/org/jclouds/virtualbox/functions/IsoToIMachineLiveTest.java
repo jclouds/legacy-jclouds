@@ -20,7 +20,6 @@
 package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.in;
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
@@ -36,7 +35,6 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.predicates.SocketOpenPredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.json.Json;
@@ -44,7 +42,6 @@ import org.jclouds.json.config.GsonModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.predicates.SocketOpen;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExists;
 import org.testng.annotations.BeforeGroups;
@@ -67,7 +64,6 @@ public class IsoToIMachineLiveTest extends BaseVirtualBoxClientLiveTest {
    }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
          .getInstance(Json.class));
 
-   private String settingsFile = null;
    private boolean forceOverwrite = true;
    private String vmId = "jclouds-image-iso-1";
    private String osTypeId = "";
@@ -92,7 +88,7 @@ public class IsoToIMachineLiveTest extends BaseVirtualBoxClientLiveTest {
       ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId,
             "localhost", new Credentials("toor", "password"));
       Predicate<IPSocket> socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 10, 1, TimeUnit.SECONDS);
-      IMachine imageMachine = new IsoToIMachine(manager, adminDisk, diskFormat, settingsFile, vmName, osTypeId, vmId,
+      IMachine imageMachine = new IsoToIMachine(manager, adminDisk, diskFormat, vmName, osTypeId, vmId,
             forceOverwrite, controllerIDE, localHostContext, hostId, guestId, socketTester, "127.0.0.1", 8080)
             .apply("ubuntu-11.04-server-i386.iso");
 

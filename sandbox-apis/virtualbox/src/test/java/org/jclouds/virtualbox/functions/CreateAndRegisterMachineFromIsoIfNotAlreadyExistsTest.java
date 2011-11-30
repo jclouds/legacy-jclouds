@@ -68,7 +68,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       replay(manager, vBox);
 
-      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists("", "", "", false, manager).apply(vmName);
+      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists("", "", false, manager).apply(vmName);
 
       verify(manager, vBox);
    }
@@ -87,7 +87,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       replay(manager, vBox);
 
-      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists("", "", "", false, manager).apply(vmName);
+      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists("", "", false, manager).apply(vmName);
    }
 
    @Test(expectedExceptions = VBoxException.class)
@@ -107,7 +107,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       replay(manager, vBox);
 
-      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists("", "", "", false, manager).apply(vmName);
+      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists("", "", false, manager).apply(vmName);
 
    }
 
