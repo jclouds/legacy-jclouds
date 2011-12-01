@@ -332,6 +332,16 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
       }
    }
 
+   @Test
+   public void testTemplateBuilderCanUseImageIdFromNonDefaultOwner() {
+      // This is the id of a public image, not owned by one of the four default owners
+      String imageId = "us-east-1/ami-44d02f2d";
+      Template defaultTemplate = context.getComputeService().templateBuilder().imageId(imageId)
+               .imageMatches(EC2ImagePredicates.rootDeviceType(RootDeviceType.INSTANCE_STORE)).build();
+      assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
+      assertEquals(defaultTemplate.getImage().getId(), imageId);
+   }
+
    @Override
    protected Set<String> getIso3166Codes() {
       return ImmutableSet.<String> of("US-VA", "US-CA", "US-OR", "IE", "SG", "JP-13");

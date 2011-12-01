@@ -18,16 +18,38 @@
  */
 package org.jclouds.ec2.compute.suppliers;
 
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Maps.uniqueIndex;
+import static org.jclouds.ec2.options.DescribeImagesOptions.Builder.ownedBy;
+import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.functions.EC2ImageParser;
+import org.jclouds.ec2.compute.strategy.DescribeImagesParallel;
+import org.jclouds.ec2.options.DescribeImagesOptions;
+import org.jclouds.location.Region;
+import org.jclouds.logging.Logger;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.cache.Cache;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -36,16 +58,75 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class EC2ImageSupplier implements Supplier<Set<? extends Image>> {
-   private final Supplier<Cache<RegionAndName, ? extends Image>> map;
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
+
+   private final Set<String> regions;
+   private final DescribeImagesParallel describer;
+   private final String[] amiOwners;
+   private final EC2ImageParser parser;
+   private final Supplier<Cache<RegionAndName, ? extends Image>> cache;
 
    @Inject
-   EC2ImageSupplier(Supplier<Cache<RegionAndName, ? extends Image>> map) {
-      this.map = map;
+   protected EC2ImageSupplier(@Region Set<String> regions, DescribeImagesParallel describer,
+         @Named(PROPERTY_EC2_AMI_OWNERS) String[] amiOwners, Supplier<Cache<RegionAndName, ? extends Image>> cache,
+         EC2ImageParser parser) {
+      this.regions = regions;
+      this.describer = describer;
+      this.amiOwners = amiOwners;
+      this.cache = cache;
+      this.parser = parser;
    }
 
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override
    public Set<? extends Image> get() {
-      return Sets.newLinkedHashSet(map.get().asMap().values());
+      if (amiOwners.length == 0) {
+         logger.debug(">> no owners specified, skipping image parsing");
+         return Collections.emptySet();
+      
+      } else {
+         logger.debug(">> providing images");
+
+         Iterable<Entry<String, DescribeImagesOptions>> queries = getDescribeQueriesForOwnersInRegions(regions,
+                  amiOwners);
+
+         Iterable<? extends Image> parsedImages = ImmutableSet.copyOf(filter(transform(describer.apply(queries), parser), Predicates
+                  .notNull()));
+
+         ImmutableMap<RegionAndName, ? extends Image> imageMap = uniqueIndex(parsedImages, new Function<Image, RegionAndName>() {
+
+            @Override
+            public RegionAndName apply(Image from) {
+               return new RegionAndName(from.getLocation().getId(), from.getProviderId());
+            }
+
+         });
+         
+         cache.get().invalidateAll();
+         cache.get().asMap().putAll((Map)imageMap);
+         logger.debug("<< images(%d)", imageMap.size());
+         
+         return Sets.newLinkedHashSet(imageMap.values());
+      }
    }
 
+   public Iterable<Entry<String, DescribeImagesOptions>> getDescribeQueriesForOwnersInRegions(Set<String> regions,
+         String[] amiOwners) {
+      DescribeImagesOptions options = getOptionsForOwners(amiOwners);
+      Builder<String, DescribeImagesOptions> builder = ImmutableMap.<String, DescribeImagesOptions> builder();
+      for (String region : regions)
+         builder.put(region, options);
+      return builder.build().entrySet();
+   }
+
+   public DescribeImagesOptions getOptionsForOwners(String... amiOwners) {
+      DescribeImagesOptions options;
+      if (amiOwners.length == 1 && amiOwners[0].equals("*"))
+         options = new DescribeImagesOptions();
+      else
+         options = ownedBy(amiOwners);
+      return options;
+   }
 }

@@ -16,34 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.ec2.compute.suppliers;
+package org.jclouds.aws.ec2.compute.config;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import java.util.Set;
 
+import org.jclouds.aws.ec2.compute.suppliers.AWSEC2ImageSupplier;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.config.EC2BindComputeSuppliersByClass;
 
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-
 /**
- * 
- * @author Adrian Cole
+ * @author Aled Sage
  */
-@Singleton
-public class RegionAndNameToImageSupplier implements Supplier<Cache<RegionAndName, ? extends Image>> {
-   private final Cache<RegionAndName, Image> cache;
-
-   @Inject
-   protected RegionAndNameToImageSupplier(CacheLoader<RegionAndName, Image> regionAndIdToImage) {
-      cache = CacheBuilder.newBuilder().build(regionAndIdToImage);
-   }
-
+public class AWSEC2BindComputeSuppliersByClass extends EC2BindComputeSuppliersByClass {
    @Override
-   public Cache<RegionAndName, ? extends Image> get() {
-      return cache;
+   protected Class<? extends Supplier<Set<? extends Image>>> defineImageSupplier() {
+      return AWSEC2ImageSupplier.class;
    }
 }

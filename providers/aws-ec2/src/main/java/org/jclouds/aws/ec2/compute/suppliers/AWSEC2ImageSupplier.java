@@ -25,6 +25,7 @@ import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUE
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_REGIONS;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -47,8 +48,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -60,12 +60,14 @@ import com.google.common.util.concurrent.Futures;
  * @author Adrian Cole
  */
 @Singleton
-public class AWSRegionAndNameToImageSupplier implements Supplier<Cache<RegionAndName, ? extends Image>> {
+public class AWSEC2ImageSupplier implements Supplier<Set<? extends Image>> {
+   
+   // TODO could/should this sub-class EC2ImageSupplier? Or does that confuse guice?
+   
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-
-   private final CacheLoader<RegionAndName, Image> regionAndIdToImage;
+   
    private final Set<String> clusterComputeIds;
    private final CallForImages.Factory factory;
    private final ExecutorService executor;
@@ -74,11 +76,13 @@ public class AWSRegionAndNameToImageSupplier implements Supplier<Cache<RegionAnd
    private final String amiQuery;
    private final Iterable<String> clusterRegions;
    private final String ccAmiQuery;
-
+   private final Supplier<Cache<RegionAndName, ? extends Image>> cache;
+   
    @Inject
-   protected AWSRegionAndNameToImageSupplier(@Region Set<String> regions,
+   protected AWSEC2ImageSupplier(@Region Set<String> regions,
             @Named(PROPERTY_EC2_AMI_QUERY) String amiQuery, @Named(PROPERTY_EC2_CC_REGIONS) String clusterRegions,
-            @Named(PROPERTY_EC2_CC_AMI_QUERY) String ccAmiQuery, CacheLoader<RegionAndName, Image> regionAndIdToImage,
+            @Named(PROPERTY_EC2_CC_AMI_QUERY) String ccAmiQuery, 
+            Supplier<Cache<RegionAndName, ? extends Image>> cache,
             CallForImages.Factory factory, @ClusterCompute Set<String> clusterComputeIds,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.factory = factory;
@@ -86,21 +90,21 @@ public class AWSRegionAndNameToImageSupplier implements Supplier<Cache<RegionAnd
       this.amiQuery = amiQuery;
       this.clusterRegions = Splitter.on(',').split(clusterRegions);
       this.ccAmiQuery = ccAmiQuery;
-      this.regionAndIdToImage = regionAndIdToImage;
+      this.cache = cache;
       this.clusterComputeIds = clusterComputeIds;
       this.executor = executor;
    }
-
+   
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override
-   public Cache<RegionAndName, ? extends Image> get() {
+   public Set<? extends Image> get() {
       Future<Iterable<Image>> normalImages = images(regions, amiQuery, PROPERTY_EC2_AMI_QUERY);
       ImmutableSet<Image> clusterImages;
       try {
          clusterImages = ImmutableSet.copyOf(images(clusterRegions, ccAmiQuery, PROPERTY_EC2_CC_AMI_QUERY).get());
       } catch (Exception e) {
          logger.warn(e, "Error parsing images in query %s", ccAmiQuery);
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
       Iterables.addAll(clusterComputeIds, transform(clusterImages, new Function<Image, String>() {
 
@@ -108,29 +112,34 @@ public class AWSRegionAndNameToImageSupplier implements Supplier<Cache<RegionAnd
          public String apply(Image arg0) {
             return arg0.getId();
          }
+
       }));
       Iterable<? extends Image> parsedImages;
       try {
          parsedImages = ImmutableSet.copyOf(concat(clusterImages, normalImages.get()));
       } catch (Exception e) {
          logger.warn(e, "Error parsing images in query %s", amiQuery);
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
-      Cache<RegionAndName, Image> cache = CacheBuilder.newBuilder().build(regionAndIdToImage);
 
-      cache.asMap().putAll(uniqueIndex(parsedImages, new Function<Image, RegionAndName>() {
+      // TODO Need to clear out old entries; previously it was a new cache object every time 
+      // (and enclosed within the cache provider so didn't risk someone getting the cache while it was empty)!
+      ImmutableMap<RegionAndName, ? extends Image> imageMap = uniqueIndex(parsedImages, new Function<Image, RegionAndName>() {
 
          @Override
          public RegionAndName apply(Image from) {
             return new RegionAndName(from.getLocation().getId(), from.getProviderId());
          }
 
-      }));
-      logger.debug("<< images(%d)", cache.asMap().size());
-      return cache;
+      });
+      cache.get().invalidateAll();
+      cache.get().asMap().putAll((Map)imageMap);
+      logger.debug("<< images(%d)", imageMap.size());
+      
+      // TODO Used to be mutable; was this assumed anywhere?
+      return ImmutableSet.copyOf(imageMap.values());
    }
-
+   
    private Future<Iterable<Image>> images(Iterable<String> regions, String query, String tag) {
       if (query.equals("")) {
          logger.debug(">> no %s specified, skipping image parsing", tag);

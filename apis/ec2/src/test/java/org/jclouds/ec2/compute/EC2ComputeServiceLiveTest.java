@@ -22,6 +22,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
@@ -52,6 +53,7 @@ import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
@@ -235,6 +237,45 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          client.destroyNodesMatching(NodePredicates.inGroup(group));
          ebsClient.deleteSnapshotInRegion(snapshot.getRegion(), snapshot.getId());
       }
+   }
+
+   /**
+    * e.g. on aws-ec2: timeByImageId=534ms; timeByOsFamily=11587ms.
+    * Expecting it to be at least 2 times faster seems reasonable, including on other ec2 flavours.
+    */
+   @Test(enabled = true)
+   public void testTemplateBuildsFasterByImageIdThanBySearchingAllImages() throws Exception {
+      Stopwatch stopwatch = new Stopwatch();
+      
+      // Find any image, and get its id
+      template = buildTemplate(client.templateBuilder());
+      String imageId = template.getImage().getId();
+      
+      // Build a template using that specific image-id
+      context.close();
+      setupClient();
+      stopwatch.start();
+      client.templateBuilder().imageId(imageId).build();
+      stopwatch.stop();
+      long timeByImageId = stopwatch.elapsedMillis();
+
+      // Build a template using that specific image-id
+      context.close();
+      setupClient();
+      stopwatch.reset();
+      stopwatch.start();
+      try {
+         client.templateBuilder().osFamily(OsFamily.UBUNTU).build();
+      } catch (NoSuchElementException e) {
+         // ignore; we are only interested in how long it took to establish this fact!
+      }
+      stopwatch.stop();
+      long timeByOsFamily = stopwatch.elapsedMillis();
+
+      System.out.println("testTemplateBuildsFasterByImageIdThanBySearchingAllImages: " +
+               "timeByImageId="+timeByImageId+"ms; timeByOsFamily="+timeByOsFamily+"ms");
+      
+      assertTrue((timeByImageId*2) < timeByOsFamily, "timeByImageId="+timeByImageId+"; timeByOsFamily="+timeByOsFamily);
    }
 
    protected RunningInstance getInstance(InstanceClient instanceClient, String id) {
