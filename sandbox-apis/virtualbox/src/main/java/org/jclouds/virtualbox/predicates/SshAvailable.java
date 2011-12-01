@@ -19,7 +19,6 @@
 
 package org.jclouds.virtualbox.predicates;
 
-import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
 
 import javax.annotation.Nullable;
@@ -30,7 +29,6 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.SshException;
-import org.virtualbox_4_1.IMachine;
 
 import com.google.common.base.Predicate;
 
@@ -38,35 +36,38 @@ import com.google.common.base.Predicate;
  * 
  * @author Andrea Turli
  */
-public class SshDaemonIsRunning implements Predicate<IMachine> {
+public class SshAvailable implements Predicate<String> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
    private final ComputeServiceContext context;
-   private final String nodeId;
 
-   public SshDaemonIsRunning(ComputeServiceContext context, String nodeId) {
+   public SshAvailable(ComputeServiceContext context) {
       this.context = context;
-      this.nodeId = nodeId;
    }
 
    @Override
-   public boolean apply(@Nullable IMachine machine) {
-      boolean sshDeamonIsRunning = false;
+   public boolean apply(@Nullable String nodeId) {
+      boolean sshDaemonIsRunning = false;
       try {
          if (context.getComputeService()
-               .runScriptOnNode(nodeId, "id", wrapInInitScript(false))
+               .runScriptOnNode(nodeId, "id", wrapInInitScript(false).runAsRoot(false))
                .getExitCode() == 0) {
-            logger.debug("Got response from ssh daemon.");
-            sshDeamonIsRunning = true;
+            logger.debug("Got response from ssh daemon running on %s", nodeId);
+            sshDaemonIsRunning = true;
          }
       } catch (SshException e) {
-         logger.debug("No response from ssh daemon...");
-         propagate(e);
-      }
-      return sshDeamonIsRunning;
+         logger.debug("No response from ssh daemon running on %s", nodeId);
+         return sshDaemonIsRunning;
+      } 
+      return sshDaemonIsRunning;
+   }
+
+   @Override
+   public String toString() {
+      return "SSH Daemon is available";
    }
 
 }

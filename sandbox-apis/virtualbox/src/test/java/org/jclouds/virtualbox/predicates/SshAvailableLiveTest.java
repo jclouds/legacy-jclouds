@@ -2,6 +2,9 @@ package org.jclouds.virtualbox.predicates;
 
 import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
 import static org.jclouds.virtualbox.util.MachineUtils.applyForMachine;
+import static org.jclouds.virtualbox.util.MachineUtils.lockSessionOnMachineAndApply;
+import static org.virtualbox_4_1.LockType.Shared;
+import static org.testng.Assert.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -16,12 +19,15 @@ import org.jclouds.virtualbox.functions.IsoToIMachine;
 import org.jclouds.virtualbox.functions.LaunchMachineIfNotAlreadyRunning;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.VirtualBoxManager;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
 @Test(groups = "live", singleThreaded = true, testName = "IsoToIMachineLiveTest")
-public class SshDaemonIsRunningLiveTest extends BaseVirtualBoxClientLiveTest {
+public class SshAvailableLiveTest extends BaseVirtualBoxClientLiveTest {
 
    private boolean forceOverwrite = true;
    private String vmId = "jclouds-image-iso-1";
@@ -43,13 +49,23 @@ public class SshDaemonIsRunningLiveTest extends BaseVirtualBoxClientLiveTest {
             hostId, "localhost", guestId, "localhost", new Credentials("toor",
                   "password"));
 
-      IMachine nodeWithSshDaemonRunning = getNodeWithSshDaemonRunning(manager,
-            localHostContext);
+     getNodeWithSshDaemonRunning(manager, localHostContext);
       ensureMachineIsLaunched(vmName);
-      RetryablePredicate<IMachine> predicate = new RetryablePredicate<IMachine>(
-            new SshDaemonIsRunning(localHostContext, guestId), 5, 1,
+      RetryablePredicate<String> predicate = new RetryablePredicate<String>(
+            new SshAvailable(localHostContext), 5, 1,
             TimeUnit.SECONDS);
-      predicate.apply(nodeWithSshDaemonRunning);
+      assertTrue(predicate.apply(guestId));
+      
+      lockSessionOnMachineAndApply(manager, Shared, vmName, new Function<ISession, Void>() {
+
+         @Override
+         public Void apply(ISession session) {
+            IProgress powerDownProgress = session.getConsole().powerDown();
+            powerDownProgress.waitForCompletion(-1);
+            return null;
+         }
+
+      });
    }
 
    private IMachine getNodeWithSshDaemonRunning(VirtualBoxManager manager,
