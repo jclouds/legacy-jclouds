@@ -67,7 +67,7 @@ public class SshAvailable implements Predicate<String> {
 
    @Override
    public String toString() {
-      return "SSH Daemon is available";
+      return "sshAvailable()";
    }
 
 }
