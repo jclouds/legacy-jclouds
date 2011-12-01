@@ -62,6 +62,9 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
    }
 
    /**
+    * sets the displayName - just for display purposes. We don't pass this
+    * parameter to the backend.
+    * 
     * @param displayName
     *           an optional user generated name for the virtual machine
     */
@@ -98,6 +101,10 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
    }
 
    /**
+    * sets the hostName, it will be propagated down to the backend and set on
+    * the user vm. If this parameter is not passed it, it will be defaulted to
+    * our usual "i-x-y'
+    * 
     * @param name
     *           host name for the virtual machine
     */
@@ -108,7 +115,7 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
 
    /**
     * @param ipOnDefaultNetwork
-    *          the requested ip address (2.2.12 only option)
+    *           the requested ip address (2.2.12 only option)
     */
    public DeployVirtualMachineOptions ipOnDefaultNetwork(String ipOnDefaultNetwork) {
       this.queryParameters.replaceValues("ipaddress", ImmutableSet.of(ipOnDefaultNetwork));
@@ -117,19 +124,14 @@ public class DeployVirtualMachineOptions extends AccountInDomainOptions {
 
    /**
     * @param ipsToNetworks
-    *          mapping ip addresses to network ids (2.2.12 only option)
+    *           mapping ip addresses to network ids (2.2.12 only option)
     */
    public DeployVirtualMachineOptions ipsToNetworks(Map<String, Long> ipsToNetworks) {
       int count = 0;
-      for(String ip : ipsToNetworks.keySet()) {
-         this.queryParameters.replaceValues(
-            String.format("ipnetworklist[%d].ip", count),
-            ImmutableSet.of(ip)
-         );
-         this.queryParameters.replaceValues(
-            String.format("ipnetworklist[%d].networkid", count),
-            ImmutableSet.of("" + ipsToNetworks.get(ip))
-         );
+      for (String ip : ipsToNetworks.keySet()) {
+         this.queryParameters.replaceValues(String.format("ipnetworklist[%d].ip", count), ImmutableSet.of(ip));
+         this.queryParameters.replaceValues(String.format("ipnetworklist[%d].networkid", count),
+               ImmutableSet.of("" + ipsToNetworks.get(ip)));
          count += 1;
       }
       return this;

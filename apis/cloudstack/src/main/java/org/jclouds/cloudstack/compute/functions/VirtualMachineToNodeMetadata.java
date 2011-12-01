@@ -60,16 +60,16 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, NodeMetadata> {
 
    public static final Map<VirtualMachine.State, NodeState> vmStateToNodeState = ImmutableMap
-      .<VirtualMachine.State, NodeState>builder().put(VirtualMachine.State.STARTING, NodeState.PENDING)
-      .put(VirtualMachine.State.RUNNING, NodeState.RUNNING).put(VirtualMachine.State.STOPPING, NodeState.PENDING)
-      .put(VirtualMachine.State.STOPPED, NodeState.SUSPENDED)
-      .put(VirtualMachine.State.DESTROYED, NodeState.TERMINATED)
-      .put(VirtualMachine.State.EXPUNGING, NodeState.TERMINATED)
-      .put(VirtualMachine.State.MIGRATING, NodeState.PENDING).put(VirtualMachine.State.ERROR, NodeState.ERROR)
-      .put(VirtualMachine.State.UNKNOWN, NodeState.UNRECOGNIZED)
+         .<VirtualMachine.State, NodeState> builder().put(VirtualMachine.State.STARTING, NodeState.PENDING)
+         .put(VirtualMachine.State.RUNNING, NodeState.RUNNING).put(VirtualMachine.State.STOPPING, NodeState.PENDING)
+         .put(VirtualMachine.State.STOPPED, NodeState.SUSPENDED)
+         .put(VirtualMachine.State.DESTROYED, NodeState.TERMINATED)
+         .put(VirtualMachine.State.EXPUNGING, NodeState.TERMINATED)
+         .put(VirtualMachine.State.MIGRATING, NodeState.PENDING).put(VirtualMachine.State.ERROR, NodeState.ERROR)
+         .put(VirtualMachine.State.UNKNOWN, NodeState.UNRECOGNIZED)
          // TODO: is this really a state?
-      .put(VirtualMachine.State.SHUTDOWNED, NodeState.PENDING)
-      .put(VirtualMachine.State.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
+         .put(VirtualMachine.State.SHUTDOWNED, NodeState.PENDING)
+         .put(VirtualMachine.State.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
 
    private final FindLocationForVirtualMachine findLocationForVirtualMachine;
    private final FindHardwareForVirtualMachine findHardwareForVirtualMachine;
@@ -78,14 +78,14 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
 
    @Inject
    VirtualMachineToNodeMetadata(FindLocationForVirtualMachine findLocationForVirtualMachine,
-                                FindHardwareForVirtualMachine findHardwareForVirtualMachine,
-                                FindImageForVirtualMachine findImageForVirtualMachine,
-                                Cache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine) {
+         FindHardwareForVirtualMachine findHardwareForVirtualMachine,
+         FindImageForVirtualMachine findImageForVirtualMachine,
+         Cache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine) {
       this.findLocationForVirtualMachine = checkNotNull(findLocationForVirtualMachine, "findLocationForVirtualMachine");
       this.findHardwareForVirtualMachine = checkNotNull(findHardwareForVirtualMachine, "findHardwareForVirtualMachine");
       this.findImageForVirtualMachine = checkNotNull(findImageForVirtualMachine, "findImageForVirtualMachine");
       this.getIPForwardingRulesByVirtualMachine = checkNotNull(getIPForwardingRulesByVirtualMachine,
-         "getIPForwardingRulesByVirtualMachine");
+            "getIPForwardingRulesByVirtualMachine");
    }
 
    @Override
@@ -94,7 +94,13 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
       builder.ids(from.getId() + "");
       builder.name(from.getName());
-      builder.hostname(from.getHostname());
+      // TODO: in cloudstack 2.2.12, when "name" was set fine on the backend,
+      // but wrong API response was returned to the user
+      // http://bugs.cloud.com/show_bug.cgi?id=11664
+      //
+      // we set displayName to the same value as name, but this could be wrong
+      // on hosts not started with jclouds
+      builder.hostname(from.getDisplayName());
       builder.location(findLocationForVirtualMachine.apply(from));
       builder.group(parseGroupFromName(from.getDisplayName()));
       Image image = findImageForVirtualMachine.apply(from);
@@ -112,7 +118,7 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
       // TODO: check to see public or private
       if (from.getIPAddress() != null) {
          boolean isPrivate = InetAddresses2.isPrivateIPAddress(from.getIPAddress());
-         Set<String> addresses = ImmutableSet.<String>of(from.getIPAddress());
+         Set<String> addresses = ImmutableSet.<String> of(from.getIPAddress());
          if (isPrivate)
             builder.privateAddresses(addresses);
          else
@@ -120,19 +126,19 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
       }
       try {
 
-         builder.publicAddresses(transform(filter(getIPForwardingRulesByVirtualMachine.getUnchecked(from.getId()),
-            new Predicate<IPForwardingRule>() {
-               @Override
-               public boolean apply(@Nullable IPForwardingRule rule) {
-                  return !"Deleting".equals(rule.getState());
-               }
-            }),
-            new Function<IPForwardingRule, String>() {
-               @Override
-               public String apply(@Nullable IPForwardingRule rule) {
-                  return rule.getIPAddress();
-               }
-            }));
+         builder.publicAddresses(transform(
+               filter(getIPForwardingRulesByVirtualMachine.getUnchecked(from.getId()),
+                     new Predicate<IPForwardingRule>() {
+                        @Override
+                        public boolean apply(@Nullable IPForwardingRule rule) {
+                           return !"Deleting".equals(rule.getState());
+                        }
+                     }), new Function<IPForwardingRule, String>() {
+                  @Override
+                  public String apply(@Nullable IPForwardingRule rule) {
+                     return rule.getIPAddress();
+                  }
+               }));
       } catch (UncheckedExecutionException e) {
          if (Throwables2.getFirstThrowableOfType(e, ResourceNotFoundException.class) == null) {
             Throwables.propagateIfPossible(e.getCause());
@@ -181,9 +187,9 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
       @Override
       public boolean matches(VirtualMachine from, Image input) {
          return input.getProviderId().equals(from.getTemplateId() + "")
-            // either location free image (location is null)
-            // or in the same zone as the VM
-            && (input.getLocation() == null || input.getId().equals(from.getZoneId() + ""));
+         // either location free image (location is null)
+         // or in the same zone as the VM
+               && (input.getLocation() == null || input.getId().equals(from.getZoneId() + ""));
       }
    }
 

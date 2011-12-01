@@ -72,7 +72,8 @@ public class CreatePortForwardingRulesForIP {
    }
 
    public Set<IPForwardingRule> apply(PublicIPAddress ip, String protocol, Iterable<Integer> ports) {
-      checkState(ip.getVirtualMachineId() != -1, "ip should be static NATed to a virtual machine");
+      checkState(ip.getVirtualMachineId() != -1,
+            "ip %s should be static NATed to a virtual machine before applying rules", ip);
       if (Iterables.size(ports) == 0)
          return ImmutableSet.<IPForwardingRule> of();
       Builder<AsyncCreateResponse> responses = ImmutableSet.<AsyncCreateResponse> builder();

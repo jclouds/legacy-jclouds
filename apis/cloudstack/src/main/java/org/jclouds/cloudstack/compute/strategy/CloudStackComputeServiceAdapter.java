@@ -121,8 +121,7 @@ public class CloudStackComputeServiceAdapter implements
 
       CloudStackTemplateOptions templateOptions = template.getOptions().as(CloudStackTemplateOptions.class);
 
-      // not all hypervisors support setting name
-      DeployVirtualMachineOptions options = displayName(name);
+      DeployVirtualMachineOptions options = displayName(name).name(name);
       if (templateOptions.getSecurityGroupIds().size() > 0) {
          options.securityGroupIds(templateOptions.getSecurityGroupIds());
       } else if (templateOptions.getNetworkIds().size() > 0) {
