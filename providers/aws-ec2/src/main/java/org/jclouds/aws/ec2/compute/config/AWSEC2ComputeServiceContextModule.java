@@ -24,6 +24,7 @@ import static org.jclouds.compute.domain.OsFamily.AMZN_LINUX;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.aws.ec2.AWSEC2PropertiesBuilder;
 import org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderImpl;
 import org.jclouds.aws.ec2.compute.functions.AWSRunningInstanceToNodeMetadata;
 import org.jclouds.aws.ec2.compute.predicates.AWSEC2InstancePresent;
@@ -34,13 +35,11 @@ import org.jclouds.aws.ec2.compute.strategy.AWSEC2ListNodesStrategy;
 import org.jclouds.aws.ec2.compute.strategy.AWSEC2ReviseParsedImage;
 import org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions;
 import org.jclouds.aws.ec2.compute.suppliers.AWSEC2HardwareSupplier;
-import org.jclouds.aws.ec2.compute.suppliers.AWSRegionAndNameToImageSupplier;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.ec2.compute.config.EC2BindComputeStrategiesByClass;
-import org.jclouds.ec2.compute.config.EC2BindComputeSuppliersByClass;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
@@ -53,6 +52,7 @@ import org.jclouds.ec2.compute.strategy.EC2GetNodeMetadataStrategy;
 import org.jclouds.ec2.compute.strategy.EC2ListNodesStrategy;
 import org.jclouds.ec2.compute.strategy.ReviseParsedImage;
 import org.jclouds.ec2.compute.suppliers.EC2HardwareSupplier;
+import org.jclouds.ec2.compute.suppliers.RegionAndNameToImageSupplier;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
 import com.google.common.base.Supplier;
@@ -70,7 +70,7 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
       super.configure();
       installDependencies();
       install(new EC2BindComputeStrategiesByClass());
-      install(new EC2BindComputeSuppliersByClass());
+      install(new AWSEC2BindComputeSuppliersByClass());
       bind(ReviseParsedImage.class).to(AWSEC2ReviseParsedImage.class);
       bind(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class).to(
                CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions.class);
@@ -91,7 +91,7 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
    @Provides
    @Singleton
    protected Supplier<Cache<RegionAndName, ? extends Image>> provideRegionAndNameToImageSupplierCache(
-            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final AWSRegionAndNameToImageSupplier supplier) {
+            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final RegionAndNameToImageSupplier supplier) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Cache<RegionAndName, ? extends Image>>(
                authException, seconds, new Supplier<Cache<RegionAndName, ? extends Image>>() {
                   @Override

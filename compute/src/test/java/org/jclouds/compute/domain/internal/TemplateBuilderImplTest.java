@@ -139,7 +139,7 @@ public class TemplateBuilderImplTest {
       expect(image2.getLocation()).andReturn(defaultLocation).atLeastOnce();
       expect(image.getOperatingSystem()).andReturn(os).atLeastOnce();
       expect(image2.getOperatingSystem()).andReturn(os2).atLeastOnce();
-      expect(image.getId()).andReturn("1");
+      expect(image.getId()).andReturn("myregion/1");
 
       expect(os.getArch()).andReturn("X86_32").atLeastOnce();
       expect(os2.getArch()).andReturn("X86_64").atLeastOnce();
@@ -175,7 +175,7 @@ public class TemplateBuilderImplTest {
       Image image = createMock(Image.class);
       OperatingSystem os = createMock(OperatingSystem.class);
 
-      Hardware hardware = new HardwareBuilder().id("hardwareId").supportsImage(ImagePredicates.idEquals("imageId"))
+      Hardware hardware = new HardwareBuilder().id("hardwareId").supportsImage(ImagePredicates.idEquals("myregion/imageId"))
                .build();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
@@ -189,12 +189,15 @@ public class TemplateBuilderImplTest {
       TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
 
       expect(optionsProvider.get()).andReturn(new TemplateOptions());
-      expect(image.getId()).andReturn("imageId").atLeastOnce();
+      expect(image.getId()).andReturn("myregion/imageId").atLeastOnce();
       expect(image.getLocation()).andReturn(defaultLocation).atLeastOnce();
       expect(image.getName()).andReturn(null).atLeastOnce();
       expect(image.getDescription()).andReturn(null).atLeastOnce();
       expect(image.getVersion()).andReturn(null).atLeastOnce();
       expect(image.getOperatingSystem()).andReturn(os).atLeastOnce();
+      expect(image.getProviderId()).andReturn("imageId").anyTimes();
+      
+      expect(defaultLocation.getId()).andReturn("myregion").anyTimes();
 
       expect(os.getName()).andReturn(null).atLeastOnce();
       expect(os.getVersion()).andReturn(null).atLeastOnce();
@@ -215,7 +218,7 @@ public class TemplateBuilderImplTest {
       TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, defaultLocation,
                optionsProvider, templateBuilderProvider);
 
-      template.imageId("imageId").build();
+      template.imageId("myregion/imageId").build();
 
       verify(image);
       verify(os);
@@ -232,7 +235,7 @@ public class TemplateBuilderImplTest {
       Image image = createMock(Image.class);
       OperatingSystem os = createMock(OperatingSystem.class);
 
-      Hardware hardware = new HardwareBuilder().id("hardwareId").supportsImage(ImagePredicates.idEquals("imageId"))
+      Hardware hardware = new HardwareBuilder().id("hardwareId").supportsImage(ImagePredicates.idEquals("differentImageId"))
                .build();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
@@ -246,12 +249,15 @@ public class TemplateBuilderImplTest {
       TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
 
       expect(optionsProvider.get()).andReturn(new TemplateOptions());
-      expect(image.getId()).andReturn("notImageId").atLeastOnce();
+      expect(image.getId()).andReturn("myregion/imageId").atLeastOnce();
       expect(image.getLocation()).andReturn(defaultLocation).atLeastOnce();
       expect(image.getOperatingSystem()).andReturn(os).atLeastOnce();
       expect(image.getName()).andReturn(null).atLeastOnce();
       expect(image.getDescription()).andReturn(null).atLeastOnce();
       expect(image.getVersion()).andReturn(null).atLeastOnce();
+      expect(image.getProviderId()).andReturn("imageId").anyTimes();
+      
+      expect(defaultLocation.getId()).andReturn("myregion").anyTimes();
 
       expect(os.getName()).andReturn(null).atLeastOnce();
       expect(os.getVersion()).andReturn(null).atLeastOnce();
@@ -272,13 +278,13 @@ public class TemplateBuilderImplTest {
       TemplateBuilderImpl template = createTemplateBuilder(image, locations, images, hardwares, defaultLocation,
                optionsProvider, templateBuilderProvider);
       try {
-         template.imageId("notImageId").build();
+         template.imageId("myregion/imageId").build();
          assert false;
       } catch (NoSuchElementException e) {
          // make sure big data is not in the exception message
          assertEquals(
                   e.getMessage(),
-                  "no hardware profiles support images matching params: [biggest=false, fastest=false, imageName=null, imageDescription=null, imageId=notImageId, imagePredicate=null, imageVersion=null, location=EasyMock for interface org.jclouds.domain.Location, minCores=0.0, minRam=0, osFamily=null, osName=null, osDescription=null, osVersion=null, osArch=null, os64Bit=false, hardwareId=null]");
+                  "no hardware profiles support images matching params: [biggest=false, fastest=false, imageName=null, imageDescription=null, imageId=myregion/imageId, imagePredicate=null, imageVersion=null, location=EasyMock for interface org.jclouds.domain.Location, minCores=0.0, minRam=0, osFamily=null, osName=null, osDescription=null, osVersion=null, osArch=null, os64Bit=false, hardwareId=null]");
          verify(image);
          verify(os);
          verify(defaultTemplate);
@@ -376,7 +382,7 @@ public class TemplateBuilderImplTest {
       Location defaultLocation = createMock(Location.class);
       Image image = createMock(Image.class);
 
-      Hardware hardware = new HardwareBuilder().id("hardwareId").supportsImage(ImagePredicates.idEquals("foo")).build();
+      Hardware hardware = new HardwareBuilder().id("hardwareId").supportsImage(ImagePredicates.idEquals("myregion/foo")).build();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
                .<Location> of(defaultLocation));
@@ -392,15 +398,16 @@ public class TemplateBuilderImplTest {
       TemplateOptions defaultOptions = createMock(TemplateOptions.class);
       expect(optionsProvider.get()).andReturn(from).atLeastOnce();
 
-      expect(defaultLocation.getId()).andReturn("location").atLeastOnce();
+      expect(defaultLocation.getId()).andReturn("myregion").atLeastOnce();
 
-      expect(image.getId()).andReturn("foo").atLeastOnce();
+      expect(image.getId()).andReturn("myregion/foo").atLeastOnce();
       expect(image.getLocation()).andReturn(defaultLocation).atLeastOnce();
       expect(image.getOperatingSystem()).andReturn(os).atLeastOnce();
       expect(image.getName()).andReturn(null).atLeastOnce();
       expect(image.getDescription()).andReturn(null).atLeastOnce();
       expect(image.getVersion()).andReturn(null).atLeastOnce();
-
+      expect(image.getProviderId()).andReturn("foo").anyTimes();
+      
       expect(os.getName()).andReturn(null).atLeastOnce();
       expect(os.getVersion()).andReturn(null).atLeastOnce();
       expect(os.getFamily()).andReturn(null).atLeastOnce();
@@ -421,7 +428,7 @@ public class TemplateBuilderImplTest {
       TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, defaultLocation,
                optionsProvider, templateBuilderProvider);
 
-      assertEquals(template.imageId("foo").locationId("location").build().getLocation(), defaultLocation);
+      assertEquals(template.imageId("myregion/foo").locationId("myregion").build().getLocation(), defaultLocation);
 
       verify(defaultOptions);
       verify(imageLocation);
@@ -525,11 +532,11 @@ public class TemplateBuilderImplTest {
                optionsProvider, templateBuilderProvider);
 
       try {
-         template.imageId("region/ami").build();
+         template.imageId("region/imageId").build();
          assert false;
       } catch (NoSuchElementException e) {
          // make sure big data is not in the exception message
-         assertEquals(e.getMessage(), "imageId(region/ami) not found");
+         assertEquals(e.getMessage(), "imageId(region/imageId) not found");
       }
 
       verify(defaultOptions);

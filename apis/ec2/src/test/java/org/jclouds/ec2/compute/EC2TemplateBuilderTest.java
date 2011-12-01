@@ -18,6 +18,7 @@
  */
 package org.jclouds.ec2.compute;
 
+import static com.google.common.collect.Maps.uniqueIndex;
 import static java.lang.String.format;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
@@ -34,6 +35,8 @@ import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.m2_xlarge;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.t1_micro;
 import static org.testng.Assert.assertEquals;
 
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.inject.Provider;
@@ -52,11 +55,18 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -137,9 +147,69 @@ public class EC2TemplateBuilderTest {
                         .getHardware().getId());
    }
 
-   @SuppressWarnings("unchecked")
-   private TemplateBuilder newTemplateBuilder() {
+   @Test
+   public void testTemplateChoiceForInstanceByImageId() throws Exception {
+      Template template = newTemplateBuilder().imageId("us-east-1/cc-image").build();
 
+      assert template != null : "The returned template was null, but it should have a value.";
+      assertEquals(template.getImage().getId(), "us-east-1/cc-image");
+   }
+
+   @Test
+   public void testTemplateChoiceForInstanceByImageIdDoesNotGetAllImages() throws Exception {
+      @SuppressWarnings("unchecked")
+      Supplier<Set<? extends Image>> images = createMock(Supplier.class);
+      replay(images);
+      
+      final Image image = new ImageBuilder().providerId("cc-image").name("image").id("us-east-1/cc-image").location(location)
+               .operatingSystem(new OperatingSystem(OsFamily.UBUNTU, null, "1.0", "hvm", "ubuntu", true))
+               .description("description").version("1.0").defaultCredentials(new LoginCredentials("root", null, null, false))
+               .build();
+      Map<RegionAndName, Image> imageMap = ImmutableMap.of(
+               new RegionAndName(image.getLocation().getId(), image.getProviderId()), image);
+      
+      // weird compilation error means have to declare extra generics for call to build() - see https://bugs.eclipse.org/bugs/show_bug.cgi?id=365818
+      Supplier<Cache<RegionAndName, ? extends Image>> imageCache = Suppliers.<Cache<RegionAndName, ? extends Image>> ofInstance(
+               CacheBuilder.newBuilder().<RegionAndName,Image>build(CacheLoader.from(Functions.forMap(imageMap))));
+
+      Template template = newTemplateBuilder(images, imageCache).imageId("us-east-1/cc-image").build();
+
+      assert template != null : "The returned template was null, but it should have a value.";
+      assertEquals(template.getImage().getId(), "us-east-1/cc-image");
+   }
+
+   @Test(expectedExceptions={NoSuchElementException.class})
+   public void testNegativeTemplateChoiceForInstanceByImageId() throws Exception {
+      newTemplateBuilder().imageId("wrongregion/wrongimageid").build();
+   }
+
+   private TemplateBuilder newTemplateBuilder() {
+      final Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(
+               new ImageBuilder().providerId("cc-image").name("image").id("us-east-1/cc-image").location(location)
+                        .operatingSystem(new OperatingSystem(OsFamily.UBUNTU, null, "1.0", "hvm", "ubuntu", true))
+                        .description("description").version("1.0").defaultCredentials(new LoginCredentials("root", null, null, false))
+                        .build(), 
+               new ImageBuilder().providerId("normal-image").name("image").id("us-east-1/normal-image").location(location)
+                        .operatingSystem(new OperatingSystem(OsFamily.UBUNTU, null, "1.0", "paravirtual", "ubuntu", true))
+                        .description("description").version("1.0").defaultCredentials(new LoginCredentials("root", null, null, false))
+                        .build()));
+      
+      // weird compilation error means have to cast this - see https://bugs.eclipse.org/bugs/show_bug.cgi?id=365818
+      @SuppressWarnings("unchecked")
+      ImmutableMap<RegionAndName, Image> imageMap = (ImmutableMap<RegionAndName, Image>) uniqueIndex(images.get(), new Function<Image, RegionAndName>() {
+         @Override
+         public RegionAndName apply(Image from) {
+            return new RegionAndName(from.getLocation().getId(), from.getProviderId());
+         }
+      });
+      Supplier<Cache<RegionAndName, ? extends Image>> imageCache = Suppliers.<Cache<RegionAndName, ? extends Image>> ofInstance(
+               CacheBuilder.newBuilder().<RegionAndName,Image>build(CacheLoader.from(Functions.forMap(imageMap))));
+
+      return newTemplateBuilder(images, imageCache);
+   }
+
+   @SuppressWarnings("unchecked")
+   private TemplateBuilder newTemplateBuilder(Supplier<Set<? extends Image>> images, Supplier<Cache<RegionAndName, ? extends Image>> imageCache) {
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
       TemplateOptions defaultOptions = createMock(TemplateOptions.class);
@@ -150,26 +220,16 @@ public class EC2TemplateBuilderTest {
       replay(templateBuilderProvider);
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
                .<Location> of(location));
-      Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(
-               new ImageBuilder().providerId("cc-image").name("image").id("us-east-1/cc-image").location(location)
-                        .operatingSystem(new OperatingSystem(OsFamily.UBUNTU, null, "1.0", "hvm", "ubuntu", true))
-                        .description("description").version("1.0").defaultCredentials(new LoginCredentials("root", null, null, false))
-                        .build(), new ImageBuilder().providerId("normal-image").name("image").id("us-east-1/cc-image")
-                        .location(location).operatingSystem(
-                                 new OperatingSystem(OsFamily.UBUNTU, null, "1.0", "paravirtual", "ubuntu", true))
-                        .description("description").version("1.0").defaultCredentials(new LoginCredentials("root", null, null, false))
-                        .build()));
       Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
                .<Hardware> of(t1_micro().build(), c1_medium().build(), c1_xlarge().build(), m1_large().build(),
                         m1_small32().build(), m1_xlarge().build(), m2_xlarge().build(), m2_2xlarge().build(),
                         m2_4xlarge().build(), CC1_4XLARGE));
 
-      return new TemplateBuilderImpl(locations, images, sizes, Suppliers.ofInstance(location), optionsProvider,
-               templateBuilderProvider) {
-
+      return new EC2TemplateBuilderImpl(locations, images, sizes, Suppliers.ofInstance(location), optionsProvider,
+               templateBuilderProvider, imageCache) {
       };
    }
-
+   
    Function<ComputeMetadata, String> indexer() {
       return new Function<ComputeMetadata, String>() {
          @Override
@@ -178,5 +238,4 @@ public class EC2TemplateBuilderTest {
          }
       };
    }
-
 }

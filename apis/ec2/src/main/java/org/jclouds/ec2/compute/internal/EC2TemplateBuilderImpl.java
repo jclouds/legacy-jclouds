@@ -39,6 +39,7 @@ import org.jclouds.ec2.compute.domain.RegionAndName;
 
 import com.google.common.base.Supplier;
 import com.google.common.cache.Cache;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
@@ -47,7 +48,7 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
  */
 public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
 
-   private final Supplier<Cache<RegionAndName, ? extends Image>> imageMap;
+   private final Supplier<Cache<RegionAndName, ? extends Image>> lazyImageCache;
 
    @Inject
    protected EC2TemplateBuilderImpl(@Memoized Supplier<Set<? extends Location>> locations,
@@ -55,7 +56,7 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
          Supplier<Location> defaultLocation, @Named("DEFAULT") Provider<TemplateOptions> optionsProvider,
          @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider, Supplier<Cache<RegionAndName, ? extends Image>> imageMap) {
       super(locations, images, sizes, defaultLocation, optionsProvider, defaultTemplateProvider);
-      this.imageMap = imageMap;
+      this.lazyImageCache = imageMap;
    }
 
    final Provider<Image> lazyImageProvider = new Provider<Image>() {
@@ -68,7 +69,7 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
                   "amazon image ids must include the region ( ex. us-east-1/ami-7ea24a17 ) you specified: " + imageId);
             RegionAndName key = new RegionAndName(regionName[0], regionName[1]);
             try {
-               return imageMap.get().get(key);
+               return lazyImageCache.get().get(key);
             } catch (ExecutionException e) {
                throw new NoSuchElementException(String.format("could not get imageId(%s/%s)", key.getRegion(), key.getName()));
             } catch (UncheckedExecutionException e) {
@@ -101,14 +102,11 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
    @SuppressWarnings("unchecked")
    @Override
    protected Set<? extends Image> getImages() {
-      Set<Image> images = (Set<Image>) this.images.get();
-      if (images.size() == 0) {
-         Image toReturn = lazyImageProvider.get();
-         if (toReturn != null) {
-            images.add(toReturn);
-         }
+      if (imageId != null) {
+         Image image = lazyImageProvider.get();
+         return ImmutableSet.of(image);
+      } else {
+         return (Set<Image>) this.images.get();
       }
-      return images;
    }
-
 }
