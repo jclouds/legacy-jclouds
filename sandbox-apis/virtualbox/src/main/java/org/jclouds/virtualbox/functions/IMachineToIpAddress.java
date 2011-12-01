@@ -23,15 +23,16 @@ import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.options.RunScriptOptions;
-import org.jclouds.virtualbox.config.VirtualBoxConstants;
-import org.virtualbox_4_1.IGuestOSType;
+import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.virtualbox.domain.GetIPAddressFromMAC;
+import org.jclouds.virtualbox.domain.ScanNetworkWithPing;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
+import com.google.inject.Inject;
 
 /**
  * Get an IP address from an IMachine using arp of the host machine.
@@ -40,62 +41,35 @@ import com.google.common.base.Function;
  */
 public class IMachineToIpAddress implements Function<IMachine, String> {
 
-   private VirtualBoxManager manager;
-   private ComputeService computeService;
+   private ComputeServiceContext context;
+   private String hostId;
+   private String network;
 
-   public IMachineToIpAddress(VirtualBoxManager manager, ComputeService computeService) {
-      this.manager = manager;
-      this.computeService = computeService;
+   @Inject
+   public IMachineToIpAddress(ComputeServiceContext context, String hostId, String network) {
+      this.context = context;
+      this.hostId = hostId;
+      this.network = network;
    }
 
    @Override
    public String apply(@Nullable IMachine machine) {
-
-      String macAddress = machine.getNetworkAdapter(0l).getMACAddress();
-      int offset = 0, step = 2;
-      for (int j = 1; j <= 5; j++) {
-         macAddress = new StringBuffer(macAddress).insert(j * step + offset, ":").toString().toLowerCase();
-         offset++;
-      }
-
-      String simplifiedMacAddressOfClonedVM = macAddress;
-
-      final String hostId = System.getProperty(VirtualBoxConstants.VIRTUALBOX_HOST_ID);
-      IMachine hostMachine = manager.getVBox().findMachine(hostId);
-      if (isOSX(hostMachine)) {
-         if (simplifiedMacAddressOfClonedVM.contains("00"))
-            simplifiedMacAddressOfClonedVM = new StringBuffer(simplifiedMacAddressOfClonedVM).delete(
-                  simplifiedMacAddressOfClonedVM.indexOf("00"), simplifiedMacAddressOfClonedVM.indexOf("00") + 1)
-                  .toString();
-
-         if (simplifiedMacAddressOfClonedVM.contains("0"))
-            if (simplifiedMacAddressOfClonedVM.indexOf("0") + 1 != ':'
-                  && simplifiedMacAddressOfClonedVM.indexOf("0") - 1 != ':')
-               simplifiedMacAddressOfClonedVM = new StringBuffer(simplifiedMacAddressOfClonedVM).delete(
-                     simplifiedMacAddressOfClonedVM.indexOf("0"), simplifiedMacAddressOfClonedVM.indexOf("0") + 1)
-                     .toString();
-      }
-
-      // TODO: This is both shell-dependent and hard-coded. Needs to be fixed.
-      ExecResponse execResponse = runScriptOnNode(hostId, "for i in {1..254} ; do ping -c 1 -t 1 192.168.2.$i & done",
+      OsFamily osFamily = OsFamily.UNIX;
+      if(context.getComputeService().getNodeMetadata(hostId).getOperatingSystem().getFamily().name().equalsIgnoreCase("WINDOWS"))
+         osFamily  = OsFamily.WINDOWS; 
+      runScriptOnNode(hostId,
+            new ScanNetworkWithPing(network).render(osFamily),
             runAsRoot(false).wrapInInitScript(false));
-      System.out.println(execResponse);
-
-      String arpLine = runScriptOnNode(hostId, "arp -an | grep " + simplifiedMacAddressOfClonedVM,
-            runAsRoot(false).wrapInInitScript(false)).getOutput();
-      String ipAddress = arpLine.substring(arpLine.indexOf("(") + 1, arpLine.indexOf(")"));
-      System.out.println("IP address " + ipAddress);
-      return ipAddress;
+      
+      String command = new GetIPAddressFromMAC(machine.getNetworkAdapter(0l).getMACAddress()).render(osFamily);
+      String arpLine = runScriptOnNode(hostId, command, runAsRoot(false).wrapInInitScript(false)).getOutput();
+      return arpLine.substring(arpLine.indexOf("(") + 1, arpLine.indexOf(")"));
    }
 
-   private ExecResponse runScriptOnNode(String nodeId, String command, RunScriptOptions options) {
-      return computeService.runScriptOnNode(nodeId, command, options);
-   }
-
-   protected boolean isOSX(IMachine machine) {
-      String osTypeId = machine.getOSTypeId();
-      IGuestOSType guestOSType = manager.getVBox().getGuestOSType(osTypeId);
-      return guestOSType.getFamilyDescription().equals("Other");
+   private ExecResponse runScriptOnNode(String nodeId, String command,
+         RunScriptOptions options) {
+      return context.getComputeService().runScriptOnNode(nodeId, command,
+            options);
    }
 
 }
