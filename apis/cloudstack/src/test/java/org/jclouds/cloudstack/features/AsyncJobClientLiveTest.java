@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.cloudstack.domain.AsyncJob.ResultCode;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -28,18 +29,20 @@ import org.testng.annotations.Test;
 
 /**
  * Tests behavior of {@code AsyncJobClientLiveTest}
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "AsyncJobClientLiveTest")
 public class AsyncJobClientLiveTest extends BaseCloudStackClientLiveTest {
-   // disabled as it takes too long
-   @Test(enabled = false)
+
+   @Test(enabled = true)
    public void testListAsyncJobs() throws Exception {
       Set<AsyncJob<?>> response = client.getAsyncJobClient().listAsyncJobs();
       assert null != response;
+
       long asyncJobCount = response.size();
       assertTrue(asyncJobCount >= 0);
+
       for (AsyncJob<?> asyncJob : response) {
          assert asyncJob.getCmd() != null : asyncJob;
          assert asyncJob.getUserId() >= 0 : asyncJob;
@@ -57,12 +60,11 @@ public class AsyncJobClientLiveTest extends BaseCloudStackClientLiveTest {
       assert query.getStatus().code() >= 0 : query;
       assert query.getResultCode().code() >= 0 : query;
       assert query.getProgress() >= 0 : query;
-      if (query.getResultCode().code() == 0) {
-         if (query.getResult() != null)// null is ok for result of success =
-                                       // true
-            // ensure we parsed properly
-            assert (query.getResult().getClass().getPackage().equals(AsyncJob.class.getPackage())) : query;
-      } else if (query.getResultCode().code() > 400) {
+      if (query.getResultCode() == ResultCode.SUCCESS) {
+         if (query.getResult() != null) {
+            assertEquals(query.getResult().getClass().getPackage(), AsyncJob.class.getPackage());
+         }
+      } else if (query.getResultCode() == ResultCode.FAIL) {
          assert query.getResult() == null : query;
          assert query.getError() != null : query;
       } else {

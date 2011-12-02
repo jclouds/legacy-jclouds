@@ -25,30 +25,34 @@ import java.util.Set;
 
 import javax.inject.Singleton;
 
+import com.google.inject.TypeLiteral;
 import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
+import org.jclouds.json.internal.GsonWrapper;
 
 /**
- * 
  * @author Adrian Cole
  */
 @Singleton
 public class ParseAsyncJobsFromHttpResponse implements Function<HttpResponse, Set<AsyncJob<?>>> {
-   private final UnwrapOnlyNestedJsonValue<Set<AsyncJob<Map<String, JsonBall>>>> parser;
+   private final ParseFirstJsonValueNamed<Set<AsyncJob<Map<String, JsonBall>>>> parser;
    private final ParseTypedAsyncJob parseTyped;
 
    @Inject
-   public ParseAsyncJobsFromHttpResponse(ParseTypedAsyncJob parseTyped,
-         UnwrapOnlyNestedJsonValue<Set<AsyncJob<Map<String, JsonBall>>>> parser) {
+   public ParseAsyncJobsFromHttpResponse(ParseTypedAsyncJob parseTyped, GsonWrapper gsonWrapper) {
       this.parseTyped = checkNotNull(parseTyped, "parseTyped");
-      this.parser = checkNotNull(parser, "parser");
+      this.parser = new ParseFirstJsonValueNamed<Set<AsyncJob<Map<String, JsonBall>>>>(
+         checkNotNull(gsonWrapper, "gsonWrapper"),
+         new TypeLiteral<Set<AsyncJob<Map<String, JsonBall>>>>() { },
+         "asyncjobs");
    }
 
    public Set<AsyncJob<?>> apply(HttpResponse response) {

@@ -1,5 +1,6 @@
 {
     "listasyncjobsresponse": {
+        "count": 77,
         "asyncjobs": [{
             "jobid": 1084,
             "accountid": 3,
