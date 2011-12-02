@@ -97,28 +97,13 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.dunkel-vcd.endpoint</name>
-                                            <value>${test.dunkel-vcd.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.dunkel-vcd.apiversion</name>
-                                            <value>${test.dunkel-vcd.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.dunkel-vcd.identity</name>
-                                            <value>${test.dunkel-vcd.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.dunkel-vcd.credential</name>
-                                            <value>${test.dunkel-vcd.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.dunkel-vcd.image-id</name>
-                                            <value>${test.dunkel-vcd.image-id}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.dunkel-vcd.endpoint>${test.dunkel-vcd.endpoint}</test.dunkel-vcd.endpoint>
+                                        <test.dunkel-vcd.apiversion>${test.dunkel-vcd.apiversion}</test.dunkel-vcd.apiversion>
+                                        <test.dunkel-vcd.identity>${test.dunkel-vcd.identity}</test.dunkel-vcd.identity>
+                                        <test.dunkel-vcd.credential>${test.dunkel-vcd.credential}</test.dunkel-vcd.credential>
+                                        <test.dunkel-vcd.image-id>${test.dunkel-vcd.image-id}</test.dunkel-vcd.image-id>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

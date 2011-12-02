@@ -124,28 +124,13 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.libvirt.endpoint</name>
-                                            <value>${test.libvirt.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.libvirt.apiversion</name>
-                                            <value>${test.libvirt.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.libvirt.identity</name>
-                                            <value>${test.libvirt.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.libvirt.credential</name>
-                                            <value>${test.libvirt.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.libvirt.image-id</name>
-                                            <value>${test.libvirt.image-id}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.libvirt.endpoint>${test.libvirt.endpoint}</test.libvirt.endpoint>
+                                        <test.libvirt.apiversion>${test.libvirt.apiversion}</test.libvirt.apiversion>
+                                        <test.libvirt.identity>${test.libvirt.identity}</test.libvirt.identity>
+                                        <test.libvirt.credential>${test.libvirt.credential}</test.libvirt.credential>
+                                        <test.libvirt.image-id>${test.libvirt.image-id}</test.libvirt.image-id>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

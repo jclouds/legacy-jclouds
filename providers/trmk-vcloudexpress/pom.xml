@@ -99,28 +99,13 @@
                                 </goals>
                                 <configuration>
                                     <threadCount>1</threadCount>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.trmk-vcloudexpress.endpoint</name>
-                                            <value>${test.trmk-vcloudexpress.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.trmk-vcloudexpress.apiversion</name>
-                                            <value>${test.trmk-vcloudexpress.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.trmk-vcloudexpress.identity</name>
-                                            <value>${test.trmk-vcloudexpress.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.trmk-vcloudexpress.credential</name>
-                                            <value>${test.trmk-vcloudexpress.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.trmk-vcloudexpress.image-id</name>
-                                            <value>${test.trmk-vcloudexpress.image-id}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.trmk-vcloudexpress.endpoint>${test.trmk-vcloudexpress.endpoint}</test.trmk-vcloudexpress.endpoint>
+                                        <test.trmk-vcloudexpress.apiversion>${test.trmk-vcloudexpress.apiversion}</test.trmk-vcloudexpress.apiversion>
+                                        <test.trmk-vcloudexpress.identity>${test.trmk-vcloudexpress.identity}</test.trmk-vcloudexpress.identity>
+                                        <test.trmk-vcloudexpress.credential>${test.trmk-vcloudexpress.credential}</test.trmk-vcloudexpress.credential>
+                                        <test.trmk-vcloudexpress.image-id>${test.trmk-vcloudexpress.image-id}</test.trmk-vcloudexpress.image-id>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

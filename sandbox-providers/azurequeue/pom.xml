@@ -84,24 +84,12 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.azurequeue.endpoint</name>
-                                            <value>${test.azurequeue.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.azurequeue.apiversion</name>
-                                            <value>${test.azurequeue.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.azurequeue.identity</name>
-                                            <value>${test.azurequeue.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.azurequeue.credential</name>
-                                            <value>${test.azurequeue.credential}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.azurequeue.endpoint>${test.azurequeue.endpoint}</test.azurequeue.endpoint>
+                                        <test.azurequeue.apiversion>${test.azurequeue.apiversion}</test.azurequeue.apiversion>
+                                        <test.azurequeue.identity>${test.azurequeue.identity}</test.azurequeue.identity>
+                                        <test.azurequeue.credential>${test.azurequeue.credential}</test.azurequeue.credential>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

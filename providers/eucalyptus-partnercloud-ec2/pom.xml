@@ -113,32 +113,14 @@
                                 </goals>
                                 <configuration>
                                     <threadCount>1</threadCount>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.eucalyptus-partnercloud-ec2.endpoint</name>
-                                            <value>${test.eucalyptus-partnercloud-ec2.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.eucalyptus-partnercloud-ec2.apiversion</name>
-                                            <value>${test.eucalyptus-partnercloud-ec2.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.eucalyptus-partnercloud-ec2.identity</name>
-                                            <value>${test.eucalyptus-partnercloud-ec2.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.eucalyptus-partnercloud-ec2.credential</name>
-                                            <value>${test.eucalyptus-partnercloud-ec2.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.eucalyptus-partnercloud-ec2.image-id</name>
-                                            <value>${test.eucalyptus-partnercloud-ec2.image-id}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.eucalyptus-partnercloud-ec2.virtualization-type</name>
-                                            <value>${test.eucalyptus-partnercloud-ec2.virtualization-type}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.eucalyptus-partnercloud-ec2.endpoint>${test.eucalyptus-partnercloud-ec2.endpoint}</test.eucalyptus-partnercloud-ec2.endpoint>
+                                        <test.eucalyptus-partnercloud-ec2.apiversion>${test.eucalyptus-partnercloud-ec2.apiversion}</test.eucalyptus-partnercloud-ec2.apiversion>
+                                        <test.eucalyptus-partnercloud-ec2.identity>${test.eucalyptus-partnercloud-ec2.identity}</test.eucalyptus-partnercloud-ec2.identity>
+                                        <test.eucalyptus-partnercloud-ec2.credential>${test.eucalyptus-partnercloud-ec2.credential}</test.eucalyptus-partnercloud-ec2.credential>
+                                        <test.eucalyptus-partnercloud-ec2.image-id>${test.eucalyptus-partnercloud-ec2.image-id}</test.eucalyptus-partnercloud-ec2.image-id>
+                                        <test.eucalyptus-partnercloud-ec2.virtualization-type>${test.eucalyptus-partnercloud-ec2.virtualization-type}</test.eucalyptus-partnercloud-ec2.virtualization-type>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

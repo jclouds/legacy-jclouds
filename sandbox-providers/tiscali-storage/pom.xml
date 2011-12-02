@@ -107,36 +107,15 @@
                                 </goals>
                                 <configuration>
                                     <threadCount>1</threadCount>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.tiscali-storage.endpoint</name>
-                                            <value>${test.tiscali-storage.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.tiscali-storage.apiversion</name>
-                                            <value>${test.tiscali-storage.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.tiscali-storage.identity</name>
-                                            <value>${test.tiscali-storage.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.tiscali-storage.credential</name>
-                                            <value>${test.tiscali-storage.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.initializer</name>
-                                            <value>${test.initializer}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.url</name>
-                                            <value>${jclouds.blobstore.httpstream.url}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.md5</name>
-                                            <value>${jclouds.blobstore.httpstream.md5}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.tiscali-storage.endpoint>${test.tiscali-storage.endpoint}</test.tiscali-storage.endpoint>
+                                        <test.tiscali-storage.apiversion>${test.tiscali-storage.apiversion}</test.tiscali-storage.apiversion>
+                                        <test.tiscali-storage.identity>${test.tiscali-storage.identity}</test.tiscali-storage.identity>
+                                        <test.tiscali-storage.credential>${test.tiscali-storage.credential}</test.tiscali-storage.credential>
+                                        <test.initializer>${test.initializer}</test.initializer>
+                                        <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
+                                        <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

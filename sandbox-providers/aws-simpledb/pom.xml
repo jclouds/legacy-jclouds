@@ -91,24 +91,12 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.aws-simpledb.endpoint</name>
-                                            <value>${test.aws-simpledb.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-simpledb.apiversion</name>
-                                            <value>${test.aws-simpledb.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-simpledb.identity</name>
-                                            <value>${test.aws-simpledb.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-simpledb.credential</name>
-                                            <value>${test.aws-simpledb.credential}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.aws-simpledb.endpoint>${test.aws-simpledb.endpoint}</test.aws-simpledb.endpoint>
+                                        <test.aws-simpledb.apiversion>${test.aws-simpledb.apiversion}</test.aws-simpledb.apiversion>
+                                        <test.aws-simpledb.identity>${test.aws-simpledb.identity}</test.aws-simpledb.identity>
+                                        <test.aws-simpledb.credential>${test.aws-simpledb.credential}</test.aws-simpledb.credential>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

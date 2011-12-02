@@ -98,28 +98,13 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.greenhousedata-element-vcloud.endpoint</name>
-                                            <value>${test.greenhousedata-element-vcloud.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.greenhousedata-element-vcloud.apiversion</name>
-                                            <value>${test.greenhousedata-element-vcloud.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.greenhousedata-element-vcloud.identity</name>
-                                            <value>${test.greenhousedata-element-vcloud.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.greenhousedata-element-vcloud.credential</name>
-                                            <value>${test.greenhousedata-element-vcloud.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.greenhousedata-element-vcloud.image-id</name>
-                                            <value>${test.greenhousedata-element-vcloud.image-id}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.greenhousedata-element-vcloud.endpoint>${test.greenhousedata-element-vcloud.endpoint}</test.greenhousedata-element-vcloud.endpoint>
+                                        <test.greenhousedata-element-vcloud.apiversion>${test.greenhousedata-element-vcloud.apiversion}</test.greenhousedata-element-vcloud.apiversion>
+                                        <test.greenhousedata-element-vcloud.identity>${test.greenhousedata-element-vcloud.identity}</test.greenhousedata-element-vcloud.identity>
+                                        <test.greenhousedata-element-vcloud.credential>${test.greenhousedata-element-vcloud.credential}</test.greenhousedata-element-vcloud.credential>
+                                        <test.greenhousedata-element-vcloud.image-id>${test.greenhousedata-element-vcloud.image-id}</test.greenhousedata-element-vcloud.image-id>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>
