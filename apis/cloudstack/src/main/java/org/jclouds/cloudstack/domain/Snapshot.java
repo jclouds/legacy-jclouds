@@ -22,6 +22,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
 
+import org.jclouds.cloudstack.domain.VirtualMachine.State;
+
+import com.google.common.base.CaseFormat;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -171,11 +174,16 @@ public class Snapshot implements Comparable<Snapshot> {
 
    public enum State {
 
-      BackedUp, Creating, BackingUp, UNRECOGNIZED;
+      BACKED_UP, CREATING, BACKING_UP, UNRECOGNIZED;
 
-      public static State fromValue(String type) {
+      @Override
+      public String toString() {
+         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
+      }
+
+      public static State fromValue(String state) {
          try {
-            return valueOf(checkNotNull(type, "type"));
+            return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
          } catch (IllegalArgumentException e) {
             return UNRECOGNIZED;
          }

@@ -24,6 +24,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Date;
 import java.util.Map;
 
+import org.jclouds.cloudstack.domain.VirtualMachine.State;
+
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -540,21 +543,26 @@ public class Volume implements Comparable<Volume> {
    public enum State {
 
       /** indicates that the volume record is created in the DB, but not on the backend */
-      Allocated, 
+      ALLOCATED, 
       /** the volume is being created on the backend */
-      Creating,
+      CREATING,
       /** the volume is ready to be used */
-      Ready, 
+      READY, 
       /** the volume is destroyed (either as a result of deleteVolume command for DataDisk or as a part of destroyVm) */
-      Destroyed,
+      DESTROYED,
       /** the volume has failed somehow, e.g. during creation (in cloudstack development) */
-      Failed,
+      FAILED,
       
       UNRECOGNIZED;
 
-      public static State fromValue(String type) {
+      @Override
+      public String toString() {
+         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
+      }
+
+      public static State fromValue(String state) {
          try {
-            return valueOf(checkNotNull(type, "type"));
+            return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
          } catch (IllegalArgumentException e) {
             return UNRECOGNIZED;
          }
