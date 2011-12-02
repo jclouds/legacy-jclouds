@@ -22,9 +22,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
 
-import org.jclouds.cloudstack.domain.VirtualMachine.State;
-
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -366,22 +365,22 @@ public class Snapshot implements Comparable<Snapshot> {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      Snapshot snapshot = (Snapshot) o;
+      Snapshot that = (Snapshot) o;
 
-      if (domainId != snapshot.domainId) return false;
-      if (id != snapshot.id) return false;
-      if (jobId != snapshot.jobId) return false;
-      if (volumeId != snapshot.volumeId) return false;
-      if (account != null ? !account.equals(snapshot.account) : snapshot.account != null) return false;
-      if (created != null ? !created.equals(snapshot.created) : snapshot.created != null) return false;
-      if (domain != null ? !domain.equals(snapshot.domain) : snapshot.domain != null) return false;
-      if (interval != snapshot.interval) return false;
-      if (jobStatus != null ? !jobStatus.equals(snapshot.jobStatus) : snapshot.jobStatus != null) return false;
-      if (name != null ? !name.equals(snapshot.name) : snapshot.name != null) return false;
-      if (snapshotType != snapshot.snapshotType) return false;
-      if (state != snapshot.state) return false;
-      if (volumeName != null ? !volumeName.equals(snapshot.volumeName) : snapshot.volumeName != null) return false;
-      if (volumeType != null ? !volumeType.equals(snapshot.volumeType) : snapshot.volumeType != null) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(jobId, that.jobId)) return false;
+      if (!Objects.equal(volumeId, that.volumeId)) return false;
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
+      if (!Objects.equal(interval, that.interval)) return false;
+      if (!Objects.equal(jobStatus, that.jobStatus)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(snapshotType, that.snapshotType)) return false;
+      if (!Objects.equal(state, that.state)) return false;
+      if (!Objects.equal(volumeName, that.volumeName)) return false;
+      if (!Objects.equal(volumeType, that.volumeType)) return false;
 
       return true;
    }
