@@ -135,7 +135,7 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
    }
    protected Snapshot getPreferredSnapshot() {
       for (Snapshot candidate : client.getSnapshotClient().listSnapshots()) {
-         if (candidate.getState()==Snapshot.State.BackedUp)
+         if (candidate.getState()==Snapshot.State.BACKED_UP)
             return candidate;
       }
       throw new AssertionError("No suitable Snapshot found.");

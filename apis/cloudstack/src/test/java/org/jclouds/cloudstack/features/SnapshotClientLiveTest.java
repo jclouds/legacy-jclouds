@@ -112,7 +112,7 @@ public class SnapshotClientLiveTest extends BaseCloudStackClientLiveTest {
 
    protected Volume getPreferredVolume() {
       for (Volume candidate : client.getVolumeClient().listVolumes()) {
-         if (candidate.getState() == Volume.State.Ready)
+         if (candidate.getState() == Volume.State.READY)
             return candidate;
       }
       throw new AssertionError("No suitable Volume found.");
