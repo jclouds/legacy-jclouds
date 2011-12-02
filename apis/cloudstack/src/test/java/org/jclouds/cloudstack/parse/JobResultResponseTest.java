@@ -19,7 +19,7 @@
 package org.jclouds.cloudstack.parse;
 
 import org.jclouds.cloudstack.domain.AsyncJob;
-import org.jclouds.cloudstack.domain.OperationResult;
+import org.jclouds.cloudstack.domain.JobResult;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
  * @author Richard Downer
  */
 @Test(groups = "unit", testName = "DeleteNetworkResponseTest")
-public class OperationResultResponseTest extends BaseItemParserTest<AsyncJob> {
+public class JobResultResponseTest extends BaseItemParserTest<AsyncJob> {
 
    @Override
    public String resource() {
@@ -39,8 +39,8 @@ public class OperationResultResponseTest extends BaseItemParserTest<AsyncJob> {
    @Override
    @SelectJson("queryasyncjobresultresponse")
    public AsyncJob expected() {
-      OperationResult payload = new OperationResult(true, null);
-      AsyncJob<OperationResult> wrapper = AsyncJob.<OperationResult>builder().id(118).status(1).progress(0).resultCode(0).resultType("object").result(payload).build();
+      JobResult payload = new JobResult(true, null);
+      AsyncJob<JobResult> wrapper = AsyncJob.<JobResult>builder().id(118).status(1).progress(0).resultCode(0).resultType("object").result(payload).build();
       return wrapper;
    }
 

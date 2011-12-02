@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
  *
  * @author Richard Downer
  */
-public class OperationResult implements Comparable<OperationResult> {
+public class JobResult implements Comparable<JobResult> {
 
    private boolean success;
    @SerializedName("displaytext")
@@ -19,10 +19,10 @@ public class OperationResult implements Comparable<OperationResult> {
    /**
     * present only for the serializer
     */
-   OperationResult() {
+   JobResult() {
    }
 
-   public OperationResult(boolean success, String displayText) {
+   public JobResult(boolean success, String displayText) {
       this.success = success;
       this.displayText = displayText;
    }
@@ -40,7 +40,7 @@ public class OperationResult implements Comparable<OperationResult> {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      OperationResult that = (OperationResult) o;
+      JobResult that = (JobResult) o;
 
       if (success != that.success) return false;
       if (displayText != null ? !displayText.equals(that.displayText) : that.displayText != null) return false;
@@ -64,7 +64,7 @@ public class OperationResult implements Comparable<OperationResult> {
    }
 
    @Override
-   public int compareTo(OperationResult other) {
+   public int compareTo(JobResult other) {
       int comparison = Boolean.valueOf(success).compareTo(other.success);
       if (comparison == 0)
          comparison = displayText.compareTo(other.displayText);
