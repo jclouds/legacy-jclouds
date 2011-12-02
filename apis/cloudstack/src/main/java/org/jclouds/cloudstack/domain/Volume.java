@@ -534,6 +534,11 @@ public class Volume implements Comparable<Volume> {
       result = 31 * result + (zoneName != null ? zoneName.hashCode() : 0);
       return result;
    }
+   
+   @Override
+   public String toString() {
+      return getClass().getCanonicalName()+"["+id+"; "+name+"; "+vmState+"]";
+   }
 
    public enum VolumeType {
       ROOT(0),

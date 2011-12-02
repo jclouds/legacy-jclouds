@@ -18,11 +18,11 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import com.google.gson.annotations.SerializedName;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * @author Richard Downer
@@ -377,21 +377,21 @@ public class Snapshot implements Comparable<Snapshot> {
    @Override
    public String toString() {
       return "Snapshot[" +
-         "id=" + id +
-         ", account='" + account + '\'' +
-         ", created=" + created +
-         ", domain='" + domain + '\'' +
-         ", domainId=" + domainId +
-         ", interval=" + interval +
-         ", jobId=" + jobId +
-         ", jobStatus='" + jobStatus + '\'' +
-         ", name='" + name + '\'' +
-         ", snapshotType=" + snapshotType +
-         ", state=" + state +
-         ", volumeId=" + volumeId +
-         ", volumeName='" + volumeName + '\'' +
-         ", volumeType='" + volumeType + '\'' +
-         ']';
+            "id=" + id +
+            ", account='" + account + '\'' +
+            ", created=" + created +
+            ", domain='" + domain + '\'' +
+            ", domainId=" + domainId +
+            ", interval=" + interval +
+            ", jobId=" + jobId +
+            ", jobStatus='" + jobStatus + '\'' +
+            ", name='" + name + '\'' +
+            ", snapshotType=" + snapshotType +
+            ", state=" + state +
+            ", volumeId=" + volumeId +
+            ", volumeName='" + volumeName + '\'' +
+            ", volumeType='" + volumeType + '\'' +
+            ']';
    }
 
    @Override
