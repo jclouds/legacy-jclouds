@@ -19,24 +19,26 @@
 package org.jclouds.glesys.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
 import org.jclouds.glesys.domain.Server;
 import org.jclouds.glesys.domain.ServerDetails;
+import org.jclouds.glesys.domain.ServerStatus;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 /**
  * Tests behavior of {@code ServerClient}
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "live", testName = "ServerClientLiveTest")
 public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
 
-   @BeforeGroups(groups = { "live" })
+   @BeforeGroups(groups = {"live"})
    public void setupClient() {
       super.setupClient();
       client = context.getApi().getServerClient();
@@ -56,6 +58,8 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
          assertEquals(newDetails.getPlatform(), server.getPlatform());
          assertEquals(newDetails.getDatacenter(), server.getDatacenter());
          checkServer(newDetails);
+         ServerStatus newStatus = client.getServerStatus(server.getId());
+         checkStatus(newStatus);
       }
    }
 
@@ -64,6 +68,33 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       assert server.getCpuCores() > 0 : server;
       assert server.getDisk() > 0 : server;
       assert server.getMemory() > 0 : server;
+      assert server.getCost() != null;
    }
 
+   private void checkStatus(ServerStatus status) {
+      assertNotNull(status.getState());
+      assertNotNull(status.getUptime());
+
+      assertNotNull(status.getBandwidth());
+      assert status.getBandwidth().getToday() >= 0 : status;
+      assert status.getBandwidth().getLast30Days() >= 0 : status;
+      assert status.getBandwidth().getMax() >= 0 : status;
+
+      assertNotNull(status.getCpu());
+      assert status.getCpu().getSystem() >= 0.0 : status;
+      assert status.getCpu().getUser() >= 0.0 : status;
+      assert status.getCpu().getNice() >= 0.0 : status;
+      assert status.getCpu().getIdle() >= 0.0 : status;
+      assertNotNull(status.getCpu().getUnit());
+
+      assertNotNull(status.getDisk());
+      assert status.getDisk().getSize() >= 0 : status;
+      assert status.getDisk().getUsed() >= 0 : status;
+      assertNotNull(status.getDisk().getUnit());
+
+      assertNotNull(status.getMemory());
+      assert status.getMemory().getSize() > 0 : status;
+      assert status.getMemory().getUsage() >= 0 : status;
+      assertNotNull(status.getMemory().getUnit());
+   }
 }
