@@ -24,6 +24,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Date;
 import java.util.Map;
 
+import org.jclouds.cloudstack.domain.VirtualMachine.State;
+
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -61,9 +64,8 @@ public class Volume implements Comparable<Volume> {
       private String serviceOfferingName;
       private long size;
       private long snapshotId;
-      private String state;
+      private State state;
       private String storage;
-      // TODO enum
       private String storageType;
       private VolumeType type;
       private long virtualMachineId;
@@ -173,7 +175,7 @@ public class Volume implements Comparable<Volume> {
          return this;
       }
 
-      public Builder state(String state) {
+      public Builder state(State state) {
          this.state = state;
          return this;
       }
@@ -231,11 +233,6 @@ public class Volume implements Comparable<Volume> {
       }
    }
 
-   // for deserialization
-   Volume() {
-
-   }
-
    private long id;
    private Date attached;
    private Date created;
@@ -257,7 +254,6 @@ public class Volume implements Comparable<Volume> {
    @SerializedName("jobid")
    private long jobId;
    @SerializedName("jobstatus")
-   //TODO Change to enum
    private String jobStatus;
    private String name;
    @SerializedName("serviceofferingdisplaytext")
@@ -269,9 +265,10 @@ public class Volume implements Comparable<Volume> {
    private long size;
    @SerializedName("snapshotid")
    private long snapshotId;
-   private String state;
+   private State state;
    private String storage;
    @SerializedName("storagetype")
+   // MAYDO: this should perhaps be an enum; only value I have seen is "shared"
    private String storageType;
    private VolumeType type;
    @SerializedName("virtualmachineid")
@@ -291,7 +288,7 @@ public class Volume implements Comparable<Volume> {
                  String diskOfferingDisplayText, long diskOfferingId, String diskOfferingName,
                  String domain, long domainId, String hypervisor, boolean extractable, long jobId,
                  String jobStatus, String name, String serviceOfferingDisplayText, long serviceOfferingId,
-                 String serviceOfferingName, long size, long snapshotId, String state, String storage,
+                 String serviceOfferingName, long size, long snapshotId, State state, String storage,
                  String storageType, VolumeType type, long virtualMachineId, String vmDisplayName, String vmName,
                  VirtualMachine.State vmState, long zoneId, String zoneName) {
       this.id = id;
@@ -326,6 +323,10 @@ public class Volume implements Comparable<Volume> {
       this.zoneName = zoneName;
    }
 
+   // for deserialization
+   Volume() {
+   }
+
    public long getId() {
       return id;
    }
@@ -333,7 +334,6 @@ public class Volume implements Comparable<Volume> {
    public Date getAttached() {
       return attached;
    }
-
 
    public Date getCreated() {
       return created;
@@ -407,7 +407,7 @@ public class Volume implements Comparable<Volume> {
       return snapshotId;
    }
 
-   public String getState() {
+   public State getState() {
       return state;
    }
 
@@ -533,6 +533,40 @@ public class Volume implements Comparable<Volume> {
       result = 31 * result + (int) (zoneId ^ (zoneId >>> 32));
       result = 31 * result + (zoneName != null ? zoneName.hashCode() : 0);
       return result;
+   }
+   
+   @Override
+   public String toString() {
+      return getClass().getCanonicalName()+"["+id+"; "+name+"; "+vmState+"]";
+   }
+
+   public enum State {
+
+      /** indicates that the volume record is created in the DB, but not on the backend */
+      ALLOCATED, 
+      /** the volume is being created on the backend */
+      CREATING,
+      /** the volume is ready to be used */
+      READY, 
+      /** the volume is destroyed (either as a result of deleteVolume command for DataDisk or as a part of destroyVm) */
+      DESTROYED,
+      /** the volume has failed somehow, e.g. during creation (in cloudstack development) */
+      FAILED,
+      
+      UNRECOGNIZED;
+
+      @Override
+      public String toString() {
+         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
+      }
+
+      public static State fromValue(String state) {
+         try {
+            return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
+      }
    }
 
    public enum VolumeType {

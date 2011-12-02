@@ -18,11 +18,13 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import com.google.gson.annotations.SerializedName;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.CaseFormat;
+import com.google.common.base.Objects;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * @author Richard Downer
@@ -48,7 +50,7 @@ public class Snapshot implements Comparable<Snapshot> {
       private State state;
       private long volumeId;
       private String volumeName;
-      private String volumeType;
+      private Volume.VolumeType volumeType;
 
       /**
        * @param id ID of the snapshot
@@ -157,27 +159,37 @@ public class Snapshot implements Comparable<Snapshot> {
       /**
        * @param volumeType type of the disk volume
        */
-      public Builder volumeType(String volumeType) {
+      public Builder volumeType(Volume.VolumeType volumeType) {
          this.volumeType = volumeType;
          return this;
       }
 
+      public Snapshot build() {
+         return new Snapshot(id, account, created, domain, domainId, interval, jobId,
+               jobStatus, name, snapshotType, state, volumeId, volumeName, volumeType);
+      }
+
    }
 
-   public static enum State {
+   public enum State {
 
-      BackedUp, Creating, BackingUp, UNRECOGNIZED;
+      BACKED_UP, CREATING, BACKING_UP, UNRECOGNIZED;
 
-      public static State fromValue(String type) {
+      @Override
+      public String toString() {
+         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
+      }
+
+      public static State fromValue(String state) {
          try {
-            return valueOf(checkNotNull(type, "type"));
+            return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
          } catch (IllegalArgumentException e) {
             return UNRECOGNIZED;
          }
       }
    }
 
-   public static enum Type {
+   public enum Type {
 
       MANUAL, RECURRING, UNRECOGNIZED;
 
@@ -190,7 +202,7 @@ public class Snapshot implements Comparable<Snapshot> {
       }
    }
 
-   public static enum Interval {
+   public enum Interval {
 
       HOURLY, DAILY, WEEKLY, MONTHLY, template, none, UNRECOGNIZED;
 
@@ -224,7 +236,25 @@ public class Snapshot implements Comparable<Snapshot> {
    @SerializedName("volumename")
    private String volumeName;
    @SerializedName("volumetype")
-   private String volumeType; // FIXME: replace this with a proper enumerated type (blocked until volume API implemented)
+   private Volume.VolumeType volumeType;
+
+   public Snapshot(long id, String account, Date created, String domain, long domainId, Interval interval, long jobId,
+         String jobStatus, String name, Type snapshotType, State state, long volumeId, String volumeName, Volume.VolumeType volumeType) {
+      this.id = id;
+      this.account = account;
+      this.created = created;
+      this.domain = domain;
+      this.domainId = domainId;
+      this.interval = interval;
+      this.jobId = jobId;
+      this.jobStatus = jobStatus;
+      this.name = name;
+      this.snapshotType = snapshotType;
+      this.state = state;
+      this.volumeId = volumeId;
+      this.volumeName = volumeName;
+      this.volumeType = volumeType;
+   }
 
    /**
     * present only for serializer
@@ -326,7 +356,7 @@ public class Snapshot implements Comparable<Snapshot> {
    /**
     * @return type of the disk volume
     */
-   public String getVolumeType() {
+   public Volume.VolumeType getVolumeType() {
       return volumeType;
    }
 
@@ -335,22 +365,22 @@ public class Snapshot implements Comparable<Snapshot> {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      Snapshot snapshot = (Snapshot) o;
+      Snapshot that = (Snapshot) o;
 
-      if (domainId != snapshot.domainId) return false;
-      if (id != snapshot.id) return false;
-      if (jobId != snapshot.jobId) return false;
-      if (volumeId != snapshot.volumeId) return false;
-      if (account != null ? !account.equals(snapshot.account) : snapshot.account != null) return false;
-      if (created != null ? !created.equals(snapshot.created) : snapshot.created != null) return false;
-      if (domain != null ? !domain.equals(snapshot.domain) : snapshot.domain != null) return false;
-      if (interval != snapshot.interval) return false;
-      if (jobStatus != null ? !jobStatus.equals(snapshot.jobStatus) : snapshot.jobStatus != null) return false;
-      if (name != null ? !name.equals(snapshot.name) : snapshot.name != null) return false;
-      if (snapshotType != snapshot.snapshotType) return false;
-      if (state != snapshot.state) return false;
-      if (volumeName != null ? !volumeName.equals(snapshot.volumeName) : snapshot.volumeName != null) return false;
-      if (volumeType != null ? !volumeType.equals(snapshot.volumeType) : snapshot.volumeType != null) return false;
+      if (!Objects.equal(domainId, that.domainId)) return false;
+      if (!Objects.equal(id, that.id)) return false;
+      if (!Objects.equal(jobId, that.jobId)) return false;
+      if (!Objects.equal(volumeId, that.volumeId)) return false;
+      if (!Objects.equal(account, that.account)) return false;
+      if (!Objects.equal(created, that.created)) return false;
+      if (!Objects.equal(domain, that.domain)) return false;
+      if (!Objects.equal(interval, that.interval)) return false;
+      if (!Objects.equal(jobStatus, that.jobStatus)) return false;
+      if (!Objects.equal(name, that.name)) return false;
+      if (!Objects.equal(snapshotType, that.snapshotType)) return false;
+      if (!Objects.equal(state, that.state)) return false;
+      if (!Objects.equal(volumeName, that.volumeName)) return false;
+      if (!Objects.equal(volumeType, that.volumeType)) return false;
 
       return true;
    }
@@ -377,21 +407,21 @@ public class Snapshot implements Comparable<Snapshot> {
    @Override
    public String toString() {
       return "Snapshot[" +
-         "id=" + id +
-         ", account='" + account + '\'' +
-         ", created=" + created +
-         ", domain='" + domain + '\'' +
-         ", domainId=" + domainId +
-         ", interval=" + interval +
-         ", jobId=" + jobId +
-         ", jobStatus='" + jobStatus + '\'' +
-         ", name='" + name + '\'' +
-         ", snapshotType=" + snapshotType +
-         ", state=" + state +
-         ", volumeId=" + volumeId +
-         ", volumeName='" + volumeName + '\'' +
-         ", volumeType='" + volumeType + '\'' +
-         ']';
+            "id=" + id +
+            ", account='" + account + '\'' +
+            ", created=" + created +
+            ", domain='" + domain + '\'' +
+            ", domainId=" + domainId +
+            ", interval=" + interval +
+            ", jobId=" + jobId +
+            ", jobStatus='" + jobStatus + '\'' +
+            ", name='" + name + '\'' +
+            ", snapshotType=" + snapshotType +
+            ", state=" + state +
+            ", volumeId=" + volumeId +
+            ", volumeName='" + volumeName + '\'' +
+            ", volumeType='" + volumeType + '\'' +
+            ']';
    }
 
    @Override
