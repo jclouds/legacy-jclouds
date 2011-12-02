@@ -128,9 +128,11 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
 
       // detach iso
       // TODO: also hard-coded values here
+      /*
       int controllerPort = 0;
-      int device = 0;
+      int device = 1;
       ensureMachineHasDistroMediumDetached(cloneName, controllerIDE, controllerPort, device);
+      */
 
       return clonedMachine;
    }
