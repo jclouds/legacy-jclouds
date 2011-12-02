@@ -48,7 +48,7 @@ public class Snapshot implements Comparable<Snapshot> {
       private State state;
       private long volumeId;
       private String volumeName;
-      private String volumeType;
+      private Volume.VolumeType volumeType;
 
       /**
        * @param id ID of the snapshot
@@ -157,14 +157,19 @@ public class Snapshot implements Comparable<Snapshot> {
       /**
        * @param volumeType type of the disk volume
        */
-      public Builder volumeType(String volumeType) {
+      public Builder volumeType(Volume.VolumeType volumeType) {
          this.volumeType = volumeType;
          return this;
       }
 
+      public Snapshot build() {
+         return new Snapshot(id, account, created, domain, domainId, interval, jobId,
+               jobStatus, name, snapshotType, state, volumeId, volumeName, volumeType);
+      }
+
    }
 
-   public static enum State {
+   public enum State {
 
       BackedUp, Creating, BackingUp, UNRECOGNIZED;
 
@@ -177,7 +182,7 @@ public class Snapshot implements Comparable<Snapshot> {
       }
    }
 
-   public static enum Type {
+   public enum Type {
 
       MANUAL, RECURRING, UNRECOGNIZED;
 
@@ -190,7 +195,7 @@ public class Snapshot implements Comparable<Snapshot> {
       }
    }
 
-   public static enum Interval {
+   public enum Interval {
 
       HOURLY, DAILY, WEEKLY, MONTHLY, template, none, UNRECOGNIZED;
 
@@ -224,7 +229,25 @@ public class Snapshot implements Comparable<Snapshot> {
    @SerializedName("volumename")
    private String volumeName;
    @SerializedName("volumetype")
-   private String volumeType; // FIXME: replace this with a proper enumerated type (blocked until volume API implemented)
+   private Volume.VolumeType volumeType;
+
+   public Snapshot(long id, String account, Date created, String domain, long domainId, Interval interval, long jobId,
+         String jobStatus, String name, Type snapshotType, State state, long volumeId, String volumeName, Volume.VolumeType volumeType) {
+      this.id = id;
+      this.account = account;
+      this.created = created;
+      this.domain = domain;
+      this.domainId = domainId;
+      this.interval = interval;
+      this.jobId = jobId;
+      this.jobStatus = jobStatus;
+      this.name = name;
+      this.snapshotType = snapshotType;
+      this.state = state;
+      this.volumeId = volumeId;
+      this.volumeName = volumeName;
+      this.volumeType = volumeType;
+   }
 
    /**
     * present only for serializer
@@ -326,7 +349,7 @@ public class Snapshot implements Comparable<Snapshot> {
    /**
     * @return type of the disk volume
     */
-   public String getVolumeType() {
+   public Volume.VolumeType getVolumeType() {
       return volumeType;
    }
 

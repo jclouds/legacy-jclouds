@@ -112,7 +112,7 @@ public class SnapshotClientLiveTest extends BaseCloudStackClientLiveTest {
 
    protected Volume getPreferredVolume() {
       for (Volume candidate : client.getVolumeClient().listVolumes()) {
-         if ("Ready".equals(candidate.getState()))
+         if (candidate.getState() == Volume.State.Ready)
             return candidate;
       }
       throw new AssertionError("No suitable Volume found.");
@@ -123,6 +123,7 @@ public class SnapshotClientLiveTest extends BaseCloudStackClientLiveTest {
 
       Snapshot snapshot = Retryables.retryGettingResultOrFailing(new PredicateCallable<Snapshot>() {
          public Snapshot call() {
+            logger.info("creating snapshot from volume %s", volume);
             AsyncCreateResponse job = client.getSnapshotClient().createSnapshot(volume.getId());
             assertTrue(jobComplete.apply(job.getJobId()));
             return findSnapshotWithId(job.getId());
@@ -131,7 +132,7 @@ public class SnapshotClientLiveTest extends BaseCloudStackClientLiveTest {
             logger.info("failed creating snapshot (retrying): %s", getLastFailure());
          }
       }, null, 60*1000, "failed to create snapshot");
-
+      logger.info("created snapshot %s from volume %s", snapshot, volume);
       checkSnapshot(snapshot);
       client.getSnapshotClient().deleteSnapshot(snapshot.getId());
    }
