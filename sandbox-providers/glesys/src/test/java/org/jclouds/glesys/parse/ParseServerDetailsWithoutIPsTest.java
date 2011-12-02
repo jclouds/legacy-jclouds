@@ -24,6 +24,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.glesys.config.GleSYSParserModule;
+import org.jclouds.glesys.domain.Cost;
 import org.jclouds.glesys.domain.ServerDetails;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
@@ -49,8 +50,9 @@ public class ParseServerDetailsWithoutIPsTest extends BaseItemParserTest<ServerD
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
    public ServerDetails expected() {
+      Cost cost = Cost.builder().amount(6.38).currency("EUR").timePeriod("month").build();
       return ServerDetails.builder().id("vz1541880").hostname("mammamia").datacenter("Falkenberg").platform("OpenVZ")
-            .description("description").cpuCores(1).memory(128).disk(5).build();
+            .description("description").cpuCores(1).memory(128).disk(5).cost(cost).build();
    }
 
    protected Injector injector() {

@@ -18,15 +18,15 @@
  */
 package org.jclouds.glesys.features;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import org.jclouds.glesys.domain.Server;
+import org.jclouds.glesys.domain.ServerDetails;
+import org.jclouds.glesys.domain.ServerStatus;
+import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.Test;
 
 import java.util.Set;
 
-import org.jclouds.glesys.domain.Server;
-import org.jclouds.glesys.domain.ServerDetails;
-import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.Test;
+import static org.testng.Assert.*;
 
 /**
  * Tests behavior of {@code ServerClient}
@@ -58,12 +58,12 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
          checkServer(newDetails);
       }
    }
-
+    
    private void checkServer(ServerDetails server) {
       // description can be null
       assert server.getCpuCores() > 0 : server;
       assert server.getDisk() > 0 : server;
       assert server.getMemory() > 0 : server;
+      assert server.getCost() != null;
    }
-
 }
