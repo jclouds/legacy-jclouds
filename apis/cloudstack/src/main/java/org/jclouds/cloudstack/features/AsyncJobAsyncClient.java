@@ -57,7 +57,6 @@ public interface AsyncJobAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listAsyncJobs")
-   @SelectJson("asyncjobs")
    @ResponseParser(ParseAsyncJobsFromHttpResponse.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<AsyncJob<?>>> listAsyncJobs(ListAsyncJobsOptions... options);
