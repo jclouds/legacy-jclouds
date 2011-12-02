@@ -21,6 +21,7 @@ package org.jclouds.compute.options;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
@@ -330,6 +331,18 @@ public class RunScriptOptions {
       return authenticateSudo;
    }
 
+   /**
+    * This will be removed in jclouds 1.4.0
+    * @see #getLoginPassword
+    * @see #getLoginPrivateKey
+    * @see #getLoginUser
+    */
+   @Deprecated
+   public Credentials getOverridingCredentials() {
+      return DefaultCredentialsFromImageOrOverridingCredentials.overrideDefaultCredentialsWithOptionsIfPresent(null,
+            this);
+   }
+   
    /**
     * 
     * @return the login password for

@@ -21,9 +21,10 @@ package org.jclouds.compute.functions;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.domain.LoginCredentials.Builder;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Function;
 
@@ -36,8 +37,14 @@ public class DefaultCredentialsFromImageOrOverridingCredentials implements Funct
 
    @Override
    public LoginCredentials apply(Template template) {
-      TemplateOptions options = template.getOptions();
-      Builder builder = LoginCredentials.builder(template.getImage().getDefaultCredentials());
+      RunScriptOptions options = template.getOptions();
+      LoginCredentials defaultCreds = template.getImage().getDefaultCredentials();
+      return overrideDefaultCredentialsWithOptionsIfPresent(defaultCreds, options);
+   }
+
+   public static LoginCredentials overrideDefaultCredentialsWithOptionsIfPresent(
+         @Nullable LoginCredentials defaultCreds, RunScriptOptions options) {
+      Builder builder = LoginCredentials.builder(defaultCreds);
       if (options.getLoginUser() != null)
          builder.user(options.getLoginUser());
       if (options.getLoginPassword() != null)
