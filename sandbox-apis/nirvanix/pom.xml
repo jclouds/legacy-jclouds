@@ -104,24 +104,12 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.nirvanix.endpoint</name>
-                                            <value>${test.nirvanix.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.nirvanix.apiversion</name>
-                                            <value>${test.nirvanix.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.nirvanix.identity</name>
-                                            <value>${test.nirvanix.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.nirvanix.credential</name>
-                                            <value>${test.nirvanix.credential}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.nirvanix.endpoint>${test.nirvanix.endpoint}</test.nirvanix.endpoint>
+                                        <test.nirvanix.apiversion>${test.nirvanix.apiversion}</test.nirvanix.apiversion>
+                                        <test.nirvanix.identity>${test.nirvanix.identity}</test.nirvanix.identity>
+                                        <test.nirvanix.credential>${test.nirvanix.credential}</test.nirvanix.credential>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

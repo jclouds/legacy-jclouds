@@ -91,24 +91,12 @@
                                 <configuration>
                                     <!-- beat up the slicehost server less -->
                                     <threadCount>1</threadCount>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.slicehost.endpoint</name>
-                                            <value>${test.slicehost.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.slicehost.apiversion</name>
-                                            <value>${test.slicehost.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.slicehost.identity</name>
-                                            <value>${test.slicehost.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.slicehost.image-id</name>
-                                            <value>${test.slicehost.image-id}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.slicehost.endpoint>${test.slicehost.endpoint}</test.slicehost.endpoint>
+                                        <test.slicehost.apiversion>${test.slicehost.apiversion}</test.slicehost.apiversion>
+                                        <test.slicehost.identity>${test.slicehost.identity}</test.slicehost.identity>
+                                        <test.slicehost.image-id>${test.slicehost.image-id}</test.slicehost.image-id>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

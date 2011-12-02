@@ -97,28 +97,13 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.virtacore-vcloudexpress.endpoint</name>
-                                            <value>${test.virtacore-vcloudexpress.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.virtacore-vcloudexpress.apiversion</name>
-                                            <value>${test.virtacore-vcloudexpress.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.virtacore-vcloudexpress.identity</name>
-                                            <value>${test.virtacore-vcloudexpress.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.virtacore-vcloudexpress.credential</name>
-                                            <value>${test.virtacore-vcloudexpress.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.virtacore-vcloudexpress.image-id</name>
-                                            <value>${test.virtacore-vcloudexpress.image-id}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.virtacore-vcloudexpress.endpoint>${test.virtacore-vcloudexpress.endpoint}</test.virtacore-vcloudexpress.endpoint>
+                                        <test.virtacore-vcloudexpress.apiversion>${test.virtacore-vcloudexpress.apiversion}</test.virtacore-vcloudexpress.apiversion>
+                                        <test.virtacore-vcloudexpress.identity>${test.virtacore-vcloudexpress.identity}</test.virtacore-vcloudexpress.identity>
+                                        <test.virtacore-vcloudexpress.credential>${test.virtacore-vcloudexpress.credential}</test.virtacore-vcloudexpress.credential>
+                                        <test.virtacore-vcloudexpress.image-id>${test.virtacore-vcloudexpress.image-id}</test.virtacore-vcloudexpress.image-id>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

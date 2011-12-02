@@ -98,28 +98,13 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.elastichosts-sat-p.endpoint</name>
-                                            <value>${test.elastichosts-sat-p.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.elastichosts-sat-p.apiversion</name>
-                                            <value>${test.elastichosts-sat-p.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.elastichosts-sat-p.identity</name>
-                                            <value>${test.elastichosts-sat-p.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.elastichosts-sat-p.credential</name>
-                                            <value>${test.elastichosts-sat-p.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.elastichosts-sat-p.image-id</name>
-                                            <value>${test.elastichosts-sat-p.image-id}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.elastichosts-sat-p.endpoint>${test.elastichosts-sat-p.endpoint}</test.elastichosts-sat-p.endpoint>
+                                        <test.elastichosts-sat-p.apiversion>${test.elastichosts-sat-p.apiversion}</test.elastichosts-sat-p.apiversion>
+                                        <test.elastichosts-sat-p.identity>${test.elastichosts-sat-p.identity}</test.elastichosts-sat-p.identity>
+                                        <test.elastichosts-sat-p.credential>${test.elastichosts-sat-p.credential}</test.elastichosts-sat-p.credential>
+                                        <test.elastichosts-sat-p.image-id>${test.elastichosts-sat-p.image-id}</test.elastichosts-sat-p.image-id>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

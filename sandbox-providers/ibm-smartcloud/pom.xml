@@ -108,28 +108,13 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.ibm-smartcloud.endpoint</name>
-                                            <value>${test.ibm-smartcloud.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.ibm-smartcloud.apiversion</name>
-                                            <value>${test.ibm-smartcloud.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.ibm-smartcloud.identity</name>
-                                            <value>${test.ibm-smartcloud.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.ibm-smartcloud.credential</name>
-                                            <value>${test.ibm-smartcloud.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.ibm-smartcloud.image-id</name>
-                                            <value>${test.ibm-smartcloud.image-id}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.ibm-smartcloud.endpoint>${test.ibm-smartcloud.endpoint}</test.ibm-smartcloud.endpoint>
+                                        <test.ibm-smartcloud.apiversion>${test.ibm-smartcloud.apiversion}</test.ibm-smartcloud.apiversion>
+                                        <test.ibm-smartcloud.identity>${test.ibm-smartcloud.identity}</test.ibm-smartcloud.identity>
+                                        <test.ibm-smartcloud.credential>${test.ibm-smartcloud.credential}</test.ibm-smartcloud.credential>
+                                        <test.ibm-smartcloud.image-id>${test.ibm-smartcloud.image-id}</test.ibm-smartcloud.image-id>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

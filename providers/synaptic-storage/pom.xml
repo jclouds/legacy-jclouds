@@ -99,36 +99,15 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.synaptic-storage.endpoint</name>
-                                            <value>${test.synaptic-storage.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.synaptic-storage.apiversion</name>
-                                            <value>${test.synaptic-storage.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.synaptic-storage.identity</name>
-                                            <value>${test.synaptic-storage.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.synaptic-storage.credential</name>
-                                            <value>${test.synaptic-storage.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.initializer</name>
-                                            <value>${test.initializer}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.url</name>
-                                            <value>${jclouds.blobstore.httpstream.url}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.md5</name>
-                                            <value>${jclouds.blobstore.httpstream.md5}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.synaptic-storage.endpoint>${test.synaptic-storage.endpoint}</test.synaptic-storage.endpoint>
+                                        <test.synaptic-storage.apiversion>${test.synaptic-storage.apiversion}</test.synaptic-storage.apiversion>
+                                        <test.synaptic-storage.identity>${test.synaptic-storage.identity}</test.synaptic-storage.identity>
+                                        <test.synaptic-storage.credential>${test.synaptic-storage.credential}</test.synaptic-storage.credential>
+                                        <test.initializer>${test.initializer}</test.initializer>
+                                        <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
+                                        <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

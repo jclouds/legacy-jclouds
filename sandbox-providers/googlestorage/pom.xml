@@ -99,36 +99,15 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.googlestorage.endpoint</name>
-                                            <value>${test.googlestorage.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.googlestorage.apiversion</name>
-                                            <value>${test.googlestorage.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.googlestorage.identity</name>
-                                            <value>${test.googlestorage.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.googlestorage.credential</name>
-                                            <value>${test.googlestorage.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.initializer</name>
-                                            <value>${test.initializer}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.url</name>
-                                            <value>${jclouds.blobstore.httpstream.url}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.md5</name>
-                                            <value>${jclouds.blobstore.httpstream.md5}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.googlestorage.endpoint>${test.googlestorage.endpoint}</test.googlestorage.endpoint>
+                                        <test.googlestorage.apiversion>${test.googlestorage.apiversion}</test.googlestorage.apiversion>
+                                        <test.googlestorage.identity>${test.googlestorage.identity}</test.googlestorage.identity>
+                                        <test.googlestorage.credential>${test.googlestorage.credential}</test.googlestorage.credential>
+                                        <test.initializer>${test.initializer}</test.initializer>
+                                        <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
+                                        <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

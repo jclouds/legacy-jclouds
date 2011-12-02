@@ -98,28 +98,13 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.stratogen-vcloud-mycloud.endpoint</name>
-                                            <value>${test.stratogen-vcloud-mycloud.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.stratogen-vcloud-mycloud.apiversion</name>
-                                            <value>${test.stratogen-vcloud-mycloud.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.stratogen-vcloud-mycloud.identity</name>
-                                            <value>${test.stratogen-vcloud-mycloud.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.stratogen-vcloud-mycloud.credential</name>
-                                            <value>${test.stratogen-vcloud-mycloud.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.stratogen-vcloud-mycloud.image-id</name>
-                                            <value>${test.stratogen-vcloud-mycloud.image-id}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.stratogen-vcloud-mycloud.endpoint>${test.stratogen-vcloud-mycloud.endpoint}</test.stratogen-vcloud-mycloud.endpoint>
+                                        <test.stratogen-vcloud-mycloud.apiversion>${test.stratogen-vcloud-mycloud.apiversion}</test.stratogen-vcloud-mycloud.apiversion>
+                                        <test.stratogen-vcloud-mycloud.identity>${test.stratogen-vcloud-mycloud.identity}</test.stratogen-vcloud-mycloud.identity>
+                                        <test.stratogen-vcloud-mycloud.credential>${test.stratogen-vcloud-mycloud.credential}</test.stratogen-vcloud-mycloud.credential>
+                                        <test.stratogen-vcloud-mycloud.image-id>${test.stratogen-vcloud-mycloud.image-id}</test.stratogen-vcloud-mycloud.image-id>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

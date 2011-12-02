@@ -108,40 +108,16 @@
                                 </goals>
                                 <configuration>
                                     <threadCount>1</threadCount>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.eucalyptus-partnercloud-s3.endpoint</name>
-                                            <value>${test.eucalyptus-partnercloud-s3.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.eucalyptus-partnercloud-s3.apiversion</name>
-                                            <value>${test.eucalyptus-partnercloud-s3.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.eucalyptus-partnercloud-s3.identity</name>
-                                            <value>${test.eucalyptus-partnercloud-s3.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.eucalyptus-partnercloud-s3.credential</name>
-                                            <value>${test.eucalyptus-partnercloud-s3.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.initializer</name>
-                                            <value>${test.initializer}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.url</name>
-                                            <value>${jclouds.blobstore.httpstream.url}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.md5</name>
-                                            <value>${jclouds.blobstore.httpstream.md5}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.blobstore.container-count</name>
-                                            <value>${test.blobstore.container-count}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.eucalyptus-partnercloud-s3.endpoint>${test.eucalyptus-partnercloud-s3.endpoint}</test.eucalyptus-partnercloud-s3.endpoint>
+                                        <test.eucalyptus-partnercloud-s3.apiversion>${test.eucalyptus-partnercloud-s3.apiversion}</test.eucalyptus-partnercloud-s3.apiversion>
+                                        <test.eucalyptus-partnercloud-s3.identity>${test.eucalyptus-partnercloud-s3.identity}</test.eucalyptus-partnercloud-s3.identity>
+                                        <test.eucalyptus-partnercloud-s3.credential>${test.eucalyptus-partnercloud-s3.credential}</test.eucalyptus-partnercloud-s3.credential>
+                                        <test.initializer>${test.initializer}</test.initializer>
+                                        <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
+                                        <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
+                                        <test.blobstore.container-count>${test.blobstore.container-count}</test.blobstore.container-count>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

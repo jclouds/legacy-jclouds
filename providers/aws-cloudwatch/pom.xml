@@ -85,44 +85,17 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.aws-cloudwatch.endpoint</name>
-                                            <value>${test.aws-cloudwatch.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-cloudwatch.apiversion</name>
-                                            <value>${test.aws-cloudwatch.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-cloudwatch.identity</name>
-                                            <value>${test.aws-cloudwatch.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-cloudwatch.credential</name>
-                                            <value>${test.aws-cloudwatch.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-cloudwatch.compute.provider</name>
-                                            <value>${test.aws-cloudwatch.compute.provider}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-cloudwatch.compute.endpoint</name>
-                                            <value>${test.aws-cloudwatch.compute.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-cloudwatch.compute.apiversion</name>
-                                            <value>${test.aws-cloudwatch.compute.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-cloudwatch.compute.identity</name>
-                                            <value>${test.aws-cloudwatch.compute.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-cloudwatch.compute.credential</name>
-                                            <value>${test.aws-cloudwatch.compute.credential}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.aws-cloudwatch.endpoint>${test.aws-cloudwatch.endpoint}</test.aws-cloudwatch.endpoint>
+                                        <test.aws-cloudwatch.apiversion>${test.aws-cloudwatch.apiversion}</test.aws-cloudwatch.apiversion>
+                                        <test.aws-cloudwatch.identity>${test.aws-cloudwatch.identity}</test.aws-cloudwatch.identity>
+                                        <test.aws-cloudwatch.credential>${test.aws-cloudwatch.credential}</test.aws-cloudwatch.credential>
+                                        <test.aws-cloudwatch.compute.provider>${test.aws-cloudwatch.compute.provider}</test.aws-cloudwatch.compute.provider>
+                                        <test.aws-cloudwatch.compute.endpoint>${test.aws-cloudwatch.compute.endpoint}</test.aws-cloudwatch.compute.endpoint>
+                                        <test.aws-cloudwatch.compute.apiversion>${test.aws-cloudwatch.compute.apiversion}</test.aws-cloudwatch.compute.apiversion>
+                                        <test.aws-cloudwatch.compute.identity>${test.aws-cloudwatch.compute.identity}</test.aws-cloudwatch.compute.identity>
+                                        <test.aws-cloudwatch.compute.credential>${test.aws-cloudwatch.compute.credential}</test.aws-cloudwatch.compute.credential>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>
