@@ -44,9 +44,10 @@ import static org.testng.Assert.*;
 @Test(groups = "live", singleThreaded = true, testName = "TemplateClientLiveTest")
 public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
 
-   private static final String IMPORT_VHD_URL = "http://www.frontiertown.co.uk/jclouds/openwrt.vhd";
+   private static final String IMPORT_VHD_URL = "http://www.frontiertown.co.uk/jclouds/empty.vhd";
    private VirtualMachine vm;
-   private Template template;
+   private Template createdTemplate;
+   private Template registeredTemplate;
 
    @Test
    public void testListTemplates() throws Exception {
@@ -110,17 +111,17 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       CreateTemplateOptions options = CreateTemplateOptions.Builder.volumeId(volume.getId());
       AsyncCreateResponse response = client.getTemplateClient().createTemplate(TemplateMetadata.builder().name(tmplName).osTypeId(vm.getGuestOSId()).displayText("jclouds live testCreateTemplate").build(), options);
       assert jobComplete.apply(response.getJobId()) : vm;
-      template = client.getTemplateClient().getTemplateInZone(response.getId(), vm.getZoneId());
+      createdTemplate = client.getTemplateClient().getTemplateInZone(response.getId(), vm.getZoneId());
 
       // Assertions
-      assertNotNull(template);
+      assertNotNull(createdTemplate);
    }
 
-   @Test(enabled = true, dependsOnMethods = "testCreateTemplate")
+   @Test(enabled = true, dependsOnMethods = "testRegisterTemplate")
    public void testExtractTemplate() throws Exception {
       // Initiate the extraction and wait for it to complete
-      AsyncCreateResponse response = client.getTemplateClient().extractTemplate(template.getId(), ExtractMode.HTTP_DOWNLOAD, template.getZoneId());
-      assert jobComplete.apply(response.getJobId()) : template;
+      AsyncCreateResponse response = client.getTemplateClient().extractTemplate(registeredTemplate.getId(), ExtractMode.HTTP_DOWNLOAD, registeredTemplate.getZoneId());
+      assert jobComplete.apply(response.getJobId()) : registeredTemplate;
 
       // Get the result
       AsyncJob<TemplateExtraction> asyncJob = client.getAsyncJobClient().getAsyncJob(response.getJobId());
@@ -153,11 +154,11 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
 
       // Register a template
       String tmplName = "jclouds-" + Integer.toHexString(new Random().nextInt());
-      RegisterTemplateOptions options = RegisterTemplateOptions.Builder.bits(32);
+      RegisterTemplateOptions options = RegisterTemplateOptions.Builder.bits(32).isExtractable(true);
       TemplateMetadata templateMetadata = TemplateMetadata.builder().name(tmplName).osTypeId(osType.getId()).displayText("jclouds live testRegisterTemplate").build();
-      Set<Template> templates = client.getTemplateClient().registerTemplate(templateMetadata, "VHD", "xen", IMPORT_VHD_URL, zone.getId(), options);
-      template = Iterables.getOnlyElement(templates, null);
-      assertNotNull(template);
+      Set<Template> templates = client.getTemplateClient().registerTemplate(templateMetadata, "VHD", "XenServer", IMPORT_VHD_URL, zone.getId(), options);
+      registeredTemplate = Iterables.getOnlyElement(templates, null);
+      assertNotNull(registeredTemplate);
 
       // Ensure it is available
       final long zoneId = zone.getId();
@@ -170,10 +171,10 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
             return "Download Complete".equals(t2.getStatus());
          }
       };
-      assertTrue(new RetryablePredicate<Template>(templateReadyPredicate, 60000).apply(template));
+      assertTrue(new RetryablePredicate<Template>(templateReadyPredicate, 60000).apply(registeredTemplate));
 
       // Create a VM that uses this template
-      vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, template.getId(), client, jobComplete, virtualMachineRunning);
+      vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, registeredTemplate.getId(), client, jobComplete, virtualMachineRunning);
       assertNotNull(vm);
    }
 
@@ -185,8 +186,11 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
          assert jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vm.getId())) : vm;
          assert virtualMachineDestroyed.apply(vm);
       }
-      if (template != null) {
-         client.getTemplateClient().deleteTemplate(template.getId());
+      if (createdTemplate != null) {
+         client.getTemplateClient().deleteTemplate(createdTemplate.getId());
+      }
+      if (registeredTemplate != null) {
+         client.getTemplateClient().deleteTemplate(registeredTemplate.getId());
       }
       super.tearDown();
    }
