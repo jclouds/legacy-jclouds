@@ -28,9 +28,15 @@ import static org.testng.AssertJUnit.assertTrue;
 
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Snapshot;
+import org.jclouds.cloudstack.domain.Volume;
 import org.jclouds.cloudstack.options.ListSnapshotsOptions;
+import org.jclouds.logging.Logger;
+import org.jclouds.predicates.PredicateCallable;
+import org.jclouds.predicates.Retryables;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -40,11 +46,13 @@ import com.google.common.collect.Iterables;
 /**
  * Tests behavior of {@code SnapshotClient}
  *
- * @author grkvlt@apache.org
+ * @author grkvlt@apache.org, Alex Heneveld
  */
 @Test(groups = "live", singleThreaded = true, testName = "SnapshotClientLiveTest")
 public class SnapshotClientLiveTest extends BaseCloudStackClientLiveTest {
 
+   @Resource Logger logger = Logger.NULL;
+   
    public void testListSnapshots() {
       Set<Snapshot> snapshots = client.getSnapshotClient().listSnapshots();
       assertNotNull(snapshots);
@@ -102,24 +110,29 @@ public class SnapshotClientLiveTest extends BaseCloudStackClientLiveTest {
       assertNull(found);
    }
 
-   public void testCreateSnapshotFromVolume() {
-      // Pick some volume
-      long volumeId = Iterables.get(client.getVolumeClient().listVolumes(), 0).getId();
-
-      Snapshot snapshot = null;
-      while (snapshot == null) {
-         try {
-            AsyncCreateResponse job = client.getSnapshotClient().createSnapshot(volumeId);
-            assertTrue(jobComplete.apply(job.getJobId()));
-            snapshot = findSnapshotWithId(job.getId());
-         } catch (IllegalStateException e) {
-            // TODO snapshot creation failed - retry?
-         }
+   protected Volume getPreferredVolume() {
+      for (Volume candidate : client.getVolumeClient().listVolumes()) {
+         if ("Ready".equals(candidate.getState()))
+            return candidate;
       }
+      throw new AssertionError("No suitable Volume found.");
+   }
+
+   public void testCreateSnapshotFromVolume() {
+      final Volume volume = getPreferredVolume();  //fail fast if none
+
+      Snapshot snapshot = Retryables.retryGettingResultOrFailing(new PredicateCallable<Snapshot>() {
+         public Snapshot call() {
+            AsyncCreateResponse job = client.getSnapshotClient().createSnapshot(volume.getId());
+            assertTrue(jobComplete.apply(job.getJobId()));
+            return findSnapshotWithId(job.getId());
+         }
+         protected void onFailure() {
+            logger.info("failed creating snapshot (retrying): %s", getLastFailure());
+         }
+      }, null, 60*1000, "failed to create snapshot");
 
       checkSnapshot(snapshot);
-
-      // Delete the snapshot
       client.getSnapshotClient().deleteSnapshot(snapshot.getId());
    }
 

@@ -18,31 +18,46 @@
  */
 package org.jclouds.cloudstack.features;
 
-import static com.google.common.collect.Iterables.*;
-import static org.testng.AssertJUnit.*;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertNotSame;
+import static org.testng.AssertJUnit.assertNull;
+import static org.testng.AssertJUnit.assertTrue;
 
+import java.util.NoSuchElementException;
 import java.util.Set;
 
-import com.google.common.base.Function;
+import javax.annotation.Resource;
+
+import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.cloudstack.domain.DiskOffering;
 import org.jclouds.cloudstack.domain.Snapshot;
+import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.Volume;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.options.ListVolumesOptions;
+import org.jclouds.logging.Logger;
+import org.jclouds.predicates.PredicateCallable;
+import org.jclouds.predicates.Retryables;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
+import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code VolumeClient}
  *
- * @author Vijay Kiran
+ * @author Vijay Kiran, Alex Heneveld
  */
 @Test(groups = "live", singleThreaded = true, testName = "VolumeClientLiveTest")
 public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
-   protected String prefix = System.getProperty("user.name");
+
+   @Resource Logger logger = Logger.NULL;
+
+   protected String prefix = System.getProperty("user.name")+"-"+getClass().getSimpleName();
 
    private long zoneId;
 
@@ -66,10 +81,10 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public void testListVolumesById() {
       Iterable<Long> volumeIds = Iterables.transform(client.getVolumeClient().listVolumes(), new Function<Volume, Long>() {
-                  public Long apply(Volume input) {
-                      return input.getId();
-                  }
-              });
+         public Long apply(Volume input) {
+            return input.getId();
+         }
+      });
       assertNotNull(volumeIds);
       assertFalse(Iterables.isEmpty(volumeIds));
 
@@ -91,10 +106,10 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public void testGetVolumeById() {
       Iterable<Long> volumeIds = Iterables.transform(client.getVolumeClient().listVolumes(), new Function<Volume, Long>() {
-                  public Long apply(Volume input) {
-                      return input.getId();
-                  }
-              });
+         public Long apply(Volume input) {
+            return input.getId();
+         }
+      });
       assertNotNull(volumeIds);
       assertFalse(Iterables.isEmpty(volumeIds));
 
@@ -111,114 +126,141 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
       assertNull(found);
    }
 
-   public void testCreateVolumeFromDiskofferingInZoneAndDeleteVolume() {
-      // Pick some disk offering
-      long diskOfferingId = Iterables.get(client.getOfferingClient().listDiskOfferings(), 0).getId();
-
-      Volume volume = null;
-      while (volume == null) {
-         try {
-            AsyncCreateResponse job = client.getVolumeClient().createVolumeFromDiskOfferingInZone(prefix + "-jclouds-volume",
-                  diskOfferingId, zoneId);
-            assertTrue(jobComplete.apply(job.getJobId()));
-            volume = findVolumeWithId(job.getId());
-         } catch (IllegalStateException e) {
-            // TODO volume creation failed - retry?
-         }
+   protected DiskOffering getPreferredDiskOffering() {
+      for (DiskOffering candidate : client.getOfferingClient().listDiskOfferings()) {
+         //any will do
+         return candidate;
       }
+      throw new AssertionError("No suitable DiskOffering found.");
+   }
+   protected Snapshot getPreferredSnapshot() {
+      for (Snapshot candidate : client.getSnapshotClient().listSnapshots()) {
+         if (candidate.getState()==Snapshot.State.BackedUp)
+            return candidate;
+      }
+      throw new AssertionError("No suitable Snapshot found.");
+   }
 
+   protected VirtualMachine getPreferredVirtualMachine() {
+      for (VirtualMachine candidate : client.getVirtualMachineClient().listVirtualMachines()) {
+//         this is a guess::
+         if (candidate.getState()==VirtualMachine.State.RUNNING || candidate.getState()==VirtualMachine.State.STOPPED)
+            return candidate;
+      }
+      throw new AssertionError("No suitable VirtualMachine found.");
+   }
+
+   protected Volume createPreferredVolumeFromDisk() {
+      return Retryables.retryGettingResultOrFailing(new PredicateCallable<Volume>() {
+         public Volume call() {
+            AsyncCreateResponse job = client.getVolumeClient().createVolumeFromDiskOfferingInZone(
+                  prefix+"-jclouds-volume", getPreferredDiskOffering().getId(), zoneId);
+            assertTrue(jobComplete.apply(job.getJobId()));
+            logger.info("created volume "+job.getId());
+            return findVolumeWithId(job.getId());
+         }
+      }, null, 60*1000, "failed to create volume");
+   }
+
+   public void testCreateVolumeFromDiskofferingInZoneAndDeleteVolume() {
+      logger.info("testCreateVolumeFromDiskofferingInZoneAndDeleteVolume");
+      Volume volume = createPreferredVolumeFromDisk();
       checkVolume(volume);
-
-      // Delete the volume
       client.getVolumeClient().deleteVolume(volume.getId());
    }
 
+   /** test requires that a VM exist */
    public void testCreateVolumeFromDiskofferingInZoneAndAttachVolumeToVirtualMachineAndDetachAndDelete() {
-      // Pick some disk offering
-      long diskOfferingId = Iterables.get(client.getOfferingClient().listDiskOfferings(), 0).getId();
+      logger.info("testCreateVolumeFromDiskofferingInZoneAndAttachVolumeToVirtualMachineAndDetachAndDelete");
+      final Volume volume = createPreferredVolumeFromDisk();
+      try {
 
-      Volume volume = null;
-      while (volume == null) {
-         try {
-            AsyncCreateResponse job = client.getVolumeClient().createVolumeFromDiskOfferingInZone(prefix + "-jclouds-volume",
-                  diskOfferingId, zoneId);
-            assertTrue(jobComplete.apply(job.getJobId()));
-            volume = findVolumeWithId(job.getId());
-         } catch (IllegalStateException e) {
-            // TODO volume creation failed - retry?
-         }
+         checkVolume(volume);
+
+         final VirtualMachine virtualMachine = getPreferredVirtualMachine();
+
+         Volume attachedVolume = Retryables.retryGettingResultOrFailing(new PredicateCallable<Volume>() {
+            public Volume call() {
+               logger.info("attaching volume %s to vm %s", volume, virtualMachine);
+               AsyncCreateResponse job = client.getVolumeClient().attachVolume(volume.getId(), virtualMachine.getId());
+               assertTrue(jobComplete.apply(job.getJobId()));
+               return findVolumeWithId(volume.getId());
+            }
+            int failures=0;
+            protected void onFailure() {
+               logger.info("failed attaching volume (retrying): %s", getLastFailure());
+               if (failures++==0) logger.warn(getLastFailure(), "first failure attaching volume");
+            }
+         }, null, 60*1000, "failed to attach volume");
+         checkVolume(attachedVolume);
+         assertEquals(virtualMachine.getId(), attachedVolume.getVirtualMachineId());
+         assertNotNull(attachedVolume.getAttached());
+
+         Volume detachedVolume = Retryables.retryGettingResultOrFailing(new PredicateCallable<Volume>() {
+            public Volume call() {
+               logger.info("detaching volume %s from vm %s", volume, virtualMachine);
+               AsyncCreateResponse job = client.getVolumeClient().detachVolume(volume.getId());
+               assertTrue(jobComplete.apply(job.getJobId()));
+               return findVolumeWithId(volume.getId());
+            }
+            protected void onFailure() {
+               logger.debug("failed detaching volume (retrying): %s", getLastFailure());
+            }
+         }, null, 60*1000, "failed to detach volume");
+         checkVolume(detachedVolume);
+         assertNull(detachedVolume.getAttached());
+
+      } finally {
+         client.getVolumeClient().deleteVolume(volume.getId());
       }
-
-      checkVolume(volume);
-      long virtualMachineId = Iterables.get(client.getVirtualMachineClient().listVirtualMachines(), 0).getId();
-
-      // Attach Volume
-      Volume attachedVolume = null;
-      while (attachedVolume == null) {
-         try {
-            AsyncCreateResponse job = client.getVolumeClient().attachVolume(volume.getId(), virtualMachineId);
-            assertTrue(jobComplete.apply(job.getJobId()));
-            attachedVolume = findVolumeWithId(volume.getId());
-            assertEquals(virtualMachineId, attachedVolume.getVirtualMachineId());
-            assertNotNull(attachedVolume.getAttached());
-         } catch (IllegalStateException e) {
-            // TODO volume creation failed - retry?
-         }
-      }
-
-      // Detach Volume
-      Volume detachedVolume = null;
-      while (detachedVolume == null) {
-         try {
-            AsyncCreateResponse job = client.getVolumeClient().detachVolume(volume.getId());
-            assertTrue(jobComplete.apply(job.getJobId()));
-            detachedVolume = findVolumeWithId(volume.getId());
-            checkVolume(detachedVolume);
-         } catch (IllegalStateException e) {
-            //TODO volume creation failed - retry?
-         }
-      }
-
-      // Cleanup
-      client.getVolumeClient().deleteVolume(volume.getId());
    }
 
    public void testCreateVolumeFromSnapshotInZoneAndDeleteVolume() {
-      Set<Snapshot> snapshots = client.getSnapshotClient().listSnapshots();
-      assertNotNull(snapshots);
-      assertFalse(snapshots.isEmpty());
-      long snapshotId = Iterables.get(snapshots, 0).getId();
-
-      Volume volume = null;
-      while (volume == null) {
-         try {
-            AsyncCreateResponse job = client.getVolumeClient().createVolumeFromSnapshotInZone(prefix + "-jclouds-volume",
-                  snapshotId, zoneId);
+      logger.info("testCreateVolumeFromSnapshotInZoneAndDeleteVolume (takes ~3m)");
+      assertNotNull(getPreferredSnapshot());
+      Volume volume = Retryables.retryGettingResultOrFailing(new PredicateCallable<Volume>() {
+         public Volume call() {
+            AsyncCreateResponse job = client.getVolumeClient().createVolumeFromSnapshotInZone(
+                  prefix+"-jclouds-volume", getPreferredSnapshot().getId(), zoneId);
             assertTrue(jobComplete.apply(job.getJobId()));
-            volume = findVolumeWithId(job.getId());
-         } catch (IllegalStateException e) {
-            // TODO volume creation failed - retry?
+            return findVolumeWithId(job.getId());
          }
-      }
+         protected void onFailure() {
+            logger.debug("failed creating volume (retrying): %s", getLastFailure());
+         }
+      }, null, 60*1000, "failed to create volume");
 
       checkVolume(volume);
-
-      // Delete the volume
       client.getVolumeClient().deleteVolume(volume.getId());
    }
 
-   private void checkVolume(final Volume volume) {
+   static void checkVolume(final Volume volume) {
       assertNotNull(volume.getId());
       assertNotNull(volume.getName());
       assertNotSame(Volume.VolumeType.UNRECOGNIZED, volume.getType());
    }
 
-   private Volume findVolumeWithId(final long id) {
-      return find(client.getVolumeClient().listVolumes(), new Predicate<Volume>() {
-         @Override
-         public boolean apply(Volume arg0) {
-            return arg0.getId() == id;
-         }
-      });
+   Volume findVolumeWithId(final long id) {
+      return findVolumeWithId(client, id);
    }
+
+   static Volume findVolumeWithId(final CloudStackClient client, final long id) {
+      for (Volume v: client.getVolumeClient().listVolumes())
+         if (v.getId()==id) return v;
+      throw new NoSuchElementException("no volume with id "+id);
+   }
+
+//   //uncomment to force a cleanup of volumes (since test failures can leave messes) 
+//   public void deleteAllWeUsed() {
+//      for (Volume v: client.getVolumeClient().listVolumes()) {
+//         if (v.getName().startsWith(prefix)) {
+//            logger.warn("found apparent detritus, deleting: %s", v);
+//            try {
+//               client.getVolumeClient().deleteVolume(v.getId());
+//            } catch (Exception e) {
+//               logger.warn(e, "failed to delete %s: %s", v, e);
+//            }
+//         }
+//       }
+//   }
 }
