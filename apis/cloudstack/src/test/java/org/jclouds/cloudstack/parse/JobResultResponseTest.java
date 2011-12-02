@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
  * @author Richard Downer
  */
 @Test(groups = "unit", testName = "DeleteNetworkResponseTest")
-public class JobResultResponseTest extends BaseItemParserTest<AsyncJob> {
+public class JobResultResponseTest extends BaseItemParserTest<JobResult> {
 
    @Override
    public String resource() {
@@ -37,11 +37,9 @@ public class JobResultResponseTest extends BaseItemParserTest<AsyncJob> {
    }
 
    @Override
-   @SelectJson("queryasyncjobresultresponse")
-   public AsyncJob expected() {
-      JobResult payload = new JobResult(true, null);
-      AsyncJob<JobResult> wrapper = AsyncJob.<JobResult>builder().id(118).status(1).progress(0).resultCode(0).resultType("object").result(payload).build();
-      return wrapper;
+   @SelectJson("jobresult")
+   public JobResult expected() {
+      return new JobResult(true, null);
    }
 
 }
