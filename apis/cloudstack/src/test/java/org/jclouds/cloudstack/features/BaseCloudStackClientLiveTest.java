@@ -49,6 +49,7 @@ import org.jclouds.cloudstack.predicates.VirtualMachineDestroyed;
 import org.jclouds.cloudstack.predicates.VirtualMachineRunning;
 import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
+import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.Credentials;
@@ -130,6 +131,7 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
    protected String prefix = System.getProperty("user.name");
 
    protected CloudStackContext computeContext;
+   protected ComputeService computeClient;
    protected RestContext<CloudStackClient, CloudStackAsyncClient> context;
    protected CloudStackClient client;
    protected CloudStackClient adminClient;
@@ -173,8 +175,10 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
    public void setupClient() {
       setupCredentials();
 
-      computeContext = CloudStackContext.class.cast(new ComputeServiceContextFactory().createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), setupProperties()));
+      computeContext = CloudStackContext.class.cast(new ComputeServiceContextFactory(setupRestProperties()).
+            createContext(provider, ImmutableSet.<Module> of(
+            new Log4JLoggingModule(), new SshjSshClientModule()), setupProperties()));
+      computeClient = computeContext.getComputeService();
       context = computeContext.getProviderSpecificContext();
       client = context.getApi();
       user = verifyCurrentUserIsOfType(context, Account.Type.USER);
@@ -182,9 +186,9 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
       domainAdminEnabled = setupAdminProperties() != null;
 
       if (domainAdminEnabled) {
-         domainAdminComputeContext = CloudStackContext.class.cast(new ComputeServiceContextFactory().createContext(
-               provider, ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()),
-               setupAdminProperties()));
+         domainAdminComputeContext = CloudStackContext.class.cast(new ComputeServiceContextFactory(setupRestProperties()).
+               createContext(provider, ImmutableSet.<Module> of(
+               new Log4JLoggingModule(), new SshjSshClientModule()), setupAdminProperties()));
          domainAdminContext = domainAdminComputeContext.getDomainContext();
          domainAdminClient = domainAdminContext.getApi();
          domainAdminUser = verifyCurrentUserIsOfType(domainAdminContext, Account.Type.DOMAIN_ADMIN);

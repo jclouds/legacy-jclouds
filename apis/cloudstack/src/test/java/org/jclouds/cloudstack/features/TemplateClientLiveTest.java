@@ -37,7 +37,7 @@ import static org.jclouds.cloudstack.options.ListTemplatesOptions.Builder.zoneId
 import static org.testng.Assert.*;
 
 /**
- * Tests behavior of {@code TemplateClientLiveTest}
+ * Tests behavior of {@code TemplateClient}
  * 
  * @author Adrian Cole
  */

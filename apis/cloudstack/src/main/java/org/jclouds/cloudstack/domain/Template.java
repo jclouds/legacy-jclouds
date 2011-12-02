@@ -211,6 +211,7 @@ public class Template implements Comparable<Template> {
 
       USER, BUILTIN, UNRECOGNIZED;
 
+      //TODO do we need camel case routines (e.g. see enums in VirtualMachine) ?
       public static Type fromValue(String type) {
          try {
             return valueOf(checkNotNull(type, "type"));
