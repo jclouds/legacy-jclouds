@@ -170,12 +170,12 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
       HttpRequest httpRequest = processor.createRequest(method, 17);
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/client/api?response=json&command=deleteTemplate&id=17 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
       checkFilters(httpRequest);
    }
@@ -185,12 +185,12 @@ public class TemplateAsyncClientTest extends BaseCloudStackAsyncClientTest<Templ
       HttpRequest httpRequest = processor.createRequest(method, 17, DeleteTemplateOptions.Builder.zoneId(8));
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:8080/client/api?response=json&command=deleteTemplate&id=17&zoneid=8 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
+      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
       checkFilters(httpRequest);
    }
