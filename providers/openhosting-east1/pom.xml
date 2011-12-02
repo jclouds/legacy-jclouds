@@ -98,28 +98,13 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.openhosting-east1.endpoint</name>
-                                            <value>${test.openhosting-east1.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.openhosting-east1.apiversion</name>
-                                            <value>${test.openhosting-east1.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.openhosting-east1.identity</name>
-                                            <value>${test.openhosting-east1.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.openhosting-east1.credential</name>
-                                            <value>${test.openhosting-east1.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.openhosting-east1.image-id</name>
-                                            <value>${test.openhosting-east1.image-id}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.openhosting-east1.endpoint>${test.openhosting-east1.endpoint}</test.openhosting-east1.endpoint>
+                                        <test.openhosting-east1.apiversion>${test.openhosting-east1.apiversion}</test.openhosting-east1.apiversion>
+                                        <test.openhosting-east1.identity>${test.openhosting-east1.identity}</test.openhosting-east1.identity>
+                                        <test.openhosting-east1.credential>${test.openhosting-east1.credential}</test.openhosting-east1.credential>
+                                        <test.openhosting-east1.image-id>${test.openhosting-east1.image-id}</test.openhosting-east1.image-id>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

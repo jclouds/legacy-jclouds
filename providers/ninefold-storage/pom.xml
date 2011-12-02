@@ -99,36 +99,15 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.ninefold-storage.endpoint</name>
-                                            <value>${test.ninefold-storage.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.ninefold-storage.apiversion</name>
-                                            <value>${test.ninefold-storage.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.ninefold-storage.identity</name>
-                                            <value>${test.ninefold-storage.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.ninefold-storage.credential</name>
-                                            <value>${test.ninefold-storage.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.initializer</name>
-                                            <value>${test.initializer}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.url</name>
-                                            <value>${jclouds.blobstore.httpstream.url}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.md5</name>
-                                            <value>${jclouds.blobstore.httpstream.md5}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.ninefold-storage.endpoint>${test.ninefold-storage.endpoint}</test.ninefold-storage.endpoint>
+                                        <test.ninefold-storage.apiversion>${test.ninefold-storage.apiversion}</test.ninefold-storage.apiversion>
+                                        <test.ninefold-storage.identity>${test.ninefold-storage.identity}</test.ninefold-storage.identity>
+                                        <test.ninefold-storage.credential>${test.ninefold-storage.credential}</test.ninefold-storage.credential>
+                                        <test.initializer>${test.initializer}</test.initializer>
+                                        <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
+                                        <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

@@ -100,36 +100,15 @@
                                 </goals>
                                 <configuration>
                                     <threadCount>1</threadCount>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.cloudonestorage.endpoint</name>
-                                            <value>${test.cloudonestorage.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.cloudonestorage.apiversion</name>
-                                            <value>${test.cloudonestorage.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.cloudonestorage.identity</name>
-                                            <value>${test.cloudonestorage.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.cloudonestorage.credential</name>
-                                            <value>${test.cloudonestorage.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.initializer</name>
-                                            <value>${test.initializer}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.url</name>
-                                            <value>${jclouds.blobstore.httpstream.url}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.md5</name>
-                                            <value>${jclouds.blobstore.httpstream.md5}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.cloudonestorage.endpoint>${test.cloudonestorage.endpoint}</test.cloudonestorage.endpoint>
+                                        <test.cloudonestorage.apiversion>${test.cloudonestorage.apiversion}</test.cloudonestorage.apiversion>
+                                        <test.cloudonestorage.identity>${test.cloudonestorage.identity}</test.cloudonestorage.identity>
+                                        <test.cloudonestorage.credential>${test.cloudonestorage.credential}</test.cloudonestorage.credential>
+                                        <test.initializer>${test.initializer}</test.initializer>
+                                        <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
+                                        <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

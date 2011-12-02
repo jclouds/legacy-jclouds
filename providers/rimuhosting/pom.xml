@@ -99,24 +99,12 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.rimuhosting.endpoint</name>
-                                            <value>${test.rimuhosting.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.rimuhosting.apiversion</name>
-                                            <value>${test.rimuhosting.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.rimuhosting.identity</name>
-                                            <value>${test.rimuhosting.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.rimuhosting.image-id</name>
-                                            <value>${test.rimuhosting.image-id}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.rimuhosting.endpoint>${test.rimuhosting.endpoint}</test.rimuhosting.endpoint>
+                                        <test.rimuhosting.apiversion>${test.rimuhosting.apiversion}</test.rimuhosting.apiversion>
+                                        <test.rimuhosting.identity>${test.rimuhosting.identity}</test.rimuhosting.identity>
+                                        <test.rimuhosting.image-id>${test.rimuhosting.image-id}</test.rimuhosting.image-id>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

@@ -107,24 +107,12 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.cloudloadbalancers-us.endpoint</name>
-                                            <value>${test.cloudloadbalancers-us.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.cloudloadbalancers-us.apiversion</name>
-                                            <value>${test.cloudloadbalancers-us.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.cloudloadbalancers-us.identity</name>
-                                            <value>${test.cloudloadbalancers-us.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.cloudloadbalancers-us.credential</name>
-                                            <value>${test.cloudloadbalancers-us.credential}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.cloudloadbalancers-us.endpoint>${test.cloudloadbalancers-us.endpoint}</test.cloudloadbalancers-us.endpoint>
+                                        <test.cloudloadbalancers-us.apiversion>${test.cloudloadbalancers-us.apiversion}</test.cloudloadbalancers-us.apiversion>
+                                        <test.cloudloadbalancers-us.identity>${test.cloudloadbalancers-us.identity}</test.cloudloadbalancers-us.identity>
+                                        <test.cloudloadbalancers-us.credential>${test.cloudloadbalancers-us.credential}</test.cloudloadbalancers-us.credential>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

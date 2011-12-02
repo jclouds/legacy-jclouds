@@ -98,28 +98,13 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.go2cloud-jhb1.endpoint</name>
-                                            <value>${test.go2cloud-jhb1.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.go2cloud-jhb1.apiversion</name>
-                                            <value>${test.go2cloud-jhb1.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.go2cloud-jhb1.identity</name>
-                                            <value>${test.go2cloud-jhb1.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.go2cloud-jhb1.credential</name>
-                                            <value>${test.go2cloud-jhb1.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.go2cloud-jhb1.image-id</name>
-                                            <value>${test.go2cloud-jhb1.image-id}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.go2cloud-jhb1.endpoint>${test.go2cloud-jhb1.endpoint}</test.go2cloud-jhb1.endpoint>
+                                        <test.go2cloud-jhb1.apiversion>${test.go2cloud-jhb1.apiversion}</test.go2cloud-jhb1.apiversion>
+                                        <test.go2cloud-jhb1.identity>${test.go2cloud-jhb1.identity}</test.go2cloud-jhb1.identity>
+                                        <test.go2cloud-jhb1.credential>${test.go2cloud-jhb1.credential}</test.go2cloud-jhb1.credential>
+                                        <test.go2cloud-jhb1.image-id>${test.go2cloud-jhb1.image-id}</test.go2cloud-jhb1.image-id>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

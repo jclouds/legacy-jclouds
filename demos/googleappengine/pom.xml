@@ -151,34 +151,14 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.aws.identity</name>
-                                            <!-- same for EC2 -->
-                                            <value>${test.aws-s3.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws.credential</name>
-                                            <!-- same for EC2 -->
-                                            <value>${test.aws-s3.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>appengine.sdk.root</name>
-                                            <value>${appengine.sdk.root}</value>
-                                        </property>
-                                        <property>
-                                            <name>devappserver.address</name>
-                                            <value>${devappserver.address}</value>
-                                        </property>
-                                        <property>
-                                            <name>devappserver.port</name>
-                                            <value>${devappserver.port}</value>
-                                        </property>
-                                        <property>
-                                            <name>warfile</name>
-                                            <value>${project.build.directory}/${project.artifactId}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.aws.identity>${test.aws-s3.identity}</test.aws.identity>
+                                        <test.aws.credential>${test.aws-s3.credential}</test.aws.credential>
+                                        <appengine.sdk.root>${appengine.sdk.root}</appengine.sdk.root>
+                                        <devappserver.address>${devappserver.address}</devappserver.address>
+                                        <devappserver.port>${devappserver.port}</devappserver.port>
+                                        <warfile>${project.build.directory}/${project.artifactId}</warfile>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

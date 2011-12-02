@@ -98,28 +98,13 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.elastichosts-lon-b.endpoint</name>
-                                            <value>${test.elastichosts-lon-b.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.elastichosts-lon-b.apiversion</name>
-                                            <value>${test.elastichosts-lon-b.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.elastichosts-lon-b.identity</name>
-                                            <value>${test.elastichosts-lon-b.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.elastichosts-lon-b.credential</name>
-                                            <value>${test.elastichosts-lon-b.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.elastichosts-lon-b.image-id</name>
-                                            <value>${test.elastichosts-lon-b.image-id}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.elastichosts-lon-b.endpoint>${test.elastichosts-lon-b.endpoint}</test.elastichosts-lon-b.endpoint>
+                                        <test.elastichosts-lon-b.apiversion>${test.elastichosts-lon-b.apiversion}</test.elastichosts-lon-b.apiversion>
+                                        <test.elastichosts-lon-b.identity>${test.elastichosts-lon-b.identity}</test.elastichosts-lon-b.identity>
+                                        <test.elastichosts-lon-b.credential>${test.elastichosts-lon-b.credential}</test.elastichosts-lon-b.credential>
+                                        <test.elastichosts-lon-b.image-id>${test.elastichosts-lon-b.image-id}</test.elastichosts-lon-b.image-id>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

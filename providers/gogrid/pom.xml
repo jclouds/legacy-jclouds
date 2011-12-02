@@ -91,28 +91,13 @@
                                 </goals>
                                 <configuration>
                                     <threadCount>1</threadCount>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.gogrid.endpoint</name>
-                                            <value>${test.gogrid.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.gogrid.apiversion</name>
-                                            <value>${test.gogrid.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.gogrid.identity</name>
-                                            <value>${test.gogrid.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.gogrid.credential</name>
-                                            <value>${test.gogrid.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.gogrid.image-id</name>
-                                            <value>${test.gogrid.image-id}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.gogrid.endpoint>${test.gogrid.endpoint}</test.gogrid.endpoint>
+                                        <test.gogrid.apiversion>${test.gogrid.apiversion}</test.gogrid.apiversion>
+                                        <test.gogrid.identity>${test.gogrid.identity}</test.gogrid.identity>
+                                        <test.gogrid.credential>${test.gogrid.credential}</test.gogrid.credential>
+                                        <test.gogrid.image-id>${test.gogrid.image-id}</test.gogrid.image-id>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

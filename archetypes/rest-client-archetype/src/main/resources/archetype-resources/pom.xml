@@ -103,24 +103,12 @@ $symbol_dollar = '$' )
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.${lcaseProviderName}.identity</name>
-                                            <value>\$\{test.${lcaseProviderName}.identity\}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.${lcaseProviderName}.credential</name>
-                                            <value>\$\{test.${lcaseProviderName}.credential\}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.${lcaseProviderName}.endpoint</name>
-                                            <value>\$\{test.${lcaseProviderName}.endpoint\}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.${lcaseProviderName}.apiversion</name>
-                                            <value>\$\{test.${lcaseProviderName}.apiversion\}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.${lcaseProviderName}.identity>\$\{test.${lcaseProviderName}.identity\}</test.${lcaseProviderName}.identity>
+                                        <test.${lcaseProviderName}.credential>\$\{test.${lcaseProviderName}.credential\}</test.${lcaseProviderName}.credential>
+                                        <test.${lcaseProviderName}.endpoint>\$\{test.${lcaseProviderName}.endpoint\}</test.${lcaseProviderName}.endpoint>
+                                        <test.${lcaseProviderName}.apiversion>\$\{test.${lcaseProviderName}.apiversion\}</test.${lcaseProviderName}.apiversion>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

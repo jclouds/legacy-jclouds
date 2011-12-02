@@ -95,24 +95,12 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.boxdotnet.endpoint</name>
-                                            <value>${test.boxdotnet.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.boxdotnet.apiversion</name>
-                                            <value>${test.boxdotnet.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.boxdotnet.identity</name>
-                                            <value>${test.boxdotnet.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.boxdotnet.credential</name>
-                                            <value>${test.boxdotnet.credential}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.boxdotnet.endpoint>${test.boxdotnet.endpoint}</test.boxdotnet.endpoint>
+                                        <test.boxdotnet.apiversion>${test.boxdotnet.apiversion}</test.boxdotnet.apiversion>
+                                        <test.boxdotnet.identity>${test.boxdotnet.identity}</test.boxdotnet.identity>
+                                        <test.boxdotnet.credential>${test.boxdotnet.credential}</test.boxdotnet.credential>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

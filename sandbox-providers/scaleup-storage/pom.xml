@@ -106,36 +106,15 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.scaleup-storage.endpoint</name>
-                                            <value>${test.scaleup-storage.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.scaleup-storage.apiversion</name>
-                                            <value>${test.scaleup-storage.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.scaleup-storage.identity</name>
-                                            <value>${test.scaleup-storage.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.scaleup-storage.credential</name>
-                                            <value>${test.scaleup-storage.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.initializer</name>
-                                            <value>${test.initializer}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.url</name>
-                                            <value>${jclouds.blobstore.httpstream.url}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.md5</name>
-                                            <value>${jclouds.blobstore.httpstream.md5}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.scaleup-storage.endpoint>${test.scaleup-storage.endpoint}</test.scaleup-storage.endpoint>
+                                        <test.scaleup-storage.apiversion>${test.scaleup-storage.apiversion}</test.scaleup-storage.apiversion>
+                                        <test.scaleup-storage.identity>${test.scaleup-storage.identity}</test.scaleup-storage.identity>
+                                        <test.scaleup-storage.credential>${test.scaleup-storage.credential}</test.scaleup-storage.credential>
+                                        <test.initializer>${test.initializer}</test.initializer>
+                                        <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
+                                        <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

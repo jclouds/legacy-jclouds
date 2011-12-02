@@ -96,40 +96,16 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.identity.azureblob</name>
-                                            <value>${jclouds.azure.storage.account}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.credential.azureblob</name>
-                                            <value>${jclouds.azure.storage.key}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.identity.cloudfiles</name>
-                                            <value>${jclouds.rackspace.user}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.credential.cloudfiles</name>
-                                            <value>${jclouds.rackspace.key}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.identity.s3</name>
-                                            <value>${jclouds.aws.accesskeyid}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.credential.s3</name>
-                                            <value>${jclouds.aws.secretaccesskey}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.getpath.container</name>
-                                            <value>${jclouds.getpath.container}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.getpath.path</name>
-                                            <value>${jclouds.getpath.path}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.identity.azureblob>${jclouds.azure.storage.account}</test.identity.azureblob>
+                                        <test.credential.azureblob>${jclouds.azure.storage.key}</test.credential.azureblob>
+                                        <test.identity.cloudfiles>${jclouds.rackspace.user}</test.identity.cloudfiles>
+                                        <test.credential.cloudfiles>${jclouds.rackspace.key}</test.credential.cloudfiles>
+                                        <test.identity.s3>${jclouds.aws.accesskeyid}</test.identity.s3>
+                                        <test.credential.s3>${jclouds.aws.secretaccesskey}</test.credential.s3>
+                                        <jclouds.getpath.container>${jclouds.getpath.container}</jclouds.getpath.container>
+                                        <jclouds.getpath.path>${jclouds.getpath.path}</jclouds.getpath.path>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

@@ -96,24 +96,12 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.servermanager.endpoint</name>
-                                            <value>${test.servermanager.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.servermanager.apiversion</name>
-                                            <value>${test.servermanager.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.servermanager.identity</name>
-                                            <value>${test.servermanager.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.compute.blacklist-nodes</name>
-                                            <value>${jclouds.compute.blacklist-nodes}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.servermanager.endpoint>${test.servermanager.endpoint}</test.servermanager.endpoint>
+                                        <test.servermanager.apiversion>${test.servermanager.apiversion}</test.servermanager.apiversion>
+                                        <test.servermanager.identity>${test.servermanager.identity}</test.servermanager.identity>
+                                        <jclouds.compute.blacklist-nodes>${jclouds.compute.blacklist-nodes}</jclouds.compute.blacklist-nodes>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>
