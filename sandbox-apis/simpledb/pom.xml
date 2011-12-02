@@ -77,24 +77,12 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.simpledb.endpoint</name>
-                                            <value>${test.simpledb.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.simpledb.apiversion</name>
-                                            <value>${test.simpledb.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.simpledb.identity</name>
-                                            <value>${test.simpledb.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.simpledb.credential</name>
-                                            <value>${test.simpledb.credential}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.simpledb.endpoint>${test.simpledb.endpoint}</test.simpledb.endpoint>
+                                        <test.simpledb.apiversion>${test.simpledb.apiversion}</test.simpledb.apiversion>
+                                        <test.simpledb.identity>${test.simpledb.identity}</test.simpledb.identity>
+                                        <test.simpledb.credential>${test.simpledb.credential}</test.simpledb.credential>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

@@ -98,36 +98,15 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.azureblob.endpoint</name>
-                                            <value>${test.azureblob.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.azureblob.apiversion</name>
-                                            <value>${test.azureblob.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.azureblob.identity</name>
-                                            <value>${test.azureblob.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.azureblob.credential</name>
-                                            <value>${test.azureblob.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.initializer</name>
-                                            <value>${test.initializer}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.url</name>
-                                            <value>${jclouds.blobstore.httpstream.url}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.md5</name>
-                                            <value>${jclouds.blobstore.httpstream.md5}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.azureblob.endpoint>${test.azureblob.endpoint}</test.azureblob.endpoint>
+                                        <test.azureblob.apiversion>${test.azureblob.apiversion}</test.azureblob.apiversion>
+                                        <test.azureblob.identity>${test.azureblob.identity}</test.azureblob.identity>
+                                        <test.azureblob.credential>${test.azureblob.credential}</test.azureblob.credential>
+                                        <test.initializer>${test.initializer}</test.initializer>
+                                        <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
+                                        <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

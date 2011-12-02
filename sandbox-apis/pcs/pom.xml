@@ -104,24 +104,12 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.pcs.endpoint</name>
-                                            <value>${test.pcs.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.pcs.apiversion</name>
-                                            <value>${test.pcs.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.pcs.identity</name>
-                                            <value>${test.pcs.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.pcs.credential</name>
-                                            <value>${test.pcs.credential}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.pcs.endpoint>${test.pcs.endpoint}</test.pcs.endpoint>
+                                        <test.pcs.apiversion>${test.pcs.apiversion}</test.pcs.apiversion>
+                                        <test.pcs.identity>${test.pcs.identity}</test.pcs.identity>
+                                        <test.pcs.credential>${test.pcs.credential}</test.pcs.credential>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>
