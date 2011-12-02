@@ -187,7 +187,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
          assert virtualMachineDestroyed.apply(vm);
       }
       if (createdTemplate != null) {
-         AsyncCreateResponse deleteJob = client.getTemplateClient().deleteTemplate(template.getId());
+         AsyncCreateResponse deleteJob = client.getTemplateClient().deleteTemplate(createdTemplate.getId());
          assertTrue(jobComplete.apply(deleteJob.getJobId()));
          client.getTemplateClient().deleteTemplate(createdTemplate.getId());
       }
