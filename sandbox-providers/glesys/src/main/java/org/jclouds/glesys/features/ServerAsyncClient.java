@@ -28,6 +28,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.glesys.domain.Server;
 import org.jclouds.glesys.domain.ServerDetails;
+import org.jclouds.glesys.domain.ServerStatus;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -67,5 +68,16 @@ public interface ServerAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<ServerDetails> getServerDetails(@PathParam("id") String id);
+
+    
+   /**
+    * @see ServerClient#getServerDetails
+    */
+   @GET
+   @Path("/server/status/serverid/{id}/format/json")
+   @SelectJson("server")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<ServerStatus> getServerStatus(@PathParam("id") String id);
 
 }

@@ -23,7 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * detailed information about a server such as cpuCores, hardware configuration
+ * Detailed information about a server such as cpuCores, hardware configuration
  * (cpu, memory and disk), ip adresses, cost, transfer, os and more.
  * 
  * @author Adrian Cole
@@ -39,6 +39,7 @@ public class ServerDetails extends Server {
       private int cpuCores;
       private int memory;
       private int disk;
+      private Cost cost;
 
       public Builder description(String description) {
          this.description = description;
@@ -60,12 +61,17 @@ public class ServerDetails extends Server {
          return this;
       }
 
+      public Builder cost(Cost cost) {
+         this.cost = cost;
+         return this;
+      }
+       
       public ServerDetails build() {
-         return new ServerDetails(id, hostname, datacenter, platform, description, cpuCores, memory, disk);
+         return new ServerDetails(id, hostname, datacenter, platform, description, cpuCores, memory, disk, cost);
       }
 
       public Builder fromServerDetails(ServerDetails in) {
-         return fromServer(in).memory(in.getMemory()).disk(in.getDisk()).cpuCores(in.getCpuCores())
+         return fromServer(in).memory(in.getMemory()).disk(in.getDisk()).cpuCores(in.getCpuCores()).cost(in.getCost())
                .description(in.getDescription());
       }
 
@@ -93,22 +99,23 @@ public class ServerDetails extends Server {
       public Builder fromServer(Server in) {
          return Builder.class.cast(super.fromServer(in));
       }
-
    }
-
+    
    private final String description;
    @SerializedName("cpucores")
    private final int cpuCores;
    private final int memory;
    private final int disk;
-
+   private final Cost cost;
+   
    public ServerDetails(String id, String hostname, String datacenter, String platform, String description,
-         int cpuCores, int memory, int disk) {
+         int cpuCores, int memory, int disk, Cost cost) {
       super(id, hostname, datacenter, platform);
       this.description = checkNotNull(description, "description");
       this.cpuCores = cpuCores;
       this.memory = memory;
       this.disk = disk;
+      this.cost = checkNotNull(cost, "cost");
    }
 
    /**
@@ -139,11 +146,18 @@ public class ServerDetails extends Server {
       return memory;
    }
 
+   /**
+   * @return details of the cost of the server
+   */
+   public Cost getCost() {
+     return cost;
+   }
+
    @Override
    public String toString() {
       return String.format(
-            "[id=%s, hostname=%s, datacenter=%s, platform=%s, description=%s, cpuCores=%s, memory=%s, disk=%s]", id,
-            hostname, datacenter, platform, description, cpuCores, memory, disk);
+            "[id=%s, hostname=%s, datacenter=%s, platform=%s, description=%s, cpuCores=%s, memory=%s, disk=%s, cost=%s]", id,
+            hostname, datacenter, platform, description, cpuCores, memory, disk, cost);
    }
 
 }

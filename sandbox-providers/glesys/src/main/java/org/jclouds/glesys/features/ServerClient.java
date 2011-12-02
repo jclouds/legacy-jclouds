@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.glesys.domain.Server;
 import org.jclouds.glesys.domain.ServerDetails;
+import org.jclouds.glesys.domain.ServerStatus;
 
 /**
  * Provides synchronous access to Server.
@@ -54,4 +55,14 @@ public interface ServerClient {
     */
    ServerDetails getServerDetails(String id);
 
+   /**
+    * Get detailed information about a server status including up-time and hardware usage
+    * (cpu, disk, memory and bandwidth)
+    *
+    * @param id
+    *           id of the server
+    * @return server or null if not found
+    */
+   ServerStatus getServerStatus(String id);
+    
 }
