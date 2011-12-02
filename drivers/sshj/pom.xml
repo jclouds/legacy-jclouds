@@ -140,32 +140,14 @@
                                         <include>**/*IntegrationTest.java</include>
                                         <include>**/*LiveTest.java</include>
                                     </includes>
-                                    <systemProperties>
-                                        <property>
-                                            <name>file.encoding</name>
-                                            <value>UTF-8</value>
-                                        </property>
-                                        <property>
-                                            <name>test.ssh.host</name>
-                                            <value>${test.ssh.host}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.ssh.port</name>
-                                            <value>${test.ssh.port}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.ssh.username</name>
-                                            <value>${test.ssh.username}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.ssh.keyfile</name>
-                                            <value>${test.ssh.keyfile}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.ssh.password</name>
-                                            <value>${test.ssh.password}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <file.encoding>UTF-8</file.encoding>
+                                        <test.ssh.host>${test.ssh.host}</test.ssh.host>
+                                        <test.ssh.port>${test.ssh.port}</test.ssh.port>
+                                        <test.ssh.username>${test.ssh.username}</test.ssh.username>
+                                        <test.ssh.keyfile>${test.ssh.keyfile}</test.ssh.keyfile>
+                                        <test.ssh.password>${test.ssh.password}</test.ssh.password>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

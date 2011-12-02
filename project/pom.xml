@@ -349,16 +349,10 @@
                           <value>${jclouds.test.listener}</value>
                        </property>
                    </properties>
-                   <systemProperties>
-                       <property>
-                           <name>jclouds.wire.httpstream.url</name>
-                           <value>${jclouds.wire.httpstream.url}</value>
-                       </property>
-                       <property>
-                           <name>jclouds.wire.httpstream.md5</name>
-                           <value>${jclouds.wire.httpstream.md5}</value>
-                       </property>
-                   </systemProperties>
+                    <systemPropertyVariables>
+                        <jclouds.wire.httpstream.url>${jclouds.wire.httpstream.url}</jclouds.wire.httpstream.url>
+                        <jclouds.wire.httpstream.md5>${jclouds.wire.httpstream.md5}</jclouds.wire.httpstream.md5>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <!-- make sure we generate src jars too -->
@@ -572,29 +566,17 @@ pageTracker._trackPageview();
                                         <include>**/*IntegrationTest.java</include>
                                         <include>**/*LiveTest.java</include>
                                     </includes>
-                                    <systemProperties>
-                                    <!--
-                                        If you're behind a proxy, set this here
-                                        http://java.sun.com/javase/6/docs/technotes/guides/net/proxies.html
+                                    <systemPropertyVariables>
+                                        <!--
+                                            If you're behind a proxy, set this here
+                                            http://java.sun.com/javase/6/docs/technotes/guides/net/proxies.html
 
-                                        <property>
-                                           <name>https.proxyHost</name>
-                                           <value>proxy</value>
-                                        </property>
-                                        <property>
-                                           <name>https.proxyPort</name>
-                                           <value>port</value>
-                                        </property>
-                                        <property>
-                                           <name>https.noProxyHosts</name>
-                                           <value>localhost|10.150.4.49</value>
-                                        </property>
-                                  -->
-                                        <property>
-                                            <name>file.encoding</name>
-                                            <value>${project.build.sourceEncoding}</value>
-                                        </property>
-                                    </systemProperties>
+                                        <https.proxyHost>proxy</https.proxyHost>
+                                        <https.proxyPort>port</https.proxyPort>
+                                        <https.noProxyHosts>localhost|10.150.4.49</https.noProxyHosts>
+                                        -->
+                                        <file.encoding>${project.build.sourceEncoding}</file.encoding>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

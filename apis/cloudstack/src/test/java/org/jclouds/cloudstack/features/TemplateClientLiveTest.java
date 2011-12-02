@@ -37,7 +37,7 @@ import static org.jclouds.cloudstack.options.ListTemplatesOptions.Builder.zoneId
 import static org.testng.Assert.*;
 
 /**
- * Tests behavior of {@code TemplateClientLiveTest}
+ * Tests behavior of {@code TemplateClient}
  * 
  * @author Adrian Cole
  */
@@ -187,6 +187,8 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
          assert virtualMachineDestroyed.apply(vm);
       }
       if (createdTemplate != null) {
+         AsyncCreateResponse deleteJob = client.getTemplateClient().deleteTemplate(template.getId());
+         assertTrue(jobComplete.apply(deleteJob.getJobId()));
          client.getTemplateClient().deleteTemplate(createdTemplate.getId());
       }
       if (registeredTemplate != null) {

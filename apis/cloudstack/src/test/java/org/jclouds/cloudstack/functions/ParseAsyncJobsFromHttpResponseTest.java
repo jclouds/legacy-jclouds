@@ -39,7 +39,7 @@ import com.google.inject.Injector;
 @Test(groups = "unit")
 public class ParseAsyncJobsFromHttpResponseTest {
 
-   Injector i = Guice.createInjector(new GsonModule() {
+   Injector injector = Guice.createInjector(new GsonModule() {
 
       @Override
       protected void configure() {
@@ -52,7 +52,7 @@ public class ParseAsyncJobsFromHttpResponseTest {
    public void testCanParse() {
       InputStream is = getClass().getResourceAsStream("/listasyncjobsresponse.json");
 
-      ParseAsyncJobsFromHttpResponse parser = i.getInstance(ParseAsyncJobsFromHttpResponse.class);
+      ParseAsyncJobsFromHttpResponse parser = injector.getInstance(ParseAsyncJobsFromHttpResponse.class);
       Set<AsyncJob<?>> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
 
       assertEquals(response.size(), 77);

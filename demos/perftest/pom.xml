@@ -132,24 +132,12 @@
             </goals>
             <configuration>
               <threadCount>1</threadCount>
-              <systemProperties>
-                <property>
-                  <name>test.aws-s3.identity</name>
-                  <value>${test.aws-s3.identity}</value>
-                </property>
-                <property>
-                  <name>test.aws-s3.credential</name>
-                  <value>${test.aws-s3.credential}</value>
-                </property>
-                <property>
-                  <name>test.initializer</name>
-                  <value>${test.initializer}</value>
-                </property>
-                <property>
-                  <name>test.aws-s3.loopcount</name>
-                  <value>${test.aws-s3.loopcount}</value>
-                </property>
-              </systemProperties>
+               <systemPropertyVariables>
+                   <test.aws-s3.identity>${test.aws-s3.identity}</test.aws-s3.identity>
+                   <test.aws-s3.credential>${test.aws-s3.credential}</test.aws-s3.credential>
+                   <test.initializer>${test.initializer}</test.initializer>
+                   <test.aws-s3.loopcount>${test.aws-s3.loopcount}</test.aws-s3.loopcount>
+               </systemPropertyVariables>
             </configuration>
           </execution>
         </executions>

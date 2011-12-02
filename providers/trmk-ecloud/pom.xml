@@ -100,32 +100,14 @@
                                 </goals>
                                 <configuration>
                                     <threadCount>1</threadCount>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.trmk-ecloud.endpoint</name>
-                                            <value>${test.trmk-ecloud.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.trmk-ecloud.apiversion</name>
-                                            <value>${test.trmk-ecloud.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.trmk-ecloud.identity</name>
-                                            <value>${test.trmk-ecloud.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.trmk-ecloud.credential</name>
-                                            <value>${test.trmk-ecloud.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.trmk-ecloud.datacenter</name>
-                                            <value>${test.trmk-ecloud.datacenter}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.trmk-ecloud.image-id</name>
-                                            <value>${test.trmk-ecloud.image-id}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.trmk-ecloud.endpoint>${test.trmk-ecloud.endpoint}</test.trmk-ecloud.endpoint>
+                                        <test.trmk-ecloud.apiversion>${test.trmk-ecloud.apiversion}</test.trmk-ecloud.apiversion>
+                                        <test.trmk-ecloud.identity>${test.trmk-ecloud.identity}</test.trmk-ecloud.identity>
+                                        <test.trmk-ecloud.credential>${test.trmk-ecloud.credential}</test.trmk-ecloud.credential>
+                                        <test.trmk-ecloud.datacenter>${test.trmk-ecloud.datacenter}</test.trmk-ecloud.datacenter>
+                                        <test.trmk-ecloud.image-id>${test.trmk-ecloud.image-id}</test.trmk-ecloud.image-id>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

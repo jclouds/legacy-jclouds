@@ -103,28 +103,13 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.tmrk-enterprisecloud.endpoint</name>
-                                            <value>${test.tmrk-enterprisecloud.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.tmrk-enterprisecloud.apiversion</name>
-                                            <value>${test.tmrk-enterprisecloud.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.tmrk-enterprisecloud.identity</name>
-                                            <value>${test.tmrk-enterprisecloud.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.tmrk-enterprisecloud.credential</name>
-                                            <value>${test.tmrk-enterprisecloud.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.tmrk-enterprisecloud.image-id</name>
-                                            <value>${test.tmrk-enterprisecloud.image-id}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.tmrk-enterprisecloud.endpoint>${test.tmrk-enterprisecloud.endpoint}</test.tmrk-enterprisecloud.endpoint>
+                                        <test.tmrk-enterprisecloud.apiversion>${test.tmrk-enterprisecloud.apiversion}</test.tmrk-enterprisecloud.apiversion>
+                                        <test.tmrk-enterprisecloud.identity>${test.tmrk-enterprisecloud.identity}</test.tmrk-enterprisecloud.identity>
+                                        <test.tmrk-enterprisecloud.credential>${test.tmrk-enterprisecloud.credential}</test.tmrk-enterprisecloud.credential>
+                                        <test.tmrk-enterprisecloud.image-id>${test.tmrk-enterprisecloud.image-id}</test.tmrk-enterprisecloud.image-id>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

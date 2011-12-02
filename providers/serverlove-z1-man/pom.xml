@@ -98,28 +98,13 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.serverlove-z1-man.endpoint</name>
-                                            <value>${test.serverlove-z1-man.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.serverlove-z1-man.apiversion</name>
-                                            <value>${test.serverlove-z1-man.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.serverlove-z1-man.identity</name>
-                                            <value>${test.serverlove-z1-man.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.serverlove-z1-man.credential</name>
-                                            <value>${test.serverlove-z1-man.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.serverlove-z1-man.image-id</name>
-                                            <value>${test.serverlove-z1-man.image-id}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.serverlove-z1-man.endpoint>${test.serverlove-z1-man.endpoint}</test.serverlove-z1-man.endpoint>
+                                        <test.serverlove-z1-man.apiversion>${test.serverlove-z1-man.apiversion}</test.serverlove-z1-man.apiversion>
+                                        <test.serverlove-z1-man.identity>${test.serverlove-z1-man.identity}</test.serverlove-z1-man.identity>
+                                        <test.serverlove-z1-man.credential>${test.serverlove-z1-man.credential}</test.serverlove-z1-man.credential>
+                                        <test.serverlove-z1-man.image-id>${test.serverlove-z1-man.image-id}</test.serverlove-z1-man.image-id>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

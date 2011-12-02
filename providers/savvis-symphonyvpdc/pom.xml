@@ -112,40 +112,16 @@
                                 </goals>
                                 <configuration>
                                 	<threadCount>1</threadCount>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.savvis-symphonyvpdc.endpoint</name>
-                                            <value>${test.savvis-symphonyvpdc.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.savvis-symphonyvpdc.apiversion</name>
-                                            <value>${test.savvis-symphonyvpdc.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.savvis-symphonyvpdc.identity</name>
-                                            <value>${test.savvis-symphonyvpdc.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.savvis-symphonyvpdc.credential</name>
-                                            <value>${test.savvis-symphonyvpdc.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.savvis-symphonyvpdc.image-id</name>
-                                            <value>${test.savvis-symphonyvpdc.image-id}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.savvis-symphonyvpdc.vdc-email</name>
-                                            <value>${test.savvis-symphonyvpdc.vdc-email}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.savvis-symphonyvpdc.loginUser</name>
-                                            <value>${test.savvis-symphonyvpdc.loginUser}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.savvis-symphonyvpdc.loginPassword</name>
-                                            <value>${test.savvis-symphonyvpdc.loginPassword}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.savvis-symphonyvpdc.endpoint>${test.savvis-symphonyvpdc.endpoint}</test.savvis-symphonyvpdc.endpoint>
+                                        <test.savvis-symphonyvpdc.apiversion>${test.savvis-symphonyvpdc.apiversion}</test.savvis-symphonyvpdc.apiversion>
+                                        <test.savvis-symphonyvpdc.identity>${test.savvis-symphonyvpdc.identity}</test.savvis-symphonyvpdc.identity>
+                                        <test.savvis-symphonyvpdc.credential>${test.savvis-symphonyvpdc.credential}</test.savvis-symphonyvpdc.credential>
+                                        <test.savvis-symphonyvpdc.image-id>${test.savvis-symphonyvpdc.image-id}</test.savvis-symphonyvpdc.image-id>
+                                        <test.savvis-symphonyvpdc.vdc-email>${test.savvis-symphonyvpdc.vdc-email}</test.savvis-symphonyvpdc.vdc-email>
+                                        <test.savvis-symphonyvpdc.loginUser>${test.savvis-symphonyvpdc.loginUser}</test.savvis-symphonyvpdc.loginUser>
+                                        <test.savvis-symphonyvpdc.loginPassword>${test.savvis-symphonyvpdc.loginPassword}</test.savvis-symphonyvpdc.loginPassword>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

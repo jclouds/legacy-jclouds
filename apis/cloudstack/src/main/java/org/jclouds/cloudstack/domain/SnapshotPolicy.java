@@ -86,6 +86,9 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
          return this;
       }
 
+      public SnapshotPolicy build() {
+         return new SnapshotPolicy(id, interval, numberToRetain, schedule, timezone, volumeId);
+      }
    }
 
    private long id;
@@ -98,6 +101,15 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
    @SerializedName("volumeid")
    private long volumeId;
 
+   public SnapshotPolicy(long id, Snapshot.Interval interval, long numberToRetain, String schedule, String timezone, long volumeId) {
+      this.id = id;
+      this.interval = interval;
+      this.numberToRetain = numberToRetain;
+      this.schedule = schedule;
+      this.timezone = timezone;
+      this.volumeId = volumeId;
+   }
+   
    /**
     * present only for serializer
     */

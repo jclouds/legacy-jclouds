@@ -34,6 +34,11 @@ import com.google.common.base.Predicate;
 /**
  * 
  * Retries a condition until it is met or a timeout occurs.
+ * maxWait parameter is required.
+ * Initial retry period and retry maxPeriod are optionally configurable,
+ * defaulting to 50ms and 1000ms respectively,
+ * with the retrier increasing the interval by a factor of 1.5 each time within these constraints.
+ * All values taken as millis unless TimeUnit specified.
  * 
  * @author Adrian Cole
  */
@@ -92,6 +97,7 @@ public class RetryablePredicate<T> implements Predicate<T> {
    }
 
    protected long nextMaxInterval(long attempt, Date end) {
+      // FIXME i think this should be pow(1.5, attempt) -- or alternatively newInterval = oldInterval*1.5
       long interval = (period * (long) Math.pow(attempt, 1.5));
       interval = interval > maxPeriod ? maxPeriod : interval;
       long max = end.getTime() - System.currentTimeMillis();

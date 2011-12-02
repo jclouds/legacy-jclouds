@@ -121,48 +121,18 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.aws-elb.endpoint</name>
-                                            <value>${test.aws-elb.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-elb.apiversion</name>
-                                            <value>${test.aws-elb.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-elb.identity</name>
-                                            <value>${test.aws-elb.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-elb.credential</name>
-                                            <value>${test.aws-elb.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-elb.compute.provider</name>
-                                            <value>${test.aws-elb.compute.provider}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-elb.compute.endpoint</name>
-                                            <value>${test.aws-elb.compute.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-elb.compute.apiversion</name>
-                                            <value>${test.aws-elb.compute.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-elb.compute.identity</name>
-                                            <value>${test.aws-elb.compute.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-elb.compute.credential</name>
-                                            <value>${test.aws-elb.compute.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-elb.compute.image-id</name>
-                                            <value>${test.aws-elb.compute.image-id}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.aws-elb.endpoint>${test.aws-elb.endpoint}</test.aws-elb.endpoint>
+                                        <test.aws-elb.apiversion>${test.aws-elb.apiversion}</test.aws-elb.apiversion>
+                                        <test.aws-elb.identity>${test.aws-elb.identity}</test.aws-elb.identity>
+                                        <test.aws-elb.credential>${test.aws-elb.credential}</test.aws-elb.credential>
+                                        <test.aws-elb.compute.provider>${test.aws-elb.compute.provider}</test.aws-elb.compute.provider>
+                                        <test.aws-elb.compute.endpoint>${test.aws-elb.compute.endpoint}</test.aws-elb.compute.endpoint>
+                                        <test.aws-elb.compute.apiversion>${test.aws-elb.compute.apiversion}</test.aws-elb.compute.apiversion>
+                                        <test.aws-elb.compute.identity>${test.aws-elb.compute.identity}</test.aws-elb.compute.identity>
+                                        <test.aws-elb.compute.credential>${test.aws-elb.compute.credential}</test.aws-elb.compute.credential>
+                                        <test.aws-elb.compute.image-id>${test.aws-elb.compute.image-id}</test.aws-elb.compute.image-id>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

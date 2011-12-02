@@ -107,36 +107,15 @@
                                 </goals>
                                 <configuration>
                                     <threadCount>1</threadCount>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.cloudfiles-uk.endpoint</name>
-                                            <value>${test.cloudfiles-uk.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.cloudfiles-uk.apiversion</name>
-                                            <value>${test.cloudfiles-uk.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.cloudfiles-uk.identity</name>
-                                            <value>${test.cloudfiles-uk.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.cloudfiles-uk.credential</name>
-                                            <value>${test.cloudfiles-uk.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.initializer</name>
-                                            <value>${test.initializer}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.url</name>
-                                            <value>${jclouds.blobstore.httpstream.url}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.md5</name>
-                                            <value>${jclouds.blobstore.httpstream.md5}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.cloudfiles-uk.endpoint>${test.cloudfiles-uk.endpoint}</test.cloudfiles-uk.endpoint>
+                                        <test.cloudfiles-uk.apiversion>${test.cloudfiles-uk.apiversion}</test.cloudfiles-uk.apiversion>
+                                        <test.cloudfiles-uk.identity>${test.cloudfiles-uk.identity}</test.cloudfiles-uk.identity>
+                                        <test.cloudfiles-uk.credential>${test.cloudfiles-uk.credential}</test.cloudfiles-uk.credential>
+                                        <test.initializer>${test.initializer}</test.initializer>
+                                        <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
+                                        <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

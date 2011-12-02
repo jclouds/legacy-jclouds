@@ -98,28 +98,13 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.skalicloud-sdg-my.endpoint</name>
-                                            <value>${test.skalicloud-sdg-my.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.skalicloud-sdg-my.apiversion</name>
-                                            <value>${test.skalicloud-sdg-my.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.skalicloud-sdg-my.identity</name>
-                                            <value>${test.skalicloud-sdg-my.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.skalicloud-sdg-my.credential</name>
-                                            <value>${test.skalicloud-sdg-my.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.skalicloud-sdg-my.image-id</name>
-                                            <value>${test.skalicloud-sdg-my.image-id}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.skalicloud-sdg-my.endpoint>${test.skalicloud-sdg-my.endpoint}</test.skalicloud-sdg-my.endpoint>
+                                        <test.skalicloud-sdg-my.apiversion>${test.skalicloud-sdg-my.apiversion}</test.skalicloud-sdg-my.apiversion>
+                                        <test.skalicloud-sdg-my.identity>${test.skalicloud-sdg-my.identity}</test.skalicloud-sdg-my.identity>
+                                        <test.skalicloud-sdg-my.credential>${test.skalicloud-sdg-my.credential}</test.skalicloud-sdg-my.credential>
+                                        <test.skalicloud-sdg-my.image-id>${test.skalicloud-sdg-my.image-id}</test.skalicloud-sdg-my.image-id>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

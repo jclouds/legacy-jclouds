@@ -99,36 +99,15 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.scality-rs2.endpoint</name>
-                                            <value>${test.scality-rs2.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.scality-rs2.apiversion</name>
-                                            <value>${test.scality-rs2.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.scality-rs2.identity</name>
-                                            <value>${test.scality-rs2.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.scality-rs2.credential</name>
-                                            <value>${test.scality-rs2.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.initializer</name>
-                                            <value>${test.initializer}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.url</name>
-                                            <value>${jclouds.blobstore.httpstream.url}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.md5</name>
-                                            <value>${jclouds.blobstore.httpstream.md5}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.scality-rs2.endpoint>${test.scality-rs2.endpoint}</test.scality-rs2.endpoint>
+                                        <test.scality-rs2.apiversion>${test.scality-rs2.apiversion}</test.scality-rs2.apiversion>
+                                        <test.scality-rs2.identity>${test.scality-rs2.identity}</test.scality-rs2.identity>
+                                        <test.scality-rs2.credential>${test.scality-rs2.credential}</test.scality-rs2.credential>
+                                        <test.initializer>${test.initializer}</test.initializer>
+                                        <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
+                                        <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

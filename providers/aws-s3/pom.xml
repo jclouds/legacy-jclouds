@@ -121,40 +121,16 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.aws-s3.endpoint</name>
-                                            <value>${test.aws-s3.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-s3.apiversion</name>
-                                            <value>${test.aws-s3.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-s3.identity</name>
-                                            <value>${test.aws-s3.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.aws-s3.credential</name>
-                                            <value>${test.aws-s3.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.initializer</name>
-                                            <value>${test.initializer}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.url</name>
-                                            <value>${jclouds.blobstore.httpstream.url}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.md5</name>
-                                            <value>${jclouds.blobstore.httpstream.md5}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.blobstore.container-count</name>
-                                            <value>${test.blobstore.container-count}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.aws-s3.endpoint>${test.aws-s3.endpoint}</test.aws-s3.endpoint>
+                                        <test.aws-s3.apiversion>${test.aws-s3.apiversion}</test.aws-s3.apiversion>
+                                        <test.aws-s3.identity>${test.aws-s3.identity}</test.aws-s3.identity>
+                                        <test.aws-s3.credential>${test.aws-s3.credential}</test.aws-s3.credential>
+                                        <test.initializer>${test.initializer}</test.initializer>
+                                        <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
+                                        <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
+                                        <test.blobstore.container-count>${test.blobstore.container-count}</test.blobstore.container-count>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

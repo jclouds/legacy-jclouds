@@ -77,24 +77,12 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.sqs.endpoint</name>
-                                            <value>${test.sqs.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.sqs.apiversion</name>
-                                            <value>${test.sqs.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.sqs.identity</name>
-                                            <value>${test.sqs.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.sqs.credential</name>
-                                            <value>${test.sqs.credential}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.sqs.endpoint>${test.sqs.endpoint}</test.sqs.endpoint>
+                                        <test.sqs.apiversion>${test.sqs.apiversion}</test.sqs.apiversion>
+                                        <test.sqs.identity>${test.sqs.identity}</test.sqs.identity>
+                                        <test.sqs.credential>${test.sqs.credential}</test.sqs.credential>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>

@@ -96,24 +96,12 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.twitter.endpoint</name>
-                                            <value>${test.twitter.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.twitter.apiversion</name>
-                                            <value>${test.twitter.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.twitter.identity</name>
-                                            <value>${test.twitter.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.twitter.credential</name>
-                                            <value>${test.twitter.credential}</value>
-                                        </property>
-                                    </systemProperties>
+                                    <systemPropertyVariables>
+                                        <test.twitter.endpoint>${test.twitter.endpoint}</test.twitter.endpoint>
+                                        <test.twitter.apiversion>${test.twitter.apiversion}</test.twitter.apiversion>
+                                        <test.twitter.identity>${test.twitter.identity}</test.twitter.identity>
+                                        <test.twitter.credential>${test.twitter.credential}</test.twitter.credential>
+                                    </systemPropertyVariables>
                                 </configuration>
                             </execution>
                         </executions>
