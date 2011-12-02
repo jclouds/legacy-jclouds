@@ -18,19 +18,31 @@
  */
 package org.jclouds.glesys.features;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.concurrent.Timeout;
+
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to IP Addresses.
  * <p/>
- * 
+ *
+ * @author Adrian Cole
  * @see IpAsyncClient
  * @see <a href="https://customer.glesys.com/api.php" />
- * @author Adrian Cole
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface IpClient {
+
+
+   /**
+    * Get a set of all IP addresses that are available and not used on any account or server.
+    *
+    * @param ipversion  "4" or "6", for IPV4 or IPV6, respectively
+    * @param datacenter the datacenter
+    * @param platform   the platform
+    * @return a set of free IP addresses
+    */
+   Set<String> listFree(String ipversion, String datacenter, String platform);
 
 }

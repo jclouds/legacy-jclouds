@@ -18,18 +18,42 @@
  */
 package org.jclouds.glesys.features;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.MediaType;
+import java.util.Set;
 
 /**
  * Provides asynchronous access to IP Addresses via their REST API.
  * <p/>
- * 
+ *
+ * @author Adrian Cole
  * @see ServerClient
  * @see <a href="https://customer.glesys.com/api.php" />
- * @author Adrian Cole
  */
 @RequestFilters(BasicAuthentication.class)
 public interface IpAsyncClient {
+
+
+   /**
+    * @see IpClient#listFree
+    */
+   @GET
+   @Path("/ip/listfree/ipversion/{ipversion}/datacenter/{datacenter}/platform/{platform}/format/json")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @SelectJson("iplist")
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<Set<String>> listFree(@PathParam("ipversion") String ipversion,
+                                          @PathParam("datacenter") String datacenter,
+                                          @PathParam("platform") String platform);
 
 }

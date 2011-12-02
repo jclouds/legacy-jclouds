@@ -21,9 +21,13 @@ package org.jclouds.glesys.features;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import java.util.Set;
+
+import static org.testng.Assert.assertTrue;
+
 /**
  * Tests behavior of {@code IpClient}
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "live", testName = "IpClientLiveTest")
@@ -37,4 +41,9 @@ public class IpClientLiveTest extends BaseGleSYSClientLiveTest {
 
    private IpClient client;
 
+   @Test
+   public void testListFree() throws Exception {
+      Set<String> freeIps = client.listFree("4", "Falkenberg", "OpenVZ");
+      assertTrue(freeIps.size() >= 0);
+   }
 }

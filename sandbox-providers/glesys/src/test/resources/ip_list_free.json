@@ -1,0 +1,1 @@
+{"response":{"status":{"code":"200","text":"OK"},"ipinfo":{"ipversion":4,"datacenter":"Falkenberg","platform":"OpenVZ"},"iplist":["31.192.226.131","31.192.226.133"],"debug":{"input":{"ipversion":"4","datacenter":"Falkenberg","platform":"OpenVZ"}}}}
