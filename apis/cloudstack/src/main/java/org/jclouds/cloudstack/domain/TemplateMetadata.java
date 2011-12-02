@@ -200,28 +200,18 @@ public class TemplateMetadata {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         TemplateMetadata that = (TemplateMetadata) o;
 
-        if (osTypeId != that.osTypeId)
-            return false;
-        if (snapshotId != null ? !snapshotId.equals(that.snapshotId) : that.snapshotId != null)
-            return false;
-        if (volumeId != null ? !volumeId.equals(that.volumeId) : that.volumeId != null)
-            return false;
-        if (virtualMachineId != null ? !virtualMachineId.equals(that.virtualMachineId) : that.virtualMachineId != null)
-            return false;
-        if (passwordEnabled != null ? !passwordEnabled.equals(that.passwordEnabled) : that.passwordEnabled != null)
-            return false;
-        if (displayText != null ? !displayText.equals(that.displayText) : that.displayText != null)
-            return false;
-        if (name != null ? !name.equals(that.name) : that.name != null)
-            return false;
-
+        if (!Objects.equal(osTypeId, that.osTypeId)) return false;
+        if (!Objects.equal(snapshotId, that.snapshotId)) return false;
+        if (!Objects.equal(volumeId, that.volumeId)) return false;
+        if (!Objects.equal(virtualMachineId, that.virtualMachineId)) return false;
+        if (!Objects.equal(passwordEnabled, that.passwordEnabled)) return false;
+        if (!Objects.equal(displayText, that.displayText)) return false;
+        if (!Objects.equal(name, that.name)) return false;
         return true;
     }
 
