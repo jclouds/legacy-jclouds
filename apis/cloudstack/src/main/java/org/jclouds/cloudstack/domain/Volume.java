@@ -19,13 +19,10 @@
 
 package org.jclouds.cloudstack.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Date;
 import java.util.Map;
 
-import org.jclouds.cloudstack.domain.VirtualMachine.State;
-
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
@@ -45,6 +42,7 @@ public class Volume implements Comparable<Volume> {
    public static class Builder {
 
       private long id;
+      private String account;
       private Date attached;
       private Date created;
       private boolean destroyed;
@@ -77,6 +75,11 @@ public class Volume implements Comparable<Volume> {
 
       public Builder id(long id) {
          this.id = id;
+         return this;
+      }
+
+      public Builder account(String account) {
+         this.account = account;
          return this;
       }
 
@@ -226,7 +229,7 @@ public class Volume implements Comparable<Volume> {
       }
 
       public Volume build() {
-         return new Volume(id, attached, created, destroyed, deviceId, diskOfferingDisplayText, diskOfferingId,
+         return new Volume(id, account, attached, created, destroyed, deviceId, diskOfferingDisplayText, diskOfferingId,
                diskOfferingName, domain, domainId, hypervisor, isExtractable, jobId, jobStatus, name,
                serviceOfferingDisplayText, serviceOfferingId, serviceOfferingName, size, snapshotId, state, storage,
                storageType, type, virtualMachineId, vmDisplayName, vmName, vmState, zoneId, zoneName);
@@ -234,6 +237,7 @@ public class Volume implements Comparable<Volume> {
    }
 
    private long id;
+   private String account;
    private Date attached;
    private Date created;
    private boolean destroyed;
@@ -284,7 +288,7 @@ public class Volume implements Comparable<Volume> {
    @SerializedName("zonename")
    private String zoneName;
 
-   public Volume(long id, Date attached, Date created, boolean destroyed, long deviceId,
+   public Volume(long id,String account,  Date attached, Date created, boolean destroyed, long deviceId,
                  String diskOfferingDisplayText, long diskOfferingId, String diskOfferingName,
                  String domain, long domainId, String hypervisor, boolean extractable, long jobId,
                  String jobStatus, String name, String serviceOfferingDisplayText, long serviceOfferingId,
@@ -292,6 +296,7 @@ public class Volume implements Comparable<Volume> {
                  String storageType, VolumeType type, long virtualMachineId, String vmDisplayName, String vmName,
                  VirtualMachine.State vmState, long zoneId, String zoneName) {
       this.id = id;
+      this.account = account;
       this.attached = attached;
       this.created = created;
       this.destroyed = destroyed;
@@ -447,6 +452,10 @@ public class Volume implements Comparable<Volume> {
       return zoneName;
    }
 
+   public String getAccount() {
+      return account;
+   }
+
    @Override
    public int compareTo(Volume volume) {
       return Long.valueOf(this.id).compareTo(volume.id);
@@ -461,6 +470,7 @@ public class Volume implements Comparable<Volume> {
       Volume volume = (Volume) o;
 
       if (deviceId != volume.deviceId) return false;
+
       if (diskOfferingId != volume.diskOfferingId) return false;
       if (domainId != volume.domainId) return false;
       if (id != volume.id) return false;
@@ -497,7 +507,11 @@ public class Volume implements Comparable<Volume> {
       if (vmName != null ? !vmName.equals(volume.vmName) : volume.vmName != null) return false;
       if (vmState != volume.vmState) return false;
       if (zoneName != null ? !zoneName.equals(volume.zoneName) : volume.zoneName != null) return false;
-
+      if (account == null) {
+         if (volume.account != null)
+            return false;
+      } else if (!account.equals(volume.account))
+         return false;
       return true;
    }
 
@@ -534,25 +548,35 @@ public class Volume implements Comparable<Volume> {
       result = 31 * result + (zoneName != null ? zoneName.hashCode() : 0);
       return result;
    }
-   
+
    @Override
    public String toString() {
-      return getClass().getCanonicalName()+"["+id+"; "+name+"; "+vmState+"]";
+      return getClass().getCanonicalName() + "[" + id + "; " + name + "; " + vmState + "]";
    }
 
    public enum State {
 
-      /** indicates that the volume record is created in the DB, but not on the backend */
-      ALLOCATED, 
-      /** the volume is being created on the backend */
+      /**
+       * indicates that the volume record is created in the DB, but not on the backend
+       */
+      ALLOCATED,
+      /**
+       * the volume is being created on the backend
+       */
       CREATING,
-      /** the volume is ready to be used */
-      READY, 
-      /** the volume is destroyed (either as a result of deleteVolume command for DataDisk or as a part of destroyVm) */
+      /**
+       * the volume is ready to be used
+       */
+      READY,
+      /**
+       * the volume is destroyed (either as a result of deleteVolume command for DataDisk or as a part of destroyVm)
+       */
       DESTROYED,
-      /** the volume has failed somehow, e.g. during creation (in cloudstack development) */
+      /**
+       * the volume has failed somehow, e.g. during creation (in cloudstack development)
+       */
       FAILED,
-      
+
       UNRECOGNIZED;
 
       @Override

@@ -18,21 +18,19 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.common.collect.ForwardingSet;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import com.google.gson.annotations.SerializedName;
 
 /**
- * 
  * @author Adrian Cole
  */
 public class Account extends ForwardingSet<User> implements Comparable<Account> {
@@ -44,6 +42,7 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    public static class Builder {
       private long id;
       private Type type;
+      private String networkDomain;
       private String domain;
       private long domainId;
       private Long IPsAvailable;
@@ -77,6 +76,11 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
 
       public Builder type(Type type) {
          this.type = type;
+         return this;
+      }
+
+      public Builder networkDomain(String networkDomain) {
+         this.networkDomain = networkDomain;
          return this;
       }
 
@@ -206,7 +210,7 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
       }
 
       public Account build() {
-         return new Account(id, type, domain, domainId, IPsAvailable, IPLimit, IPs, cleanupRequired, name,
+         return new Account(id, type, networkDomain, domain, domainId, IPsAvailable, IPLimit, IPs, cleanupRequired, name,
                receivedBytes, sentBytes, snapshotsAvailable, snapshotLimit, snapshots, state, templatesAvailable,
                templateLimit, templates, VMsAvailable, VMLimit, VMsRunning, VMsStopped, VMs, volumesAvailable,
                volumeLimit, volumes, users);
@@ -216,6 +220,7 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
 
    public static enum State {
       ENABLED, DISABLED, LOCKED, UNRECOGNIZED;
+
       @Override
       public String toString() {
          return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
@@ -278,40 +283,65 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    private long id;
+   @SerializedName("accounttype")
    private Type type;
+   @SerializedName("networkdomain")
+   private String networkDomain;
    private String domain;
+   @SerializedName("domainId")
    private long domainId;
+   @SerializedName("ipsavailable")
    private Long IPsAvailable;
+   @SerializedName("iplimit")
    private Long IPLimit;
+   @SerializedName("iptotal")
    private long IPs;
+   @SerializedName("iscleanuprequired")
    private boolean cleanupRequired;
    private String name;
+   @SerializedName("receivedbytes")
    private long receivedBytes;
+   @SerializedName("sentbytes")
    private long sentBytes;
+   @SerializedName("snapshotavailable")
    private Long snapshotsAvailable;
+   @SerializedName("snapshotLimit")
    private Long snapshotLimit;
+   @SerializedName("snapshottotal")
    private long snapshots;
    private State state;
+   @SerializedName("templateavailable")
    private Long templatesAvailable;
+   @SerializedName("templatelimit")
    private Long templateLimit;
+   @SerializedName("templatetotal")
    private long templates;
+   @SerializedName("vmavailable")
    private Long VMsAvailable;
+   @SerializedName("vmlimit")
    private Long VMLimit;
+   @SerializedName("vmrunning")
    private long VMsRunning;
+   @SerializedName("vmstopped")
    private long VMsStopped;
+   @SerializedName("vmtotal")
    private long VMs;
+   @SerializedName("volumeavailable")
    private Long volumesAvailable;
+   @SerializedName("volumelimit")
    private Long volumeLimit;
+   @SerializedName("volumetotal")
    private long volumes;
    private Set<User> users;
 
-   public Account(long id, Type type, String domain, long domainId, Long IPsAvailable, Long IPLimit, long iPs,
-         boolean cleanupRequired, String name, long receivedBytes, long sentBytes, Long snapshotsAvailable,
-         Long snapshotLimit, long snapshots, org.jclouds.cloudstack.domain.Account.State state,
-         Long templatesAvailable, Long templateLimit, long templates, Long VMsAvailable, Long VMLimit, long vMsRunning,
-         long vMsStopped, long vMs, Long volumesAvailable, Long volumeLimit, long volumes, Set<User> users) {
+   public Account(long id, Type type, String networkDomain, String domain, long domainId, Long IPsAvailable, Long IPLimit, long iPs,
+                  boolean cleanupRequired, String name, long receivedBytes, long sentBytes, Long snapshotsAvailable,
+                  Long snapshotLimit, long snapshots, org.jclouds.cloudstack.domain.Account.State state,
+                  Long templatesAvailable, Long templateLimit, long templates, Long VMsAvailable, Long VMLimit, long vMsRunning,
+                  long vMsStopped, long vMs, Long volumesAvailable, Long volumeLimit, long volumes, Set<User> users) {
       this.id = id;
       this.type = type;
+      this.networkDomain = networkDomain;
       this.domain = domain;
       this.domainId = domainId;
       this.IPsAvailable = IPsAvailable;
@@ -341,14 +371,12 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
 
    /**
     * present only for serializer
-    * 
     */
    Account() {
 
    }
 
    /**
-    * 
     * @return the id of the account
     */
    public long getId() {
@@ -356,7 +384,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the name of the account
     */
 
@@ -365,7 +392,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return account type (admin, domain-admin, user)
     */
    public Type getType() {
@@ -373,7 +399,13 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
+    * @return the network domain
+    */
+   public String getNetworkDomain() {
+      return networkDomain;
+   }
+
+   /**
     * @return name of the Domain the account belongs to
     */
    public String getDomain() {
@@ -381,7 +413,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return id of the Domain the account belongs to
     */
    public long getDomainId() {
@@ -389,7 +420,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return true if the account requires cleanup
     */
    public boolean isCleanupRequired() {
@@ -397,7 +427,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the list of users associated with account
     */
    public Set<User> getUsers() {
@@ -405,7 +434,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the total number of public ip addresses available for this account
     *         to acquire, or null if unlimited
     */
@@ -415,7 +443,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the total number of public ip addresses this account can acquire,
     *         or null if unlimited
     */
@@ -425,7 +452,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the total number of public ip addresses allocated for this account
     */
    public long getIPs() {
@@ -433,7 +459,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the total number of network traffic bytes received
     */
    public long getReceivedBytes() {
@@ -441,7 +466,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the total number of network traffic bytes sent
     */
    public long getSentBytes() {
@@ -449,7 +473,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the total number of snapshots available for this account, or null
     *         if unlimited
     */
@@ -459,7 +482,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the total number of snapshots which can be stored by this account,
     *         or null if unlimited
     */
@@ -469,7 +491,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the total number of snapshots stored by this account
     */
    public long getSnapshots() {
@@ -477,7 +498,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the state of the account
     */
    public State getState() {
@@ -485,7 +505,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the total number of templates available to be created by this
     *         account, or null if unlimited
     */
@@ -495,7 +514,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the total number of templates which can be created by this
     *         account, or null if unlimited
     */
@@ -505,7 +523,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the total number of templates which have been created by this
     *         account
     */
@@ -514,7 +531,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the total number of virtual machines available for this account to
     *         acquire, or null if unlimited
     */
@@ -524,7 +540,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the total number of virtual machines that can be deployed by this
     *         account, or null if unlimited
     */
@@ -534,7 +549,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the total number of virtual machines running for this account
     */
    public long getVMsRunning() {
@@ -542,7 +556,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the total number of virtual machines stopped for this account
     */
    public long getVMsStopped() {
@@ -550,7 +563,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the total number of virtual machines deployed by this account
     */
    public long getVMs() {
@@ -558,7 +570,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the total volume available for this account, or null if unlimited
     */
    @Nullable
@@ -567,7 +578,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the total volume which can be used by this account, or null if
     *         unlimited
     */
@@ -577,7 +587,6 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
    }
 
    /**
-    * 
     * @return the total volume being used by this account
     */
    public long getVolumes() {
