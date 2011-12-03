@@ -18,15 +18,14 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import javax.annotation.Nullable;
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.CaseFormat;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * 
  * @author Adrian Cole
  */
 public class PublicIPAddress implements Comparable<PublicIPAddress> {
@@ -55,6 +54,8 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
       private String VLANName;
       private long zoneId;
       private String zoneName;
+      private Long jobId;
+      private Integer jobStatus;
 
       public Builder id(long id) {
          this.id = id;
@@ -151,10 +152,20 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
          return this;
       }
 
+      public Builder jobId(Long jobId) {
+         this.jobId = jobId;
+         return this;
+      }
+
+      public Builder jobStatus(int jobStatus) {
+         this.jobStatus = jobStatus;
+         return this;
+      }
+
       public PublicIPAddress build() {
          return new PublicIPAddress(id, account, allocated, associatedNetworkId, domain, domainId, usesVirtualNetwork,
                IPAddress, isSourceNAT, isStaticNAT, networkId, state, virtualMachineDisplayName, virtualMachineId,
-               virtualMachineName, VLANId, VLANName, zoneId, zoneName);
+               virtualMachineName, VLANId, VLANName, zoneId, zoneName, jobId, jobStatus);
       }
    }
 
@@ -191,9 +202,16 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    private long zoneId;
    @SerializedName("zonename")
    private String zoneName;
+   @SerializedName("jobid")
+   @Nullable
+   private Long jobId;
+   @SerializedName("jobstatus")
+   @Nullable
+   private Integer jobStatus;
 
    public static enum State {
       ALLOCATING, ALLOCATED, RELEASING, UNRECOGNIZED;
+
       @Override
       public String toString() {
          return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
@@ -215,9 +233,10 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    public PublicIPAddress(long id, String account, Date allocated, long associatedNetworkId, String domain,
-         long domainId, boolean usesVirtualNetwork, String iPAddress, boolean isSourceNAT, boolean isStaticNAT,
-         long networkId, State state, String virtualMachineDisplayName, long virtualMachineId,
-         String virtualMachineName, long VLANId, String VLANName, long zoneId, String zoneName) {
+                          long domainId, boolean usesVirtualNetwork, String iPAddress, boolean isSourceNAT, boolean isStaticNAT,
+                          long networkId, State state, String virtualMachineDisplayName, long virtualMachineId,
+                          String virtualMachineName, long VLANId, String VLANName, long zoneId, String zoneName, Long jobId, 
+                          Integer jobStatus) {
       this.id = id;
       this.account = account;
       this.allocated = allocated;
@@ -237,6 +256,9 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
       this.VLANName = VLANName;
       this.zoneId = zoneId;
       this.zoneName = zoneName;
+      this.jobId = jobId;
+      this.jobStatus = jobStatus;
+
    }
 
    @Override
@@ -245,7 +267,6 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    /**
-    * 
     * @return public IP address id
     */
    public long getId() {
@@ -253,7 +274,6 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    /**
-    * 
     * @return the account the public IP address is associated with
     */
    public String getAccount() {
@@ -261,7 +281,6 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    /**
-    * 
     * @return date the public IP address was acquired
     */
    public Date getAllocated() {
@@ -269,7 +288,25 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    /**
-    * 
+    * @return shows the current pending asynchronous job ID. This tag is not
+    *         returned if no current pending jobs are acting on the virtual
+    *         machine
+    */
+   @Nullable
+   public Long getJobId() {
+      return jobId;
+   }
+
+   /**
+    * @return shows the current pending asynchronous job status
+    */
+   @Nullable
+   public Integer getJobStatus() {
+      return jobStatus;
+   }
+
+
+   /**
     * @return the ID of the Network associated with the IP address
     */
    public long getAssociatedNetworkId() {
@@ -277,7 +314,6 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    /**
-    * 
     * @return the domain the public IP address is associated with
     */
    public String getDomain() {
@@ -285,7 +321,6 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    /**
-    * 
     * @return the domain ID the public IP address is associated with
     */
    public long getDomainId() {
@@ -300,7 +335,6 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    /**
-    * 
     * @return public IP address
     */
    public String getIPAddress() {
@@ -308,7 +342,6 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    /**
-    * 
     * @return true if the IP address is a source nat address, false otherwise
     */
    public boolean isSourceNAT() {
@@ -316,7 +349,6 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    /**
-    * 
     * @return true if this ip is for static nat, false otherwise
     */
    public boolean isStaticNAT() {
@@ -324,7 +356,6 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    /**
-    * 
     * @return the ID of the Network where ip belongs to
     */
    public long getNetworkId() {
@@ -332,7 +363,6 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    /**
-    * 
     * @return State of the ip address. Can be: Allocating, Allocated and
     *         Releasing
     */
@@ -341,7 +371,6 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    /**
-    * 
     * @return virtual machine display name the ip address is assigned to (not
     *         null only for static nat Ip)
     */
@@ -350,7 +379,6 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    /**
-    * 
     * @return virtual machine id the ip address is assigned to (not null only
     *         for static nat Ip)
     */
@@ -359,7 +387,6 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    /**
-    * 
     * @return virtual machine name the ip address is assigned to (not null only
     *         for static nat Ip)
     */
@@ -368,7 +395,6 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    /**
-    * 
     * @return the ID of the VLAN associated with the IP address
     */
    public long getVLANId() {
@@ -376,7 +402,6 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    /**
-    * 
     * @return the VLAN associated with the IP address
     */
    public String getVLANName() {
@@ -384,7 +409,6 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    /**
-    * 
     * @return the ID of the zone the public IP address belongs to
     */
    public long getZoneId() {
@@ -392,7 +416,6 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
    }
 
    /**
-    * 
     * @return the name of the zone the public IP address belongs to
     */
    public String getZoneName() {
@@ -422,6 +445,7 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
       result = prime * result + ((virtualMachineName == null) ? 0 : virtualMachineName.hashCode());
       result = prime * result + (int) (zoneId ^ (zoneId >>> 32));
       result = prime * result + ((zoneName == null) ? 0 : zoneName.hashCode());
+      result = prime * result + ((jobStatus == null) ? 0 : jobStatus.hashCode());
       return result;
    }
 
@@ -498,6 +522,16 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
          if (other.zoneName != null)
             return false;
       } else if (!zoneName.equals(other.zoneName))
+         return false;
+      if (jobId == null) {
+         if (other.jobId != null)
+            return false;
+      } else if (!jobId.equals(other.jobId))
+         return false;
+      if (jobStatus == null) {
+         if (other.jobStatus != null)
+            return false;
+      } else if (!jobStatus.equals(other.jobStatus))
          return false;
       return true;
    }

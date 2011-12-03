@@ -18,17 +18,16 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.SortedSet;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * 
  * @author Adrian Cole
  */
 public class SecurityGroup implements Comparable<SecurityGroup> {
@@ -43,6 +42,9 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
       private String description;
       private String domain;
       private long domainId;
+      private Long jobId;
+      private Integer jobStatus;
+
       private Set<IngressRule> ingressRules = ImmutableSet.of();
 
       public Builder id(long id) {
@@ -75,13 +77,23 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
          return this;
       }
 
+      public Builder jobId(Long jobId) {
+         this.jobId = jobId;
+         return this;
+      }
+
+      public Builder jobStatus(int jobStatus) {
+         this.jobStatus = jobStatus;
+         return this;
+      }
+
       public Builder ingressRules(Set<IngressRule> ingressRules) {
          this.ingressRules = ImmutableSet.copyOf(checkNotNull(ingressRules, "ingressRules"));
          return this;
       }
 
       public SecurityGroup build() {
-         return new SecurityGroup(id, account, name, description, domain, domainId, ingressRules);
+         return new SecurityGroup(id, account, name, description, domain, domainId, jobId, jobStatus, ingressRules);
       }
    }
 
@@ -92,31 +104,37 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    private String domain;
    @SerializedName("domainid")
    private long domainId;
+   @SerializedName("jobid")
+   @Nullable
+   private Long jobId;
+   @SerializedName("jobstatus")
+   @Nullable
+   private Integer jobStatus;
    @SerializedName("ingressrule")
    // so that tests and serialization come out expected
-   private SortedSet<IngressRule> ingressRules = ImmutableSortedSet.<IngressRule> of();
+   private SortedSet<IngressRule> ingressRules = ImmutableSortedSet.<IngressRule>of();
 
    public SecurityGroup(long id, String account, String name, String description, String domain, long domainId,
-         Set<IngressRule> ingressRules) {
+                        Long jobId, Integer jobStatus, Set<IngressRule> ingressRules) {
       this.id = id;
       this.account = account;
       this.name = name;
       this.description = description;
       this.domain = domain;
       this.domainId = domainId;
+      this.jobId = jobId;
+      this.jobStatus = jobStatus;
       this.ingressRules = ImmutableSortedSet.copyOf(checkNotNull(ingressRules, "ingressRules"));
    }
 
    /**
     * present only for serializer
-    * 
     */
    SecurityGroup() {
 
    }
 
    /**
-    * 
     * @return the id of the security group
     */
    public long getId() {
@@ -124,7 +142,6 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    }
 
    /**
-    * 
     * @return the name of the security group
     */
 
@@ -133,7 +150,6 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    }
 
    /**
-    * 
     * @return an alternate display text of the security group.
     */
    public String getDescription() {
@@ -141,7 +157,6 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    }
 
    /**
-    * 
     * @return Domain name for the security group
     */
    public String getDomain() {
@@ -149,7 +164,6 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    }
 
    /**
-    * 
     * @return the domain id of the security group
     */
    public long getDomainId() {
@@ -157,7 +171,24 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    }
 
    /**
-    * 
+    * @return shows the current pending asynchronous job ID. This tag is not
+    *         returned if no current pending jobs are acting on the virtual
+    *         machine
+    */
+   @Nullable
+   public Long getJobId() {
+      return jobId;
+   }
+
+   /**
+    * @return shows the current pending asynchronous job status
+    */
+   @Nullable
+   public Integer getJobStatus() {
+      return jobStatus;
+   }
+
+   /**
     * @return the account owning the security group
     */
    public String getAccount() {
@@ -165,7 +196,6 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    }
 
    /**
-    * 
     * @return the list of ingress rules associated with the security group
     */
    public Set<IngressRule> getIngressRules() {
@@ -178,6 +208,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
       int result = 1;
       result = prime * result + (int) (domainId ^ (domainId >>> 32));
       result = prime * result + (int) (id ^ (id >>> 32));
+      result = prime * result + ((jobStatus == null) ? 0 : jobStatus.hashCode());
       return result;
    }
 
@@ -193,6 +224,16 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
       if (domainId != other.domainId)
          return false;
       if (id != other.id)
+         return false;
+      if (jobId == null) {
+         if (other.jobId != null)
+            return false;
+      } else if (!jobId.equals(other.jobId))
+         return false;
+      if (jobStatus == null) {
+         if (other.jobStatus != null)
+            return false;
+      } else if (!jobStatus.equals(other.jobStatus))
          return false;
       return true;
    }
