@@ -18,16 +18,13 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import javax.annotation.Nullable;
 import java.util.Date;
 
-import javax.annotation.Nullable;
-
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * 
  * @author Adrian Cole
  */
 public class Template implements Comparable<Template> {
@@ -63,6 +60,11 @@ public class Template implements Comparable<Template> {
       private boolean passwordEnabled;
       private Long jobId;
       private String jobStatus;
+      private String checksum;
+      private Long hostId;
+      private String hostName;
+      private Long sourceTemplateId;
+      private String templateTag;
 
       public Builder id(long id) {
          this.id = id;
@@ -199,10 +201,37 @@ public class Template implements Comparable<Template> {
          return this;
       }
 
+      public Builder checksum(String checksum) {
+         this.checksum = checksum;
+         return this;
+      }
+
+      public Builder hostid(Long hostid) {
+         this.hostId = hostid;
+         return this;
+      }
+
+      public Builder hostName(String hostName) {
+         this.hostName = hostName;
+         return this;
+      }
+
+      public Builder sourceTemplateId(Long sourceTemplateId) {
+         this.sourceTemplateId = sourceTemplateId;
+         return this;
+      }
+
+      public Builder templateTag(String templateTag) {
+         this.templateTag = templateTag;
+         return this;
+      }
+
+
       public Template build() {
          return new Template(id, displayText, domain, domainId, account, accountId, zone, zoneId, OSType, OSTypeId,
                name, type, status, format, hypervisor, size, created, removed, crossZones, bootable, extractable,
-               featured, isPublic, ready, passwordEnabled, jobId, jobStatus);
+               featured, isPublic, ready, passwordEnabled, jobId, jobStatus, checksum, hostId, hostName, sourceTemplateId,
+               templateTag);
       }
 
    }
@@ -281,12 +310,24 @@ public class Template implements Comparable<Template> {
    @SerializedName("jobstatus")
    //TODO: this should be a type
    private String jobStatus;
+   private String checksum;
+   @SerializedName("hostId")
+   private Long hostId;
+   @SerializedName("hostname")
+   private String hostName;
+   @SerializedName("sourcetemplateid")
+   @Nullable
+   private Long sourceTemplateId;
+   @SerializedName("templatetag")
+   private String templateTag;
+
 
    public Template(long id, String displayText, String domain, long domainId, String account, long accountId,
-         String zone, long zoneId, String oSType, long oSTypeId, String name, Type type, String status, Format format,
-         String hypervisor, Long size, Date created, Date removed, boolean crossZones, boolean bootable,
-         boolean extractable, boolean featured, boolean ispublic, boolean ready, boolean passwordEnabled, Long jobId,
-         String jobStatus) {
+                   String zone, long zoneId, String oSType, long oSTypeId, String name, Type type, String status, Format format,
+                   String hypervisor, Long size, Date created, Date removed, boolean crossZones, boolean bootable,
+                   boolean extractable, boolean featured, boolean ispublic, boolean ready, boolean passwordEnabled, Long jobId,
+                   String jobStatus, String checksum, Long hostId, String hostName, Long sourceTemplateId,
+                   String templateTag) {
       this.id = id;
       this.displayText = displayText;
       this.domain = domain;
@@ -314,18 +355,22 @@ public class Template implements Comparable<Template> {
       this.passwordEnabled = passwordEnabled;
       this.jobId = jobId;
       this.jobStatus = jobStatus;
+      this.checksum = checksum;
+      this.hostId = hostId;
+      this.hostName = hostName;
+      this.sourceTemplateId = sourceTemplateId;
+      this.templateTag = templateTag;
+
    }
 
    /**
     * present only for serializer
-    * 
     */
    Template() {
 
    }
 
    /**
-    * 
     * @return Template id
     */
    public long getId() {
@@ -333,7 +378,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return the display text of the template
     */
    public String getDisplayText() {
@@ -341,7 +385,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return the name of the domain to which the template beLongs
     */
    public String getDomain() {
@@ -349,7 +392,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return the ID of the domain to which the template beLongs
     */
    public long getDomainId() {
@@ -357,7 +399,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return the name of the account to which the template beLongs
     */
    public String getAccount() {
@@ -365,7 +406,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return the ID of the account to which the template beLongs
     */
    public long getAccountId() {
@@ -373,7 +413,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return the name of the zone to which the template beLongs
     */
    public String getZone() {
@@ -381,7 +420,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return the ID of the zone to which the template beLongs
     */
    public long getZoneId() {
@@ -389,7 +427,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return the name of the OS type to which the template beLongs
     */
    public String getOSType() {
@@ -397,7 +434,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return the ID of the OS type to which the template beLongs
     */
    public long getOSTypeId() {
@@ -405,7 +441,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return Template name
     */
    public String getName() {
@@ -413,7 +448,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return
     */
    public String getStatus() {
@@ -421,7 +455,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return the format of the template.
     */
    public Format getFormat() {
@@ -429,7 +462,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return the hypervisor on which the template runs
     */
    public String getHypervisor() {
@@ -437,7 +469,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return the size of the template in kilobytes
     */
    public Long getSize() {
@@ -445,7 +476,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return the type of the template
     */
    public Type getType() {
@@ -453,7 +483,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return the date this template was created
     */
    public Date getCreated() {
@@ -461,7 +490,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return the date this template was removed
     */
    public Date getRemoved() {
@@ -469,7 +497,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return true if the template is managed across all Zones, false otherwise
     */
    public boolean isCrossZones() {
@@ -477,7 +504,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return true if the ISO is bootable, false otherwise
     */
    public boolean isBootable() {
@@ -485,7 +511,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return true if the template is extractable, false otherwise
     */
    public boolean isExtractable() {
@@ -493,7 +518,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return true if this template is a featured template, false otherwise
     */
    public boolean isFeatured() {
@@ -501,7 +525,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return true if this template is a public template, false otherwise
     */
    public boolean isPublic() {
@@ -509,7 +532,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return true if the template is ready to be deployed from, false otherwise
     */
    public boolean isReady() {
@@ -517,7 +539,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return true if the reset password feature is enabled, false otherwise
     */
    public boolean isPasswordEnabled() {
@@ -525,7 +546,6 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return shows the current pending asynchronous job ID, or null if current
     *         pending jobs are acting on the template
     */
@@ -535,11 +555,45 @@ public class Template implements Comparable<Template> {
    }
 
    /**
-    * 
     * @return shows the current pending asynchronous job status
     */
    public String getJobStatus() {
       return jobStatus;
+   }
+
+   /**
+    * @return checksum of the template
+    */
+   public String getChecksum() {
+      return checksum;
+   }
+
+   /**
+    * @return the ID of the secondary storage host for the template
+    */
+   public Long getHostId() {
+      return hostId;
+   }
+
+   /**
+    * @return the name of the secondary storage host for the template
+    */
+   public String getHostName() {
+      return hostName;
+   }
+
+   /**
+    * @return the template ID of the parent template if present
+    */
+   public Long getSourceTemplateId() {
+      return sourceTemplateId;
+   }
+
+   /**
+    * @return the tag of this template
+    */
+   public String getTemplateTag() {
+      return templateTag;
    }
 
    @Override

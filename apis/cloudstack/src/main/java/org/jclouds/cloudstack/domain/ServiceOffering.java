@@ -18,18 +18,16 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Date;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * 
  * @author Adrian Cole
  */
 public class ServiceOffering implements Comparable<ServiceOffering> {
@@ -50,6 +48,13 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
       private int memory;
       private boolean haSupport;
       private StorageType storageType;
+      private boolean defaultUse;
+      private String hostTags;
+      private boolean systemOffering;
+      private boolean cpuUseLimited;
+      private long networkRate;
+      private boolean systemVmType;
+
       private Set<String> tags = ImmutableSet.of();
 
       public Builder id(long id) {
@@ -112,9 +117,41 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
          return this;
       }
 
+      public Builder defaultUse(boolean defaultUse) {
+         this.defaultUse = defaultUse;
+         return this;
+      }
+
+      public Builder hostTags(String hostTags) {
+         this.hostTags = hostTags;
+         return this;
+      }
+
+      public Builder systemOffering(boolean systemOffering) {
+         this.systemOffering = systemOffering;
+         return this;
+      }
+
+      public Builder cpuUseLimited(boolean cpuUseLimited) {
+         this.cpuUseLimited = cpuUseLimited;
+         return this;
+      }
+
+      public Builder networkRate(long networkRate) {
+         this.networkRate = networkRate;
+         return this;
+      }
+
+      public Builder systemVmType(boolean systemVmType) {
+         this.systemVmType = systemVmType;
+         return this;
+      }
+
+
       public ServiceOffering build() {
          return new ServiceOffering(id, name, displayText, created, domain, domainId, cpuNumber, cpuSpeed, memory,
-               haSupport, storageType, tags);
+               haSupport, storageType, tags, defaultUse, hostTags, systemOffering, cpuUseLimited, networkRate,
+               systemVmType);
       }
    }
 
@@ -136,9 +173,24 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
    @SerializedName("storagetype")
    private StorageType storageType;
    private String tags;
+   @SerializedName("defaultuse")
+   private boolean defaultUse;
+   @SerializedName("hosttags")
+   private String hostTags;
+   @SerializedName("issystem")
+   private boolean systemOffering;
+   @SerializedName("limitcpuuse")
+   private boolean cpuUseLimited;
+   @SerializedName("networkrate")
+   private long networkRate;
+   @SerializedName("systemvmtype")
+   private boolean systemVmType;
+
 
    public ServiceOffering(long id, String name, String displayText, Date created, String domain, long domainId,
-         int cpuNumber, int cpuSpeed, int memory, boolean haSupport, StorageType storageType, Set<String> tags) {
+                          int cpuNumber, int cpuSpeed, int memory, boolean haSupport, StorageType storageType, Set<String> tags,
+                          boolean defaultUse, String hostTags, boolean systemOffering, boolean cpuUseLimited, long networkRate,
+                          boolean systemVmType) {
       this.id = id;
       this.name = name;
       this.displayText = displayText;
@@ -155,14 +207,12 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
 
    /**
     * present only for serializer
-    * 
     */
    ServiceOffering() {
 
    }
 
    /**
-    * 
     * @return the id of the service offering
     */
    public long getId() {
@@ -170,7 +220,6 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
    }
 
    /**
-    * 
     * @return the name of the service offering
     */
 
@@ -179,7 +228,6 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
    }
 
    /**
-    * 
     * @return an alternate display text of the service offering.
     */
    public String getDisplayText() {
@@ -187,7 +235,6 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
    }
 
    /**
-    * 
     * @return the date this service offering was created
     */
    public Date getCreated() {
@@ -195,7 +242,6 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
    }
 
    /**
-    * 
     * @return Domain name for the offering
     */
    public String getDomain() {
@@ -203,7 +249,6 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
    }
 
    /**
-    * 
     * @return the domain id of the service offering
     */
    public long getDomainId() {
@@ -211,7 +256,6 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
    }
 
    /**
-    * 
     * @return the number of CPU
     */
    public int getCpuNumber() {
@@ -219,7 +263,6 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
    }
 
    /**
-    * 
     * @return the clock rate CPU speed in Mhz
     */
    public int getCpuSpeed() {
@@ -227,7 +270,6 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
    }
 
    /**
-    * 
     * @return the memory in MB
     */
    public int getMemory() {
@@ -235,7 +277,6 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
    }
 
    /**
-    * 
     * @return the ha support in the service offering
     */
    public boolean supportsHA() {
@@ -243,7 +284,6 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
    }
 
    /**
-    * 
     * @return the storage type for this service offering
     */
    public StorageType getStorageType() {
@@ -251,11 +291,52 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
    }
 
    /**
-    * 
+    * @return whether this is a default system vm offering
+    */
+   public boolean isDefaultUse() {
+      return defaultUse;
+   }
+
+   /**
+    * @return the host tag for the service offering
+    */
+   public String getHostTags() {
+      return hostTags;
+   }
+
+   /**
+    * @return whether this is a system vm offering
+    */
+   public boolean isSystemOffering() {
+      return systemOffering;
+   }
+
+   /**
+    * @return whether restrict the CPU usage to committed service offering
+    */
+   public boolean isCpuUseLimited() {
+      return cpuUseLimited;
+   }
+
+   /**
+    * @return data transfer rate in megabits per second allowed.
+    */
+   public long getNetworkRate() {
+      return networkRate;
+   }
+
+   /**
+    * @return whether this is a the systemvm type for system vm offering
+    */
+   public boolean isSystemVmType() {
+      return systemVmType;
+   }
+
+   /**
     * @return the tags for the service offering
     */
    public Set<String> getTags() {
-      return tags != null ? ImmutableSet.copyOf(Splitter.on(',').split(tags)) : ImmutableSet.<String> of();
+      return tags != null ? ImmutableSet.copyOf(Splitter.on(',').split(tags)) : ImmutableSet.<String>of();
    }
 
    @Override

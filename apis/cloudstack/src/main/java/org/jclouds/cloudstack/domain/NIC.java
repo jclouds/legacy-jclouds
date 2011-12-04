@@ -23,7 +23,7 @@ import java.net.URI;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * 
+ *
  * @author Adrian Cole
  */
 public class NIC {
@@ -39,6 +39,7 @@ public class NIC {
       private boolean isDefault;
       private URI isolationURI;
       private String netmask;
+      private String macAddress;
       private long networkId;
       private TrafficType trafficType;
       private GuestIPType guestIPType;
@@ -78,6 +79,11 @@ public class NIC {
          return this;
       }
 
+      public Builder macAddress(String macAddress) {
+         this.macAddress = macAddress;
+         return this;
+      }
+
       public Builder networkId(long networkId) {
          this.networkId = networkId;
          return this;
@@ -94,8 +100,8 @@ public class NIC {
       }
 
       public NIC build() {
-         return new NIC(id, broadcastURI, gateway, IPAddress, isDefault, isolationURI, netmask, networkId, trafficType,
-               guestIPType);
+         return new NIC(id, broadcastURI, gateway, IPAddress, isDefault, isolationURI, netmask, macAddress, networkId,
+               trafficType, guestIPType);
 
       }
    }
@@ -111,6 +117,8 @@ public class NIC {
    @SerializedName("isolationuri")
    private URI isolationURI;
    private String netmask;
+   @SerializedName("macaddress")
+   private String macAddress;
    @SerializedName("networkid")
    private long networkId;
    @SerializedName("traffictype")
@@ -120,14 +128,13 @@ public class NIC {
 
    /**
     * present only for serializer
-    * 
     */
    NIC() {
 
    }
 
    public NIC(long id, URI broadcastURI, String gateway, String iPAddress, boolean isDefault, URI isolationURI,
-         String netmask, long networkId, TrafficType trafficType, GuestIPType guestIPType) {
+              String netmask, String macAddress, long networkId, TrafficType trafficType, GuestIPType guestIPType) {
       this.id = id;
       this.broadcastURI = broadcastURI;
       this.gateway = gateway;
@@ -135,6 +142,7 @@ public class NIC {
       this.isDefault = isDefault;
       this.isolationURI = isolationURI;
       this.netmask = netmask;
+      this.macAddress = macAddress;
       this.networkId = networkId;
       this.trafficType = trafficType;
       this.guestIPType = guestIPType;
@@ -190,6 +198,13 @@ public class NIC {
    }
 
    /**
+    * the MAC Address of the NIC
+    */
+   public String getMacAddress() {
+      return macAddress;
+   }
+
+   /**
     * the ID of the corresponding network
     */
    public long getNetworkId() {
@@ -222,6 +237,7 @@ public class NIC {
       result = prime * result + (isDefault ? 1231 : 1237);
       result = prime * result + ((isolationURI == null) ? 0 : isolationURI.hashCode());
       result = prime * result + ((netmask == null) ? 0 : netmask.hashCode());
+      result = prime * result + ((macAddress == null) ? 0 : macAddress.hashCode());
       result = prime * result + (int) (networkId ^ (networkId >>> 32));
       result = prime * result + ((trafficType == null) ? 0 : trafficType.hashCode());
       return result;
@@ -267,6 +283,11 @@ public class NIC {
             return false;
       } else if (!netmask.equals(other.netmask))
          return false;
+      if (macAddress == null) {
+         if (other.macAddress != null)
+            return false;
+      } else if (!macAddress.equals(other.macAddress))
+         return false;
       if (networkId != other.networkId)
          return false;
       if (trafficType != other.trafficType)
@@ -277,8 +298,8 @@ public class NIC {
    @Override
    public String toString() {
       return "[id=" + id + ", broadcastURI=" + broadcastURI + ", gateway=" + gateway + ", IPAddress=" + IPAddress
-            + ", isDefault=" + isDefault + ", isolationURI=" + isolationURI + ", netmask=" + netmask + ", networkId="
-            + networkId + ", trafficType=" + trafficType + ", guestIPType=" + guestIPType + "]";
+            + ", isDefault=" + isDefault + ", isolationURI=" + isolationURI + ", netmask=" + netmask + ", MACAddress="
+            + macAddress + ", networkId=" + networkId + ", trafficType=" + trafficType + ", guestIPType=" + guestIPType + "]";
    }
 
 }

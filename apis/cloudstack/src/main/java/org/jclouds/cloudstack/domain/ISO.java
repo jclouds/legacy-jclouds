@@ -18,11 +18,10 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.Date;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * @author Richard Downer
@@ -344,7 +343,6 @@ public class ISO implements Comparable<ISO> {
    private long hostId;
    @SerializedName("hostname")
    private String hostName;
-   @SerializedName("")
    private String hypervisor;
    @SerializedName("isextractable")
    private boolean isExtractable;
@@ -692,39 +690,39 @@ public class ISO implements Comparable<ISO> {
    @Override
    public String toString() {
       return "[" +
-         "id=" + id +
-         ", account='" + account + '\'' +
-         ", accountId=" + accountId +
-         ", bootable=" + bootable +
-         ", checksum='" + checksum + '\'' +
-         ", created=" + created +
-         ", crossZones=" + crossZones +
-         ", displayText='" + displayText + '\'' +
-         ", domain='" + domain + '\'' +
-         ", domainid=" + domainid +
-         ", format='" + format + '\'' +
-         ", hostId=" + hostId +
-         ", hostName='" + hostName + '\'' +
-         ", hypervisor='" + hypervisor + '\'' +
-         ", isExtractable=" + isExtractable +
-         ", isFeatured=" + isFeatured +
-         ", isPublic=" + isPublic +
-         ", isReady=" + isReady +
-         ", jobId=" + jobId +
-         ", jobStatus='" + jobStatus + '\'' +
-         ", name='" + name + '\'' +
-         ", osTypeId=" + osTypeId +
-         ", osTypeName='" + osTypeName + '\'' +
-         ", passwordEnabled=" + passwordEnabled +
-         ", removed=" + removed +
-         ", size=" + size +
-         ", sourceTemplateId=" + sourceTemplateId +
-         ", status='" + status + '\'' +
-         ", templateTag='" + templateTag + '\'' +
-         ", templateType='" + templateType + '\'' +
-         ", zoneId=" + zoneId +
-         ", zoneName='" + zoneName + '\'' +
-         ']';
+            "id=" + id +
+            ", account='" + account + '\'' +
+            ", accountId=" + accountId +
+            ", bootable=" + bootable +
+            ", checksum='" + checksum + '\'' +
+            ", created=" + created +
+            ", crossZones=" + crossZones +
+            ", displayText='" + displayText + '\'' +
+            ", domain='" + domain + '\'' +
+            ", domainid=" + domainid +
+            ", format='" + format + '\'' +
+            ", hostId=" + hostId +
+            ", hostName='" + hostName + '\'' +
+            ", hypervisor='" + hypervisor + '\'' +
+            ", isExtractable=" + isExtractable +
+            ", isFeatured=" + isFeatured +
+            ", isPublic=" + isPublic +
+            ", isReady=" + isReady +
+            ", jobId=" + jobId +
+            ", jobStatus='" + jobStatus + '\'' +
+            ", name='" + name + '\'' +
+            ", osTypeId=" + osTypeId +
+            ", osTypeName='" + osTypeName + '\'' +
+            ", passwordEnabled=" + passwordEnabled +
+            ", removed=" + removed +
+            ", size=" + size +
+            ", sourceTemplateId=" + sourceTemplateId +
+            ", status='" + status + '\'' +
+            ", templateTag='" + templateTag + '\'' +
+            ", templateType='" + templateType + '\'' +
+            ", zoneId=" + zoneId +
+            ", zoneName='" + zoneName + '\'' +
+            ']';
    }
 
    @Override
