@@ -20,6 +20,10 @@ package org.jclouds.epc;
 
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.ENDPOINT;
+import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
 
@@ -34,8 +38,11 @@ public class EucalyptusPartnerCloudWalrusPropertiesBuilder extends WalrusPropert
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+      properties.setProperty(PROPERTY_REGIONS, "Walrus");
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-CA");
+      properties.setProperty(PROPERTY_REGION + ".Walrus." + ISO3166_CODES, "US-CA");
       properties.setProperty(PROPERTY_ENDPOINT, "http://partnercloud.eucalyptus.com:8773/services/Walrus");
+      properties.setProperty(PROPERTY_REGION + "." + "Walrus" + "." + ENDPOINT, "http://partnercloud.eucalyptus.com:8773/services/Walrus");
       return properties;
    }
 
