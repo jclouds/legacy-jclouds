@@ -30,7 +30,6 @@ import org.testng.annotations.Test;
 import javax.annotation.Nullable;
 import java.net.URI;
 import java.net.URLDecoder;
-import java.util.Random;
 import java.util.Set;
 
 import static org.jclouds.cloudstack.options.ListTemplatesOptions.Builder.zoneId;
@@ -45,7 +44,8 @@ import static org.testng.Assert.*;
 public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
 
    private static final String IMPORT_VHD_URL = "http://www.frontiertown.co.uk/jclouds/empty.vhd";
-   private VirtualMachine vm;
+   private VirtualMachine vmForCreation;
+   private VirtualMachine vmForRegistration;
    private Template createdTemplate;
    private Template registeredTemplate;
 
@@ -98,20 +98,19 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
 
       // Create a VM and stop it
       Long templateId = (imageId != null && !"".equals(imageId)) ? new Long(imageId) : null;
-      vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, templateId, client, jobComplete, virtualMachineRunning);
-      assert jobComplete.apply(client.getVirtualMachineClient().stopVirtualMachine(vm.getId())) : vm;
+      vmForCreation = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, templateId, client, jobComplete, virtualMachineRunning);
+      assert jobComplete.apply(client.getVirtualMachineClient().stopVirtualMachine(vmForCreation.getId())) : vmForCreation;
 
       // Work out the VM's volume
-      Set<Volume> volumes = client.getVolumeClient().listVolumes(ListVolumesOptions.Builder.virtualMachineId(vm.getId()));
+      Set<Volume> volumes = client.getVolumeClient().listVolumes(ListVolumesOptions.Builder.virtualMachineId(vmForCreation.getId()));
       assertEquals(volumes.size(), 1);
       Volume volume = Iterables.getOnlyElement(volumes);
 
       // Create a template
-      String tmplName = "jclouds-" + Integer.toHexString(new Random().nextInt());
       CreateTemplateOptions options = CreateTemplateOptions.Builder.volumeId(volume.getId());
-      AsyncCreateResponse response = client.getTemplateClient().createTemplate(TemplateMetadata.builder().name(tmplName).osTypeId(vm.getGuestOSId()).displayText("jclouds live testCreateTemplate").build(), options);
-      assert jobComplete.apply(response.getJobId()) : vm;
-      createdTemplate = client.getTemplateClient().getTemplateInZone(response.getId(), vm.getZoneId());
+      AsyncCreateResponse response = client.getTemplateClient().createTemplate(TemplateMetadata.builder().name(prefix+"-createTemplate").osTypeId(vmForCreation.getGuestOSId()).displayText("jclouds live testCreateTemplate").build(), options);
+      assert jobComplete.apply(response.getJobId()) : vmForCreation;
+      createdTemplate = client.getTemplateClient().getTemplateInZone(response.getId(), vmForCreation.getZoneId());
 
       // Assertions
       assertNotNull(createdTemplate);
@@ -153,9 +152,8 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       OSType osType = Iterables.getFirst(osTypes, null);
 
       // Register a template
-      String tmplName = "jclouds-" + Integer.toHexString(new Random().nextInt());
       RegisterTemplateOptions options = RegisterTemplateOptions.Builder.bits(32).isExtractable(true);
-      TemplateMetadata templateMetadata = TemplateMetadata.builder().name(tmplName).osTypeId(osType.getId()).displayText("jclouds live testRegisterTemplate").build();
+      TemplateMetadata templateMetadata = TemplateMetadata.builder().name(prefix+"-registerTemplate").osTypeId(osType.getId()).displayText("jclouds live testRegisterTemplate").build();
       Set<Template> templates = client.getTemplateClient().registerTemplate(templateMetadata, "VHD", "XenServer", IMPORT_VHD_URL, zone.getId(), options);
       registeredTemplate = Iterables.getOnlyElement(templates, null);
       assertNotNull(registeredTemplate);
@@ -174,25 +172,30 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       assertTrue(new RetryablePredicate<Template>(templateReadyPredicate, 60000).apply(registeredTemplate));
 
       // Create a VM that uses this template
-      vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, registeredTemplate.getId(), client, jobComplete, virtualMachineRunning);
-      assertNotNull(vm);
+      vmForRegistration = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, registeredTemplate.getId(), client, jobComplete, virtualMachineRunning);
+      assertNotNull(vmForRegistration);
    }
 
 
    @AfterGroups(groups = "live")
    protected void tearDown() {
-      if (vm != null) {
-         assert jobComplete.apply(client.getVirtualMachineClient().stopVirtualMachine(vm.getId())) : vm;
-         assert jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vm.getId())) : vm;
-         assert virtualMachineDestroyed.apply(vm);
+      if (vmForCreation != null) {
+         assert jobComplete.apply(client.getVirtualMachineClient().stopVirtualMachine(vmForCreation.getId())) : vmForCreation;
+         assert jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vmForCreation.getId())) : vmForCreation;
+         assert virtualMachineDestroyed.apply(vmForCreation);
+      }
+      if (vmForRegistration != null) {
+         assert jobComplete.apply(client.getVirtualMachineClient().stopVirtualMachine(vmForRegistration.getId())) : vmForRegistration;
+         assert jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vmForRegistration.getId())) : vmForRegistration;
+         assert virtualMachineDestroyed.apply(vmForRegistration);
       }
       if (createdTemplate != null) {
          AsyncCreateResponse deleteJob = client.getTemplateClient().deleteTemplate(createdTemplate.getId());
          assertTrue(jobComplete.apply(deleteJob.getJobId()));
-         client.getTemplateClient().deleteTemplate(createdTemplate.getId());
       }
       if (registeredTemplate != null) {
-         client.getTemplateClient().deleteTemplate(registeredTemplate.getId());
+         AsyncCreateResponse deleteJob = client.getTemplateClient().deleteTemplate(registeredTemplate.getId());
+         assertTrue(jobComplete.apply(deleteJob.getJobId()));
       }
       super.tearDown();
    }
