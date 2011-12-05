@@ -18,12 +18,15 @@
  */
 package org.jclouds.cloudloadbalancers.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer;
+import org.jclouds.cloudloadbalancers.functions.ConvertLB.Factory;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
@@ -40,11 +43,14 @@ public class UnwrapLoadBalancers implements Function<HttpResponse, Set<LoadBalan
          InvocationContext<UnwrapLoadBalancers> {
 
    private final ParseJson<Map<String, Set<LB>>> json;
+   private final Factory factory;
+
    private ConvertLB convertLB;
 
    @Inject
-   UnwrapLoadBalancers(ParseJson<Map<String, Set<LB>>> json) {
-      this.json = json;
+   UnwrapLoadBalancers(ParseJson<Map<String, Set<LB>>> json, ConvertLB.Factory factory) {
+      this.json = checkNotNull(json, "json");
+      this.factory = checkNotNull(factory, "factory");
    }
 
    @Override
@@ -62,7 +68,7 @@ public class UnwrapLoadBalancers implements Function<HttpResponse, Set<LoadBalan
    }
 
    UnwrapLoadBalancers setRegion(String region) {
-      this.convertLB = new ConvertLB(region);
+      this.convertLB = factory.createForRegion(region);
       return this;
    }
 

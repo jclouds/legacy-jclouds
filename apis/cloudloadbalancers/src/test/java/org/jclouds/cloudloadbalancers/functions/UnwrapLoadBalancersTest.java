@@ -30,7 +30,9 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
  * 
@@ -61,6 +63,20 @@ public class UnwrapLoadBalancersTest extends BaseSetParserTest<LoadBalancer> {
                                  .ipVersion(VirtualIP.IPVersion.IPV4).build())).created(
                         new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:42Z")).updated(
                         new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z")).build());
+
+   }
+
+   // add factory binding as this is not default
+   @Override
+   protected Injector injector() {
+      return super.injector().createChildInjector(new AbstractModule() {
+
+         @Override
+         protected void configure() {
+            install(new FactoryModuleBuilder().build(ConvertLB.Factory.class));
+         }
+
+      });
 
    }
 

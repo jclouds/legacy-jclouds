@@ -19,17 +19,13 @@
 package org.jclouds.cloudloadbalancers.functions;
 
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer;
-import org.jclouds.cloudloadbalancers.domain.Node;
-import org.jclouds.cloudloadbalancers.domain.VirtualIP;
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer.Status;
-import org.jclouds.cloudloadbalancers.domain.VirtualIP.IPVersion;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.json.BaseItemParserTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
@@ -38,35 +34,19 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "UnwrapLoadBalancerTest")
-public class UnwrapLoadBalancerTest extends BaseItemParserTest<LoadBalancer> {
+@Test(groups = "unit", testName = "UnwrapLoadBalancerWhenDeletedTest")
+public class UnwrapLoadBalancerWhenDeletedTest extends BaseItemParserTest<LoadBalancer> {
 
    @Override
    public String resource() {
-      return "/getloadbalancer.json";
+      return "/getloadbalancer-deleted.json";
    }
 
    @Override
    public LoadBalancer expected() {
-      return LoadBalancer.builder().region("DFW").id(2000).name("sample-loadbalancer").protocol("HTTP").port(80)
-               .algorithm("RANDOM").status(Status.ACTIVE).connectionLoggingEnabled(true).virtualIPs(
-                        ImmutableSet.of(VirtualIP.builder().id(1000).address("206.10.10.210").type(
-                                 VirtualIP.Type.PUBLIC).ipVersion(IPVersion.IPV4).build()))
-
-               .nodes(
-                        ImmutableSet.of(Node.builder().id(1041).address("10.1.1.1").port(80).condition(
-                                 Node.Condition.ENABLED).status(Node.Status.ONLINE).build(), Node.builder().id(1411)
-                                 .address("10.1.1.2").port(80).condition(Node.Condition.ENABLED).status(
-                                          Node.Status.ONLINE).build())).sessionPersistenceType("HTTP_COOKIE")
-               // connectionThrottle({
-               // minConnections(10)
-               // maxConnections(100)
-               // maxConnectionRate(50)
-               // rateInterval(60
-               // })
-               .clusterName("c1.dfw1").created(
-                        new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:42Z")).updated(
-                        new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-11-30T03:23:44Z")).build();
+      return LoadBalancer.builder().region("LON").id(4865).name("adriancole-LON").status(Status.DELETED).created(
+               new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-12-05T18:03:23Z")).updated(
+               new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-12-05T18:04:04Z")).build();
    }
 
    // add factory binding as this is not default
@@ -85,6 +65,6 @@ public class UnwrapLoadBalancerTest extends BaseItemParserTest<LoadBalancer> {
 
    @Override
    protected Function<HttpResponse, LoadBalancer> parser(Injector i) {
-      return i.getInstance(UnwrapLoadBalancer.class).setRegion("DFW");
+      return i.getInstance(UnwrapLoadBalancer.class).setRegion("LON");
    }
 }

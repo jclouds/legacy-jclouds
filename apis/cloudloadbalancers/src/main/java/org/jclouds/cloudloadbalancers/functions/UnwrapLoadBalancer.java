@@ -18,11 +18,15 @@
  */
 package org.jclouds.cloudloadbalancers.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer;
+import org.jclouds.cloudloadbalancers.functions.ConvertLB.Factory;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
@@ -37,15 +41,19 @@ import com.google.common.collect.Iterables;
 public class UnwrapLoadBalancer implements Function<HttpResponse, LoadBalancer>, InvocationContext<UnwrapLoadBalancer> {
 
    private final ParseJson<Map<String, LB>> json;
+   private final Factory factory;
+
    private ConvertLB convertLB;
 
    @Inject
-   UnwrapLoadBalancer(ParseJson<Map<String, LB>> json) {
-      this.json = json;
+   UnwrapLoadBalancer(ParseJson<Map<String, LB>> json, ConvertLB.Factory factory) {
+      this.json = checkNotNull(json, "json");
+      this.factory = checkNotNull(factory, "factory");
    }
 
    @Override
    public LoadBalancer apply(HttpResponse arg0) {
+      checkState(convertLB != null, "convertLB should be set by InvocationContext");
       Map<String, LB> map = json.apply(arg0);
       if (map == null || map.size() == 0)
          return null;
@@ -59,7 +67,7 @@ public class UnwrapLoadBalancer implements Function<HttpResponse, LoadBalancer>,
    }
 
    UnwrapLoadBalancer setRegion(String region) {
-      this.convertLB = new ConvertLB(region);
+      this.convertLB = factory.createForRegion(region);
       return this;
    }
 

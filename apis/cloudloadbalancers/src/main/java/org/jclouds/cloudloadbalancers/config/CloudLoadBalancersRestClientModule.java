@@ -34,6 +34,7 @@ import org.jclouds.cloudloadbalancers.features.LoadBalancerAsyncClient;
 import org.jclouds.cloudloadbalancers.features.LoadBalancerClient;
 import org.jclouds.cloudloadbalancers.features.NodeAsyncClient;
 import org.jclouds.cloudloadbalancers.features.NodeClient;
+import org.jclouds.cloudloadbalancers.functions.ConvertLB;
 import org.jclouds.cloudloadbalancers.handlers.ParseCloudLoadBalancersErrorFromHttpResponse;
 import org.jclouds.cloudloadbalancers.reference.RackspaceConstants;
 import org.jclouds.http.HttpErrorHandler;
@@ -63,6 +64,7 @@ import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
  * Configures theRackspace Cloud Load Balancers connection.
@@ -109,6 +111,7 @@ public class CloudLoadBalancersRestClientModule extends
       install(new OpenStackAuthenticationModule());
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
       bindRegionsToProvider();
+      install(new FactoryModuleBuilder().build(ConvertLB.Factory.class));
       super.configure();
    }
 

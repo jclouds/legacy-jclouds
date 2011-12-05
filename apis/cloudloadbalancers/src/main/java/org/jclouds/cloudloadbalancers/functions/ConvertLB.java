@@ -18,39 +18,57 @@
  */
 package org.jclouds.cloudloadbalancers.functions;
 
+import javax.annotation.Resource;
+import javax.inject.Inject;
+
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer.Builder;
+import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.google.inject.assistedinject.Assisted;
 
 /**
  * @author Adrian Cole
  */
 public class ConvertLB implements Function<LB, LoadBalancer> {
 
+   public static interface Factory {
+      ConvertLB createForRegion(String region);
+   }
+
+   @Resource
+   protected Logger logger = Logger.NULL;
+
    private final String region;
 
-   ConvertLB(String region) {
+   @Inject
+   ConvertLB(@Assisted String region) {
       this.region = region.toUpperCase();
    }
 
    @Override
    public LoadBalancer apply(LB lb) {
-      Builder builder = LoadBalancer.builder().region(region).name(lb.getName()).port(lb.getPort()).protocol(
-               lb.getProtocol()).algorithm(lb.getAlgorithm()).nodes(lb.getNodes()).id(lb.id).status(lb.status)
-               .virtualIPs(lb.virtualIps);
-      if (lb.cluster.size() == 1)
-         builder.clusterName(Iterables.get(lb.cluster.values(), 0));
-      if (lb.sessionPersistence.size() == 1)
-         builder.sessionPersistenceType(Iterables.get(lb.sessionPersistence.values(), 0));
-      if (lb.created.size() == 1)
-         builder.created(Iterables.get(lb.created.values(), 0));
-      if (lb.updated.size() == 1)
-         builder.updated(Iterables.get(lb.updated.values(), 0));
-      if (lb.connectionLogging.size() == 1)
-         builder.connectionLoggingEnabled(Iterables.get(lb.connectionLogging.values(), 0));
-      return builder.build();
+      try {
+         Builder builder = LoadBalancer.builder().region(region).name(lb.getName()).port(lb.getPort()).protocol(
+                  lb.getProtocol()).algorithm(lb.getAlgorithm()).nodes(lb.getNodes()).id(lb.id).status(lb.status)
+                  .virtualIPs(lb.virtualIps);
+         if (lb.cluster.size() == 1)
+            builder.clusterName(Iterables.get(lb.cluster.values(), 0));
+         if (lb.sessionPersistence.size() == 1)
+            builder.sessionPersistenceType(Iterables.get(lb.sessionPersistence.values(), 0));
+         if (lb.created.size() == 1)
+            builder.created(Iterables.get(lb.created.values(), 0));
+         if (lb.updated.size() == 1)
+            builder.updated(Iterables.get(lb.updated.values(), 0));
+         if (lb.connectionLogging.size() == 1)
+            builder.connectionLoggingEnabled(Iterables.get(lb.connectionLogging.values(), 0));
+         return builder.build();
+      } catch (NullPointerException e) {
+         logger.warn(e, "nullpointer found parsing %s", lb);
+         throw e;
+      }
    }
 
 }

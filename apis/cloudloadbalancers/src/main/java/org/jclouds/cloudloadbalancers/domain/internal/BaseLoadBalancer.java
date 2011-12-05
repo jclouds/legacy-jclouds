@@ -23,6 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Set;
 import java.util.SortedSet;
 
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
@@ -107,7 +109,7 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
    // so tests will come out consistently
    protected SortedSet<N> nodes = ImmutableSortedSet.of();
 
-   public BaseLoadBalancer(String name, String protocol, Integer port, String algorithm, Iterable<N> nodes) {
+   public BaseLoadBalancer(String name, String protocol, Integer port, @Nullable String algorithm, Iterable<N> nodes) {
       this.name = checkNotNull(name, "name");
       this.protocol = protocol;// null on deleted LB
       this.port = port;// null on deleted LB
@@ -132,6 +134,11 @@ public class BaseLoadBalancer<N extends BaseNode<N>, T extends BaseLoadBalancer<
       return port;
    }
 
+   /**
+    * 
+    * @return algorithm, which may be null if the load balancer is deleted
+    */
+   @Nullable
    public String getAlgorithm() {
       return algorithm;
    }
