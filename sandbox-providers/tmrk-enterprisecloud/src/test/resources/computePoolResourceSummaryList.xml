@@ -1,0 +1,64 @@
+<ComputePoolResourceSummaryList
+        href="/cloudapi/ecloud/computepools/environments/77/resourcesummarylist"
+        type="application/vnd.tmrk.cloud.computePoolResourceSummary; type=collection"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <Links>
+        <Link href="/cloudapi/ecloud/environments/77" name="Beta Environment 01"
+              type="application/vnd.tmrk.cloud.environment" rel="up"/>
+    </Links>
+    <ComputePoolResourceSummary
+            href="/cloudapi/ecloud/computepools/89/resourcesummary"
+            type="application/vnd.tmrk.cloud.computePoolResourceSummary">
+        <Links>
+            <Link href="/cloudapi/ecloud/computepools/89"
+                  name="Default Compute Pool"
+                  type="application/vnd.tmrk.cloud.computePool" rel="up"/>
+        </Links>
+        <StartTime>2011-12-04T18:55:00Z</StartTime>
+        <EndTime>2011-12-05T18:55:00Z</EndTime>
+        <Cpu>
+            <Allocated>
+                <Unit>GHz</Unit>
+                <Value>2.7</Value>
+            </Allocated>
+            <Consumed>
+                <Unit>MHz</Unit>
+                <Value>59</Value>
+            </Consumed>
+            <Purchased>
+                <Unit>GHz</Unit>
+                <Value>5</Value>
+            </Purchased>
+            <Utilization>2</Utilization>
+        </Cpu>
+        <Memory>
+            <Allocated>
+                <Unit>GB</Unit>
+                <Value>0.4</Value>
+            </Allocated>
+            <Consumed>
+                <Unit>MB</Unit>
+                <Value>404</Value>
+            </Consumed>
+            <Purchased>
+                <Unit>GB</Unit>
+                <Value>10</Value>
+            </Purchased>
+            <Utilization>4</Utilization>
+        </Memory>
+        <Storage>
+            <Purchased>
+                <Unit>GB</Unit>
+                <Value>250</Value>
+            </Purchased>
+            <Used>
+                <Unit>GB</Unit>
+                <Value>10</Value>
+            </Used>
+        </Storage>
+        <VirtualMachines>
+            <Count>1</Count>
+            <PoweredOnCount>1</PoweredOnCount>
+        </VirtualMachines>
+    </ComputePoolResourceSummary>
+</ComputePoolResourceSummaryList>
