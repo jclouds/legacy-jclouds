@@ -19,9 +19,7 @@
 package org.jclouds.tmrk.enterprisecloud;
 
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.tmrk.enterprisecloud.features.TaskAsyncClient;
-import org.jclouds.tmrk.enterprisecloud.features.TemplateAsyncClient;
-import org.jclouds.tmrk.enterprisecloud.features.VirtualMachineAsyncClient;
+import org.jclouds.tmrk.enterprisecloud.features.*;
 
 /**
  * Provides asynchronous access to TerremarkEnterpriseCloud via their REST API.
@@ -34,6 +32,18 @@ import org.jclouds.tmrk.enterprisecloud.features.VirtualMachineAsyncClient;
  * @author Adrian Cole
  */
 public interface TerremarkEnterpriseCloudAsyncClient {
+
+   /**
+    * Provides asynchronous access to Location features.
+    */
+   @Delegate
+   LocationAsyncClient getLocationClient();
+
+   /**
+    * Provides asynchronous access to Resource features.
+    */
+   @Delegate
+   ResourceAsyncClient getResourceClient();
 
    /**
     * Provides asynchronous access to Task features.
