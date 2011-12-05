@@ -1,0 +1,7 @@
+<Location href="/cloudapi/ecloud/locations/1" name="Terremark - Richardson"
+          type="application/vnd.tmrk.cloud.location"
+          xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <FriendlyName>Terremark - Richardson</FriendlyName>
+    <Locode>DAC</Locode>
+    <ISO3166>US-TX</ISO3166>
+</Location>
