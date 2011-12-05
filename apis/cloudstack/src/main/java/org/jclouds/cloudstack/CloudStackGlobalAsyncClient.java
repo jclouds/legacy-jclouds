@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack;
 
 import org.jclouds.cloudstack.features.GlobalAccountAsyncClient;
+import org.jclouds.cloudstack.features.GlobalAlertAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -34,10 +35,16 @@ import org.jclouds.rest.annotations.Delegate;
 public interface CloudStackGlobalAsyncClient extends CloudStackDomainAsyncClient {
 
    /**
-    * Provides synchronous access to Accounts
+    * Provides asynchronous access to Accounts
     */
    @Delegate
    @Override
    GlobalAccountAsyncClient getAccountClient();
+
+   /**
+    * Provides asynchronous access to Alerts
+    */
+   @Delegate
+   GlobalAlertAsyncClient getAlertClient();
 
 }
