@@ -130,6 +130,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
          .put(VolumeClient.class, VolumeAsyncClient.class)//
          .put(SnapshotClient.class, SnapshotAsyncClient.class)//
          .put(GlobalAlertClient.class, GlobalAlertAsyncClient.class)//
+         .put(GlobalOfferingClient.class, GlobalOfferingAsyncClient.class)//
          .build();
 
    @Override
