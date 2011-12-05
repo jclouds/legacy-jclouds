@@ -47,7 +47,7 @@ public class Location extends Resource<Location> {
     */
    @Override
    public Builder toBuilder() {
-      return new Builder().fromTask(this);
+      return new Builder().fromLocation(this);
    }
 
    public static class Builder extends Resource.Builder<Location> {
@@ -85,7 +85,7 @@ public class Location extends Resource<Location> {
                actions, friendlyName, locode, iso3166);
       }
 
-      public Builder fromTask(Location in) {
+      public Builder fromLocation(Location in) {
          return fromResource(in).friendlyName(in.getFriendlyName()).locode(in.getLocode()).iso3166(in.getIso3166());
       }
 
