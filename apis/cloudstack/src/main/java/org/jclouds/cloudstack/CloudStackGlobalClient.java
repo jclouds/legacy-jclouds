@@ -21,6 +21,7 @@ package org.jclouds.cloudstack;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.features.GlobalAccountClient;
+import org.jclouds.cloudstack.features.GlobalCapacityClient;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 
@@ -43,4 +44,10 @@ public interface CloudStackGlobalClient extends CloudStackDomainClient {
    @Delegate
    @Override
    GlobalAccountClient getAccountClient();
+
+    /**
+     * Provides synchronous access to Capacities
+     */
+    @Delegate
+    GlobalCapacityClient getCapacityClient();
 }

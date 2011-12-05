@@ -29,11 +29,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import org.jclouds.cloudstack.CloudStackAsyncClient;
-import org.jclouds.cloudstack.CloudStackClient;
-import org.jclouds.cloudstack.CloudStackContext;
-import org.jclouds.cloudstack.CloudStackDomainAsyncClient;
-import org.jclouds.cloudstack.CloudStackDomainClient;
+import org.jclouds.cloudstack.*;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.User;
@@ -78,6 +74,8 @@ import com.google.inject.Module;
 public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
    protected String domainAdminIdentity;
    protected String domainAdminCredential;
+   protected String globalAdminIdentity;
+   protected String globalAdminCredential;
 
    public BaseCloudStackClientLiveTest() {
       provider = "cloudstack";
@@ -88,13 +86,26 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
       super.setupCredentials();
       domainAdminIdentity = emptyToNull(System.getProperty("test." + provider + ".domainAdminIdentity"));
       domainAdminCredential = emptyToNull(System.getProperty("test." + provider + ".domainAdminCredential"));
+      globalAdminIdentity = emptyToNull(System.getProperty("test." + provider + ".globalAdminIdentity"));
+      globalAdminCredential = emptyToNull(System.getProperty("test." + provider + ".globalAdminCredential"));
    }
 
-   protected Properties setupAdminProperties() {
+   protected Properties setupDomainAdminProperties() {
       if (domainAdminIdentity != null && domainAdminCredential != null) {
          Properties overrides = setupProperties();
          overrides.setProperty(provider + ".identity", domainAdminIdentity);
          overrides.setProperty(provider + ".credential", domainAdminCredential);
+         return overrides;
+      } else {
+         return null;
+      }
+   }
+
+   protected Properties setupGlobalAdminProperties() {
+      if (globalAdminIdentity != null && globalAdminCredential != null) {
+         Properties overrides = setupProperties();
+         overrides.setProperty(provider + ".identity", globalAdminIdentity);
+         overrides.setProperty(provider + ".credential", globalAdminCredential);
          return overrides;
       } else {
          return null;
@@ -157,6 +168,12 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
    protected CloudStackClient domainAdminClient;
    protected User domainAdminUser;
 
+   protected boolean globalAdminEnabled;
+   protected CloudStackContext globalAdminComputeContext;
+   protected RestContext<CloudStackGlobalClient, CloudStackGlobalAsyncClient> globalAdminContext;
+   protected CloudStackGlobalClient globalAdminClient;
+   protected User globalAdminUser;
+   
    protected void checkSSH(IPSocket socket) {
       socketTester.apply(socket);
       SshClient client = sshFactory.create(socket, new Credentials("root", password));
@@ -183,16 +200,26 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
       client = context.getApi();
       user = verifyCurrentUserIsOfType(context, Account.Type.USER);
 
-      domainAdminEnabled = setupAdminProperties() != null;
-
+      domainAdminEnabled = setupDomainAdminProperties() != null;
       if (domainAdminEnabled) {
          domainAdminComputeContext = CloudStackContext.class.cast(new ComputeServiceContextFactory(setupRestProperties()).
                createContext(provider, ImmutableSet.<Module> of(
-               new Log4JLoggingModule(), new SshjSshClientModule()), setupAdminProperties()));
+               new Log4JLoggingModule(), new SshjSshClientModule()), setupDomainAdminProperties()));
          domainAdminContext = domainAdminComputeContext.getDomainContext();
          domainAdminClient = domainAdminContext.getApi();
          domainAdminUser = verifyCurrentUserIsOfType(domainAdminContext, Account.Type.DOMAIN_ADMIN);
          adminClient = domainAdminContext.getApi();
+      }
+
+      globalAdminEnabled = setupDomainAdminProperties() != null;
+      if (globalAdminEnabled) {
+         globalAdminComputeContext = CloudStackContext.class.cast(new ComputeServiceContextFactory(setupRestProperties()).
+               createContext(provider, ImmutableSet.<Module> of(
+               new Log4JLoggingModule(), new SshjSshClientModule()), setupGlobalAdminProperties()));
+         globalAdminContext = globalAdminComputeContext.getGlobalContext();
+         globalAdminClient = globalAdminContext.getApi();
+         globalAdminUser = verifyCurrentUserIsOfType(globalAdminContext, Account.Type.ADMIN);
+         adminClient = globalAdminContext.getApi();
       }
 
       injector = Guice.createInjector(new SshjSshClientModule(), new Log4JLoggingModule());
