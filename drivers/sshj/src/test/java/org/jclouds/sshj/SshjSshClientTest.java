@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.SSHException;
@@ -37,11 +38,14 @@ import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.userauth.UserAuthException;
 
 import org.jclouds.domain.Credentials;
+import org.jclouds.logging.BufferLogger;
+import org.jclouds.logging.BufferLogger.Record;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
+import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -177,6 +181,35 @@ public class SshjSshClientTest {
       props.setProperty("jclouds.ssh.retryable-messages", "foo-baR");
       SshjSshClient ssh1 = createClient(props);
       assert !ssh1.shouldRetry(new RuntimeException(nex));
+   }
+
+   public void testRetriesLoggedAtInfoWithCount() throws Exception {
+      @SuppressWarnings("unchecked")
+      SshjSshClient.Connection<net.schmizz.sshj.SSHClient> mockConnection = createMock(SshjSshClient.Connection.class);
+      net.schmizz.sshj.SSHClient mockClient = createMock(net.schmizz.sshj.SSHClient.class);
+      
+      mockConnection.clear(); expectLastCall();
+      mockConnection.create(); expectLastCall().andThrow(new ConnectionException("test1"));
+      mockConnection.clear(); expectLastCall();
+      //currently does two clears, one on failure (above) and one on next iteration (below)
+      mockConnection.clear(); expectLastCall();
+      mockConnection.create(); expectLastCall().andReturn(mockClient);
+      replay(mockConnection);
+      replay(mockClient);
+      
+      ssh.sshConnection = mockConnection;
+      BufferLogger logcheck = new BufferLogger(ssh.getClass().getCanonicalName()); 
+      ssh.logger = logcheck;
+      logcheck.setLevel(Level.INFO);
+      
+      ssh.connect();
+      
+      Assert.assertEquals(ssh.ssh, mockClient);
+      verify(mockConnection);
+      verify(mockClient);
+      Record r = logcheck.assertLogContains("attempt 1 of 5");
+      logcheck.assertLogDoesntContain("attempt 2 of 5");
+      Assert.assertEquals(Level.INFO, r.getLevel());
    }
 
 }
