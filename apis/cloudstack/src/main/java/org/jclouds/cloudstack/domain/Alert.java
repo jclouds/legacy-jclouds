@@ -27,6 +27,41 @@ import java.util.Date;
  */
 public class Alert implements Comparable<Alert> {
 
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+      private long id;
+      private String description;
+      private Date sent;
+      private String type;
+
+      public Builder id(long id) {
+         this.id = id;
+         return this;
+      }
+
+      public Builder description(String description) {
+         this.description = description;
+         return this;
+      }
+
+      public Builder sent(Date sent) {
+         this.sent = sent;
+         return this;
+      }
+
+      public Builder type(String type) {
+         this.type = type;
+         return this;
+      }
+
+      public Alert build() {
+         return new Alert(id, description, sent, type);
+      }
+   }
+
    private long id;
    private String description;
    private Date sent;
@@ -36,7 +71,7 @@ public class Alert implements Comparable<Alert> {
    Alert() {
    }
 
-   public Alert(long id, String description, Date sent, String type) {
+   private Alert(long id, String description, Date sent, String type) {
       this.id = id;
       this.description = description;
       this.sent = sent;

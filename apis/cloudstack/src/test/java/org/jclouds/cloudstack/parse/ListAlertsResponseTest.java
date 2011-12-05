@@ -74,7 +74,8 @@ public class ListAlertsResponseTest extends BaseSetParserTest<Alert> {
       c.set(Calendar.HOUR_OF_DAY, 12);
       c.set(Calendar.MINUTE, 5);
       c.set(Calendar.SECOND, 2);
-      return ImmutableSet.of(new Alert(20, "Failed to deploy Vm with Id: 52", c.getTime(), "7"));
+      return ImmutableSet.of(Alert.builder()
+         .id(20).description("Failed to deploy Vm with Id: 52").sent(c.getTime()).type("7").build());
    }
 
 }
