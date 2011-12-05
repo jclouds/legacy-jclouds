@@ -30,7 +30,6 @@ import org.testng.annotations.Test;
 import javax.annotation.Nullable;
 import java.net.URI;
 import java.net.URLDecoder;
-import java.util.Random;
 import java.util.Set;
 
 import static org.jclouds.cloudstack.options.ListTemplatesOptions.Builder.zoneId;
@@ -108,9 +107,8 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       Volume volume = Iterables.getOnlyElement(volumes);
 
       // Create a template
-      String tmplName = "jclouds-" + Integer.toHexString(new Random().nextInt());
       CreateTemplateOptions options = CreateTemplateOptions.Builder.volumeId(volume.getId());
-      AsyncCreateResponse response = client.getTemplateClient().createTemplate(TemplateMetadata.builder().name(tmplName).osTypeId(vmForCreation.getGuestOSId()).displayText("jclouds live testCreateTemplate").build(), options);
+      AsyncCreateResponse response = client.getTemplateClient().createTemplate(TemplateMetadata.builder().name(prefix+"-createTemplate").osTypeId(vmForCreation.getGuestOSId()).displayText("jclouds live testCreateTemplate").build(), options);
       assert jobComplete.apply(response.getJobId()) : vmForCreation;
       createdTemplate = client.getTemplateClient().getTemplateInZone(response.getId(), vmForCreation.getZoneId());
 
@@ -154,9 +152,8 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       OSType osType = Iterables.getFirst(osTypes, null);
 
       // Register a template
-      String tmplName = "jclouds-" + Integer.toHexString(new Random().nextInt());
       RegisterTemplateOptions options = RegisterTemplateOptions.Builder.bits(32).isExtractable(true);
-      TemplateMetadata templateMetadata = TemplateMetadata.builder().name(tmplName).osTypeId(osType.getId()).displayText("jclouds live testRegisterTemplate").build();
+      TemplateMetadata templateMetadata = TemplateMetadata.builder().name(prefix+"-registerTemplate").osTypeId(osType.getId()).displayText("jclouds live testRegisterTemplate").build();
       Set<Template> templates = client.getTemplateClient().registerTemplate(templateMetadata, "VHD", "XenServer", IMPORT_VHD_URL, zone.getId(), options);
       registeredTemplate = Iterables.getOnlyElement(templates, null);
       assertNotNull(registeredTemplate);
