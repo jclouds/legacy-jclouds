@@ -18,13 +18,17 @@
  */
 package org.jclouds.cloudstack.features;
 
+import com.google.common.collect.ImmutableSet;
+import org.jclouds.cloudstack.domain.DiskOffering;
 import org.jclouds.cloudstack.domain.ServiceOffering;
 import org.jclouds.cloudstack.domain.StorageType;
+import org.jclouds.cloudstack.options.UpdateDiskOfferingOptions;
+import org.jclouds.cloudstack.options.UpdateServiceOfferingOptions;
 import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
 
+import static org.jclouds.cloudstack.options.CreateDiskOfferingOptions.Builder.diskSizeInGB;
 import static org.jclouds.cloudstack.options.CreateServiceOfferingOptions.Builder.highlyAvailable;
-import static org.jclouds.cloudstack.options.UpdateServiceOfferingOptions.Builder.name;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -53,7 +57,8 @@ public class GlobalOfferingClientLiveTest extends BaseCloudStackClientLiveTest {
          checkServiceOffering(offering);
 
          offering = globalAdminClient.getOfferingClient()
-            .updateServiceOffering(offering.getId(), name(name + "-2").displayText(displayText + "-2"));
+            .updateServiceOffering(offering.getId(),
+               UpdateServiceOfferingOptions.Builder.name(name + "-2").displayText(displayText + "-2"));
 
          assertEquals(offering.getName(), name + "-2");
          assertEquals(offering.getDisplayText(), displayText + "-2");
@@ -73,6 +78,43 @@ public class GlobalOfferingClientLiveTest extends BaseCloudStackClientLiveTest {
       assertEquals(offering.getMemory(), 2048);
       assertTrue(offering.supportsHA());
       assertEquals(offering.getStorageType(), StorageType.LOCAL);
+   }
+
+   @Test(groups = "live", enabled = true)
+   public void testCreateDiskOffering() throws Exception {
+      assertTrue(globalAdminEnabled, "Test cannot run without global admin identity and credentials");
+
+      String name = prefix + "-test-create-disk-offering";
+      String displayText = name + "-display";
+      DiskOffering offering = null;
+      try {
+         offering = globalAdminClient.getOfferingClient().
+            createDiskOffering(name, displayText,
+               diskSizeInGB(100).customized(true).tags(ImmutableSet.<String>of("dummy-tag")));
+
+         assertEquals(offering.getName(), name);
+         assertEquals(offering.getDisplayText(), displayText);
+         checkDiskOffering(offering);
+
+         offering = globalAdminClient.getOfferingClient().
+            updateDiskOffering(offering.getId(),
+               UpdateDiskOfferingOptions.Builder.name(name + "-2").displayText(displayText + "-2"));
+
+         assertEquals(offering.getName(), name + "-2");
+         assertEquals(offering.getDisplayText(), displayText + "-2");
+         checkDiskOffering(offering);
+
+      } finally {
+         if (offering != null) {
+            globalAdminClient.getOfferingClient().deleteDiskOffering(offering.getId());
+         }
+      }
+   }
+
+   private void checkDiskOffering(DiskOffering offering) {
+      assertTrue(offering.isCustomized());
+      assertEquals(offering.getDiskSize(), 100);
+      assertTrue(offering.getTags().contains("dummy-tag"));
    }
 
 }
