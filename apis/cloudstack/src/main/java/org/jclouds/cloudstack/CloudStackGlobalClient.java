@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.features.GlobalAccountClient;
 import org.jclouds.cloudstack.features.GlobalAlertClient;
+import org.jclouds.cloudstack.features.GlobalOfferingClient;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 
@@ -50,5 +51,12 @@ public interface CloudStackGlobalClient extends CloudStackDomainClient {
     */
    @Delegate
    GlobalAlertClient getAlertClient();
+
+   /**
+    * Provides synchronous access to Offerings
+    */
+   @Delegate
+   @Override
+   GlobalOfferingClient getOfferingClient();
 
 }
