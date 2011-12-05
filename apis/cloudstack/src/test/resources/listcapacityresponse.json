@@ -1,0 +1,1 @@
+{ "listcapacityresponse" : { "count":2 ,"capacity" : [  {"type":3,"zoneid":1,"zonename":"Dev Zone 1","podid":-1,"podname":"All","capacityused":34057748480,"capacitytotal":1796712955904,"percentused":"1.9"}, {"type":3,"zoneid":1,"zonename":"Dev Zone 1","podid":1,"podname":"Dev Pod 1","capacityused":34057748480,"capacitytotal":1796712955904,"percentused":"1.9"} ] } }

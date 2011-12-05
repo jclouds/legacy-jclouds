@@ -16,35 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudstack;
+package org.jclouds.cloudstack.features;
 
-import org.jclouds.cloudstack.features.GlobalAccountAsyncClient;
-import org.jclouds.cloudstack.features.GlobalCapacityAsyncClient;
-import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.cloudstack.domain.Capacity;
+import org.jclouds.cloudstack.options.ListCapacityOptions;
+import org.jclouds.concurrent.Timeout;
+
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Provides asynchronous access to CloudStack via their REST API.
- * <p/>
+ * Provides synchronous access to CloudStack Capacities features available to Global
+ * Admin users.
  * 
- * @author Adrian Cole
- * @see CloudStackDomainClient
+ * @author Richard Downer
  * @see <a href=
  *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Global_Admin.html"
  *      />
  */
-public interface CloudStackGlobalAsyncClient extends CloudStackDomainAsyncClient {
+@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
+public interface GlobalCapacityClient {
 
    /**
-    * Provides synchronous access to Accounts
+    * List Capacities
+    *
+    * @return alert list or null if not found
     */
-   @Delegate
-   @Override
-   GlobalAccountAsyncClient getAccountClient();
+   Set<Capacity> listCapacity(ListCapacityOptions... options);
 
-
-    /**
-     * Provides asynchronous access to Capacities
-     */
-    @Delegate
-    GlobalCapacityAsyncClient getCapacityClient();
 }

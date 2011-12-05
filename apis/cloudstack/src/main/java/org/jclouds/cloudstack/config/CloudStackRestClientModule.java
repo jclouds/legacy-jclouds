@@ -44,6 +44,8 @@ import org.jclouds.cloudstack.features.FirewallAsyncClient;
 import org.jclouds.cloudstack.features.FirewallClient;
 import org.jclouds.cloudstack.features.GlobalAccountAsyncClient;
 import org.jclouds.cloudstack.features.GlobalAccountClient;
+import org.jclouds.cloudstack.features.GlobalCapacityAsyncClient;
+import org.jclouds.cloudstack.features.GlobalCapacityClient;
 import org.jclouds.cloudstack.features.GuestOSAsyncClient;
 import org.jclouds.cloudstack.features.GuestOSClient;
 import org.jclouds.cloudstack.features.HypervisorAsyncClient;
@@ -128,6 +130,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
          .put(ISOClient.class, ISOAsyncClient.class)//
          .put(VolumeClient.class, VolumeAsyncClient.class)//
          .put(SnapshotClient.class, SnapshotAsyncClient.class)//
+         .put(GlobalCapacityClient.class, GlobalCapacityAsyncClient.class)//
          .build();
 
    @Override
