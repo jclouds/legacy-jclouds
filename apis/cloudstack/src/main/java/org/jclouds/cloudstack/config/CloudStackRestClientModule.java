@@ -18,8 +18,8 @@
  */
 package org.jclouds.cloudstack.config;
 
-import java.util.Map;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.TypeLiteral;
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.CloudStackDomainAsyncClient;
@@ -44,6 +44,8 @@ import org.jclouds.cloudstack.features.FirewallAsyncClient;
 import org.jclouds.cloudstack.features.FirewallClient;
 import org.jclouds.cloudstack.features.GlobalAccountAsyncClient;
 import org.jclouds.cloudstack.features.GlobalAccountClient;
+import org.jclouds.cloudstack.features.GlobalAlertAsyncClient;
+import org.jclouds.cloudstack.features.GlobalAlertClient;
 import org.jclouds.cloudstack.features.GuestOSAsyncClient;
 import org.jclouds.cloudstack.features.GuestOSClient;
 import org.jclouds.cloudstack.features.HypervisorAsyncClient;
@@ -90,8 +92,7 @@ import org.jclouds.rest.config.BinderUtils;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.internal.RestContextImpl;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.TypeLiteral;
+import java.util.Map;
 
 /**
  * Configures the cloudstack connection.
@@ -128,6 +129,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
          .put(ISOClient.class, ISOAsyncClient.class)//
          .put(VolumeClient.class, VolumeAsyncClient.class)//
          .put(SnapshotClient.class, SnapshotAsyncClient.class)//
+         .put(GlobalAlertClient.class, GlobalAlertAsyncClient.class)//
          .build();
 
    @Override
