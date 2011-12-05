@@ -19,9 +19,7 @@
 package org.jclouds.cloudloadbalancers.features;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.testng.Assert.assertEquals;
 
-import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -38,7 +36,6 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
