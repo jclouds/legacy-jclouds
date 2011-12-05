@@ -18,18 +18,20 @@
  */
 package org.jclouds.cloudstack.features;
 
-import static com.google.common.base.Strings.emptyToNull;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.get;
-import static org.testng.Assert.assertEquals;
-
-import java.util.NoSuchElementException;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
-
-import org.jclouds.cloudstack.*;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import org.jclouds.cloudstack.CloudStackAsyncClient;
+import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackContext;
+import org.jclouds.cloudstack.CloudStackDomainAsyncClient;
+import org.jclouds.cloudstack.CloudStackDomainClient;
+import org.jclouds.cloudstack.CloudStackGlobalAsyncClient;
+import org.jclouds.cloudstack.CloudStackGlobalClient;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.User;
@@ -59,13 +61,16 @@ import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+
+import static com.google.common.base.Strings.emptyToNull;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.get;
+import static org.testng.Assert.assertEquals;
 
 /**
  * 
