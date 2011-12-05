@@ -478,7 +478,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
     * @return the amount of the vm's CPU currently used
     */
    public float getCpuUsed() {
-      return cpuUsed != null ? Float.parseFloat(cpuUsed.substring(9, cpuUsed.length() - 1)) : 0.0f;
+      return cpuUsed != null ? Float.parseFloat(cpuUsed.substring(0, cpuUsed.length() - 1)) : 0.0f;
    }
 
    /**
