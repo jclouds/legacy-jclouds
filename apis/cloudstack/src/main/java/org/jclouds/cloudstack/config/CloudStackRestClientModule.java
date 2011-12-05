@@ -46,6 +46,8 @@ import org.jclouds.cloudstack.features.GlobalAccountAsyncClient;
 import org.jclouds.cloudstack.features.GlobalAccountClient;
 import org.jclouds.cloudstack.features.GlobalAlertAsyncClient;
 import org.jclouds.cloudstack.features.GlobalAlertClient;
+import org.jclouds.cloudstack.features.GlobalOfferingAsyncClient;
+import org.jclouds.cloudstack.features.GlobalOfferingClient;
 import org.jclouds.cloudstack.features.GuestOSAsyncClient;
 import org.jclouds.cloudstack.features.GuestOSClient;
 import org.jclouds.cloudstack.features.HypervisorAsyncClient;
