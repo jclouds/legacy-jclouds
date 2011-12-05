@@ -26,6 +26,8 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.gson.annotations.SerializedName;
@@ -44,7 +46,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
       private String account;
       private long cpuCount;
       private long cpuSpeed;
-      private Long cpuUsed;
+      private String cpuUsed;
       private String displayName;
       private Date created;
       private String domain;
@@ -102,7 +104,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          return this;
       }
 
-      public Builder cpuUsed(long cpuUsed) {
+      public Builder cpuUsed(String cpuUsed) {
          this.cpuUsed = cpuUsed;
          return this;
       }
@@ -388,7 +390,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
    @SerializedName("securitygroup")
    private Set<SecurityGroup> securityGroups = ImmutableSet.<SecurityGroup> of();
 
-   public VirtualMachine(long id, String account, long cpuCount, long cpuSpeed, Long cpuUsed, String displayName,
+   public VirtualMachine(long id, String account, long cpuCount, long cpuSpeed, String cpuUsed, String displayName,
          Date created, String domain, long domainId, boolean usesVirtualNetwork, String group, long groupId,
          long guestOSId, boolean hAEnabled, long hostId, String hostname, String iPAddress, String iSODisplayText,
          long iSOId, String iSOName, Long jobId, Integer jobStatus, long memory, String name, Long networkKbsRead,
@@ -396,6 +398,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
          Set<SecurityGroup> securityGroups, long serviceOfferingId, String serviceOfferingName, State state,
          String templateDisplayText, long templateId, String templateName, long zoneId, String zoneName, Set<NIC> nics,
          String hypervisor) {
+      Preconditions.checkArgument(Strings.isNullOrEmpty(cpuUsed) || cpuUsed.matches("^[0-9\\.]+%$"), "cpuUsed value should be a decimal number followed by %");
       this.id = id;
       this.account = account;
       this.cpuCount = cpuCount;
@@ -478,7 +481,7 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
     * @return the amount of the vm's CPU currently used
     */
    public float getCpuUsed() {
-      return cpuUsed != null ? Float.parseFloat(cpuUsed.substring(9, cpuUsed.length() - 1)) : 0.0f;
+      return cpuUsed != null ? Float.parseFloat(cpuUsed.substring(0, cpuUsed.length() - 1)) : 0.0f;
    }
 
    /**
