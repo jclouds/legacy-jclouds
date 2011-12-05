@@ -16,54 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.tmrk.enterprisecloud;
-
-import java.util.concurrent.TimeUnit;
+package org.jclouds.tmrk.enterprisecloud.features;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.tmrk.enterprisecloud.features.*;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
+
+import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Provides synchronous access to TerremarkEnterpriseCloud.
+ * Provides synchronous access to various Resources.
  * <p/>
  * 
- * @see TerremarkEnterpriseCloudAsyncClient
+ * @see ResourceAsyncClient
  * @see <a href=
  *      "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID="
  *      />
- * @author Adrian Cole
+ * @author Jason King
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface TerremarkEnterpriseCloudClient {
+public interface ResourceClient {
 
    /**
-    * Provides synchronous access to Location features.
+    * The Get Resources Summary call returns resource summary information regarding a specified compute pool defined in an environment.
+    * @param uri the uri of the compute pool
+    * @return the summary
     */
-   @Delegate
-   LocationClient getLocationClient();
+   ComputePoolResourceSummary getResourceSummary(URI uri);
 
-   /**
-    * Provides synchronous access to Resource features.
-    */
-   @Delegate
-   ResourceClient getResourceClient();
-
-   /**
-    * Provides synchronous access to Task features.
-    */
-   @Delegate
-   TaskClient getTaskClient();
-
-   /**
-    * Provides synchronous access to VirtualMachine features.
-    */
-   @Delegate
-   VirtualMachineClient getVirtualMachineClient();
-
-   /**
-    * Provides synchronous access to Template features.
-    */
-   @Delegate
-   TemplateClient getTemplateClient();
 }

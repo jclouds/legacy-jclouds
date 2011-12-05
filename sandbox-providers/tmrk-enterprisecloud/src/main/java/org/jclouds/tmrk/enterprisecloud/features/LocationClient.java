@@ -16,54 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.tmrk.enterprisecloud;
-
-import java.util.concurrent.TimeUnit;
+package org.jclouds.tmrk.enterprisecloud.features;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.tmrk.enterprisecloud.features.*;
+import org.jclouds.tmrk.enterprisecloud.domain.Location;
+
+import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Provides synchronous access to TerremarkEnterpriseCloud.
+ * Provides synchronous access to Location.
  * <p/>
  * 
- * @see TerremarkEnterpriseCloudAsyncClient
+ * @see org.jclouds.tmrk.enterprisecloud.features.LocationAsyncClient
  * @see <a href=
  *      "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID="
  *      />
- * @author Adrian Cole
+ * @author Jason King
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface TerremarkEnterpriseCloudClient {
+public interface LocationClient {
 
    /**
-    * Provides synchronous access to Location features.
+    * The Get Locations by ID call returns information regarding a single data center location.
+    * @param uri the uri of the location
+    * @return the location
     */
-   @Delegate
-   LocationClient getLocationClient();
+   Location getLocationById(URI uri);
 
-   /**
-    * Provides synchronous access to Resource features.
-    */
-   @Delegate
-   ResourceClient getResourceClient();
-
-   /**
-    * Provides synchronous access to Task features.
-    */
-   @Delegate
-   TaskClient getTaskClient();
-
-   /**
-    * Provides synchronous access to VirtualMachine features.
-    */
-   @Delegate
-   VirtualMachineClient getVirtualMachineClient();
-
-   /**
-    * Provides synchronous access to Template features.
-    */
-   @Delegate
-   TemplateClient getTemplateClient();
 }
