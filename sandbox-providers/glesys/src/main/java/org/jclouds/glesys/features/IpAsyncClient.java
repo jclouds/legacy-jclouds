@@ -19,6 +19,7 @@
 package org.jclouds.glesys.features;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.glesys.domain.IpDetails;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -55,5 +56,15 @@ public interface IpAsyncClient {
    ListenableFuture<Set<String>> listFree(@PathParam("ipversion") String ipversion,
                                           @PathParam("datacenter") String datacenter,
                                           @PathParam("platform") String platform);
+
+   /**
+    * @see IpClient#getIpDetails
+    */
+   @GET
+   @Path("/ip/details/ipaddress/{ipaddress}/format/json")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @SelectJson("details")
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<IpDetails> getIpDetails(@PathParam("ipaddress") String ipAddress);
 
 }

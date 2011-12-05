@@ -18,22 +18,25 @@
  */
 package org.jclouds.glesys.features;
 
+import org.jclouds.glesys.domain.IpDetails;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import java.util.Set;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 /**
  * Tests behavior of {@code IpClient}
  *
- * @author Adrian Cole
+ * @author Adrian Cole, Mattias Holmqvist
  */
 @Test(groups = "live", testName = "IpClientLiveTest")
 public class IpClientLiveTest extends BaseGleSYSClientLiveTest {
 
-   @BeforeGroups(groups = { "live" })
+   @BeforeGroups(groups = {"live"})
    public void setupClient() {
       super.setupClient();
       client = context.getApi().getIpClient();
@@ -43,7 +46,38 @@ public class IpClientLiveTest extends BaseGleSYSClientLiveTest {
 
    @Test
    public void testListFree() throws Exception {
-      Set<String> freeIps = client.listFree("4", "Falkenberg", "OpenVZ");
-      assertTrue(freeIps.size() >= 0);
+      Set<String> freeIps = client.listFree("4", "Falkenberg", "Xen");
+      assertTrue(freeIps.size() >= 1);
    }
+
+   @Test
+   public void testGetOpenVZDetails() throws Exception {
+      Set<String> openVzIps = client.listFree("4", "Falkenberg", "OpenVZ");
+      assertTrue(openVzIps.size() >= 1);
+      String openVzIp = openVzIps.iterator().next();
+      IpDetails ipDetails = client.getIpDetails(openVzIp);
+      assertEquals(ipDetails.getDatacenter(), "Falkenberg");
+      assertEquals(ipDetails.getPlatform(), "OpenVZ");
+      assertEquals(ipDetails.getIpversion(), "4");
+      
+      // TODO: Ask Glesys to include address in response for OpenVZ?
+      // assertEquals(ipDetails.getAddress(), openVzIp);
+   }
+
+   @Test
+   public void testGetXenDetails() throws Exception {
+      Set<String> xenVzIps = client.listFree("4", "Falkenberg", "Xen");
+      assertTrue(xenVzIps.size() >= 1);
+      String xenIp = xenVzIps.iterator().next();
+      IpDetails ipDetails = client.getIpDetails(xenIp);
+      assertEquals(ipDetails.getDatacenter(), "Falkenberg");
+      assertEquals(ipDetails.getPlatform(), "Xen");
+      assertEquals(ipDetails.getIpversion(), "4");
+      assertEquals(ipDetails.getAddress(), xenIp);
+      assertNotNull(ipDetails.getPtr());
+      assertNotNull(ipDetails.getBroadcast());
+      assertNotNull(ipDetails.getGateway());
+      assertNotNull(ipDetails.getNetmask());
+   }
+
 }

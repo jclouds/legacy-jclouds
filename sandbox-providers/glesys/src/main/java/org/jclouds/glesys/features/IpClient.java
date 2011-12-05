@@ -19,6 +19,7 @@
 package org.jclouds.glesys.features;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.glesys.domain.IpDetails;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -44,5 +45,13 @@ public interface IpClient {
     * @return a set of free IP addresses
     */
    Set<String> listFree(String ipversion, String datacenter, String platform);
+
+   /**
+    * Get a set of all IP addresses that are available and not used on any account or server.
+    *
+    * @return a set of free IP addresses
+    */
+   IpDetails getIpDetails(String ipAddress);
+
 
 }

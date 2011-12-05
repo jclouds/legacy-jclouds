@@ -1,0 +1,1 @@
+{"response":{"status":{"code":"200","text":"OK"},"details":{"datacenter":"Falkenberg","ipversion":4,"PTR":"109-74-10-64-static.serverhotell.net.","address":"109.74.10.64","netmask":"255.255.254.0","broadcast":"109.74.11.255","gateway":"109.74.10.1","nameservers":"79.99.4.100 79.99.4.101","platform":"Xen"},"debug":{"input":{"ipaddress":"109.74.10.64"}}}}
