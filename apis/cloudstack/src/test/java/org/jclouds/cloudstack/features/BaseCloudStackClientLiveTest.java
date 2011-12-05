@@ -216,7 +216,7 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
          adminClient = domainAdminContext.getApi();
       }
 
-      globalAdminEnabled = setupDomainAdminProperties() != null;
+      globalAdminEnabled = setupGlobalAdminProperties() != null;
       if (globalAdminEnabled) {
          globalAdminComputeContext = CloudStackContext.class.cast(new ComputeServiceContextFactory(setupRestProperties()).
                createContext(provider, ImmutableSet.<Module> of(
