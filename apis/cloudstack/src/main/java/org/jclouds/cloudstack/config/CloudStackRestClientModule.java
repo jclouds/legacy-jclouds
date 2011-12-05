@@ -46,6 +46,8 @@ import org.jclouds.cloudstack.features.GlobalAccountAsyncClient;
 import org.jclouds.cloudstack.features.GlobalAccountClient;
 import org.jclouds.cloudstack.features.GlobalAlertAsyncClient;
 import org.jclouds.cloudstack.features.GlobalAlertClient;
+import org.jclouds.cloudstack.features.GlobalCapacityAsyncClient;
+import org.jclouds.cloudstack.features.GlobalCapacityClient;
 import org.jclouds.cloudstack.features.GlobalOfferingAsyncClient;
 import org.jclouds.cloudstack.features.GlobalOfferingClient;
 import org.jclouds.cloudstack.features.GuestOSAsyncClient;
@@ -132,6 +134,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
          .put(VolumeClient.class, VolumeAsyncClient.class)//
          .put(SnapshotClient.class, SnapshotAsyncClient.class)//
          .put(GlobalAlertClient.class, GlobalAlertAsyncClient.class)//
+         .put(GlobalCapacityClient.class, GlobalCapacityAsyncClient.class)//
          .put(GlobalOfferingClient.class, GlobalOfferingAsyncClient.class)//
          .build();
 
