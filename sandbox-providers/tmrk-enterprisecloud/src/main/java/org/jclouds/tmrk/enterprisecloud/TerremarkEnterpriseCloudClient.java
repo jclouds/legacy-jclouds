@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.tmrk.enterprisecloud.features.LocationClient;
 import org.jclouds.tmrk.enterprisecloud.features.TaskClient;
 import org.jclouds.tmrk.enterprisecloud.features.TemplateClient;
 import org.jclouds.tmrk.enterprisecloud.features.VirtualMachineClient;
@@ -38,6 +39,12 @@ import org.jclouds.tmrk.enterprisecloud.features.VirtualMachineClient;
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkEnterpriseCloudClient {
+
+   /**
+    * Provides synchronous access to Location features.
+    */
+   @Delegate
+   LocationClient getLocationClient();
 
    /**
     * Provides synchronous access to Task features.

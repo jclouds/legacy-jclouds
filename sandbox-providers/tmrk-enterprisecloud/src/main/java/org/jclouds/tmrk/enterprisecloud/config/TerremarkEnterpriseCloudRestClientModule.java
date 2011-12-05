@@ -47,6 +47,7 @@ public class TerremarkEnterpriseCloudRestClientModule extends
       RestClientModule<TerremarkEnterpriseCloudClient, TerremarkEnterpriseCloudAsyncClient> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
+         .put(LocationClient.class, LocationAsyncClient.class)
          .put(TaskClient.class, TaskAsyncClient.class)
          .put(VirtualMachineClient.class, VirtualMachineAsyncClient.class)
          .put(TemplateClient.class, TemplateAsyncClient.class)
