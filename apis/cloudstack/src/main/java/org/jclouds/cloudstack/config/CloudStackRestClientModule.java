@@ -26,56 +26,7 @@ import org.jclouds.cloudstack.CloudStackDomainAsyncClient;
 import org.jclouds.cloudstack.CloudStackDomainClient;
 import org.jclouds.cloudstack.CloudStackGlobalAsyncClient;
 import org.jclouds.cloudstack.CloudStackGlobalClient;
-import org.jclouds.cloudstack.features.AccountAsyncClient;
-import org.jclouds.cloudstack.features.AccountClient;
-import org.jclouds.cloudstack.features.AddressAsyncClient;
-import org.jclouds.cloudstack.features.AddressClient;
-import org.jclouds.cloudstack.features.AsyncJobAsyncClient;
-import org.jclouds.cloudstack.features.AsyncJobClient;
-import org.jclouds.cloudstack.features.ConfigurationAsyncClient;
-import org.jclouds.cloudstack.features.ConfigurationClient;
-import org.jclouds.cloudstack.features.DomainAccountAsyncClient;
-import org.jclouds.cloudstack.features.DomainAccountClient;
-import org.jclouds.cloudstack.features.DomainLimitAsyncClient;
-import org.jclouds.cloudstack.features.DomainLimitClient;
-import org.jclouds.cloudstack.features.EventAsyncClient;
-import org.jclouds.cloudstack.features.EventClient;
-import org.jclouds.cloudstack.features.FirewallAsyncClient;
-import org.jclouds.cloudstack.features.FirewallClient;
-import org.jclouds.cloudstack.features.GlobalAccountAsyncClient;
-import org.jclouds.cloudstack.features.GlobalAccountClient;
-import org.jclouds.cloudstack.features.GuestOSAsyncClient;
-import org.jclouds.cloudstack.features.GuestOSClient;
-import org.jclouds.cloudstack.features.HypervisorAsyncClient;
-import org.jclouds.cloudstack.features.HypervisorClient;
-import org.jclouds.cloudstack.features.ISOAsyncClient;
-import org.jclouds.cloudstack.features.ISOClient;
-import org.jclouds.cloudstack.features.LimitAsyncClient;
-import org.jclouds.cloudstack.features.LimitClient;
-import org.jclouds.cloudstack.features.LoadBalancerAsyncClient;
-import org.jclouds.cloudstack.features.LoadBalancerClient;
-import org.jclouds.cloudstack.features.NATAsyncClient;
-import org.jclouds.cloudstack.features.NATClient;
-import org.jclouds.cloudstack.features.NetworkAsyncClient;
-import org.jclouds.cloudstack.features.NetworkClient;
-import org.jclouds.cloudstack.features.OfferingAsyncClient;
-import org.jclouds.cloudstack.features.OfferingClient;
-import org.jclouds.cloudstack.features.SSHKeyPairAsyncClient;
-import org.jclouds.cloudstack.features.SSHKeyPairClient;
-import org.jclouds.cloudstack.features.SecurityGroupAsyncClient;
-import org.jclouds.cloudstack.features.SecurityGroupClient;
-import org.jclouds.cloudstack.features.SnapshotAsyncClient;
-import org.jclouds.cloudstack.features.SnapshotClient;
-import org.jclouds.cloudstack.features.TemplateAsyncClient;
-import org.jclouds.cloudstack.features.TemplateClient;
-import org.jclouds.cloudstack.features.VMGroupAsyncClient;
-import org.jclouds.cloudstack.features.VMGroupClient;
-import org.jclouds.cloudstack.features.VirtualMachineAsyncClient;
-import org.jclouds.cloudstack.features.VirtualMachineClient;
-import org.jclouds.cloudstack.features.VolumeAsyncClient;
-import org.jclouds.cloudstack.features.VolumeClient;
-import org.jclouds.cloudstack.features.ZoneAsyncClient;
-import org.jclouds.cloudstack.features.ZoneClient;
+import org.jclouds.cloudstack.features.*;
 import org.jclouds.cloudstack.handlers.CloudStackErrorHandler;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
@@ -128,6 +79,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
          .put(ISOClient.class, ISOAsyncClient.class)//
          .put(VolumeClient.class, VolumeAsyncClient.class)//
          .put(SnapshotClient.class, SnapshotAsyncClient.class)//
+         .put(GlobalAlertClient.class, GlobalAlertAsyncClient.class)//
          .build();
 
    @Override

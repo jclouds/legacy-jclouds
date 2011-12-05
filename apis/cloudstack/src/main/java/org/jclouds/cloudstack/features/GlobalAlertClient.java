@@ -16,39 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudstack;
+package org.jclouds.cloudstack.features;
 
+import org.jclouds.cloudstack.domain.Alert;
+import org.jclouds.cloudstack.options.ListAlertsOptions;
+import org.jclouds.concurrent.Timeout;
+
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.cloudstack.features.GlobalAccountClient;
-import org.jclouds.cloudstack.features.GlobalAlertClient;
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.rest.annotations.Delegate;
-
 /**
- * Provides synchronous access to CloudStack.
- * <p/>
+ * Provides synchronous access to CloudStack Alerts features available to Global
+ * Admin users.
  * 
- * @author Adrian Cole
- * @see CloudStackDomainAsyncClient
+ * @author Richard Downer
  * @see <a href=
  *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Global_Admin.html"
  *      />
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface CloudStackGlobalClient extends CloudStackDomainClient {
+public interface GlobalAlertClient {
 
    /**
-    * Provides synchronous access to Accounts
+    * List Alerts
+    *
+    * @return alert list or null if not found
     */
-   @Delegate
-   @Override
-   GlobalAccountClient getAccountClient();
-
-   /**
-    * Provides synchronous access to Alerts
-    */
-   @Delegate
-   GlobalAlertClient getAlertClient();
+   Set<Alert> listAlerts(ListAlertsOptions... options);
 
 }
