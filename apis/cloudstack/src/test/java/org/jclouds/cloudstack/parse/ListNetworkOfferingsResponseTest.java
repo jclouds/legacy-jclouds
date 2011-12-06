@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.parse;
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.NetworkOffering;
+import org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType;
 import org.jclouds.cloudstack.domain.TrafficType;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.rest.annotations.SelectJson;
@@ -28,8 +29,9 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
 
+import static org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType.REQUIRED;
+
 /**
- * 
  * @author Adrian Cole
  */
 @Test(groups = "unit")
@@ -43,12 +45,12 @@ public class ListNetworkOfferingsResponseTest extends BaseSetParserTest<NetworkO
    @Override
    @SelectJson("networkoffering")
    public Set<NetworkOffering> expected() {
-      return ImmutableSet.<NetworkOffering> of(
-            NetworkOffering.builder().id(7).name("DefaultDirectNetworkOffering").displayText("Direct")
-                  .trafficType(TrafficType.PUBLIC).isDefault(true).supportsVLAN(false).availability("Required")
-                  .networkRate(200).build(), NetworkOffering.builder().id(6).name("DefaultVirtualizedNetworkOffering")
-                  .displayText("Virtual Vlan").trafficType(TrafficType.GUEST).isDefault(true).supportsVLAN(false)
-                  .availability("Required").networkRate(200).build());
+      return ImmutableSet.<NetworkOffering>of(
+         NetworkOffering.builder().id(7).name("DefaultDirectNetworkOffering").displayText("Direct")
+            .trafficType(TrafficType.PUBLIC).isDefault(true).supportsVLAN(false).availability(REQUIRED)
+            .networkRate(200).build(), NetworkOffering.builder().id(6).name("DefaultVirtualizedNetworkOffering")
+            .displayText("Virtual Vlan").trafficType(TrafficType.GUEST).isDefault(true).supportsVLAN(false)
+            .availability(REQUIRED).networkRate(200).build());
    }
 
 }

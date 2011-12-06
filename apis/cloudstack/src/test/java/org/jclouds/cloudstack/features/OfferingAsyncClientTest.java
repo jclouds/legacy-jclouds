@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.features;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType;
 import org.jclouds.cloudstack.options.ListDiskOfferingsOptions;
 import org.jclouds.cloudstack.options.ListNetworkOfferingsOptions;
 import org.jclouds.cloudstack.options.ListServiceOfferingsOptions;
@@ -35,6 +36,8 @@ import org.testng.annotations.Test;
 import com.google.common.base.Functions;
 import com.google.inject.TypeLiteral;
 
+import static org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType.DEFAULT;
+
 /**
  * Tests behavior of {@code OfferingAsyncClient}
  * 
@@ -42,7 +45,7 @@ import com.google.inject.TypeLiteral;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during
 // surefire
-@Test(groups = "unit", testName = "ServiceOfferingAsyncClientTest")
+@Test(groups = "unit", testName = "OfferingAsyncClientTest")
 public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<OfferingAsyncClient> {
    public void testListDiskOfferings() throws SecurityException, NoSuchMethodException, IOException {
       Method method = OfferingAsyncClient.class.getMethod("listDiskOfferings", ListDiskOfferingsOptions[].class);
@@ -116,7 +119,7 @@ public class OfferingAsyncClientTest extends BaseCloudStackAsyncClientTest<Offer
    public void testListNetworkOfferingsOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = OfferingAsyncClient.class.getMethod("listNetworkOfferings", ListNetworkOfferingsOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method,
-            ListNetworkOfferingsOptions.Builder.availability("Default").isShared(true).id(6));
+         ListNetworkOfferingsOptions.Builder.availability(DEFAULT).isShared(true).id(6));
 
       assertRequestLineEquals(
             httpRequest,

@@ -44,7 +44,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
       private String name;
       private String displayText;
       private Date created;
-      private String availability;
+      private NetworkOfferingAvailabilityType availability;
       private Integer maxConnections;
       private int networkRate;
       private boolean isDefault;
@@ -73,7 +73,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
          return this;
       }
 
-      public Builder availability(String availability) {
+      public Builder availability(NetworkOfferingAvailabilityType availability) {
          this.availability = availability;
          return this;
       }
@@ -124,7 +124,8 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
    @SerializedName("displaytext")
    private String displayText;
    private Date created;
-   private String availability;
+   @SerializedName("availability")
+   private NetworkOfferingAvailabilityType availability;
    @SerializedName("maxconnections")
    private Integer maxConnections;
    @SerializedName("isdefault")
@@ -139,9 +140,9 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
    private int networkRate = -1;
    private String tags;
 
-   public NetworkOffering(long id, String name, String displayText, @Nullable Date created, String availability,
-         boolean supportsVLAN, @Nullable Integer maxConnections, boolean isDefault, TrafficType trafficType,
-         GuestIPType guestIPType, int networkRate, Set<String> tags) {
+   public NetworkOffering(long id, String name, String displayText, @Nullable Date created,
+         NetworkOfferingAvailabilityType availability, boolean supportsVLAN, @Nullable Integer maxConnections,
+         boolean isDefault, TrafficType trafficType, GuestIPType guestIPType, int networkRate, Set<String> tags) {
       this.id = id;
       this.name = name;
       this.displayText = displayText;
@@ -202,7 +203,7 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
     * 
     * @return Availability name for the offering
     */
-   public String getAvailability() {
+   public NetworkOfferingAvailabilityType getAvailability() {
       return availability;
    }
 
