@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.tmrk.enterprisecloud.domain.resource;
+package org.jclouds.tmrk.enterprisecloud.domain.resource.cpu;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
@@ -50,7 +50,7 @@ public class ComputePoolCpuUsageDetailSummaryEntry {
       private ResourceCapacity value;
 
       /**
-       * @see org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolCpuUsageDetailSummaryEntry#getTime
+       * @see ComputePoolCpuUsageDetailSummaryEntry#getTime
        */
       public Builder time(Date time) {
          this.time = time;
@@ -58,7 +58,7 @@ public class ComputePoolCpuUsageDetailSummaryEntry {
       }
 
       /**
-       * @see org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolCpuUsageDetailSummaryEntry#getValue
+       * @see ComputePoolCpuUsageDetailSummaryEntry#getValue
        */
       public Builder value(ResourceCapacity value) {
          this.value = value;

@@ -19,7 +19,7 @@
 package org.jclouds.tmrk.enterprisecloud.features;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolCpuUsage;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
 

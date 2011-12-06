@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.tmrk.enterprisecloud.domain.resource;
+package org.jclouds.tmrk.enterprisecloud.domain.resource.cpu;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.tmrk.enterprisecloud.domain.Action;
@@ -27,7 +27,6 @@ import org.jclouds.tmrk.enterprisecloud.domain.internal.Resource;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
