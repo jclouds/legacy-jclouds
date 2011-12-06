@@ -18,25 +18,14 @@
  */
 package org.jclouds.cloudstack.parse;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import org.jclouds.cloudstack.config.CloudStackParserModule;
-import org.jclouds.cloudstack.domain.Account;
-import org.jclouds.cloudstack.domain.Account.State;
-import org.jclouds.cloudstack.domain.Account.Type;
+import java.util.Set;
+
 import org.jclouds.cloudstack.domain.Capacity;
-import org.jclouds.cloudstack.domain.User;
-import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseSetParserTest;
-import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
-import sun.util.resources.CalendarData;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Set;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 

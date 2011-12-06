@@ -18,25 +18,20 @@
  */
 package org.jclouds.cloudstack.parse;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import java.util.Calendar;
+import java.util.Set;
+import java.util.TimeZone;
+
 import org.jclouds.cloudstack.config.CloudStackParserModule;
-import org.jclouds.cloudstack.domain.Account;
-import org.jclouds.cloudstack.domain.Account.State;
-import org.jclouds.cloudstack.domain.Account.Type;
 import org.jclouds.cloudstack.domain.Alert;
-import org.jclouds.cloudstack.domain.User;
-import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
-import sun.util.resources.CalendarData;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Set;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * 
@@ -67,11 +62,11 @@ public class ListAlertsResponseTest extends BaseSetParserTest<Alert> {
    @Override
    @SelectJson("alert")
    public Set<Alert> expected() {
-      Calendar c = Calendar.getInstance();
+      Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
       c.set(Calendar.YEAR, 2011);
       c.set(Calendar.MONTH, Calendar.DECEMBER);
       c.set(Calendar.DAY_OF_MONTH, 4);
-      c.set(Calendar.HOUR_OF_DAY, 12);
+      c.set(Calendar.HOUR_OF_DAY, 10);
       c.set(Calendar.MINUTE, 5);
       c.set(Calendar.SECOND, 2);
       return ImmutableSet.of(Alert.builder()
