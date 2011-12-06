@@ -25,6 +25,7 @@ import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSumma
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsageDetail;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsage;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsageDetail;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -110,7 +111,7 @@ public class ResourceClientLiveTest extends BaseTerremarkEnterpriseCloudClientLi
    }
 
    private void testGetComputePoolMemoryUsageDetail(URI uri) {
-    //  ComputePoolMemoryUsageDetail detail = client.getComputePoolMemoryUsageDetail(uri);
-    //  assertNotNull(detail.getTime());
+      ComputePoolMemoryUsageDetail detail = client.getComputePoolMemoryUsageDetail(uri);
+      assertNotNull(detail.getTime());
    }
 }

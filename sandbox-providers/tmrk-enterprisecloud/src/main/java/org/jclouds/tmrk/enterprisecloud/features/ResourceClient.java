@@ -24,6 +24,7 @@ import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSumma
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsageDetail;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsage;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsageDetail;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
@@ -78,14 +79,14 @@ public interface ResourceClient {
     * for a specified compute pool defined in an environment at the time in the URL query part,
     * a specified five minute time interval within the 24 hours ending one hour prior to
     * the current time, rounded later.
-    * For example, if current time is 11:22, the end time 10:25.
+    * For example, if current time is 11:22, the end time is 10:25.
     * The response includes usage of every virtual machine during the interval.
     *
     * Note: The query part is required and the time passed as the parameter must
     * precisely match a time in the preceding 24 hours.
     *
     * Times are on five minute intervals starting on the hour.
-    * Available times are in <Time> in the response to {@code getComputePoolCpuUsage}
+    * Available times are in Time in the response to {@code getComputePoolCpuUsage}
     * The time parameter is of the form 2011-12-05t10%3a10%3a00z
     *
     * Deleted is applicable and appears only when virtual machines have been removed
@@ -109,4 +110,25 @@ public interface ResourceClient {
     */
    ComputePoolMemoryUsage getComputePoolMemoryUsage(URI uri);
 
+   /**
+    * The Get Resources Usage Memory Detail call returns information regarding memory usage
+    * for a specified compute pool defined in an environment at the time in the URL query part,
+    * a specified five minute time interval within the 24 hours ending one hour prior to the current time, 
+    * rounded later.
+    * For example, if current time is 11:22, the end time is 10:25.
+    * The response includes usage of every virtual machine during the interval.
+    *
+    * Note: The query part is required and the time passed as the parameter must precisely match
+    * a time in the preceding 24 hours.
+    * Times are on five minute intervals starting on the hour.
+    * Available times are in Time in the response to {@code getComputePoolMemoryUsage}.
+    *
+    * Deleted is applicable and appears only when virtual machine have been removed subsequent
+    * to the time of the snapshot.
+    *
+    * @param uri the uri of the call based upon the compute pool and the time
+    * e.g. /cloudapi/ecloud/computepools/{id}/usage/memory/details?time={time}
+    * @return the compute pool memory usage detail
+    */
+   ComputePoolMemoryUsageDetail getComputePoolMemoryUsageDetail(URI uri);
 }

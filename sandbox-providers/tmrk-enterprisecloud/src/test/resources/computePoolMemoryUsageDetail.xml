@@ -1,0 +1,29 @@
+<ComputePoolMemoryUsageDetail
+        href="/cloudapi/ecloud/computepools/89/usage/memory/details?time=2011-12-05t15%3a55%3a00z"
+        type="application/vnd.tmrk.cloud.computePoolMemoryUsageDetail"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <Links>
+        <Link href="/cloudapi/ecloud/computepools/89"
+              name="Default Compute Pool"
+              type="application/vnd.tmrk.cloud.computePool" rel="up"/>
+        <Link href="/cloudapi/ecloud/computepools/89/usage/memory"
+              type="application/vnd.tmrk.cloud.computePoolMemoryUsage"
+              rel="up"/>
+    </Links>
+    <Time>2011-12-05T15:55:00Z</Time>
+    <Value>
+        <Unit>MB</Unit>
+        <Value>404</Value>
+    </Value>
+    <VirtualMachines>
+        <VirtualMachine href="/cloudapi/ecloud/virtualmachines/5504"
+                        name="helloworld"
+                        type="application/vnd.tmrk.cloud.virtualMachine">
+            <Usage>
+                <Unit>MB</Unit>
+                <Value>404</Value>
+            </Usage>
+            <Utilization>100</Utilization>
+        </VirtualMachine>
+    </VirtualMachines>
+</ComputePoolMemoryUsageDetail>
