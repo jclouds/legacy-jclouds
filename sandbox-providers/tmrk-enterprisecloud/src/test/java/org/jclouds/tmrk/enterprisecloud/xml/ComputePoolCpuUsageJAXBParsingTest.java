@@ -103,7 +103,7 @@ public class ComputePoolCpuUsageJAXBParsingTest extends BaseRestClientTest {
       Function<HttpResponse, ComputePoolCpuUsage> parser = (Function<HttpResponse, ComputePoolCpuUsage>) RestAnnotationProcessor
             .createResponseParser(parserFactory, injector, method, request);
 
-      InputStream is = getClass().getResourceAsStream("/computePoolsCpuUsage.xml");
+      InputStream is = getClass().getResourceAsStream("/computePoolCpuUsage.xml");
       ComputePoolCpuUsage cpuUsage = parser.apply(new HttpResponse(200, "ok", newInputStreamPayload(is)));
 
       assertLinks(cpuUsage.getLinks());
