@@ -36,7 +36,9 @@ import org.jclouds.rest.BaseRestClientTest;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.tmrk.enterprisecloud.domain.Link;
-import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolCpuUsage;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolCpuUsageDetailSummaryEntry;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.CpuUsageDetails;
 import org.jclouds.tmrk.enterprisecloud.features.ResourceAsyncClient;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -52,14 +54,15 @@ import static org.jclouds.io.Payloads.newInputStreamPayload;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 /**
- * Tests behavior of JAXB parsing for ComputePoolResourceSummaryList
+ * Tests behavior of JAXB parsing for ComputePoolCpuUsage
  * 
  * @author Jason King
  */
-@Test(groups = "unit", testName = "ComputePoolResourceSummaryListJAXBParsingTest")
-public class ComputePoolResourceSummaryListJAXBParsingTest extends BaseRestClientTest {
+@Test(groups = "unit", testName = "ComputePoolCpuUsageJAXBParsingTest")
+public class ComputePoolCpuUsageJAXBParsingTest extends BaseRestClientTest {
 
    private SimpleDateFormatDateService dateService;
    @BeforeMethod
@@ -93,25 +96,43 @@ public class ComputePoolResourceSummaryListJAXBParsingTest extends BaseRestClien
 
    public void testParseWithJAXB() throws Exception {
 
-      Method method = ResourceAsyncClient.class.getMethod("getResourceSummaries", URI.class);
+      Method method = ResourceAsyncClient.class.getMethod("getComputePoolCpuUsage", URI.class);
       HttpRequest request = factory(ResourceAsyncClient.class).createRequest(method,new URI("/1"));
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
 
-      Function<HttpResponse, ComputePoolResourceSummaryList> parser = (Function<HttpResponse, ComputePoolResourceSummaryList>) RestAnnotationProcessor
+      Function<HttpResponse, ComputePoolCpuUsage> parser = (Function<HttpResponse, ComputePoolCpuUsage>) RestAnnotationProcessor
             .createResponseParser(parserFactory, injector, method, request);
 
-      InputStream is = getClass().getResourceAsStream("/computePoolResourceSummaryList.xml");
-      ComputePoolResourceSummaryList list = parser.apply(new HttpResponse(200, "ok", newInputStreamPayload(is)));
+      InputStream is = getClass().getResourceAsStream("/computePoolsCpuUsage.xml");
+      ComputePoolCpuUsage cpuUsage = parser.apply(new HttpResponse(200, "ok", newInputStreamPayload(is)));
 
-      assertLinks(list.getLinks());
-      // ComputePoolResourceSummary details are tested separately.
-      assertEquals(list.getComputePoolResourceSummaries().size(),1);
+      assertLinks(cpuUsage.getLinks());
+      assertEquals(cpuUsage.getStartTime(), dateService.iso8601DateParse("2011-12-05T09:45:00.0Z"));
+      assertEquals(cpuUsage.getEndTime(), dateService.iso8601DateParse("2011-12-06T09:45:00.0Z"));
+      assertDetails(cpuUsage.getDetails());
    }
 
    private void assertLinks(Set<Link> links) {
-      assertEquals(links.size(),1);
-      Link link = Iterables.getOnlyElement(links);
-      assertEquals(link.getName(),"Beta Environment 01");
+      assertEquals(links.size(),2);
+      Link link = Iterables.get(links, 0);
+      assertEquals(link.getName(),"Default Compute Pool");
       assertEquals(link.getRelationship(), Link.Relationship.UP);
+
+      Link link2 = Iterables.get(links, 1);
+      assertEquals(link2.getHref(), URI.create("/cloudapi/ecloud/computepools/89/usage/cpu/details?time=2011-12-05t09%3a45%3a00z"));
+      assertEquals(link2.getType(), "application/vnd.tmrk.cloud.computePoolCpuUsageDetail");
+      assertEquals(link2.getRelationship(), Link.Relationship.DOWN);
+   }
+
+   private void assertDetails(CpuUsageDetails details) {
+      assertEquals(details.getEntries().size(), 7);
+      for(ComputePoolCpuUsageDetailSummaryEntry entry: details.getEntries()) {
+         assertDetail(entry);
+      }
+   }
+
+   private void assertDetail(ComputePoolCpuUsageDetailSummaryEntry entry) {
+      assertNotNull(entry.getTime());
+      assertNotNull(entry.getValue());
    }
 }

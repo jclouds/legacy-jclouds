@@ -90,7 +90,7 @@ public class ComputePoolResourceSummaryJAXBParsingTest extends BaseRestClientTes
    }
 
    @Test
-   public void testParseLocationWithJAXB() throws Exception {
+   public void testParseWithJAXB() throws Exception {
       Method method = ResourceAsyncClient.class.getMethod("getResourceSummary",URI.class);
       HttpRequest request = factory(ResourceAsyncClient.class).createRequest(method, new URI("/1"));
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
