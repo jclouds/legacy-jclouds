@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.tmrk.enterprisecloud.domain.template;
+package org.jclouds.tmrk.enterprisecloud.domain.resource;
 
 import com.google.common.collect.Sets;
 import org.jclouds.tmrk.enterprisecloud.domain.Action;
@@ -34,13 +34,13 @@ import java.util.Set;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Templates is more than a simple wrapper as it extends BaseResource.
- * <xs:complexType name="Templates">
+ * ComputePoolResourceSummaryList is more than a simple wrapper as it extends Resource.
+ * <xs:complexType name="ComputePoolResourceSummaryList">
  * @author Jason King
  * 
  */
-@XmlRootElement(name = "Templates")
-public class Templates extends Resource<Templates> {
+@XmlRootElement(name = "ComputePoolResourceSummaryList")
+public class ComputePoolResourceSummaryList extends Resource<ComputePoolResourceSummaryList> {
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -52,34 +52,34 @@ public class Templates extends Resource<Templates> {
     */
    @Override
    public Builder toBuilder() {
-      return new Builder().fromTemplates(this);
+      return new Builder().fromSummaryList(this);
    }
 
-   public static class Builder extends Resource.Builder<Templates> {
-      private Set<TemplateFamily> families = Sets.newLinkedHashSet();
+   public static class Builder extends Resource.Builder<ComputePoolResourceSummaryList> {
+      private Set<ComputePoolResourceSummary> summaries = Sets.newLinkedHashSet();
 
       /**
-       * @see Templates#getTemplateFamilies
+       * @see org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList#getComputePoolResourceSummaries
        */
-      public Builder families(Set<TemplateFamily> families) {
-         this.families =(checkNotNull(families,"families"));
+      public Builder summaries(Set<ComputePoolResourceSummary> summaries) {
+         this.summaries =(checkNotNull(summaries,"summaries"));
          return this;
       }
 
       @Override
-      public Templates build() {
-         return new Templates(href, type, name, links, actions, families);
+      public ComputePoolResourceSummaryList build() {
+         return new ComputePoolResourceSummaryList(href, type, name, links, actions, summaries);
       }
 
-      public Builder fromTemplates(Templates in) {
-         return fromResource(in).families(in.getTemplateFamilies());
+      public Builder fromSummaryList(ComputePoolResourceSummaryList in) {
+         return fromResource(in).summaries(in.getComputePoolResourceSummaries());
       }
 
       /**
        * {@inheritDoc}
        */
       @Override
-      public Builder fromBaseResource(BaseResource<Templates> in) {
+      public Builder fromBaseResource(BaseResource<ComputePoolResourceSummaryList> in) {
          return Builder.class.cast(super.fromBaseResource(in));
       }
 
@@ -87,7 +87,7 @@ public class Templates extends Resource<Templates> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResource(Resource<Templates> in) {
+      public Builder fromResource(Resource<ComputePoolResourceSummaryList> in) {
          return Builder.class.cast(super.fromResource(in));
       }
 
@@ -141,20 +141,20 @@ public class Templates extends Resource<Templates> {
 
    }
 
-   @XmlElement(name = "Families", required = false)
-   private TemplateFamilies families;
+   @XmlElement(name = "ComputePoolResourceSummary")
+   private Set<ComputePoolResourceSummary> summaries = Sets.newLinkedHashSet();
 
-   private Templates(URI href, String type, String name, Set<Link> links, Set<Action> actions, Set<TemplateFamily> families) {
+   private ComputePoolResourceSummaryList(URI href, String type, String name, Set<Link> links, Set<Action> actions, Set<ComputePoolResourceSummary> summaries) {
       super(href, type, name, links, actions);
-      this.families = TemplateFamilies.builder().families(families).build();
+      this.summaries = checkNotNull(summaries,"summaries");
    }
 
-   private Templates() {
+   private ComputePoolResourceSummaryList() {
        //For JAXB
    }
 
-   public Set<TemplateFamily> getTemplateFamilies() {
-      return families.getTemplateFamilies();
+   public Set<ComputePoolResourceSummary> getComputePoolResourceSummaries() {
+      return summaries;
    }
 
    @Override
@@ -163,10 +163,9 @@ public class Templates extends Resource<Templates> {
       if (o == null || getClass() != o.getClass()) return false;
       if (!super.equals(o)) return false;
 
-      Templates templates = (Templates) o;
+      ComputePoolResourceSummaryList that = (ComputePoolResourceSummaryList) o;
 
-      if (families != null ? !families.equals(templates.families) : templates.families != null)
-         return false;
+      if (!summaries.equals(that.summaries)) return false;
 
       return true;
    }
@@ -174,12 +173,12 @@ public class Templates extends Resource<Templates> {
    @Override
    public int hashCode() {
       int result = super.hashCode();
-      result = 31 * result + (families != null ? families.hashCode() : 0);
+      result = 31 * result + summaries.hashCode();
       return result;
    }
 
    @Override
    public String string() {
-      return super.string()+", families="+families;
+      return super.string()+", summaries="+summaries;
    }
 }
