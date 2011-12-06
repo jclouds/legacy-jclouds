@@ -23,6 +23,7 @@ import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsageDetail;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsage;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
@@ -95,5 +96,17 @@ public interface ResourceClient {
     * @return the compute pool cpu usage detail
     */
    ComputePoolCpuUsageDetail getComputePoolCpuUsageDetail(URI uri);
+
+   /**
+    * The Get Resources Usage Memory call returns information regarding memory usage
+    * for a specified compute pool defined in an environment at five minute intervals
+    * for the 24 hours ending one hour prior to the current time, rounded later.
+    * For example, if current time is 11:22, the end time 10:25.
+    *
+    * @param uri the uri of the call based upon the compute pool
+    * e.g. /cloudapi/ecloud/computepools/{id}/usage/memory
+    * @return The memory usage for the compute pool
+    */
+   ComputePoolMemoryUsage getComputePoolMemoryUsage(URI uri);
 
 }

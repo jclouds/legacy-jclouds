@@ -24,6 +24,7 @@ import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsageDetail;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsage;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -67,14 +68,14 @@ public class ResourceClientLiveTest extends BaseTerremarkEnterpriseCloudClientLi
    }
 
    public void testGetComputePoolCpuUsage() throws Exception {
-      ComputePoolCpuUsage cpuUsage = client.getComputePoolCpuUsage(URI.create("/cloudapi/ecloud/computepools/89/usage/cpu"));
-      for(Link link: cpuUsage.getLinks()) {
+      ComputePoolCpuUsage usage = client.getComputePoolCpuUsage(URI.create("/cloudapi/ecloud/computepools/89/usage/cpu"));
+      assertNotNull(usage);
+      for(Link link: usage.getLinks()) {
          //The compute pool cpu usage has a link to a detail entry
          if( "application/vnd.tmrk.cloud.computePoolCpuUsageDetail".equals(link.getType())) {
             testGetComputePoolCpuUsageDetail(link.getHref());
          }
       }
-      assertNotNull(cpuUsage);
    }
 
    public void testMissingComputePoolCpuUsage() {
@@ -95,5 +96,21 @@ public class ResourceClientLiveTest extends BaseTerremarkEnterpriseCloudClientLi
       assertNotNull(detail.getTime());
       assertEquals(detail.getValue(), ResourceCapacity.builder().value(0).unit("MHz").build());
       assertNull(detail.getVirtualMachinesCpuUsage());
+   }
+
+   public void testGetComputePoolMemoryUsage() throws Exception {
+      ComputePoolMemoryUsage usage = client.getComputePoolMemoryUsage(URI.create("/cloudapi/ecloud/computepools/89/usage/memory"));
+      assertNotNull(usage);
+      for(Link link: usage.getLinks()) {
+         //The compute pool memory usage has a link to a detail entry
+         if( "application/vnd.tmrk.cloud.computePoolMemoryUsageDetail".equals(link.getType())) {
+            testGetComputePoolMemoryUsageDetail(link.getHref());
+         }
+      }
+   }
+
+   private void testGetComputePoolMemoryUsageDetail(URI uri) {
+    //  ComputePoolMemoryUsageDetail detail = client.getComputePoolMemoryUsageDetail(uri);
+    //  assertNotNull(detail.getTime());
    }
 }
