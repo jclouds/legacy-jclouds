@@ -36,6 +36,7 @@ import org.jclouds.compute.domain.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.util.Throwables2;
 
 import com.google.common.base.Supplier;
 import com.google.common.cache.Cache;
@@ -73,6 +74,11 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
             } catch (ExecutionException e) {
                throw new NoSuchElementException(String.format("could not get imageId(%s/%s)", key.getRegion(), key.getName()));
             } catch (UncheckedExecutionException e) {
+               // Primarily for testing: if cache is backed by a map, can get IllegalArgumentException instead of NPE
+               IllegalArgumentException e2 = Throwables2.getFirstThrowableOfType(e, IllegalArgumentException.class);
+               if (e2 != null && e2.getMessage() != null && e2.getMessage().contains("not present in")) {
+                  throw new NoSuchElementException(String.format("imageId(%s/%s) not found", key.getRegion(), key.getName()));
+               }
                throw new NoSuchElementException(String.format("could not get imageId(%s/%s)", key.getRegion(), key.getName()));
             } catch (NullPointerException nex) {
                throw new NoSuchElementException(String.format("imageId(%s/%s) not found", key.getRegion(), key.getName()));

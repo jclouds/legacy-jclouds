@@ -45,7 +45,6 @@ import org.jclouds.ec2.xml.DescribeInstancesResponseHandlerTest;
 import org.jclouds.javax.annotation.Nullable;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.cache.Cache;
@@ -54,7 +53,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 
 /**
  * @author Adrian Cole
@@ -234,14 +232,7 @@ public class RunningInstanceToNodeMetadataTest {
 
          @Override
          public Image load(@Nullable RegionAndName from) {
-            return Maps.uniqueIndex(images, new Function<Image, RegionAndName>() {
-
-               @Override
-               public RegionAndName apply(Image from) {
-                  return new RegionAndName(from.getLocation().getId(), from.getProviderId());
-               }
-
-            }).get(from);
+            return ImagesToRegionAndIdMap.imagesToMap(images).get(from);
          }
       };
       Cache<RegionAndName, Image> instanceToImage = CacheBuilder.newBuilder().build(getRealImage);

@@ -20,7 +20,6 @@ package org.jclouds.ec2.compute.suppliers;
 
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
-import static com.google.common.collect.Maps.uniqueIndex;
 import static org.jclouds.ec2.options.DescribeImagesOptions.Builder.ownedBy;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
@@ -38,12 +37,12 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.functions.EC2ImageParser;
+import org.jclouds.ec2.compute.functions.ImagesToRegionAndIdMap;
 import org.jclouds.ec2.compute.strategy.DescribeImagesParallel;
 import org.jclouds.ec2.options.DescribeImagesOptions;
 import org.jclouds.location.Region;
 import org.jclouds.logging.Logger;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.cache.Cache;
@@ -95,15 +94,7 @@ public class EC2ImageSupplier implements Supplier<Set<? extends Image>> {
          Iterable<? extends Image> parsedImages = ImmutableSet.copyOf(filter(transform(describer.apply(queries), parser), Predicates
                   .notNull()));
 
-         ImmutableMap<RegionAndName, ? extends Image> imageMap = uniqueIndex(parsedImages, new Function<Image, RegionAndName>() {
-
-            @Override
-            public RegionAndName apply(Image from) {
-               return new RegionAndName(from.getLocation().getId(), from.getProviderId());
-            }
-
-         });
-         
+         Map<RegionAndName, ? extends Image> imageMap = ImagesToRegionAndIdMap.imagesToMap(parsedImages);
          cache.get().invalidateAll();
          cache.get().asMap().putAll((Map)imageMap);
          logger.debug("<< images(%d)", imageMap.size());
