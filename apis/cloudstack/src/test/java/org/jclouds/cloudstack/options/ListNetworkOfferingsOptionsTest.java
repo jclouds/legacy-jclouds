@@ -28,6 +28,7 @@ import static org.jclouds.cloudstack.options.ListNetworkOfferingsOptions.Builder
 import static org.jclouds.cloudstack.options.ListNetworkOfferingsOptions.Builder.zoneId;
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType;
 import org.jclouds.cloudstack.domain.TrafficType;
 import org.testng.annotations.Test;
 
@@ -92,13 +93,14 @@ public class ListNetworkOfferingsOptionsTest {
    }
 
    public void testAvailability() {
-      ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions().availability("moo");
-      assertEquals(ImmutableList.of("moo"), options.buildQueryParameters().get("availability"));
+      ListNetworkOfferingsOptions options =
+         new ListNetworkOfferingsOptions().availability(NetworkOfferingAvailabilityType.REQUIRED);
+      assertEquals(ImmutableList.of("Required"), options.buildQueryParameters().get("availability"));
    }
 
    public void testAvailabilityStatic() {
-      ListNetworkOfferingsOptions options = availability("moo");
-      assertEquals(ImmutableList.of("moo"), options.buildQueryParameters().get("availability"));
+      ListNetworkOfferingsOptions options = availability(NetworkOfferingAvailabilityType.REQUIRED);
+      assertEquals(ImmutableList.of("Required"), options.buildQueryParameters().get("availability"));
    }
 
    public void testTrafficType() {

@@ -29,6 +29,7 @@ import org.jclouds.cloudstack.options.ListDiskOfferingsOptions;
 import org.jclouds.cloudstack.options.ListNetworkOfferingsOptions;
 import org.jclouds.cloudstack.options.ListServiceOfferingsOptions;
 import org.jclouds.cloudstack.options.UpdateDiskOfferingOptions;
+import org.jclouds.cloudstack.options.UpdateNetworkOfferingOptions;
 import org.jclouds.cloudstack.options.UpdateServiceOfferingOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.OnlyElement;
@@ -116,4 +117,14 @@ public interface GlobalOfferingAsyncClient extends OfferingAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Void> deleteDiskOffering(@QueryParam("id") long id);
+
+   /**
+    * @see GlobalOfferingClient#updateNetworkOffering
+    */
+   @GET
+   @QueryParams(keys = "command", values ="updateNetworkOffering")
+   @SelectJson("networkoffering")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<NetworkOffering> updateNetworkOffering(@QueryParam("id") long id, UpdateNetworkOfferingOptions... options);
 }
