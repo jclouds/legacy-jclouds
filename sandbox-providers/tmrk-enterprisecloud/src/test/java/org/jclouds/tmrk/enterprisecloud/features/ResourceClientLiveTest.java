@@ -18,6 +18,7 @@
  */
 package org.jclouds.tmrk.enterprisecloud.features;
 
+import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolCpuUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
 import org.testng.annotations.BeforeGroups;
@@ -62,11 +63,11 @@ public class ResourceClientLiveTest extends BaseTerremarkEnterpriseCloudClientLi
    }
 
    public void testGetComputePoolCpuUsage() throws Exception {
-      ComputePoolResourceSummary resourceSummary = client.getResourceSummary(URI.create("/cloudapi/ecloud/computepools/89/usage/cpu"));
-      assertNotNull(resourceSummary);
+      ComputePoolCpuUsage cpuUsage = client.getComputePoolCpuUsage(URI.create("/cloudapi/ecloud/computepools/89/usage/cpu"));
+      assertNotNull(cpuUsage);
    }
 
    public void testMissingComputePoolCpuUsage() {
-      assertNull(client.getResourceSummary(URI.create("/cloudapi/ecloud/computepools/-1/usage/cpu")));
+      assertNull(client.getComputePoolCpuUsage(URI.create("/cloudapi/ecloud/computepools/-1/usage/cpu")));
    }
 }
