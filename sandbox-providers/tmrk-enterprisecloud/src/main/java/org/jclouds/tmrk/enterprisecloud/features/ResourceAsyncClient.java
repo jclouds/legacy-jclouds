@@ -22,6 +22,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolCpuUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
 
@@ -60,4 +61,13 @@ public interface ResourceAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<ComputePoolResourceSummary> getResourceSummary(@EndpointParam URI uri);
+
+   /**
+    * @see ResourceClient#getComputePoolCpuUsage
+    */
+   @GET
+   @Consumes("application/vnd.tmrk.cloud.computePoolCpuUsage")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<ComputePoolCpuUsage> getComputePoolCpuUsage(@EndpointParam URI uri);
 }

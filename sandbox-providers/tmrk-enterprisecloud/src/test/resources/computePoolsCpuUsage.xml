@@ -1,0 +1,65 @@
+<ComputePoolCpuUsage href="/cloudapi/ecloud/computepools/89/usage/cpu"
+                     type="application/vnd.tmrk.cloud.computePoolCpuUsage"
+                     xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <Links>
+        <Link href="/cloudapi/ecloud/computepools/89"
+              name="Default Compute Pool"
+              type="application/vnd.tmrk.cloud.computePool" rel="up"/>
+        <Link href="/cloudapi/ecloud/computepools/89/usage/cpu/details?time=2011-12-05t09%3a45%3a00z"
+              type="application/vnd.tmrk.cloud.computePoolCpuUsageDetail"
+              rel="down"/>
+    </Links>
+    <StartTime>2011-12-05T09:45:00Z</StartTime>
+    <EndTime>2011-12-06T09:45:00Z</EndTime>
+    <CpuUsageDetailSummary>
+        <CpuUsageDetail>
+            <Time>2011-12-05T09:45:00Z</Time>
+            <Value>
+                <Unit>MHz</Unit>
+                <Value>57</Value>
+            </Value>
+        </CpuUsageDetail>
+        <CpuUsageDetail>
+            <Time>2011-12-05T09:50:00Z</Time>
+            <Value>
+                <Unit>MHz</Unit>
+                <Value>42</Value>
+            </Value>
+        </CpuUsageDetail>
+        <CpuUsageDetail>
+            <Time>2011-12-05T09:55:00Z</Time>
+            <Value>
+                <Unit>MHz</Unit>
+                <Value>42</Value>
+            </Value>
+        </CpuUsageDetail>
+        <CpuUsageDetail>
+            <Time>2011-12-05T10:00:00Z</Time>
+            <Value>
+                <Unit>MHz</Unit>
+                <Value>42</Value>
+            </Value>
+        </CpuUsageDetail>
+        <CpuUsageDetail>
+            <Time>2011-12-05T10:05:00Z</Time>
+            <Value>
+                <Unit>MHz</Unit>
+                <Value>43</Value>
+            </Value>
+        </CpuUsageDetail>
+        <CpuUsageDetail>
+            <Time>2011-12-05T10:10:00Z</Time>
+            <Value>
+                <Unit>MHz</Unit>
+                <Value>43</Value>
+            </Value>
+        </CpuUsageDetail>
+        <CpuUsageDetail>
+            <Time>2011-12-05T10:15:00Z</Time>
+            <Value>
+                <Unit>MHz</Unit>
+                <Value>41</Value>
+            </Value>
+        </CpuUsageDetail>
+    </CpuUsageDetailSummary>
+</ComputePoolCpuUsage>

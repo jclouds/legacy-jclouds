@@ -60,4 +60,13 @@ public class ResourceClientLiveTest extends BaseTerremarkEnterpriseCloudClientLi
    public void testMissingResourceSummary() {
       assertNull(client.getResourceSummary(URI.create("/cloudapi/ecloud/computepools/-1/resourcesummary")));
    }
+
+   public void testGetComputePoolCpuUsage() throws Exception {
+      ComputePoolResourceSummary resourceSummary = client.getResourceSummary(URI.create("/cloudapi/ecloud/computepools/89/usage/cpu"));
+      assertNotNull(resourceSummary);
+   }
+
+   public void testMissingComputePoolCpuUsage() {
+      assertNull(client.getResourceSummary(URI.create("/cloudapi/ecloud/computepools/-1/usage/cpu")));
+   }
 }

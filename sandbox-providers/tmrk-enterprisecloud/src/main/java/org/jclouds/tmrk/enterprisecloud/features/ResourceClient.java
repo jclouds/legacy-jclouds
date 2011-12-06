@@ -19,6 +19,7 @@
 package org.jclouds.tmrk.enterprisecloud.features;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolCpuUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
 
@@ -55,5 +56,16 @@ public interface ResourceClient {
     * @return the summary
     */
    ComputePoolResourceSummary getResourceSummary(URI uri);
+
+   /**
+    * The call returns information regarding processor usage for a specified compute pool
+    * defined in an environment at five minute intervals for the 24 hours ending one hour
+    * prior to the current time, rounded later.
+    * For example, if current time is 11:22, the end time is 10:25.
+    * @param uri the uri of the call based upon the compute pool
+    * e.g. /cloudapi/ecloud/computepools/{id}/usage/cpu
+    * @return The cpu usage for the compute pool
+    */
+   ComputePoolCpuUsage getComputePoolCpuUsage(URI uri);
 
 }
