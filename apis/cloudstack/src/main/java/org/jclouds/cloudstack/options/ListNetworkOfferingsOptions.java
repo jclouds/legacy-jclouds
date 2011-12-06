@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.options;
 
+import org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType;
 import org.jclouds.cloudstack.domain.TrafficType;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
@@ -75,8 +76,8 @@ public class ListNetworkOfferingsOptions extends BaseHttpRequestOptions {
     * @param availability
     *           the availability of network offering. Default value is Required
     */
-   public ListNetworkOfferingsOptions availability(String availability) {
-      this.queryParameters.replaceValues("availability", ImmutableSet.of(availability));
+   public ListNetworkOfferingsOptions availability(NetworkOfferingAvailabilityType availability) {
+      this.queryParameters.replaceValues("availability", ImmutableSet.of(availability.toString()));
       return this;
    }
 
@@ -161,7 +162,7 @@ public class ListNetworkOfferingsOptions extends BaseHttpRequestOptions {
       /**
        * @see ListNetworkOfferingsOptions#availability
        */
-      public static ListNetworkOfferingsOptions availability(String availability) {
+      public static ListNetworkOfferingsOptions availability(NetworkOfferingAvailabilityType availability) {
          ListNetworkOfferingsOptions options = new ListNetworkOfferingsOptions();
          return options.availability(availability);
       }

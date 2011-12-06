@@ -19,10 +19,12 @@
 package org.jclouds.cloudstack.features;
 
 import org.jclouds.cloudstack.domain.DiskOffering;
+import org.jclouds.cloudstack.domain.NetworkOffering;
 import org.jclouds.cloudstack.domain.ServiceOffering;
 import org.jclouds.cloudstack.options.CreateDiskOfferingOptions;
 import org.jclouds.cloudstack.options.CreateServiceOfferingOptions;
 import org.jclouds.cloudstack.options.UpdateDiskOfferingOptions;
+import org.jclouds.cloudstack.options.UpdateNetworkOfferingOptions;
 import org.jclouds.cloudstack.options.UpdateServiceOfferingOptions;
 import org.jclouds.concurrent.Timeout;
 
@@ -113,4 +115,16 @@ public interface GlobalOfferingClient extends OfferingClient {
     *       the ID of the disk offering
     */
    Void deleteDiskOffering(long id);
+
+   /**
+    * Update network offering
+    *
+    * @param id
+    *       the id of the network offering
+    * @param options
+    *       optional arguments
+    * @return
+    *       network offering instance
+    */
+   NetworkOffering updateNetworkOffering(long id, UpdateNetworkOfferingOptions... options);
 }

@@ -20,16 +20,23 @@ package org.jclouds.cloudstack.features;
 
 import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.domain.DiskOffering;
+import org.jclouds.cloudstack.domain.NetworkOffering;
+import org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType;
 import org.jclouds.cloudstack.domain.ServiceOffering;
 import org.jclouds.cloudstack.domain.StorageType;
 import org.jclouds.cloudstack.options.UpdateDiskOfferingOptions;
+import org.jclouds.cloudstack.options.UpdateNetworkOfferingOptions;
 import org.jclouds.cloudstack.options.UpdateServiceOfferingOptions;
 import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
 
+import static com.google.common.collect.Iterables.getFirst;
+import static org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType.OPTIONAL;
+import static org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType.REQUIRED;
 import static org.jclouds.cloudstack.options.CreateDiskOfferingOptions.Builder.diskSizeInGB;
 import static org.jclouds.cloudstack.options.CreateServiceOfferingOptions.Builder.highlyAvailable;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -115,6 +122,33 @@ public class GlobalOfferingClientLiveTest extends BaseCloudStackClientLiveTest {
       assertTrue(offering.isCustomized());
       assertEquals(offering.getDiskSize(), 100);
       assertTrue(offering.getTags().contains("dummy-tag"));
+   }
+
+   @Test(groups = "live", enabled = true)
+   public void testUpdateNetworkOffering() throws Exception {
+      assertTrue(globalAdminEnabled, "Test cannot run without global admin identity and credentials");
+
+      NetworkOffering offering = getFirst(globalAdminClient.getOfferingClient().listNetworkOfferings(), null);
+      assertNotNull(offering, "Unable to test, no network offering found.");
+
+      String name = offering.getName();
+      NetworkOfferingAvailabilityType availability = offering.getAvailability();
+
+      try {
+         NetworkOfferingAvailabilityType newValue = OPTIONAL;
+         if (availability == OPTIONAL) {
+            newValue = REQUIRED;
+         }
+         NetworkOffering updated = globalAdminClient.getOfferingClient().updateNetworkOffering(offering.getId(),
+            UpdateNetworkOfferingOptions.Builder.name(prefix + name).availability(newValue));
+
+         assertEquals(updated.getName(), prefix + name);
+         assertEquals(updated.getAvailability(), newValue);
+
+      } finally {
+         globalAdminClient.getOfferingClient().updateNetworkOffering(offering.getId(),
+            UpdateNetworkOfferingOptions.Builder.name(name).availability(availability));
+      }
    }
 
 }
