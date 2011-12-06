@@ -110,6 +110,13 @@ public class ComputePoolCpuUsageJAXBParsingTest extends BaseRestClientTest {
       assertEquals(cpuUsage.getStartTime(), dateService.iso8601DateParse("2011-12-05T09:45:00.0Z"));
       assertEquals(cpuUsage.getEndTime(), dateService.iso8601DateParse("2011-12-06T09:45:00.0Z"));
       assertDetails(cpuUsage.getDetails());
+
+      Set<ComputePoolCpuUsageDetailSummaryEntry> entries = cpuUsage.getDetails().getEntries();
+      ComputePoolCpuUsageDetailSummaryEntry first = Iterables.getFirst(entries, null);
+      assertEquals(cpuUsage.getStartTime(),first.getTime());
+
+      ComputePoolCpuUsageDetailSummaryEntry last = Iterables.getLast(entries, null);
+      assertEquals(cpuUsage.getEndTime(),last.getTime());
    }
 
    private void assertLinks(Set<Link> links) {
@@ -125,7 +132,7 @@ public class ComputePoolCpuUsageJAXBParsingTest extends BaseRestClientTest {
    }
 
    private void assertDetails(CpuUsageDetails details) {
-      assertEquals(details.getEntries().size(), 7);
+      assertEquals(details.getEntries().size(), 289);
       for(ComputePoolCpuUsageDetailSummaryEntry entry: details.getEntries()) {
          assertDetail(entry);
       }
