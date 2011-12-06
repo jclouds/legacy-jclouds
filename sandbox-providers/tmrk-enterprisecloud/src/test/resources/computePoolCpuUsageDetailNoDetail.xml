@@ -1,0 +1,17 @@
+<ComputePoolCpuUsageDetail
+        href="/cloudapi/ecloud/computepools/89/usage/cpu/details?time=1974-12-05t10%3a10%3a00z"
+        type="application/vnd.tmrk.cloud.computePoolCpuUsageDetail"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <Links>
+        <Link href="/cloudapi/ecloud/computepools/89"
+              name="Default Compute Pool"
+              type="application/vnd.tmrk.cloud.computePool" rel="up"/>
+        <Link href="/cloudapi/ecloud/computepools/89/usage/cpu"
+              type="application/vnd.tmrk.cloud.computePoolCpuUsage" rel="up"/>
+    </Links>
+    <Time>1974-12-05T10:10:00Z</Time>
+    <Value>
+        <Unit>MHz</Unit>
+        <Value>0</Value>
+    </Value>
+</ComputePoolCpuUsageDetail>

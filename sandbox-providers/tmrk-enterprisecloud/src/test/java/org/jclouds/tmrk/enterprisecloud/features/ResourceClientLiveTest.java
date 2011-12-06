@@ -18,14 +18,18 @@
  */
 package org.jclouds.tmrk.enterprisecloud.features;
 
+import org.jclouds.tmrk.enterprisecloud.domain.Link;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsageDetail;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import java.net.URI;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 
@@ -64,10 +68,32 @@ public class ResourceClientLiveTest extends BaseTerremarkEnterpriseCloudClientLi
 
    public void testGetComputePoolCpuUsage() throws Exception {
       ComputePoolCpuUsage cpuUsage = client.getComputePoolCpuUsage(URI.create("/cloudapi/ecloud/computepools/89/usage/cpu"));
+      for(Link link: cpuUsage.getLinks()) {
+         //The compute pool cpu usage has a link to a detail entry
+         if( "application/vnd.tmrk.cloud.computePoolCpuUsageDetail".equals(link.getType())) {
+            testGetComputePoolCpuUsageDetail(link.getHref());
+         }
+      }
       assertNotNull(cpuUsage);
    }
 
    public void testMissingComputePoolCpuUsage() {
       assertNull(client.getComputePoolCpuUsage(URI.create("/cloudapi/ecloud/computepools/-1/usage/cpu")));
+   }
+
+   private void testGetComputePoolCpuUsageDetail(URI uri) {
+      ComputePoolCpuUsageDetail detail = client.getComputePoolCpuUsageDetail(uri);
+      assertNotNull(detail.getTime());
+   }
+
+   public void testMissingComputePoolCpuUsageDetail() {
+      assertNull(client.getComputePoolCpuUsageDetail(URI.create("/cloudapi/ecloud/computepools/-1/usage/cpu/details?time=2011-12-05t10%3a10%3a00z")));
+   }
+
+   public void testMissingDateComputePoolCpuUsageDetail() {
+      ComputePoolCpuUsageDetail detail = client.getComputePoolCpuUsageDetail(URI.create("/cloudapi/ecloud/computepools/89/usage/cpu/details?time=1974-01-01t10%3a10%3a00z"));
+      assertNotNull(detail.getTime());
+      assertEquals(detail.getValue(), ResourceCapacity.builder().value(0).unit("MHz").build());
+      assertNull(detail.getVirtualMachinesCpuUsage());
    }
 }

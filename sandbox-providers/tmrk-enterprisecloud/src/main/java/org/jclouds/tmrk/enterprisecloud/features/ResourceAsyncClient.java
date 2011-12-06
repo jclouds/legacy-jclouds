@@ -25,6 +25,7 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsageDetail;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -70,4 +71,13 @@ public interface ResourceAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<ComputePoolCpuUsage> getComputePoolCpuUsage(@EndpointParam URI uri);
+
+   /**
+    * @see ResourceClient#getComputePoolCpuUsageDetail
+    */
+   @GET
+   @Consumes("application/vnd.tmrk.cloud.computePoolCpuUsageDetail")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<ComputePoolCpuUsageDetail> getComputePoolCpuUsageDetail(@EndpointParam URI uri);
 }
