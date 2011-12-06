@@ -21,6 +21,9 @@ package org.jclouds.aws.ec2.compute.config;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.compute.domain.OsFamily.AMZN_LINUX;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -39,8 +42,10 @@ import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier;
 import org.jclouds.ec2.compute.config.EC2BindComputeStrategiesByClass;
 import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.functions.RegionAndIdToImage;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
@@ -53,10 +58,14 @@ import org.jclouds.ec2.compute.strategy.EC2ListNodesStrategy;
 import org.jclouds.ec2.compute.strategy.ReviseParsedImage;
 import org.jclouds.ec2.compute.suppliers.EC2HardwareSupplier;
 import org.jclouds.ec2.compute.suppliers.RegionAndNameToImageSupplier;
-import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
+import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.suppliers.SetAndThrowAuthorizationExceptionSupplier;
 
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.base.Throwables;
 import com.google.common.cache.Cache;
+import com.google.common.cache.CacheLoader;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 
@@ -88,17 +97,42 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
       install(new AWSEC2ComputeServiceDependenciesModule());
    }
 
+   // TODO duplicates EC2ComputeServiceContextModule; but that's easiest thing to do with guice; could extract to common util
+   @Provides
+   @Singleton
+   protected Supplier<CacheLoader<RegionAndName, Image>> provideRegionAndNameToImageSupplierCacheLoader(
+            final RegionAndIdToImage delegate) {
+      return Suppliers.<CacheLoader<RegionAndName, Image>>ofInstance(new CacheLoader<RegionAndName, Image>() {
+
+         @Override
+         public Image load(final RegionAndName key) throws Exception {
+            // raw lookup of an image
+            Supplier<Image> rawSupplier = new Supplier<Image>() {
+               @Override public Image get() {
+                  try {
+                     return delegate.load(key);
+                  } catch (ExecutionException e) {
+                     throw Throwables.propagate(e);
+                  }
+               }
+            };
+            
+            // wrap in retry logic
+            AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
+            Supplier<Image> retryingSupplier = new RetryOnTimeOutExceptionSupplier<Image>(
+                  new SetAndThrowAuthorizationExceptionSupplier<Image>(rawSupplier, authException));
+            
+            return retryingSupplier.get();
+         }
+         
+      });
+   }
+
    @Provides
    @Singleton
    protected Supplier<Cache<RegionAndName, ? extends Image>> provideRegionAndNameToImageSupplierCache(
             @Named(PROPERTY_SESSION_INTERVAL) long seconds, final RegionAndNameToImageSupplier supplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Cache<RegionAndName, ? extends Image>>(
-               authException, seconds, new Supplier<Cache<RegionAndName, ? extends Image>>() {
-                  @Override
-                  public Cache<RegionAndName, ? extends Image> get() {
-                     return supplier.get();
-                  }
-               });
+      return supplier;
    }
 
    @Override
