@@ -20,6 +20,7 @@ package org.jclouds.tmrk.enterprisecloud.features;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
@@ -38,8 +39,19 @@ import java.util.concurrent.TimeUnit;
 public interface ResourceClient {
 
    /**
-    * The Get Resources Summary call returns resource summary information regarding a specified compute pool defined in an environment.
-    * @param uri the uri of the compute pool
+    * The Get Resources Summary List call returns summary information regarding
+    * resource utilization in the compute pools defined in an environment.
+    * @param uri the uri of the call based upon the environment
+    * e.g. /cloudapi/ecloud/computepools/environments/{id}/resourcesummarylist
+    * @return the summary list
+    */
+   ComputePoolResourceSummaryList getResourceSummaries(URI uri);
+
+   /**
+    * The Get Resources Summary call returns resource summary information regarding
+    * a specified compute pool defined in an environment.
+    * @param uri the uri of the call based upon the compute pool
+    * e.g. /cloudapi/ecloud/computepools/{id}/resourcesummary
     * @return the summary
     */
    ComputePoolResourceSummary getResourceSummary(URI uri);

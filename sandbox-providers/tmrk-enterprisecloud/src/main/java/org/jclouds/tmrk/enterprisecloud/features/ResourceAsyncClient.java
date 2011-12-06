@@ -23,6 +23,7 @@ import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -41,6 +42,15 @@ import java.net.URI;
 @RequestFilters(BasicAuthentication.class)
 @Headers(keys = "x-tmrk-version", values = "{jclouds.api-version}")
 public interface ResourceAsyncClient {
+
+   /**
+    * @see ResourceClient#getResourceSummary
+    */
+   @GET
+   @Consumes("application/vnd.tmrk.cloud.computePoolResourceSummary; type=collection")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<ComputePoolResourceSummaryList> getResourceSummaries(@EndpointParam URI uri);
 
    /**
     * @see ResourceClient#getResourceSummary

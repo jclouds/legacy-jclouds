@@ -19,6 +19,7 @@
 package org.jclouds.tmrk.enterprisecloud.features;
 
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -41,6 +42,15 @@ public class ResourceClientLiveTest extends BaseTerremarkEnterpriseCloudClientLi
    }
 
    private ResourceClient client;
+
+   public void testGetResourceSummaries() throws Exception {
+      ComputePoolResourceSummaryList list = client.getResourceSummaries(URI.create("/cloudapi/ecloud/computepools/environments/77/resourcesummarylist"));
+      assertNotNull(list);
+   }
+
+   public void testMissingResourceSummaries() {
+      assertNull(client.getResourceSummaries(URI.create("/cloudapi/ecloud/computepools/environments/-1/resourcesummarylist")));
+   }
 
    public void testGetResourceSummary() throws Exception {
       ComputePoolResourceSummary resourceSummary = client.getResourceSummary(URI.create("/cloudapi/ecloud/computepools/89/resourcesummary"));
