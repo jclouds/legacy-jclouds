@@ -23,10 +23,12 @@ import org.jclouds.cloudstack.domain.DiskOffering;
 import org.jclouds.cloudstack.domain.NetworkOffering;
 import org.jclouds.cloudstack.domain.ServiceOffering;
 import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.options.CreateDiskOfferingOptions;
 import org.jclouds.cloudstack.options.CreateServiceOfferingOptions;
 import org.jclouds.cloudstack.options.ListDiskOfferingsOptions;
 import org.jclouds.cloudstack.options.ListNetworkOfferingsOptions;
 import org.jclouds.cloudstack.options.ListServiceOfferingsOptions;
+import org.jclouds.cloudstack.options.UpdateDiskOfferingOptions;
 import org.jclouds.cloudstack.options.UpdateServiceOfferingOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.OnlyElement;
@@ -85,4 +87,33 @@ public interface GlobalOfferingAsyncClient extends OfferingAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Void> deleteServiceOffering(@QueryParam("id") long id);
 
+   /**
+    * @see GlobalOfferingClient#createDiskOffering
+    */
+   @GET
+   @QueryParams(keys = "command", values = "createDiskOffering")
+   @SelectJson("diskoffering")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<DiskOffering> createDiskOffering(@QueryParam("name") String name,
+         @QueryParam("displaytext") String displayText, CreateDiskOfferingOptions... options);
+
+   /**
+    * @see GlobalOfferingClient#updateDiskOffering
+    */
+   @GET
+   @QueryParams(keys = "command", values = "updateDiskOffering")
+   @SelectJson("diskoffering")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<DiskOffering> updateDiskOffering(@QueryParam("id") long id, UpdateDiskOfferingOptions... options);
+
+   /**
+    * @see GlobalOfferingClient#deleteDiskOffering
+    */
+   @GET
+   @QueryParams(keys = "command", values = "deleteDiskOffering")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Void> deleteDiskOffering(@QueryParam("id") long id);
 }

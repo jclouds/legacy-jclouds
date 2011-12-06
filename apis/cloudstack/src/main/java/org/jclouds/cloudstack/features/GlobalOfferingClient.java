@@ -18,8 +18,11 @@
  */
 package org.jclouds.cloudstack.features;
 
+import org.jclouds.cloudstack.domain.DiskOffering;
 import org.jclouds.cloudstack.domain.ServiceOffering;
+import org.jclouds.cloudstack.options.CreateDiskOfferingOptions;
 import org.jclouds.cloudstack.options.CreateServiceOfferingOptions;
+import org.jclouds.cloudstack.options.UpdateDiskOfferingOptions;
 import org.jclouds.cloudstack.options.UpdateServiceOfferingOptions;
 import org.jclouds.concurrent.Timeout;
 
@@ -76,4 +79,38 @@ public interface GlobalOfferingClient extends OfferingClient {
     *       the ID of the service offering
     */
    Void deleteServiceOffering(long id);
+
+   /**
+    * Create a new disk offering
+    *
+    * @param name
+    *          name of the disk offering
+    * @param displayText
+    *          display text for disk offering
+    * @param options
+    *          optional arguments
+    * @return
+    *          disk offering instance
+    */
+   DiskOffering createDiskOffering(String name, String displayText, CreateDiskOfferingOptions... options);
+
+   /**
+    * Update a disk offering
+    *
+    * @param id
+    *          disk offering ID
+    * @param options
+    *          optional arguments
+    * @return
+    *          disk offering instance
+    */
+   DiskOffering updateDiskOffering(long id, UpdateDiskOfferingOptions... options);
+
+   /**
+    * Delete disk offering
+    *
+    * @param id
+    *       the ID of the disk offering
+    */
+   Void deleteDiskOffering(long id);
 }
