@@ -153,10 +153,6 @@ public class ComputePoolResourceSummaryList extends Resource<ComputePoolResource
        //For JAXB
    }
 
-   public Set<Link> getLinks() {
-       return Collections.unmodifiableSet(links.getLinks());
-   }
-
    public Set<ComputePoolResourceSummary> getComputePoolResourceSummaries() {
       return summaries;
    }

@@ -153,10 +153,6 @@ public class Templates extends Resource<Templates> {
        //For JAXB
    }
 
-   public Set<Link> getLinks() {
-       return Collections.unmodifiableSet(links.getLinks());
-   }
-
    public Set<TemplateFamily> getTemplateFamilies() {
       return families.getTemplateFamilies();
    }
