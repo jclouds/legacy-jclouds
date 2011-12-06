@@ -16,9 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.tmrk.enterprisecloud.domain.template;
+package org.jclouds.tmrk.enterprisecloud.domain.resource.memory;
 
-import com.google.common.collect.Sets;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.tmrk.enterprisecloud.domain.Action;
 import org.jclouds.tmrk.enterprisecloud.domain.Link;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
@@ -27,20 +27,20 @@ import org.jclouds.tmrk.enterprisecloud.domain.internal.Resource;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
-import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Templates is more than a simple wrapper as it extends BaseResource.
- * <xs:complexType name="Templates">
+ * ComputePoolMemoryUsage is more than a simple wrapper as it extends Resource.
+ * <xs:complexType name="ComputePoolMemoryUsage">
  * @author Jason King
  * 
  */
-@XmlRootElement(name = "Templates")
-public class Templates extends Resource<Templates> {
+@XmlRootElement(name = "ComputePoolMemoryUsage")
+public class ComputePoolMemoryUsage extends Resource<ComputePoolMemoryUsage> {
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -52,34 +52,52 @@ public class Templates extends Resource<Templates> {
     */
    @Override
    public Builder toBuilder() {
-      return new Builder().fromTemplates(this);
+      return new Builder().fromComputePoolCpuUsage(this);
    }
 
-   public static class Builder extends Resource.Builder<Templates> {
-      private Set<TemplateFamily> families = Sets.newLinkedHashSet();
+   public static class Builder extends Resource.Builder<ComputePoolMemoryUsage> {
+      private Date startTime;
+      private Date endTime;
+      private MemoryUsageDetails details;
 
       /**
-       * @see Templates#getTemplateFamilies
+       * @see ComputePoolMemoryUsage#getStartTime
        */
-      public Builder families(Set<TemplateFamily> families) {
-         this.families =(checkNotNull(families,"families"));
+      public Builder startTime(Date startTime) {
+         this.startTime =(checkNotNull(startTime,"startTime"));
+         return this;
+      }
+
+      /**
+       * @see ComputePoolMemoryUsage#getEndTime
+       */
+      public Builder endTime(Date endTime) {
+         this.endTime =(checkNotNull(endTime,"endTime"));
+         return this;
+      }
+
+      /**
+       * @see ComputePoolMemoryUsage#getDetails
+       */
+      public Builder details(MemoryUsageDetails details) {
+         this.details =(checkNotNull(details,"details"));
          return this;
       }
 
       @Override
-      public Templates build() {
-         return new Templates(href, type, name, links, actions, families);
+      public ComputePoolMemoryUsage build() {
+         return new ComputePoolMemoryUsage(href, type, name, links, actions, startTime, endTime, details);
       }
 
-      public Builder fromTemplates(Templates in) {
-         return fromResource(in).families(in.getTemplateFamilies());
+      public Builder fromComputePoolCpuUsage(ComputePoolMemoryUsage in) {
+         return fromResource(in).startTime(in.getStartTime()).endTime(in.getEndTime()).details(in.getDetails());
       }
 
       /**
        * {@inheritDoc}
        */
       @Override
-      public Builder fromBaseResource(BaseResource<Templates> in) {
+      public Builder fromBaseResource(BaseResource<ComputePoolMemoryUsage> in) {
          return Builder.class.cast(super.fromBaseResource(in));
       }
 
@@ -87,7 +105,7 @@ public class Templates extends Resource<Templates> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResource(Resource<Templates> in) {
+      public Builder fromResource(Resource<ComputePoolMemoryUsage> in) {
          return Builder.class.cast(super.fromResource(in));
       }
 
@@ -141,20 +159,36 @@ public class Templates extends Resource<Templates> {
 
    }
 
-   @XmlElement(name = "Families", required = false)
-   private TemplateFamilies families;
+   @XmlElement(name = "StartTime", required = true)
+   private Date startTime;
 
-   private Templates(URI href, String type, String name, Set<Link> links, Set<Action> actions, Set<TemplateFamily> families) {
+   @XmlElement(name = "EndTime", required = true)
+   private Date endTime;
+
+   @XmlElement(name = "MemoryUsageDetailSummary", required = false)
+   private MemoryUsageDetails details;
+
+   private ComputePoolMemoryUsage(URI href, String type, String name, Set<Link> links, Set<Action> actions, Date startTime, Date endTime, @Nullable MemoryUsageDetails details) {
       super(href, type, name, links, actions);
-      this.families = TemplateFamilies.builder().families(families).build();
+      this.startTime = checkNotNull(startTime, "startTime");
+      this.endTime = checkNotNull(endTime, "endTime");
+      this.details = details;
    }
 
-   private Templates() {
+   private ComputePoolMemoryUsage() {
        //For JAXB
    }
 
-   public Set<TemplateFamily> getTemplateFamilies() {
-      return families.getTemplateFamilies();
+   public Date getStartTime() {
+      return startTime;
+   }
+
+   public Date getEndTime() {
+      return endTime;
+   }
+
+   public MemoryUsageDetails getDetails() {
+      return details;
    }
 
    @Override
@@ -163,10 +197,12 @@ public class Templates extends Resource<Templates> {
       if (o == null || getClass() != o.getClass()) return false;
       if (!super.equals(o)) return false;
 
-      Templates templates = (Templates) o;
+      ComputePoolMemoryUsage that = (ComputePoolMemoryUsage) o;
 
-      if (families != null ? !families.equals(templates.families) : templates.families != null)
+      if (details != null ? !details.equals(that.details) : that.details != null)
          return false;
+      if (!endTime.equals(that.endTime)) return false;
+      if (!startTime.equals(that.startTime)) return false;
 
       return true;
    }
@@ -174,12 +210,14 @@ public class Templates extends Resource<Templates> {
    @Override
    public int hashCode() {
       int result = super.hashCode();
-      result = 31 * result + (families != null ? families.hashCode() : 0);
+      result = 31 * result + startTime.hashCode();
+      result = 31 * result + endTime.hashCode();
+      result = 31 * result + (details != null ? details.hashCode() : 0);
       return result;
    }
 
    @Override
    public String string() {
-      return super.string()+", families="+families;
+      return super.string()+", startTime="+startTime+", endTime="+endTime+", details="+details;
    }
 }

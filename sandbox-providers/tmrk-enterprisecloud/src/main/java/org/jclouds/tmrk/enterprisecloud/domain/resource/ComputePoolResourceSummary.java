@@ -23,6 +23,7 @@ import org.jclouds.tmrk.enterprisecloud.domain.Action;
 import org.jclouds.tmrk.enterprisecloud.domain.Link;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.Resource;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.CpuComputeResourceSummary;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;

@@ -22,7 +22,12 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsageDetail;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsage;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsageDetail;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -46,8 +51,53 @@ public interface ResourceAsyncClient {
     * @see ResourceClient#getResourceSummary
     */
    @GET
+   @Consumes("application/vnd.tmrk.cloud.computePoolResourceSummary; type=collection")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<ComputePoolResourceSummaryList> getResourceSummaries(@EndpointParam URI uri);
+
+   /**
+    * @see ResourceClient#getResourceSummary
+    */
+   @GET
    @Consumes("application/vnd.tmrk.cloud.computePoolResourceSummary")
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<ComputePoolResourceSummary> getResourceSummary(@EndpointParam URI uri);
+
+   /**
+    * @see ResourceClient#getComputePoolCpuUsage
+    */
+   @GET
+   @Consumes("application/vnd.tmrk.cloud.computePoolCpuUsage")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<ComputePoolCpuUsage> getComputePoolCpuUsage(@EndpointParam URI uri);
+
+   /**
+    * @see ResourceClient#getComputePoolCpuUsageDetail
+    */
+   @GET
+   @Consumes("application/vnd.tmrk.cloud.computePoolCpuUsageDetail")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<ComputePoolCpuUsageDetail> getComputePoolCpuUsageDetail(@EndpointParam URI uri);
+
+   /**
+    * @see ResourceClient#getComputePoolMemoryUsage
+    */
+   @GET
+   @Consumes("application/vnd.tmrk.cloud.computePoolMemoryUsage")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<ComputePoolMemoryUsage> getComputePoolMemoryUsage(@EndpointParam URI uri);
+
+   /**
+    * @see ResourceClient#getComputePoolMemoryUsageDetail
+    */
+   @GET
+   @Consumes("application/vnd.tmrk.cloud.computePoolMemoryUsageDetail")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<ComputePoolMemoryUsageDetail> getComputePoolMemoryUsageDetail(@EndpointParam URI uri);
 }

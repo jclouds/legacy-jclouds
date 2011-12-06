@@ -38,6 +38,21 @@ import java.net.URISyntaxException;
 @Test(groups = "unit", testName = "ResourceAsyncClient")
 public class ResourceAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClientTest<ResourceAsyncClient> {
 
+   public void testGetResourceSummaries() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = ResourceAsyncClient.class.getMethod("getResourceSummaries", URI.class);
+      HttpRequest httpRequest = processor.createRequest(method, new URI("/cloudapi/ecloud/computepools/environments/77/resourcesummarylist"));
+
+      assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/computepools/environments/77/resourcesummarylist HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest,
+            "Accept: application/vnd.tmrk.cloud.computePoolResourceSummary; type=collection\nx-tmrk-version: 2011-07-01\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
    public void testGetResourceSummary() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
       Method method = ResourceAsyncClient.class.getMethod("getResourceSummary", URI.class);
       HttpRequest httpRequest = processor.createRequest(method, new URI("/cloudapi/ecloud/computepools/89/resourcesummary"));
@@ -45,6 +60,66 @@ public class ResourceAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncCl
       assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/computepools/89/resourcesummary HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest,
             "Accept: application/vnd.tmrk.cloud.computePoolResourceSummary\nx-tmrk-version: 2011-07-01\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testGetComputePoolCpuUsage() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = ResourceAsyncClient.class.getMethod("getComputePoolCpuUsage", URI.class);
+      HttpRequest httpRequest = processor.createRequest(method, URI.create("/cloudapi/ecloud/computepools/89/usage/cpu"));
+
+      assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/computepools/89/usage/cpu HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest,
+            "Accept: application/vnd.tmrk.cloud.computePoolCpuUsage\nx-tmrk-version: 2011-07-01\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testGetComputePoolCpuUsageDetail() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = ResourceAsyncClient.class.getMethod("getComputePoolCpuUsageDetail", URI.class);
+      HttpRequest httpRequest = processor.createRequest(method, URI.create("/cloudapi/ecloud/computepools/89/usage/cpu/details?time=2011-12-05t10%3a10%3a00z"));
+
+      assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/computepools/89/usage/cpu/details?time=2011-12-05t10%3a10%3a00z HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest,
+            "Accept: application/vnd.tmrk.cloud.computePoolCpuUsageDetail\nx-tmrk-version: 2011-07-01\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testGetComputePoolMemoryUsage() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = ResourceAsyncClient.class.getMethod("getComputePoolMemoryUsage", URI.class);
+      HttpRequest httpRequest = processor.createRequest(method, URI.create("/cloudapi/ecloud/computepools/89/usage/memory"));
+
+      assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/computepools/89/usage/memory HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest,
+            "Accept: application/vnd.tmrk.cloud.computePoolMemoryUsage\nx-tmrk-version: 2011-07-01\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testGetComputePoolMemoryUsageDetail() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = ResourceAsyncClient.class.getMethod("getComputePoolMemoryUsageDetail", URI.class);
+      HttpRequest httpRequest = processor.createRequest(method, URI.create("/cloudapi/ecloud/computepools/89/usage/memory/details?time=2011-12-05t10%3a10%3a00z"));
+
+      assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/computepools/89/usage/memory/details?time=2011-12-05t10%3a10%3a00z HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest,
+            "Accept: application/vnd.tmrk.cloud.computePoolMemoryUsageDetail\nx-tmrk-version: 2011-07-01\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);

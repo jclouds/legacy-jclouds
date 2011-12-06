@@ -36,6 +36,7 @@ import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.*;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.CpuComputeResourceSummary;
 import org.jclouds.tmrk.enterprisecloud.features.ResourceAsyncClient;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -90,7 +91,7 @@ public class ComputePoolResourceSummaryJAXBParsingTest extends BaseRestClientTes
    }
 
    @Test
-   public void testParseLocationWithJAXB() throws Exception {
+   public void testParseWithJAXB() throws Exception {
       Method method = ResourceAsyncClient.class.getMethod("getResourceSummary",URI.class);
       HttpRequest request = factory(ResourceAsyncClient.class).createRequest(method, new URI("/1"));
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
