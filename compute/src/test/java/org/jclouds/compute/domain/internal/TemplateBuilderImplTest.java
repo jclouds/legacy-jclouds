@@ -79,6 +79,10 @@ public class TemplateBuilderImplTest {
       expect(image2.getVersion()).andReturn("imageVersion");
       expect(image.getOperatingSystem()).andReturn(os).atLeastOnce();
       expect(image2.getOperatingSystem()).andReturn(os2).atLeastOnce();
+      expect(image.getLocation()).andReturn(defaultLocation).anyTimes();
+      expect(image2.getLocation()).andReturn(defaultLocation).anyTimes();
+      expect(image.getProviderId()).andReturn("imageId").anyTimes();
+      expect(image2.getProviderId()).andReturn("imageId2").anyTimes();
       expect(os.getName()).andReturn("osName");
       expect(os2.getName()).andReturn("osName");
       expect(os.getVersion()).andReturn("osVersion");
@@ -87,7 +91,8 @@ public class TemplateBuilderImplTest {
       expect(os2.getDescription()).andReturn("osDescription");
       expect(os.getArch()).andReturn("X86_64").atLeastOnce();
       expect(os2.getArch()).andReturn("X86_64").atLeastOnce();
-
+      expect(defaultLocation.getId()).andReturn("location").anyTimes();
+      
       replay(image);
       replay(image2);
       replay(os);
@@ -135,11 +140,15 @@ public class TemplateBuilderImplTest {
 
       expect(optionsProvider.get()).andReturn(new TemplateOptions());
 
+      expect(defaultLocation.getId()).andReturn("myregion").anyTimes();
+      
       expect(image.getLocation()).andReturn(defaultLocation).atLeastOnce();
       expect(image2.getLocation()).andReturn(defaultLocation).atLeastOnce();
       expect(image.getOperatingSystem()).andReturn(os).atLeastOnce();
       expect(image2.getOperatingSystem()).andReturn(os2).atLeastOnce();
-      expect(image.getId()).andReturn("myregion/1");
+      expect(image.getId()).andReturn("myregion/1").atLeastOnce();
+      expect(image.getProviderId()).andReturn("1").anyTimes();
+      expect(image2.getProviderId()).andReturn("2").anyTimes();
 
       expect(os.getArch()).andReturn("X86_32").atLeastOnce();
       expect(os2.getArch()).andReturn("X86_64").atLeastOnce();

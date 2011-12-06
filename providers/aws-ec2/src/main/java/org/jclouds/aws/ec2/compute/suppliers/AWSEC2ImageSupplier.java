@@ -20,7 +20,6 @@ package org.jclouds.aws.ec2.compute.suppliers;
 
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.transform;
-import static com.google.common.collect.Maps.uniqueIndex;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUERY;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_REGIONS;
@@ -40,6 +39,7 @@ import org.jclouds.aws.ec2.compute.config.ClusterCompute;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.functions.ImagesToRegionAndIdMap;
 import org.jclouds.location.Region;
 import org.jclouds.logging.Logger;
 
@@ -48,7 +48,6 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.cache.Cache;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -122,16 +121,7 @@ public class AWSEC2ImageSupplier implements Supplier<Set<? extends Image>> {
          throw Throwables.propagate(e);
       }
 
-      // TODO Need to clear out old entries; previously it was a new cache object every time 
-      // (and enclosed within the cache provider so didn't risk someone getting the cache while it was empty)!
-      ImmutableMap<RegionAndName, ? extends Image> imageMap = uniqueIndex(parsedImages, new Function<Image, RegionAndName>() {
-
-         @Override
-         public RegionAndName apply(Image from) {
-            return new RegionAndName(from.getLocation().getId(), from.getProviderId());
-         }
-
-      });
+      final Map<RegionAndName, ? extends Image> imageMap = ImagesToRegionAndIdMap.imagesToMap(parsedImages);
       cache.get().invalidateAll();
       cache.get().asMap().putAll((Map)imageMap);
       logger.debug("<< images(%d)", imageMap.size());

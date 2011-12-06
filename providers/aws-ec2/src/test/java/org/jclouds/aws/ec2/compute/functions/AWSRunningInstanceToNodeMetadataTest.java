@@ -36,6 +36,7 @@ import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.ec2.compute.config.EC2ComputeServiceDependenciesModule;
 import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.functions.ImagesToRegionAndIdMap;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.InstanceState;
@@ -43,7 +44,6 @@ import org.jclouds.ec2.domain.RootDeviceType;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.cache.Cache;
@@ -52,7 +52,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.google.inject.Guice;
 
 /**
@@ -159,15 +158,8 @@ public class AWSRunningInstanceToNodeMetadataTest {
             Map<String, Credentials> credentialStore) {
       Map<InstanceState, NodeState> instanceToNodeState = EC2ComputeServiceDependenciesModule.instanceToNodeState;
 
-      final ImmutableMap<RegionAndName, Image> backing = Maps.uniqueIndex(images, new Function<Image, RegionAndName>() {
+      final Map<RegionAndName, ? extends Image> backing = ImagesToRegionAndIdMap.imagesToMap(images);
 
-         @Override
-         public RegionAndName apply(Image from) {
-            return new RegionAndName(from.getLocation().getId(), from.getProviderId());
-         }
-
-      });
-      
       Cache<RegionAndName, Image> instanceToImage = CacheBuilder.newBuilder().build(new CacheLoader<RegionAndName, Image> (){
     
          @Override

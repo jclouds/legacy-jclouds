@@ -18,7 +18,6 @@
  */
 package org.jclouds.ec2.compute;
 
-import static com.google.common.collect.Maps.uniqueIndex;
 import static java.lang.String.format;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
@@ -56,6 +55,7 @@ import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.functions.ImagesToRegionAndIdMap;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
 import org.testng.annotations.Test;
 
@@ -196,12 +196,7 @@ public class EC2TemplateBuilderTest {
       
       // weird compilation error means have to cast this - see https://bugs.eclipse.org/bugs/show_bug.cgi?id=365818
       @SuppressWarnings("unchecked")
-      ImmutableMap<RegionAndName, Image> imageMap = (ImmutableMap<RegionAndName, Image>) uniqueIndex(images.get(), new Function<Image, RegionAndName>() {
-         @Override
-         public RegionAndName apply(Image from) {
-            return new RegionAndName(from.getLocation().getId(), from.getProviderId());
-         }
-      });
+      ImmutableMap<RegionAndName, Image> imageMap = (ImmutableMap<RegionAndName, Image>) ImagesToRegionAndIdMap.imagesToMap(images.get());
       Supplier<Cache<RegionAndName, ? extends Image>> imageCache = Suppliers.<Cache<RegionAndName, ? extends Image>> ofInstance(
                CacheBuilder.newBuilder().<RegionAndName,Image>build(CacheLoader.from(Functions.forMap(imageMap))));
 

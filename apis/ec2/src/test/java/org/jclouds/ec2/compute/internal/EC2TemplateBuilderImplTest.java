@@ -18,7 +18,6 @@
  */
 package org.jclouds.ec2.compute.internal;
 
-import static com.google.common.collect.Maps.uniqueIndex;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
@@ -43,10 +42,11 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.functions.ImagesToRegionAndIdMap;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.cache.Cache;
@@ -86,20 +86,8 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
          });
          
       } else {
-         imageMap = CacheBuilder.newBuilder().build(new CacheLoader<RegionAndName, Image>() {
-            @Override
-            public Image load(RegionAndName from) {
-               return uniqueIndex(images.get(), new Function<Image, RegionAndName>() {
-                  
-                  @Override
-                  public RegionAndName apply(Image from) {
-                     return new RegionAndName(from.getLocation().getId(), from.getProviderId());
-                  }
-                  
-               }).get(from);
-            }
-   
-         });
+         imageMap = CacheBuilder.newBuilder().build(CacheLoader.from(Functions.forMap(
+                  ImagesToRegionAndIdMap.imagesToMap(images.get()))));
       }
 
       return new EC2TemplateBuilderImpl(locations, images, sizes, Suppliers.ofInstance(defaultLocation),
