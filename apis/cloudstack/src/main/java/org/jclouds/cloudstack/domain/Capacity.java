@@ -230,6 +230,20 @@ public class Capacity implements Comparable<Capacity> {
    }
 
    @Override
+   public String toString() {
+      return "[" +
+         "podId=" + podId +
+         ", podName='" + podName + '\'' +
+         ", zoneId=" + zoneId +
+         ", zoneName='" + zoneName + '\'' +
+         ", type=" + type +
+         ", capacityUsed=" + capacityUsed +
+         ", capacityTotal=" + capacityTotal +
+         ", percentUsed=" + percentUsed +
+         ']';
+   }
+
+   @Override
    public int compareTo(Capacity other) {
       int comparison = Long.valueOf(this.zoneId).compareTo(other.zoneId);
       if (comparison != 0) return comparison;
