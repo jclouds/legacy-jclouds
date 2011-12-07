@@ -18,13 +18,11 @@
  */
 package org.jclouds.aws.ec2.compute.config;
 
-import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.compute.domain.OsFamily.AMZN_LINUX;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.AWSEC2PropertiesBuilder;
@@ -131,7 +129,7 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
    @Provides
    @Singleton
    protected Supplier<Cache<RegionAndName, ? extends Image>> provideRegionAndNameToImageSupplierCache(
-            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final RegionAndNameToImageSupplier supplier) {
+            final RegionAndNameToImageSupplier supplier) {
       return supplier;
    }
 

@@ -19,7 +19,6 @@
 package org.jclouds.ec2.compute.config;
 
 import static com.google.common.collect.Iterables.toArray;
-import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
 import java.util.concurrent.ExecutionException;
@@ -37,7 +36,6 @@ import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.functions.RegionAndIdToImage;
 import org.jclouds.ec2.compute.suppliers.RegionAndNameToImageSupplier;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.rest.suppliers.SetAndThrowAuthorizationExceptionSupplier;
 
 import com.google.common.base.Splitter;
@@ -69,7 +67,7 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
    @Provides
    @Singleton
    protected Supplier<Cache<RegionAndName, ? extends Image>> provideRegionAndNameToImageSupplierCache(
-            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final RegionAndNameToImageSupplier supplier) {
+            final RegionAndNameToImageSupplier supplier) {
       return supplier;
    }
 
