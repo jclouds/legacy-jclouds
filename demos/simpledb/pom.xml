@@ -24,7 +24,7 @@
 	<parent>
 		<groupId>org.jclouds</groupId>
 		<artifactId>jclouds-demos-project</artifactId>
-		<version>1.0-SNAPSHOT</version>
+		<version>1.3.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>jclouds-demo-simpledb</artifactId>
 	<name>jclouds simpledb sample that putAttributes and select it</name>
@@ -32,8 +32,8 @@
 	
   <dependencies>
       <dependency>
-          <groupId>org.jclouds.api</groupId>
-          <artifactId>simpledb</artifactId>
+          <groupId>org.jclouds.provider</groupId>
+          <artifactId>aws-simpledb</artifactId>
           <version>${project.version}</version>
       </dependency>
   </dependencies>

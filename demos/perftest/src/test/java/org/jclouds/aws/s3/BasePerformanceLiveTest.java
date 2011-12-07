@@ -37,7 +37,7 @@ import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.JdkFutureAdapters;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -162,7 +162,7 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
       }
 
       public ListenableFuture<?> get() {
-         return Futures.makeListenable(putByteArray(bucketName, key.getAndIncrement() + "", test,
+         return JdkFutureAdapters.listenInPoolThread(putByteArray(bucketName, key.getAndIncrement() + "", test,
                   "application/octetstring"));
       }
    }
@@ -177,7 +177,7 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
       }
 
       public ListenableFuture<?> get() {
-         return Futures.makeListenable(putFile(bucketName, key.getAndIncrement() + "", file, "text/xml"));
+         return JdkFutureAdapters.listenInPoolThread(putFile(bucketName, key.getAndIncrement() + "", file, "text/xml"));
       }
    }
 
@@ -193,7 +193,7 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
       @Override
       public ListenableFuture<?> get() {
 
-         return Futures.makeListenable(putInputStream(bucketName, key.getAndIncrement() + "", new ByteArrayInputStream(
+         return JdkFutureAdapters.listenInPoolThread(putInputStream(bucketName, key.getAndIncrement() + "", new ByteArrayInputStream(
                   test), "application/octetstring"));
 
       }
@@ -209,7 +209,7 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
       }
 
       public ListenableFuture<?> get() {
-         return Futures.makeListenable(putString(bucketName, key.getAndIncrement() + "", testString, "text/plain"));
+         return JdkFutureAdapters.listenInPoolThread(putString(bucketName, key.getAndIncrement() + "", testString, "text/plain"));
       }
    }
 

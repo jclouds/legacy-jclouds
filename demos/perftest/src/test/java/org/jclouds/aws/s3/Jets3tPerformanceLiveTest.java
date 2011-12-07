@@ -28,6 +28,7 @@ import java.util.concurrent.Future;
 
 import org.jets3t.service.S3Service;
 import org.jets3t.service.impl.rest.httpclient.RestS3Service;
+import org.jets3t.service.model.S3Object;
 import org.jets3t.service.security.AWSCredentials;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
@@ -95,23 +96,21 @@ public class Jets3tPerformanceLiveTest extends BasePerformanceLiveTest {
 
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    protected Future<?> putFile(final String bucket, String key, File data, String contentType) {
       final org.jets3t.service.model.S3Object object = new org.jets3t.service.model.S3Object(key);
       object.setContentType(contentType);
       object.setDataInputFile(data);
       object.setContentLength(data.length());
-      return exec.submit(new Callable() {
+      return exec.submit(new Callable<S3Object>() {
          @Override
-         public Object call() throws Exception {
+         public S3Object call() throws Exception {
             return jetClient.putObject(bucket, object);
          }
       });
 
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    protected Future<?> putInputStream(final String bucket, String key, InputStream data, String contentType) {
       final org.jets3t.service.model.S3Object object = new org.jets3t.service.model.S3Object(key);
@@ -122,9 +121,9 @@ public class Jets3tPerformanceLiveTest extends BasePerformanceLiveTest {
       } catch (IOException e) {
          Throwables.propagate(e);
       }
-      return exec.submit(new Callable() {
+      return exec.submit(new Callable<S3Object>() {
          @Override
-         public Object call() throws Exception {
+         public S3Object call() throws Exception {
             return jetClient.putObject(bucket, object);
          }
       });

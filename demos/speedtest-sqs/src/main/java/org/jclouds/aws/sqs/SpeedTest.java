@@ -18,8 +18,8 @@
  */
 package org.jclouds.aws.sqs;
 
-import static org.jclouds.aws.sqs.options.ListQueuesOptions.Builder.queuePrefix;
 import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
+import static org.jclouds.sqs.options.ListQueuesOptions.Builder.queuePrefix;
 
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +27,6 @@ import java.util.SortedSet;
 import java.util.concurrent.Future;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.sqs.domain.Queue;
 import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.enterprise.config.EnterpriseConfigurationModule;
 import org.jclouds.logging.ConsoleLogger;
@@ -35,6 +34,9 @@ import org.jclouds.logging.Logger;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
+import org.jclouds.sqs.SQSAsyncClient;
+import org.jclouds.sqs.SQSClient;
+import org.jclouds.sqs.domain.Queue;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;

@@ -65,13 +65,12 @@ public class AmazonPerformanceLiveTest extends BasePerformanceLiveTest {
       throw new UnsupportedOperationException();
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    protected Future<?> putByteArray(final String bucket, final String key, final byte[] data, final String contentType) {
 
-      return exec.submit(new Callable() {
+      return exec.submit(new Callable<String>() {
          @Override
-         public Object call() throws Exception {
+         public String call() throws Exception {
             ObjectMetadata md = new ObjectMetadata();
             md.setContentType(contentType);
             md.setContentLength(data.length);
@@ -80,26 +79,24 @@ public class AmazonPerformanceLiveTest extends BasePerformanceLiveTest {
       });
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    protected Future<?> putFile(final String bucket, final String key, final File data, String contentType) {
 
-      return exec.submit(new Callable() {
+      return exec.submit(new Callable<String>() {
          @Override
-         public Object call() throws Exception {
+         public String call() throws Exception {
             return s3.putObject(new PutObjectRequest(bucket, key, data)).getETag();
          }
       });
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    protected Future<?> putInputStream(final String bucket, final String key, final InputStream data,
          final String contentType) {
 
-      return exec.submit(new Callable() {
+      return exec.submit(new Callable<String>() {
          @Override
-         public Object call() throws Exception {
+         public String call() throws Exception {
             ObjectMetadata md = new ObjectMetadata();
             md.setContentType(contentType);
             md.setContentLength(data.available());
