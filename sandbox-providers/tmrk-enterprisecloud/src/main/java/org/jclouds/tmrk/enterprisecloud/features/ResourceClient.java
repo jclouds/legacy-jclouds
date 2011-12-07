@@ -19,6 +19,7 @@
 package org.jclouds.tmrk.enterprisecloud.features;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolPerformanceStatistics;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
@@ -142,4 +143,13 @@ public interface ResourceClient {
     * @return the compute pool storage usage detail
     */
    ComputePoolStorageUsageDetail getComputePoolStorageUsage(URI uri);
+
+   /**
+    * The Get Resources Performance Statistics call returns references to obtain
+    * the individual performance statistics reports in a compute pool.
+    * @param uri the uri of the call based upon the compute pool
+    * e.g. /cloudapi/ecloud/computepools/{id}/performanceStatistics
+    * @return
+    */
+   ComputePoolPerformanceStatistics getComputePoolPerformanceStatistics(URI uri);
 }
