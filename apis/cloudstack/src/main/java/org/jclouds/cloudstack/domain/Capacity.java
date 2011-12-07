@@ -102,6 +102,9 @@ public class Capacity implements Comparable<Capacity> {
       PUBLIC_IP_ADDRESSES(4),
       PRIVATE_IP_ADDRESSES(5),
       SECONDARY_STORAGE_USED_BYTES(6),
+      VLANS(7),
+      DIRECT_ATTACHED_PUBLIC_IP_ADDRESSES(8),
+      LOCAL_STORAGE_USED_BYTES(9),
       UNRECOGNIZED(Integer.MAX_VALUE);
 
       private int code;
