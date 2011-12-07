@@ -137,12 +137,12 @@ public class ISOPermissions implements Comparable<ISOPermissions> {
 
    @Override
    public String toString() {
-      return "[" +
-         "id=" + id +
-         ", account='" + account + '\'' +
-         ", domainId=" + domainId +
-         ", isPublic=" + isPublic +
-         ']';
+      return "ISOPermissions{" +
+            "id=" + id +
+            ", account='" + account + '\'' +
+            ", domainId=" + domainId +
+            ", isPublic=" + isPublic +
+            '}';
    }
 
    @Override

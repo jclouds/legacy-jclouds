@@ -18,11 +18,12 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.common.collect.ForwardingSet;
@@ -598,15 +599,39 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
       return new Long(id).compareTo(arg0.getId());
    }
 
+
    @Override
    public String toString() {
-      return String
-            .format(
-                  "[id=%s, name=%s, type=%s, state=%s, domain=%s, domainId=%s, cleanupRequired=%s, sentBytes=%s, receivedBytes=%s, IPs=%s, IPsAvailable=%s, IPLimit=%s, VMs=%s, VMsAvailable=%s, VMsRunning=%s, VMsStopped=%s, VMLimit=%s, snapshots=%s, snapshotLimit=%s, snapshotsAvailable=%s, templateLimit=%s, templates=%s, templatesAvailable=%s, volumes=%s, volumeLimit=%s, volumesAvailable=%s, users=%s]",
-                  id, name, type, state, domain, domainId, cleanupRequired, sentBytes, receivedBytes, IPs,
-                  IPsAvailable, IPLimit, VMs, VMsAvailable, VMsRunning, VMsStopped, VMLimit, snapshots, snapshotLimit,
-                  snapshotsAvailable, templateLimit, templates, templatesAvailable, volumes, volumeLimit,
-                  volumesAvailable, users);
+      return "Account{" +
+            "id=" + id +
+            ", type=" + type +
+            ", networkDomain='" + networkDomain + '\'' +
+            ", domain='" + domain + '\'' +
+            ", domainId=" + domainId +
+            ", IPsAvailable=" + IPsAvailable +
+            ", IPLimit=" + IPLimit +
+            ", IPs=" + IPs +
+            ", cleanupRequired=" + cleanupRequired +
+            ", name='" + name + '\'' +
+            ", receivedBytes=" + receivedBytes +
+            ", sentBytes=" + sentBytes +
+            ", snapshotsAvailable=" + snapshotsAvailable +
+            ", snapshotLimit=" + snapshotLimit +
+            ", snapshots=" + snapshots +
+            ", state=" + state +
+            ", templatesAvailable=" + templatesAvailable +
+            ", templateLimit=" + templateLimit +
+            ", templates=" + templates +
+            ", VMsAvailable=" + VMsAvailable +
+            ", VMLimit=" + VMLimit +
+            ", VMsRunning=" + VMsRunning +
+            ", VMsStopped=" + VMsStopped +
+            ", VMs=" + VMs +
+            ", volumesAvailable=" + volumesAvailable +
+            ", volumeLimit=" + volumeLimit +
+            ", volumes=" + volumes +
+            ", users=" + users +
+            '}';
    }
 
    @Override

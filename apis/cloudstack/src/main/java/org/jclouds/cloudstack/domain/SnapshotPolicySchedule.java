@@ -41,4 +41,12 @@ public class SnapshotPolicySchedule {
    public String getTime() {
       return time;
    }
+
+   @Override
+   public String toString() {
+      return "SnapshotPolicySchedule{" +
+            "interval=" + interval +
+            ", time='" + time + '\'' +
+            '}';
+   }
 }

@@ -18,9 +18,9 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.Date;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * @author Richard Downer
@@ -170,13 +170,14 @@ public class VMGroup implements Comparable<VMGroup> {
 
    @Override
    public String toString() {
-      return "[id=" + id +
-         ", account='" + account + '\'' +
-         ", created=" + created +
-         ", domain='" + domain + '\'' +
-         ", domainId=" + domainId +
-         ", name='" + name + '\'' +
-         '}';
+      return "VMGroup{" +
+            "id=" + id +
+            ", account='" + account + '\'' +
+            ", created=" + created +
+            ", domain='" + domain + '\'' +
+            ", domainId=" + domainId +
+            ", name='" + name + '\'' +
+            '}';
    }
 
    @Override

@@ -143,12 +143,12 @@ public class TemplatePermission implements Comparable<TemplatePermission> {
 
    @Override
    public String toString() {
-      return "[" +
-         "id=" + id +
-         ", account='" + account + '\'' +
-         ", domainId=" + domainId +
-         ", isPublic=" + isPublic +
-         ']';
+      return "TemplatePermission{" +
+            "id=" + id +
+            ", account='" + account + '\'' +
+            ", domainId=" + domainId +
+            ", isPublic=" + isPublic +
+            '}';
    }
 
    @Override

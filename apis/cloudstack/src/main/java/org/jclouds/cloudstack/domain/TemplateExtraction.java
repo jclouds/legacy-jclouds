@@ -332,11 +332,21 @@ public class TemplateExtraction implements Comparable<TemplateExtraction> {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", accountId=" + accountId + ", created=" + created
-         + ", extractId=" + extractId + ", extractMode=" + extractMode
-         + ", name=" + name + ", state=" + state + ", status=" + status
-         + ", storageType=" + storageType + ", uploadPercentage=" + uploadPercentage
-         + ", url=" + url + ", zoneId=" + zoneId + ", zoneName=" + zoneName;
+      return "TemplateExtraction{" +
+            "id=" + id +
+            ", accountId=" + accountId +
+            ", created=" + created +
+            ", extractId=" + extractId +
+            ", extractMode=" + extractMode +
+            ", name='" + name + '\'' +
+            ", state='" + state + '\'' +
+            ", status='" + status + '\'' +
+            ", storageType='" + storageType + '\'' +
+            ", uploadPercentage=" + uploadPercentage +
+            ", url='" + url + '\'' +
+            ", zoneId=" + zoneId +
+            ", zoneName='" + zoneName + '\'' +
+            '}';
    }
 
    @Override

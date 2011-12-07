@@ -20,15 +20,13 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.List;
-
 import javax.annotation.Nullable;
+import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * 
  * @author Adrian Cole
  */
 public class Zone implements Comparable<Zone> {
@@ -47,9 +45,11 @@ public class Zone implements Comparable<Zone> {
       private List<String> internalDNS = ImmutableList.of();
       private String name;
       private NetworkType networkType;
-      private String status;
       private String VLAN;
       private boolean securityGroupsEnabled;
+      private String allocationState;
+      private String dhcpProvider;
+      private String zoneToken;
 
       public Builder id(long id) {
          this.id = id;
@@ -101,11 +101,6 @@ public class Zone implements Comparable<Zone> {
          return this;
       }
 
-      public Builder status(String status) {
-         this.status = status;
-         return this;
-      }
-
       public Builder VLAN(String VLAN) {
          this.VLAN = VLAN;
          return this;
@@ -116,9 +111,25 @@ public class Zone implements Comparable<Zone> {
          return this;
       }
 
+
+      public Builder allocationState(String allocationState) {
+         this.allocationState = allocationState;
+         return this;
+      }
+
+      public Builder dhcpProvider(String dhcpProvider) {
+         this.dhcpProvider = dhcpProvider;
+         return this;
+      }
+
+      public Builder zoneToken(String zoneToken) {
+         this.zoneToken = zoneToken;
+         return this;
+      }
+
       public Zone build() {
          return new Zone(id, description, displayText, DNS, domain, domainId, guestCIDRAddress, internalDNS, name,
-               networkType, status, VLAN, securityGroupsEnabled);
+               networkType, VLAN, securityGroupsEnabled, allocationState, dhcpProvider, zoneToken);
       }
    }
 
@@ -143,23 +154,28 @@ public class Zone implements Comparable<Zone> {
    private String name;
    @SerializedName("networktype")
    private NetworkType networkType;
-   private String status;
    @SerializedName("vlan")
    private String VLAN;
    @SerializedName("securitygroupsenabled")
    private boolean securityGroupsEnabled;
+   @SerializedName("allocationstate")
+   //TODO Change to enum?
+   private String allocationState;
+   @SerializedName("dhcpprovider")
+   private String dhcpProvider;
+   @SerializedName("zonetoken")
+   private String zoneToken;
 
    /**
     * present only for serializer
-    * 
     */
    Zone() {
 
    }
 
    public Zone(long id, String description, String displayText, List<String> DNS, String domain, long domainId,
-         String guestCIDRAddress, List<String> internalDNS, String name, NetworkType networkType, String status,
-         String vLAN, boolean securityGroupsEnabled) {
+               String guestCIDRAddress, List<String> internalDNS, String name, NetworkType networkType,
+               String vLAN, boolean securityGroupsEnabled, String allocationState, String dhcpProvider, String zoneToken) {
       this.id = id;
       this.description = description;
       this.displayText = displayText;
@@ -172,13 +188,14 @@ public class Zone implements Comparable<Zone> {
       this.internalDNS2 = internalDNS.size() > 1 ? internalDNS.get(1) : null;
       this.name = name;
       this.networkType = networkType;
-      this.status = status;
       this.VLAN = vLAN;
       this.securityGroupsEnabled = securityGroupsEnabled;
+      this.allocationState = allocationState;
+      this.dhcpProvider = dhcpProvider;
+      this.zoneToken = zoneToken;
    }
 
    /**
-    * 
     * @return Zone id
     */
    public long getId() {
@@ -186,7 +203,6 @@ public class Zone implements Comparable<Zone> {
    }
 
    /**
-    * 
     * @return Zone description
     */
    public String getDescription() {
@@ -194,7 +210,6 @@ public class Zone implements Comparable<Zone> {
    }
 
    /**
-    * 
     * @return the display text of the zone
     */
    public String getDisplayText() {
@@ -202,7 +217,6 @@ public class Zone implements Comparable<Zone> {
    }
 
    /**
-    * 
     * @return the external DNS for the Zone
     */
    public List<String> getDNS() {
@@ -215,7 +229,6 @@ public class Zone implements Comparable<Zone> {
    }
 
    /**
-    * 
     * @return Domain name for the Vms in the zone
     */
    public String getDomain() {
@@ -223,7 +236,6 @@ public class Zone implements Comparable<Zone> {
    }
 
    /**
-    * 
     * @return the ID of the containing domain, null for public zones
     */
    @Nullable
@@ -232,7 +244,6 @@ public class Zone implements Comparable<Zone> {
    }
 
    /**
-    * 
     * @return the guest CIDR address for the Zone
     */
    public String getGuestCIDRAddress() {
@@ -240,7 +251,6 @@ public class Zone implements Comparable<Zone> {
    }
 
    /**
-    * 
     * @return the internal DNS for the Zone
     */
    public List<String> getInternalDNS() {
@@ -253,7 +263,6 @@ public class Zone implements Comparable<Zone> {
    }
 
    /**
-    * 
     * @return Zone name
     */
    public String getName() {
@@ -261,7 +270,6 @@ public class Zone implements Comparable<Zone> {
    }
 
    /**
-    * 
     * @return the network type of the zone; can be Basic or Advanced
     */
    public NetworkType getNetworkType() {
@@ -269,15 +277,6 @@ public class Zone implements Comparable<Zone> {
    }
 
    /**
-    * 
-    * @return
-    */
-   public String getStatus() {
-      return status;
-   }
-
-   /**
-    * 
     * @return the vlan range of the zone
     */
    public String getVLAN() {
@@ -285,11 +284,31 @@ public class Zone implements Comparable<Zone> {
    }
 
    /**
-    * 
     * @return true if this zone has security groups enabled
     */
    public boolean isSecurityGroupsEnabled() {
       return securityGroupsEnabled;
+   }
+
+   /**
+    * @return the allocation state of the cluster
+    */
+   public String getAllocationState() {
+      return allocationState;
+   }
+
+   /**
+    * @return the dhcp Provider for the Zone
+    */
+   public String getDhcpProvider() {
+      return dhcpProvider;
+   }
+
+   /**
+    * @return Zone Token
+    */
+   public String getZoneToken() {
+      return zoneToken;
    }
 
    @Override
@@ -308,6 +327,7 @@ public class Zone implements Comparable<Zone> {
       result = prime * result + ((internalDNS1 == null) ? 0 : internalDNS1.hashCode());
       result = prime * result + ((internalDNS2 == null) ? 0 : internalDNS2.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((allocationState == null) ? 0 : allocationState.hashCode());
       result = prime * result + ((networkType == null) ? 0 : networkType.hashCode());
       result = prime * result + (securityGroupsEnabled ? 1231 : 1237);
       return result;
@@ -341,6 +361,11 @@ public class Zone implements Comparable<Zone> {
          if (other.description != null)
             return false;
       } else if (!description.equals(other.description))
+         return false;
+      if (allocationState == null) {
+         if (other.allocationState != null)
+            return false;
+      } else if (!allocationState.equals(other.allocationState))
          return false;
       if (displayText == null) {
          if (other.displayText != null)
@@ -388,10 +413,25 @@ public class Zone implements Comparable<Zone> {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", status=" + status + ", name=" + name + ", description=" + description + ", displayText="
-            + displayText + ", domain=" + domain + ", domainId=" + domainId + ", networkType=" + networkType
-            + ", guestCIDRAddress=" + guestCIDRAddress + ", VLAN=" + VLAN + ", DNS=" + getDNS()
-            + ", securityGroupsEnabled=" + isSecurityGroupsEnabled() + ", internalDNS=" + getInternalDNS() + "]";
+      return "Zone{" +
+            "id=" + id +
+            ", description='" + description + '\'' +
+            ", displayText='" + displayText + '\'' +
+            ", DNS1='" + DNS1 + '\'' +
+            ", DNS2='" + DNS2 + '\'' +
+            ", domain='" + domain + '\'' +
+            ", domainId=" + domainId +
+            ", guestCIDRAddress='" + guestCIDRAddress + '\'' +
+            ", internalDNS1='" + internalDNS1 + '\'' +
+            ", internalDNS2='" + internalDNS2 + '\'' +
+            ", name='" + name + '\'' +
+            ", networkType=" + networkType +
+            ", VLAN='" + VLAN + '\'' +
+            ", securityGroupsEnabled=" + securityGroupsEnabled +
+            ", allocationState='" + allocationState + '\'' +
+            ", dhcpProvider='" + dhcpProvider + '\'' +
+            ", zoneToken='" + zoneToken + '\'' +
+            '}';
    }
 
    @Override

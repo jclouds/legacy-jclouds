@@ -220,9 +220,17 @@ public class TemplateMetadata {
         return Objects.hashCode(name, displayText, osTypeId, snapshotId, volumeId, passwordEnabled, virtualMachineId);
     }
 
-    @Override
-    public String toString() {
-        return "[" + "name='" + name + '\'' + ", osTypeId=" + osTypeId + ", displayText='" + displayText + '\'' + ']';
-    }
+   @Override
+   public String toString() {
+      return "TemplateMetadata{" +
+            "name='" + name + '\'' +
+            ", osTypeId=" + osTypeId +
+            ", displayText='" + displayText + '\'' +
+            ", snapshotId=" + snapshotId +
+            ", volumeId=" + volumeId +
+            ", virtualMachineId=" + virtualMachineId +
+            ", passwordEnabled=" + passwordEnabled +
+            '}';
+   }
 
 }
