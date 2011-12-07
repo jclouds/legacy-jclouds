@@ -20,16 +20,20 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collections;
+import java.util.Set;
+
 import com.google.common.base.CaseFormat;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * 
  * @author Adrian Cole
  */
 public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    public static enum State {
       ADD, ACTIVE, UNRECOGNIZED;
+
       @Override
       public String toString() {
          return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
@@ -47,6 +51,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
 
    public static enum Algorithm {
       SOURCE, ROUNDROBIN, LEASTCONN, UNRECOGNIZED;
+
       @Override
       public String toString() {
          return name().toLowerCase();
@@ -79,6 +84,8 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
       private long publicIPId;
       private int publicPort;
       private State state;
+      private Set<String> CIDRs = ImmutableSet.of();
+      private long zoneId;
 
       public Builder id(long id) {
          this.id = id;
@@ -140,9 +147,19 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
          return this;
       }
 
+      public Builder CIDRs(Set<String> CIDRs) {
+         this.CIDRs = CIDRs;
+         return this;
+      }
+
+      public Builder zoneId(long zoneId) {
+         this.zoneId = zoneId;
+         return this;
+      }
+
       public LoadBalancerRule build() {
          return new LoadBalancerRule(id, account, algorithm, description, domain, domainId, name, privatePort,
-               publicIP, publicIPId, publicPort, state);
+               publicIP, publicIPId, publicPort, state, zoneId, CIDRs);
       }
    }
 
@@ -163,6 +180,10 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    @SerializedName("publicport")
    private int publicPort;
    private State state;
+   @SerializedName("cidrlist")
+   private Set<String> CIDRs;
+   @SerializedName("zoneId")
+   private long zoneId;
 
    // for deserializer
    LoadBalancerRule() {
@@ -170,7 +191,8 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    }
 
    public LoadBalancerRule(long id, String account, Algorithm algorithm, String description, String domain,
-         long domainId, String name, int privatePort, String publicIP, long publicIPId, int publicPort, State state) {
+                           long domainId, String name, int privatePort, String publicIP, long publicIPId, int publicPort, State state,
+                           long zoneId, Set<String> CIDRs) {
       this.id = id;
       this.account = account;
       this.algorithm = algorithm;
@@ -269,10 +291,25 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
       return state;
    }
 
+   /**
+    * @return the cidr list to forward traffic from
+    */
+   public Set<String> getCIDRs() {
+      return Collections.unmodifiableSet(CIDRs);
+   }
+
+   /**
+    * @return the id of the zone the rule belongs to
+    */
+   public long getZoneId() {
+      return zoneId;
+   }
+
    @Override
    public int compareTo(LoadBalancerRule arg0) {
       return new Long(id).compareTo(arg0.getId());
    }
+
 
    @Override
    public int hashCode() {
@@ -289,6 +326,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
       result = prime * result + ((publicIP == null) ? 0 : publicIP.hashCode());
       result = prime * result + (int) (publicIPId ^ (publicIPId >>> 32));
       result = prime * result + publicPort;
+      result = prime * result + (int) (zoneId ^ (zoneId >>> 32));
       result = prime * result + ((state == null) ? 0 : state.hashCode());
       return result;
    }
@@ -324,6 +362,8 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
          return false;
       if (domainId != other.domainId)
          return false;
+      if (zoneId != other.zoneId)
+         return false;
       if (id != other.id)
          return false;
       if (name == null) {
@@ -353,7 +393,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
    @Override
    public String toString() {
       return "[account=" + account + ", algorithm=" + algorithm + ", description=" + description + ", domain=" + domain
-            + ", domainId=" + domainId + ", id=" + id + ", name=" + name + ", privatePort=" + privatePort
+            + ", domainId=" + domainId + ", zoneId=" + zoneId + ", id=" + id + ", name=" + name + ", privatePort=" + privatePort
             + ", publicIP=" + publicIP + ", publicIPId=" + publicIPId + ", publicPort=" + publicPort + ", state="
             + state + "]";
    }

@@ -21,7 +21,6 @@ package org.jclouds.cloudstack.domain;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * 
  * @author Adrian Cole
  */
 public class Capabilities {
@@ -33,6 +32,8 @@ public class Capabilities {
       private String cloudStackVersion;
       private boolean securityGroupsEnabled;
       private boolean canShareTemplates;
+      private boolean firewallRuleUiEnabled;
+      private boolean supportELB;
 
       public Builder cloudStackVersion(String cloudStackVersion) {
          this.cloudStackVersion = cloudStackVersion;
@@ -49,8 +50,18 @@ public class Capabilities {
          return this;
       }
 
+      public Builder firewallRuleUiEnabled(boolean firewallRuleUiEnabled) {
+         this.firewallRuleUiEnabled = firewallRuleUiEnabled;
+         return this;
+      }
+
+      public Builder supportELB(boolean supportELB) {
+         this.supportELB = supportELB;
+         return this;
+      }
+
       public Capabilities build() {
-         return new Capabilities(cloudStackVersion, securityGroupsEnabled, canShareTemplates);
+         return new Capabilities(cloudStackVersion, securityGroupsEnabled, canShareTemplates, firewallRuleUiEnabled, supportELB);
       }
    }
 
@@ -60,24 +71,27 @@ public class Capabilities {
    private boolean securityGroupsEnabled;
    @SerializedName("userpublictemplateenabled")
    private boolean canShareTemplates;
+   private boolean firewallRuleUiEnabled;
+   private boolean supportELB;
+
 
    /**
     * present only for serializer
-    * 
     */
    Capabilities() {
 
    }
 
-   public Capabilities(String cloudStackVersion, boolean securityGroupsEnabled, boolean canShareTemplates) {
+   public Capabilities(String cloudStackVersion, boolean securityGroupsEnabled, boolean canShareTemplates,
+                       boolean firewallRuleUiEnabled, boolean supportELB) {
       this.cloudStackVersion = cloudStackVersion;
       this.securityGroupsEnabled = securityGroupsEnabled;
       this.canShareTemplates = canShareTemplates;
-
+      this.firewallRuleUiEnabled = firewallRuleUiEnabled;
+      this.supportELB = supportELB;
    }
 
    /**
-    * 
     * @return version of the cloud stack
     */
    public String getCloudStackVersion() {
@@ -85,7 +99,6 @@ public class Capabilities {
    }
 
    /**
-    * 
     * @return true if security groups support is enabled, false otherwise
     */
    public boolean isSecurityGroupsEnabled() {
@@ -93,12 +106,25 @@ public class Capabilities {
    }
 
    /**
-    * 
     * @return true if user and domain admins can set templates to be shared,
     *         false otherwise
     */
    public boolean isSharedTemplatesEnabled() {
       return canShareTemplates;
+   }
+
+   /**
+    * @return true if the firewall rule UI is enabled
+    */
+   public boolean isFirewallRuleUiEnabled() {
+      return firewallRuleUiEnabled;
+   }
+
+   /**
+    * @return true if region supports elastic load balancer on basic zones
+    */
+   public boolean isSupportELB() {
+      return supportELB;
    }
 
    @Override
@@ -108,6 +134,8 @@ public class Capabilities {
       result = prime * result + (canShareTemplates ? 1231 : 1237);
       result = prime * result + ((cloudStackVersion == null) ? 0 : cloudStackVersion.hashCode());
       result = prime * result + (securityGroupsEnabled ? 1231 : 1237);
+      result = prime * result + (firewallRuleUiEnabled ? 1231 : 1237);
+      result = prime * result + (supportELB ? 1231 : 1237);
       return result;
    }
 
@@ -129,12 +157,18 @@ public class Capabilities {
          return false;
       if (securityGroupsEnabled != other.securityGroupsEnabled)
          return false;
+      if (firewallRuleUiEnabled != other.firewallRuleUiEnabled)
+         return false;
+      if (supportELB != other.supportELB)
+         return false;
       return true;
    }
 
    @Override
    public String toString() {
       return "[cloudStackVersion=" + cloudStackVersion + ", canShareTemplates=" + canShareTemplates
-            + ", securityGroupsEnabled=" + securityGroupsEnabled + "]";
+            + ", securityGroupsEnabled=" + securityGroupsEnabled
+            + ", firewallRuleUiEnabled=" + firewallRuleUiEnabled
+            + ", supportELB=" + supportELB + "]";
    }
 }
