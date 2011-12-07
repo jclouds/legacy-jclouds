@@ -155,7 +155,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
             zoneId, options);
       AsyncCreateResponse job = client.getVirtualMachineClient().deployVirtualMachineInZone(zoneId, serviceOfferingId,
             templateId, options);
-      assert jobComplete.apply(job.getJobId());
+      assertTrue(jobComplete.apply(job.getJobId()));
       AsyncJob<VirtualMachine> jobWithResult = client.getAsyncJobClient().<VirtualMachine> getAsyncJob(job.getJobId());
       if (jobWithResult.getError() != null)
          Throwables.propagate(new ExecutionException(String.format("job %s failed with exception %s", job.getId(),
@@ -166,7 +166,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       if (vm.isPasswordEnabled()) {
          assert vm.getPassword() != null : vm;
       }
-      assert virtualMachineRunning.apply(vm);
+      assertTrue(virtualMachineRunning.apply(vm));
       assertEquals(vm.getServiceOfferingId(), serviceOfferingId);
       assertEquals(vm.getTemplateId(), templateId);
       assertEquals(vm.getZoneId(), zoneId);
@@ -209,8 +209,8 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
                   }
                }
 
-               assert adminJobComplete.apply(
-                  adminClient.getNetworkClient().deleteNetwork(net.getId())) : net;
+               assertTrue(adminJobComplete.apply(
+                  adminClient.getNetworkClient().deleteNetwork(net.getId())), net.toString());
             }
          }
 
@@ -272,9 +272,9 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    private void destroyMachine(VirtualMachine virtualMachine) {
-      assert adminJobComplete.apply(
-         adminClient.getVirtualMachineClient().destroyVirtualMachine(virtualMachine.getId())) : virtualMachine;
-      assert adminVirtualMachineDestroyed.apply(virtualMachine);
+      assertTrue(adminJobComplete.apply(
+         adminClient.getVirtualMachineClient().destroyVirtualMachine(virtualMachine.getId())), virtualMachine.toString());
+      assertTrue(adminVirtualMachineDestroyed.apply(virtualMachine));
    }
 
    private void conditionallyCheckSSH() {
@@ -294,13 +294,13 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
    @Test(dependsOnMethods = "testCreateVirtualMachine")
    public void testLifeCycle() throws Exception {
       Long job = client.getVirtualMachineClient().stopVirtualMachine(vm.getId());
-      assert jobComplete.apply(job);
+      assertTrue(jobComplete.apply(job));
       vm = client.getVirtualMachineClient().getVirtualMachine(vm.getId());
       assertEquals(vm.getState(), VirtualMachine.State.STOPPED);
 
       if (vm.isPasswordEnabled()) {
          job = client.getVirtualMachineClient().resetPasswordForVirtualMachine(vm.getId());
-         assert jobComplete.apply(job);
+         assertTrue(jobComplete.apply(job));
          vm = client.getAsyncJobClient().<VirtualMachine> getAsyncJob(job).getResult();
          if (vm.getPassword() != null) {
             conditionallyCheckSSH();
@@ -308,12 +308,12 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
       }
 
       job = client.getVirtualMachineClient().startVirtualMachine(vm.getId());
-      assert jobComplete.apply(job);
+      assertTrue(jobComplete.apply(job));
       vm = client.getVirtualMachineClient().getVirtualMachine(vm.getId());
       assertEquals(vm.getState(), VirtualMachine.State.RUNNING);
 
       job = client.getVirtualMachineClient().rebootVirtualMachine(vm.getId());
-      assert jobComplete.apply(job);
+      assertTrue(jobComplete.apply(job));
       vm = client.getVirtualMachineClient().getVirtualMachine(vm.getId());
       assertEquals(vm.getState(), VirtualMachine.State.RUNNING);
    }
