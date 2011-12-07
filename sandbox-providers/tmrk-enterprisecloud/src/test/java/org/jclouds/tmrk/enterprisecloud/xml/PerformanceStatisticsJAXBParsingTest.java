@@ -114,7 +114,7 @@ public class PerformanceStatisticsJAXBParsingTest extends BaseRestClientTest {
    private void assertVirtalMachineStatistics(Set<VirtualMachinePerformanceStatistic> vmStatistics) {
       assertEquals(vmStatistics.size(),1);
       VirtualMachinePerformanceStatistic statistic = Iterables.getOnlyElement(vmStatistics);
-      assertEquals(statistic.getStatistics().size(), 24);
+      assertEquals(statistic.getStatistics().size(), 7);
       for(PerformanceStatistic stat: statistic.getStatistics()) {
          assertNotNull(stat.getTime());
          assertNotNull(stat.getUsed());
