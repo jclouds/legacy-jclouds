@@ -19,8 +19,10 @@
 package org.jclouds.ec2.compute.config;
 
 import static com.google.common.collect.Iterables.toArray;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -44,7 +46,12 @@ import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheLoader;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 /**
  * Configures the {@link ComputeServiceContext}; requires {@link EC2ComputeService} bound.
@@ -62,6 +69,25 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
    
    protected void installDependencies(){
       install(new EC2ComputeServiceDependenciesModule());
+   }
+
+   @Override
+   protected boolean shouldParseImagesOnDemand(Injector injector) {
+      // If no owners to query, then will never lookup all images
+      String[] amiOwners = injector.getInstance(Key.get(String[].class, Names.named(PROPERTY_EC2_AMI_OWNERS)));
+      return (amiOwners.length > 0);
+   }
+
+   @Override
+   protected Supplier<Set<? extends Image>> supplyNonParsingImageCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+            final Supplier<Set<? extends Image>> imageSupplier, Injector injector) {
+      final Supplier<Cache<RegionAndName, ? extends Image>> cache = injector.getInstance(Key.get(new TypeLiteral<Supplier<Cache<RegionAndName, ? extends Image>>>() {}));
+      return new Supplier<Set<? extends Image>>() {
+         @Override
+         public Set<? extends Image> get() {
+            return ImmutableSet.copyOf(cache.get().asMap().values());
+         }
+      };
    }
 
    @Provides

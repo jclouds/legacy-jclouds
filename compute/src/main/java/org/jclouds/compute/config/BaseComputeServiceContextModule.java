@@ -232,6 +232,19 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Singleton
    @Memoized
    protected Supplier<Set<? extends Image>> supplyImageCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+         final Supplier<Set<? extends Image>> imageSupplier, Injector injector) {
+      if (shouldParseImagesOnDemand(injector)) {
+         return supplyImageCache(seconds, imageSupplier);
+      } else {
+         return supplyNonParsingImageCache(seconds, imageSupplier, injector);
+      }
+   }
+
+   protected boolean shouldParseImagesOnDemand(Injector injector) {
+      return true;
+   }
+
+   protected Supplier<Set<? extends Image>> supplyImageCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final Supplier<Set<? extends Image>> imageSupplier) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Image>>(authException,
             seconds, new Supplier<Set<? extends Image>>() {
@@ -240,6 +253,14 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
                   return imageSupplier.get();
                }
             });
+   }
+
+   /**
+    * For overriding; default impl is same as {@link supplyImageCache(seconds, imageSupplier)}
+    */
+   protected Supplier<Set<? extends Image>> supplyNonParsingImageCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+            final Supplier<Set<? extends Image>> imageSupplier, Injector injector) {
+      return supplyImageCache(seconds, imageSupplier);
    }
 
    @Provides

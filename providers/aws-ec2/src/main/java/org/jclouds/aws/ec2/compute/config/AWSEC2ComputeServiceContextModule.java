@@ -18,11 +18,14 @@
  */
 package org.jclouds.aws.ec2.compute.config;
 
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.compute.domain.OsFamily.AMZN_LINUX;
 
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.AWSEC2PropertiesBuilder;
@@ -36,6 +39,7 @@ import org.jclouds.aws.ec2.compute.strategy.AWSEC2ListNodesStrategy;
 import org.jclouds.aws.ec2.compute.strategy.AWSEC2ReviseParsedImage;
 import org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions;
 import org.jclouds.aws.ec2.compute.suppliers.AWSEC2HardwareSupplier;
+import org.jclouds.aws.ec2.reference.AWSEC2Constants;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -64,8 +68,12 @@ import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheLoader;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 /**
  * 
@@ -95,7 +103,29 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
       install(new AWSEC2ComputeServiceDependenciesModule());
    }
 
-   // TODO duplicates EC2ComputeServiceContextModule; but that's easiest thing to do with guice; could extract to common util
+   @Override
+   protected boolean shouldParseImagesOnDemand(Injector injector) {
+      // If no queries defined, then will never lookup all images
+      String amiQuery = injector.getInstance(Key.get(String.class, Names.named(AWSEC2Constants.PROPERTY_EC2_AMI_QUERY)));
+      String amiCcQuery = injector.getInstance(Key.get(String.class, Names.named(AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY)));
+
+      return !(amiQuery.isEmpty() && amiCcQuery.isEmpty());
+   }
+
+   // duplicates EC2ComputeServiceContextModule; but that's easiest thing to do with guice; could extract to common util
+   @Override
+   protected Supplier<Set<? extends Image>> supplyNonParsingImageCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+            final Supplier<Set<? extends Image>> imageSupplier, Injector injector) {
+      final Supplier<Cache<RegionAndName, ? extends Image>> cache = injector.getInstance(Key.get(new TypeLiteral<Supplier<Cache<RegionAndName, ? extends Image>>>() {}));
+      return new Supplier<Set<? extends Image>>() {
+         @Override
+         public Set<? extends Image> get() {
+            return ImmutableSet.copyOf(cache.get().asMap().values());
+         }
+      };
+   }
+
+   // duplicates EC2ComputeServiceContextModule; but that's easiest thing to do with guice; could extract to common util
    @Provides
    @Singleton
    protected Supplier<CacheLoader<RegionAndName, Image>> provideRegionAndNameToImageSupplierCacheLoader(
