@@ -18,7 +18,12 @@
  */
 package org.jclouds.ec2.compute.suppliers;
 
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
@@ -38,8 +43,9 @@ public class RegionAndNameToImageSupplier implements Supplier<Cache<RegionAndNam
    private final Cache<RegionAndName, Image> cache;
 
    @Inject
-   protected RegionAndNameToImageSupplier(CacheLoader<RegionAndName, Image> regionAndIdToImage) {
-      cache = CacheBuilder.newBuilder().build(regionAndIdToImage);
+   protected RegionAndNameToImageSupplier(CacheLoader<RegionAndName, Image> regionAndIdToImage, 
+            @Named(PROPERTY_SESSION_INTERVAL) long expirationSecs) {
+      cache = CacheBuilder.newBuilder().expireAfterWrite(expirationSecs,  TimeUnit.SECONDS).build(regionAndIdToImage);
    }
 
    @Override
