@@ -8,9 +8,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 
 import com.google.common.base.Function;
-import com.google.inject.Singleton;
 
-@Singleton
 public class ImagesToRegionAndIdMap implements Function<Iterable<? extends Image>, Map<RegionAndName, ? extends Image>> {
 
    public static Map<RegionAndName, ? extends Image> imagesToMap(Iterable<? extends Image> input) {
