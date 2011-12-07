@@ -28,6 +28,7 @@ import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSumma
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsageDetail;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsageDetail;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.storage.ComputePoolStorageUsageDetail;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -100,4 +101,13 @@ public interface ResourceAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<ComputePoolMemoryUsageDetail> getComputePoolMemoryUsageDetail(@EndpointParam URI uri);
+
+   /**
+    * @see ResourceClient#getComputePoolStorageUsage
+    */
+   @GET
+   @Consumes("application/vnd.tmrk.cloud.computePoolStorageUsageDetail")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<ComputePoolStorageUsageDetail> getComputePoolStorageUsage(@EndpointParam URI uri);
 }

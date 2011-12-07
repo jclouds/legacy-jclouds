@@ -25,6 +25,7 @@ import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSumma
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsageDetail;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsageDetail;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.storage.ComputePoolStorageUsageDetail;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
@@ -131,4 +132,14 @@ public interface ResourceClient {
     * @return the compute pool memory usage detail
     */
    ComputePoolMemoryUsageDetail getComputePoolMemoryUsageDetail(URI uri);
+
+   /**
+    * The Get Resources Usage Storage call returns information regarding current storage usage
+    * for a specified compute pool defined in an environment for active virtual machines.
+    * The response includes usage of every active virtual machine.
+    * @param uri the uri of the call based upon the compute pool
+    * e.g. /cloudapi/ecloud/computepools/{id}/usage/storage
+    * @return the compute pool storage usage detail
+    */
+   ComputePoolStorageUsageDetail getComputePoolStorageUsage(URI uri);
 }

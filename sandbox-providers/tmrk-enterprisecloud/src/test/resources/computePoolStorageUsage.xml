@@ -1,0 +1,25 @@
+<ComputePoolStorageUsageDetail
+        href="/cloudapi/ecloud/computepools/89/usage/storage"
+        type="application/vnd.tmrk.cloud.computePoolStorageUsageDetail"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <Links>
+        <Link href="/cloudapi/ecloud/computepools/89"
+              name="Default Compute Pool"
+              type="application/vnd.tmrk.cloud.computePool" rel="up"/>
+    </Links>
+    <Allocated>
+        <Unit>GB</Unit>
+        <Value>10</Value>
+    </Allocated>
+    <VirtualMachines>
+        <VirtualMachine href="/cloudapi/ecloud/virtualmachines/5504"
+                        name="helloworld"
+                        type="application/vnd.tmrk.cloud.virtualMachine">
+            <DiskCount>1</DiskCount>
+            <Allocated>
+                <Unit>GB</Unit>
+                <Value>10</Value>
+            </Allocated>
+        </VirtualMachine>
+    </VirtualMachines>
+</ComputePoolStorageUsageDetail>
