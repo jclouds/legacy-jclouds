@@ -187,7 +187,16 @@ public class CreateNetworkOptions extends AccountInDomainOptions {
    }
 
    /**
-    * {@inheritDoc}
+    * Specify the account that will own the network. This can be run by a privileged user to be
+    * able to set advanced network properties, such as the VLAN tag, and then to immediately pass
+    * ownership of the network to an unprivileged user.
+    *
+    * Note that the unprivileged user will be able to delete the network later, since they are it's owner.
+    *
+    * @param account
+    *           account name
+    * @param domain
+    *           domain ID
     */
    @Override
    public CreateNetworkOptions accountInDomain(String account, long domain) {
@@ -195,7 +204,16 @@ public class CreateNetworkOptions extends AccountInDomainOptions {
    }
 
    /**
-    * {@inheritDoc}
+    * Specify the domain that will own the network. Any user in the domain can then use this
+    * network.
+    *
+    * CloudStack requires that when using this option, you also specify isShared(true).
+    *
+    * Changes or deletions to this network must be done by a domain admin in the same domain, or a
+    * global admin.
+    * 
+    * @param domainId
+    *           domain ID
     */
    @Override
    public CreateNetworkOptions domainId(long domainId) {
