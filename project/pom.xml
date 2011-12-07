@@ -186,6 +186,7 @@
     </developers>
 
     <properties>
+        <clojure.version>1.2.0</clojure.version>
         <maven.compile.source>1.6</maven.compile.source>
         <maven.compile.target>1.6</maven.compile.target>
         <maven.compile.optimize>true</maven.compile.optimize>
@@ -231,7 +232,7 @@
         <dependency>
             <groupId>org.clojure</groupId>
             <artifactId>clojure</artifactId>
-            <version>1.2.0</version>
+            <version>${clojure.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
