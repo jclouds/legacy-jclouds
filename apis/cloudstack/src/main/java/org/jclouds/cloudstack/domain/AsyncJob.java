@@ -422,10 +422,21 @@ public class AsyncJob<T> {
 
    @Override
    public String toString() {
-      return "[accountId=" + accountId + ", cmd=" + cmd + ", created=" + created + ", id=" + id + ", instanceId="
-            + instanceId + ", instanceType=" + instanceType + ", error=" + error + ", progress=" + progress
-            + ", result=" + result + ", resultCode=" + resultCode + ", resultType=" + resultType + ", status=" + status
-            + ", userId=" + userId + "]";
+      return "AsyncJob{" +
+            "accountId=" + accountId +
+            ", cmd='" + cmd + '\'' +
+            ", created=" + created +
+            ", id=" + id +
+            ", instanceId=" + instanceId +
+            ", instanceType='" + instanceType + '\'' +
+            ", progress=" + progress +
+            ", result=" + result +
+            ", resultCode=" + resultCode +
+            ", resultType='" + resultType + '\'' +
+            ", status=" + status +
+            ", userId=" + userId +
+            ", error=" + error +
+            '}';
    }
 
 }

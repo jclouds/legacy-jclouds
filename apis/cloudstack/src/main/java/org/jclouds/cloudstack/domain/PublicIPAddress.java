@@ -18,10 +18,11 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.annotation.Nullable;
 import java.util.Date;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.CaseFormat;
 import com.google.gson.annotations.SerializedName;
 
@@ -538,12 +539,29 @@ public class PublicIPAddress implements Comparable<PublicIPAddress> {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", IPAddress=" + IPAddress + ", VLANId=" + VLANId + ", VLANName=" + VLANName + ", account="
-            + account + ", allocated=" + allocated + ", associatedNetworkId=" + associatedNetworkId + ", domain="
-            + domain + ", domainId=" + domainId + ", usesVirtualNetwork=" + usesVirtualNetwork + ", isSourceNAT="
-            + isSourceNAT + ", isStaticNAT=" + isStaticNAT + ", networkId=" + networkId + ", state=" + state
-            + ", virtualMachineDisplayName=" + virtualMachineDisplayName + ", virtualMachineId=" + virtualMachineId
-            + ", virtualMachineName=" + virtualMachineName + ", zoneId=" + zoneId + ", zoneName=" + zoneName + "]";
+      return "PublicIPAddress{" +
+            "id=" + id +
+            ", account='" + account + '\'' +
+            ", allocated=" + allocated +
+            ", associatedNetworkId=" + associatedNetworkId +
+            ", domain='" + domain + '\'' +
+            ", domainId=" + domainId +
+            ", usesVirtualNetwork=" + usesVirtualNetwork +
+            ", IPAddress='" + IPAddress + '\'' +
+            ", isSourceNAT=" + isSourceNAT +
+            ", isStaticNAT=" + isStaticNAT +
+            ", networkId=" + networkId +
+            ", state=" + state +
+            ", virtualMachineDisplayName='" + virtualMachineDisplayName + '\'' +
+            ", virtualMachineId=" + virtualMachineId +
+            ", virtualMachineName='" + virtualMachineName + '\'' +
+            ", VLANId=" + VLANId +
+            ", VLANName='" + VLANName + '\'' +
+            ", zoneId=" + zoneId +
+            ", zoneName='" + zoneName + '\'' +
+            ", jobId=" + jobId +
+            ", jobStatus=" + jobStatus +
+            '}';
    }
 
 }

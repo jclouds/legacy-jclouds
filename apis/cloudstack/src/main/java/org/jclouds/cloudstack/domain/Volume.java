@@ -19,10 +19,11 @@
 
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Date;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
@@ -551,7 +552,39 @@ public class Volume implements Comparable<Volume> {
 
    @Override
    public String toString() {
-      return getClass().getCanonicalName() + "[" + id + "; " + name + "; " + vmState + "]";
+      return "Volume{" +
+            "id=" + id +
+            ", account='" + account + '\'' +
+            ", attached=" + attached +
+            ", created=" + created +
+            ", destroyed=" + destroyed +
+            ", deviceId=" + deviceId +
+            ", diskOfferingDisplayText='" + diskOfferingDisplayText + '\'' +
+            ", diskOfferingId=" + diskOfferingId +
+            ", diskOfferingName='" + diskOfferingName + '\'' +
+            ", domain='" + domain + '\'' +
+            ", domainId=" + domainId +
+            ", hypervisor='" + hypervisor + '\'' +
+            ", isExtractable=" + isExtractable +
+            ", jobId=" + jobId +
+            ", jobStatus='" + jobStatus + '\'' +
+            ", name='" + name + '\'' +
+            ", serviceOfferingDisplayText='" + serviceOfferingDisplayText + '\'' +
+            ", serviceOfferingId=" + serviceOfferingId +
+            ", serviceOfferingName='" + serviceOfferingName + '\'' +
+            ", size=" + size +
+            ", snapshotId=" + snapshotId +
+            ", state=" + state +
+            ", storage='" + storage + '\'' +
+            ", storageType='" + storageType + '\'' +
+            ", type=" + type +
+            ", virtualMachineId=" + virtualMachineId +
+            ", vmDisplayName='" + vmDisplayName + '\'' +
+            ", vmName='" + vmName + '\'' +
+            ", vmState=" + vmState +
+            ", zoneId=" + zoneId +
+            ", zoneName='" + zoneName + '\'' +
+            '}';
    }
 
    public enum State {

@@ -265,9 +265,19 @@ public class Event implements Comparable<Event> {
 
    @Override
    public String toString() {
-      return String.format("[id=%d, account=%s, description=%s, created=%s, domain=%s, domainId=%d, level=%s, " +
-            "parentId=%s, state=%s, type=%s, username=%s]",
-            id, account, description, created, domain, domainId, level, parentId, state, type, username);
+      return "Event{" +
+            "id=" + id +
+            ", account='" + account + '\'' +
+            ", description='" + description + '\'' +
+            ", created=" + created +
+            ", domain='" + domain + '\'' +
+            ", domainId=" + domainId +
+            ", level='" + level + '\'' +
+            ", parentId='" + parentId + '\'' +
+            ", state='" + state + '\'' +
+            ", type='" + type + '\'' +
+            ", username='" + username + '\'' +
+            '}';
    }
 
 

@@ -326,11 +326,22 @@ public class User implements Comparable<User> {
 
    @Override
    public String toString() {
-      return String
-            .format(
-                  "[id=%s, name=%s, state=%s, created=%s, account=%s, accountType=%s, domain=%s, domainId=%s, email=%s, firstName=%s, lastName=%s, apiKey=%s, secretKey=%s, timeZone=%s]",
-                  id, name, state, created, account, accountType, domain, domainId, email, firstName, lastName, apiKey,
-                  secretKey, timeZone);
+      return "User{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            ", email='" + email + '\'' +
+            ", created=" + created +
+            ", state='" + state + '\'' +
+            ", account='" + account + '\'' +
+            ", accountType=" + accountType +
+            ", domain='" + domain + '\'' +
+            ", domainId=" + domainId +
+            ", timeZone='" + timeZone + '\'' +
+            ", apiKey='" + apiKey + '\'' +
+            ", secretKey='" + secretKey + '\'' +
+            '}';
    }
 
 }

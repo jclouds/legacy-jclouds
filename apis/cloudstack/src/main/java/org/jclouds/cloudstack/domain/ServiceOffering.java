@@ -411,10 +411,26 @@ public class ServiceOffering implements Comparable<ServiceOffering> {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", name=" + name + ", displayText=" + displayText + ", created=" + created + ", cpuNumber="
-            + cpuNumber + ", cpuSpeed=" + cpuSpeed + ", memory=" + memory + ", storageType=" + storageType
-            + ", haSupport=" + haSupport + ", domain=" + domain + ", domainId=" + domainId + ", tags=" + getTags()
-            + "]";
+      return "ServiceOffering{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", displayText='" + displayText + '\'' +
+            ", created=" + created +
+            ", domain='" + domain + '\'' +
+            ", domainId=" + domainId +
+            ", cpuNumber=" + cpuNumber +
+            ", cpuSpeed=" + cpuSpeed +
+            ", memory=" + memory +
+            ", haSupport=" + haSupport +
+            ", storageType=" + storageType +
+            ", tags='" + tags + '\'' +
+            ", defaultUse=" + defaultUse +
+            ", hostTags='" + hostTags + '\'' +
+            ", systemOffering=" + systemOffering +
+            ", cpuUseLimited=" + cpuUseLimited +
+            ", networkRate=" + networkRate +
+            ", systemVmType=" + systemVmType +
+            '}';
    }
 
    @Override

@@ -118,14 +118,15 @@ public class Alert implements Comparable<Alert> {
       return result;
    }
 
+
    @Override
    public String toString() {
       return "Alert{" +
-         "id=" + id +
-         ", description='" + description + '\'' +
-         ", sent=" + sent +
-         ", type='" + type + '\'' +
-         '}';
+            "id=" + id +
+            ", description='" + description + '\'' +
+            ", sent=" + sent +
+            ", type='" + type + '\'' +
+            '}';
    }
 
    @Override

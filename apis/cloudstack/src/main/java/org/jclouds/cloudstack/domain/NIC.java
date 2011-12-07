@@ -297,9 +297,19 @@ public class NIC {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", broadcastURI=" + broadcastURI + ", gateway=" + gateway + ", IPAddress=" + IPAddress
-            + ", isDefault=" + isDefault + ", isolationURI=" + isolationURI + ", netmask=" + netmask + ", MACAddress="
-            + macAddress + ", networkId=" + networkId + ", trafficType=" + trafficType + ", guestIPType=" + guestIPType + "]";
+      return "NIC{" +
+            "id=" + id +
+            ", broadcastURI=" + broadcastURI +
+            ", gateway='" + gateway + '\'' +
+            ", IPAddress='" + IPAddress + '\'' +
+            ", isDefault=" + isDefault +
+            ", isolationURI=" + isolationURI +
+            ", netmask='" + netmask + '\'' +
+            ", macAddress='" + macAddress + '\'' +
+            ", networkId=" + networkId +
+            ", trafficType=" + trafficType +
+            ", guestIPType=" + guestIPType +
+            '}';
    }
 
 }

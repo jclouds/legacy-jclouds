@@ -240,8 +240,17 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", account=" + account + ", name=" + name + ", description=" + description + ", domain="
-            + domain + ", domainId=" + domainId + ", ingressRules=" + ingressRules + "]";
+      return "SecurityGroup{" +
+            "id=" + id +
+            ", account='" + account + '\'' +
+            ", name='" + name + '\'' +
+            ", description='" + description + '\'' +
+            ", domain='" + domain + '\'' +
+            ", domainId=" + domainId +
+            ", jobId=" + jobId +
+            ", jobStatus=" + jobStatus +
+            ", ingressRules=" + ingressRules +
+            '}';
    }
 
    @Override

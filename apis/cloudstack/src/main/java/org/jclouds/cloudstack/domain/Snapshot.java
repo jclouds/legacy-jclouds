@@ -406,7 +406,7 @@ public class Snapshot implements Comparable<Snapshot> {
 
    @Override
    public String toString() {
-      return "Snapshot[" +
+      return "Snapshot{" +
             "id=" + id +
             ", account='" + account + '\'' +
             ", created=" + created +
@@ -420,8 +420,8 @@ public class Snapshot implements Comparable<Snapshot> {
             ", state=" + state +
             ", volumeId=" + volumeId +
             ", volumeName='" + volumeName + '\'' +
-            ", volumeType='" + volumeType + '\'' +
-            ']';
+            ", volumeType=" + volumeType +
+            '}';
    }
 
    @Override

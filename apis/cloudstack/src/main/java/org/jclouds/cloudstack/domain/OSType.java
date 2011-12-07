@@ -125,7 +125,11 @@ public class OSType implements Comparable<OSType> {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", OSCategoryId=" + OSCategoryId + ", description=" + description + "]";
+      return "OSType{" +
+            "id=" + id +
+            ", OSCategoryId=" + OSCategoryId +
+            ", description='" + description + '\'' +
+            '}';
    }
 
    @Override

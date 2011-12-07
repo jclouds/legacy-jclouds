@@ -188,14 +188,14 @@ public class SnapshotPolicy implements Comparable<SnapshotPolicy> {
 
    @Override
    public String toString() {
-      return "[" +
-         "id=" + id +
-         ", interval=" + interval +
-         ", numberToRetain=" + numberToRetain +
-         ", schedule='" + schedule + '\'' +
-         ", timezone='" + timezone + '\'' +
-         ", volumeId=" + volumeId +
-         ']';
+      return "SnapshotPolicy{" +
+            "id=" + id +
+            ", interval=" + interval +
+            ", numberToRetain=" + numberToRetain +
+            ", schedule='" + schedule + '\'' +
+            ", timezone='" + timezone + '\'' +
+            ", volumeId=" + volumeId +
+            '}';
    }
 
    @Override

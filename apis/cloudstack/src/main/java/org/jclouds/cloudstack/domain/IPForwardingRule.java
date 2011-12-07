@@ -18,10 +18,14 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import java.util.Collections;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * 
  * @author Adrian Cole
  */
 public class IPForwardingRule implements Comparable<IPForwardingRule> {
@@ -40,6 +44,10 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
       private String virtualMachineDisplayName;
       public long virtualMachineId;
       private String virtualMachineName;
+      private Set<String> CIDRs = ImmutableSet.of();
+      private int privateEndPort;
+      private int publicEndPort;
+      public int publicPort;
 
       public Builder id(long id) {
          this.id = id;
@@ -91,9 +99,29 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
          return this;
       }
 
+      public Builder publicPort(int publicPort) {
+         this.publicPort = publicPort;
+         return this;
+      }
+
+      public Builder CIDRs(Set<String> CIDRs) {
+         this.CIDRs = CIDRs;
+         return this;
+      }
+
+      public Builder privateEndPort(int privateEndPort) {
+         this.privateEndPort = privateEndPort;
+         return this;
+      }
+
+      public Builder publicEndPort(int publicEndPort) {
+         this.publicEndPort = publicEndPort;
+         return this;
+      }
+
       public IPForwardingRule build() {
          return new IPForwardingRule(id, IPAddress, IPAddressId, startPort, protocol, endPort, state,
-               virtualMachineDisplayName, virtualMachineId, virtualMachineName);
+               virtualMachineDisplayName, virtualMachineId, virtualMachineName, publicEndPort, publicPort, CIDRs, privateEndPort);
       }
    }
 
@@ -114,6 +142,14 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    public long virtualMachineId;
    @SerializedName("virtualmachinename")
    private String virtualMachineName;
+   @SerializedName("publicport")
+   public int publicPort;
+   @SerializedName("cidrlist")
+   private Set<String> CIDRs;
+   @SerializedName("privateendport")
+   private int privateEndPort;
+   @SerializedName("publicendport")
+   private int publicEndPort;
 
    // for deserializer
    IPForwardingRule() {
@@ -121,7 +157,8 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    }
 
    public IPForwardingRule(long id, String iPAddress, long iPAddressId, int startPort, String protocol, int endPort,
-         String state, String virtualMachineDisplayName, long virtualMachineId, String virtualMachineName) {
+                           String state, String virtualMachineDisplayName, long virtualMachineId, String virtualMachineName,
+                           int publicEndPort, int publicPort, Set<String> CIDRs, int privateEndPort) {
       this.id = id;
       this.IPAddress = iPAddress;
       this.IPAddressId = iPAddressId;
@@ -132,6 +169,11 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
       this.virtualMachineDisplayName = virtualMachineDisplayName;
       this.virtualMachineId = virtualMachineId;
       this.virtualMachineName = virtualMachineName;
+      this.CIDRs = Sets.newHashSet(CIDRs);
+      this.privateEndPort = privateEndPort;
+      this.publicEndPort = publicEndPort;
+      this.publicPort = publicPort;
+
    }
 
    @Override
@@ -140,7 +182,6 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    }
 
    /**
-    * 
     * @return the ID of the ip forwarding rule
     */
    public long getId() {
@@ -148,7 +189,6 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    }
 
    /**
-    * 
     * @return the public ip address for the ip forwarding rule
     */
    public String getIPAddress() {
@@ -156,7 +196,6 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    }
 
    /**
-    * 
     * @return the public ip address id for the ip forwarding rule
     */
    public long getIPAddressId() {
@@ -164,7 +203,6 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    }
 
    /**
-    * 
     * @return the private port for the ip forwarding rule
     */
    public int getStartPort() {
@@ -172,7 +210,6 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    }
 
    /**
-    * 
     * @return the protocol of the ip forwarding rule
     */
    public String getProtocol() {
@@ -180,7 +217,6 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    }
 
    /**
-    * 
     * @return the public port for the ip forwarding rule
     */
    public int getEndPort() {
@@ -188,7 +224,6 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    }
 
    /**
-    * 
     * @return the state of the rule
     */
    public String getState() {
@@ -196,7 +231,6 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    }
 
    /**
-    * 
     * @return the VM display name for the ip forwarding rule
     */
    public String getVirtualMachineDisplayName() {
@@ -204,7 +238,6 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    }
 
    /**
-    * 
     * @return the VM ID for the ip forwarding rule
     */
    public long getVirtualMachineId() {
@@ -212,11 +245,38 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
    }
 
    /**
-    * 
     * @return the VM name for the ip forwarding rule
     */
    public String getVirtualMachineName() {
       return virtualMachineName;
+   }
+
+   /**
+    * @return the starting port of port forwarding rule's public port range
+    */
+   public int getPublicPort() {
+      return publicPort;
+   }
+
+   /**
+    * @return the cidr list to forward traffic from
+    */
+   public Set<String> getCIDRs() {
+      return Collections.unmodifiableSet(CIDRs);
+   }
+
+   /**
+    * @return the ending port of port forwarding rule's private port range
+    */
+   public int getPrivateEndPort() {
+      return privateEndPort;
+   }
+
+   /**
+    * @return the ending port of port forwarding rule's private port range
+    */
+   public int getPublicEndPort() {
+      return publicEndPort;
    }
 
    @Override
@@ -229,6 +289,9 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
       result = prime * result + (int) (id ^ (id >>> 32));
       result = prime * result + ((protocol == null) ? 0 : protocol.hashCode());
       result = prime * result + startPort;
+      result = prime * result + publicEndPort;
+      result = prime * result + privateEndPort;
+      result = prime * result + publicPort;
       result = prime * result + ((state == null) ? 0 : state.hashCode());
       result = prime * result + ((virtualMachineDisplayName == null) ? 0 : virtualMachineDisplayName.hashCode());
       result = prime * result + (int) (virtualMachineId ^ (virtualMachineId >>> 32));
@@ -253,6 +316,12 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
       if (IPAddressId != other.IPAddressId)
          return false;
       if (endPort != other.endPort)
+         return false;
+      if (publicPort != other.publicPort)
+         return false;
+      if (publicEndPort != other.publicEndPort)
+         return false;
+      if (privateEndPort != other.privateEndPort)
          return false;
       if (id != other.id)
          return false;

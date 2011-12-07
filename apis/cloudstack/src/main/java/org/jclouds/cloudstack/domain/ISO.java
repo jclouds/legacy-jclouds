@@ -689,7 +689,7 @@ public class ISO implements Comparable<ISO> {
 
    @Override
    public String toString() {
-      return "[" +
+      return "ISO{" +
             "id=" + id +
             ", account='" + account + '\'' +
             ", accountId=" + accountId +
@@ -722,7 +722,7 @@ public class ISO implements Comparable<ISO> {
             ", templateType='" + templateType + '\'' +
             ", zoneId=" + zoneId +
             ", zoneName='" + zoneName + '\'' +
-            ']';
+            '}';
    }
 
    @Override

@@ -18,10 +18,7 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.gson.annotations.SerializedName;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.annotation.Nullable;
 import java.net.URI;
@@ -29,7 +26,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * @author Adrian Cole
@@ -66,9 +68,24 @@ public class Network implements Comparable<Network> {
       private TrafficType trafficType;
       private long zoneId;
       private Set<? extends NetworkService> services = ImmutableSet.<NetworkService>of();
+      private String account;
+      private long domainId;
+      private boolean securityGroupEnabled;
+      private Set<String> tags = ImmutableSet.of();
+
 
       public Builder id(long id) {
          this.id = id;
+         return this;
+      }
+
+      public Builder account(String account) {
+         this.account = account;
+         return this;
+      }
+
+      public Builder domainId(long domainId) {
+         this.domainId = domainId;
          return this;
       }
 
@@ -197,15 +214,26 @@ public class Network implements Comparable<Network> {
          return this;
       }
 
+      public Builder tags(Set<String> tags) {
+         this.tags = ImmutableSet.copyOf(checkNotNull(tags, "tags"));
+         return this;
+      }
+
+      public Builder securityGroupEnabled(boolean securityGroupEnabled) {
+         this.securityGroupEnabled = securityGroupEnabled;
+         return this;
+      }
+
       public Network build() {
-         return new Network(id, broadcastDomainType, broadcastURI, displayText, DNS, domain, endIP,
+         return new Network(id, broadcastDomainType, broadcastURI, displayText, DNS, domain, domainId, endIP,
                gateway, isDefault, isShared, isSystem, netmask, networkDomain, networkOfferingAvailability,
                networkOfferingDisplayText, networkOfferingId, networkOfferingName, related, startIP, name, state,
-               guestIPType, VLAN, trafficType, zoneId, services);
+               guestIPType, VLAN, trafficType, zoneId, services, tags, securityGroupEnabled, account);
       }
    }
 
    private long id;
+   private String account;
    @SerializedName("broadcastdomaintype")
    private String broadcastDomainType;
    @SerializedName("broadcasturi")
@@ -216,8 +244,9 @@ public class Network implements Comparable<Network> {
    private String DNS1;
    @SerializedName("dns2")
    private String DNS2;
-   @SerializedName("networkdomain")
    private String domain;
+   @SerializedName("domainid")
+   private long domainId;
    @SerializedName("endip")
    private String endIP;
    private String gateway;
@@ -252,8 +281,11 @@ public class Network implements Comparable<Network> {
    private TrafficType trafficType;
    @SerializedName("zoneid")
    private long zoneId;
-   @SerializedName("service")
+   private String tags;
+   @SerializedName("securitygroupenabled")
+   private boolean securityGroupEnabled;
    // so tests and serialization comes out expected
+   @SerializedName("service")
    private SortedSet<? extends NetworkService> services = ImmutableSortedSet.<NetworkService>of();
 
    /**
@@ -264,11 +296,12 @@ public class Network implements Comparable<Network> {
    }
 
    public Network(long id, String broadcastDomainType, URI broadcastURI, String displayText,
-                  List<String> DNS, String domain, String endIP, String gateway, boolean isDefault,
+                  List<String> DNS, String domain, long domainId, String endIP, String gateway, boolean isDefault,
                   boolean isShared, boolean isSystem, String netmask, String networkDomain, String networkOfferingAvailability,
                   String networkOfferingDisplayText, long networkOfferingId, String networkOfferingName, long related,
                   String startIP, String name, String state, GuestIPType type, String vLAN, TrafficType trafficType,
-                  long zoneId, Set<? extends NetworkService> services) {
+                  long zoneId, Set<? extends NetworkService> services, Set<String> tags, boolean securityGroupEnabled,
+                  String account) {
       this.id = id;
       this.broadcastDomainType = broadcastDomainType;
       this.broadcastURI = broadcastURI;
@@ -276,6 +309,7 @@ public class Network implements Comparable<Network> {
       this.DNS1 = checkNotNull(DNS, "DNS").size() > 0 ? DNS.get(0) : null;
       this.DNS2 = DNS.size() > 1 ? DNS.get(1) : null;
       this.domain = domain;
+      this.domainId = domainId;
       this.endIP = endIP;
       this.gateway = gateway;
       this.isDefault = isDefault;
@@ -296,6 +330,9 @@ public class Network implements Comparable<Network> {
       this.trafficType = trafficType;
       this.zoneId = zoneId;
       this.services = ImmutableSortedSet.copyOf(checkNotNull(services, "services"));
+      this.tags = tags.size() == 0 ? null : Joiner.on(',').join(tags);
+      this.securityGroupEnabled = securityGroupEnabled;
+      this.account = account;
    }
 
    /**
@@ -339,10 +376,24 @@ public class Network implements Comparable<Network> {
    }
 
    /**
-    * @return Domain name for the Vms in the zone
+    * @return Domain name for the Network
     */
    public String getDomain() {
       return domain;
+   }
+
+   /**
+    * @return the domain id of the Network
+    */
+   public long getDomainId() {
+      return domainId;
+   }
+
+   /**
+    * @return the account associated with the network
+    */
+   public String getAccount() {
+      return account;
    }
 
    /**
@@ -485,6 +536,20 @@ public class Network implements Comparable<Network> {
       return services;
    }
 
+   /**
+    * @return true if security group is enabled, false otherwise
+    */
+   public boolean isSecurityGroupEnabled() {
+      return securityGroupEnabled;
+   }
+
+   /**
+    * @return the tags for the Network
+    */
+   public Set<String> getTags() {
+      return tags != null ? ImmutableSet.copyOf(Splitter.on(',').split(tags)) : ImmutableSet.<String>of();
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -516,6 +581,8 @@ public class Network implements Comparable<Network> {
       result = prime * result + ((state == null) ? 0 : state.hashCode());
       result = prime * result + ((trafficType == null) ? 0 : trafficType.hashCode());
       result = prime * result + (int) (zoneId ^ (zoneId >>> 32));
+      result = prime * result + ((tags == null) ? 0 : tags.hashCode());
+      result = prime * result + (int) (domainId ^ (domainId >>> 32));
       return result;
    }
 
@@ -636,20 +703,51 @@ public class Network implements Comparable<Network> {
          return false;
       if (zoneId != other.zoneId)
          return false;
+      if (tags == null) {
+         if (other.tags != null)
+            return false;
+      } else if (!tags.equals(other.tags))
+         return false;
+      if (domainId != other.domainId)
+         return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "[id=" + id + ", state=" + state + ", name=" + name + ", displayText=" + displayText + ", guestIPType="
-            + guestIPType + ", trafficType=" + trafficType + ", DNS=" + getDNS() + ", VLAN=" + VLAN
-            + ", startIP=" + startIP + ", endIP=" + endIP + ", netmask=" + netmask + ", gateway=" + gateway
-            + ", broadcastDomainType=" + broadcastDomainType + ", broadcastURI=" + broadcastURI + ", services="
-            + services + ", domain=" + domain + ", isDefault=" + isDefault + ", isShared="
-            + isShared + ", isSystem=" + isSystem + ", related=" + related + ", zoneId=" + zoneId + ", domain="
-            + networkDomain + ", networkOfferingAvailability=" + networkOfferingAvailability
-            + ", networkOfferingDisplayText=" + networkOfferingDisplayText + ", networkOfferingId=" + networkOfferingId
-            + ", networkOfferingName=" + networkOfferingName + "]";
+      return "Network{" +
+            "id=" + id +
+            ", account='" + account + '\'' +
+            ", broadcastDomainType='" + broadcastDomainType + '\'' +
+            ", broadcastURI=" + broadcastURI +
+            ", displayText='" + displayText + '\'' +
+            ", DNS1='" + DNS1 + '\'' +
+            ", DNS2='" + DNS2 + '\'' +
+            ", domain='" + domain + '\'' +
+            ", domainId=" + domainId +
+            ", endIP='" + endIP + '\'' +
+            ", gateway='" + gateway + '\'' +
+            ", isDefault=" + isDefault +
+            ", isShared=" + isShared +
+            ", isSystem=" + isSystem +
+            ", netmask='" + netmask + '\'' +
+            ", networkDomain='" + networkDomain + '\'' +
+            ", networkOfferingAvailability='" + networkOfferingAvailability + '\'' +
+            ", networkOfferingDisplayText='" + networkOfferingDisplayText + '\'' +
+            ", networkOfferingId=" + networkOfferingId +
+            ", networkOfferingName='" + networkOfferingName + '\'' +
+            ", related=" + related +
+            ", startIP='" + startIP + '\'' +
+            ", name='" + name + '\'' +
+            ", state='" + state + '\'' +
+            ", guestIPType=" + guestIPType +
+            ", VLAN='" + VLAN + '\'' +
+            ", trafficType=" + trafficType +
+            ", zoneId=" + zoneId +
+            ", tags='" + tags + '\'' +
+            ", securityGroupEnabled=" + securityGroupEnabled +
+            ", services=" + services +
+            '}';
    }
 
    @Override

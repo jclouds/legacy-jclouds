@@ -57,10 +57,10 @@ public class JobResult implements Comparable<JobResult> {
 
    @Override
    public String toString() {
-      return "[" +
-         "success=" + success +
-         ", displayText=" + (displayText != null ? '\'' + displayText + '\'' : "null") +
-         ']';
+      return "JobResult{" +
+            "success=" + success +
+            ", displayText='" + displayText + '\'' +
+            '}';
    }
 
    @Override
