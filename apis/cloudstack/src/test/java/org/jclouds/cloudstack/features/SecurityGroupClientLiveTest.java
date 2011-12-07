@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -71,7 +72,7 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
          for (SecurityGroup securityGroup : client.getSecurityGroupClient().listSecurityGroups(
                ListSecurityGroupsOptions.Builder.named(prefix))) {
             for (IngressRule rule : securityGroup.getIngressRules())
-               assert this.jobComplete.apply(client.getSecurityGroupClient().revokeIngressRule(rule.getId())) : rule;
+               assertTrue(jobComplete.apply(client.getSecurityGroupClient().revokeIngressRule(rule.getId())), rule.toString());
             client.getSecurityGroupClient().deleteSecurityGroup(securityGroup.getId());
          }
          group = client.getSecurityGroupClient().createSecurityGroup(prefix);
@@ -101,9 +102,9 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
          return;
       String cidr = getCurrentCIDR();
       ImmutableSet<String> cidrs = ImmutableSet.of(cidr);
-      assert jobComplete.apply(client.getSecurityGroupClient().authorizeIngressICMPToCIDRs(group.getId(), 0, 8, cidrs)) : group;
-      assert jobComplete.apply(client.getSecurityGroupClient().authorizeIngressPortsToCIDRs(group.getId(), "TCP", 22,
-            22, cidrs)) : group;
+      assertTrue(jobComplete.apply(client.getSecurityGroupClient().authorizeIngressICMPToCIDRs(group.getId(), 0, 8, cidrs)), group.toString());
+      assertTrue(jobComplete.apply(client.getSecurityGroupClient().authorizeIngressPortsToCIDRs(group.getId(), "TCP", 22,
+            22, cidrs)), group.toString());
 
       AccountInDomainOptions.Builder.accountInDomain(group.getAccount(), group.getDomainId());
 
@@ -197,11 +198,11 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
    @AfterGroups(groups = "live")
    protected void tearDown() {
       if (vm != null) {
-         assert jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vm.getId()));
+         assertTrue(jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vm.getId())));
       }
       if (group != null) {
          for (IngressRule rule : group.getIngressRules())
-            assert this.jobComplete.apply(client.getSecurityGroupClient().revokeIngressRule(rule.getId())) : rule;
+            assertTrue(jobComplete.apply(client.getSecurityGroupClient().revokeIngressRule(rule.getId())), rule.toString());
          client.getSecurityGroupClient().deleteSecurityGroup(group.getId());
          assertEquals(client.getSecurityGroupClient().getSecurityGroup(group.getId()), null);
       }

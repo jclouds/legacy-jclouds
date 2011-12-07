@@ -99,7 +99,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       // Create a VM and stop it
       Long templateId = (imageId != null && !"".equals(imageId)) ? new Long(imageId) : null;
       vmForCreation = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network, templateId, client, jobComplete, virtualMachineRunning);
-      assert jobComplete.apply(client.getVirtualMachineClient().stopVirtualMachine(vmForCreation.getId())) : vmForCreation;
+      assertTrue(jobComplete.apply(client.getVirtualMachineClient().stopVirtualMachine(vmForCreation.getId())), vmForCreation.toString());
 
       // Work out the VM's volume
       Set<Volume> volumes = client.getVolumeClient().listVolumes(ListVolumesOptions.Builder.virtualMachineId(vmForCreation.getId()));
@@ -109,7 +109,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       // Create a template
       CreateTemplateOptions options = CreateTemplateOptions.Builder.volumeId(volume.getId());
       AsyncCreateResponse response = client.getTemplateClient().createTemplate(TemplateMetadata.builder().name(prefix+"-createTemplate").osTypeId(vmForCreation.getGuestOSId()).displayText("jclouds live testCreateTemplate").build(), options);
-      assert jobComplete.apply(response.getJobId()) : vmForCreation;
+      assertTrue(jobComplete.apply(response.getJobId()), vmForCreation.toString());
       createdTemplate = client.getTemplateClient().getTemplateInZone(response.getId(), vmForCreation.getZoneId());
 
       // Assertions
@@ -120,7 +120,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testExtractTemplate() throws Exception {
       // Initiate the extraction and wait for it to complete
       AsyncCreateResponse response = client.getTemplateClient().extractTemplate(registeredTemplate.getId(), ExtractMode.HTTP_DOWNLOAD, registeredTemplate.getZoneId());
-      assert jobComplete.apply(response.getJobId()) : registeredTemplate;
+      assertTrue(jobComplete.apply(response.getJobId()), registeredTemplate.toString());
 
       // Get the result
       AsyncJob<TemplateExtraction> asyncJob = client.getAsyncJobClient().getAsyncJob(response.getJobId());
@@ -180,13 +180,13 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
    @AfterGroups(groups = "live")
    protected void tearDown() {
       if (vmForCreation != null) {
-         assert jobComplete.apply(client.getVirtualMachineClient().stopVirtualMachine(vmForCreation.getId())) : vmForCreation;
-         assert jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vmForCreation.getId())) : vmForCreation;
-         assert virtualMachineDestroyed.apply(vmForCreation);
+         assertTrue(jobComplete.apply(client.getVirtualMachineClient().stopVirtualMachine(vmForCreation.getId())), vmForCreation.toString());
+         assertTrue(jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vmForCreation.getId())), vmForCreation.toString());
+         assertTrue(virtualMachineDestroyed.apply(vmForCreation));
       }
       if (vmForRegistration != null) {
-         assert jobComplete.apply(client.getVirtualMachineClient().stopVirtualMachine(vmForRegistration.getId())) : vmForRegistration;
-         assert jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vmForRegistration.getId())) : vmForRegistration;
+         assertTrue(jobComplete.apply(client.getVirtualMachineClient().stopVirtualMachine(vmForRegistration.getId())), vmForRegistration.toString());
+         assertTrue(jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vmForRegistration.getId())), vmForRegistration.toString());
          assert virtualMachineDestroyed.apply(vmForRegistration);
       }
       if (createdTemplate != null) {
