@@ -114,6 +114,9 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
             Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
       // ensure we don't mutate the input template
       template = templateBuilderProvider.get().fromTemplate(template).build();
+      
+      // preallocate count addresses
+      
       Iterable<? extends RunningInstance> started = createKeyPairAndSecurityGroupsAsNeededThenRunInstances(group,
                count, template);
 
@@ -126,7 +129,9 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
          logger.debug("<< present instances(%s)", idsString);
          populateCredentials(started);
       }
-
+      
+      // assign addresses to instances
+      
       return utils.customizeNodesAndAddToGoodMapOrPutExceptionIntoBadMap(template.getOptions(), transform(started,
                runningInstanceToNodeMetadata), goodNodes, badNodes, customizationResponses);
    }

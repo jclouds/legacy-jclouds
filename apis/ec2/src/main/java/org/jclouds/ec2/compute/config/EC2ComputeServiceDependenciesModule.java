@@ -41,6 +41,7 @@ import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.EC2ComputeService;
 import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.functions.AddElasticIpsToNodemetadata;
 import org.jclouds.ec2.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.ec2.compute.functions.CredentialsForInstance;
@@ -52,11 +53,13 @@ import org.jclouds.ec2.compute.predicates.SecurityGroupPresent;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.cache.Cache;
@@ -94,8 +97,6 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       bind(TemplateBuilder.class).to(EC2TemplateBuilderImpl.class);
       bind(TemplateOptions.class).to(EC2TemplateOptions.class);
       bind(ComputeService.class).to(EC2ComputeService.class);
-      bind(new TypeLiteral<Function<RunningInstance, NodeMetadata>>() {
-      }).to(RunningInstanceToNodeMetadata.class);
       bind(new TypeLiteral<CacheLoader<RunningInstance, Credentials>>() {
       }).to(CredentialsForInstance.class);
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
@@ -110,6 +111,16 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       bind(new TypeLiteral<RestContext<EC2Client, EC2AsyncClient>>() {
       }).to(new TypeLiteral<RestContextImpl<EC2Client, EC2AsyncClient>>() {
       }).in(Scopes.SINGLETON);
+   }
+
+   @Provides
+   @Singleton
+   public Function<RunningInstance, NodeMetadata> bindNodeConverter(RunningInstanceToNodeMetadata baseConverter,
+            AddElasticIpsToNodemetadata addElasticIpsToNodemetadata,
+            @Named(EC2Constants.PROPERTY_EC2_AUTO_ALLOCATE_ELASTIC_IPS) boolean autoAllocateElasticIps) {
+      if (!autoAllocateElasticIps)
+         return baseConverter;
+      return Functions.compose(addElasticIpsToNodemetadata, baseConverter);
    }
 
    @Provides
