@@ -109,7 +109,7 @@ See http://code.google.com/p/jclouds for details."
    (compute-context? (first args)) (.getComputeService (first args))
    :else (apply compute-service args)))
 
-(def *compute*)
+(def ^{:dynamic :true} *compute*)
 
 (defmacro with-compute-service
   "Specify the default compute service"

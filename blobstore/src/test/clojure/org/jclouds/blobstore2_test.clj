@@ -34,95 +34,94 @@
       (delete-container blobstore (.getName container)))
     (f)))
 
-(def *blobstore* (blobstore "transient" "" ""))
+(def blobstore-stub (blobstore "transient" "" ""))
 
-(use-fixtures :each (clean-stub-fixture *blobstore*))
+(use-fixtures :each (clean-stub-fixture blobstore-stub))
 
 (deftest blobstore?-test
-  (is (blobstore? *blobstore*)))
+  (is (blobstore? blobstore-stub)))
 
 (deftest as-blobstore-test
-  (is (blobstore? (blobstore "transient" "user" "password")))
-  (is (blobstore? *blobstore*)))
+  (is (blobstore? (blobstore "transient" "user" "password"))))
 
 (deftest create-existing-container-test
-  (is (not (container-exists? *blobstore* "")))
-  (is (create-container *blobstore* "fred"))
-  (is (container-exists? *blobstore* "fred")))
+  (is (not (container-exists? blobstore-stub "")))
+  (is (create-container blobstore-stub "fred"))
+  (is (container-exists? blobstore-stub "fred")))
 
 (deftest create-container-test
-  (is (create-container *blobstore* "fred"))
-  (is (container-exists? *blobstore* "fred")))
+  (is (create-container blobstore-stub "fred"))
+  (is (container-exists? blobstore-stub "fred")))
 
 (deftest locations-test
-  (is (not (empty? (locations *blobstore*))))
-  (is (create-container *blobstore* "fred"
-                        :location (first (locations *blobstore*)))))
+  (is (not (empty? (locations blobstore-stub))))
+  (is (create-container blobstore-stub "fred"
+                        :location (first (locations blobstore-stub)))))
 
 (deftest containers-test
-  (is (empty? (containers *blobstore*)))
-  (is (create-container *blobstore* "fred"))
-  (is (= 1 (count (containers *blobstore*)))))
+  (is (empty? (containers blobstore-stub)))
+  (is (create-container blobstore-stub "fred"))
+  (is (= 1 (count (containers blobstore-stub)))))
 
 (deftest blobs-test
-  (is (create-container *blobstore* "container"))
-  (is (empty? (blobs *blobstore* "container")))
-  (is (put-blob *blobstore* "container"
+  (is (create-container blobstore-stub "container"))
+  (is (empty? (blobs blobstore-stub "container")))
+  (is (put-blob blobstore-stub "container"
                 (blob "blob1" :payload "blob1" :calculate-md5 true)))
-  (is (put-blob *blobstore* "container"
+  (is (put-blob blobstore-stub "container"
                 (blob "blob2" :payload "blob2" :calculate-md5 true)))
-  (is (= 2 (count (blobs *blobstore* "container"))))
-  (is (= 1 (count (blobs *blobstore* "container" :max-results 1))))
-  (create-directory *blobstore* "container" "dir")
-  (is (put-blob *blobstore* "container"
+  (is (= 2 (count (blobs blobstore-stub "container"))))
+  (is (= 1 (count (blobs blobstore-stub "container" :max-results 1))))
+  (create-directory blobstore-stub "container" "dir")
+  (is (put-blob blobstore-stub "container"
                 (blob "dir/blob2" :payload "blob2" :calculate-md5 true)))
-  (is (= 3 (count-blobs *blobstore* "container")))
-  (is (= 3 (count (blobs *blobstore* "container"))))
-  (is (= 4 (count (blobs *blobstore* "container" :recursive true))))
-  (is (= 3 (count (blobs *blobstore* "container" :with-details true))))
-  (is (= 1 (count (blobs *blobstore* "container" :in-directory "dir")))))
+  (is (= 3 (count-blobs blobstore-stub "container")))
+  (is (= 3 (count (blobs blobstore-stub "container"))))
+  (is (= 4 (count (blobs blobstore-stub "container" :recursive true))))
+  (is (= 3 (count (blobs blobstore-stub "container" :with-details true))))
+  (is (= 1 (count (blobs blobstore-stub "container" :in-directory "dir")))))
 
 (deftest large-container-list-test
   (let [container-name "test"
         total-blobs 5000]
     ;; create a container full of blobs
-    (create-container *blobstore* container-name)
-    (dotimes [i total-blobs] (put-blob *blobstore* container-name
+    (create-container blobstore-stub container-name)
+    (dotimes [i total-blobs] (put-blob blobstore-stub container-name
                                        (blob (str i)
                                              :payload (str i)
                                              :calculate-md5 true)))
     ;; verify
-    (is (= total-blobs (count-blobs *blobstore* container-name)))))
+    (is (= total-blobs (count-blobs blobstore-stub container-name)))))
 
 (deftest container-seq-test
-  (is (create-container *blobstore* "container"))
-  (is (empty? (container-seq *blobstore* "container")))
-  (is (empty? (container-seq *blobstore* "container" "/a"))))
+  (is (create-container blobstore-stub "container"))
+  (is (empty? (container-seq blobstore-stub "container")))
+  (is (empty? (container-seq blobstore-stub "container" "/a"))))
 
 (deftest get-blob-test
-  (is (create-container *blobstore* "blob"))
-  (is (put-blob *blobstore* "blob"
+  (is (create-container blobstore-stub "blob"))
+  (is (put-blob blobstore-stub "blob"
                 (blob "blob1" :payload "blob1" :calculate-md5 true)))
-  (is (put-blob *blobstore* "blob"
+  (is (put-blob blobstore-stub "blob"
                 (blob "blob2" :payload "blob2" :calculate-md5 true)))
-  (is (= "blob2" (Strings2/toStringAndClose (get-blob-stream *blobstore*
+  (is (= "blob2" (Strings2/toStringAndClose (get-blob-stream blobstore-stub
                                                              "blob" "blob2")))))
 
 (deftest put-blob-test
   ;; Check multipart works
-  (is (create-container *blobstore* "blobs"))
-  (is (put-blob *blobstore* "blobs"
+  (is (create-container blobstore-stub "blobs"))
+  (is (put-blob blobstore-stub "blobs"
                 (blob "blob1" :payload "blob1")
                 :multipart? true))
-  (is (= 1 (count (blobs *blobstore* "blobs")))))
+  (is (= 1 (count (blobs blobstore-stub "blobs")))))
 
 (deftest sign-get-test
-  (let [request (sign-get *blobstore* "container" "path")]
+  (let [request (sign-get blobstore-stub "container" "path")]
     (is (= "http://localhost/container/path" (str (.getEndpoint request))))
     (is (= "GET" (.getMethod request)))))
 
 (deftest sign-put-test
-  (let [request (sign-put *blobstore* "container"
+  (let [request (sign-put blobstore-stub "container"
                           (blob "path" :content-length 10))]
     (is (= "http://localhost/container/path" (str (.getEndpoint request))))
     (is (= "PUT" (.getMethod request)))
@@ -131,7 +130,7 @@
          (first (.get (.getHeaders request) "Content-Type"))))))
 
 (deftest sign-put-with-headers-test
-  (let [request (sign-put *blobstore*
+  (let [request (sign-put blobstore-stub
                  "container"
                  (blob "path"
                        :content-length 10
@@ -147,7 +146,7 @@
     (is (= "g" (first (.get (.getHeaders request) "Content-Encoding"))))))
 
 (deftest sign-delete-test
-  (let [request (sign-delete *blobstore* "container" "path")]
+  (let [request (sign-delete blobstore-stub "container" "path")]
     (is (= "http://localhost/container/path" (str (.getEndpoint request))))
     (is (= "DELETE" (.getMethod request)))))
 
@@ -161,34 +160,34 @@
 (deftest payload-protocol-test
   (is (instance? org.jclouds.io.Payload (payload "test")))
   (is (blob "blob1" :payload (payload "blob1")))
-  (is (create-container *blobstore* "container"))
+  (is (create-container blobstore-stub "container"))
   (is (= "blob1"
          (do
-           (put-blob *blobstore* "container"
+           (put-blob blobstore-stub "container"
                      (blob "blob1"
                            :payload "blob1"))
-           (Strings2/toStringAndClose (get-blob-stream *blobstore*
+           (Strings2/toStringAndClose (get-blob-stream blobstore-stub
                                                        "container" "blob1")))))
   (is (= "blob2"
          (do
-           (put-blob *blobstore* "container"
+           (put-blob blobstore-stub "container"
                      (blob "blob2"
                            :payload (StringBufferInputStream. "blob2")))
-           (Strings2/toStringAndClose (get-blob-stream *blobstore*
+           (Strings2/toStringAndClose (get-blob-stream blobstore-stub
                                                        "container" "blob2")))))
   (is (= "blob3"
          (do
-           (put-blob *blobstore* "container"
+           (put-blob blobstore-stub "container"
                      (blob "blob3"
                            :payload (.getBytes "blob3")))
-           (Strings2/toStringAndClose (get-blob-stream *blobstore*
+           (Strings2/toStringAndClose (get-blob-stream blobstore-stub
                                                        "container" "blob3")))))
   (is (= "blob4"
          (do
-           (put-blob *blobstore* "container"
+           (put-blob blobstore-stub "container"
                      (blob "blob4"
                            :payload #(.write % (.getBytes "blob4"))))
-           (Strings2/toStringAndClose (get-blob-stream *blobstore*
+           (Strings2/toStringAndClose (get-blob-stream blobstore-stub
                                                        "container" "blob4"))))))
 
 ;; TODO: more tests involving blob-specific functions

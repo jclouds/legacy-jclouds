@@ -100,9 +100,9 @@ Options can also be specified for extension modules
    (blobstore-context? (first args)) (.getBlobStore (first args))
    :else (apply blobstore args)))
 
-(def *blobstore*)
+(def ^{:dynamic :true} *blobstore*)
 
-(def *max-retries* 3)
+(def ^{:dynamic :true} *max-retries* 3)
 
 (defmacro with-blobstore [[& blobstore-or-args] & body]
   `(binding [*blobstore* (as-blobstore ~@blobstore-or-args)]
@@ -249,7 +249,7 @@ Note: (apply concat coll) or (lazy-cat coll) are not lazy wrt coll itself."
   ([container-name path #^BlobStore blobstore]
      (.blobMetadata blobstore container-name path)))
 
-(defn get-blob
+(defn ^{:dynamic :true} get-blob
   "Get blob from given path"
   ([container-name path]
      (get-blob container-name path *blobstore*))

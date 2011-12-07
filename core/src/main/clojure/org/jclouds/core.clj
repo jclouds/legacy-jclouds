@@ -24,7 +24,7 @@
            (com.google.common.collect ImmutableSet))
   (:require [clojure.string :as string]))
 
-(def module-lookup
+(def ^{:dynamic :true} module-lookup
      {:log4j 'org.jclouds.logging.log4j.config.Log4JLoggingModule
       :slf4j 'org.jclouds.logging.slf4j.config.SLF4JLoggingModule
       :lognull 'org.jclouds.logging.config.NullLoggingModule
