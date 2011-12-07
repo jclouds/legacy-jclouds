@@ -49,6 +49,7 @@ public class ListNetworksResponseTest extends BaseSetParserTest<Network> {
             .<Network> of(Network
                   .builder()
                   .id(204)
+                  .account("adrian")
                   .name("Virtual Network")
                   .displayText(
                         "A dedicated virtualized network for your account.  The broadcast domain is contained within a VLAN and all public network access is routed out by a virtual router.")
@@ -66,7 +67,8 @@ public class ListNetworksResponseTest extends BaseSetParserTest<Network> {
                   .broadcastURI(URI.create("vlan://240"))
                   .DNS(ImmutableList.of("8.8.8.8"))
                   .guestIPType(GuestIPType.VIRTUAL)
-                  .domain("cs3cloud.internal")
+                  .domain("ROOT")
+                  .domainId(1)
                   .isDefault(true)
                   .services(
                         ImmutableSortedSet.of(

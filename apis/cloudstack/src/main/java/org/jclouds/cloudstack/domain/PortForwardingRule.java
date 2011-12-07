@@ -137,7 +137,7 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
    @SerializedName("virtualmachinename")
    private String virtualMachineName;
    @SerializedName("cidrlist")
-   private Set<String> CIDRs;
+   private Set<String> CIDRs = ImmutableSet.of();
    @SerializedName("privateendport")
    private int privateEndPort;
    @SerializedName("publicendport")
