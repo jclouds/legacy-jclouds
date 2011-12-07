@@ -1,0 +1,70 @@
+<PerformanceStatistics
+        href="/cloudapi/ecloud/computepools/89/usage/cpu/performancestatistics/daily?starttime=2011-11-30t00%3a00%3a00z&amp;endtime=2011-12-06t00%3a00%3a00z"
+        type="application/vnd.tmrk.cloud.performanceStatistics"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <Links>
+        <Link href="/cloudapi/ecloud/computepools/89"
+              name="Default Compute Pool"
+              type="application/vnd.tmrk.cloud.computePool" rel="up"/>
+        <Link href="/cloudapi/ecloud/computepools/89/performancestatistics"
+              type="application/vnd.tmrk.cloud.computePoolPerformanceStatistics"
+              rel="up"/>
+    </Links>
+    <StartTime>2011-11-30T00:00:00Z</StartTime>
+    <EndTime>2011-12-06T00:00:00Z</EndTime>
+    <VirtualMachines>
+        <VirtualMachine href="/cloudapi/ecloud/virtualmachines/5504"
+                        name="helloworld"
+                        type="application/vnd.tmrk.cloud.virtualMachine">
+            <PerformanceStatistic>
+                <Time>2011-11-30T00:00:00Z</Time>
+                <Used>
+                    <Unit>MHz</Unit>
+                    <Value>43</Value>
+                </Used>
+            </PerformanceStatistic>
+            <PerformanceStatistic>
+                <Time>2011-12-01T00:00:00Z</Time>
+                <Used>
+                    <Unit>MHz</Unit>
+                    <Value>43</Value>
+                </Used>
+            </PerformanceStatistic>
+            <PerformanceStatistic>
+                <Time>2011-12-02T00:00:00Z</Time>
+                <Used>
+                    <Unit>MHz</Unit>
+                    <Value>42</Value>
+                </Used>
+            </PerformanceStatistic>
+            <PerformanceStatistic>
+                <Time>2011-12-03T00:00:00Z</Time>
+                <Used>
+                    <Unit>MHz</Unit>
+                    <Value>43</Value>
+                </Used>
+            </PerformanceStatistic>
+            <PerformanceStatistic>
+                <Time>2011-12-04T00:00:00Z</Time>
+                <Used>
+                    <Unit>MHz</Unit>
+                    <Value>44</Value>
+                </Used>
+            </PerformanceStatistic>
+            <PerformanceStatistic>
+                <Time>2011-12-05T00:00:00Z</Time>
+                <Used>
+                    <Unit>MHz</Unit>
+                    <Value>42</Value>
+                </Used>
+            </PerformanceStatistic>
+            <PerformanceStatistic>
+                <Time>2011-12-06T00:00:00Z</Time>
+                <Used>
+                    <Unit>MHz</Unit>
+                    <Value>43</Value>
+                </Used>
+            </PerformanceStatistic>
+        </VirtualMachine>
+    </VirtualMachines>
+</PerformanceStatistics>

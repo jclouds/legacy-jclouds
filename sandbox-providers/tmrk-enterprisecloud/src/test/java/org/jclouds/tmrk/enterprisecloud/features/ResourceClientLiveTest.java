@@ -20,12 +20,14 @@ package org.jclouds.tmrk.enterprisecloud.features;
 
 import org.jclouds.tmrk.enterprisecloud.domain.Link;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.PerformanceStatistics;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsageDetail;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsageDetail;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.storage.ComputePoolStorageUsageDetail;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -113,5 +115,15 @@ public class ResourceClientLiveTest extends BaseTerremarkEnterpriseCloudClientLi
    private void testGetComputePoolMemoryUsageDetail(URI uri) {
       ComputePoolMemoryUsageDetail detail = client.getComputePoolMemoryUsageDetail(uri);
       assertNotNull(detail.getTime());
+   }
+
+   public void testGetComputePoolStorageUsage() throws Exception {
+      ComputePoolStorageUsageDetail usage = client.getComputePoolStorageUsage(URI.create("/cloudapi/ecloud/computepools/89/usage/storage"));
+      assertNotNull(usage);
+   }
+
+   public void testGetDailyCpuPerformanceStatistics() throws Exception {
+      PerformanceStatistics stats = client.getDailyCpuPerformanceStatistics(URI.create("/cloudapi/ecloud/computepools/89/usage/cpu/performancestatistics/daily"));
+      assertNotNull(stats);
    }
 }

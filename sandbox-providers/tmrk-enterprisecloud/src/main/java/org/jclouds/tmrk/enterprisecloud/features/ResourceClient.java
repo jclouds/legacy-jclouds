@@ -19,12 +19,15 @@
 package org.jclouds.tmrk.enterprisecloud.features;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolPerformanceStatistics;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.PerformanceStatistics;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsageDetail;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsageDetail;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.storage.ComputePoolStorageUsageDetail;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
@@ -131,4 +134,39 @@ public interface ResourceClient {
     * @return the compute pool memory usage detail
     */
    ComputePoolMemoryUsageDetail getComputePoolMemoryUsageDetail(URI uri);
+
+   /**
+    * The Get Resources Usage Storage call returns information regarding current storage usage
+    * for a specified compute pool defined in an environment for active virtual machines.
+    * The response includes usage of every active virtual machine.
+    * @param uri the uri of the call based upon the compute pool
+    * e.g. /cloudapi/ecloud/computepools/{id}/usage/storage
+    * @return the compute pool storage usage detail
+    */
+   ComputePoolStorageUsageDetail getComputePoolStorageUsage(URI uri);
+
+   /**
+    * The Get Resources Performance Statistics call returns references to obtain
+    * the individual performance statistics reports in a compute pool.
+    * @param uri the uri of the call based upon the compute pool
+    * e.g. /cloudapi/ecloud/computepools/{id}/performanceStatistics
+    * @return
+    */
+   ComputePoolPerformanceStatistics getComputePoolPerformanceStatistics(URI uri);
+
+   /**
+    * The Get Resources Performance Statistics Processor Daily call returns daily
+    * information regarding processor performance for a specified compute pool
+    *
+    * returns statistics for the previous seven days.
+    *
+    * The default endTime is midnight the beginning of the current day and the default
+    * startTime is midnight seven days prior to the endTime.
+    * For example, if the call is made at 2011-07-12T14:48:00Z, then startTime is 2011-07-05T00:00:00Z
+    * and endTime is 2011-07-12T00:00:00Z.
+    * @param uri uri the uri of the call based upon the compute pool
+    * e.g. /cloudapi/ecloud/computepools/{id}/usage/cpu/performanceStatistics/daily
+    * @return
+    */
+   PerformanceStatistics getDailyCpuPerformanceStatistics(URI uri);
 }
