@@ -1,0 +1,22 @@
+<ComputePoolPerformanceStatistics
+href="/cloudapi/ecloud/computepools/89/performancestatistics"
+type="application/vnd.tmrk.cloud.computePoolPerformanceStatistics"
+xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+<Links>
+    <Link href="/cloudapi/ecloud/computepools/89"
+          name="Default Compute Pool"
+          type="application/vnd.tmrk.cloud.computePool" rel="up"/>
+</Links>
+<Hourly>
+    <Cpu href="/cloudapi/ecloud/computepools/89/usage/cpu/performancestatistics/hourly"
+         type="application/vnd.tmrk.cloud.performanceStatistics"/>
+    <Memory href="/cloudapi/ecloud/computepools/89/usage/memory/performancestatistics/hourly"
+            type="application/vnd.tmrk.cloud.performanceStatistics"/>
+</Hourly>
+<Daily>
+    <Cpu href="/cloudapi/ecloud/computepools/89/usage/cpu/performancestatistics/daily"
+         type="application/vnd.tmrk.cloud.performanceStatistics"/>
+    <Memory href="/cloudapi/ecloud/computepools/89/usage/memory/performancestatistics/daily"
+            type="application/vnd.tmrk.cloud.performanceStatistics"/>
+</Daily>
+</ComputePoolPerformanceStatistics>

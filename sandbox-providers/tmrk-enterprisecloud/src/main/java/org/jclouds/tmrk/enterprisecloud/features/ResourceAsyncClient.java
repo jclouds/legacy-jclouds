@@ -22,12 +22,15 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolPerformanceStatistics;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.PerformanceStatistics;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsageDetail;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsageDetail;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.storage.ComputePoolStorageUsageDetail;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -100,4 +103,31 @@ public interface ResourceAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<ComputePoolMemoryUsageDetail> getComputePoolMemoryUsageDetail(@EndpointParam URI uri);
+
+   /**
+    * @see ResourceClient#getComputePoolStorageUsage
+    */
+   @GET
+   @Consumes("application/vnd.tmrk.cloud.computePoolStorageUsageDetail")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<ComputePoolStorageUsageDetail> getComputePoolStorageUsage(@EndpointParam URI uri);
+
+   /**
+    * @see ResourceClient#getComputePoolPerformanceStatistics
+    */
+   @GET
+   @Consumes("application/vnd.tmrk.cloud.computePoolPerformanceStatistics")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<ComputePoolPerformanceStatistics> getComputePoolPerformanceStatistics(@EndpointParam URI uri);
+
+   /**
+    * @see ResourceClient#getDailyCpuPerformanceStatistics
+    */
+   @GET
+   @Consumes("application/vnd.tmrk.cloud.performanceStatistics")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<PerformanceStatistics> getDailyCpuPerformanceStatistics(@EndpointParam URI uri);
 }
