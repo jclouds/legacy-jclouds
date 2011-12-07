@@ -23,6 +23,7 @@ import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolPerformanceStatistics;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.PerformanceStatistics;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
@@ -120,4 +121,13 @@ public interface ResourceAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<ComputePoolPerformanceStatistics> getComputePoolPerformanceStatistics(@EndpointParam URI uri);
+
+   /**
+    * @see ResourceClient#getDailyCpuPerformanceStatistics
+    */
+   @GET
+   @Consumes("application/vnd.tmrk.cloud.performanceStatistics")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<PerformanceStatistics> getDailyCpuPerformanceStatistics(@EndpointParam URI uri);
 }
