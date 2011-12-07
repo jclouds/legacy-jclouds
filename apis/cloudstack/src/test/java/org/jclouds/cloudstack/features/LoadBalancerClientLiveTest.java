@@ -105,10 +105,10 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testAssignToLoadBalancerRule() throws Exception {
       if (networksDisabled)
          return;
-      assert jobComplete.apply(client.getLoadBalancerClient().assignVirtualMachinesToLoadBalancerRule(rule.getId(),
-            vm.getId()));
+      assertTrue(jobComplete.apply(client.getLoadBalancerClient().assignVirtualMachinesToLoadBalancerRule(rule.getId(),
+            vm.getId())));
       assertEquals(client.getLoadBalancerClient().listVirtualMachinesAssignedToLoadBalancerRule(rule.getId()).size(), 1);
-      assert loadBalancerRuleActive.apply(rule) : rule;
+      assertTrue(loadBalancerRuleActive.apply(rule), rule.toString());
       loopAndCheckSSH();
    }
 
@@ -134,8 +134,8 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testRemoveFromLoadBalancerRule() throws Exception {
       if (networksDisabled)
          throw new SshException();
-      assert jobComplete.apply(client.getLoadBalancerClient().removeVirtualMachinesFromLoadBalancerRule(rule.getId(),
-            vm.getId()));
+      assertTrue(jobComplete.apply(client.getLoadBalancerClient().removeVirtualMachinesFromLoadBalancerRule(rule.getId(),
+            vm.getId())));
       assertEquals(client.getLoadBalancerClient().listVirtualMachinesAssignedToLoadBalancerRule(rule.getId()).size(), 0);
       assertEquals(rule.getState(), State.ADD);
       checkSSH(new IPSocket(ip.getIPAddress(), 22));
@@ -144,10 +144,10 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    @AfterGroups(groups = "live")
    protected void tearDown() {
       if (rule != null) {
-         assert jobComplete.apply(client.getLoadBalancerClient().deleteLoadBalancerRule(rule.getId()));
+         assertTrue(jobComplete.apply(client.getLoadBalancerClient().deleteLoadBalancerRule(rule.getId())));
       }
       if (vm != null) {
-         assert jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vm.getId()));
+         assertTrue(jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vm.getId())));
       }
       if (ip != null) {
          client.getAddressClient().disassociateIPAddress(ip.getId());

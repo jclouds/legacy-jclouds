@@ -76,7 +76,7 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
          try {
             AsyncCreateResponse job = client.getFirewallClient().createPortForwardingRuleForVirtualMachine(vm.getId(),
                   ip.getId(), "tcp", 22, 22);
-            assert jobComplete.apply(job.getJobId());
+            assertTrue(jobComplete.apply(job.getJobId()));
             rule = findRuleWithId(job.getId());
          } catch (IllegalStateException e) {
             // very likely an ip conflict, so retry;
