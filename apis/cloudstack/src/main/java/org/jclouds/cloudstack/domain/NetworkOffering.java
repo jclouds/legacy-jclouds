@@ -334,9 +334,20 @@ public class NetworkOffering implements Comparable<NetworkOffering> {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", name=" + name + ", displayText=" + displayText + ", created=" + created
-            + ", maxConnections=" + maxConnections + ", trafficType=" + trafficType + ", isDefault=" + isDefault
-            + ", availability=" + availability + ", supportsVLAN=" + supportsVLAN + ", tags=" + getTags() + "]";
+      return "NetworkOffering{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", displayText='" + displayText + '\'' +
+            ", created=" + created +
+            ", availability=" + availability +
+            ", maxConnections=" + maxConnections +
+            ", isDefault=" + isDefault +
+            ", supportsVLAN=" + supportsVLAN +
+            ", trafficType=" + trafficType +
+            ", guestIPType=" + guestIPType +
+            ", networkRate=" + networkRate +
+            ", tags='" + tags + '\'' +
+            '}';
    }
 
    @Override

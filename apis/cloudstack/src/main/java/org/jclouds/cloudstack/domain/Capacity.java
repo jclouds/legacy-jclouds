@@ -231,16 +231,16 @@ public class Capacity implements Comparable<Capacity> {
 
    @Override
    public String toString() {
-      return "[" +
-         "podId=" + podId +
-         ", podName='" + podName + '\'' +
-         ", zoneId=" + zoneId +
-         ", zoneName='" + zoneName + '\'' +
-         ", type=" + type +
-         ", capacityUsed=" + capacityUsed +
-         ", capacityTotal=" + capacityTotal +
-         ", percentUsed=" + percentUsed +
-         ']';
+      return "Capacity{" +
+            "capacityTotal=" + capacityTotal +
+            ", capacityUsed=" + capacityUsed +
+            ", percentUsed=" + percentUsed +
+            ", podId=" + podId +
+            ", podName='" + podName + '\'' +
+            ", type=" + type +
+            ", zoneId=" + zoneId +
+            ", zoneName='" + zoneName + '\'' +
+            '}';
    }
 
    @Override

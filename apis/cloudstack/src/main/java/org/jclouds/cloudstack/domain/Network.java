@@ -281,11 +281,11 @@ public class Network implements Comparable<Network> {
    private TrafficType trafficType;
    @SerializedName("zoneid")
    private long zoneId;
-   @SerializedName("service")
    private String tags;
    @SerializedName("securitygroupenabled")
    private boolean securityGroupEnabled;
    // so tests and serialization comes out expected
+   @SerializedName("service")
    private SortedSet<? extends NetworkService> services = ImmutableSortedSet.<NetworkService>of();
 
    /**
@@ -715,15 +715,39 @@ public class Network implements Comparable<Network> {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", state=" + state + ", name=" + name + ", displayText=" + displayText + ", guestIPType="
-            + guestIPType + ", trafficType=" + trafficType + ", DNS=" + getDNS() + ", VLAN=" + VLAN
-            + ", startIP=" + startIP + ", endIP=" + endIP + ", netmask=" + netmask + ", gateway=" + gateway
-            + ", broadcastDomainType=" + broadcastDomainType + ", broadcastURI=" + broadcastURI + ", services="
-            + services + ", domain=" + domain + ", domainId=" + domainId + ", isDefault=" + isDefault + ", isShared="
-            + isShared + ", isSystem=" + isSystem + ", related=" + related + ", zoneId=" + zoneId + ", domain="
-            + networkDomain + ", networkOfferingAvailability=" + networkOfferingAvailability
-            + ", networkOfferingDisplayText=" + networkOfferingDisplayText + ", networkOfferingId=" + networkOfferingId
-            + ", networkOfferingName=" + networkOfferingName + ", tags=" + getTags() + "]";
+      return "Network{" +
+            "id=" + id +
+            ", account='" + account + '\'' +
+            ", broadcastDomainType='" + broadcastDomainType + '\'' +
+            ", broadcastURI=" + broadcastURI +
+            ", displayText='" + displayText + '\'' +
+            ", DNS1='" + DNS1 + '\'' +
+            ", DNS2='" + DNS2 + '\'' +
+            ", domain='" + domain + '\'' +
+            ", domainId=" + domainId +
+            ", endIP='" + endIP + '\'' +
+            ", gateway='" + gateway + '\'' +
+            ", isDefault=" + isDefault +
+            ", isShared=" + isShared +
+            ", isSystem=" + isSystem +
+            ", netmask='" + netmask + '\'' +
+            ", networkDomain='" + networkDomain + '\'' +
+            ", networkOfferingAvailability='" + networkOfferingAvailability + '\'' +
+            ", networkOfferingDisplayText='" + networkOfferingDisplayText + '\'' +
+            ", networkOfferingId=" + networkOfferingId +
+            ", networkOfferingName='" + networkOfferingName + '\'' +
+            ", related=" + related +
+            ", startIP='" + startIP + '\'' +
+            ", name='" + name + '\'' +
+            ", state='" + state + '\'' +
+            ", guestIPType=" + guestIPType +
+            ", VLAN='" + VLAN + '\'' +
+            ", trafficType=" + trafficType +
+            ", zoneId=" + zoneId +
+            ", tags='" + tags + '\'' +
+            ", securityGroupEnabled=" + securityGroupEnabled +
+            ", services=" + services +
+            '}';
    }
 
    @Override

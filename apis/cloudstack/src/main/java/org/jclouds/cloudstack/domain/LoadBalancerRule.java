@@ -25,6 +25,7 @@ import java.util.Set;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -205,6 +206,9 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
       this.publicIPId = publicIPId;
       this.publicPort = publicPort;
       this.state = state;
+      this.zoneId = zoneId;
+      this.CIDRs = Sets.newHashSet(CIDRs);
+
    }
 
    /**
@@ -392,10 +396,22 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
 
    @Override
    public String toString() {
-      return "[account=" + account + ", algorithm=" + algorithm + ", description=" + description + ", domain=" + domain
-            + ", domainId=" + domainId + ", zoneId=" + zoneId + ", id=" + id + ", name=" + name + ", privatePort=" + privatePort
-            + ", publicIP=" + publicIP + ", publicIPId=" + publicIPId + ", publicPort=" + publicPort + ", state="
-            + state + "]";
+      return "LoadBalancerRule{" +
+            "id=" + id +
+            ", account='" + account + '\'' +
+            ", algorithm=" + algorithm +
+            ", description='" + description + '\'' +
+            ", domain='" + domain + '\'' +
+            ", domainId=" + domainId +
+            ", name='" + name + '\'' +
+            ", privatePort=" + privatePort +
+            ", publicIP='" + publicIP + '\'' +
+            ", publicIPId=" + publicIPId +
+            ", publicPort=" + publicPort +
+            ", state=" + state +
+            ", CIDRs=" + CIDRs +
+            ", zoneId=" + zoneId +
+            '}';
    }
 
 }

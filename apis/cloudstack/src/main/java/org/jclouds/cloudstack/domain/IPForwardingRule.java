@@ -18,10 +18,11 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -168,7 +169,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
       this.virtualMachineDisplayName = virtualMachineDisplayName;
       this.virtualMachineId = virtualMachineId;
       this.virtualMachineName = virtualMachineName;
-      this.CIDRs = new HashSet<String>(CIDRs);
+      this.CIDRs = Sets.newHashSet(CIDRs);
       this.privateEndPort = privateEndPort;
       this.publicEndPort = publicEndPort;
       this.publicPort = publicPort;
@@ -261,7 +262,7 @@ public class IPForwardingRule implements Comparable<IPForwardingRule> {
     * @return the cidr list to forward traffic from
     */
    public Set<String> getCIDRs() {
-      return CIDRs;
+      return Collections.unmodifiableSet(CIDRs);
    }
 
    /**

@@ -256,9 +256,17 @@ public class IngressRule implements Comparable<IngressRule> {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", securityGroupName=" + securityGroupName + ", account=" + account + ", startPort="
-            + startPort + ", endPort=" + endPort + ", protocol=" + protocol + ", CIDR=" + CIDR + ", ICMPCode="
-            + ICMPCode + ", ICMPType=" + ICMPType + "]";
+      return "IngressRule{" +
+            "account='" + account + '\'' +
+            ", CIDR='" + CIDR + '\'' +
+            ", endPort=" + endPort +
+            ", ICMPCode=" + ICMPCode +
+            ", ICMPType=" + ICMPType +
+            ", protocol='" + protocol + '\'' +
+            ", id=" + id +
+            ", securityGroupName='" + securityGroupName + '\'' +
+            ", startPort=" + startPort +
+            '}';
    }
 
    @Override

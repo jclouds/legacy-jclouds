@@ -329,10 +329,21 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
 
    @Override
    public String toString() {
-      return "[IPAddress=" + IPAddress + ", IPAddressId=" + IPAddressId + ", id=" + id + ", privatePort=" + privatePort
-            + ", protocol=" + protocol + ", publicPort=" + publicPort + ", state=" + state
-            + ", virtualMachineDisplayName=" + virtualMachineDisplayName + ", virtualMachineId=" + virtualMachineId
-            + ", virtualMachineName=" + virtualMachineName + "]";
+      return "PortForwardingRule{" +
+            "id=" + id +
+            ", IPAddress='" + IPAddress + '\'' +
+            ", IPAddressId=" + IPAddressId +
+            ", privatePort=" + privatePort +
+            ", protocol='" + protocol + '\'' +
+            ", publicPort=" + publicPort +
+            ", state='" + state + '\'' +
+            ", virtualMachineDisplayName='" + virtualMachineDisplayName + '\'' +
+            ", virtualMachineId=" + virtualMachineId +
+            ", virtualMachineName='" + virtualMachineName + '\'' +
+            ", CIDRs=" + CIDRs +
+            ", privateEndPort=" + privateEndPort +
+            ", publicEndPort=" + publicEndPort +
+            '}';
    }
 
 }

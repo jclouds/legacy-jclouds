@@ -85,7 +85,10 @@ public class AsyncCreateResponse {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", jobId=" + jobId + "]";
+      return "AsyncCreateResponse{" +
+            "id=" + id +
+            ", jobId=" + jobId +
+            '}';
    }
 
 }

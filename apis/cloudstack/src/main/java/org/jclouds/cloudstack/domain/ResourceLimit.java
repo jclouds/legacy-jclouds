@@ -148,8 +148,13 @@ public class ResourceLimit implements Comparable<ResourceLimit> {
 
    @Override
    public String toString() {
-      return String.format("[account=%s, domain=%s, domainId=%d, max=%d, resourceType=%s]",
-            account, domain, domainId, max, resourceType);
+      return "ResourceLimit{" +
+            "account='" + account + '\'' +
+            ", domain='" + domain + '\'' +
+            ", domainId=" + domainId +
+            ", max=" + max +
+            ", resourceType=" + resourceType +
+            '}';
    }
 
    /**

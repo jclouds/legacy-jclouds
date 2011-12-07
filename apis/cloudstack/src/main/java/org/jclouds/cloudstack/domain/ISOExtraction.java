@@ -313,21 +313,21 @@ public class ISOExtraction implements Comparable<ISOExtraction> {
 
    @Override
    public String toString() {
-      return "[" +
-         "id=" + id +
-         ", accountId=" + accountId +
-         ", created=" + created +
-         ", extractId=" + extractId +
-         ", extractMode=" + extractMode +
-         ", name='" + name + '\'' +
-         ", state='" + state + '\'' +
-         ", status='" + status + '\'' +
-         ", storageType='" + storageType + '\'' +
-         ", uploadPercentage=" + uploadPercentage +
-         ", url='" + url + '\'' +
-         ", zoneId=" + zoneId +
-         ", zoneName='" + zoneName + '\'' +
-         ']';
+      return "ISOExtraction{" +
+            "id=" + id +
+            ", accountId=" + accountId +
+            ", created=" + created +
+            ", extractId=" + extractId +
+            ", extractMode=" + extractMode +
+            ", name='" + name + '\'' +
+            ", state='" + state + '\'' +
+            ", status='" + status + '\'' +
+            ", storageType='" + storageType + '\'' +
+            ", uploadPercentage=" + uploadPercentage +
+            ", url='" + url + '\'' +
+            ", zoneId=" + zoneId +
+            ", zoneName='" + zoneName + '\'' +
+            '}';
    }
 
    @Override

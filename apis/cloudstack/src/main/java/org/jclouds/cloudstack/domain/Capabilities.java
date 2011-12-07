@@ -166,9 +166,12 @@ public class Capabilities {
 
    @Override
    public String toString() {
-      return "[cloudStackVersion=" + cloudStackVersion + ", canShareTemplates=" + canShareTemplates
-            + ", securityGroupsEnabled=" + securityGroupsEnabled
-            + ", firewallRuleUiEnabled=" + firewallRuleUiEnabled
-            + ", supportELB=" + supportELB + "]";
+      return "Capabilities{" +
+            "cloudStackVersion='" + cloudStackVersion + '\'' +
+            ", securityGroupsEnabled=" + securityGroupsEnabled +
+            ", canShareTemplates=" + canShareTemplates +
+            ", firewallRuleUiEnabled=" + firewallRuleUiEnabled +
+            ", supportELB=" + supportELB +
+            '}';
    }
 }

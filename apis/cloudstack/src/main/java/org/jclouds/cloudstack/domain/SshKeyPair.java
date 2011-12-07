@@ -125,7 +125,11 @@ public class SshKeyPair implements Comparable<SshKeyPair> {
 
    @Override
    public String toString() {
-      return "[fingerprint=" + fingerprint + ", name=" + name + "]";
+      return "SshKeyPair{" +
+            "fingerprint='" + fingerprint + '\'' +
+            ", name='" + name + '\'' +
+            ", privateKey='" + privateKey + '\'' +
+            '}';
    }
 
    @Override

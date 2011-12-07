@@ -413,10 +413,25 @@ public class Zone implements Comparable<Zone> {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", allocationState=" + allocationState + ", name=" + name + ", description=" + description + ", displayText="
-            + displayText + ", domain=" + domain + ", domainId=" + domainId + ", networkType=" + networkType
-            + ", guestCIDRAddress=" + guestCIDRAddress + ", VLAN=" + VLAN + ", DNS=" + getDNS()
-            + ", securityGroupsEnabled=" + isSecurityGroupsEnabled() + ", internalDNS=" + getInternalDNS() + "]";
+      return "Zone{" +
+            "id=" + id +
+            ", description='" + description + '\'' +
+            ", displayText='" + displayText + '\'' +
+            ", DNS1='" + DNS1 + '\'' +
+            ", DNS2='" + DNS2 + '\'' +
+            ", domain='" + domain + '\'' +
+            ", domainId=" + domainId +
+            ", guestCIDRAddress='" + guestCIDRAddress + '\'' +
+            ", internalDNS1='" + internalDNS1 + '\'' +
+            ", internalDNS2='" + internalDNS2 + '\'' +
+            ", name='" + name + '\'' +
+            ", networkType=" + networkType +
+            ", VLAN='" + VLAN + '\'' +
+            ", securityGroupsEnabled=" + securityGroupsEnabled +
+            ", allocationState='" + allocationState + '\'' +
+            ", dhcpProvider='" + dhcpProvider + '\'' +
+            ", zoneToken='" + zoneToken + '\'' +
+            '}';
    }
 
    @Override

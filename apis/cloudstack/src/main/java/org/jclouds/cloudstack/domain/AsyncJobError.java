@@ -120,7 +120,10 @@ public class AsyncJobError {
 
    @Override
    public String toString() {
-      return "[errorCode=" + errorCode + ", errorText=" + errorText + "]";
+      return "AsyncJobError{" +
+            "errorCode=" + errorCode +
+            ", errorText='" + errorText + '\'' +
+            '}';
    }
 
 }

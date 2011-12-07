@@ -160,7 +160,10 @@ public class NetworkService implements Comparable<NetworkService> {
 
    @Override
    public String toString() {
-      return "[name=" + name + ", capabilities=" + capabilities + "]";
+      return "NetworkService{" +
+            "name='" + name + '\'' +
+            ", capabilities=" + capabilities +
+            '}';
    }
 
    @Override

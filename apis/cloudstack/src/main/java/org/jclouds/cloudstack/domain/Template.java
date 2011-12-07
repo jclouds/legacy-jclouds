@@ -737,13 +737,40 @@ public class Template implements Comparable<Template> {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", name=" + name + ", displayText=" + displayText + ", format=" + format + ", type=" + type
-            + ", hypervisor=" + hypervisor + ", size=" + size + ", status=" + status + ", created=" + created
-            + ", removed=" + removed + ", OSType=" + OSType + ", OSTypeId=" + OSTypeId + ", account=" + account
-            + ", accountId=" + accountId + ", domain=" + domain + ", domainId=" + domainId + ", zone=" + zone
-            + ", zoneId=" + zoneId + ", ready=" + ready + ", bootable=" + bootable + ", crossZones=" + crossZones
-            + ", extractable=" + extractable + ", featured=" + featured + ", ispublic=" + ispublic
-            + ", passwordEnabled=" + passwordEnabled + ", jobId=" + jobId + ", jobStatus=" + jobStatus + "]";
+      return "Template{" +
+            "id=" + id +
+            ", displayText='" + displayText + '\'' +
+            ", domain='" + domain + '\'' +
+            ", domainId=" + domainId +
+            ", account='" + account + '\'' +
+            ", accountId=" + accountId +
+            ", zone='" + zone + '\'' +
+            ", zoneId=" + zoneId +
+            ", OSType='" + OSType + '\'' +
+            ", OSTypeId=" + OSTypeId +
+            ", name='" + name + '\'' +
+            ", type=" + type +
+            ", status='" + status + '\'' +
+            ", format=" + format +
+            ", hypervisor='" + hypervisor + '\'' +
+            ", size=" + size +
+            ", created=" + created +
+            ", removed=" + removed +
+            ", crossZones=" + crossZones +
+            ", bootable=" + bootable +
+            ", extractable=" + extractable +
+            ", featured=" + featured +
+            ", ispublic=" + ispublic +
+            ", ready=" + ready +
+            ", passwordEnabled=" + passwordEnabled +
+            ", jobId=" + jobId +
+            ", jobStatus='" + jobStatus + '\'' +
+            ", checksum='" + checksum + '\'' +
+            ", hostId=" + hostId +
+            ", hostName='" + hostName + '\'' +
+            ", sourceTemplateId=" + sourceTemplateId +
+            ", templateTag='" + templateTag + '\'' +
+            '}';
    }
 
    @Override

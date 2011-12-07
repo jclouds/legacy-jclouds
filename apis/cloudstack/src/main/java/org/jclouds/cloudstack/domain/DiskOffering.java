@@ -270,9 +270,17 @@ public class DiskOffering implements Comparable<DiskOffering> {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", name=" + name + ", displayText=" + displayText + ", created=" + created + ", diskSize="
-            + diskSize + ", iscustomized=" + customized + ", domain=" + domain + ", domainId=" + domainId + ", tags="
-            + getTags() + "]";
+      return "DiskOffering{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", displayText='" + displayText + '\'' +
+            ", created=" + created +
+            ", domain='" + domain + '\'' +
+            ", domainId=" + domainId +
+            ", diskSize=" + diskSize +
+            ", customized=" + customized +
+            ", tags='" + tags + '\'' +
+            '}';
    }
 
    @Override

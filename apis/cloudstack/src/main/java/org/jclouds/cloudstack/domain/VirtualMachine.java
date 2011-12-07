@@ -958,23 +958,49 @@ public class VirtualMachine implements Comparable<VirtualMachine> {
 
    @Override
    public String toString() {
-      return "[id=" + id 
-//            + ", account=" + account + ", cpuCount=" + cpuCount + ", cpuSpeed=" + cpuSpeed + ", cpuUsed=" + cpuUsed  
-            + ", displayName=" + displayName + ", created=" + created  
-//            + ", domain=" + domain + ", domainId="
-//            + domainId + ", usesVirtualNetwork=" + usesVirtualNetwork + ", group=" + group + ", groupId=" + groupId
-//            + ", guestOSId=" + guestOSId + ", HAEnabled=" + HAEnabled + ", hostId=" + hostId + ", hostname=" + hostname
-            + ", IPAddress=" + IPAddress 
-//            + ", ISODisplayText=" + ISODisplayText + ", ISOId=" + ISOId + ", ISOName="
-//            + ISOName + ", jobId=" + jobId + ", jobStatus=" + jobStatus + ", memory=" + memory + ", name=" + name
-//            + ", networkKbsRead=" + networkKbsRead + ", networkKbsWrite=" + networkKbsWrite + ", password=" + password
-//            + ", passwordEnabled=" + passwordEnabled + ", rootDeviceId=" + rootDeviceId + ", rootDeviceType="
-//            + rootDeviceType + ", serviceOfferingId=" + serviceOfferingId + ", serviceOfferingName=" + serviceOfferingName 
-            + ", state=" + state 
-//            + ", templateDisplayText=" + templateDisplayText
-//            + ", templateId=" + templateId + ", templateName=" + templateName + ", zoneId=" + zoneId + ", zoneName="
-//            + zoneName + ", nics=" + nics + ", hypervisor=" + hypervisor + ", securityGroups=" + securityGroups 
-            + "]";
+      return "VirtualMachine{" +
+            "id=" + id +
+            ", account='" + account + '\'' +
+            ", cpuCount=" + cpuCount +
+            ", cpuSpeed=" + cpuSpeed +
+            ", cpuUsed='" + cpuUsed + '\'' +
+            ", displayName='" + displayName + '\'' +
+            ", created=" + created +
+            ", domain='" + domain + '\'' +
+            ", domainId=" + domainId +
+            ", usesVirtualNetwork=" + usesVirtualNetwork +
+            ", group='" + group + '\'' +
+            ", groupId=" + groupId +
+            ", guestOSId=" + guestOSId +
+            ", HAEnabled=" + HAEnabled +
+            ", hostId=" + hostId +
+            ", hostname='" + hostname + '\'' +
+            ", IPAddress='" + IPAddress + '\'' +
+            ", ISODisplayText='" + ISODisplayText + '\'' +
+            ", ISOId=" + ISOId +
+            ", ISOName='" + ISOName + '\'' +
+            ", jobId=" + jobId +
+            ", jobStatus=" + jobStatus +
+            ", memory=" + memory +
+            ", name='" + name + '\'' +
+            ", networkKbsRead=" + networkKbsRead +
+            ", networkKbsWrite=" + networkKbsWrite +
+            ", password='" + password + '\'' +
+            ", passwordEnabled=" + passwordEnabled +
+            ", rootDeviceId=" + rootDeviceId +
+            ", rootDeviceType='" + rootDeviceType + '\'' +
+            ", serviceOfferingId=" + serviceOfferingId +
+            ", serviceOfferingName='" + serviceOfferingName + '\'' +
+            ", state=" + state +
+            ", templateDisplayText='" + templateDisplayText + '\'' +
+            ", templateId=" + templateId +
+            ", templateName='" + templateName + '\'' +
+            ", zoneId=" + zoneId +
+            ", zoneName='" + zoneName + '\'' +
+            ", nics=" + nics +
+            ", hypervisor='" + hypervisor + '\'' +
+            ", securityGroups=" + securityGroups +
+            '}';
    }
 
    @Override
