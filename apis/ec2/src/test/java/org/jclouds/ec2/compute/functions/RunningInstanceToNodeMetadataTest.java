@@ -69,7 +69,33 @@ public class RunningInstanceToNodeMetadataTest {
       }
 
    }
+   
+   @Test
+   public void testPrivateIpAddressIncorrectlyInPublicAddressFieldGoesToPrivateAddressCollection() {
+      RunningInstance instance = RunningInstance.builder().instanceId("id").imageId("image").instanceType("m1.small")
+               .instanceState(InstanceState.RUNNING).region("us-east-1").ipAddress("10.1.1.1").build();
 
+      RunningInstanceToNodeMetadata parser = createNodeParser(ImmutableSet.<Hardware> of(), ImmutableSet
+               .<Location> of(), ImmutableSet.<Image> of(), ImmutableMap.<String, Credentials> of());
+
+      assertEquals(parser.apply(instance), new NodeMetadataBuilder().state(NodeState.RUNNING).publicAddresses(
+               ImmutableSet.<String> of()).privateAddresses(ImmutableSet.of("10.1.1.1")).id("us-east-1/id").imageId(
+               "us-east-1/image").providerId("id").build());
+   }
+
+   @Test
+   public void testPublicIpAddressIncorrectlyInPrivateAddressFieldGoesToPublicAddressCollection() {
+      RunningInstance instance = RunningInstance.builder().instanceId("id").imageId("image").instanceType("m1.small")
+               .instanceState(InstanceState.RUNNING).region("us-east-1").privateIpAddress("1.1.1.1").build();
+
+      RunningInstanceToNodeMetadata parser = createNodeParser(ImmutableSet.<Hardware> of(), ImmutableSet
+               .<Location> of(), ImmutableSet.<Image> of(), ImmutableMap.<String, Credentials> of());
+
+      assertEquals(parser.apply(instance), new NodeMetadataBuilder().state(NodeState.RUNNING).privateAddresses(
+               ImmutableSet.<String> of()).publicAddresses(ImmutableSet.of("1.1.1.1")).id("us-east-1/id").imageId(
+               "us-east-1/image").providerId("id").build());
+   }
+   
    static Location provider = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1")
             .description("us-east-1").build();
 
