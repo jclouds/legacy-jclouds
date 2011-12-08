@@ -158,8 +158,8 @@ public class ResourceAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncCl
       checkFilters(httpRequest);
    }
 
-   public void testGetDailyCpuPerformanceStatistics() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
-      Method method = ResourceAsyncClient.class.getMethod("getDailyCpuPerformanceStatistics", URI.class);
+   public void testGetPerformanceStatistics() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = ResourceAsyncClient.class.getMethod("getPerformanceStatistics", URI.class);
       HttpRequest httpRequest = processor.createRequest(method, URI.create("/cloudapi/ecloud/computepools/89/usage/cpu/performancestatistics/daily"));
 
       assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/computepools/89/usage/cpu/performancestatistics/daily HTTP/1.1");

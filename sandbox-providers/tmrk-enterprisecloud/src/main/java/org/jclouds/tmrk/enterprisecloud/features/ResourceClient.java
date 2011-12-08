@@ -155,18 +155,28 @@ public interface ResourceClient {
    ComputePoolPerformanceStatistics getComputePoolPerformanceStatistics(URI uri);
 
    /**
-    * The Get Resources Performance Statistics Processor Daily call returns daily
-    * information regarding processor performance for a specified compute pool
+    * The getPerformanceStatistics call returns information regarding performance for a specified compute pool.
+    * There are 2 time periods available: daily and hourly
+    * There is information for cpu (processor) and memory.
+    * To determine the correct URI to use, first call {@code getComputePoolPerformanceStatistics}
+    * then select the desired statistic from the result (e.g. hourly or daily then cpu or memory)
     *
-    * returns statistics for the previous seven days.
+    * Daily statistics return results for the previous seven days.
     *
-    * The default endTime is midnight the beginning of the current day and the default
-    * startTime is midnight seven days prior to the endTime.
-    * For example, if the call is made at 2011-07-12T14:48:00Z, then startTime is 2011-07-05T00:00:00Z
-    * and endTime is 2011-07-12T00:00:00Z.
-    * @param uri uri the uri of the call based upon the compute pool
-    * e.g. /cloudapi/ecloud/computepools/{id}/usage/cpu/performanceStatistics/daily
-    * @return
+    * The default endTime is midnight the beginning of the current day
+    * and the default startTime is midnight seven days prior to the endTime.
+    * For example, if the call is made at 2011-07-12T14:48:00Z,
+    * then startTime is 2011-07-05T00:00:00Z and endTime is 2011-07-12T00:00:00Z.
+    *
+    * Hourly statistics return results for the previous 24 hours
+    *
+    * The default endTime is the end of the hour prior to the current time
+    * and the default startTime is the beginning of the hour 24 hours prior to the endTime.
+    * For example, if the call is made at 2011-07- 12T14:48:00Z,
+    * then startTime is 2011-07-11T13:00:00Z and endTime is 2011-07-12T14:00:00Z.
+    *
+    * @param uri uri the uri of the call.
+    * @return the performance statistics for the desired period and metric
     */
-   PerformanceStatistics getDailyCpuPerformanceStatistics(URI uri);
+   PerformanceStatistics getPerformanceStatistics(URI uri);
 }

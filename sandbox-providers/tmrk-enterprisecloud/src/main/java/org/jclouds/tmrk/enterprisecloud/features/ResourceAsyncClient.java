@@ -123,11 +123,11 @@ public interface ResourceAsyncClient {
    ListenableFuture<ComputePoolPerformanceStatistics> getComputePoolPerformanceStatistics(@EndpointParam URI uri);
 
    /**
-    * @see ResourceClient#getDailyCpuPerformanceStatistics
+    * @see ResourceClient#getPerformanceStatistics
     */
    @GET
    @Consumes("application/vnd.tmrk.cloud.performanceStatistics")
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<PerformanceStatistics> getDailyCpuPerformanceStatistics(@EndpointParam URI uri);
+   ListenableFuture<PerformanceStatistics> getPerformanceStatistics(@EndpointParam URI uri);
 }

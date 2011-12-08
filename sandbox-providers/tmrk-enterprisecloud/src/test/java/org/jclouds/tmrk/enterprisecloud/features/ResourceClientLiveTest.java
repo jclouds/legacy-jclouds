@@ -20,6 +20,7 @@ package org.jclouds.tmrk.enterprisecloud.features;
 
 import org.jclouds.tmrk.enterprisecloud.domain.Link;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolPerformanceStatistics;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.PerformanceStatistics;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
@@ -122,8 +123,17 @@ public class ResourceClientLiveTest extends BaseTerremarkEnterpriseCloudClientLi
       assertNotNull(usage);
    }
 
-   public void testGetDailyCpuPerformanceStatistics() throws Exception {
-      PerformanceStatistics stats = client.getDailyCpuPerformanceStatistics(URI.create("/cloudapi/ecloud/computepools/89/usage/cpu/performancestatistics/daily"));
+   public void testGetPerformanceStatistics() throws Exception {
+      ComputePoolPerformanceStatistics statistics = client.getComputePoolPerformanceStatistics(URI.create("/cloudapi/ecloud/computepools/89/performancestatistics"));
+      assertNotNull(statistics);
+      testPerformanceStatistic(statistics.getDaily().getCpu().getHref());
+      testPerformanceStatistic(statistics.getDaily().getMemory().getHref());
+      testPerformanceStatistic(statistics.getHourly().getCpu().getHref());
+      testPerformanceStatistic(statistics.getHourly().getMemory().getHref());
+   }
+   
+   private void testPerformanceStatistic(URI uri) {
+      PerformanceStatistics stats = client.getPerformanceStatistics(uri);
       assertNotNull(stats);
    }
 }

@@ -95,7 +95,7 @@ public class PerformanceStatisticsJAXBParsingTest extends BaseRestClientTest {
 
    public void testParseWithJAXB() throws Exception {
 
-      Method method = ResourceAsyncClient.class.getMethod("getDailyCpuPerformanceStatistics", URI.class);
+      Method method = ResourceAsyncClient.class.getMethod("getPerformanceStatistics", URI.class);
       HttpRequest request = factory(ResourceAsyncClient.class).createRequest(method,new URI("/1"));
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
 
