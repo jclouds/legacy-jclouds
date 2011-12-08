@@ -59,7 +59,7 @@ import static org.testng.Assert.assertTrue;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "TaskHandlerTest")
+@Test(groups = "unit", testName = "TaskJAXBParsingTest")
 public class TaskJAXBParsingTest extends BaseRestClientTest {
    private SimpleDateFormatDateService dateService;
    private Task expected1;

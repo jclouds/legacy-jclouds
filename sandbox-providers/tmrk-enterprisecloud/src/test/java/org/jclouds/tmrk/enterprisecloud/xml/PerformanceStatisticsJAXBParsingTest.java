@@ -47,6 +47,7 @@ import javax.inject.Named;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Date;
 import java.util.Set;
 
 import static org.jclouds.io.Payloads.newInputStreamPayload;
@@ -95,8 +96,8 @@ public class PerformanceStatisticsJAXBParsingTest extends BaseRestClientTest {
 
    public void testParseWithJAXB() throws Exception {
 
-      Method method = ResourceAsyncClient.class.getMethod("getDailyCpuPerformanceStatistics", URI.class);
-      HttpRequest request = factory(ResourceAsyncClient.class).createRequest(method,new URI("/1"));
+      Method method = ResourceAsyncClient.class.getMethod("getPerformanceStatistics", URI.class, Date.class, Date.class);
+      HttpRequest request = factory(ResourceAsyncClient.class).createRequest(method,new URI("/1"),null,null);
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
 
       Function<HttpResponse, PerformanceStatistics> parser = (Function<HttpResponse, PerformanceStatistics>) RestAnnotationProcessor

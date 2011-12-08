@@ -19,24 +19,35 @@
 package org.jclouds.tmrk.enterprisecloud.features;
 
 import com.google.inject.TypeLiteral;
+import org.jclouds.date.DateService;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Date;
 
 /**
  * Tests annotation parsing of {@code ResourceAsyncClient}
  * 
  * @author Jason King
  */
-@Test(groups = "unit", testName = "ResourceAsyncClient")
+@Test(groups = "unit", testName = "ResourceAsyncClientTest")
 public class ResourceAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClientTest<ResourceAsyncClient> {
+
+   private DateService dateService;
+
+   @BeforeMethod
+   public void setUp() {
+      dateService = new SimpleDateFormatDateService();
+   }
 
    public void testGetResourceSummaries() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
       Method method = ResourceAsyncClient.class.getMethod("getResourceSummaries", URI.class);
@@ -158,11 +169,29 @@ public class ResourceAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncCl
       checkFilters(httpRequest);
    }
 
-   public void testGetDailyCpuPerformanceStatistics() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
-      Method method = ResourceAsyncClient.class.getMethod("getDailyCpuPerformanceStatistics", URI.class);
-      HttpRequest httpRequest = processor.createRequest(method, URI.create("/cloudapi/ecloud/computepools/89/usage/cpu/performancestatistics/daily"));
+   public void testGetPerformanceStatisticsNoDates() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = ResourceAsyncClient.class.getMethod("getPerformanceStatistics", URI.class,Date.class,Date.class);
+      HttpRequest httpRequest = processor.createRequest(method, URI.create("/cloudapi/ecloud/computepools/89/usage/cpu/performancestatistics/daily"),null,null);
 
       assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/computepools/89/usage/cpu/performancestatistics/daily HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest,
+            "Accept: application/vnd.tmrk.cloud.performanceStatistics\nx-tmrk-version: 2011-07-01\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testGetPerformanceStatisticsWithDates() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = ResourceAsyncClient.class.getMethod("getPerformanceStatistics", URI.class,Date.class,Date.class);
+      
+      Date startTime = dateService.iso8601SecondsDateParse("2011-12-08T15:00:00Z");
+      Date endTime = dateService.iso8601SecondsDateParse("2011-12-08T16:30:00Z");;
+      HttpRequest httpRequest = processor.createRequest(method, URI.create("/cloudapi/ecloud/computepools/89/usage/cpu/performancestatistics/daily"),startTime,endTime);
+
+      assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/computepools/89/usage/cpu/performancestatistics/daily?endtime=2011-12-08T16%3A30%3A00Z&starttime=2011-12-08T15%3A00%3A00Z HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest,
             "Accept: application/vnd.tmrk.cloud.performanceStatistics\nx-tmrk-version: 2011-07-01\n");
       assertPayloadEquals(httpRequest, null, null, false);
