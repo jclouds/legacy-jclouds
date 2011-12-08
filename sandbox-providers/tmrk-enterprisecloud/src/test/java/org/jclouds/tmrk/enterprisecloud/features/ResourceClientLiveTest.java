@@ -18,13 +18,11 @@
  */
 package org.jclouds.tmrk.enterprisecloud.features;
 
+import com.google.common.collect.Iterables;
 import org.jclouds.tmrk.enterprisecloud.domain.Link;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
-import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolPerformanceStatistics;
-import org.jclouds.tmrk.enterprisecloud.domain.resource.PerformanceStatistics;
+import org.jclouds.tmrk.enterprisecloud.domain.resource.*;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsage;
-import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummary;
-import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolResourceSummaryList;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsageDetail;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsage;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemoryUsageDetail;
@@ -33,10 +31,10 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import java.net.URI;
+import java.util.Date;
+import java.util.Set;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
+import static org.testng.Assert.*;
 
 /**
  * Tests behavior of {@code ResourceClient}
@@ -133,7 +131,28 @@ public class ResourceClientLiveTest extends BaseTerremarkEnterpriseCloudClientLi
    }
    
    private void testPerformanceStatistic(URI uri) {
-      PerformanceStatistics stats = client.getPerformanceStatistics(uri);
+      PerformanceStatistics stats = client.getPerformanceStatistics(uri,null,null);
       assertNotNull(stats);
+   }
+   
+   public void testGetPerformanceStatisticsWithDateRange() {
+      ComputePoolPerformanceStatistics statistics = client.getComputePoolPerformanceStatistics(URI.create("/cloudapi/ecloud/computepools/89/performancestatistics"));
+      URI uri = statistics.getDaily().getCpu().getHref();
+      
+      Set<PerformanceStatistic> set = getStatsForFirstVM(uri,null,null);
+      assertEquals(set.size(), 7);
+
+      // A subset of the entire results
+      Date start = Iterables.get(set, 1).getTime();
+      Date end = Iterables.get(set, set.size()-1).getTime();
+
+      Set<PerformanceStatistic> result = getStatsForFirstVM(uri, start, end);
+      assertEquals(result.size(), 5);
+   }
+   
+   private Set<PerformanceStatistic> getStatsForFirstVM(URI uri, Date start, Date end) {
+      PerformanceStatistics stats = client.getPerformanceStatistics(uri, start, end);
+      Set<VirtualMachinePerformanceStatistic> virtualMachines = stats.getStatistics().getVirtualMachinesPerformanceStatistics();
+      return Iterables.getFirst(virtualMachines,null).getStatistics();
    }
 }

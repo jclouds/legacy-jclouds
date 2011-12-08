@@ -20,8 +20,11 @@ package org.jclouds.tmrk.enterprisecloud.features;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.tmrk.enterprisecloud.binders.BindEndTimeQueryParam;
+import org.jclouds.tmrk.enterprisecloud.binders.BindStartTimeQueryParam;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolPerformanceStatistics;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.PerformanceStatistics;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.cpu.ComputePoolCpuUsage;
@@ -35,6 +38,7 @@ import org.jclouds.tmrk.enterprisecloud.domain.resource.storage.ComputePoolStora
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import java.net.URI;
+import java.util.Date;
 
 /**
  * Provides asynchronous access to various Resources via their REST API.
@@ -129,5 +133,5 @@ public interface ResourceAsyncClient {
    @Consumes("application/vnd.tmrk.cloud.performanceStatistics")
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<PerformanceStatistics> getPerformanceStatistics(@EndpointParam URI uri);
+   ListenableFuture<PerformanceStatistics> getPerformanceStatistics(@EndpointParam URI uri, @Nullable @BinderParam(BindStartTimeQueryParam.class) Date startTime,  @Nullable @BinderParam(BindEndTimeQueryParam.class) Date endTime);
 }
