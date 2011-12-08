@@ -61,6 +61,7 @@ import static org.testng.AssertJUnit.assertNotNull;
  * @author Jason King
  *
  */
+@Test(groups = "unit", testName = "HardwareConfigurationJAXBParsingTest")
 public class HardwareConfigurationJAXBParsingTest extends BaseRestClientTest {
 
    @BeforeClass

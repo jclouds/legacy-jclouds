@@ -30,6 +30,7 @@ import org.jclouds.tmrk.enterprisecloud.domain.resource.memory.ComputePoolMemory
 import org.jclouds.tmrk.enterprisecloud.domain.resource.storage.ComputePoolStorageUsageDetail;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -155,18 +156,62 @@ public interface ResourceClient {
    ComputePoolPerformanceStatistics getComputePoolPerformanceStatistics(URI uri);
 
    /**
-    * The Get Resources Performance Statistics Processor Daily call returns daily
-    * information regarding processor performance for a specified compute pool
+    * <h2>Introduction</h2>
     *
-    * returns statistics for the previous seven days.
+    * The getPerformanceStatistics call returns information regarding performance for a specified compute pool.
+    * There are 2 time periods available: daily and hourly
+    * There is information for cpu (processor) and memory.
+    * To determine the correct URI to use, first call {@code getComputePoolPerformanceStatistics}
+    * then select the desired statistic from the result (e.g. hourly or daily then cpu or memory)
     *
-    * The default endTime is midnight the beginning of the current day and the default
-    * startTime is midnight seven days prior to the endTime.
-    * For example, if the call is made at 2011-07-12T14:48:00Z, then startTime is 2011-07-05T00:00:00Z
-    * and endTime is 2011-07-12T00:00:00Z.
-    * @param uri uri the uri of the call based upon the compute pool
-    * e.g. /cloudapi/ecloud/computepools/{id}/usage/cpu/performanceStatistics/daily
-    * @return
+    * <h2>Default Mode</h2>
+    *
+    * <h3>Daily Statistics</h2>
+    * Daily statistics return results for the previous seven days.
+    *
+    * The default endTime is midnight the beginning of the current day
+    * and the default startTime is midnight seven days prior to the endTime.
+    * For example, if the call is made at 2011-07-12T14:48:00Z,
+    * then startTime is 2011-07-05T00:00:00Z and endTime is 2011-07-12T00:00:00Z.
+    *
+    * <h3>Hourly Statistics</h3>
+    * Hourly statistics return results for the previous 24 hours
+    *
+    * The default endTime is the end of the hour prior to the current time
+    * and the default startTime is the beginning of the hour 24 hours prior to the endTime.
+    * For example, if the call is made at 2011-07- 12T14:48:00Z,
+    * then startTime is 2011-07-11T13:00:00Z and endTime is 2011-07-12T14:00:00Z.
+    *
+    * <h2>Query Mode</h2>
+    *
+    * <h3>Daily Statistics with startTime and endTime</h3>
+    *
+    * If startTime and endTime are present returns statistics for the complete days
+    * between the requested dates.
+    *
+    * If either parameter is missing, the default value is used.
+    * Only complete days are returned.
+    * For example, 2011-06-20T00:00:00Z to 2011-06-22T00:00:00Z returns information for 2 days:
+    * June 20 and June 21.
+    * Conversely, 2011-06-20T22:00:00Z to 2011-06-21T22:30:00Z returns no information
+    * as no complete days are in the requested interval.
+    *
+    * <h3>Hourly Statistics with startTime and endTime</h3>
+    *
+    * If startTime and endTime are present returns statistics for the complete hours
+    * between the requested dates.
+    *
+    * If either parameter is missing, the default value is used.
+    * Only complete hours are returned.
+    * For example, 2011-06-22T06:00:00Z to 2011-06-22T08:00:00Z returns information for 2 hours:
+    * the 06:00 hour and the 07:00 hour.
+    * Conversely, 2011-06-21T14:10:00Z to 2011-06-21T15:50:00Z returns no information
+    * as no complete hours are in the requested interval.
+    *
+    * @param uri uri the uri of the call.
+    * @param startTime the desired start time for the statistics (optional).
+    * @param endTime the desired end time for the statistics (optional).
+    * @return the performance statistics for the desired period and metric
     */
-   PerformanceStatistics getDailyCpuPerformanceStatistics(URI uri);
+   PerformanceStatistics getPerformanceStatistics(URI uri, Date startTime, Date endTime);
 }

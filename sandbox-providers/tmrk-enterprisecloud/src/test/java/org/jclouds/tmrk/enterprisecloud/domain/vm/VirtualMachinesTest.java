@@ -34,7 +34,7 @@ import static org.testng.Assert.assertTrue;
 /**
  * @author Jason King
  */
-@Test(groups = "unit", testName = "ActionsTest")
+@Test(groups = "unit", testName = "VirtualMachinesTest")
 public class VirtualMachinesTest {
 
    private VirtualMachine virtualMachine;
