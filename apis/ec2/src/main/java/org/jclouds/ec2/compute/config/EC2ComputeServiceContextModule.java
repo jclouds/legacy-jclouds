@@ -102,6 +102,7 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
    protected Supplier<CacheLoader<RegionAndName, Image>> provideRegionAndNameToImageSupplierCacheLoader(
             final RegionAndIdToImage delegate) {
       return Suppliers.<CacheLoader<RegionAndName, Image>>ofInstance(new CacheLoader<RegionAndName, Image>() {
+         private final AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
 
          @Override
          public Image load(final RegionAndName key) throws Exception {
@@ -117,7 +118,6 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
             };
             
             // wrap in retry logic
-            AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
             Supplier<Image> retryingSupplier = new RetryOnTimeOutExceptionSupplier<Image>(
                   new SetAndThrowAuthorizationExceptionSupplier<Image>(rawSupplier, authException));
             
