@@ -39,7 +39,7 @@ import java.util.Date;
  * 
  * @author Jason King
  */
-@Test(groups = "unit", testName = "ResourceAsyncClient")
+@Test(groups = "unit", testName = "ResourceAsyncClientTest")
 public class ResourceAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClientTest<ResourceAsyncClient> {
 
    private DateService dateService;

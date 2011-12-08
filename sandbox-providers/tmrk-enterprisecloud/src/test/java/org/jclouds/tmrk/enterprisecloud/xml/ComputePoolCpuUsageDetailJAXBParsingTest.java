@@ -60,7 +60,7 @@ import static org.testng.Assert.assertNull;
  * 
  * @author Jason King
  */
-@Test(groups = "unit", testName = "ComputePoolResourceSummaryListJAXBParsingTest")
+@Test(groups = "unit", testName = "ComputePoolCpuUsageDetailJAXBParsingTest")
 public class ComputePoolCpuUsageDetailJAXBParsingTest extends BaseRestClientTest {
 
    private SimpleDateFormatDateService dateService;

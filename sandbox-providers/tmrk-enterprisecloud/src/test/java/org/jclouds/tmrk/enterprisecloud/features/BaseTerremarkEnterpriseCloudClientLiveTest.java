@@ -39,7 +39,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
+@Test(groups = "live", testName = "BaseTerremarkEnterpriseCloudClientLiveTest")
 public class BaseTerremarkEnterpriseCloudClientLiveTest extends BaseVersionedServiceLiveTest {
 
    protected RestContext<TerremarkEnterpriseCloudClient, TerremarkEnterpriseCloudAsyncClient> context;
