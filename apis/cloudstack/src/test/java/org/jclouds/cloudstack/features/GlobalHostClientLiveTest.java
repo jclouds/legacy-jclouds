@@ -48,8 +48,8 @@ public class GlobalHostClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    private void checkHost(Host host) {
-      // assert host.getCpuNumber() > 0;
-      // assert host.getAverageLoad() >= 0;
+      assert host.getCpuNumber() > 0;
+      assert host.getAverageLoad() >= 0;
    }
 
 }

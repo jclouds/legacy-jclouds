@@ -47,7 +47,7 @@ public class Host implements Comparable<Host> {
       private String cpuUsed;
       private float cpuWithOverProvisioning;
       private Date created;
-      private boolean disconnected;
+      private Date disconnected;
       private long diskSizeAllocated;
       private long diskSizeTotal;
       private String events;
@@ -142,7 +142,7 @@ public class Host implements Comparable<Host> {
          return this;
       }
 
-      public Builder disconnected(boolean disconnected) {
+      public Builder disconnected(Date disconnected) {
          this.disconnected = disconnected;
          return this;
       }
@@ -325,7 +325,7 @@ public class Host implements Comparable<Host> {
    @SerializedName("cpuwithoverprovisioning")
    private float cpuWithOverProvisioning;
    private Date created;
-   private boolean disconnected;
+   private Date disconnected;
    @SerializedName("disksizeallocated")
    private long diskSizeAllocated;
    @SerializedName("disksizetotal")
@@ -383,7 +383,7 @@ public class Host implements Comparable<Host> {
    public Host(long id, String allocationState, int averageLoad, String capabilities,
                long clusterId, String clusterName, String clusterType, String cpuAllocated,
                int cpuNumber, int cpuSpeed, String cpuUsed, float cpuWithOverProvisioning,
-               Date created, boolean disconnected, long diskSizeAllocated, long diskSizeTotal,
+               Date created, Date disconnected, long diskSizeAllocated, long diskSizeTotal,
                String events, boolean hasEnoughCapacity, String hostTags, String hypervisor,
                String ipAddress, boolean localStorageActive, long jobId, AsyncJob.Status jobStatus,
                Date lastPinged, long managementServerId, long memoryAllocated, long memoryTotal,
@@ -486,7 +486,7 @@ public class Host implements Comparable<Host> {
       return created;
    }
 
-   public boolean isDisconnected() {
+   public Date getDisconnected() {
       return disconnected;
    }
 
@@ -617,7 +617,7 @@ public class Host implements Comparable<Host> {
       result = 31 * result + (cpuUsed != null ? cpuUsed.hashCode() : 0);
       result = 31 * result + (int) cpuWithOverProvisioning;
       result = 31 * result + (created != null ? created.hashCode() : 0);
-      result = 31 * result + (disconnected ? 1 : 0);
+      result = 31 * result + (disconnected != null ? disconnected.hashCode() : 0);
       result = 31 * result + (int) (diskSizeAllocated ^ (diskSizeAllocated >>> 32));
       result = 31 * result + (int) (diskSizeTotal ^ (diskSizeTotal >>> 32));
       result = 31 * result + (events != null ? events.hashCode() : 0);
