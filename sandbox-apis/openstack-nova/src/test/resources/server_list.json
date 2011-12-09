@@ -1,0 +1,64 @@
+{
+    "servers": [
+        {
+            "uuid": "0bab236f-f5c4-46ef-93c2-a8e2bcfffff6",
+            "name": "jd-test-tiny",
+            "links": [
+                {
+                    "href": "http://se1.devex.me:8774/v1.1/dev_16767499955063/servers/804",
+                    "rel": "self"
+                },
+                {
+                    "href": "http://se1.devex.me:8774/dev_16767499955063/servers/804",
+                    "rel": "bookmark"
+                }
+            ],
+            "id": 804
+        },
+        {
+            "uuid": "488eac65-84ab-4f10-b2a4-555c23613428",
+            "name": "rgtest2",
+            "links": [
+                {
+                    "href": "http://se1.devex.me:8774/v1.1/dev_16767499955063/servers/528",
+                    "rel": "self"
+                },
+                {
+                    "href": "http://se1.devex.me:8774/dev_16767499955063/servers/528",
+                    "rel": "bookmark"
+                }
+            ],
+            "id": 528
+        },
+        {
+            "uuid": "df891742-4ecb-4f9f-b206-b2a4d821a100",
+            "name": "rgtest",
+            "links": [
+                {
+                    "href": "http://se1.devex.me:8774/v1.1/dev_16767499955063/servers/507",
+                    "rel": "self"
+                },
+                {
+                    "href": "http://se1.devex.me:8774/dev_16767499955063/servers/507",
+                    "rel": "bookmark"
+                }
+            ],
+            "id": 507
+        },
+        {
+            "uuid": "42cded93-1ade-4da2-b39f-70e6577c2b82",
+            "name": "fog_hprgmac.local_1320358100_server",
+            "links": [
+                {
+                    "href": "http://se1.devex.me:8774/v1.1/dev_16767499955063/servers/430",
+                    "rel": "self"
+                },
+                {
+                    "href": "http://se1.devex.me:8774/dev_16767499955063/servers/430",
+                    "rel": "bookmark"
+                }
+            ],
+            "id": 430
+        }
+    ]
+}

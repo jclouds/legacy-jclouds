@@ -1,0 +1,54 @@
+{
+    "server": {
+        "status": "REBOOT",
+        "updated": "2011-12-06T22:37:44Z",
+        "hostId": "3852db942cbeb5e840d759de11bdef403e2a0149c66f06a5d7caa61e",
+        "user_id": "dev_41247879706381",
+        "name": "jd-test-tiny",
+        "links": [
+            {
+                "href": "http://se1.devex.me:8774/v1.1/dev_16767499955063/servers/804",
+                "rel": "self"
+            },
+            {
+                "href": "http://se1.devex.me:8774/dev_16767499955063/servers/804",
+                "rel": "bookmark"
+            }
+        ],
+        "addresses": {
+            "novanet_7": [
+                {
+                    "version": 4,
+                    "addr": "10.0.0.229"
+                }
+            ]
+        },
+        "tenant_id": "dev_16767499955063",
+        "image": {
+            "id": "146",
+            "links": [
+                {
+                    "href": "http://se1.devex.me:8774/dev_16767499955063/images/146",
+                    "rel": "bookmark"
+                }
+            ]
+        },
+        "created": "2011-12-02T16:04:54Z",
+        "uuid": "0bab236f-f5c4-46ef-93c2-a8e2bcfffff6",
+        "accessIPv4": "",
+        "accessIPv6": "",
+        "key_name": null,
+        "flavor": {
+            "id": "1",
+            "links": [
+                {
+                    "href": "http://se1.devex.me:8774/dev_16767499955063/flavors/1",
+                    "rel": "bookmark"
+                }
+            ]
+        },
+        "config_drive": "",
+        "id": 804,
+        "metadata": {}
+    }
+}
