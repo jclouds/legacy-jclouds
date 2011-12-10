@@ -42,8 +42,8 @@ public class ParseFullIpDetailsTest extends BaseItemParserTest<IpDetails> {
    @Consumes(MediaType.APPLICATION_JSON)
    public IpDetails expected() {
       return IpDetails.builder().datacenter("Falkenberg").ipversion("4").platform("Xen")
-              .ptr("109-74-10-64-static.serverhotell.net.").address("109.74.10.64").netmask("255.255.254.0")
-              .broadcast("109.74.11.255").gateway("109.74.10.1").build();
+              .ptr("109-74-10-146-static.serverhotell.net.").address("109.74.10.146").netmask("255.255.254.0")
+              .broadcast("109.74.11.255").gateway("109.74.10.1").nameServers("79.99.4.100", "79.99.4.103").build();
    }
 
    protected Injector injector() {

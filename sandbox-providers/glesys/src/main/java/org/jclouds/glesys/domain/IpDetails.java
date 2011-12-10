@@ -20,11 +20,13 @@
 package org.jclouds.glesys.domain;
 
 import com.google.gson.annotations.SerializedName;
+import org.jclouds.javax.annotation.Nullable;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Represents detailed information about an available IP address.
- *
- * @author Mattias Holmqvist
  */
 public class IpDetails {
 
@@ -41,6 +43,7 @@ public class IpDetails {
       protected String netmask;
       protected String broadcast;
       protected String gateway;
+      protected List<String> nameservers;
 
       public Builder datacenter(String datacenter) {
          this.datacenter = datacenter;
@@ -64,7 +67,7 @@ public class IpDetails {
 
       public IpDetails build() {
          return new IpDetails(datacenter, ipversion, ptr, platform,
-                 address, netmask, broadcast, gateway);
+                 address, netmask, broadcast, gateway, nameservers);
       }
 
       public Builder address(String address) {
@@ -86,6 +89,11 @@ public class IpDetails {
          this.gateway = gateway;
          return this;
       }
+
+      public Builder nameServers(String... nameServers) {
+         this.nameservers = Arrays.asList(nameServers);
+         return this;
+      }
    }
 
    protected String datacenter;
@@ -97,9 +105,12 @@ public class IpDetails {
    protected String netmask;
    protected String broadcast;
    protected String gateway;
+   protected List<String> nameservers;
 
    public IpDetails(String datacenter, String ipversion, String ptr, String platform,
-                    String address, String netmask, String broadcast, String gateway) {
+                    @Nullable String address, @Nullable String netmask,
+                    @Nullable String broadcast, @Nullable String gateway,
+                    @Nullable List<String> nameservers) {
       this.datacenter = datacenter;
       this.ipversion = ipversion;
       this.ptr = ptr;
@@ -108,6 +119,7 @@ public class IpDetails {
       this.netmask = netmask;
       this.broadcast = broadcast;
       this.gateway = gateway;
+      this.nameservers = nameservers;
    }
 
    public String getDatacenter() {
@@ -142,6 +154,10 @@ public class IpDetails {
       return gateway;
    }
 
+   public List<String> getNameServers() {
+      return nameservers;
+   }
+
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;
@@ -157,6 +173,8 @@ public class IpDetails {
       if (netmask != null ? !netmask.equals(ipDetails.netmask) : ipDetails.netmask != null) return false;
       if (platform != null ? !platform.equals(ipDetails.platform) : ipDetails.platform != null) return false;
       if (ptr != null ? !ptr.equals(ipDetails.ptr) : ipDetails.ptr != null) return false;
+      if (nameservers != null ? !nameservers.equals(ipDetails.nameservers) : ipDetails.nameservers != null)
+         return false;
 
       return true;
    }
