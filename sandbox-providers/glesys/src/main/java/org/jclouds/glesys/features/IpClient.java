@@ -47,9 +47,11 @@ public interface IpClient {
    Set<String> listFree(String ipversion, String datacenter, String platform);
 
    /**
-    * Get a set of all IP addresses that are available and not used on any account or server.
+    * Get details about the given IP address such as gateway and netmask. Different details are available
+    * on different platforms.
     *
-    * @return a set of free IP addresses
+    * @param ipAddress the ip address
+    * @return details about the given IP saddress
     */
    IpDetails getIpDetails(String ipAddress);
 
