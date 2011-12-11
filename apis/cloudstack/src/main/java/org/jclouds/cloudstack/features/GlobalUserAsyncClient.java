@@ -19,10 +19,13 @@
 package org.jclouds.cloudstack.features;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.options.CreateUserOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import javax.ws.rs.Consumes;
@@ -43,6 +46,17 @@ import javax.ws.rs.core.MediaType;
 @QueryParams(keys = "response", values = "json")
 public interface GlobalUserAsyncClient extends DomainUserAsyncClient {
 
+   /**
+    * @see GlobalUserClient#createUser
+    */
+   @GET
+   @QueryParams(keys = "command", values = "createUser")
+   @SelectJson("user")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<User>createUser(@QueryParam("username") String userName, @QueryParam("account") String accountName,
+      @QueryParam("email") String email, @QueryParam("password") String hashedPassword,
+      @QueryParam("firstname") String firstName, @QueryParam("lastname") String lastName, CreateUserOptions... options);
 
    /**
     * @see GlobalUserClient#deleteUser
