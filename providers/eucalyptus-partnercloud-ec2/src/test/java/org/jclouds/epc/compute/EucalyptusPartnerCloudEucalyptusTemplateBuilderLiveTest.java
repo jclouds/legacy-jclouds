@@ -48,6 +48,20 @@ public class EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest extends EC2
       provider = "eucalyptus-partnercloud-ec2";
    }
 
+   /**
+    * Note, assertion fails on eucalyptus-partner-cloud, taking approx  timeByImageId=541; timeByOsFamily=277ms.
+    * However, testTemplateBuilderCanUseImageIdWithoutFetchingAllImages and inspection of the debug logs shows
+    * that we are submitting the HTTP request for a single image, e.g:
+    *     Action=DescribeImages&ImageId.1=emi-E0641459&Signature=YihCSyPfIAvGa6ZoJSeQtXVXBJ6zfikspJUxYoIXXh4%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2011-12-13T11%3A21%3A51.455Z&Version=2010-06-15&AWSAccessKeyId=NB0zdTG4CtdvijzOFj47W0nlyl4cBzcfPw
+    * <p>
+    * Therefore disabled here.
+    */
+   @Override
+   @Test(enabled = false)
+   public void testTemplateBuildsFasterByImageIdThanBySearchingAllImages() throws Exception {
+      super.testTemplateBuildsFasterByImageIdThanBySearchingAllImages();
+   }
+
    @Override
    protected Predicate<OsFamilyVersion64Bit> defineUnsupportedOperatingSystems() {
       return Predicates.not(new Predicate<OsFamilyVersion64Bit>() {
