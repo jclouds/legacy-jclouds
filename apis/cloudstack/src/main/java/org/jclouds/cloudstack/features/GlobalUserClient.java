@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.options.CreateUserOptions;
+import org.jclouds.cloudstack.options.UpdateUserOptions;
 import org.jclouds.concurrent.Timeout;
 
 /**
@@ -40,11 +41,30 @@ public interface GlobalUserClient extends DomainUserClient {
    /**
     * Create an user for an account that already exists
     *
+    * @param userName unique user name
+    * @param accountName Creates the user under the specified account. If no
+    *    account is specified, the username will be used as the account name.
+    * @param email
+    * @param hashedPassword Hashed password (Default is MD5). If you wish to use
+    *    any other hashing algorithm, you would need to write a custom authentication
+    *    adapter See Docs section.
+    * @param firstName
+    * @param lastName
+    * @param options optional arguments
     * @return
     */
    User createUser(String userName, String accountName, String email, String hashedPassword,
       String firstName, String lastName, CreateUserOptions... options);
 
+
+   /**
+    * Update an user
+    *
+    * @param id the user ID
+    * @param options optional arguments
+    * @return
+    */
+   User updateUser(long id, UpdateUserOptions... options);
 
    /**
     * Delete an user with the specified ID

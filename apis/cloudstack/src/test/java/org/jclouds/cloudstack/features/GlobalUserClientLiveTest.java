@@ -22,6 +22,7 @@ import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.User;
 import org.testng.annotations.Test;
 
+import static org.jclouds.cloudstack.options.UpdateUserOptions.Builder.userName;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -49,6 +50,12 @@ public class GlobalUserClientLiveTest extends BaseCloudStackClientLiveTest {
          assertNotNull(testUser);
          assertEquals(testUser.getName(), prefix + "-user");
          assertEquals(testUser.getAccount(), prefix + "-account");
+
+         User updatedUser = globalAdminClient.getUserClient()
+            .updateUser(testUser.getId(), userName(prefix + "-user-2"));
+
+         assertNotNull(updatedUser);
+         assertEquals(updatedUser.getName(), prefix + "-user-2");
 
       } finally {
          if (testUser != null) {
