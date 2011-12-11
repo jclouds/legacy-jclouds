@@ -20,13 +20,15 @@ package org.jclouds.cloudstack.features;
 
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.options.CreateAccountOptions;
 import org.jclouds.concurrent.Timeout;
 
 /**
  * Provides synchronous access to CloudStack Account features available to Global
  * Admin users.
  * 
- * @author Adrian Cole
+ * @author Adrian Cole, Andrei Savu
  * @see <a href=
  *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Global_Admin.html"
  *      />
@@ -34,5 +36,30 @@ import org.jclouds.concurrent.Timeout;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface GlobalAccountClient extends DomainAccountClient {
 
+   /**
+    * Create a new Cloudstack account
+    *
+    * @param userName unique username.
+    * @param accountType type of account
+    * @param email
+    * @param firstName
+    * @param lastName
+    * @param hashedPassword
+    *          Hashed password (Default is MD5). If you wish to use any other
+    *          hashing algorithm, you would need to write a custom authentication adapter See Docs section.
+    * @param options
+    *          optional parameters
+    * @return
+    */
+   Account createAccount(String userName, Account.Type accountType, String email,
+      String firstName, String lastName, String hashedPassword, CreateAccountOptions... options);
+
+   /**
+    * Delete an account with the specified ID
+    *
+    * @param accountId
+    * @return
+    */
+   Void deleteAccount(long accountId);
 
 }

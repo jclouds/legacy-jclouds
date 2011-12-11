@@ -34,5 +34,4 @@ import org.jclouds.concurrent.Timeout;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface GlobalUserClient extends DomainUserClient {
 
-
 }
