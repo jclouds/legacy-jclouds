@@ -66,7 +66,7 @@ public class Volume implements Comparable<Volume> {
       private State state;
       private String storage;
       private String storageType;
-      private VolumeType type;
+      private Type type;
       private long virtualMachineId;
       private String vmDisplayName;
       private String vmName;
@@ -194,7 +194,7 @@ public class Volume implements Comparable<Volume> {
          return this;
       }
 
-      public Builder type(VolumeType type) {
+      public Builder type(Type type) {
          this.type = type;
          return this;
       }
@@ -275,7 +275,7 @@ public class Volume implements Comparable<Volume> {
    @SerializedName("storagetype")
    // MAYDO: this should perhaps be an enum; only value I have seen is "shared"
    private String storageType;
-   private VolumeType type;
+   private Type type;
    @SerializedName("virtualmachineid")
    private long virtualMachineId;
    @SerializedName("vmdisplayname")
@@ -294,7 +294,7 @@ public class Volume implements Comparable<Volume> {
                  String domain, long domainId, String hypervisor, boolean extractable, long jobId,
                  String jobStatus, String name, String serviceOfferingDisplayText, long serviceOfferingId,
                  String serviceOfferingName, long size, long snapshotId, State state, String storage,
-                 String storageType, VolumeType type, long virtualMachineId, String vmDisplayName, String vmName,
+                 String storageType, Type type, long virtualMachineId, String vmDisplayName, String vmName,
                  VirtualMachine.State vmState, long zoneId, String zoneName) {
       this.id = id;
       this.account = account;
@@ -425,7 +425,7 @@ public class Volume implements Comparable<Volume> {
       return storageType;
    }
 
-   public VolumeType getType() {
+   public Type getType() {
       return type;
    }
 
@@ -626,24 +626,24 @@ public class Volume implements Comparable<Volume> {
       }
    }
 
-   public enum VolumeType {
+   public enum Type {
       ROOT(0),
       DATADISK(1),
       UNRECOGNIZED(Integer.MAX_VALUE);
 
       private int code;
 
-      private static final Map<Integer, VolumeType> INDEX = Maps.uniqueIndex(ImmutableSet.copyOf(VolumeType.values()),
-            new Function<VolumeType, Integer>() {
+      private static final Map<Integer, Type> INDEX = Maps.uniqueIndex(ImmutableSet.copyOf(Type.values()),
+            new Function<Type, Integer>() {
 
                @Override
-               public Integer apply(VolumeType input) {
+               public Integer apply(Type input) {
                   return input.code;
                }
 
             });
 
-      VolumeType(int code) {
+      Type(int code) {
          this.code = code;
       }
 
@@ -652,7 +652,7 @@ public class Volume implements Comparable<Volume> {
          return name().toLowerCase();
       }
 
-      public static VolumeType fromValue(String resourceType) {
+      public static Type fromValue(String resourceType) {
          Integer code = new Integer(checkNotNull(resourceType, "resourcetype"));
          return INDEX.containsKey(code) ? INDEX.get(code) : UNRECOGNIZED;
       }

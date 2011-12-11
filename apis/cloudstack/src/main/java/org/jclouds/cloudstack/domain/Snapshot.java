@@ -50,7 +50,7 @@ public class Snapshot implements Comparable<Snapshot> {
       private State state;
       private long volumeId;
       private String volumeName;
-      private Volume.VolumeType volumeType;
+      private Volume.Type volumeType;
 
       /**
        * @param id ID of the snapshot
@@ -159,7 +159,7 @@ public class Snapshot implements Comparable<Snapshot> {
       /**
        * @param volumeType type of the disk volume
        */
-      public Builder volumeType(Volume.VolumeType volumeType) {
+      public Builder volumeType(Volume.Type volumeType) {
          this.volumeType = volumeType;
          return this;
       }
@@ -236,10 +236,10 @@ public class Snapshot implements Comparable<Snapshot> {
    @SerializedName("volumename")
    private String volumeName;
    @SerializedName("volumetype")
-   private Volume.VolumeType volumeType;
+   private Volume.Type volumeType;
 
    public Snapshot(long id, String account, Date created, String domain, long domainId, Interval interval, long jobId,
-         String jobStatus, String name, Type snapshotType, State state, long volumeId, String volumeName, Volume.VolumeType volumeType) {
+         String jobStatus, String name, Type snapshotType, State state, long volumeId, String volumeName, Volume.Type volumeType) {
       this.id = id;
       this.account = account;
       this.created = created;
@@ -356,7 +356,7 @@ public class Snapshot implements Comparable<Snapshot> {
    /**
     * @return type of the disk volume
     */
-   public Volume.VolumeType getVolumeType() {
+   public Volume.Type getVolumeType() {
       return volumeType;
    }
 

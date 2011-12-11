@@ -85,7 +85,7 @@ public class ListVolumesOptions extends AccountInDomainOptions {
    /**
     * @param type the type of the disk volume
     */
-   public ListVolumesOptions type(Volume.VolumeType type) {
+   public ListVolumesOptions type(Volume.Type type) {
       this.queryParameters.replaceValues("type", ImmutableSet.of(type .toString()));
       return this;
    }
@@ -179,7 +179,7 @@ public class ListVolumesOptions extends AccountInDomainOptions {
       /**
        * @see ListVolumesOptions#type
        */
-      public static ListVolumesOptions type(Volume.VolumeType type) {
+      public static ListVolumesOptions type(Volume.Type type) {
          ListVolumesOptions options = new ListVolumesOptions();
          return options.type(type);
       }
