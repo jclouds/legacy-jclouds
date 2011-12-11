@@ -18,7 +18,10 @@
  */
 package org.jclouds.cloudstack.features;
 
+import org.jclouds.cloudstack.domain.User;
 import org.testng.annotations.Test;
+
+import java.util.Set;
 
 /**
  * Tests behavior of {@code DomainUserClient}
@@ -27,4 +30,21 @@ import org.testng.annotations.Test;
 @Test(groups = "live", singleThreaded = true, testName = "DomainUserClientLiveTest")
 public class DomainUserClientLiveTest extends BaseCloudStackClientLiveTest {
 
+   @Test
+   public void testListUsers() {
+      Set<User> users = domainAdminClient.getUserClient().listUsers();
+
+      assert users.size() > 0;
+      assert users.contains(user); // contains the current user
+
+      for(User user : users) {
+         checkUser(user);
+      }
+   }
+
+   private void checkUser(User user) {
+      assert user.getId() > 0;
+      assert user.getAccount() != null;
+      assert user.getDomain() != null;
+   }
 }

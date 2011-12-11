@@ -19,8 +19,10 @@
 package org.jclouds.cloudstack.features;
 
 import org.jclouds.cloudstack.domain.User;
+import org.jclouds.cloudstack.options.ListUsersOptions;
 import org.jclouds.concurrent.Timeout;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -34,6 +36,15 @@ import java.util.concurrent.TimeUnit;
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface DomainUserClient {
+
+   /**
+    * Lists Users
+    *
+    * @param options
+    *           if present, how to constrain the list.
+    * @return Users matching query, or empty set, if no Accounts are found
+    */
+   Set<User> listUsers(ListUsersOptions... options);
 
    /**
     * Enable a user with a specific ID
