@@ -24,6 +24,7 @@ import org.testng.annotations.Test;
 
 import java.util.Set;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -42,14 +43,24 @@ public class GlobalHostClientLiveTest extends BaseCloudStackClientLiveTest {
       assert hosts.size() > 0 : hosts;
 
       for(Host host : hosts) {
-         Logger.CONSOLE.info(host.toString());
          checkHost(host);
       }
    }
 
    private void checkHost(Host host) {
-      assert host.getCpuNumber() > 0;
-      assert host.getAverageLoad() >= 0;
+      if (host.getType().equals("Routing")) {
+         assert host.getCpuNumber() > 0;
+         assert host.getAverageLoad() >= 0;
+         assert host.getHypervisor() != null;
+      }
+      assert host.getAllocationState() != null;
+      assert host.getEvents() != null;
+      if (host.getType().equals("SecondaryStorageVM")) {
+         assert host.getName().startsWith("s-");
+      }
+      if (host.getType().equals("ConsoleProxy")) {
+         assert host.getName().startsWith("v-");
+      }
    }
 
 }
