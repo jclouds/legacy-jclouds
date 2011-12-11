@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.features;
 
+import org.jclouds.cloudstack.domain.User;
 import org.jclouds.concurrent.Timeout;
 
 import java.util.concurrent.TimeUnit;
@@ -32,7 +33,19 @@ import java.util.concurrent.TimeUnit;
  *      />
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface DomainUserClient extends AccountClient {
+public interface DomainUserClient {
 
+   /**
+    * Enable a user with a specific ID
+    *
+    * @param userId
+    *    the user ID to enable
+    */
+   User enableUser(long userId);
+
+   /**
+    * Disable a user with a specific ID
+    */
+   User disableUser(long userId);
 
 }

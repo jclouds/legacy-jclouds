@@ -18,9 +18,19 @@
  */
 package org.jclouds.cloudstack.features;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Provides asynchronous access to CloudStack User features available to Domain
@@ -33,6 +43,26 @@ import org.jclouds.rest.annotations.RequestFilters;
  */
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
-public interface DomainUserAsyncClient extends AccountAsyncClient {
+public interface DomainUserAsyncClient {
+
+   /**
+    * @see DomainUserClient#enableUser
+    */
+   @GET
+   @QueryParams(keys = "command", values = "enableUser")
+   @SelectJson("user")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<User> enableUser(@QueryParam("id") long userId);
+
+   /**
+    * @see DomainUserClient#disableUser
+    */
+   @GET
+   @QueryParams(keys = "command", values = "disableUser")
+   @SelectJson("user")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<User> disableUser(@QueryParam("id") long userId);
 
 }
