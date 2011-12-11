@@ -19,24 +19,23 @@
 package org.jclouds.aws.ec2.compute;
 
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService.getJavaMethodForRequestAtIndex;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.reference.AWSEC2Constants;
-import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.ec2.compute.EC2TemplateBuilderLiveTest;
 import org.jclouds.ec2.compute.predicates.EC2ImagePredicates;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.RootDeviceType;
@@ -45,26 +44,22 @@ import org.jclouds.ec2.options.DescribeRegionsOptions;
 import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.ec2.services.AvailabilityZoneAndRegionAsyncClient;
 import org.jclouds.http.HttpCommand;
-import org.jclouds.http.internal.JavaUrlHttpCommandExecutorService;
 import org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.inject.AbstractModule;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
+public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
 
    public AWSEC2TemplateBuilderLiveTest() {
       provider = "aws-ec2";
@@ -355,10 +350,6 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
                .getMethod("describeRegions", DescribeRegionsOptions[].class));
       assertEquals(getJavaMethodForRequestAtIndex(commandsInvoked, 1), AvailabilityZoneAndRegionAsyncClient.class
                .getMethod("describeAvailabilityZonesInRegion", String.class, DescribeAvailabilityZonesOptions[].class));
-   }
-
-   private static Method getJavaMethodForRequestAtIndex(final List<HttpCommand> commandsInvoked, int index) {
-      return GeneratedHttpRequest.class.cast(commandsInvoked.get(index).getCurrentRequest()).getJavaMethod();
    }
 
    @Test
