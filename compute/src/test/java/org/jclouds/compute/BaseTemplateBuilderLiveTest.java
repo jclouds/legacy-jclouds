@@ -283,6 +283,10 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
       } finally {
          if (context != null)
             context.close();
+         
+         // Need to clear persisted credentials; otherwise next time a ComputeServiceContext is created  
+         // then it will have these "foo" credentials!
+         context.credentialStore().clear();
       }
    }
 
