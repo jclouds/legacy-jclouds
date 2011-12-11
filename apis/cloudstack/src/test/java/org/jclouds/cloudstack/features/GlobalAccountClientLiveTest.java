@@ -19,7 +19,6 @@
 package org.jclouds.cloudstack.features;
 
 import org.jclouds.cloudstack.domain.Account;
-import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
@@ -44,6 +43,12 @@ public class GlobalAccountClientLiveTest extends BaseCloudStackClientLiveTest {
          assertNotNull(account);
          assertEquals(account.getName(), prefix + "-account");
          assertEquals(account.getType(), Account.Type.USER);
+
+         Account updated = globalAdminClient.getAccountClient().updateAccount(
+            account.getName(), account.getDomainId(), prefix + "-account-2");
+
+         assertNotNull(updated);
+         assertEquals(updated.getName(), prefix + "-account-2");
 
       } finally {
          if (account != null) {

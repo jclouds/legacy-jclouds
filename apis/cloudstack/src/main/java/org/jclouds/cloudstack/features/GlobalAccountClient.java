@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.options.CreateAccountOptions;
+import org.jclouds.cloudstack.options.UpdateAccountOptions;
 import org.jclouds.concurrent.Timeout;
 
 /**
@@ -53,6 +54,17 @@ public interface GlobalAccountClient extends DomainAccountClient {
     */
    Account createAccount(String userName, Account.Type accountType, String email,
       String firstName, String lastName, String hashedPassword, CreateAccountOptions... options);
+
+   /**
+    * Update an existing account
+    *
+    * @param accountName the current account name
+    * @param domainId the ID of the domain were the account exists
+    * @param newName new name for the account
+    * @param options optional arguments
+    * @return
+    */
+   Account updateAccount(String accountName, long domainId, String newName, UpdateAccountOptions... options);
 
    /**
     * Delete an account with the specified ID

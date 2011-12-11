@@ -22,6 +22,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.CreateAccountOptions;
+import org.jclouds.cloudstack.options.UpdateAccountOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -59,6 +60,17 @@ public interface GlobalAccountAsyncClient extends DomainAccountAsyncClient {
       @QueryParam("accounttype") Account.Type accountType, @QueryParam("email") String email,
       @QueryParam("firstname") String firstName, @QueryParam("lastname") String lastName,
       @QueryParam("password") String hashedPassword, CreateAccountOptions... options);
+
+   /**
+    * @see GlobalAccountClient#updateAccount
+    */
+   @GET
+   @QueryParams(keys = "command", values = "updateAccount")
+   @SelectJson("account")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Account> updateAccount(@QueryParam("account") String accountName,
+      @QueryParam("domainid") long domainId, @QueryParam("newname") String newName, UpdateAccountOptions... options);
 
    /**
     * @see GlobalAccountClient#deleteAccount
