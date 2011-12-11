@@ -16,43 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudstack;
+package org.jclouds.cloudstack.features;
 
-import org.jclouds.cloudstack.features.DomainAccountAsyncClient;
-import org.jclouds.cloudstack.features.DomainLimitAsyncClient;
-import org.jclouds.cloudstack.features.DomainUserAsyncClient;
-import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.rest.annotations.QueryParams;
+import org.jclouds.rest.annotations.RequestFilters;
 
 /**
- * Provides asynchronous access to CloudStack via their REST API.
- * <p/>
- * 
- * @author Adrian Cole
- * @see CloudStackDomainClient
+ * Provides asynchronous access to CloudStack User features available to Domain
+ * Admin users.
+ *
+ * @author Andrei Savu
  * @see <a href=
  *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Domain_Admin.html"
  *      />
  */
-public interface CloudStackDomainAsyncClient extends CloudStackAsyncClient {
-
-   /**
-    * Provides synchronous access to Resource Limits
-    */
-   @Delegate
-   @Override
-   DomainLimitAsyncClient getLimitClient();
-
-   /**
-    * Provides synchronous access to Accounts
-    */
-   @Delegate
-   @Override
-   DomainAccountAsyncClient getAccountClient();
-
-   /**
-    * Provides asynchronous access to Users
-    */
-   @Delegate
-   DomainUserAsyncClient getUserClient();
+@RequestFilters(QuerySigner.class)
+@QueryParams(keys = "response", values = "json")
+public interface DomainUserAsyncClient extends AccountAsyncClient {
 
 }
