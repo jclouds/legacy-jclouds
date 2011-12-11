@@ -23,6 +23,7 @@ import org.jclouds.cloudstack.features.GlobalAlertAsyncClient;
 import org.jclouds.cloudstack.features.GlobalCapacityAsyncClient;
 import org.jclouds.cloudstack.features.GlobalHostAsyncClient;
 import org.jclouds.cloudstack.features.GlobalOfferingAsyncClient;
+import org.jclouds.cloudstack.features.GlobalUserAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -43,6 +44,13 @@ public interface CloudStackGlobalAsyncClient extends CloudStackDomainAsyncClient
    @Delegate
    @Override
    GlobalAccountAsyncClient getAccountClient();
+
+   /**
+    * Provides asynchronous access to Users
+    */
+   @Delegate
+   @Override
+   GlobalUserAsyncClient getUserClient();
 
    /**
     * Provides asynchronous access to Alerts
