@@ -649,7 +649,7 @@ public class Volume implements Comparable<Volume> {
 
       @Override
       public String toString() {
-         return name();
+         return name().toLowerCase();
       }
 
       public static VolumeType fromValue(String resourceType) {
