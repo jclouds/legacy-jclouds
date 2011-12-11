@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.cloudstack.domain.User;
 import org.jclouds.concurrent.Timeout;
 
 /**
@@ -34,4 +35,11 @@ import org.jclouds.concurrent.Timeout;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface GlobalUserClient extends DomainUserClient {
 
+
+   /**
+    * Delete an user with the specified ID
+    *
+    * @param id  user ID
+    */
+   Void deleteUser(long id);
 }
