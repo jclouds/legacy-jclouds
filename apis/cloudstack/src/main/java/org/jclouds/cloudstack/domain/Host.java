@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.domain;
 
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
+import org.omg.CORBA.UNKNOWN;
 
 import java.util.Date;
 import java.util.Map;
@@ -73,15 +74,17 @@ public class Host implements Comparable<Host> {
    }
 
    public static enum State {
-      CREATING,
-      ENABLED,
-      DISABLED,
+      CONNECTING,
+      UP,
+      DOWN,
+      DISCONNECTED,
+      UPDATING,
       PREPARE_FOR_MAINTENANCE,
       ERROR_IN_MAINTENANCE,
       MAINTENANCE,
-      ERROR,
-      UP,      // seen in response - waiting from confirmation by cloud.com
-      ALERT,   // seen in response - waiting from confirmation cloud.com
+      ALERT,
+      REMOVED,
+      REBALANCING,
       UNKNOWN;
 
       public static State fromValue(String value) {
