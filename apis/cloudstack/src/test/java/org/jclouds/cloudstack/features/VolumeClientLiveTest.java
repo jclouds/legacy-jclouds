@@ -237,7 +237,7 @@ public class VolumeClientLiveTest extends BaseCloudStackClientLiveTest {
    static void checkVolume(final Volume volume) {
       assertNotNull(volume.getId());
       assertNotNull(volume.getName());
-      assertNotSame(Volume.VolumeType.UNRECOGNIZED, volume.getType());
+      assertNotSame(Volume.Type.UNRECOGNIZED, volume.getType());
    }
 
    Volume findVolumeWithId(final long id) {
