@@ -19,10 +19,8 @@
 package org.jclouds.cloudstack.features;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.inject.Module;
 import org.jclouds.cloudstack.CloudStackClient;
-import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.CloudStackGlobalClient;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.ApiKeyPair;
@@ -37,6 +35,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.cloudstack.features.GlobalAccountClientLiveTest.createTestAccount;
 import static org.jclouds.cloudstack.options.UpdateUserOptions.Builder.userName;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -47,11 +46,7 @@ import static org.testng.Assert.assertNotNull;
 @Test(groups = "live", singleThreaded = true, testName = "GlobalUserClientLiveTest")
 public class GlobalUserClientLiveTest extends BaseCloudStackClientLiveTest {
 
-   public static Account createTestAccount(CloudStackGlobalClient client, String prefix) {
-      return client.getAccountClient().createAccount(
-         prefix + "-account", Account.Type.USER, "dummy@example.com",
-         "First", "Last", "hashed-password");
-   }
+
 
    public static User createTestUser(CloudStackGlobalClient client, Account account, String prefix) {
       return client.getUserClient().createUser(prefix + "-user",

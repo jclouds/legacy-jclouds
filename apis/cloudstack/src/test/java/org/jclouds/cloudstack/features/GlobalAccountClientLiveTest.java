@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.features;
 
+import org.jclouds.cloudstack.CloudStackGlobalClient;
 import org.jclouds.cloudstack.domain.Account;
 import org.testng.annotations.Test;
 
@@ -32,13 +33,19 @@ import static org.testng.Assert.assertNotNull;
 @Test(groups = "live", singleThreaded = true, testName = "GlobalAccountClientLiveTest")
 public class GlobalAccountClientLiveTest extends BaseCloudStackClientLiveTest {
 
+   public static Account createTestAccount(CloudStackGlobalClient client, String prefix) {
+      return client.getAccountClient().createAccount(
+         prefix + "-account", Account.Type.USER, "dummy@example.com",
+         "First", "Last", "hashed-password");
+   }
+
    @Test
    public void testCreateAndRemoveAccount() {
+      assert globalAdminEnabled;
+
       Account account = null;
       try {
-         account = globalAdminClient.getAccountClient().createAccount(
-            prefix + "-account", Account.Type.USER, "dummy@example.com",
-            "First", "Last", "hashed-password");
+         account = createTestAccount(globalAdminClient, prefix);
 
          assertNotNull(account);
          assertEquals(account.getName(), prefix + "-account");

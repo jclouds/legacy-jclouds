@@ -20,11 +20,13 @@ package org.jclouds.cloudstack.features;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import javax.ws.rs.Consumes;
@@ -53,7 +55,7 @@ public interface DomainAccountAsyncClient extends AccountAsyncClient {
    @SelectJson("account")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Account> enableAccount(@QueryParam("account") long accountId, @QueryParam("domainid") long domainId);
+   ListenableFuture<Account> enableAccount(@QueryParam("account") String accountName, @QueryParam("domainid") long domainId);
 
 
    /**
@@ -61,10 +63,10 @@ public interface DomainAccountAsyncClient extends AccountAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "disableAccount")
-   @SelectJson("account")
+   @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Account> disableAccount(@QueryParam("account") long accountId,
+   ListenableFuture<AsyncCreateResponse> disableAccount(@QueryParam("account") String accountName,
       @QueryParam("domainid") long domainId, @QueryParam("lock") boolean onlyLock);
 
 }

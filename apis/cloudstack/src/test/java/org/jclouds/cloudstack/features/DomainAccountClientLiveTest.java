@@ -18,7 +18,15 @@
  */
 package org.jclouds.cloudstack.features;
 
+import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.cloudstack.domain.AsyncJob;
 import org.testng.annotations.Test;
+
+import static org.jclouds.cloudstack.features.GlobalAccountClientLiveTest.createTestAccount;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tests behavior of {@code DomainAccountClient}
@@ -27,5 +35,33 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", singleThreaded = true, testName = "DomainAccountClientLiveTest")
 public class DomainAccountClientLiveTest extends BaseCloudStackClientLiveTest {
+
+   @Test
+   public void testEnableDisableAccount() {
+      assert globalAdminEnabled;
+
+      Account testAccount = null;
+      try {
+         testAccount = createTestAccount(globalAdminClient, prefix);
+
+         AsyncCreateResponse response = domainAdminClient.getAccountClient()
+            .disableAccount(testAccount.getName(), testAccount.getDomainId(), false);
+         assertNotNull(response);
+         assertTrue(jobComplete.apply(response.getJobId()));
+
+         AsyncJob<Account> job = domainAdminClient.getAsyncJobClient().getAsyncJob(response.getJobId());
+         assertEquals(job.getResult().getState(), Account.State.DISABLED);
+
+         Account updated = domainAdminClient.getAccountClient()
+            .enableAccount(testAccount.getName(), testAccount.getDomainId());
+         assertNotNull(updated);
+         assertEquals(updated.getState(), Account.State.ENABLED);
+
+      } finally {
+         if (testAccount != null) {
+            globalAdminClient.getAccountClient().deleteAccount(testAccount.getId());
+         }
+      }
+   }
 
 }
