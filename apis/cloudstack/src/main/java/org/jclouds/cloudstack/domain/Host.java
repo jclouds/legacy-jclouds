@@ -18,9 +18,14 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
+import java.util.Map;
+
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 
 /**
  * Represents a host issued by Cloudstack
@@ -29,18 +34,118 @@ import java.util.Date;
  */
 public class Host implements Comparable<Host> {
 
+   public static enum AllocationState {
+      DISABLED,
+      ENABLED,
+      UNKNOWN;
+
+      public static AllocationState fromValue(String value) {
+         try{
+            return valueOf(value.toUpperCase());
+         } catch (IllegalArgumentException e) {
+            return UNKNOWN;
+         }
+      }
+
+      @Override
+      public String toString() {
+         return UPPER_UNDERSCORE.to(UPPER_CAMEL, name());
+      }
+   }
+
+   public static enum ClusterType {
+      CLOUD_MANAGED,
+      EXTERNAL_MANAGED,
+      UNKNOWN;
+
+      public static ClusterType fromValue(String value) {
+         try {
+            return valueOf(UPPER_CAMEL.to(UPPER_UNDERSCORE, value));
+         } catch(IllegalArgumentException e) {
+            return UNKNOWN;
+         }
+      }
+
+      @Override
+      public String toString() {
+         return UPPER_UNDERSCORE.to(UPPER_CAMEL, name());
+      }
+   }
+
+   public static enum State {
+      CREATING,
+      ENABLED,
+      DISABLED,
+      PREPARE_FOR_MAINTENANCE,
+      ERROR_IN_MAINTENANCE,
+      MAINTENANCE,
+      ERROR,
+      UP,      // seen in response - waiting from confirmation by cloud.com
+      ALERT,   // seen in response - waiting from confirmation cloud.com
+      UNKNOWN;
+
+      public static State fromValue(String value) {
+         try {
+            return valueOf(UPPER_CAMEL.to(UPPER_UNDERSCORE, value));
+         } catch(IllegalArgumentException e) {
+            return UNKNOWN;
+         }
+      }
+
+      @Override
+      public String toString() {
+         return UPPER_UNDERSCORE.to(UPPER_CAMEL, name());
+      }
+   }
+
+   public static enum Type {
+      STORAGE,
+      ROUTING,
+      SECONDARY_STORAGE,
+      SECONDARY_STORAGE_CMD_EXECUTOR,
+      CONSOLE_PROXY,
+      EXTERNAL_FIREWALL,
+      EXTERNAL_LOAD_BALANCER,
+      PXE_SERVER,
+      TRAFFIC_MONITOR,
+      EXTERNAL_DHCP,
+      SECONDARY_STORAGE_VM,
+      LOCAL_SECONDARY_STORAGE,
+      UNKNOWN;
+
+      public static Type fromValue(String value) {
+         try {
+            if (value.equals("SecondaryStorageVM")) {
+               return SECONDARY_STORAGE_VM;
+            }
+            return valueOf(UPPER_CAMEL.to(UPPER_UNDERSCORE, value));
+
+         } catch(IllegalArgumentException e) {
+            return UNKNOWN;
+         }
+      }
+
+      @Override
+      public String toString() {
+         if (this == SECONDARY_STORAGE_VM) {
+            return "SecondaryStorageVM"; // note the inconsistency in VM naming
+         }
+         return UPPER_UNDERSCORE.to(UPPER_CAMEL, name());
+      }
+   }
+
    public static Builder builder() {
       return new Builder();
    }
 
    public static class Builder {
       private long id;
-      private String allocationState;
+      private AllocationState allocationState;
       private int averageLoad;
       private String capabilities;
       private long clusterId;
       private String clusterName;
-      private String clusterType;
+      private ClusterType clusterType;
       private String cpuAllocated;
       private int cpuNumber;
       private int cpuSpeed;
@@ -71,8 +176,8 @@ public class Host implements Comparable<Host> {
       private long podId;
       private String podName;
       private Date removed;
-      private String state;
-      private String type;
+      private State state;
+      private Type type;
       private String version;
       private long zoneId;
       private String zoneName;
@@ -82,7 +187,7 @@ public class Host implements Comparable<Host> {
          return this;
       }
 
-      public Builder allocationState(String allocationState) {
+      public Builder allocationState(AllocationState allocationState) {
          this.allocationState = allocationState;
          return this;
       }
@@ -107,7 +212,7 @@ public class Host implements Comparable<Host> {
          return this;
       }
 
-      public Builder clusterType(String clusterType) {
+      public Builder clusterType(ClusterType clusterType) {
          this.clusterType = clusterType;
          return this;
       }
@@ -262,12 +367,12 @@ public class Host implements Comparable<Host> {
          return this;
       }
 
-      public Builder state(String state) {
+      public Builder state(State state) {
          this.state = state;
          return this;
       }
 
-      public Builder type(String type) {
+      public Builder type(Type type) {
          this.type = type;
          return this;
       }
@@ -303,7 +408,7 @@ public class Host implements Comparable<Host> {
 
    private long id;
    @SerializedName("allocationstate")
-   private String allocationState;
+   private AllocationState allocationState;
    @SerializedName("averageload")
    private int averageLoad;
    @SerializedName("capabilities")
@@ -313,7 +418,7 @@ public class Host implements Comparable<Host> {
    @SerializedName("clustername")
    private String clusterName;
    @SerializedName("clustertype")
-   private String clusterType;
+   private ClusterType clusterType;
    @SerializedName("cpuallocated")
    private String cpuAllocated;
    @SerializedName("cpunumber")
@@ -368,8 +473,8 @@ public class Host implements Comparable<Host> {
    @SerializedName("podname")
    private String podName;
    private Date removed;
-   private String state;
-   private String type;
+   private State state;
+   private Type type;
    private String version;
    @SerializedName("zoneid")
    private long zoneId;
@@ -380,8 +485,8 @@ public class Host implements Comparable<Host> {
    Host() {
    }
 
-   public Host(long id, String allocationState, int averageLoad, String capabilities,
-               long clusterId, String clusterName, String clusterType, String cpuAllocated,
+   public Host(long id, AllocationState allocationState, int averageLoad, String capabilities,
+               long clusterId, String clusterName, ClusterType clusterType, String cpuAllocated,
                int cpuNumber, int cpuSpeed, String cpuUsed, float cpuWithOverProvisioning,
                Date created, Date disconnected, long diskSizeAllocated, long diskSizeTotal,
                String events, boolean hasEnoughCapacity, String hostTags, String hypervisor,
@@ -389,7 +494,7 @@ public class Host implements Comparable<Host> {
                Date lastPinged, long managementServerId, long memoryAllocated, long memoryTotal,
                long memoryUsed, String name, long networkKbsRead, long networkKbsWrite,
                long osCategoryId, long osCategoryName, long podId, String podName, Date removed,
-               String state, String type, String version, long zoneId, String zoneName) {
+               State state, Type type, String version, long zoneId, String zoneName) {
       this.id = id;
       this.allocationState = allocationState;
       this.averageLoad = averageLoad;
@@ -438,7 +543,7 @@ public class Host implements Comparable<Host> {
       return id;
    }
 
-   public String getAllocationState() {
+   public AllocationState getAllocationState() {
       return allocationState;
    }
 
@@ -458,7 +563,7 @@ public class Host implements Comparable<Host> {
       return clusterName;
    }
 
-   public String getClusterType() {
+   public ClusterType getClusterType() {
       return clusterType;
    }
 
@@ -582,11 +687,11 @@ public class Host implements Comparable<Host> {
       return removed;
    }
 
-   public String getState() {
+   public State getState() {
       return state;
    }
 
-   public String getType() {
+   public Type getType() {
       return type;
    }
 
