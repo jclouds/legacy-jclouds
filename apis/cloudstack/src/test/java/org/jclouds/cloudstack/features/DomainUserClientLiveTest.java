@@ -18,26 +18,37 @@
  */
 package org.jclouds.cloudstack.features;
 
+import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.cloudstack.domain.User;
+import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
 
 import java.util.Set;
 
+import static org.jclouds.cloudstack.features.GlobalUserClientLiveTest.createTestAccount;
+import static org.jclouds.cloudstack.features.GlobalUserClientLiveTest.createTestUser;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
 /**
  * Tests behavior of {@code DomainUserClient}
- *
  */
 @Test(groups = "live", singleThreaded = true, testName = "DomainUserClientLiveTest")
 public class DomainUserClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test
    public void testListUsers() {
+      assert domainAdminEnabled;
+
       Set<User> users = domainAdminClient.getUserClient().listUsers();
 
       assert users.size() > 0;
       assert users.contains(user); // contains the current user
 
-      for(User user : users) {
+      for (User user : users) {
          checkUser(user);
       }
    }
@@ -46,5 +57,37 @@ public class DomainUserClientLiveTest extends BaseCloudStackClientLiveTest {
       assert user.getId() > 0;
       assert user.getAccount() != null;
       assert user.getDomain() != null;
+   }
+
+   @Test
+   public void testEnableDisableUser() {
+      assert globalAdminEnabled && domainAdminEnabled;
+
+      Account testAccount = null;
+      User testUser = null;
+      try {
+         testAccount = createTestAccount(globalAdminClient, prefix);
+         testUser = createTestUser(globalAdminClient, testAccount, prefix);
+
+         AsyncCreateResponse response = domainAdminClient.getUserClient().disableUser(testUser.getId());
+         assertNotNull(response);
+         assertTrue(jobComplete.apply(response.getJobId()));
+
+         AsyncJob<User> job = domainAdminClient.getAsyncJobClient().getAsyncJob(response.getJobId());
+         assertNotNull(job);
+         assertEquals(job.getResult().getState(), User.State.DISABLED);
+
+         User updated = domainAdminClient.getUserClient().enableUser(testUser.getId());
+         assertNotNull(updated);
+         assertEquals(updated.getState(), User.State.ENABLED);
+
+      } finally {
+         if (testUser != null) {
+            globalAdminClient.getUserClient().deleteUser(testUser.getId());
+         }
+         if (testAccount != null) {
+            globalAdminClient.getAccountClient().deleteAccount(testAccount.getId());
+         }
+      }
    }
 }

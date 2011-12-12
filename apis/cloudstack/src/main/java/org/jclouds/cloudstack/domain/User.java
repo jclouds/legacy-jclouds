@@ -30,6 +30,25 @@ import com.google.gson.annotations.SerializedName;
  */
 public class User implements Comparable<User> {
 
+   public static enum State {
+      ENABLED,
+      DISABLED,
+      UNKNOWN;
+
+      public static State fromValue(String value) {
+         try {
+            return valueOf(value.toUpperCase());
+         } catch(IllegalArgumentException e) {
+            return UNKNOWN;
+         }
+      }
+
+      @Override
+      public String toString() {
+         return name().toLowerCase();
+      }
+   }
+
    public static Builder builder() {
       return new Builder();
    }
@@ -41,7 +60,7 @@ public class User implements Comparable<User> {
       private String lastName;
       private String email;
       private Date created;
-      private String state;
+      private State state;
       private String account;
       private Account.Type accountType;
       private String domain;
@@ -80,7 +99,7 @@ public class User implements Comparable<User> {
          return this;
       }
 
-      public Builder state(String state) {
+      public Builder state(State state) {
          this.state = state;
          return this;
       }
@@ -143,7 +162,7 @@ public class User implements Comparable<User> {
    private String lastName;
    private String email;
    private Date created;
-   private String state;
+   private State state;
    private String account;
    @SerializedName("accounttype")
    private Account.Type accountType;
@@ -157,7 +176,7 @@ public class User implements Comparable<User> {
    @SerializedName("secretkey")
    private String secretKey;
 
-   public User(long id, String name, String firstname, String lastname, String email, Date created, String state,
+   public User(long id, String name, String firstname, String lastname, String email, Date created, State state,
          String account, Type accountType, String domain, long domainId, String timeZone, String apiKey,
          String secretKey) {
       this.id = id;
@@ -228,7 +247,7 @@ public class User implements Comparable<User> {
     * 
     * @return the user state
     */
-   public String getState() {
+   public State getState() {
       return state;
    }
 

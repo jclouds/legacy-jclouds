@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.features;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.ListUsersOptions;
@@ -26,6 +27,7 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
@@ -73,9 +75,9 @@ public interface DomainUserAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "disableUser")
-   @SelectJson("user")
+   @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<User> disableUser(@QueryParam("id") long userId);
+   ListenableFuture<AsyncCreateResponse> disableUser(@QueryParam("id") long userId);
 
 }

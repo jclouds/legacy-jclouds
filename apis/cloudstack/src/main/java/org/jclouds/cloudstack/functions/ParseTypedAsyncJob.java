@@ -39,6 +39,7 @@ import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.SecurityGroup;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.TemplateExtraction;
+import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.json.Json;
@@ -62,6 +63,7 @@ public class ParseTypedAsyncJob implements Function<AsyncJob<Map<String, JsonBal
    @VisibleForTesting
    @Named("jclouds.cloudstack.jobresult-type-map")
    Map<String, Class<?>> typeMap = ImmutableMap.<String, Class<?>>builder()
+      .put("user", User.class)
       .put("securitygroup", SecurityGroup.class)
       .put("portforwardingrule", PortForwardingRule.class)
       .put("ipforwardingrule", IPForwardingRule.class)

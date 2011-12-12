@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.features;
 
+import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.options.ListUsersOptions;
 import org.jclouds.concurrent.Timeout;
@@ -57,6 +58,6 @@ public interface DomainUserClient {
    /**
     * Disable a user with a specific ID
     */
-   User disableUser(long userId);
+   AsyncCreateResponse disableUser(long userId);
 
 }

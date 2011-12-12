@@ -23,6 +23,7 @@ import com.google.common.collect.Iterables;
 import com.google.inject.Module;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.CloudStackContext;
+import org.jclouds.cloudstack.CloudStackGlobalClient;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.ApiKeyPair;
 import org.jclouds.cloudstack.domain.User;
@@ -46,20 +47,25 @@ import static org.testng.Assert.assertNotNull;
 @Test(groups = "live", singleThreaded = true, testName = "GlobalUserClientLiveTest")
 public class GlobalUserClientLiveTest extends BaseCloudStackClientLiveTest {
 
-   private Account createTestAccount() {
-      return globalAdminClient.getAccountClient().createAccount(
+   public static Account createTestAccount(CloudStackGlobalClient client, String prefix) {
+      return client.getAccountClient().createAccount(
          prefix + "-account", Account.Type.USER, "dummy@example.com",
          "First", "Last", "hashed-password");
+   }
 
+   public static User createTestUser(CloudStackGlobalClient client, Account account, String prefix) {
+      return client.getUserClient().createUser(prefix + "-user",
+            account.getName(), "dummy2@example.com", "md5-password", "First", "Last");
    }
 
    @Test
    public void testCreateUser() {
-      Account testAccount = createTestAccount();
+      assert globalAdminEnabled;
+
+      Account testAccount = createTestAccount(globalAdminClient, prefix);
       User testUser = null;
       try {
-         testUser = globalAdminClient.getUserClient().createUser(prefix + "-user",
-            testAccount.getName(), "dummy2@example.com", "md5-password", "First", "Last");
+         testUser = createTestUser(globalAdminClient, testAccount, prefix);
 
          assertNotNull(testUser);
          assertEquals(testUser.getName(), prefix + "-user");
@@ -71,13 +77,14 @@ public class GlobalUserClientLiveTest extends BaseCloudStackClientLiveTest {
          assertNotNull(updatedUser);
          assertEquals(updatedUser.getName(), prefix + "-user-2");
 
+         /*
          ApiKeyPair apiKeys = globalAdminClient.getUserClient()
             .registerUserKeys(updatedUser.getId());
 
          assertNotNull(apiKeys.getApiKey());
          assertNotNull(apiKeys.getSecretKey());
 
-         checkAuthAsUser(apiKeys);
+         checkAuthAsUser(apiKeys); */
 
       } finally {
          if (testUser != null) {
