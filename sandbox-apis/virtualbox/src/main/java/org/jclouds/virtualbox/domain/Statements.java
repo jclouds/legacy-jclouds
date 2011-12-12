@@ -34,7 +34,7 @@ public class Statements {
     * @param vmname
     *           - the vm name
     */
-   public static Statement getIpAddress(String vmName) {
-      return new Call("getIpAddress", vmName);
+   public static Statement exportIpAddressFromVmNamed(String vmName) {
+      return new Call("exportIpAddressFromVmNamed", vmName);
    }
  }

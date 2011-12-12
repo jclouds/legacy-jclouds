@@ -19,7 +19,7 @@
 package org.jclouds.virtualbox.domain;
 
 import static org.jclouds.scriptbuilder.domain.Statements.interpret;
-import static org.jclouds.virtualbox.domain.Statements.getIpAddress;
+import static org.jclouds.virtualbox.domain.Statements.exportIpAddressFromVmNamed;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -37,22 +37,15 @@ import com.google.common.io.Resources;
  * @author Andrea Turli
  */
 @Test(groups = "unit")
-public class GetIPAddressFromGuestAdditionsTest {
+public class ExportIpAddressForVMNamedTest {
    
-   ScriptBuilder getIpAddressBuilder = new ScriptBuilder()
-	.addStatement(getIpAddress("{args}"))
+   ScriptBuilder exportIpAddressForVMNamedBuilder = new ScriptBuilder()
+	.addStatement(exportIpAddressFromVmNamed("{args}"))
 	.addStatement(interpret("echo {varl}FOUND_IP_ADDRESS{varr}{lf}"));
    	
    public void testUNIX() throws IOException {  	
-      assertEquals(getIpAddressBuilder.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources
-               .getResource("test_get_ip_address." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+      assertEquals(exportIpAddressForVMNamedBuilder.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources
+               .getResource("test_export_ip_address_from_vm_named." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
    }
 
-   // TODO
-   /*
-   public void testWINDOWS() throws IOException {
-      assertEquals(getIpAddressBuilder.render(OsFamily.WINDOWS), CharStreams.toString(Resources.newReaderSupplier(Resources
-               .getResource("test_get_ip_address." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
-   }
-   */
 }

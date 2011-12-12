@@ -1,13 +1,4 @@
-#!/bin/bash
-set +u
-shopt -s xpg_echo
-shopt -s expand_aliases
-unset PATH JAVA_HOME LD_LIBRARY_PATH
-function abort {
-   echo "aborting: $@" 1>&2
-   exit 1
-}
-function getIpAddress {
+function installGuestAdditions {
    unset FOUND_IP_ADDRESS;
    [ $# -eq 1 ] || {
       abort "installGuestAdditions requires virtual machine name parameter"
@@ -23,7 +14,3 @@ function getIpAddress {
       return 1
    }
 }
-export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
-getIpAddress $@ || exit 1
-echo $FOUND_IP_ADDRESS
-exit 0
