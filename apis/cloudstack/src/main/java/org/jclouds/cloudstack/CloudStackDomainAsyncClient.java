@@ -20,6 +20,7 @@ package org.jclouds.cloudstack;
 
 import org.jclouds.cloudstack.features.DomainAccountAsyncClient;
 import org.jclouds.cloudstack.features.DomainLimitAsyncClient;
+import org.jclouds.cloudstack.features.DomainUserAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -47,5 +48,11 @@ public interface CloudStackDomainAsyncClient extends CloudStackAsyncClient {
    @Delegate
    @Override
    DomainAccountAsyncClient getAccountClient();
+
+   /**
+    * Provides asynchronous access to Users
+    */
+   @Delegate
+   DomainUserAsyncClient getUserClient();
 
 }

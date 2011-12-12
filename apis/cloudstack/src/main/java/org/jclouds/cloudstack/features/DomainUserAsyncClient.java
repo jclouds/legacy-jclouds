@@ -19,54 +19,65 @@
 package org.jclouds.cloudstack.features;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.options.ListUsersOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import java.util.Set;
 
 /**
- * Provides asynchronous access to CloudStack Account features available to Domain
+ * Provides asynchronous access to CloudStack User features available to Domain
  * Admin users.
  *
- * @author Adrian Cole
+ * @author Andrei Savu
  * @see <a href=
  *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Domain_Admin.html"
  *      />
  */
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
-public interface DomainAccountAsyncClient extends AccountAsyncClient {
+public interface DomainUserAsyncClient {
 
    /**
-    * @see DomainAccountClient#enableAccount
+    * @see DomainUserClient#listUsers
     */
    @GET
-   @QueryParams(keys = "command", values = "enableAccount")
-   @SelectJson("account")
+   @QueryParams(keys = "command", values = "listUsers")
+   @SelectJson("user")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<Set<User>> listUsers(ListUsersOptions... options);
+
+   /**
+    * @see DomainUserClient#enableUser
+    */
+   @GET
+   @QueryParams(keys = "command", values = "enableUser")
+   @SelectJson("user")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Account> enableAccount(@QueryParam("account") String accountName, @QueryParam("domainid") long domainId);
-
+   ListenableFuture<User> enableUser(@QueryParam("id") long userId);
 
    /**
-    * @see DomainAccountAsyncClient#disableAccount
+    * @see DomainUserClient#disableUser
     */
    @GET
-   @QueryParams(keys = "command", values = "disableAccount")
+   @QueryParams(keys = "command", values = "disableUser")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<AsyncCreateResponse> disableAccount(@QueryParam("account") String accountName,
-      @QueryParam("domainid") long domainId, @QueryParam("lock") boolean onlyLock);
+   ListenableFuture<AsyncCreateResponse> disableUser(@QueryParam("id") long userId);
 
 }

@@ -16,32 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudstack;
+package org.jclouds.cloudstack.collections;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-
-import java.util.Properties;
-
-import org.jclouds.PropertiesBuilder;
+import javax.inject.Qualifier;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Builds properties used in cloudstack Clients
+ * Change the endpoint as needed for the integration API
  * 
- * @author Adrian Cole
+ * @author Andrei Savu
+ * 
  */
-public class CloudStackPropertiesBuilder extends PropertiesBuilder {
-   @Override
-   protected Properties defaultProperties() {
-      Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_API_VERSION, "2.2");
-      properties.setProperty("jclouds.ssh.max-retries", "7");
-      properties.setProperty("jclouds.ssh.retry-auth", "true");
-      properties.setProperty("jclouds.cloudstack.integration-api-port", "8096");
-      return properties;
-   }
-
-   public CloudStackPropertiesBuilder(Properties properties) {
-      super(properties);
-   }
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface Integration {
 
 }

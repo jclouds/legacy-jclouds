@@ -21,10 +21,10 @@ package org.jclouds.cloudstack.options;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Options used to control what networks information is returned
+ * Optional fields for network creation
  * 
  * @see <a
- *      href="http://download.cloud.com/releases/2.2.0/api/user/listNetworks.html"
+ *      href="http://download.cloud.com/releases/2.2.0/api_2.2.12/user/createNetwork.html"
  *      />
  * @author Adrian Cole
  */

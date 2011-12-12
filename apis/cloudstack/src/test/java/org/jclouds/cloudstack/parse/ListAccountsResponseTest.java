@@ -96,7 +96,7 @@ public class ListAccountsResponseTest extends BaseSetParserTest<Account> {
                   ImmutableSet.of(User.builder().id(505).name("jclouds").firstName("Adrian").lastName("Cole")
                         .email("adrian@jclouds.org")
                         .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-04-19T01:57:24+0000"))
-                        .state("enabled").account("jclouds").accountType(Type.USER).domainId(457)
+                        .state(User.State.ENABLED).account("jclouds").accountType(Type.USER).domainId(457)
                         .domain("AA000062-jclouds-dev").apiKey("APIKEY").secretKey("SECRETKEY").build())).build());
    }
 
