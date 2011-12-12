@@ -46,8 +46,6 @@ import static org.testng.Assert.assertNotNull;
 @Test(groups = "live", singleThreaded = true, testName = "GlobalUserClientLiveTest")
 public class GlobalUserClientLiveTest extends BaseCloudStackClientLiveTest {
 
-
-
    public static User createTestUser(CloudStackGlobalClient client, Account account, String prefix) {
       return client.getUserClient().createUser(prefix + "-user",
             account.getName(), "dummy2@example.com", "md5-password", "First", "Last");
@@ -72,14 +70,13 @@ public class GlobalUserClientLiveTest extends BaseCloudStackClientLiveTest {
          assertNotNull(updatedUser);
          assertEquals(updatedUser.getName(), prefix + "-user-2");
 
-         /*
          ApiKeyPair apiKeys = globalAdminClient.getUserClient()
             .registerUserKeys(updatedUser.getId());
 
          assertNotNull(apiKeys.getApiKey());
          assertNotNull(apiKeys.getSecretKey());
 
-         checkAuthAsUser(apiKeys); */
+         checkAuthAsUser(apiKeys);
 
       } finally {
          if (testUser != null) {
@@ -87,7 +84,6 @@ public class GlobalUserClientLiveTest extends BaseCloudStackClientLiveTest {
          }
          globalAdminClient.getAccountClient().deleteAccount(testAccount.getId());
       }
-
    }
 
    private void checkAuthAsUser(ApiKeyPair keyPair) {

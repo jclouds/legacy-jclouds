@@ -19,13 +19,17 @@
 package org.jclouds.cloudstack.config;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
+import com.google.inject.name.Named;
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.CloudStackDomainAsyncClient;
 import org.jclouds.cloudstack.CloudStackDomainClient;
 import org.jclouds.cloudstack.CloudStackGlobalAsyncClient;
 import org.jclouds.cloudstack.CloudStackGlobalClient;
+import org.jclouds.cloudstack.collections.Integration;
 import org.jclouds.cloudstack.features.AccountAsyncClient;
 import org.jclouds.cloudstack.features.AccountClient;
 import org.jclouds.cloudstack.features.AddressAsyncClient;
@@ -96,12 +100,15 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
+import org.jclouds.location.Provider;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.config.BinderUtils;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.internal.RestContextImpl;
 
+import javax.ws.rs.core.UriBuilder;
+import java.net.URI;
 import java.util.Map;
 
 /**
@@ -191,4 +198,12 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(CloudStackErrorHandler.class);
    }
 
+   @Singleton
+   @Provides
+   @Integration
+   protected URI providesIntegrationEndpoint(@Provider URI normal,
+         @Named("jclouds.cloudstack.integration-api-port") int port,
+         com.google.inject.Provider<UriBuilder> uriBuilder) {
+      return uriBuilder.get().uri(normal).port(port).build();
+   }
 }
