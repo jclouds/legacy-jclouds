@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.features;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.cloudstack.domain.ApiKeyPair;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.CreateUserOptions;
@@ -59,6 +60,14 @@ public interface GlobalUserAsyncClient extends DomainUserAsyncClient {
       @QueryParam("email") String email, @QueryParam("password") String hashedPassword,
       @QueryParam("firstname") String firstName, @QueryParam("lastname") String lastName, CreateUserOptions... options);
 
+   /**
+    * @see GlobalUserClient#registerUserKeys
+    */
+   @GET
+   @QueryParams(keys = "comand", values = "registerUserKeys")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<ApiKeyPair> registerUserKeys(@QueryParam("id") long userId);
 
    /**
     * @see GlobalUserClient#updateUser

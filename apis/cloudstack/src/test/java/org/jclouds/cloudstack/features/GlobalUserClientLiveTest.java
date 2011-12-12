@@ -18,10 +18,24 @@
  */
 package org.jclouds.cloudstack.features;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.inject.Module;
+import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.domain.ApiKeyPair;
 import org.jclouds.cloudstack.domain.User;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
+import java.util.Properties;
+import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.cloudstack.options.UpdateUserOptions.Builder.userName;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -57,6 +71,14 @@ public class GlobalUserClientLiveTest extends BaseCloudStackClientLiveTest {
          assertNotNull(updatedUser);
          assertEquals(updatedUser.getName(), prefix + "-user-2");
 
+         ApiKeyPair apiKeys = globalAdminClient.getUserClient()
+            .registerUserKeys(updatedUser.getId());
+
+         assertNotNull(apiKeys.getApiKey());
+         assertNotNull(apiKeys.getSecretKey());
+
+         checkAuthAsUser(apiKeys);
+
       } finally {
          if (testUser != null) {
             globalAdminClient.getUserClient().deleteUser(testUser.getId());
@@ -64,6 +86,26 @@ public class GlobalUserClientLiveTest extends BaseCloudStackClientLiveTest {
          globalAdminClient.getAccountClient().deleteAccount(testAccount.getId());
       }
 
+   }
+
+   private void checkAuthAsUser(ApiKeyPair keyPair) {
+      ComputeServiceContext context = new ComputeServiceContextFactory(setupRestProperties()).
+         createContext(provider, ImmutableSet.<Module>of(
+            new Log4JLoggingModule(), new SshjSshClientModule()), credentialsAsProperties(keyPair));
+
+      CloudStackClient client = CloudStackClient.class.cast(context.getProviderSpecificContext().getApi());
+      Set<Account> accounts = client.getAccountClient().listAccounts();
+
+      assert accounts.size() > 0;
+
+      context.close();
+   }
+
+   private Properties credentialsAsProperties(ApiKeyPair keyPair) {
+      Properties overrides = new Properties();
+      overrides.put(provider + ".identity", checkNotNull(keyPair.getApiKey()));
+      overrides.put(provider + ".credential", checkNotNull(keyPair.getSecretKey()));
+      return overrides;
    }
 
 }

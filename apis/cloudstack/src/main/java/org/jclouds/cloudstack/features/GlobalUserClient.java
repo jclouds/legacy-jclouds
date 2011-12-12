@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.cloudstack.domain.ApiKeyPair;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.options.CreateUserOptions;
 import org.jclouds.cloudstack.options.UpdateUserOptions;
@@ -56,6 +57,15 @@ public interface GlobalUserClient extends DomainUserClient {
    User createUser(String userName, String accountName, String email, String hashedPassword,
       String firstName, String lastName, CreateUserOptions... options);
 
+
+   /**
+    * This command allows a user to register for the developer API, returning a
+    * secret key and an API key
+    *
+    * @param userId the ID of the user
+    * @return
+    */
+   ApiKeyPair registerUserKeys(long userId);
 
    /**
     * Update an user
