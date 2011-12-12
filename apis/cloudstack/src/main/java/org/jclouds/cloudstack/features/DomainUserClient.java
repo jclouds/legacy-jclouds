@@ -16,46 +16,48 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudstack;
+package org.jclouds.cloudstack.features;
 
+import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.cloudstack.domain.User;
+import org.jclouds.cloudstack.options.ListUsersOptions;
+import org.jclouds.concurrent.Timeout;
+
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.cloudstack.features.DomainAccountClient;
-import org.jclouds.cloudstack.features.DomainLimitClient;
-import org.jclouds.cloudstack.features.DomainUserClient;
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.rest.annotations.Delegate;
-
 /**
- * Provides synchronous access to CloudStack.
- * <p/>
+ * Provides synchronous access to CloudStack User features available to Domain
+ * Admin users.
  * 
- * @author Adrian Cole
- * @see CloudStackDomainAsyncClient
+ * @author Andrei Savu
  * @see <a href=
  *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Domain_Admin.html"
  *      />
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface CloudStackDomainClient extends CloudStackClient {
+public interface DomainUserClient {
 
    /**
-    * Provides synchronous access to Resource Limits
+    * Lists Users
+    *
+    * @param options
+    *           if present, how to constrain the list.
+    * @return Users matching query, or empty set, if no Accounts are found
     */
-   @Delegate
-   @Override
-   DomainLimitClient getLimitClient();
-   
-   /**
-    * Provides synchronous access to Accounts
-    */
-   @Delegate
-   @Override
-   DomainAccountClient getAccountClient();
+   Set<User> listUsers(ListUsersOptions... options);
 
    /**
-    * Provides synchronous access to Users
+    * Enable a user with a specific ID
+    *
+    * @param userId
+    *    the user ID to enable
     */
-   @Delegate
-   DomainUserClient getUserClient();
+   User enableUser(long userId);
+
+   /**
+    * Disable a user with a specific ID
+    */
+   AsyncCreateResponse disableUser(long userId);
+
 }

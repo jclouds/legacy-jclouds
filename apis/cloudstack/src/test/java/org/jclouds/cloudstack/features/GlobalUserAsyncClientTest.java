@@ -18,9 +18,10 @@
  */
 package org.jclouds.cloudstack.features;
 
-import org.jclouds.cloudstack.domain.Account;
-import org.jclouds.cloudstack.options.CreateAccountOptions;
+import com.google.inject.TypeLiteral;
+import org.jclouds.cloudstack.options.CreateUserOptions;
 import org.jclouds.cloudstack.options.UpdateAccountOptions;
+import org.jclouds.cloudstack.options.UpdateUserOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
@@ -28,27 +29,23 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
-import com.google.inject.TypeLiteral;
-
 import java.lang.reflect.Method;
 
 /**
- * Tests behavior of {@code GlobalAccountAsyncClient}
- *
- * @author Adrian
+ * Tests behavior of {@code GlobalUserAsyncClient}
  */
-@Test(groups = "unit", testName = "GlobalAccountAsyncClientTest")
-public class GlobalAccountAsyncClientTest extends BaseCloudStackAsyncClientTest<GlobalAccountAsyncClient> {
+@Test(groups = "unit", testName = "GlobalUserAsyncClientTest")
+public class GlobalUserAsyncClientTest extends BaseCloudStackAsyncClientTest<GlobalUserAsyncClient> {
 
    public void testCreateAccount() throws Exception {
-      Method method = GlobalAccountAsyncClient.class.getMethod("createAccount", String.class, Account.Type.class,
-         String.class, String.class, String.class, String.class, CreateAccountOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, "user", Account.Type.USER, "email@example.com",
-         "FirstName", "LastName", "hashed-password");
+      Method method = GlobalUserAsyncClient.class.getMethod("createUser", String.class, String.class,
+         String.class, String.class, String.class, String.class, CreateUserOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method, "user", "account", "email@example.com",
+         "hashed-password", "FirstName", "LastName");
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=createAccount&password=hashed-password&" +
-            "username=user&email=email%40example.com&accounttype=0&firstname=FirstName&lastname=LastName HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=createUser&lastname=LastName&" +
+            "username=user&email=email%40example.com&account=account&password=hashed-password&firstname=FirstName HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -59,30 +56,28 @@ public class GlobalAccountAsyncClientTest extends BaseCloudStackAsyncClientTest<
       checkFilters(httpRequest);
    }
 
-   public void testUpdateAccount() throws Exception {
-      Method method = GlobalAccountAsyncClient.class.getMethod("updateAccount", String.class, long.class,
-         String.class, UpdateAccountOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, "account", 42L, "new-account-name");
-
-      assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=updateAccount&account=account&" +
-            "newname=new-account-name&domainid=42 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null, null, false);
-
-      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
-
-      checkFilters(httpRequest);
-   }
-
-   public void testDeleteAccount() throws Exception {
-      Method method = GlobalAccountAsyncClient.class.getMethod("deleteAccount", long.class);
+   public void testUpdateUser() throws Exception {
+      Method method = GlobalUserAsyncClient.class.getMethod("updateUser", long.class, UpdateUserOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 42L);
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=deleteAccount&id=42 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=updateUser&id=42 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testDeleteUser() throws Exception {
+      Method method = GlobalUserAsyncClient.class.getMethod("deleteUser", long.class);
+      HttpRequest httpRequest = processor.createRequest(method, 42L);
+
+      assertRequestLineEquals(httpRequest,
+         "GET http://localhost:8080/client/api?response=json&command=deleteUser&id=42 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -94,8 +89,8 @@ public class GlobalAccountAsyncClientTest extends BaseCloudStackAsyncClientTest<
    }
 
    @Override
-   protected TypeLiteral<RestAnnotationProcessor<GlobalAccountAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<GlobalAccountAsyncClient>>() {
+   protected TypeLiteral<RestAnnotationProcessor<GlobalUserAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<GlobalUserAsyncClient>>() {
       };
    }
 }

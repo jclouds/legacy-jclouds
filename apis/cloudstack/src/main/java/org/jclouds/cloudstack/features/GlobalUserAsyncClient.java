@@ -19,10 +19,13 @@
 package org.jclouds.cloudstack.features;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.collections.Integration;
+import org.jclouds.cloudstack.domain.ApiKeyPair;
+import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.filters.QuerySigner;
-import org.jclouds.cloudstack.options.CreateAccountOptions;
-import org.jclouds.cloudstack.options.UpdateAccountOptions;
+import org.jclouds.cloudstack.options.CreateUserOptions;
+import org.jclouds.cloudstack.options.UpdateUserOptions;
+import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -33,51 +36,58 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import java.util.Set;
 
 /**
- * Provides asynchronous access to CloudStack Account features available to Global
+ * Provides asynchronous access to CloudStack User features available to Global
  * Admin users.
  *
- * @author Adrian Cole, Andrei Savu
+ * @author Andrei Savu
  * @see <a href=
  *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Global_Admin.html"
  *      />
  */
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
-public interface GlobalAccountAsyncClient extends DomainAccountAsyncClient {
+public interface GlobalUserAsyncClient extends DomainUserAsyncClient {
 
    /**
-    * @see GlobalAccountClient#createAccount
+    * @see GlobalUserClient#createUser
     */
    @GET
-   @QueryParams(keys = "command", values = "createAccount")
-   @SelectJson("account")
+   @QueryParams(keys = "command", values = "createUser")
+   @SelectJson("user")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Account> createAccount(@QueryParam("username") String userName,
-      @QueryParam("accounttype") Account.Type accountType, @QueryParam("email") String email,
-      @QueryParam("firstname") String firstName, @QueryParam("lastname") String lastName,
-      @QueryParam("password") String hashedPassword, CreateAccountOptions... options);
+   ListenableFuture<User>createUser(@QueryParam("username") String userName, @QueryParam("account") String accountName,
+      @QueryParam("email") String email, @QueryParam("password") String hashedPassword,
+      @QueryParam("firstname") String firstName, @QueryParam("lastname") String lastName, CreateUserOptions... options);
 
    /**
-    * @see GlobalAccountClient#updateAccount
+    * @see GlobalUserClient#registerUserKeys
     */
    @GET
-   @QueryParams(keys = "command", values = "updateAccount")
-   @SelectJson("account")
+   @QueryParams(keys = "comand", values = "registerUserKeys")
+   @Endpoint(Integration.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Account> updateAccount(@QueryParam("account") String accountName,
-      @QueryParam("domainid") long domainId, @QueryParam("newname") String newName, UpdateAccountOptions... options);
+   ListenableFuture<ApiKeyPair> registerUserKeys(@QueryParam("id") long userId);
 
    /**
-    * @see GlobalAccountClient#deleteAccount
+    * @see GlobalUserClient#updateUser
     */
    @GET
-   @QueryParams(keys = "command", values = "deleteAccount")
+   @QueryParams(keys = "command", values = "updateUser")
+   @SelectJson("user")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteAccount(@QueryParam("id") long id);
+   ListenableFuture<User> updateUser(@QueryParam("id") long id, UpdateUserOptions... options);
+
+   /**
+    * @see GlobalUserClient#deleteUser
+    */
+   @GET
+   @QueryParams(keys = "command", values = "deleteUser")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Void> deleteUser(@QueryParam("id") long id);
 }

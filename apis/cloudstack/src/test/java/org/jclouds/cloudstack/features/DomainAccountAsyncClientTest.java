@@ -18,20 +18,59 @@
  */
 package org.jclouds.cloudstack.features;
 
+import org.jclouds.cloudstack.options.ListAccountsOptions;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.functions.ParseFirstJsonValueNamed;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.inject.TypeLiteral;
 
+import java.io.IOException;
+import java.lang.reflect.Method;
+
 /**
  * Tests behavior of {@code DomainAccountAsyncClient}
- * 
+ *
  * @author Adrian
  */
 @Test(groups = "unit", testName = "DomainAccountAsyncClientTest")
 public class DomainAccountAsyncClientTest extends BaseCloudStackAsyncClientTest<DomainAccountAsyncClient> {
 
-   
+   public void testEnableAccount() throws Exception {
+      Method method = DomainAccountAsyncClient.class.getMethod("enableAccount", long.class, long.class);
+      HttpRequest httpRequest = processor.createRequest(method, 1L, 2L);
+
+      assertRequestLineEquals(httpRequest,
+         "GET http://localhost:8080/client/api?response=json&command=enableAccount&account=1&domainid=2 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testDisableAccount() throws Exception {
+      Method method = DomainAccountAsyncClient.class.getMethod("disableAccount", long.class, long.class, boolean.class);
+      HttpRequest httpRequest = processor.createRequest(method, 1L, 2L, true);
+
+      assertRequestLineEquals(httpRequest,
+         "GET http://localhost:8080/client/api?response=json&command=disableAccount&account=1&lock=true&domainid=2 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
    @Override
    protected TypeLiteral<RestAnnotationProcessor<DomainAccountAsyncClient>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<DomainAccountAsyncClient>>() {

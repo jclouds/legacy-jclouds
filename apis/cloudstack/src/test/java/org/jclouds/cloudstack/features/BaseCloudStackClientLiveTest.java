@@ -170,7 +170,7 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
    protected boolean domainAdminEnabled;
    protected CloudStackContext domainAdminComputeContext;
    protected RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient> domainAdminContext;
-   protected CloudStackClient domainAdminClient;
+   protected CloudStackDomainClient domainAdminClient;
    protected User domainAdminUser;
 
    protected boolean globalAdminEnabled;

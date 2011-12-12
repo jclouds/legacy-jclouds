@@ -18,14 +18,51 @@
  */
 package org.jclouds.cloudstack.features;
 
+import org.jclouds.cloudstack.CloudStackGlobalClient;
+import org.jclouds.cloudstack.domain.Account;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * Tests behavior of {@code GlobalAccountClient}
  *
- * @author Adrian Cole
+ * @author Adrian Cole, Andrei Savu
  */
 @Test(groups = "live", singleThreaded = true, testName = "GlobalAccountClientLiveTest")
 public class GlobalAccountClientLiveTest extends BaseCloudStackClientLiveTest {
+
+   public static Account createTestAccount(CloudStackGlobalClient client, String prefix) {
+      return client.getAccountClient().createAccount(
+         prefix + "-account", Account.Type.USER, "dummy@example.com",
+         "First", "Last", "hashed-password");
+   }
+
+   @Test
+   public void testCreateAndRemoveAccount() {
+      assert globalAdminEnabled;
+
+      Account account = null;
+      try {
+         account = createTestAccount(globalAdminClient, prefix);
+
+         assertNotNull(account);
+         assertEquals(account.getName(), prefix + "-account");
+         assertEquals(account.getType(), Account.Type.USER);
+
+         Account updated = globalAdminClient.getAccountClient().updateAccount(
+            account.getName(), account.getDomainId(), prefix + "-account-2");
+
+         assertNotNull(updated);
+         assertEquals(updated.getName(), prefix + "-account-2");
+
+      } finally {
+         if (account != null) {
+            globalAdminClient.getAccountClient().deleteAccount(account.getId());
+         }
+      }
+
+   }
 
 }

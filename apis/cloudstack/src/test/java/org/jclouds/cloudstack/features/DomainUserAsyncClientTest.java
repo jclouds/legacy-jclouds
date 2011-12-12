@@ -16,32 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudstack;
+package org.jclouds.cloudstack.features;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-
-import java.util.Properties;
-
-import org.jclouds.PropertiesBuilder;
+import com.google.inject.TypeLiteral;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.testng.annotations.Test;
 
 /**
- * Builds properties used in cloudstack Clients
- * 
- * @author Adrian Cole
+ * Tests behavior of {@code DomainUserAsyncClient}
+ *
+ * @author Andrei Savu
  */
-public class CloudStackPropertiesBuilder extends PropertiesBuilder {
+@Test(groups = "unit", testName = "DomainUserAsyncClientTest")
+public class DomainUserAsyncClientTest extends BaseCloudStackAsyncClientTest<DomainUserAsyncClient> {
+
    @Override
-   protected Properties defaultProperties() {
-      Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_API_VERSION, "2.2");
-      properties.setProperty("jclouds.ssh.max-retries", "7");
-      properties.setProperty("jclouds.ssh.retry-auth", "true");
-      properties.setProperty("jclouds.cloudstack.integration-api-port", "8096");
-      return properties;
+   protected TypeLiteral<RestAnnotationProcessor<DomainUserAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<DomainUserAsyncClient>>() {
+      };
    }
-
-   public CloudStackPropertiesBuilder(Properties properties) {
-      super(properties);
-   }
-
 }
