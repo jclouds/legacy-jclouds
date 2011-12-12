@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.options;
 
 import com.google.common.collect.ImmutableList;
+import org.jclouds.cloudstack.domain.Host;
 import org.testng.annotations.Test;
 
 import static org.jclouds.cloudstack.options.ListHostsOptions.Builder.allocationState;
@@ -54,12 +55,12 @@ public class ListHostsOptionsTest {
    }
 
    public void testAllocationState() {
-      ListHostsOptions options = new ListHostsOptions().allocationState("Enabled");
+      ListHostsOptions options = new ListHostsOptions().allocationState(Host.AllocationState.ENABLED);
       assertEquals(ImmutableList.of("Enabled"), options.buildQueryParameters().get("allocationstate"));
    }
 
    public void testAllocationStateStatic() {
-      ListHostsOptions options = allocationState("Enabled");
+      ListHostsOptions options = allocationState(Host.AllocationState.ENABLED);
       assertEquals(ImmutableList.of("Enabled"), options.buildQueryParameters().get("allocationstate"));
    }
 
@@ -134,12 +135,12 @@ public class ListHostsOptionsTest {
    }
 
    public void testType() {
-      ListHostsOptions options = new ListHostsOptions().type("Routing");
+      ListHostsOptions options = new ListHostsOptions().type(Host.Type.ROUTING);
       assertEquals(ImmutableList.of("Routing"), options.buildQueryParameters().get("type"));
    }
 
    public void testTypeStatic() {
-      ListHostsOptions options = type("Routing");
+      ListHostsOptions options = type(Host.Type.ROUTING);
       assertEquals(ImmutableList.of("Routing"), options.buildQueryParameters().get("type"));
    }
 

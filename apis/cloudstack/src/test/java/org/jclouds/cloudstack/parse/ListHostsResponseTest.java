@@ -64,8 +64,8 @@ public class ListHostsResponseTest extends BaseSetParserTest<Host> {
          Host.builder()
             .id(1L)
             .name("cs2-xevsrv.alucloud.local")
-            .state("Up")
-            .type("Routing")
+            .state(Host.State.UP)
+            .type(Host.Type.ROUTING)
             .ipAddress("10.26.26.107")
             .zoneId(1)
             .zoneName("Dev Zone 1")
@@ -88,21 +88,21 @@ public class ListHostsResponseTest extends BaseSetParserTest<Host> {
             .managementServerId(223098941760041L)
             .clusterId(1)
             .clusterName("Xen Clust 1")
-            .clusterType("CloudManaged")
+            .clusterType(Host.ClusterType.CLOUD_MANAGED)
             .localStorageActive(false)
             .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-11-26T23:28:36+0200"))
             .events("PrepareUnmanaged; HypervisorVersionChanged; ManagementServerDown; PingTimeout; " +
                "AgentDisconnected; MaintenanceRequested; HostDown; AgentConnected; StartAgentRebalance; ShutdownRequested; Ping")
             .hostTags("")
             .hasEnoughCapacity(false)
-            .allocationState("Enabled").build(),
+            .allocationState(Host.AllocationState.ENABLED).build(),
 
          Host.builder()
             .id(2)
             .name("nfs://10.26.26.165/mnt/nfs/cs_sec")
-            .state("Alert")
+            .state(Host.State.ALERT)
             .disconnected(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-11-26T23:33:38+0200"))
-            .type("SecondaryStorage")
+            .type(Host.Type.SECONDARY_STORAGE)
             .ipAddress("nfs")
             .zoneId(1L)
             .zoneName("Dev Zone 1")
@@ -113,13 +113,13 @@ public class ListHostsResponseTest extends BaseSetParserTest<Host> {
             .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-11-26T23:33:38+0200"))
             .events("ManagementServerDown; AgentDisconnected; Remove; MaintenanceRequested; AgentConnected; Ping")
             .hasEnoughCapacity(false)
-            .allocationState("Enabled").build(),
+            .allocationState(Host.AllocationState.ENABLED).build(),
 
          Host.builder()
             .id(3)
             .name("s-1-VM")
-            .state("Up")
-            .type("SecondaryStorageVM")
+            .state(Host.State.UP)
+            .type(Host.Type.SECONDARY_STORAGE_VM)
             .ipAddress("10.26.26.81")
             .zoneId(1)
             .zoneName("Dev Zone 1")
@@ -133,13 +133,13 @@ public class ListHostsResponseTest extends BaseSetParserTest<Host> {
             .events("PrepareUnmanaged; HypervisorVersionChanged; ManagementServerDown; PingTimeout; " +
                "AgentDisconnected; MaintenanceRequested; HostDown; AgentConnected; StartAgentRebalance; ShutdownRequested; Ping")
             .hasEnoughCapacity(false)
-            .allocationState("Enabled").build(),
+            .allocationState(Host.AllocationState.ENABLED).build(),
 
          Host.builder()
             .id(4)
             .name("v-2-VM")
-            .state("Up")
-            .type("ConsoleProxy")
+            .state(Host.State.UP)
+            .type(Host.Type.CONSOLE_PROXY)
             .ipAddress("10.26.26.96")
             .zoneId(1)
             .zoneName("Dev Zone 1")
@@ -153,7 +153,7 @@ public class ListHostsResponseTest extends BaseSetParserTest<Host> {
             .events("PrepareUnmanaged; HypervisorVersionChanged; ManagementServerDown; PingTimeout; " +
                "AgentDisconnected; MaintenanceRequested; HostDown; AgentConnected; StartAgentRebalance; ShutdownRequested; Ping")
             .hasEnoughCapacity(false)
-            .allocationState("Enabled").build()
+            .allocationState(Host.AllocationState.ENABLED).build()
       );
    }
 

@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.options;
 
 import com.google.common.collect.ImmutableSet;
+import org.jclouds.cloudstack.domain.Host;
 import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.TrafficType;
 
@@ -45,8 +46,8 @@ public class ListHostsOptions extends AccountInDomainOptions {
    /**
     * @param allocationState list hosts by allocation state
     */
-   public ListHostsOptions allocationState(String allocationState) {
-      this.queryParameters.replaceValues("allocationstate", ImmutableSet.of(allocationState));
+   public ListHostsOptions allocationState(Host.AllocationState allocationState) {
+      this.queryParameters.replaceValues("allocationstate", ImmutableSet.of(allocationState.toString()));
       return this;
    }
 
@@ -109,8 +110,8 @@ public class ListHostsOptions extends AccountInDomainOptions {
    /**
     * @param type the type of the host
     */
-   public ListHostsOptions type(String type) {
-      this.queryParameters.replaceValues("type", ImmutableSet.of(type));
+   public ListHostsOptions type(Host.Type type) {
+      this.queryParameters.replaceValues("type", ImmutableSet.of(type.toString()));
       return this;
    }
 
@@ -159,7 +160,7 @@ public class ListHostsOptions extends AccountInDomainOptions {
       /**
        * @see ListHostsOptions#allocationState
        */
-      public static ListHostsOptions allocationState(String allocationState) {
+      public static ListHostsOptions allocationState(Host.AllocationState allocationState) {
          ListHostsOptions options = new ListHostsOptions();
          return options.allocationState(allocationState);
       }
@@ -223,7 +224,7 @@ public class ListHostsOptions extends AccountInDomainOptions {
       /**
        * @see ListHostsOptions#type
        */
-      public static ListHostsOptions type(String type) {
+      public static ListHostsOptions type(Host.Type type) {
          ListHostsOptions options = new ListHostsOptions();
          return options.type(type);
       }
