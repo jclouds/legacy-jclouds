@@ -48,17 +48,17 @@ public class GlobalHostClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    private void checkHost(Host host) {
-      if (host.getType().equals("Routing")) {
+      if (host.getType() == Host.Type.ROUTING) {
          assert host.getCpuNumber() > 0;
          assert host.getAverageLoad() >= 0;
          assert host.getHypervisor() != null;
       }
       assert host.getAllocationState() != null;
       assert host.getEvents() != null;
-      if (host.getType().equals("SecondaryStorageVM")) {
+      if (host.getType() == Host.Type.SECONDARY_STORAGE_VM) {
          assert host.getName().startsWith("s-");
       }
-      if (host.getType().equals("ConsoleProxy")) {
+      if (host.getType() == Host.Type.CONSOLE_PROXY) {
          assert host.getName().startsWith("v-");
       }
    }
