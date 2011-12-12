@@ -44,7 +44,7 @@ public class CreateVirtualMachineRequest<T extends CreateVirtualMachineRequest<T
       return new Builder().fromCreateVirtualMachineRequest(this);
    }
 
-   public static class Builder<T extends CreateVirtualMachineRequest<T>> {
+   public static class Builder<T extends CreateVirtualMachineRequest> {
 
       protected String name;
       protected String description;
