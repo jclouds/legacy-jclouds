@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import com.google.inject.TypeLiteral;
 import org.jclouds.cloudstack.options.GenerateUsageRecordsOptions;
+import org.jclouds.cloudstack.options.ListUsageRecordsOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
@@ -79,6 +80,56 @@ public class GlobalUsageAsyncClientTest extends BaseCloudStackAsyncClientTest<Gl
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=generateUsageRecords&startdate=2012-01-01&enddate=2012-01-31&domainid=42 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testListUsageRecords() throws Exception {
+      Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+      c.set(Calendar.YEAR, 2012);
+      c.set(Calendar.MONTH, Calendar.JANUARY);
+      c.set(Calendar.DAY_OF_MONTH, 1);
+      Date start = c.getTime();
+      c.set(Calendar.DAY_OF_MONTH, 31);
+      Date end = c.getTime();
+
+      Method method = GlobalUsageAsyncClient.class.getMethod("listUsageRecords",
+         Date.class, Date.class, ListUsageRecordsOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method, start, end);
+
+      assertRequestLineEquals(httpRequest,
+         "GET http://localhost:8080/client/api?response=json&command=listUsageRecords&startdate=2012-01-01&enddate=2012-01-31 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testListUsageRecordsOptions() throws Exception {
+      Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+      c.set(Calendar.YEAR, 2012);
+      c.set(Calendar.MONTH, Calendar.JANUARY);
+      c.set(Calendar.DAY_OF_MONTH, 1);
+      Date start = c.getTime();
+      c.set(Calendar.DAY_OF_MONTH, 31);
+      Date end = c.getTime();
+
+      Method method = GlobalUsageAsyncClient.class.getMethod("listUsageRecords",
+         Date.class, Date.class, ListUsageRecordsOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method, start, end, ListUsageRecordsOptions.Builder.accountInDomain("fred", 42).accountId(41).keyword("bob"));
+
+      assertRequestLineEquals(httpRequest,
+         "GET http://localhost:8080/client/api?response=json&command=listUsageRecords&startdate=2012-01-01&enddate=2012-01-31&account=fred&domainid=42&accountid=41&keyword=bob HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

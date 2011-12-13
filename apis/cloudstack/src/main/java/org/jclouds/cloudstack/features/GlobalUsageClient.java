@@ -41,4 +41,6 @@ public interface GlobalUsageClient {
 
    JobResult generateUsageRecords(Date start, Date end, GenerateUsageRecordsOptions... options);
 
+   Set<UsageRecord> listUsageRecords(Date start, Date end, ListUsageRecordsOptions... options);
+
 }
