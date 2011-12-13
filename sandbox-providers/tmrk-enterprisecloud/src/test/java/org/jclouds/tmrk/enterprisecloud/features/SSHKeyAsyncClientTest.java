@@ -68,6 +68,22 @@ public class SSHKeyAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClie
       checkFilters(httpRequest);
    }
 
+   public void testCreateSSHKey() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = SSHKeyAsyncClient.class.getMethod("createSSHKey", URI.class,String.class,boolean.class);
+      HttpRequest httpRequest = processor.createRequest(method, new URI("/cloudapi/ecloud/admin/sshkeys/organizations/17/action/createsshkey"),"myKey",true);
+
+      assertRequestLineEquals(httpRequest, "POST https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/admin/sshkeys/organizations/17/action/createsshkey HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest,
+            "Accept: application/vnd.tmrk.cloud.admin.sshKey\nx-tmrk-version: 2011-07-01\n");
+      String xml = "<CreateSshKey name='myKey'><Default>true</Default></CreateSshKey>";
+      assertPayloadEquals(httpRequest, xml, "application/xml", false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
    @Override
    protected TypeLiteral<RestAnnotationProcessor<SSHKeyAsyncClient>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<SSHKeyAsyncClient>>() {

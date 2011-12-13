@@ -55,5 +55,24 @@ public interface SSHKeyClient {
     * @return the SSHKey
     */
    public SSHKey getSSHKey(URI uri);
+
+   /**
+    * The createSSHKey call creates a new SSH key.
+    * If successful, the call returns information regarding the SSH key that was created.
+    * The name is required.
+    * Note: The name may not be that of another SSH key and may not exceed fifty characters.
+    * For the first key being created for an organization default should be true.
+    * To make the key the default, use true
+    *
+    * In the returned SSHKey:
+    * FingerPrint is the SSH key fingerprint, which is a 16 byte hash of the private key.
+    * PrivateKey is the actual private key, which has been encoded by base64.
+    * @param uri the uri of the createSshKey action based upon the organisation
+    *   e.g. /cloudapi/ecloud/admin/sshkeys/organizations/{id}/action/createsshkey
+    * @param name the desired name of the key
+    * @param defaultKey to make the key the default one
+    * @return the ssh key
+    */
+   public SSHKey createSSHKey(URI uri, String name, boolean defaultKey);
    
 }

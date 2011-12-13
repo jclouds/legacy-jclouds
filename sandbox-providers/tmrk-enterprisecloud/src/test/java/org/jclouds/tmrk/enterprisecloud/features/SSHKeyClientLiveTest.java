@@ -25,6 +25,8 @@ import org.testng.annotations.Test;
 
 import java.net.URI;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 
 /**
@@ -54,5 +56,14 @@ public class SSHKeyClientLiveTest extends BaseTerremarkEnterpriseCloudClientLive
       SSHKey sshKey = client.getSSHKey(uri);
       assertNotNull(sshKey);
       assertNotNull(sshKey.getFingerPrint());
+   }
+   
+   public void testCreateSSHKey() {
+      SSHKey sshKey = client.createSSHKey(URI.create("/cloudapi/ecloud/admin/sshkeys/organizations/17/action/createsshkey"),"mylivetestkey",false);
+      assertNotNull(sshKey);
+      assertEquals(sshKey.getName(),"mylivetestkey");
+      assertFalse(sshKey.isDefaultKey());
+      assertFalse(sshKey.getFingerPrint().isEmpty());
+      assertFalse(sshKey.getPrivateKey().isEmpty());
    }
 }

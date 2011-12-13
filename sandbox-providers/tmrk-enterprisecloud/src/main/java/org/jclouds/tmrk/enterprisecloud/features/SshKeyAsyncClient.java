@@ -27,6 +27,9 @@ import org.jclouds.tmrk.enterprisecloud.domain.keys.SSHKeys;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import java.net.URI;
 
 /**
@@ -60,4 +63,15 @@ public interface SSHKeyAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    public ListenableFuture<SSHKey> getSSHKey(@EndpointParam URI uri);
+
+   /**
+    * @see SSHKeyClient#createSSHKey
+    */
+   @POST
+   @Consumes("application/vnd.tmrk.cloud.admin.sshKey")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Payload("<CreateSshKey name='{name}'><Default>{defaultKey}</Default></CreateSshKey>")
+   @Produces(MediaType.APPLICATION_XML)
+   public ListenableFuture<SSHKey> createSSHKey(@EndpointParam URI uri, @PayloadParam("name")String name, @PayloadParam("defaultKey")boolean defaultKey);
 }
