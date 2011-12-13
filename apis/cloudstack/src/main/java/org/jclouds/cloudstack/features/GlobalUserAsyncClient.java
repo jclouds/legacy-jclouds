@@ -66,7 +66,8 @@ public interface GlobalUserAsyncClient extends DomainUserAsyncClient {
     * @see GlobalUserClient#registerUserKeys
     */
    @GET
-   @QueryParams(keys = "comand", values = "registerUserKeys")
+   @QueryParams(keys = "command", values = "registerUserKeys")
+   @SelectJson("userkeys")
    @Endpoint(Integration.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)

@@ -204,6 +204,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
    protected URI providesIntegrationEndpoint(@Provider URI normal,
          @Named("jclouds.cloudstack.integration-api-port") int port,
          com.google.inject.Provider<UriBuilder> uriBuilder) {
-      return uriBuilder.get().uri(normal).port(port).build();
+      return uriBuilder.get().scheme(normal.getScheme())
+         .host(normal.getHost()).path("/").port(port).build();
    }
 }
