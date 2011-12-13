@@ -944,6 +944,7 @@ public class RestAnnotationProcessor<T> {
 
    public GeneratedHttpRequest<T> decorateRequest(GeneratedHttpRequest<T> request) throws NegativeArraySizeException,
             ExecutionException {
+      Cache<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations.get(request.getJavaMethod()); 
       OUTER: for (Entry<Integer, Set<Annotation>> entry : concat(//
                filterValues(methodToIndexOfParamToBinderParamAnnotation.get(request.getJavaMethod()).asMap(), notEmpty)
                         .entrySet(), //
@@ -978,7 +979,17 @@ public class RestAnnotationProcessor<T> {
                }
             }
             if (input != null) {
-               request = binder.bindToRequest(request, input);
+               // Allow the input parameter to be parsed by the ParamParser before binding
+               Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
+               Object parsedValue = null;
+               if (extractors != null && extractors.size() > 0) {
+                   ParamParser extractor = (ParamParser) extractors.iterator().next();
+                   parsedValue = injector.getInstance(extractor.value()).apply(input);
+               } else {
+                   parsedValue = input;
+               }
+
+               request = binder.bindToRequest(request, parsedValue);
             }
             if (shouldBreak)
                break OUTER;
