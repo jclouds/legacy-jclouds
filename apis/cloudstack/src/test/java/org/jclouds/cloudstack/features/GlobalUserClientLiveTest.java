@@ -100,7 +100,7 @@ public class GlobalUserClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    private Properties credentialsAsProperties(ApiKeyPair keyPair) {
-      Properties overrides = new Properties();
+      Properties overrides = setupProperties();
       overrides.put(provider + ".identity", checkNotNull(keyPair.getApiKey()));
       overrides.put(provider + ".credential", checkNotNull(keyPair.getSecretKey()));
       return overrides;
