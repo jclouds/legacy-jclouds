@@ -1,0 +1,224 @@
+<Network href="/cloudapi/ecloud/networks/3936" name="10.146.204.64/28"
+         type="application/vnd.tmrk.cloud.network"
+         xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <Links>
+        <Link href="/cloudapi/ecloud/environments/77" name="Beta Environment 01"
+              type="application/vnd.tmrk.cloud.environment" rel="up"/>
+    </Links>
+    <Address>10.146.204.64</Address>
+    <NetworkType>Internal</NetworkType>
+    <BroadcastAddress>10.146.204.79</BroadcastAddress>
+    <GatewayAddress>10.146.204.65</GatewayAddress>
+    <RnatAddress href="/cloudapi/ecloud/rnats/networks/3936"
+                 name="10.146.204.64/28"
+                 type="application/vnd.tmrk.cloud.networkRnat"/>
+    <IpAddresses>
+        <IpAddress
+                href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.65"
+                name="10.146.204.65"
+                type="application/vnd.tmrk.cloud.ipAddress">
+            <Links>
+                <Link href="/cloudapi/ecloud/networks/3936"
+                      name="10.146.204.64/28"
+                      type="application/vnd.tmrk.cloud.network" rel="up"/>
+            </Links>
+            <Actions>
+                <Action href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.65/action/sync"
+                        name="sync" actionDisabled="disabled"/>
+            </Actions>
+            <Host href="/cloudapi/ecloud/networkhosts/3930"
+                  name="DAC90012VFW001"
+                  type="application/vnd.tmrk.cloud.networkHost"/>
+        </IpAddress>
+        <IpAddress
+                href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.66"
+                name="10.146.204.66"
+                type="application/vnd.tmrk.cloud.ipAddress">
+            <Links>
+                <Link href="/cloudapi/ecloud/networks/3936"
+                      name="10.146.204.64/28"
+                      type="application/vnd.tmrk.cloud.network" rel="up"/>
+            </Links>
+            <Actions>
+                <Action href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.66/action/sync"
+                        name="sync" actionDisabled="disabled"/>
+            </Actions>
+            <Host href="/cloudapi/ecloud/networkhosts/3930"
+                  name="DAC90012VFW001"
+                  type="application/vnd.tmrk.cloud.networkHost"/>
+        </IpAddress>
+        <IpAddress
+                href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.67"
+                name="10.146.204.67"
+                type="application/vnd.tmrk.cloud.ipAddress">
+            <Links>
+                <Link href="/cloudapi/ecloud/networks/3936"
+                      name="10.146.204.64/28"
+                      type="application/vnd.tmrk.cloud.network" rel="up"/>
+            </Links>
+            <Actions>
+                <Action href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.67/action/sync"
+                        name="sync" actionDisabled="disabled"/>
+            </Actions>
+            <Host href="/cloudapi/ecloud/networkhosts/5504" name="helloworld"
+                  type="application/vnd.tmrk.cloud.networkHost"/>
+            <DetectedOn href="/cloudapi/ecloud/networkhosts/5504"
+                        name="helloworld"
+                        type="application/vnd.tmrk.cloud.networkHost"/>
+        </IpAddress>
+        <IpAddress
+                href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.68"
+                name="10.146.204.68"
+                type="application/vnd.tmrk.cloud.ipAddress">
+            <Links>
+                <Link href="/cloudapi/ecloud/networks/3936"
+                      name="10.146.204.64/28"
+                      type="application/vnd.tmrk.cloud.network" rel="up"/>
+            </Links>
+            <Actions>
+                <Action href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.68/action/sync"
+                        name="sync" actionDisabled="disabled"/>
+            </Actions>
+        </IpAddress>
+        <IpAddress
+                href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.69"
+                name="10.146.204.69"
+                type="application/vnd.tmrk.cloud.ipAddress">
+            <Links>
+                <Link href="/cloudapi/ecloud/networks/3936"
+                      name="10.146.204.64/28"
+                      type="application/vnd.tmrk.cloud.network" rel="up"/>
+            </Links>
+            <Actions>
+                <Action href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.69/action/sync"
+                        name="sync" actionDisabled="disabled"/>
+            </Actions>
+        </IpAddress>
+        <IpAddress
+                href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.70"
+                name="10.146.204.70"
+                type="application/vnd.tmrk.cloud.ipAddress">
+            <Links>
+                <Link href="/cloudapi/ecloud/networks/3936"
+                      name="10.146.204.64/28"
+                      type="application/vnd.tmrk.cloud.network" rel="up"/>
+            </Links>
+            <Actions>
+                <Action href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.70/action/sync"
+                        name="sync" actionDisabled="disabled"/>
+            </Actions>
+        </IpAddress>
+        <IpAddress
+                href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.71"
+                name="10.146.204.71"
+                type="application/vnd.tmrk.cloud.ipAddress">
+            <Links>
+                <Link href="/cloudapi/ecloud/networks/3936"
+                      name="10.146.204.64/28"
+                      type="application/vnd.tmrk.cloud.network" rel="up"/>
+            </Links>
+            <Actions>
+                <Action href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.71/action/sync"
+                        name="sync" actionDisabled="disabled"/>
+            </Actions>
+        </IpAddress>
+        <IpAddress
+                href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.72"
+                name="10.146.204.72"
+                type="application/vnd.tmrk.cloud.ipAddress">
+            <Links>
+                <Link href="/cloudapi/ecloud/networks/3936"
+                      name="10.146.204.64/28"
+                      type="application/vnd.tmrk.cloud.network" rel="up"/>
+            </Links>
+            <Actions>
+                <Action href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.72/action/sync"
+                        name="sync" actionDisabled="disabled"/>
+            </Actions>
+        </IpAddress>
+        <IpAddress
+                href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.73"
+                name="10.146.204.73"
+                type="application/vnd.tmrk.cloud.ipAddress">
+            <Links>
+                <Link href="/cloudapi/ecloud/networks/3936"
+                      name="10.146.204.64/28"
+                      type="application/vnd.tmrk.cloud.network" rel="up"/>
+            </Links>
+            <Actions>
+                <Action href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.73/action/sync"
+                        name="sync" actionDisabled="disabled"/>
+            </Actions>
+        </IpAddress>
+        <IpAddress
+                href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.74"
+                name="10.146.204.74"
+                type="application/vnd.tmrk.cloud.ipAddress">
+            <Links>
+                <Link href="/cloudapi/ecloud/networks/3936"
+                      name="10.146.204.64/28"
+                      type="application/vnd.tmrk.cloud.network" rel="up"/>
+            </Links>
+            <Actions>
+                <Action href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.74/action/sync"
+                        name="sync" actionDisabled="disabled"/>
+            </Actions>
+        </IpAddress>
+        <IpAddress
+                href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.75"
+                name="10.146.204.75"
+                type="application/vnd.tmrk.cloud.ipAddress">
+            <Links>
+                <Link href="/cloudapi/ecloud/networks/3936"
+                      name="10.146.204.64/28"
+                      type="application/vnd.tmrk.cloud.network" rel="up"/>
+            </Links>
+            <Actions>
+                <Action href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.75/action/sync"
+                        name="sync" actionDisabled="disabled"/>
+            </Actions>
+        </IpAddress>
+        <IpAddress
+                href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.76"
+                name="10.146.204.76"
+                type="application/vnd.tmrk.cloud.ipAddress">
+            <Links>
+                <Link href="/cloudapi/ecloud/networks/3936"
+                      name="10.146.204.64/28"
+                      type="application/vnd.tmrk.cloud.network" rel="up"/>
+            </Links>
+            <Actions>
+                <Action href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.76/action/sync"
+                        name="sync" actionDisabled="disabled"/>
+            </Actions>
+        </IpAddress>
+        <IpAddress
+                href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.77"
+                name="10.146.204.77"
+                type="application/vnd.tmrk.cloud.ipAddress">
+            <Links>
+                <Link href="/cloudapi/ecloud/networks/3936"
+                      name="10.146.204.64/28"
+                      type="application/vnd.tmrk.cloud.network" rel="up"/>
+            </Links>
+            <Actions>
+                <Action href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.77/action/sync"
+                        name="sync" actionDisabled="disabled"/>
+            </Actions>
+        </IpAddress>
+        <IpAddress
+                href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.78"
+                name="10.146.204.78"
+                type="application/vnd.tmrk.cloud.ipAddress">
+            <Links>
+                <Link href="/cloudapi/ecloud/networks/3936"
+                      name="10.146.204.64/28"
+                      type="application/vnd.tmrk.cloud.network" rel="up"/>
+            </Links>
+            <Actions>
+                <Action href="/cloudapi/ecloud/ipaddresses/networks/3936/10.146.204.78/action/sync"
+                        name="sync" actionDisabled="disabled"/>
+            </Actions>
+        </IpAddress>
+    </IpAddresses>
+</Network>

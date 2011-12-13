@@ -1,0 +1,4 @@
+<SshKey name="{name}">
+    <Default>{isDefault}</Default>
+    <FingerPrint>{fingerPrint}</FingerPrint>
+</SshKey>

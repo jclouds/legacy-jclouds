@@ -50,6 +50,18 @@ public interface TerremarkEnterpriseCloudClient {
    ResourceClient getResourceClient();
 
    /**
+    * Provides synchronous access to Network features.
+    */
+   @Delegate
+   NetworkClient getNetworkClient();
+
+   /**
+    * Provides synchronous access to SSH Key features.
+    */
+   @Delegate
+   SSHKeyClient getSSHKeyClient();
+
+   /**
     * Provides synchronous access to Task features.
     */
    @Delegate
