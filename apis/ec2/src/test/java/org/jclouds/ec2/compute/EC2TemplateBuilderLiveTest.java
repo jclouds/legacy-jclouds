@@ -4,18 +4,14 @@ import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorServic
 import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService.getJavaMethodForRequest;
 import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService.getJavaMethodForRequestAtIndex;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
 
 import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.ec2.options.DescribeAvailabilityZonesOptions;
 import org.jclouds.ec2.options.DescribeImagesOptions;
@@ -28,7 +24,6 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Stopwatch;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -77,44 +72,6 @@ public abstract class EC2TemplateBuilderLiveTest extends BaseTemplateBuilderLive
       }
    }
    
-   /**
-    * e.g. on aws-ec2: timeByImageId=534ms; timeByOsFamily=11587ms.
-    * Expecting it to be at least 2 times faster seems reasonable.
-    * Note, assertion fails on eucalyptus-partner-cloud, taking approx  timeByImageId=1172ms; timeByOsFamily=774ms
-    */
-   @Test(enabled = true)
-   public void testTemplateBuildsFasterByImageIdThanBySearchingAllImages() throws Exception {
-      Stopwatch stopwatch = new Stopwatch();
-      
-      // Find any image, and get its id
-      Template defaultTemplate = context.getComputeService().templateBuilder().build();
-      String imageId = defaultTemplate.getImage().getId();
-      
-      // Build a template using that specific image-id
-      context.close();
-      setupClient();
-      stopwatch.start();
-      context.getComputeService().templateBuilder().imageId(imageId).build();
-
-      stopwatch.stop();
-      long timeByImageId = stopwatch.elapsedMillis();
-
-      // Build a template, searching for matching OS so fetches all images
-      context.close();
-      setupClient();
-      stopwatch.reset();
-      stopwatch.start();
-      try {
-         context.getComputeService().templateBuilder().osFamily(OsFamily.UBUNTU).build();
-      } catch (NoSuchElementException e) {
-         // ignore; we are only interested in how long it took to establish this fact!
-      }
-      stopwatch.stop();
-      long timeByOsFamily = stopwatch.elapsedMillis();
-
-      assertTrue((timeByImageId*2) < timeByOsFamily, "timeByImageId="+timeByImageId+"; timeByOsFamily="+timeByOsFamily);
-   }
-
    private static void assertDescribeImagesOptionsEquals(DescribeImagesOptions[] actual, String expectedImageId) {
       assertEquals(actual.length, 1);
       assertEquals(actual[0].getImageIds(), ImmutableSet.of(expectedImageId));
