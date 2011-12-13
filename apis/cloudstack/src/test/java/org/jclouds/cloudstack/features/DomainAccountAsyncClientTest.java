@@ -18,18 +18,16 @@
  */
 package org.jclouds.cloudstack.features;
 
-import org.jclouds.cloudstack.options.ListAccountsOptions;
+import java.lang.reflect.Method;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 import com.google.inject.TypeLiteral;
-
-import java.io.IOException;
-import java.lang.reflect.Method;
 
 /**
  * Tests behavior of {@code DomainAccountAsyncClient}
@@ -40,11 +38,11 @@ import java.lang.reflect.Method;
 public class DomainAccountAsyncClientTest extends BaseCloudStackAsyncClientTest<DomainAccountAsyncClient> {
 
    public void testEnableAccount() throws Exception {
-      Method method = DomainAccountAsyncClient.class.getMethod("enableAccount", long.class, long.class);
-      HttpRequest httpRequest = processor.createRequest(method, 1L, 2L);
+      Method method = DomainAccountAsyncClient.class.getMethod("enableAccount", String.class, long.class);
+      HttpRequest httpRequest = processor.createRequest(method, "goo", 2L);
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=enableAccount&account=1&domainid=2 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=enableAccount&account=goo&domainid=2 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -56,7 +54,7 @@ public class DomainAccountAsyncClientTest extends BaseCloudStackAsyncClientTest<
    }
 
    public void testDisableAccount() throws Exception {
-      Method method = DomainAccountAsyncClient.class.getMethod("disableAccount", long.class, long.class, boolean.class);
+      Method method = DomainAccountAsyncClient.class.getMethod("disableAccount", String.class, long.class, boolean.class);
       HttpRequest httpRequest = processor.createRequest(method, 1L, 2L, true);
 
       assertRequestLineEquals(httpRequest,
@@ -64,7 +62,7 @@ public class DomainAccountAsyncClientTest extends BaseCloudStackAsyncClientTest<
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
+      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
