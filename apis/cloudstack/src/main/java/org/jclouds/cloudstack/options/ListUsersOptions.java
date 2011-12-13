@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.options;
 
 import com.google.common.collect.ImmutableSet;
+import org.jclouds.cloudstack.domain.User;
 
 /**
  * Options used to control what user information is returned
@@ -55,8 +56,8 @@ public class ListUsersOptions extends AccountInDomainOptions {
     *           list accounts by state. Valid states are enabled, disabled, and
     *           locked.
     */
-   public ListUsersOptions state(String state) {
-      this.queryParameters.replaceValues("state", ImmutableSet.of(state));
+   public ListUsersOptions state(User.State state) {
+      this.queryParameters.replaceValues("state", ImmutableSet.of(state.toString()));
       return this;
    }
 
@@ -117,7 +118,7 @@ public class ListUsersOptions extends AccountInDomainOptions {
       /**
        * @see ListUsersOptions#state
        */
-      public static ListUsersOptions state(String state) {
+      public static ListUsersOptions state(User.State state) {
          ListUsersOptions options = new ListUsersOptions();
          return options.state(state);
       }
