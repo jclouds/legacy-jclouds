@@ -87,7 +87,7 @@ public class NetworksJAXBParsingTest extends BaseRestClientTest {
    @Test
    public void testParseNetworksWithJAXB() throws Exception {
       Method method = NetworkAsyncClient.class.getMethod("getNetworks",URI.class);
-      HttpRequest request = factory(LocationAsyncClient.class).createRequest(method, new URI("/1"));
+      HttpRequest request = factory(NetworkAsyncClient.class).createRequest(method, new URI("/1"));
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
 
       Function<HttpResponse, Networks> parser = (Function<HttpResponse, Networks>) RestAnnotationProcessor
@@ -104,7 +104,7 @@ public class NetworksJAXBParsingTest extends BaseRestClientTest {
    @Test
    public void testParseNetworkWithJAXB() throws Exception {
       Method method = NetworkAsyncClient.class.getMethod("getNetwork",URI.class);
-      HttpRequest request = factory(LocationAsyncClient.class).createRequest(method, new URI("/1"));
+      HttpRequest request = factory(NetworkAsyncClient.class).createRequest(method, new URI("/1"));
       assertResponseParserClassEquals(method, request, ParseXMLWithJAXB.class);
 
       Function<HttpResponse, NetworkReference> parser = (Function<HttpResponse, NetworkReference>) RestAnnotationProcessor

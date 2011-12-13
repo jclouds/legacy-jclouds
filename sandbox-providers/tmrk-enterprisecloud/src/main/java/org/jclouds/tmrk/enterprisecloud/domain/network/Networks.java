@@ -33,7 +33,7 @@ import java.util.Set;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Networks is more than a simple wrapper as it extends BaseResource.
+ * Networks is more than a simple wrapper as it extends Resource.
  * @author Jason King
  * 
  */
