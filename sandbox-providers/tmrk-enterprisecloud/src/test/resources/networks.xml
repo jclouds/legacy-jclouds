@@ -1,0 +1,16 @@
+<Networks href="/cloudapi/ecloud/networks/environments/77"
+          type="application/vnd.tmrk.cloud.network; type=collection"
+          xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <Links>
+        <Link href="/cloudapi/ecloud/environments/77" name="Beta Environment 01"
+              type="application/vnd.tmrk.cloud.environment" rel="up"/>
+    </Links>
+    <Network href="/cloudapi/ecloud/networks/3936" name="10.146.204.64/28"
+             type="application/vnd.tmrk.cloud.network">
+        <NetworkType>Internal</NetworkType>
+    </Network>
+    <Network href="/cloudapi/ecloud/networks/3933" name="10.146.205.128/27"
+             type="application/vnd.tmrk.cloud.network">
+        <NetworkType>Dmz</NetworkType>
+    </Network>
+</Networks>

@@ -40,7 +40,7 @@ public class NicsTest {
 
    @BeforeMethod()
    public void setUp() throws URISyntaxException {
-      networkReference = NetworkReference.builder().href(new URI("/netref")).type("a network ref").name("my network ref").build();
+      networkReference = NetworkReference.builder().href(new URI("/netref")).type("a network ref").name("my network ref").networkType(NetworkReference.NetworkType.INTERNAL).build();
       nic = VirtualNic.builder().macAddress("aa:bb").name("my nic").network(networkReference).unitNumber(1).build();
       nics = Nics.builder().addVirtualNic(nic).build();
    }

@@ -40,6 +40,12 @@ public interface TerremarkEnterpriseCloudAsyncClient {
    LocationAsyncClient getLocationClient();
 
    /**
+    * Provides asynchronous access to Network features.
+    */
+   @Delegate
+   NetworkAsyncClient getNetworkClient();
+
+   /**
     * Provides asynchronous access to Resource features.
     */
    @Delegate
