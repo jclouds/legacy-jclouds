@@ -46,7 +46,7 @@ public class BindS3ObjectMetadataToRequest implements Binder {
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
-      checkArgument(checkNotNull(input, "input") instanceof S3Object, "this binder is only valid for S3Object!");
+      checkArgument(checkNotNull(input, "input") instanceof S3Object, "this binder is only valid for S3Object!, not %s", input);
       checkNotNull(request, "request");
 
       S3Object s3Object = S3Object.class.cast(input);

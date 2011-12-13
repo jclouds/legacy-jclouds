@@ -2537,48 +2537,6 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertEquals(domain.getElem(), "Hello World");
    }
 
-   public static class AppendTextParser implements Function<Object, String> {
-       @Override
-       public String apply(Object input)
-       {
-           return input.toString() + "PARSED";
-       }
-   }
-
-   public interface TestBindWithParamParser {
-       @GET
-       @Path("/foo")
-       public ListenableFuture<String> bindWithoutParsing(
-           @BinderParam(BindToStringPayload.class) String param);
-
-       @GET
-       @Path("/bar")
-       public ListenableFuture<String> bindAfterParsing(
-           @BinderParam(BindToStringPayload.class) @ParamParser(AppendTextParser.class) String param);
-   }
-
-   @Test
-   public void testBindWithoutParamParser() throws SecurityException, NoSuchMethodException, IOException {
-       RestAnnotationProcessor<TestBindWithParamParser> processor = factory(TestBindWithParamParser.class);
-       Method method = TestBindWithParamParser.class.getMethod("bindWithoutParsing", String.class);
-       GeneratedHttpRequest<TestBindWithParamParser> request = processor.createRequest(method, "test");
-
-       assertRequestLineEquals(request, "GET http://localhost:9999/foo HTTP/1.1");
-       assertNonPayloadHeadersEqual(request, "");
-       assertPayloadEquals(request, "test", "application/unknown", false);
-   }
-
-   @Test
-   public void testBindWithParamParser() throws SecurityException, NoSuchMethodException, IOException {
-       RestAnnotationProcessor<TestBindWithParamParser> processor = factory(TestBindWithParamParser.class);
-       Method method = TestBindWithParamParser.class.getMethod("bindAfterParsing", String.class);
-       GeneratedHttpRequest<TestBindWithParamParser> request = processor.createRequest(method, "test");
-
-       assertRequestLineEquals(request, "GET http://localhost:9999/bar HTTP/1.1");
-       assertNonPayloadHeadersEqual(request, "");
-       assertPayloadEquals(request, "testPARSED", "application/unknown", false);
-   }
-
    @Test(expectedExceptions = NullPointerException.class)
    public void testAddHostNullWithHost() throws Exception{
        assertNull(RestAnnotationProcessor.addHostIfMissing(null,null));
