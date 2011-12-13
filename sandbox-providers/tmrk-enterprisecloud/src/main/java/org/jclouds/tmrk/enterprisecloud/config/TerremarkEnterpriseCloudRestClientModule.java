@@ -51,6 +51,7 @@ public class TerremarkEnterpriseCloudRestClientModule extends
          .put(NetworkClient.class, NetworkAsyncClient.class)
          .put(ResourceClient.class, ResourceAsyncClient.class)
          .put(TaskClient.class, TaskAsyncClient.class)
+         .put(SSHKeyClient.class, SSHKeyAsyncClient.class)
          .put(VirtualMachineClient.class, VirtualMachineAsyncClient.class)
          .put(TemplateClient.class, TemplateAsyncClient.class)
          .build();

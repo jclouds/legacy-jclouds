@@ -58,6 +58,12 @@ public interface TerremarkEnterpriseCloudAsyncClient {
    TaskAsyncClient getTaskClient();
 
    /**
+    * Provides asynchronous access to SSH Key features.
+    */
+   @Delegate
+   SSHKeyAsyncClient getSSHKeyClient();
+
+   /**
     * Provides asynchronous access to VirtualMachine features.
     */
    @Delegate
