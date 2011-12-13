@@ -33,9 +33,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * TODO Tests
+ *
  * @author Jason King
- * 
  */
 @Singleton
 public class BindSSHKeyToXmlPayload implements Binder {
