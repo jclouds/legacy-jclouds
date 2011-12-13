@@ -18,8 +18,10 @@
  */
 package org.jclouds.tmrk.enterprisecloud.config;
 
+import java.io.IOException;
 import java.util.Map;
 
+import com.google.inject.Provides;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
@@ -35,6 +37,10 @@ import org.jclouds.tmrk.enterprisecloud.features.*;
 import org.jclouds.tmrk.enterprisecloud.handlers.TerremarkEnterpriseCloudErrorHandler;
 
 import com.google.common.collect.ImmutableMap;
+import org.jclouds.util.Strings2;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 /**
  * Configures the TerremarkEnterpriseCloud connection.
@@ -48,8 +54,10 @@ public class TerremarkEnterpriseCloudRestClientModule extends
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
          .put(LocationClient.class, LocationAsyncClient.class)
+         .put(NetworkClient.class, NetworkAsyncClient.class)
          .put(ResourceClient.class, ResourceAsyncClient.class)
          .put(TaskClient.class, TaskAsyncClient.class)
+         .put(SSHKeyClient.class, SSHKeyAsyncClient.class)
          .put(VirtualMachineClient.class, VirtualMachineAsyncClient.class)
          .put(TemplateClient.class, TemplateAsyncClient.class)
          .build();
@@ -75,4 +83,10 @@ public class TerremarkEnterpriseCloudRestClientModule extends
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(BackoffLimitedRetryHandler.class);
    }
 
+   @Singleton
+   @Provides
+   @Named("EditSSHKey")
+   String provideEditSSHKey() throws IOException {
+      return Strings2.toStringAndClose(getClass().getResourceAsStream("/EditSSHKey.xml"));
+   }
 }

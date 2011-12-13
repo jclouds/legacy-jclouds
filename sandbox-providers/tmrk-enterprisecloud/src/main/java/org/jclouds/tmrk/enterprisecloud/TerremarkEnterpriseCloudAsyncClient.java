@@ -40,6 +40,12 @@ public interface TerremarkEnterpriseCloudAsyncClient {
    LocationAsyncClient getLocationClient();
 
    /**
+    * Provides asynchronous access to Network features.
+    */
+   @Delegate
+   NetworkAsyncClient getNetworkClient();
+
+   /**
     * Provides asynchronous access to Resource features.
     */
    @Delegate
@@ -50,6 +56,12 @@ public interface TerremarkEnterpriseCloudAsyncClient {
     */
    @Delegate
    TaskAsyncClient getTaskClient();
+
+   /**
+    * Provides asynchronous access to SSH Key features.
+    */
+   @Delegate
+   SSHKeyAsyncClient getSSHKeyClient();
 
    /**
     * Provides asynchronous access to VirtualMachine features.
