@@ -74,5 +74,26 @@ public interface SSHKeyClient {
     * @return the ssh key
     */
    public SSHKey createSSHKey(URI uri, String name, boolean defaultKey);
-   
+
+
+   /**
+    * The editSSHKey call edits the name of the SSH key.
+    * If successful, the call returns information regarding the SSH key that was modified.
+    * The name attribute on the sshKey may be changed.
+    * Note: The name may not be changed to that of another SSH key and may not exceed fifty characters.
+    * FingerPrint is optional and ignored if sent.
+    * Note: The default SSH key may not be modified to false.
+    * Instead, modify the SSH key desired as the default to true and the existing
+    * default SSH key will be automatically modified to false.
+    */
+   public void editSSHKey(URI uri, SSHKey key);
+
+   /**
+    * The deleteSSHKey call removes a specified SSH key from an organization.
+    * //TODO Make this a boolean if sucessful
+    * @param uri the uri of the ssk key to delete
+    *  e.g. /cloudapi/ecloud/admin/sshkeys/77
+    */
+   public void deleteSSHKey(URI uri);
+
 }

@@ -21,8 +21,11 @@ package org.jclouds.tmrk.enterprisecloud.features;
 import com.google.inject.TypeLiteral;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
+import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.tmrk.enterprisecloud.domain.keys.SSHKey;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -80,6 +83,44 @@ public class SSHKeyAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClie
 
       assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testEditSSHKey() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = SSHKeyAsyncClient.class.getMethod("editSSHKey", URI.class,SSHKey.class);
+      
+      SSHKey key = SSHKey.builder().type("application/vnd.tmrk.cloud.admin.sshKey")
+                                   .href(URI.create("/cloudapi/ecloud/admin/sshkeys/77"))
+                                   .name("newName").defaultKey(false).fingerPrint("123").build();
+      
+      HttpRequest httpRequest = processor.createRequest(method, new URI("/cloudapi/ecloud/admin/sshkeys/77"),key);
+
+      assertRequestLineEquals(httpRequest, "PUT https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/admin/sshkeys/77 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest,
+            "Accept: application/vnd.tmrk.cloud.admin.sshKey\nx-tmrk-version: 2011-07-01\n");
+      String xml = "<SshKey name=\"newName\">\n" +
+                   "    <Default>false</Default>\n" +
+                   "    <FingerPrint>123</FingerPrint>\n" +
+                   "</SshKey>";
+      assertPayloadEquals(httpRequest, xml, "application/xml", false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testDeleteSSHKey() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = SSHKeyAsyncClient.class.getMethod("deleteSSHKey", URI.class);
+      HttpRequest httpRequest = processor.createRequest(method, new URI("/cloudapi/ecloud/admin/sshkeys/77"));
+
+      assertRequestLineEquals(httpRequest, "DELETE https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/admin/sshkeys/77 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest,"x-tmrk-version: 2011-07-01\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
+      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
    }

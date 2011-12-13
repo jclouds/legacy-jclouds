@@ -22,13 +22,12 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+import org.jclouds.tmrk.enterprisecloud.binders.BindSSHKeyToXmlPayload;
 import org.jclouds.tmrk.enterprisecloud.domain.keys.SSHKey;
 import org.jclouds.tmrk.enterprisecloud.domain.keys.SSHKeys;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.net.URI;
 
@@ -71,7 +70,28 @@ public interface SSHKeyAsyncClient {
    @Consumes("application/vnd.tmrk.cloud.admin.sshKey")
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   //TODO This would be done better with a template like editSSHKey
    @Payload("<CreateSshKey name='{name}'><Default>{defaultKey}</Default></CreateSshKey>")
    @Produces(MediaType.APPLICATION_XML)
    public ListenableFuture<SSHKey> createSSHKey(@EndpointParam URI uri, @PayloadParam("name")String name, @PayloadParam("defaultKey")boolean defaultKey);
+
+   /**
+    * @see SSHKeyClient#editSSHKey
+    */
+   @PUT
+   @Consumes("application/vnd.tmrk.cloud.admin.sshKey")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @JAXBResponseParser
+   @Produces(MediaType.APPLICATION_XML)
+   public ListenableFuture<SSHKey> editSSHKey(@EndpointParam URI uri, @BinderParam(BindSSHKeyToXmlPayload.class)SSHKey key);
+
+   /**
+    * @see SSHKeyClient#createSSHKey
+    * TODO Should map the 204 header to a boolean to indicate that it was sucessful
+    */
+   @DELETE
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   public ListenableFuture<Void> deleteSSHKey(@EndpointParam URI uri);
+
+
 }

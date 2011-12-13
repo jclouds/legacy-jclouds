@@ -25,9 +25,7 @@ import org.testng.annotations.Test;
 
 import java.net.URI;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.*;
 
 /**
  * Tests behavior of {@code SSHKeyClient}
@@ -59,11 +57,26 @@ public class SSHKeyClientLiveTest extends BaseTerremarkEnterpriseCloudClientLive
    }
    
    public void testCreateSSHKey() {
-      SSHKey sshKey = client.createSSHKey(URI.create("/cloudapi/ecloud/admin/sshkeys/organizations/17/action/createsshkey"),"mylivetestkey",false);
+      SSHKey sshKey = client.createSSHKey(URI.create("/cloudapi/ecloud/admin/sshkeys/organizations/17/action/createsshkey"),"mynewtestkey1",false);
       assertNotNull(sshKey);
-      assertEquals(sshKey.getName(),"mylivetestkey");
+      assertEquals(sshKey.getName(),"mynewtestkey1");
       assertFalse(sshKey.isDefaultKey());
       assertFalse(sshKey.getFingerPrint().isEmpty());
       assertFalse(sshKey.getPrivateKey().isEmpty());
+      client.deleteSSHKey(sshKey.getHref());
+      assertNull(client.getSSHKey(sshKey.getHref()));
+   }
+
+   public void testEditSSHKey() {
+      SSHKey sshKey = client.createSSHKey(URI.create("/cloudapi/ecloud/admin/sshkeys/organizations/17/action/createsshkey"),"mykeytoedit",false);
+      assertNotNull(sshKey);
+      SSHKey newKey = sshKey.toBuilder().name("editedname").defaultKey(false).build();
+      client.editSSHKey(sshKey.getHref(),newKey);
+      
+     SSHKey result = client.getSSHKey(sshKey.getHref());
+     assertEquals(result.getName(),"editedname");
+
+     client.deleteSSHKey(sshKey.getHref());
+     assertNull(client.getSSHKey(sshKey.getHref()));
    }
 }
