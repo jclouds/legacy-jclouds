@@ -47,5 +47,4 @@ public class ExportIpAddressForVMNamedTest {
       assertEquals(exportIpAddressForVMNamedBuilder.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources
                .getResource("test_export_ip_address_from_vm_named." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
    }
-
 }

@@ -18,6 +18,7 @@
  */
 package org.jclouds.virtualbox.domain;
 
+import org.jclouds.scriptbuilder.domain.AppendFile;
 import org.jclouds.scriptbuilder.domain.Call;
 import org.jclouds.scriptbuilder.domain.Statement;
 
