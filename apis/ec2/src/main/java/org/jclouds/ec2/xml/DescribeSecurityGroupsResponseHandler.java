@@ -19,6 +19,7 @@
 package org.jclouds.ec2.xml;
 
 import static org.jclouds.util.SaxUtils.currentOrNull;
+import static org.jclouds.util.SaxUtils.currentOrNegative;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import java.util.Set;
@@ -101,11 +102,14 @@ public class DescribeSecurityGroupsResponseHandler extends
       } else if (equalsOrSuffix(qName, "groupDescription")) {
          this.groupDescription = currentOrNull(currentText);
       } else if (equalsOrSuffix(qName, "ipProtocol")) {
-         this.ipProtocol = IpProtocol.fromValue(currentOrNull(currentText));
+         /// algorete: Can have no value on EC2 clone
+         this.ipProtocol = IpProtocol.fromValue(currentOrNegative(currentText));
       } else if (equalsOrSuffix(qName, "fromPort")) {
-         this.fromPort = Integer.parseInt(currentOrNull(currentText));
+         /// algorete: Can have no value on EC2 clone
+         this.fromPort = Integer.parseInt(currentOrNegative(currentText));
       } else if (equalsOrSuffix(qName, "toPort")) {
-         this.toPort = Integer.parseInt(currentOrNull(currentText));
+         /// algorete: Can have no value on EC2 clone
+         this.toPort = Integer.parseInt(currentOrNegative(currentText));
       } else if (equalsOrSuffix(qName, "cidrIp")) {
          this.ipRanges.add(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "ipPermissions")) {
