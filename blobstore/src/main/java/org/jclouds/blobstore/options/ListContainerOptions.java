@@ -21,6 +21,8 @@ package org.jclouds.blobstore.options;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.base.Objects;
+
 /**
  * Contains options supported in the list container operation. <h2>
  * Usage</h2> The recommended way to instantiate a ListOptions object is to statically import
@@ -228,4 +230,27 @@ public class ListContainerOptions extends ListOptions implements Cloneable {
       return "[dir=" + dir + ", recursive=" + recursive + ", detailed=" + detailed
                + ", maxResults=" + getMaxResults() + "]";
    }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(detailed, recursive, dir, getMarker(), getMaxResults());
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      ListContainerOptions other = (ListContainerOptions) obj;
+      return (detailed == other.detailed) &&
+               recursive == other.recursive &&
+               Objects.equal(dir, other.dir) &&
+               Objects.equal(getMarker(), other.getMarker()) &&
+               Objects.equal(getMaxResults(), other.getMaxResults());
+   }
+   
+   
 }
