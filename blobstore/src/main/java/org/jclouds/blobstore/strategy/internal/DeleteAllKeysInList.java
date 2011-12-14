@@ -91,8 +91,13 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
       if (options.isRecursive())
          message = message + " recursively";
       Map<StorageMetadata, Exception> exceptions = Maps.newHashMap();
-      Iterable<? extends StorageMetadata> toDelete = getResourcesToDelete(containerName, options);
+      Iterable<? extends StorageMetadata> toDelete;
       for (int i = 0; i < 3; i++) { // TODO parameterize
+         toDelete = getResourcesToDelete(containerName, options);
+         if (Iterables.isEmpty(toDelete)) {
+            break;
+         }
+
          Map<StorageMetadata, Future<?>> responses = Maps.newHashMap();
          try {
             for (final StorageMetadata md : toDelete) {
@@ -120,19 +125,15 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
             }
          } finally {
             exceptions = awaitCompletion(responses, userExecutor, maxTime, logger, message);
-            toDelete = getResourcesToDelete(containerName, options);
-            if (Iterables.size(toDelete) == 0) {
-               break;
-            }
-            if (exceptions.size() > 0) {
-               toDelete = Iterables.concat(exceptions.keySet(), toDelete);
-               retryHandler.imposeBackoffExponentialDelay(i + 1, message);
-            }
+         }
+         if (!exceptions.isEmpty()) {
+            retryHandler.imposeBackoffExponentialDelay(i + 1, message);
          }
       }
-      if (exceptions.size() > 0)
+      if (!exceptions.isEmpty())
          throw new BlobRuntimeException(String.format("error %s: %s", message, exceptions));
-      assert Iterables.size(toDelete) == 0 : String.format("items remaining %s: %s", message,
+      toDelete = getResourcesToDelete(containerName, options);
+      assert Iterables.isEmpty(toDelete) : String.format("items remaining %s: %s", message,
                toDelete);
    }
 
