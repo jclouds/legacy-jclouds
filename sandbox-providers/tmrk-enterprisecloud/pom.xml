@@ -61,6 +61,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.jamesmurty.utils</groupId>
+            <artifactId>java-xmlbuilder</artifactId>
+            <version>0.4</version>
+        </dependency>
+        <dependency>
             <groupId>org.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>

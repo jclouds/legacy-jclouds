@@ -94,6 +94,6 @@ public interface SSHKeyClient {
     * @param uri the uri of the ssk key to delete
     *  e.g. /cloudapi/ecloud/admin/sshkeys/77
     */
-   public void deleteSSHKey(URI uri);
+   public boolean deleteSSHKey(URI uri);
 
 }

@@ -63,7 +63,7 @@ public class SSHKeyClientLiveTest extends BaseTerremarkEnterpriseCloudClientLive
       assertFalse(sshKey.isDefaultKey());
       assertFalse(sshKey.getFingerPrint().isEmpty());
       assertFalse(sshKey.getPrivateKey().isEmpty());
-      client.deleteSSHKey(sshKey.getHref());
+      assertTrue(client.deleteSSHKey(sshKey.getHref()));
       assertNull(client.getSSHKey(sshKey.getHref()));
    }
 
@@ -76,7 +76,11 @@ public class SSHKeyClientLiveTest extends BaseTerremarkEnterpriseCloudClientLive
      SSHKey result = client.getSSHKey(sshKey.getHref());
      assertEquals(result.getName(),"editedname");
 
-     client.deleteSSHKey(sshKey.getHref());
+     assertTrue(client.deleteSSHKey(sshKey.getHref()));
      assertNull(client.getSSHKey(sshKey.getHref()));
+   }
+   
+   public void testDeleteWhenNoKey() {
+      assertFalse(client.deleteSSHKey(URI.create("/cloudapi/ecloud/admin/sshkeys/-1")));
    }
 }

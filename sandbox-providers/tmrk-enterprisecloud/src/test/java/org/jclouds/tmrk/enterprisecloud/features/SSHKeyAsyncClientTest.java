@@ -21,9 +21,9 @@ package org.jclouds.tmrk.enterprisecloud.features;
 import com.google.inject.TypeLiteral;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
-import org.jclouds.http.functions.ReleasePayloadAndReturn;
+import org.jclouds.http.functions.ReturnTrueIf2xx;
+import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.tmrk.enterprisecloud.domain.keys.SSHKey;
 import org.testng.annotations.Test;
@@ -78,7 +78,7 @@ public class SSHKeyAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClie
       assertRequestLineEquals(httpRequest, "POST https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/admin/sshkeys/organizations/17/action/createsshkey HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest,
             "Accept: application/vnd.tmrk.cloud.admin.sshKey\nx-tmrk-version: 2011-07-01\n");
-      String xml = "<CreateSshKey name='myKey'><Default>true</Default></CreateSshKey>";
+      String xml = "<CreateSshKey name=\"myKey\"><Default>true</Default></CreateSshKey>";
       assertPayloadEquals(httpRequest, xml, "application/xml", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
@@ -99,10 +99,7 @@ public class SSHKeyAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClie
       assertRequestLineEquals(httpRequest, "PUT https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/admin/sshkeys/77 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest,
             "Accept: application/vnd.tmrk.cloud.admin.sshKey\nx-tmrk-version: 2011-07-01\n");
-      String xml = "<SshKey name=\"newName\">\n" +
-                   "    <Default>false</Default>\n" +
-                   "    <FingerPrint>123</FingerPrint>\n" +
-                   "</SshKey>";
+      String xml = "<SshKey name=\"newName\"><Default>false</Default><FingerPrint>123</FingerPrint></SshKey>";
       assertPayloadEquals(httpRequest, xml, "application/xml", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
@@ -119,8 +116,8 @@ public class SSHKeyAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClie
       assertNonPayloadHeadersEqual(httpRequest,"x-tmrk-version: 2011-07-01\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
-      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+      assertResponseParserClassEquals(method, httpRequest, ReturnTrueIf2xx.class);
+      assertExceptionParserClassEquals(method, ReturnFalseOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
    }

@@ -18,29 +18,24 @@
  */
 package org.jclouds.tmrk.enterprisecloud.binders;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Provides;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.tmrk.enterprisecloud.domain.keys.SSHKey;
-import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 
 import static org.testng.Assert.assertEquals;
 
 /**
- * Tests behavior of {@code BindSSHKeyToXmlPayloadTest}
+ * Tests behavior of {@code BindCreateSSHKeyToXmlPayloadTest}
  * @author Jason King
  */
-@Test(groups = "unit", testName = "BindSSHKeyToXmlPayloadTest")
-public class BindSSHKeyToXmlPayloadTest {
+@Test(groups = "unit", testName = "BindCreateSSHKeyToXmlPayloadTest")
+public class BindCreateSSHKeyToXmlPayloadTest {
    Injector injector = Guice.createInjector(new AbstractModule() {
 
       @Override
@@ -51,20 +46,14 @@ public class BindSSHKeyToXmlPayloadTest {
    public void testPayloadXmlContent() throws IOException {
       final String name = "newName";
       final boolean isDefault = false;
-      final String fingerPrint = "123";
-      final String expected = String.format("<SshKey name=\"%s\"><Default>%b</Default><FingerPrint>%s</FingerPrint></SshKey>",
-                                     name,isDefault,fingerPrint);
+      final String expected = String.format("<CreateSshKey name=\"%s\"><Default>%b</Default></CreateSshKey>",
+                                     name,isDefault);
 
       HttpRequest request = new HttpRequest("GET", URI.create("http://test"));
-      BindSSHKeyToXmlPayload binder = injector
-               .getInstance(BindSSHKeyToXmlPayload.class);
+      BindCreateSSHKeyToXmlPayload binder = injector
+               .getInstance(BindCreateSSHKeyToXmlPayload.class);
 
-      SSHKey key = SSHKey.builder().type("application/vnd.tmrk.cloud.admin.sshKey")
-            .href(URI.create("/cloudapi/ecloud/admin/sshkeys/77"))
-            .name(name)
-            .defaultKey(isDefault).fingerPrint(fingerPrint).build();
-
-      binder.bindToRequest(request, key);
+      binder.bindToRequest(request, ImmutableMap.of("name", name, "isDefault", Boolean.toString(isDefault)));
       assertEquals(request.getPayload().getRawContent(), expected);
    }
 }
