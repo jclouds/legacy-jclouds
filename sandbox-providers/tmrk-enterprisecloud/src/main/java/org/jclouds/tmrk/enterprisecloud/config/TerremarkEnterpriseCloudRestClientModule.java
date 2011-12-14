@@ -82,11 +82,4 @@ public class TerremarkEnterpriseCloudRestClientModule extends
    protected void bindRetryHandlers() {
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(BackoffLimitedRetryHandler.class);
    }
-
-   @Singleton
-   @Provides
-   @Named("EditSSHKey")
-   String provideEditSSHKey() throws IOException {
-      return Strings2.toStringAndClose(getClass().getResourceAsStream("/EditSSHKey.xml"));
-   }
 }

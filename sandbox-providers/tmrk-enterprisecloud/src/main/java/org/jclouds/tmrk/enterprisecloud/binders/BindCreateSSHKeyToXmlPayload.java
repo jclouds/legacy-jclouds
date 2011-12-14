@@ -20,17 +20,16 @@ package org.jclouds.tmrk.enterprisecloud.binders;
 
 import com.jamesmurty.utils.XMLBuilder;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.Binder;
+import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
-import org.jclouds.tmrk.enterprisecloud.domain.keys.SSHKey;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import java.util.Map;
 import java.util.Properties;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -38,41 +37,42 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Jason King
  */
 @Singleton
-public class BindSSHKeyToXmlPayload implements Binder {
+public class BindCreateSSHKeyToXmlPayload implements MapBinder {
 
    private final BindToStringPayload stringBinder;
 
    @Inject
-   BindSSHKeyToXmlPayload(BindToStringPayload stringBinder) {
+   BindCreateSSHKeyToXmlPayload(BindToStringPayload stringBinder) {
       this.stringBinder = stringBinder;
    }
 
    @Override
-   public <R extends HttpRequest> R bindToRequest(R request, Object key) {
-      checkArgument(checkNotNull(key, "key") instanceof SSHKey, "this binder is only valid for SSHKey instances!");
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> params) {
       checkNotNull(request, "request");
-      SSHKey sshKey = SSHKey.class.cast(key);
+      checkNotNull(params, "params");
+      String name = checkNotNull(params.get("name"), "name");
+      String isDefault = checkNotNull(params.get("isDefault"), "isDefault");
 
-      String name = sshKey.getName();
-      String isDefault = Boolean.toString(sshKey.isDefaultKey());
-      String fingerPrint = sshKey.getFingerPrint();
-
-      String payload = createXMLPayload(name,isDefault,fingerPrint);
+      String payload = createXMLPayload(name,isDefault);
       return stringBinder.bindToRequest(request, payload);
    }
    
-   private String createXMLPayload(String name, String isDefault, String fingerPrint) {
+   private String createXMLPayload(String name, String isDefault) {
       try {
          Properties outputProperties = new Properties();
          outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
-         return XMLBuilder.create("SshKey").a("name",name)
-                                           .e("Default").t(isDefault).up()
-                                           .e("FingerPrint").t(fingerPrint)
+         return XMLBuilder.create("CreateSshKey").a("name",name)
+                                           .e("Default").t(isDefault)
                                            .asString(outputProperties);
       } catch (ParserConfigurationException e) {
          throw new RuntimeException(e);
       } catch (TransformerException t) {
          throw new RuntimeException(t);
       }
+   }
+
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      throw new IllegalStateException("BindCreateKey needs parameters");
    }
 }
