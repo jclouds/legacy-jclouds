@@ -18,6 +18,7 @@
  */
 package org.jclouds.virtualbox.domain;
 
+import org.jclouds.scriptbuilder.domain.AppendFile;
 import org.jclouds.scriptbuilder.domain.Call;
 import org.jclouds.scriptbuilder.domain.Statement;
 
@@ -36,5 +37,9 @@ public class Statements {
     */
    public static Statement exportIpAddressFromVmNamed(String vmName) {
       return new Call("exportIpAddressFromVmNamed", vmName);
+   }
+   
+   public static Statement installGuestAdditions(String vboxVersion) {
+      return new InstallGuestAdditions(vboxVersion);
    }
  }

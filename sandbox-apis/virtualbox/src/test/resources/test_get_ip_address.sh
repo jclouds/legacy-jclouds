@@ -7,10 +7,10 @@ function abort {
    echo "aborting: $@" 1>&2
    exit 1
 }
-function exportIpAddressFromVmNamed {
+function getIpAddress {
    unset FOUND_IP_ADDRESS;
    [ $# -eq 1 ] || {
-      abort "exportIpAddressFromVmNamed requires virtual machine name parameter"
+      abort "installGuestAdditions requires virtual machine name parameter"
       return 1
    }
    local VMNAME="$0"; shift
@@ -24,6 +24,6 @@ function exportIpAddressFromVmNamed {
    }
 }
 export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
-exportIpAddressFromVmNamed $@ || exit 1
+getIpAddress $@ || exit 1
 echo $FOUND_IP_ADDRESS
 exit 0
