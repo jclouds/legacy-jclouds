@@ -19,6 +19,7 @@
 package org.jclouds.glesys.domain;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 
@@ -82,7 +83,23 @@ public class ServerUptime {
    }
 
    @Override
+   public boolean equals(Object object) {
+      if (this == object) {
+         return true;
+      }
+      return object instanceof ServerUptime
+            && time == ((ServerUptime) object).time;
+   }
+
+   @Override
+   public int hashCode() {
+      return 37 * (int) time;
+   }
+
+   @Override
    public String toString() {
       return timeString;
    }
+
+
 }

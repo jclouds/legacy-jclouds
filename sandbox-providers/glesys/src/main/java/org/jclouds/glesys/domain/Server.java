@@ -18,13 +18,14 @@
  */
 package org.jclouds.glesys.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Listing of a server.
- * 
+ *
  * @author Adrian Cole
  * @see <a href= "https://customer.glesys.com/api.php?a=doc#server_list" />
  */
@@ -110,46 +111,24 @@ public class Server {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((datacenter == null) ? 0 : datacenter.hashCode());
-      result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((platform == null) ? 0 : platform.hashCode());
-      return result;
+   public boolean equals(Object object) {
+      if (this == object) {
+         return true;
+      }
+      if (object instanceof Server) {
+         final Server other = (Server) object;
+         return Objects.equal(datacenter, other.datacenter)
+               && Objects.equal(hostname, other.hostname)
+               && Objects.equal(id, other.id)
+               && Objects.equal(platform, other.platform);
+      } else {
+         return false;
+      }
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Server other = (Server) obj;
-      if (datacenter == null) {
-         if (other.datacenter != null)
-            return false;
-      } else if (!datacenter.equals(other.datacenter))
-         return false;
-      if (hostname == null) {
-         if (other.hostname != null)
-            return false;
-      } else if (!hostname.equals(other.hostname))
-         return false;
-      if (id == null) {
-         if (other.id != null)
-            return false;
-      } else if (!id.equals(other.id))
-         return false;
-      if (platform == null) {
-         if (other.platform != null)
-            return false;
-      } else if (!platform.equals(other.platform))
-         return false;
-      return true;
+   public int hashCode() {
+      return Objects.hashCode(datacenter, hostname, id, platform);
    }
 
    @Override

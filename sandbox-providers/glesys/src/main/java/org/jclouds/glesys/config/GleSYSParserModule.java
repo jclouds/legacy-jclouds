@@ -21,6 +21,7 @@ package org.jclouds.glesys.config;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import org.jclouds.glesys.domain.ServerAllowedArguments;
 import org.jclouds.glesys.domain.ServerState;
 import org.jclouds.glesys.domain.ServerUptime;
 import org.jclouds.glesys.functions.internal.CustomDeserializers;
@@ -30,6 +31,7 @@ import org.jclouds.json.config.GsonModule.DateAdapter;
 import javax.inject.Singleton;
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Adrian Cole

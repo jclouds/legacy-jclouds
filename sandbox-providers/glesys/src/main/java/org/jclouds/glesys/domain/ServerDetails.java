@@ -20,12 +20,13 @@ package org.jclouds.glesys.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Detailed information about a server such as cpuCores, hardware configuration
  * (cpu, memory and disk), ip adresses, cost, transfer, os and more.
- * 
+ *
  * @author Adrian Cole
  * @see <a href= "https://customer.glesys.com/api.php?a=doc#server_details" />
  */
@@ -65,7 +66,7 @@ public class ServerDetails extends Server {
          this.cost = cost;
          return this;
       }
-       
+
       public ServerDetails build() {
          return new ServerDetails(id, hostname, datacenter, platform, description, cpuCores, memory, disk, cost);
       }
@@ -100,16 +101,16 @@ public class ServerDetails extends Server {
          return Builder.class.cast(super.fromServer(in));
       }
    }
-    
+
    private final String description;
    @SerializedName("cpucores")
    private final int cpuCores;
    private final int memory;
    private final int disk;
    private final Cost cost;
-   
+
    public ServerDetails(String id, String hostname, String datacenter, String platform, String description,
-         int cpuCores, int memory, int disk, Cost cost) {
+                        int cpuCores, int memory, int disk, Cost cost) {
       super(id, hostname, datacenter, platform);
       this.description = checkNotNull(description, "description");
       this.cpuCores = cpuCores;
@@ -147,10 +148,10 @@ public class ServerDetails extends Server {
    }
 
    /**
-   * @return details of the cost of the server
-   */
+    * @return details of the cost of the server
+    */
    public Cost getCost() {
-     return cost;
+      return cost;
    }
 
    @Override
@@ -158,6 +159,29 @@ public class ServerDetails extends Server {
       return String.format(
             "[id=%s, hostname=%s, datacenter=%s, platform=%s, description=%s, cpuCores=%s, memory=%s, disk=%s, cost=%s]", id,
             hostname, datacenter, platform, description, cpuCores, memory, disk, cost);
+   }
+
+   @Override
+   public int hashCode() {
+      return super.hashCode() + Objects.hashCode(description, cpuCores, disk, memory, cost);
+   }
+
+   @Override
+   public boolean equals(Object object) {
+      if (this == object) {
+         return true;
+      }
+      if (object instanceof ServerDetails) {
+         final ServerDetails other = (ServerDetails) object;
+         return super.equals(other)
+               && Objects.equal(description, other.description) 
+               && Objects.equal(cpuCores, other.cpuCores)
+               && Objects.equal(disk, other.disk)
+               && Objects.equal(memory, other.memory)
+               && Objects.equal(cost, other.cost);
+      } else {
+         return false;
+      }
    }
 
 }

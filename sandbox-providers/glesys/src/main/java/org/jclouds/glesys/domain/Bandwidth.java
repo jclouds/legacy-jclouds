@@ -18,6 +18,8 @@
  */
 package org.jclouds.glesys.domain;
 
+import com.google.common.base.Objects;
+
 /**
  * Detailed information on Server bandwidth
  *
@@ -90,8 +92,28 @@ public class Bandwidth {
    }
 
    @Override
+   public int hashCode() {
+      return Objects.hashCode(today, last30Days, max);
+   }
+
+   @Override
+   public boolean equals(Object object) {
+      if (this == object) {
+         return true;
+      }
+      if (object instanceof Bandwidth) {
+         Bandwidth other = (Bandwidth) object;
+         return Objects.equal(today, other.today)
+               && Objects.equal(last30Days, other.last30Days)
+               && Objects.equal(max, other.max);
+      } else {
+         return false;
+      }
+   }
+
+   @Override
    public String toString() {
-      return String.format("Bandwidth[today=%d, last30Days=%d, max=%d]", today, last30Days, max);
+      return String.format("[today=%d, last30Days=%d, max=%d]", today, last30Days, max);
    }
 
 }

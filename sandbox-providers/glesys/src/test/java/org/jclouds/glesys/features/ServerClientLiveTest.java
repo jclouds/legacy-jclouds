@@ -22,11 +22,10 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
+import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.glesys.domain.Server;
-import org.jclouds.glesys.domain.ServerDetails;
-import org.jclouds.glesys.domain.ServerStatus;
+import org.jclouds.glesys.domain.*;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -46,6 +45,55 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
 
    private ServerClient client;
 
+   @Test
+   public void testCreateAndDestroyServer() throws Exception {
+//      ServerCreated server = client.createServer("Falkenberg", "Xen", "jclouds-test-host", "Debian-6 x64", 10, 512, 1, "password", 500, null, null);
+//      System.out.println(server);
+//      
+//      boolean ready= false;
+//      
+//      for (int i=0; !ready && i<60; i++) {
+//         ServerStatus newStatus = client.getServerStatus(server.getId());
+//         if (newStatus.getState() == ServerState.RUNNING) {
+//            ready = true;
+//            break;
+//         }
+//         System.out.println(newStatus);
+//         Thread.sleep(100);
+//      }
+//      
+//      assertTrue(ready, "Server was not reported as running after 1 minute");
+      
+      
+      client.destroyServer("xm3054942", 0);
+   }
+   
+   @Test
+   public void testListTemplates() throws Exception {
+      Map<String,Set<Template>> templates = client.getTemplates();
+
+      assertTrue(templates.containsKey("OpenVZ"));
+      assertTrue(templates.containsKey("Xen"));
+
+      for(Template template : templates.get("OpenVZ")) {
+         checkTemplate(template, "OpenVZ");
+      }
+
+      for(Template template : templates.get("Xen")) {
+         checkTemplate(template, "Xen");
+      }
+   }
+   
+   private void checkTemplate(Template t, String platform) {
+      assertNotNull(t);
+      assertNotNull(t.getName());
+      assertNotNull(t.getOs());
+
+      assertEquals(t.getPlatform(), platform);
+      assert t.getMinDiskSize() > 0 : t;
+      assert t.getMinMemSize() > 0 : t;
+    }
+   
    @Test
    public void testListServers() throws Exception {
       Set<Server> response = client.listServers();
