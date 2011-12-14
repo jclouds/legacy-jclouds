@@ -36,6 +36,7 @@ public class CloudStackPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_API_VERSION, "2.2");
       properties.setProperty("jclouds.ssh.max-retries", "7");
       properties.setProperty("jclouds.ssh.retry-auth", "true");
+      properties.setProperty("jclouds.cloudstack.integration-api-port", "8096");
       return properties;
    }
 

@@ -41,7 +41,7 @@ public class AssignedIpAddresses extends Resource<AssignedIpAddresses> {
 
    public AssignedIpAddresses(URI href, String type, String name, Actions actions, DeviceNetworks networks) {
       super(href, type, name, Sets.<Link>newIdentityHashSet(), actions.getActions());
-      checkNotNull(networks,"networks");
+      this.networks = checkNotNull(networks,"networks");
    }
 
    public AssignedIpAddresses() {

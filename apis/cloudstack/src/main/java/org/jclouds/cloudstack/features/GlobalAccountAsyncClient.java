@@ -18,15 +18,28 @@
  */
 package org.jclouds.cloudstack.features;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.options.CreateAccountOptions;
+import org.jclouds.cloudstack.options.UpdateAccountOptions;
+import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import java.util.Set;
 
 /**
  * Provides asynchronous access to CloudStack Account features available to Global
  * Admin users.
- * 
- * @author Adrian Cole
+ *
+ * @author Adrian Cole, Andrei Savu
  * @see <a href=
  *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Global_Admin.html"
  *      />
@@ -34,5 +47,37 @@ import org.jclouds.rest.annotations.RequestFilters;
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
 public interface GlobalAccountAsyncClient extends DomainAccountAsyncClient {
-  
+
+   /**
+    * @see GlobalAccountClient#createAccount
+    */
+   @GET
+   @QueryParams(keys = "command", values = "createAccount")
+   @SelectJson("account")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Account> createAccount(@QueryParam("username") String userName,
+      @QueryParam("accounttype") Account.Type accountType, @QueryParam("email") String email,
+      @QueryParam("firstname") String firstName, @QueryParam("lastname") String lastName,
+      @QueryParam("password") String hashedPassword, CreateAccountOptions... options);
+
+   /**
+    * @see GlobalAccountClient#updateAccount
+    */
+   @GET
+   @QueryParams(keys = "command", values = "updateAccount")
+   @SelectJson("account")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Account> updateAccount(@QueryParam("account") String accountName,
+      @QueryParam("domainid") long domainId, @QueryParam("newname") String newName, UpdateAccountOptions... options);
+
+   /**
+    * @see GlobalAccountClient#deleteAccount
+    */
+   @GET
+   @QueryParams(keys = "command", values = "deleteAccount")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Void> deleteAccount(@QueryParam("id") long id);
 }

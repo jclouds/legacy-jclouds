@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.options;
 
 import com.google.common.collect.ImmutableSet;
+import org.jclouds.cloudstack.domain.Volume;
 
 /**
  * Options used to control what volume
@@ -84,8 +85,8 @@ public class ListVolumesOptions extends AccountInDomainOptions {
    /**
     * @param type the type of the disk volume
     */
-   public ListVolumesOptions type(String type) {
-      this.queryParameters.replaceValues("type", ImmutableSet.of(type + ""));
+   public ListVolumesOptions type(Volume.Type type) {
+      this.queryParameters.replaceValues("type", ImmutableSet.of(type .toString()));
       return this;
    }
 
@@ -178,7 +179,7 @@ public class ListVolumesOptions extends AccountInDomainOptions {
       /**
        * @see ListVolumesOptions#type
        */
-      public static ListVolumesOptions type(String type) {
+      public static ListVolumesOptions type(Volume.Type type) {
          ListVolumesOptions options = new ListVolumesOptions();
          return options.type(type);
       }

@@ -273,7 +273,7 @@ public class Account extends ForwardingSet<User> implements Comparable<Account> 
 
       @Override
       public String toString() {
-         return name();
+         return "" + code;
       }
 
       public static Type fromValue(String type) {

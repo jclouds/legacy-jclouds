@@ -1,0 +1,48 @@
+<SshKeys href="/cloudapi/ecloud/admin/sshkeys/organizations/17"
+                   type="application/vnd.tmrk.cloud.admin.sshKey; type=collection"
+                   xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+<Links>
+    <Link href="/cloudapi/ecloud/admin/organizations/17"
+          name="Cloudsoft Corporation [Beta]"
+          type="application/vnd.tmrk.cloud.admin.organization" rel="up"/>
+</Links>
+<Actions>
+    <Action href="/cloudapi/ecloud/admin/sshkeys/organizations/17/action/createsshkey"
+            name="createSshKey"
+            type="application/vnd.tmrk.cloud.admin.sshKey"/>
+</Actions>
+<SshKey href="/cloudapi/ecloud/admin/sshkeys/77" name="test"
+        type="application/vnd.tmrk.cloud.admin.sshKey">
+    <Links>
+        <Link href="/cloudapi/ecloud/admin/organizations/17"
+              name="Cloudsoft Corporation [Beta]"
+              type="application/vnd.tmrk.cloud.admin.organization"
+              rel="up"/>
+    </Links>
+    <Actions>
+        <Action href="/cloudapi/ecloud/admin/sshkeys/77" name="edit"
+                type="application/vnd.tmrk.cloud.admin.sshKey"/>
+        <Action href="/cloudapi/ecloud/admin/sshkeys/77" name="remove"
+                actionDisabled="disabled"/>
+    </Actions>
+    <Default>true</Default>
+    <FingerPrint>c8:3f:41:d6:28:e2:86:37:a6:a3:e6:df:62:d9:31:e5</FingerPrint>
+</SshKey>
+<SshKey href="/cloudapi/ecloud/admin/sshkeys/78" name="added_to_xml"
+        type="application/vnd.tmrk.cloud.admin.sshKey">
+    <Links>
+        <Link href="/cloudapi/ecloud/admin/organizations/17"
+              name="Cloudsoft Corporation [Beta]"
+              type="application/vnd.tmrk.cloud.admin.organization"
+              rel="up"/>
+    </Links>
+    <Actions>
+        <Action href="/cloudapi/ecloud/admin/sshkeys/78" name="edit"
+                type="application/vnd.tmrk.cloud.admin.sshKey"/>
+        <Action href="/cloudapi/ecloud/admin/sshkeys/78" name="remove"
+                actionDisabled="disabled"/>
+    </Actions>
+    <Default>false</Default>
+    <FingerPrint>a1:3f:41:d6:28:e2:86:37:a6:a3:e6:df:62:d9:31:e5</FingerPrint>
+</SshKey>
+</SshKeys>

@@ -19,32 +19,23 @@
 package org.jclouds.aws.ec2.compute;
 
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService.getJavaMethodForRequestAtIndex;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-
-import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.reference.AWSEC2Constants;
-import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.ec2.compute.EC2TemplateBuilderLiveTest;
 import org.jclouds.ec2.compute.predicates.EC2ImagePredicates;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.RootDeviceType;
@@ -53,32 +44,22 @@ import org.jclouds.ec2.options.DescribeRegionsOptions;
 import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.ec2.services.AvailabilityZoneAndRegionAsyncClient;
 import org.jclouds.http.HttpCommand;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpUtils;
-import org.jclouds.http.IOExceptionRetryHandler;
-import org.jclouds.http.handlers.DelegatingErrorHandler;
-import org.jclouds.http.handlers.DelegatingRetryHandler;
-import org.jclouds.http.internal.HttpWire;
-import org.jclouds.http.internal.JavaUrlHttpCommandExecutorService;
+import org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.inject.AbstractModule;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
+public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
 
    public AWSEC2TemplateBuilderLiveTest() {
       provider = "aws-ec2";
@@ -327,31 +308,6 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
       }
    }
 
-   @Singleton
-   public static class TrackingJavaUrlHttpCommandExecutorService extends JavaUrlHttpCommandExecutorService {
-
-      private final List<HttpCommand> commandsInvoked;
-
-      @Inject
-      public TrackingJavaUrlHttpCommandExecutorService(HttpUtils utils,
-               @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
-               DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
-               DelegatingErrorHandler errorHandler, HttpWire wire, @Named("untrusted") HostnameVerifier verifier,
-               @Named("untrusted") Supplier<SSLContext> untrustedSSLContextProvider, List<HttpCommand> commandsInvoked)
-               throws SecurityException, NoSuchFieldException {
-         super(utils, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire, verifier,
-                  untrustedSSLContextProvider);
-         this.commandsInvoked = commandsInvoked;
-      }
-
-      @Override
-      public Future<HttpResponse> submit(HttpCommand command) {
-         commandsInvoked.add(command);
-         return super.submit(command);
-      }
-
-   }
-
    @Test
    public void testTemplateBuilderWithLessRegions() throws IOException, SecurityException, NoSuchMethodException {
       ComputeServiceContext context = null;
@@ -362,19 +318,10 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
          final List<HttpCommand> commandsInvoked = Lists.newArrayList();
          context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(
-                  new Log4JLoggingModule(), new AbstractModule() {
+                  new Log4JLoggingModule(), TrackingJavaUrlHttpCommandExecutorService.newTrackingModule(commandsInvoked)), 
+                  overrides);
 
-                     @Override
-                     protected void configure() {
-                        bind(JavaUrlHttpCommandExecutorService.class).to(
-                                 TrackingJavaUrlHttpCommandExecutorService.class);
-                        bind(new TypeLiteral<List<HttpCommand>>() {
-                        }).toInstance(commandsInvoked);
-                     }
-
-                  }), overrides);
-
-         assertOnlyOnRegionQueriedForAvailabilityZone(commandsInvoked);
+         assertOnlyOneRegionQueriedForAvailabilityZone(commandsInvoked);
 
          assert context.getComputeService().listImages().size() < this.context.getComputeService().listImages().size();
 
@@ -396,17 +343,13 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
       }
    }
 
-   private static void assertOnlyOnRegionQueriedForAvailabilityZone(List<HttpCommand> commandsInvoked)
+   private static void assertOnlyOneRegionQueriedForAvailabilityZone(List<HttpCommand> commandsInvoked)
             throws NoSuchMethodException {
       assert commandsInvoked.size() == 2 : commandsInvoked;
       assertEquals(getJavaMethodForRequestAtIndex(commandsInvoked, 0), AvailabilityZoneAndRegionAsyncClient.class
                .getMethod("describeRegions", DescribeRegionsOptions[].class));
       assertEquals(getJavaMethodForRequestAtIndex(commandsInvoked, 1), AvailabilityZoneAndRegionAsyncClient.class
                .getMethod("describeAvailabilityZonesInRegion", String.class, DescribeAvailabilityZonesOptions[].class));
-   }
-
-   private static Method getJavaMethodForRequestAtIndex(final List<HttpCommand> commandsInvoked, int index) {
-      return GeneratedHttpRequest.class.cast(commandsInvoked.get(index).getCurrentRequest()).getJavaMethod();
    }
 
    @Test

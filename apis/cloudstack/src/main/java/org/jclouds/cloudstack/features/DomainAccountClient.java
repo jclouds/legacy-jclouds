@@ -20,6 +20,8 @@ package org.jclouds.cloudstack.features;
 
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.concurrent.Timeout;
 
 /**
@@ -34,5 +36,26 @@ import org.jclouds.concurrent.Timeout;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface DomainAccountClient extends AccountClient {
 
+   /**
+    * Enable an account
+    *
+    * @param accountName
+    *    the account name you are enabling
+    * @param domainId
+    *    the domain ID
+    */
+   Account enableAccount(String accountName, long domainId);
+
+   /**
+    * Disable or lock an account
+    *
+    * @param accountName
+    *    the account name you are disabling
+    * @param domainId
+    *    the domain ID
+    * @param onlyLock
+    *    only lock if true disable otherwise
+    */
+   AsyncCreateResponse disableAccount(String accountName, long domainId, boolean onlyLock);
 
 }

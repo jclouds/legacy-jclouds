@@ -22,6 +22,7 @@ import org.jclouds.glesys.domain.IpDetails;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.testng.Assert.assertEquals;
@@ -78,6 +79,8 @@ public class IpClientLiveTest extends BaseGleSYSClientLiveTest {
       assertNotNull(ipDetails.getBroadcast());
       assertNotNull(ipDetails.getGateway());
       assertNotNull(ipDetails.getNetmask());
+      List<String> nameServers = ipDetails.getNameServers();
+      assertNotNull(nameServers);
    }
 
 }
