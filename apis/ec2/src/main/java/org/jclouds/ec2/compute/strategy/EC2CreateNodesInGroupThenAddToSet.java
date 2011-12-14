@@ -120,16 +120,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
       // ensure we don't mutate the input template
       template = templateBuilderProvider.get().fromTemplate(template).build();
 
-      // preallocate count addresses
-      System.out.println(autoAllocateElasticIps);
-      logger.debug("<< allocating elastic IPs for nodes in group (%s)", group);
-      String region = AWSUtils.getRegionFromLocationOrNull(template.getLocation());
-      Iterable<String> ips = ImmutableSet.<String> of();
-      if (autoAllocateElasticIps) {
-          for (int i=0; i<count; ++i) {
-              ips = Iterables.concat(ips, ImmutableSet.<String> of(client.getElasticIPAddressServices().allocateAddressInRegion(region)));
-          }
-      }
+      Iterable<String> ips = allocateElasticIpsInRegion(count, template);
 
       Iterable<? extends RunningInstance> started = createKeyPairAndSecurityGroupsAsNeededThenRunInstances(group,
                count, template);
@@ -143,15 +134,8 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
          logger.debug("<< present instances(%s)", idsString);
          populateCredentials(started);
       }
-      
-      // assign addresses to instances
-      if (autoAllocateElasticIps) {
-          for (int i=0; i<count; ++i) {
-              String ip = Iterables.get(ips, i);
-              String id = Iterables.get(started, i).getId();
-              client.getElasticIPAddressServices().associateAddressInRegion(region, ip, id);
-          }
-      }
+
+      assignElasticIpsToInstances(count, started, ips, template);
       
       return utils.customizeNodesAndAddToGoodMapOrPutExceptionIntoBadMap(template.getOptions(), transform(started,
                runningInstanceToNodeMetadata), goodNodes, badNodes, customizationResponses);
@@ -169,6 +153,38 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
             credentialStore.put("node#" + instance.getRegion() + "/" + instance.getId(), credentials);
    }
 
+   // TODO write test for this
+   protected Iterable<String> allocateElasticIpsInRegion(int count, Template template) {
+      
+      Iterable<String> ips = ImmutableSet.<String> of();
+      if (!autoAllocateElasticIps)
+         return ips;
+
+      String region = AWSUtils.getRegionFromLocationOrNull(template.getLocation());
+      logger.debug("<< allocating elastic IPs for nodes in region (%s)", region);
+
+      for (int i=0; i<count; ++i) {
+         ips = Iterables.concat(ips, ImmutableSet.<String> of(
+               client.getElasticIPAddressServices().allocateAddressInRegion(region)));
+      }
+      return ips;
+   }
+
+   // TODO write test for this
+   protected void assignElasticIpsToInstances(int count, Iterable<? extends RunningInstance> started,
+         Iterable<String> ips, Template template) {
+
+      if (!autoAllocateElasticIps)
+         return;
+
+      String region = AWSUtils.getRegionFromLocationOrNull(template.getLocation());
+      for (int i=0; i<count; ++i) {
+         String ip = Iterables.get(ips, i);
+         String id = Iterables.get(started, i).getId();
+         client.getElasticIPAddressServices().associateAddressInRegion(region, ip, id);
+      }
+   }
+   
    // TODO write test for this
    protected Iterable<? extends RunningInstance> createKeyPairAndSecurityGroupsAsNeededThenRunInstances(String group,
             int count, Template template) {
