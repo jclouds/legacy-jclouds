@@ -21,8 +21,8 @@ package org.jclouds.tmrk.enterprisecloud.features;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.*;
+import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.tmrk.enterprisecloud.binders.BindCreateSSHKeyToXmlPayload;
 import org.jclouds.tmrk.enterprisecloud.binders.BindSSHKeyToXmlPayload;
 import org.jclouds.tmrk.enterprisecloud.domain.keys.SSHKey;
@@ -87,11 +87,10 @@ public interface SSHKeyAsyncClient {
 
    /**
     * @see SSHKeyClient#createSSHKey
-    * TODO Should map the 204 header to a boolean to indicate that it was sucessful
     */
    @DELETE
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   public ListenableFuture<Void> deleteSSHKey(@EndpointParam URI uri);
+   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   public ListenableFuture<Boolean> deleteSSHKey(@EndpointParam URI uri);
 
 
 }
