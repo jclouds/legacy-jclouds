@@ -47,6 +47,7 @@ import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.predicates.InstancePresent;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.options.RunInstancesOptions;
+import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -68,6 +69,10 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
+
+   @Inject
+   @Named(EC2Constants.PROPERTY_EC2_AUTO_ALLOCATE_ELASTIC_IPS)
+   boolean autoAllocateElasticIps = false;
 
    @VisibleForTesting
    final EC2Client client;
@@ -114,9 +119,18 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
             Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
       // ensure we don't mutate the input template
       template = templateBuilderProvider.get().fromTemplate(template).build();
-      
+
       // preallocate count addresses
-      
+      System.out.println(autoAllocateElasticIps);
+      logger.debug("<< allocating elastic IPs for nodes in group (%s)", group);
+      String region = AWSUtils.getRegionFromLocationOrNull(template.getLocation());
+      Iterable<String> ips = ImmutableSet.<String> of();
+      if (autoAllocateElasticIps) {
+          for (int i=0; i<count; ++i) {
+              ips = Iterables.concat(ips, ImmutableSet.<String> of(client.getElasticIPAddressServices().allocateAddressInRegion(region)));
+          }
+      }
+
       Iterable<? extends RunningInstance> started = createKeyPairAndSecurityGroupsAsNeededThenRunInstances(group,
                count, template);
 
@@ -131,6 +145,13 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
       }
       
       // assign addresses to instances
+      if (autoAllocateElasticIps) {
+          for (int i=0; i<count; ++i) {
+              String ip = Iterables.get(ips, i);
+              String id = Iterables.get(started, i).getId();
+              client.getElasticIPAddressServices().associateAddressInRegion(region, ip, id);
+          }
+      }
       
       return utils.customizeNodesAndAddToGoodMapOrPutExceptionIntoBadMap(template.getOptions(), transform(started,
                runningInstanceToNodeMetadata), goodNodes, badNodes, customizationResponses);

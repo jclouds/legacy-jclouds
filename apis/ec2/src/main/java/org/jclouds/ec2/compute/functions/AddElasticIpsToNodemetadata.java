@@ -23,6 +23,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.ec2.EC2Client;
@@ -53,17 +54,16 @@ public class AddElasticIpsToNodemetadata implements Function<NodeMetadata, NodeM
 
    @Override
    public NodeMetadata apply(NodeMetadata arg0) {
-      Iterable<String> regionAndId = Splitter.on('/').split(arg0.getId());
-      String region = Iterables.get(regionAndId, 0);
-      String instanceId = Iterables.get(regionAndId, 1);
+      String[] parts = AWSUtils.parseHandle(arg0.getId());
+      String region = parts[0];
+      String instanceId = parts[1];
 
       Iterable<PublicIpInstanceIdPair> elasticIpsAssociatedWithNode = ipAddressPairsAssignedToInstance(region,
-               instanceId);
+            instanceId);
 
       Set<String> publicIps = extractIpAddressFromPairs(elasticIpsAssociatedWithNode);
 
       return addPublicIpsToNode(publicIps, arg0);
-
    }
 
    @VisibleForTesting
