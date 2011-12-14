@@ -19,8 +19,14 @@
 package org.jclouds.cloudstack.features;
 
 import com.google.inject.TypeLiteral;
+import org.jclouds.cloudstack.options.ListStoragePoolsOptions;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.functions.ParseFirstJsonValueNamed;
+import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
+
+import java.lang.reflect.Method;
 
 /**
  * Tests behavior of {@code GlobalStoragePoolAsyncClient}
@@ -29,6 +35,38 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", testName = "GlobalStoragePoolAsyncClientTest")
 public class GlobalStoragePoolAsyncClientTest extends BaseCloudStackAsyncClientTest<GlobalStoragePoolAsyncClient> {
+
+   public void testListStoragePools() throws NoSuchMethodException {
+      Method method = GlobalStoragePoolAsyncClient.class.getMethod("listStoragePools", ListStoragePoolsOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest,
+         "GET http://localhost:8080/client/api?response=json&command=listStoragePools HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testListStoragePoolsOptions() throws NoSuchMethodException {
+      Method method = GlobalStoragePoolAsyncClient.class.getMethod("listStoragePools", ListStoragePoolsOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method, ListStoragePoolsOptions.Builder.clusterId(3).id(4).ipAddress("192.168.42.42").keyword("fred").name("bob").path("/mnt/store42").podId(4).zoneId(5));
+
+      assertRequestLineEquals(httpRequest,
+         "GET http://localhost:8080/client/api?response=json&command=listStoragePools&clusterid=3&id=4&ipaddress=192.168.42.42&keyword=fred&name=bob&path=/mnt/store42&podid=4&zoneid=5 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+
+      checkFilters(httpRequest);
+   }
 
    @Override
    protected TypeLiteral<RestAnnotationProcessor<GlobalStoragePoolAsyncClient>> createTypeLiteral() {

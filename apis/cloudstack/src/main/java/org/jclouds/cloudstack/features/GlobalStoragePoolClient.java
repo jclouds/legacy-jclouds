@@ -18,8 +18,11 @@
  */
 package org.jclouds.cloudstack.features;
 
+import org.jclouds.cloudstack.domain.StoragePool;
+import org.jclouds.cloudstack.options.ListStoragePoolsOptions;
 import org.jclouds.concurrent.Timeout;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -32,4 +35,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface GlobalStoragePoolClient {
+
+   Set<StoragePool> listStoragePools(ListStoragePoolsOptions... options);
+   
 }
