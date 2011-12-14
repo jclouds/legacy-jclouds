@@ -10,7 +10,7 @@ function abort {
 function exportIpAddressFromVmNamed {
    unset FOUND_IP_ADDRESS;
    [ $# -eq 1 ] || {
-      abort "installGuestAdditions requires virtual machine name parameter"
+      abort "exportIpAddressFromVmNamed requires virtual machine name parameter"
       return 1
    }
    local VMNAME="$0"; shift
