@@ -18,16 +18,17 @@
  */
 package org.jclouds.tmrk.enterprisecloud.binders;
 
-import com.google.common.collect.ImmutableMap;
+import com.jamesmurty.utils.XMLBuilder;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.tmrk.enterprisecloud.domain.keys.SSHKey;
-import org.jclouds.util.Strings2;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.util.Properties;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -39,13 +40,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Singleton
 public class BindSSHKeyToXmlPayload implements Binder {
 
-   private final String xmlTemplate;
    private final BindToStringPayload stringBinder;
 
    @Inject
-   BindSSHKeyToXmlPayload(@Named("EditSSHKey") String xmlTemplate,
-                          BindToStringPayload stringBinder) {
-      this.xmlTemplate = xmlTemplate;
+   BindSSHKeyToXmlPayload(BindToStringPayload stringBinder) {
       this.stringBinder = stringBinder;
    }
 
@@ -59,9 +57,22 @@ public class BindSSHKeyToXmlPayload implements Binder {
       String isDefault = Boolean.toString(sshKey.isDefaultKey());
       String fingerPrint = sshKey.getFingerPrint();
 
-      String payload = Strings2.replaceTokens(xmlTemplate,
-            ImmutableMap.of("name", name, "isDefault", isDefault, "fingerPrint", fingerPrint));
-            
+      String payload = createXMLPayload(name,isDefault,fingerPrint);
       return stringBinder.bindToRequest(request, payload);
+   }
+   
+   private String createXMLPayload(String name, String isDefault, String fingerPrint) {
+      try {
+         Properties outputProperties = new Properties();
+         outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
+         return XMLBuilder.create("SshKey").a("name",name)
+                                           .e("Default").t(isDefault).up()
+                                           .e("FingerPrint").t(fingerPrint)
+                                           .asString(outputProperties);
+      } catch (ParserConfigurationException e) {
+         throw new RuntimeException(e);
+      } catch (TransformerException t) {
+         throw new RuntimeException(t);
+      }
    }
 }

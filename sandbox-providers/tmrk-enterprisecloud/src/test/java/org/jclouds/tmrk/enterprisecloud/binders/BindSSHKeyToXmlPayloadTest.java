@@ -46,28 +46,23 @@ public class BindSSHKeyToXmlPayloadTest {
       @Override
       protected void configure() {
       }
-
-      @SuppressWarnings("unused")
-      @Singleton
-      @Provides
-      @Named("EditSSHKey")
-      String provideInstantiateVAppTemplateParams() throws IOException {
-         InputStream is = getClass().getResourceAsStream("/EditSSHKey.xml");
-         return Strings2.toStringAndClose(is);
-      }
    });
 
-   public void testApplyInputStream() throws IOException {
-      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream(
-               "/EditSSHKey-test.xml"));
+   public void testPayloadXmlContent() throws IOException {
+      final String name = "newName";
+      final boolean isDefault = false;
+      final String fingerPrint = "123";
+      final String expected = String.format("<SshKey name=\"%s\"><Default>%b</Default><FingerPrint>%s</FingerPrint></SshKey>",
+                                     name,isDefault,fingerPrint);
+
       HttpRequest request = new HttpRequest("GET", URI.create("http://test"));
       BindSSHKeyToXmlPayload binder = injector
                .getInstance(BindSSHKeyToXmlPayload.class);
 
       SSHKey key = SSHKey.builder().type("application/vnd.tmrk.cloud.admin.sshKey")
             .href(URI.create("/cloudapi/ecloud/admin/sshkeys/77"))
-            .name("newName")
-            .defaultKey(false).fingerPrint("123").build();
+            .name(name)
+            .defaultKey(isDefault).fingerPrint(fingerPrint).build();
 
       binder.bindToRequest(request, key);
       assertEquals(request.getPayload().getRawContent(), expected);

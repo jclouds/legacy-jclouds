@@ -99,10 +99,7 @@ public class SSHKeyAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClie
       assertRequestLineEquals(httpRequest, "PUT https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/admin/sshkeys/77 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest,
             "Accept: application/vnd.tmrk.cloud.admin.sshKey\nx-tmrk-version: 2011-07-01\n");
-      String xml = "<SshKey name=\"newName\">\n" +
-                   "    <Default>false</Default>\n" +
-                   "    <FingerPrint>123</FingerPrint>\n" +
-                   "</SshKey>";
+      String xml = "<SshKey name=\"newName\"><Default>false</Default><FingerPrint>123</FingerPrint></SshKey>";
       assertPayloadEquals(httpRequest, xml, "application/xml", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
