@@ -36,6 +36,7 @@ import java.util.*;
  * <p/>
  *
  * @author Adrian Cole
+ * @author Adam Lowe
  * @see ServerClient
  * @see <a href="https://customer.glesys.com/api.php" />
  */
@@ -110,7 +111,7 @@ public interface ServerAsyncClient {
    @Path("/server/templates/format/json")
    @SelectJson("templates")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Map<String, Set<Template>>> getTemplates();
+   ListenableFuture<Map<String, Set<ServerTemplate>>> getTemplates();
    
    /**
     * @see ServerClient#stopServer

@@ -22,7 +22,10 @@ package org.jclouds.glesys.domain;
 import com.google.common.base.Objects;
 
 /**
- * Represents detailed information about an available IP ip.
+ * Represents detailed information about an available ip address of a new server.
+ *
+ * @author Adam Lowe
+ * @see ServerCreated
  */
 public class ServerCreatedIp {
 
@@ -49,11 +52,11 @@ public class ServerCreatedIp {
          this.cost = cost;
          return this;
       }
-      
+
       public ServerCreatedIp build() {
          return new ServerCreatedIp(ip, version, cost);
       }
-      
+
       public Builder fromIpCreated(ServerCreatedIp from) {
          return ip(from.getIp()).version(from.getVersion()).cost(from.getCost());
       }
@@ -62,25 +65,34 @@ public class ServerCreatedIp {
    protected final String ip;
    protected final int version;
    protected final double cost;
-   
+
    public ServerCreatedIp(String ip, int version, double cost) {
       this.ip = ip;
       this.version = version;
       this.cost = cost;
    }
 
+   /**
+    * @return the IP version, ex. 4
+    */
    public int getVersion() {
       return version;
    }
 
+   /**
+    * @return the ip address of the new server
+    */
    public String getIp() {
       return ip;
    }
 
+   /**
+    * @return the cost of the ip address allocated to the new server
+    */
    public double getCost() {
       return cost;
    }
-   
+
    @Override
    public boolean equals(Object object) {
       if (this == object) {
@@ -91,7 +103,7 @@ public class ServerCreatedIp {
          return Objects.equal(ip, other.ip)
                && Objects.equal(version, other.version)
                && Objects.equal(cost, other.cost);
-     } else {
+      } else {
          return false;
       }
    }
@@ -104,6 +116,6 @@ public class ServerCreatedIp {
    @Override
    public String toString() {
       return String.format("[ip=%s, version=%d, cost=%f]",
-              ip, version, cost);
+            ip, version, cost);
    }
 }

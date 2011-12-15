@@ -18,17 +18,13 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.glesys.domain.*;
 import org.jclouds.javax.annotation.Nullable;
 
 import javax.ws.rs.FormParam;
-import javax.ws.rs.PathParam;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -36,6 +32,7 @@ import java.util.concurrent.TimeUnit;
  * <p/>
  *
  * @author Adrian Cole
+ * @author Adam Lowe
  * @see ServerAsyncClient
  * @see <a href="https://customer.glesys.com/api.php" />
  */
@@ -86,10 +83,20 @@ public interface ServerClient {
     */
    ServerConsole getServerConsole(String id);
 
-   // TODO should these be squished into single sets?
-   Map<String, Set<Template>> getTemplates();
+   /**
+    * Get information about the OS templates available
+    *
+    * @return a map of templates, keyed on platform
+    */
+   Map<String, Set<ServerTemplate>> getTemplates();
+
+   /**
+    * Get information about valid arguments to #createServer for each platform
+    *
+    * @return a map of argument lists, keyed on platform
+    */
    Map<String, ServerAllowedArguments> getAllowedArguments();
-   
+
    /**
     * Reset the fail count for a server limit (for OpenVZ only).
     *
@@ -155,6 +162,5 @@ public interface ServerClient {
     */
    void resetPassword(@FormParam("serverid") String id, @FormParam("newpassword") String password);
 
-   
-   
+
 }

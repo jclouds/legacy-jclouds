@@ -23,6 +23,8 @@ import com.google.common.base.CaseFormat;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * Valid states for a server hosted in a Glesys cloud
+ * 
  * @author Adam Lowe
  * @see ServerStatus
  */

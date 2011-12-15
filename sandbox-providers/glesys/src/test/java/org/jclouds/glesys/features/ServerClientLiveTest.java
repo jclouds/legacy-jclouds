@@ -44,47 +44,47 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
    }
 
    private ServerClient client;
-
+   
    @Test
-   public void testCreateAndDestroyServer() throws Exception {
-//      ServerCreated server = client.createServer("Falkenberg", "Xen", "jclouds-test-host", "Debian-6 x64", 10, 512, 1, "password", 500, null, null);
-//      System.out.println(server);
-//      
-//      boolean ready= false;
-//      
-//      for (int i=0; !ready && i<60; i++) {
-//         ServerStatus newStatus = client.getServerStatus(server.getId());
-//         if (newStatus.getState() == ServerState.RUNNING) {
-//            ready = true;
-//            break;
-//         }
-//         System.out.println(newStatus);
-//         Thread.sleep(100);
-//      }
-//      
-//      assertTrue(ready, "Server was not reported as running after 1 minute");
+   public void testAllowedArguments() throws Exception {
+      Map<String,ServerAllowedArguments> templates = client.getAllowedArguments();
       
+      assertTrue(templates.containsKey("OpenVZ"));
+      assertTrue(templates.containsKey("Xen"));
       
-      client.destroyServer("xm3054942", 0);
+      checkAllowedArguments(templates.get("OpenVZ"));
+      checkAllowedArguments(templates.get("Xen"));
+   }
+
+   private void checkAllowedArguments(ServerAllowedArguments t) {
+      assertNotNull(t);
+
+      assert t.getDataCenters().size() > 0 : t;
+      assert t.getCpuCores().size() > 0 : t;
+      assert t.getDiskSizes().size() > 0 : t;
+      assert t.getMemorySizes().size() > 0 : t;
+      assert t.getTemplates().size() > 0 : t;
+      assert t.getTransfers().size() > 0 : t;
+      assert t.getTransfers().size() > 0 : t;
    }
    
    @Test
    public void testListTemplates() throws Exception {
-      Map<String,Set<Template>> templates = client.getTemplates();
+      Map<String,Set<ServerTemplate>> templates = client.getTemplates();
 
       assertTrue(templates.containsKey("OpenVZ"));
       assertTrue(templates.containsKey("Xen"));
 
-      for(Template template : templates.get("OpenVZ")) {
+      for(ServerTemplate template : templates.get("OpenVZ")) {
          checkTemplate(template, "OpenVZ");
       }
 
-      for(Template template : templates.get("Xen")) {
+      for(ServerTemplate template : templates.get("Xen")) {
          checkTemplate(template, "Xen");
       }
    }
    
-   private void checkTemplate(Template t, String platform) {
+   private void checkTemplate(ServerTemplate t, String platform) {
       assertNotNull(t);
       assertNotNull(t.getName());
       assertNotNull(t.getOs());

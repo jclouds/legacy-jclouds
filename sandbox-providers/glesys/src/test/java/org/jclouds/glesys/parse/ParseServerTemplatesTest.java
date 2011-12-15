@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
  * @author Adam Lowe
  */
 @Test(groups = "unit", testName = "ParseServerTemplatesTest")
-public class ParseServerTemplatesTest extends BaseItemParserTest<Map<String, Set<Template>>> {
+public class ParseServerTemplatesTest extends BaseItemParserTest<Map<String, Set<ServerTemplate>>> {
 
    @Override
    public String resource() {
@@ -47,8 +47,8 @@ public class ParseServerTemplatesTest extends BaseItemParserTest<Map<String, Set
    @Override
    @SelectJson("templates")
    @Consumes(MediaType.APPLICATION_JSON)
-   public Map<String, Set<Template>> expected() {
-      Map<String, Set<Template>> result = new LinkedHashMap<String, Set<Template>>();
+   public Map<String, Set<ServerTemplate>> expected() {
+      Map<String, Set<ServerTemplate>> result = new LinkedHashMap<String, Set<ServerTemplate>>();
       
       String[] vzNames = new String[]{
             "Centos 5", "Centos 5 64-bit", "Centos 6 32-bit", "Centos 6 64-bit",
@@ -65,17 +65,17 @@ public class ParseServerTemplatesTest extends BaseItemParserTest<Map<String, Set
             "Windows Server 2008 R2 x64 std", "Windows Server 2008 R2 x64 web", "Windows Server 2008 x64 web", "Windows Server 2008 x86 web"
       };
 
-      result.put("OpenVZ", new HashSet<Template>());
+      result.put("OpenVZ", new HashSet<ServerTemplate>());
       for (String name : vzNames) {
-         result.get("OpenVZ").add(new Template(name, 5, 128, "linux", "OpenVZ"));
+         result.get("OpenVZ").add(new ServerTemplate(name, 5, 128, "linux", "OpenVZ"));
       }
 
-      result.put("Xen", new HashSet<Template>());
+      result.put("Xen", new HashSet<ServerTemplate>());
       for (String name : xenLinuxNames) {
-         result.get("Xen").add(new Template(name, 5, 512, name.startsWith("FreeBSD") ? "freebsd" : "linux", "Xen"));
+         result.get("Xen").add(new ServerTemplate(name, 5, 512, name.startsWith("FreeBSD") ? "freebsd" : "linux", "Xen"));
       }
       for (String name : xenWindowsNames) {
-         result.get("Xen").add(new Template(name, 20, 1024, "windows", "Xen"));
+         result.get("Xen").add(new ServerTemplate(name, 20, 1024, "windows", "Xen"));
       }
     
       return result;

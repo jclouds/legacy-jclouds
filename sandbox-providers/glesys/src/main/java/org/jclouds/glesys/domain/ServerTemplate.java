@@ -4,11 +4,12 @@ import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
+ * Operating system template
+ *
  * @author Adam Lowe
- * @see <a href= "https://customer.glesys.com/api.php?a=doc#server_status" />
+ * @see <a href= "https://customer.glesys.com/api.php?a=doc#server_templates" />
  */
-public class Template {
-
+public class ServerTemplate {
 
    public static Builder builder() {
       return new Builder();
@@ -45,12 +46,12 @@ public class Template {
          this.platform = platform;
          return this;
       }
-      
-      public Template build() {
-         return new Template(name, minDiskSize, minMemSize, os, platform);
+
+      public ServerTemplate build() {
+         return new ServerTemplate(name, minDiskSize, minMemSize, os, platform);
       }
-      
-      public Builder fromTemplate(Template in) {
+
+      public Builder fromTemplate(ServerTemplate in) {
          return name(in.getName()).minDiskSize(in.getMinDiskSize()).minMemSize(in.getMinMemSize()).os(in.getOs()).platform(in.getPlatform());
       }
 
@@ -64,7 +65,7 @@ public class Template {
    private final String os;
    private final String platform;
 
-   public Template(String name, int minDiskSize, int minMemSize, String os, String platform) {
+   public ServerTemplate(String name, int minDiskSize, int minMemSize, String os, String platform) {
       this.name = name;
       this.minDiskSize = minDiskSize;
       this.minMemSize = minMemSize;
@@ -76,18 +77,32 @@ public class Template {
       return name;
    }
 
+   /**
+    * @return the minimum allowed disk size in GB
+    * @see org.jclouds.glesys.domain.ServerAllowedArguments#getDiskSizes()
+    */
    public int getMinDiskSize() {
       return minDiskSize;
    }
 
+   /**
+    * @return the minimum allowed memory size in MB
+    * @see org.jclouds.glesys.domain.ServerAllowedArguments#getMemorySizes()
+    */
    public int getMinMemSize() {
       return minMemSize;
    }
 
+   /**
+    * @return the name of the operating system type ex. "linux"
+    */
    public String getOs() {
       return os;
    }
 
+   /**
+    * @return the name of the platform this template is available in, ex. "Xen"
+    */
    public String getPlatform() {
       return platform;
    }
@@ -97,8 +112,8 @@ public class Template {
       if (this == object) {
          return true;
       }
-      if (object instanceof Template) {
-         final Template other = (Template) object;
+      if (object instanceof ServerTemplate) {
+         final ServerTemplate other = (ServerTemplate) object;
          return Objects.equal(name, other.name)
                && Objects.equal(minDiskSize, other.minDiskSize)
                && Objects.equal(minMemSize, other.minMemSize)
@@ -108,12 +123,12 @@ public class Template {
          return false;
       }
    }
-   
+
    @Override
    public int hashCode() {
       return Objects.hashCode(name, minDiskSize, minMemSize, os, platform);
    }
-   
+
    @Override
    public String toString() {
       return String.format("[name=%s, min_disk_size=%d, min_mem_size=%d, os=%s, platform=%s]",
