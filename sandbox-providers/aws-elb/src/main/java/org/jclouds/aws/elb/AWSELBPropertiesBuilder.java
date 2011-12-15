@@ -23,8 +23,10 @@ import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.aws.domain.Region.AP_NORTHEAST_1;
 import static org.jclouds.aws.domain.Region.AP_SOUTHEAST_1;
 import static org.jclouds.aws.domain.Region.EU_WEST_1;
+import static org.jclouds.aws.domain.Region.SA_EAST_1;
 import static org.jclouds.aws.domain.Region.US_EAST_1;
 import static org.jclouds.aws.domain.Region.US_WEST_1;
+import static org.jclouds.aws.domain.Region.US_WEST_2;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_ZONECLIENT_ENDPOINT;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
@@ -53,6 +55,10 @@ public class AWSELBPropertiesBuilder extends ELBPropertiesBuilder {
             "https://elasticloadbalancing.us-east-1.amazonaws.com");
       properties.setProperty(PROPERTY_REGION + "." + US_WEST_1 + ".endpoint",
             "https://elasticloadbalancing.us-west-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + US_WEST_2 + ".endpoint",
+            "https://elasticloadbalancing.us-west-2.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + SA_EAST_1 + ".endpoint",
+            "https://elasticloadbalancing.sa-east-1.amazonaws.com");      
       properties.setProperty(PROPERTY_REGION + "." + EU_WEST_1 + ".endpoint",
             "https://elasticloadbalancing.eu-west-1.amazonaws.com");
       properties.setProperty(PROPERTY_REGION + "." + AP_SOUTHEAST_1 + ".endpoint",

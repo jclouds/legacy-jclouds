@@ -164,10 +164,10 @@ public class SpotInstanceClientLiveTest {
       start = System.currentTimeMillis();
 
       requests = client.getSpotInstanceServices().requestSpotInstancesInRegion(
-               "us-west-2",
+               "sa-east-1",
                0.09f,
                1,
-               LaunchSpecification.builder().imageId("ami-38fe7308").instanceType(InstanceType.M1_SMALL).build(),
+               LaunchSpecification.builder().imageId("ami-3e3be423").instanceType(InstanceType.M1_SMALL).build(),
                launchGroup(launchGroup).availabilityZoneGroup(launchGroup).validFrom(
                         new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(2))).validUntil(
                         new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(SPOT_DELAY_SECONDS))));

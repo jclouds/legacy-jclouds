@@ -110,6 +110,6 @@ public class AWSCloudWatchProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-VA", "US-CA", "US-OR", "IE", "SG", "JP-13");
+      return ImmutableSet.of("US-VA", "US-CA", "BR-SP", "US-OR", "IE", "SG", "JP-13");
    }
 }
