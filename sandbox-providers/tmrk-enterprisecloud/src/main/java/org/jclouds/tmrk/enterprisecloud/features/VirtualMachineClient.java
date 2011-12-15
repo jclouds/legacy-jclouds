@@ -22,9 +22,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.tmrk.enterprisecloud.domain.Task;
 import org.jclouds.tmrk.enterprisecloud.domain.hardware.HardwareConfiguration;
 import org.jclouds.tmrk.enterprisecloud.domain.network.AssignedIpAddresses;
-import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachine;
-import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachineConfigurationOptions;
-import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachines;
+import org.jclouds.tmrk.enterprisecloud.domain.vm.*;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
@@ -80,6 +78,15 @@ public interface VirtualMachineClient {
     * @return
     */
    HardwareConfiguration getHardwareConfiguration(URI uri);
+
+   /**
+    * The Create Virtual Machines from Template call creates a new virtual machine from a template in the compute pool.
+    * If successful, the call returns information regarding the virtual machine that was created.
+    * @param uri the uri to create a virtual machine based upon the compute pool
+    * e.g. /cloudapi/ecloud/virtualMachines/computePools/{compute pool identifier}/action/createVirtualMachine
+    * @return the created virtual machine
+    */
+   VirtualMachine createVirtualMachineFromTemplate(URI uri,CreateVirtualMachine request);
 
    /**
     * The Action Virtual Machines Power On call powers on a specified virtual machine.

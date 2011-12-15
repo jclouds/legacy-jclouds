@@ -19,6 +19,7 @@
 package org.jclouds.tmrk.enterprisecloud.domain.vm;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.AnonymousResource;
 import org.jclouds.tmrk.enterprisecloud.domain.layout.LayoutRequest;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
 import org.jclouds.tmrk.enterprisecloud.domain.network.LinuxCustomization;
@@ -29,12 +30,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Set;
 
 /**
- * <xs:complexType name="CreateOsTemplateVirtualMachineRequestType">
+ * <xs:complexType name="CreateVirtualMachineType">
  * @author Jason King
- * 
  */
 @XmlRootElement(name = "CreateVirtualMachineRequest")
-public class CreateOsTemplateVirtualMachineRequest extends CreateVirtualMachineRequest {
+public class CreateVirtualMachine extends CreateVirtualMachineRequest {
+   // Note that this class collapses both
+   // CreateOsTemplateVirtualMachineRequestType and CreateVirtualMachineType
+   // into the same class as the separate classes are not needed.
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -49,14 +52,15 @@ public class CreateOsTemplateVirtualMachineRequest extends CreateVirtualMachineR
       return new Builder().fromCreateOsTemplateVirtualMachineRequest(this);
    }
 
-   public static class Builder extends CreateVirtualMachineRequest.Builder<CreateOsTemplateVirtualMachineRequest> {
+   public static class Builder extends CreateVirtualMachineRequest.Builder<CreateVirtualMachine> {
 
       private LinuxCustomization linuxCustomization;
       private WindowsCustomization windowsCustomization;
       private boolean poweredOn;
+      private AnonymousResource template;
 
       /**
-       * @see org.jclouds.tmrk.enterprisecloud.domain.vm.CreateOsTemplateVirtualMachineRequest#getLinuxCustomization
+       * @see CreateVirtualMachine#getLinuxCustomization
        */
       public Builder linuxCustomization(LinuxCustomization linuxCustomization) {
          this.linuxCustomization = linuxCustomization;
@@ -64,7 +68,7 @@ public class CreateOsTemplateVirtualMachineRequest extends CreateVirtualMachineR
       }
 
       /**
-       * @see org.jclouds.tmrk.enterprisecloud.domain.vm.CreateOsTemplateVirtualMachineRequest#getWindowsCustomization
+       * @see CreateVirtualMachine#getWindowsCustomization
        */
       public Builder windowsCustomization(WindowsCustomization windowsCustomization) {
          this.windowsCustomization = windowsCustomization;
@@ -73,10 +77,18 @@ public class CreateOsTemplateVirtualMachineRequest extends CreateVirtualMachineR
 
 
       /**
-       * @see org.jclouds.tmrk.enterprisecloud.domain.vm.CreateOsTemplateVirtualMachineRequest#isPoweredOn
+       * @see CreateVirtualMachine#isPoweredOn
        */
       public Builder poweredOn(boolean poweredOn) {
          this.poweredOn = poweredOn;
+         return this;
+      }
+
+      /**
+       * @see CreateVirtualMachine#getTemplate
+       */
+      public Builder template(AnonymousResource template) {
+         this.template = template;
          return this;
       }
 
@@ -127,17 +139,18 @@ public class CreateOsTemplateVirtualMachineRequest extends CreateVirtualMachineR
       }
 
       @Override
-      public CreateOsTemplateVirtualMachineRequest build() {
-         return new CreateOsTemplateVirtualMachineRequest(name, processorCount,memory,
+      public CreateVirtualMachine build() {
+         return new CreateVirtualMachine(name, processorCount,memory,
                description,layout,tags,
-               linuxCustomization,windowsCustomization,poweredOn);
+               linuxCustomization,windowsCustomization,poweredOn, template);
       }
 
-      public Builder fromCreateOsTemplateVirtualMachineRequest(CreateOsTemplateVirtualMachineRequest in) {
+      public Builder fromCreateOsTemplateVirtualMachineRequest(CreateVirtualMachine in) {
          return fromCreateVirtualMachineRequest(in)
                 .linuxCustomization(in.getLinuxCustomization())
                 .windowsCustomization(in.getWindowsCustomization())
-                .poweredOn(in.isPoweredOn());
+                .poweredOn(in.isPoweredOn())
+                .template(in.getTemplate());
       }
    }
 
@@ -149,18 +162,23 @@ public class CreateOsTemplateVirtualMachineRequest extends CreateVirtualMachineR
 
    @XmlElement(name = "PoweredOn", required = false)
    private boolean poweredOn;
-         
-         
-   private CreateOsTemplateVirtualMachineRequest(String name, int processorCount, ResourceCapacity memory,
-                                                 @Nullable String description,@Nullable LayoutRequest layout,@Nullable Set<String> tags,
-                                                 @Nullable LinuxCustomization linuxCustomization, @Nullable WindowsCustomization windowsCustomization, boolean poweredOn) {
+
+   @XmlElement(name = "Template", required = false)
+   private AnonymousResource template;
+
+
+   private CreateVirtualMachine(String name, int processorCount, ResourceCapacity memory,
+                                @Nullable String description, @Nullable LayoutRequest layout, @Nullable Set<String> tags,
+                                @Nullable LinuxCustomization linuxCustomization, @Nullable WindowsCustomization windowsCustomization,
+                                boolean poweredOn, @Nullable AnonymousResource template) {
       super(name,processorCount,memory,description,layout,tags);
       this.linuxCustomization = linuxCustomization;
       this.windowsCustomization = windowsCustomization;
       this.poweredOn = poweredOn;
+      this.template = template;
    }
 
-   protected CreateOsTemplateVirtualMachineRequest() {
+   protected CreateVirtualMachine() {
        //For JAXB
    }
 
@@ -176,15 +194,21 @@ public class CreateOsTemplateVirtualMachineRequest extends CreateVirtualMachineR
       return poweredOn;
    }
 
+   public AnonymousResource getTemplate() {
+      return template;
+   }
+
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      CreateOsTemplateVirtualMachineRequest that = (CreateOsTemplateVirtualMachineRequest) o;
+      CreateVirtualMachine that = (CreateVirtualMachine) o;
 
       if (poweredOn != that.poweredOn) return false;
       if (linuxCustomization != null ? !linuxCustomization.equals(that.linuxCustomization) : that.linuxCustomization != null)
+         return false;
+      if (template != null ? !template.equals(that.template) : that.template != null)
          return false;
       if (windowsCustomization != null ? !windowsCustomization.equals(that.windowsCustomization) : that.windowsCustomization != null)
          return false;
@@ -197,11 +221,12 @@ public class CreateOsTemplateVirtualMachineRequest extends CreateVirtualMachineR
       int result = linuxCustomization != null ? linuxCustomization.hashCode() : 0;
       result = 31 * result + (windowsCustomization != null ? windowsCustomization.hashCode() : 0);
       result = 31 * result + (poweredOn ? 1 : 0);
+      result = 31 * result + (template != null ? template.hashCode() : 0);
       return result;
    }
 
    @Override
    public String string() {
-      return super.string()+", linuxCustomization="+linuxCustomization+", windowsCustomization="+windowsCustomization+", poweredOn="+poweredOn;
+      return super.string()+", linuxCustomization="+linuxCustomization+", windowsCustomization="+windowsCustomization+", poweredOn="+poweredOn+", template="+template;
    }
 }

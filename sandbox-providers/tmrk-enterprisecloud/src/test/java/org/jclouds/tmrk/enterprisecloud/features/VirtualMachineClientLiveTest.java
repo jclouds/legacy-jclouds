@@ -18,10 +18,15 @@
  */
 package org.jclouds.tmrk.enterprisecloud.features;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import org.jclouds.tmrk.enterprisecloud.domain.NamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.hardware.HardwareConfiguration;
-import org.jclouds.tmrk.enterprisecloud.domain.network.AssignedIpAddresses;
-import org.jclouds.tmrk.enterprisecloud.domain.network.DeviceNetwork;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.AnonymousResource;
+import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
+import org.jclouds.tmrk.enterprisecloud.domain.layout.LayoutRequest;
+import org.jclouds.tmrk.enterprisecloud.domain.network.*;
+import org.jclouds.tmrk.enterprisecloud.domain.vm.CreateVirtualMachine;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachine;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachineConfigurationOptions;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.VirtualMachines;
@@ -101,4 +106,47 @@ public class VirtualMachineClientLiveTest extends BaseTerremarkEnterpriseCloudCl
       assertNull(result);
    }
 
+   public void testCreateVirtualMachineFromTemplate() throws Exception {
+      CreateVirtualMachine.Builder builder = CreateVirtualMachine.builder();
+      builder.name("VirtualMachine2")
+            .processorCount(2)
+            .memory(ResourceCapacity.builder().value(1024).unit("MB").build());
+
+      AnonymousResource group = AnonymousResource.builder().href(URI.create("/cloudapi/ecloud/layoutgroups/308")).type("application/vnd.tmrk.cloud.layoutGroup").build();
+      builder.layout(LayoutRequest.builder().group(group).build());
+      builder.description("This is my first VM");
+      builder.tags(ImmutableSet.of("Web"));
+      AnonymousResource sshKey = AnonymousResource.builder().href(URI.create("/cloudapi/ecloud/admin/sshkeys/77")).type("application/vnd.tmrk.cloud.admin.sshKey").build();
+
+      NamedResource network = NamedResource.builder()
+            .href(URI.create("/cloudapi/ecloud/networks/3936"))
+            .name("10.146.204.64/28")
+            .type("application/vnd.tmrk.cloud.network")
+            .build();
+
+      NetworkAdapterSetting adapterSetting = NetworkAdapterSetting.builder()
+            .network(network)
+            .ipAddress("10.146.204.68")
+            .build();
+
+      NetworkAdapterSettings adapterSettings = NetworkAdapterSettings.builder()
+            .addNetworkAdapterSetting(adapterSetting).build();
+      NetworkSettings networkSettings = NetworkSettings.builder().networkAdapterSettings(adapterSettings).build();
+
+      LinuxCustomization linuxCustomization = LinuxCustomization.builder()
+            .sshKey(sshKey)
+            .networkSettings(networkSettings)
+            .build();
+      builder.linuxCustomization(linuxCustomization);
+
+      AnonymousResource template = AnonymousResource.builder().href(URI.create("/cloudapi/ecloud/templates/6/computepools/89")).type("application/vnd.tmrk.cloud.template").build();
+      builder.template(template);
+
+      VirtualMachine vm = client.createVirtualMachineFromTemplate(URI.create("/cloudapi/ecloud/virtualMachines/computePools/89/action/createVirtualMachine"), builder.build());
+      assertNotNull(vm);
+
+      // TODO: Check that the VM is created OK.
+      // TODO: DNSSettings are missing
+      //client.remove(vm.getHref()); //remove once verified - there needs to be no running tasks.
+   }
 }
