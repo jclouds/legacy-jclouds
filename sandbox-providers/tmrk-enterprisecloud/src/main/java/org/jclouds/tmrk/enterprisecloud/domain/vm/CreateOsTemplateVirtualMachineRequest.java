@@ -19,7 +19,7 @@
 package org.jclouds.tmrk.enterprisecloud.domain.vm;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.tmrk.enterprisecloud.domain.LayoutRequest;
+import org.jclouds.tmrk.enterprisecloud.domain.layout.LayoutRequest;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
 import org.jclouds.tmrk.enterprisecloud.domain.network.LinuxCustomization;
 import org.jclouds.tmrk.enterprisecloud.domain.network.WindowsCustomization;

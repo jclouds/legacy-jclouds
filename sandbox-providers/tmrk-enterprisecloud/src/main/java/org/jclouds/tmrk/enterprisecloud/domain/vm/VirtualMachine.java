@@ -23,6 +23,7 @@ import org.jclouds.tmrk.enterprisecloud.domain.*;
 import org.jclouds.tmrk.enterprisecloud.domain.hardware.HardwareConfiguration;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.BaseResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.Resource;
+import org.jclouds.tmrk.enterprisecloud.domain.layout.Layout;
 import org.jclouds.tmrk.enterprisecloud.domain.software.OperatingSystem;
 import org.jclouds.tmrk.enterprisecloud.domain.software.ToolsStatus;
 
