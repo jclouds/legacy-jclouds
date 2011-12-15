@@ -30,7 +30,7 @@ import org.jclouds.elb.ELBClient;
 import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.loadbalancer.BaseLoadBalancerServiceLiveTest;
 import org.jclouds.rest.RestContext;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
 /**
@@ -46,8 +46,8 @@ public class ELBLoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveT
    }
 
    @Override
-   protected JschSshClientModule getSshModule() {
-      return new JschSshClientModule();
+   protected SshjSshClientModule getSshModule() {
+      return new SshjSshClientModule();
    }
 
    @Override

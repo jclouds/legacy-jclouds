@@ -20,11 +20,9 @@ package org.jclouds.aws.elb;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Properties;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.elb.ELBAsyncClient;
-import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.Test;
 
 /**
@@ -38,11 +36,6 @@ public class ELBAsyncClientTest extends org.jclouds.elb.ELBAsyncClientTest {
 
    public ELBAsyncClientTest() {
       this.provider = "aws-elb";
-   }
-
-   @Override
-   protected Properties getProperties() {
-      return RestContextFactory.getPropertiesFromResource("/rest.properties");
    }
 
    public void testAllRegions() throws SecurityException, NoSuchMethodException, IOException {
