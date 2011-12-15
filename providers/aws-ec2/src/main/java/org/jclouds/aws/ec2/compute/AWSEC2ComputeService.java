@@ -74,7 +74,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -85,7 +85,7 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class AWSEC2ComputeService extends EC2ComputeService {
 
-   private final Cache<RegionAndName, String> placementGroupMap;
+   private final LoadingCache<RegionAndName, String> placementGroupMap;
    private final Predicate<PlacementGroup> placementGroupDeleted;
    private final AWSEC2Client ec2Client;
    private final AWSEC2AsyncClient aclient;
@@ -108,8 +108,8 @@ public class AWSEC2ComputeService extends EC2ComputeService {
             PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, AWSEC2Client ec2Client,
             ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
-            @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap,
-            @Named("PLACEMENT") Cache<RegionAndName, String> placementGroupMap,
+            @Named("SECURITY") LoadingCache<RegionAndName, String> securityGroupMap,
+            @Named("PLACEMENT") LoadingCache<RegionAndName, String> placementGroupMap,
             @Named("DELETED") Predicate<PlacementGroup> placementGroupDeleted,
             @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames, AWSEC2AsyncClient aclient) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,

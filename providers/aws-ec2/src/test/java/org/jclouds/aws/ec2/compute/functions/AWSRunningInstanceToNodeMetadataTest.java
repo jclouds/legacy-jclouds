@@ -46,7 +46,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
@@ -160,7 +160,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
 
       final Map<RegionAndName, ? extends Image> backing = ImagesToRegionAndIdMap.imagesToMap(images);
 
-      Cache<RegionAndName, Image> instanceToImage = CacheBuilder.newBuilder().build(new CacheLoader<RegionAndName, Image> (){
+      LoadingCache<RegionAndName, Image> instanceToImage = CacheBuilder.newBuilder().build(new CacheLoader<RegionAndName, Image> (){
     
          @Override
          public Image load(RegionAndName key) throws Exception {
@@ -175,7 +175,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
 
    private AWSRunningInstanceToNodeMetadata createNodeParser(final ImmutableSet<Hardware> hardware,
             final ImmutableSet<Location> locations, Map<String, Credentials> credentialStore,
-            Map<InstanceState, NodeState> instanceToNodeState, Cache<RegionAndName, ? extends Image> instanceToImage) {
+            Map<InstanceState, NodeState> instanceToNodeState, LoadingCache<RegionAndName, ? extends Image> instanceToImage) {
       Supplier<Set<? extends Location>> locationSupplier = new Supplier<Set<? extends Location>>() {
 
          @Override
@@ -193,7 +193,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
 
       };
       AWSRunningInstanceToNodeMetadata parser = new AWSRunningInstanceToNodeMetadata(instanceToNodeState,
-            credentialStore, Suppliers.<Cache<RegionAndName, ? extends Image>> ofInstance(instanceToImage),
+            credentialStore, Suppliers.<LoadingCache<RegionAndName, ? extends Image>> ofInstance(instanceToImage),
             locationSupplier, hardwareSupplier);
       return parser;
    }

@@ -19,7 +19,6 @@
 package org.jclouds.cloudfiles.blobstore.functions;
 
 import java.net.URI;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -27,6 +26,7 @@ import javax.inject.Singleton;
 import org.jclouds.cloudfiles.CloudFilesClient;
 
 import com.google.common.base.Function;
+import com.google.common.cache.LoadingCache;
 
 /**
  * 
@@ -34,11 +34,11 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class EnableCDNAndCache implements Function<String, URI> {
-   private final Map<String, URI> cdnContainer;
+   private final LoadingCache<String, URI> cdnContainer;
    private final CloudFilesClient sync;
 
    @Inject
-   public EnableCDNAndCache(CloudFilesClient sync, Map<String, URI> cdnContainer) {
+   public EnableCDNAndCache(CloudFilesClient sync, LoadingCache<String, URI> cdnContainer) {
       this.sync = sync;
       this.cdnContainer = cdnContainer;
    }

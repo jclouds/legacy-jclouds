@@ -36,7 +36,7 @@ import org.jclouds.domain.LoginCredentials;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -79,7 +79,7 @@ public class BYONComputeServiceTest {
          assertEquals(context.getProviderSpecificContext().getEndpoint(), URI.create(endpoint));
 
          @SuppressWarnings("unchecked")
-         Supplier<Cache<String, Node>> supplier = (Supplier<Cache<String, Node>>) context.getProviderSpecificContext()
+         Supplier<LoadingCache<String, Node>> supplier = (Supplier<LoadingCache<String, Node>>) context.getProviderSpecificContext()
                .getApi();
 
          assertEquals(supplier.get().size(), context.getComputeService().listNodes().size());
@@ -107,7 +107,7 @@ public class BYONComputeServiceTest {
          assertEquals(context.getProviderSpecificContext().getEndpoint(), URI.create(endpoint));
 
          @SuppressWarnings("unchecked")
-         Supplier<Cache<String, Node>> supplier = (Supplier<Cache<String, Node>>) context.getProviderSpecificContext()
+         Supplier<LoadingCache<String, Node>> supplier = (Supplier<LoadingCache<String, Node>>) context.getProviderSpecificContext()
                .getApi();
 
          assertEquals(supplier.get().size(), context.getComputeService().listNodes().size());

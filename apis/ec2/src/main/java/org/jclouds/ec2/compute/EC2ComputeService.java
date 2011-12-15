@@ -69,7 +69,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableMultimap.Builder;
@@ -81,7 +81,7 @@ import com.google.common.collect.ImmutableMultimap.Builder;
 public class EC2ComputeService extends BaseComputeService {
    private final EC2Client ec2Client;
    private final ConcurrentMap<RegionAndName, KeyPair> credentialsMap;
-   private final Cache<RegionAndName, String> securityGroupMap;
+   private final LoadingCache<RegionAndName, String> securityGroupMap;
 
    @Inject
    protected EC2ComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
@@ -98,7 +98,7 @@ public class EC2ComputeService extends BaseComputeService {
          RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
          PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
-         ConcurrentMap<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap) {
+         ConcurrentMap<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") LoadingCache<RegionAndName, String> securityGroupMap) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
             runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy, stopNodeStrategy,
             templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated, nodeSuspended,

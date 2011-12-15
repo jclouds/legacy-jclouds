@@ -39,7 +39,8 @@ import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.util.Throwables2;
 
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
@@ -49,13 +50,13 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
  */
 public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
 
-   private final Supplier<Cache<RegionAndName, ? extends Image>> lazyImageCache;
+   private final Supplier<LoadingCache<RegionAndName, ? extends Image>> lazyImageCache;
 
    @Inject
    protected EC2TemplateBuilderImpl(@Memoized Supplier<Set<? extends Location>> locations,
          @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
          Supplier<Location> defaultLocation, @Named("DEFAULT") Provider<TemplateOptions> optionsProvider,
-         @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider, Supplier<Cache<RegionAndName, ? extends Image>> imageMap) {
+         @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider, Supplier<LoadingCache<RegionAndName, ? extends Image>> imageMap) {
       super(locations, images, sizes, defaultLocation, optionsProvider, defaultTemplateProvider);
       this.lazyImageCache = imageMap;
    }
@@ -80,7 +81,7 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
                   throw new NoSuchElementException(String.format("imageId(%s/%s) not found", key.getRegion(), key.getName()));
                }
                throw new NoSuchElementException(String.format("could not get imageId(%s/%s)", key.getRegion(), key.getName()));
-            } catch (NullPointerException nex) {
+            } catch (CacheLoader.InvalidCacheLoadException nex) {
                throw new NoSuchElementException(String.format("imageId(%s/%s) not found", key.getRegion(), key.getName()));
             }
          }

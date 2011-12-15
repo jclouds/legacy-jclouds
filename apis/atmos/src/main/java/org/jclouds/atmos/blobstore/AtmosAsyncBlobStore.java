@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.atmos.options.PutOptions.Builder.publicRead;
 
 import java.net.URI;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -64,6 +63,8 @@ import org.jclouds.http.options.GetOptions;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -81,7 +82,7 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
    private final Crypto crypto;
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
-   private final Map<String, Boolean> isPublic;
+   private final LoadingCache<String, Boolean> isPublic;
 
    @Inject
    AtmosAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
@@ -91,7 +92,7 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
             BlobStoreListOptionsToListOptions container2ContainerListOptions,
             DirectoryEntryListToResourceMetadataList container2ResourceList, Crypto crypto,
             BlobToHttpGetOptions blob2ObjectGetOptions, Provider<FetchBlobMetadata> fetchBlobMetadataProvider,
-            Map<String, Boolean> isPublic) {
+            LoadingCache<String, Boolean> isPublic) {
       super(context, blobUtils, service, defaultLocation, locations);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");
@@ -238,10 +239,10 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<String> putBlob(final String container, final Blob blob) {
       final org.jclouds.atmos.options.PutOptions options = new org.jclouds.atmos.options.PutOptions();
       try {
-         if (isPublic.get(container + "/"))
+         if (isPublic.getUnchecked(container + "/"))
             options.publicRead();
-      } catch (NullPointerException e) {
-         // MapMaker
+      } catch (CacheLoader.InvalidCacheLoadException e) {
+         // nulls not permitted
       }
       return Futures.makeListenable(service.submit(new Callable<String>() {
 

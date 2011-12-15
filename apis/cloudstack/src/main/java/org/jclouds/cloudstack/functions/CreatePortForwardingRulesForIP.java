@@ -36,7 +36,7 @@ import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
@@ -54,12 +54,12 @@ public class CreatePortForwardingRulesForIP {
 
    private final CloudStackClient client;
    private final BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult;
-   private final Cache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine;
+   private final LoadingCache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine;
 
    @Inject
    public CreatePortForwardingRulesForIP(CloudStackClient client,
          BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult,
-         Cache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine) {
+         LoadingCache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine) {
       this.client = checkNotNull(client, "client");
       this.blockUntilJobCompletesAndReturnResult = checkNotNull(blockUntilJobCompletesAndReturnResult,
             "blockUntilJobCompletesAndReturnResult");

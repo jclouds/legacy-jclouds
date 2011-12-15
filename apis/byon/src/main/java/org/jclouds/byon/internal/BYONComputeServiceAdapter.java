@@ -40,7 +40,7 @@ import org.jclouds.location.suppliers.JustProvider;
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
@@ -52,12 +52,12 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
  */
 @Singleton
 public class BYONComputeServiceAdapter implements JCloudsNativeComputeServiceAdapter {
-   private final Supplier<Cache<String, Node>> nodes;
+   private final Supplier<LoadingCache<String, Node>> nodes;
    private final NodeToNodeMetadata converter;
    private final JustProvider locationSupplier;
 
    @Inject
-   public BYONComputeServiceAdapter(Supplier<Cache<String, Node>> nodes, NodeToNodeMetadata converter,
+   public BYONComputeServiceAdapter(Supplier<LoadingCache<String, Node>> nodes, NodeToNodeMetadata converter,
             JustProvider locationSupplier) {
       this.nodes = checkNotNull(nodes, "nodes");
       this.converter = checkNotNull(converter, "converter");

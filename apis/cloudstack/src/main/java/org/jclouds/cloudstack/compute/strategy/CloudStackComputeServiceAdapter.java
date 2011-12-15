@@ -61,7 +61,7 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Sets;
@@ -86,7 +86,7 @@ public class CloudStackComputeServiceAdapter implements
    private final BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult;
    private final Factory staticNATVMInNetwork;
    private final CreatePortForwardingRulesForIP setupPortForwardingRulesForIP;
-   private final Cache<Long, Set<IPForwardingRule>> vmToRules;
+   private final LoadingCache<Long, Set<IPForwardingRule>> vmToRules;
    private final Map<String, Credentials> credentialStore;
 
    @Inject
@@ -94,7 +94,7 @@ public class CloudStackComputeServiceAdapter implements
          @Memoized Supplier<Map<Long, Network>> networkSupplier,
          BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult,
          StaticNATVirtualMachineInNetwork.Factory staticNATVMInNetwork,
-         CreatePortForwardingRulesForIP setupPortForwardingRulesForIP, Cache<Long, Set<IPForwardingRule>> vmToRules,
+         CreatePortForwardingRulesForIP setupPortForwardingRulesForIP, LoadingCache<Long, Set<IPForwardingRule>> vmToRules,
          Map<String, Credentials> credentialStore) {
       this.client = checkNotNull(client, "client");
       this.jobComplete = checkNotNull(jobComplete, "jobComplete");

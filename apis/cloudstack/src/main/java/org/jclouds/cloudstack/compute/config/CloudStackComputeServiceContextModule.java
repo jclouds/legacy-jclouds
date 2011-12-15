@@ -67,7 +67,7 @@ import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExc
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.Maps;
@@ -173,7 +173,7 @@ public class CloudStackComputeServiceContextModule
 
    @Provides
    @Singleton
-   protected Cache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine(
+   protected LoadingCache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine(
       CacheLoader<Long, Set<IPForwardingRule>> getIPForwardingRules) {
       return CacheBuilder.newBuilder().build(getIPForwardingRules);
    }

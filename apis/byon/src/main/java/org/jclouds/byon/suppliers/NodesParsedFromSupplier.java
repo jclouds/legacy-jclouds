@@ -33,29 +33,29 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class NodesParsedFromSupplier implements Supplier<Cache<String, Node>> {
+public class NodesParsedFromSupplier implements Supplier<LoadingCache<String, Node>> {
    @Resource
    protected Logger logger = Logger.NULL;
 
    private final Supplier<InputStream> supplier;
-   private final Function<InputStream, Cache<String, Node>> parser;
+   private final Function<InputStream, LoadingCache<String, Node>> parser;
 
    @Inject
-   NodesParsedFromSupplier(@Provider Supplier<InputStream> supplier, Function<InputStream, Cache<String, Node>> parser) {
+   NodesParsedFromSupplier(@Provider Supplier<InputStream> supplier, Function<InputStream, LoadingCache<String, Node>> parser) {
       this.supplier = checkNotNull(supplier, "supplier");
       this.parser = checkNotNull(parser, "parser");
    }
 
    @Override
-   public Cache<String, Node> get() {
-      Cache<String, Node> nodes = parser.apply(supplier.get());
+   public LoadingCache<String, Node> get() {
+      LoadingCache<String, Node> nodes = parser.apply(supplier.get());
       checkState(nodes != null && nodes.size() > 0, "no nodes parsed from supplier: %s", supplier);
       return nodes;
    }

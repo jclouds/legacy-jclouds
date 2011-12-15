@@ -36,7 +36,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.io.InputSupplier;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.inject.AbstractModule;
@@ -85,7 +85,7 @@ public class YamlNodeStoreModuleTest {
       Injector injector = createInjectorWithProvidedMap(map);
       assertEquals(injector.getInstance(Key.get(new TypeLiteral<Map<String, InputStream>>() {
       }, Names.named("yaml"))), map);
-      Cache<String, Node> store = getStore(injector);
+      LoadingCache<String, Node> store = getStore(injector);
 
       for (int i = 0; i < 10; i++)
          check(map, store, "test" + i, "instance1" + i, "instancename" + i);
@@ -114,8 +114,8 @@ public class YamlNodeStoreModuleTest {
 
    }
 
-   protected Cache<String, Node> getStore(Injector injector) {
-      return injector.getInstance(Key.get(new TypeLiteral<Cache<String, Node>>() {
+   protected LoadingCache<String, Node> getStore(Injector injector) {
+      return injector.getInstance(Key.get(new TypeLiteral<LoadingCache<String, Node>>() {
       }));
    }
 
@@ -148,14 +148,14 @@ public class YamlNodeStoreModuleTest {
       });
    }
 
-   protected void check(Map<String, InputStream> map, Cache<String, Node> store, String key, String id, String name)
+   protected void check(Map<String, InputStream> map, LoadingCache<String, Node> store, String key, String id, String name)
          throws IOException {
       put(map, store, key, id, name);
       checkConsistent(map, store, key, id, name);
       remove(map, store, key);
    }
 
-   protected void remove(Map<String, InputStream> map, Cache<String, Node> store, String key) {
+   protected void remove(Map<String, InputStream> map, LoadingCache<String, Node> store, String key) {
       store.invalidate(key);
       assertEquals(store.size(), 0);
       map.remove(key);
@@ -169,7 +169,7 @@ public class YamlNodeStoreModuleTest {
       assertEquals(map.get(key), null);
    }
 
-   protected void checkConsistent(Map<String, InputStream> map, Cache<String, Node> store, String key, String id,
+   protected void checkConsistent(Map<String, InputStream> map, LoadingCache<String, Node> store, String key, String id,
          String name) throws IOException {
       assertEquals(map.size(), 1);
       if (store.size() == 0)
@@ -187,7 +187,7 @@ public class YamlNodeStoreModuleTest {
       assertEquals(Strings2.toStringAndClose(map.get(key)), String.format("id: %s\nname: %s\n", id, name));
    }
 
-   protected void put(Map<String, InputStream> map, Cache<String, Node> store, String key, String id, String name) {
+   protected void put(Map<String, InputStream> map, LoadingCache<String, Node> store, String key, String id, String name) {
       assertEquals(store.size(), 0);
       assertEquals(map.size(), 0);
       map.put(key, new ByteArrayInputStream(String.format("id: %s\nname: %s\n", id, name).getBytes()));

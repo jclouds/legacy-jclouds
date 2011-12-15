@@ -66,7 +66,7 @@ import org.jclouds.rest.suppliers.SetAndThrowAuthorizationExceptionSupplier;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
@@ -116,7 +116,7 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
    @Override
    protected Supplier<Set<? extends Image>> supplyNonParsingImageCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
             final Supplier<Set<? extends Image>> imageSupplier, Injector injector) {
-      final Supplier<Cache<RegionAndName, ? extends Image>> cache = injector.getInstance(Key.get(new TypeLiteral<Supplier<Cache<RegionAndName, ? extends Image>>>() {}));
+      final Supplier<LoadingCache<RegionAndName, ? extends Image>> cache = injector.getInstance(Key.get(new TypeLiteral<Supplier<LoadingCache<RegionAndName, ? extends Image>>>() {}));
       return new Supplier<Set<? extends Image>>() {
          @Override
          public Set<? extends Image> get() {
@@ -158,7 +158,7 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
 
    @Provides
    @Singleton
-   protected Supplier<Cache<RegionAndName, ? extends Image>> provideRegionAndNameToImageSupplierCache(
+   protected Supplier<LoadingCache<RegionAndName, ? extends Image>> provideRegionAndNameToImageSupplierCache(
             final RegionAndNameToImageSupplier supplier) {
       return supplier;
    }

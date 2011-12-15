@@ -63,7 +63,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
@@ -169,7 +169,7 @@ public class EC2TemplateBuilderTest {
                new RegionAndName(image.getLocation().getId(), image.getProviderId()), image);
       
       // weird compilation error means have to declare extra generics for call to build() - see https://bugs.eclipse.org/bugs/show_bug.cgi?id=365818
-      Supplier<Cache<RegionAndName, ? extends Image>> imageCache = Suppliers.<Cache<RegionAndName, ? extends Image>> ofInstance(
+      Supplier<LoadingCache<RegionAndName, ? extends Image>> imageCache = Suppliers.<LoadingCache<RegionAndName, ? extends Image>> ofInstance(
                CacheBuilder.newBuilder().<RegionAndName,Image>build(CacheLoader.from(Functions.forMap(imageMap))));
 
       Template template = newTemplateBuilder(images, imageCache).imageId("us-east-1/cc-image").build();
@@ -197,14 +197,14 @@ public class EC2TemplateBuilderTest {
       // weird compilation error means have to cast this - see https://bugs.eclipse.org/bugs/show_bug.cgi?id=365818
       @SuppressWarnings("unchecked")
       ImmutableMap<RegionAndName, Image> imageMap = (ImmutableMap<RegionAndName, Image>) ImagesToRegionAndIdMap.imagesToMap(images.get());
-      Supplier<Cache<RegionAndName, ? extends Image>> imageCache = Suppliers.<Cache<RegionAndName, ? extends Image>> ofInstance(
+      Supplier<LoadingCache<RegionAndName, ? extends Image>> imageCache = Suppliers.<LoadingCache<RegionAndName, ? extends Image>> ofInstance(
                CacheBuilder.newBuilder().<RegionAndName,Image>build(CacheLoader.from(Functions.forMap(imageMap))));
 
       return newTemplateBuilder(images, imageCache);
    }
 
    @SuppressWarnings("unchecked")
-   private TemplateBuilder newTemplateBuilder(Supplier<Set<? extends Image>> images, Supplier<Cache<RegionAndName, ? extends Image>> imageCache) {
+   private TemplateBuilder newTemplateBuilder(Supplier<Set<? extends Image>> images, Supplier<LoadingCache<RegionAndName, ? extends Image>> imageCache) {
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
       TemplateOptions defaultOptions = createMock(TemplateOptions.class);

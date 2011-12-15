@@ -49,7 +49,7 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -114,10 +114,10 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
       @Resource
       protected Logger logger = Logger.NULL;
 
-      private final Cache<String, DriveInfo> cache;
+      private final LoadingCache<String, DriveInfo> cache;
 
       @Inject
-      public DeviceToVolume(Cache<String, DriveInfo> cache) {
+      public DeviceToVolume(LoadingCache<String, DriveInfo> cache) {
          this.cache = checkNotNull(cache, "cache");
       }
 
@@ -149,10 +149,10 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
       @Resource
       protected Logger logger = Logger.NULL;
 
-      private final Cache<String, DriveInfo> cache;
+      private final LoadingCache<String, DriveInfo> cache;
 
       @Inject
-      public GetImageIdFromServer(Cache<String, DriveInfo> cache) {
+      public GetImageIdFromServer(LoadingCache<String, DriveInfo> cache) {
          this.cache = cache;
       }
 

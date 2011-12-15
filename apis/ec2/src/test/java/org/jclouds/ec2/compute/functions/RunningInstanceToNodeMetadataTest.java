@@ -47,7 +47,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
@@ -201,7 +201,7 @@ public class RunningInstanceToNodeMetadataTest {
             return null;
          }
       };
-      Cache<RegionAndName, Image> instanceToImage = CacheBuilder.newBuilder().build(nullReturningFunction);
+      LoadingCache<RegionAndName, Image> instanceToImage = CacheBuilder.newBuilder().build(nullReturningFunction);
 
       RunningInstanceToNodeMetadata parser = createNodeParser(ImmutableSet.of(m1_small32().build()), ImmutableSet
                .of(provider), ImmutableMap.<String, Credentials> of(),
@@ -235,13 +235,13 @@ public class RunningInstanceToNodeMetadataTest {
             return ImagesToRegionAndIdMap.imagesToMap(images).get(from);
          }
       };
-      Cache<RegionAndName, Image> instanceToImage = CacheBuilder.newBuilder().build(getRealImage);
+      LoadingCache<RegionAndName, Image> instanceToImage = CacheBuilder.newBuilder().build(getRealImage);
       return createNodeParser(hardware, locations, credentialStore, instanceToNodeState, instanceToImage);
    }
 
    private RunningInstanceToNodeMetadata createNodeParser(final ImmutableSet<Hardware> hardware,
             final ImmutableSet<Location> locations, Map<String, Credentials> credentialStore,
-            Map<InstanceState, NodeState> instanceToNodeState, Cache<RegionAndName, Image> instanceToImage) {
+            Map<InstanceState, NodeState> instanceToNodeState, LoadingCache<RegionAndName, Image> instanceToImage) {
       Supplier<Set<? extends Location>> locationSupplier = new Supplier<Set<? extends Location>>() {
 
          @Override
@@ -259,7 +259,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       };
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(instanceToNodeState, credentialStore,
-            Suppliers.<Cache<RegionAndName, ? extends Image>> ofInstance(instanceToImage), locationSupplier,
+            Suppliers.<LoadingCache<RegionAndName, ? extends Image>> ofInstance(instanceToImage), locationSupplier,
             hardwareSupplier);
       return parser;
    }

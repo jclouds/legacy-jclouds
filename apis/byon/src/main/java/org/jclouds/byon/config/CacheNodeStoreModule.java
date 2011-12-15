@@ -28,7 +28,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.inject.AbstractModule;
@@ -41,9 +41,9 @@ import com.google.inject.TypeLiteral;
 @ConfiguresNodeStore
 @Beta
 public class CacheNodeStoreModule extends AbstractModule {
-   private final Cache<String, Node> backing;
+   private final LoadingCache<String, Node> backing;
 
-   public CacheNodeStoreModule(Cache<String, Node> backing) {
+   public CacheNodeStoreModule(LoadingCache<String, Node> backing) {
       this.backing = checkNotNull(backing, "backing");
    }
 
@@ -55,10 +55,10 @@ public class CacheNodeStoreModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(new TypeLiteral<Cache<String, Node>>() {
+      bind(new TypeLiteral<LoadingCache<String, Node>>() {
       }).toInstance(backing);
-      bind(new TypeLiteral<Supplier<Cache<String, Node>>>() {
-      }).toInstance(Suppliers.<Cache<String, Node>> ofInstance(backing));
+      bind(new TypeLiteral<Supplier<LoadingCache<String, Node>>>() {
+      }).toInstance(Suppliers.<LoadingCache<String, Node>> ofInstance(backing));
    }
 
 }

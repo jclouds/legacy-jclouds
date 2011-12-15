@@ -36,7 +36,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
@@ -183,7 +183,7 @@ public class SyncProxyTest {
 
    @BeforeTest
    public void setUp() throws IllegalArgumentException, SecurityException, NoSuchMethodException {
-      Cache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
+      LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
             CacheLoader.from(Functions.<Object> constant(null)));
       sync = SyncProxy.proxy(Sync.class, new Async(), cache, ImmutableMap.<Class<?>, Class<?>> of(),
             ImmutableMap.of("Sync.takeXMillisecondsPropOverride", 250L));
@@ -258,7 +258,7 @@ public class SyncProxyTest {
    @Test(enabled = false, expectedExceptions = IllegalArgumentException.class)
    public void testWrongTypedException() throws IllegalArgumentException, SecurityException, NoSuchMethodException,
          IOException {
-      Cache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
+      LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
             CacheLoader.from(Functions.<Object> constant(null)));
       SyncProxy.proxy(SyncWrongException.class, new Async(), cache, ImmutableMap.<Class<?>, Class<?>> of(),
             ImmutableMap.<String, Long> of());
@@ -278,7 +278,7 @@ public class SyncProxyTest {
    @Test(enabled = false, expectedExceptions = IllegalArgumentException.class)
    public void testNoTimeOutException() throws IllegalArgumentException, SecurityException, NoSuchMethodException,
          IOException {
-      Cache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
+      LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
             CacheLoader.from(Functions.<Object> constant(null)));
       SyncProxy.proxy(SyncNoTimeOut.class, new Async(), cache, ImmutableMap.<Class<?>, Class<?>> of(),
             ImmutableMap.<String, Long> of());
@@ -299,7 +299,7 @@ public class SyncProxyTest {
 
    @Test(enabled = false, expectedExceptions = RuntimeException.class)
    public void testClassOverridePropTimeout() throws Exception {
-      Cache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
+      LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
             CacheLoader.from(Functions.<Object> constant(null)));
       final SyncClassOverride sync2 = SyncProxy.proxy(SyncClassOverride.class, new Async(), cache,
             ImmutableMap.<Class<?>, Class<?>> of(), ImmutableMap.<String, Long> of("SyncClassOverride", 100L));

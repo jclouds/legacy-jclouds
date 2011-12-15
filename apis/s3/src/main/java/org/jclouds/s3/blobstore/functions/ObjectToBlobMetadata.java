@@ -18,8 +18,6 @@
  */
 package org.jclouds.s3.blobstore.functions;
 
-import java.util.Map;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -34,6 +32,8 @@ import org.jclouds.s3.domain.AccessControlList.GroupGranteeURI;
 import org.jclouds.s3.domain.AccessControlList.Permission;
 
 import com.google.common.base.Function;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
  * @author Adrian Cole
@@ -41,11 +41,11 @@ import com.google.common.base.Function;
 @Singleton
 public class ObjectToBlobMetadata implements Function<ObjectMetadata, MutableBlobMetadata> {
    private final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
-   private final Map<String, AccessControlList> bucketAcls;
+   private final LoadingCache<String, AccessControlList> bucketAcls;
 
    @Inject
    public ObjectToBlobMetadata(IfDirectoryReturnNameStrategy ifDirectoryReturnName,
-            Map<String, AccessControlList> bucketAcls) {
+            LoadingCache<String, AccessControlList> bucketAcls) {
       this.ifDirectoryReturnName = ifDirectoryReturnName;
       this.bucketAcls = bucketAcls;
    }
@@ -56,11 +56,11 @@ public class ObjectToBlobMetadata implements Function<ObjectMetadata, MutableBlo
       MutableBlobMetadata to = new MutableBlobMetadataImpl();
       HttpUtils.copy(from.getContentMetadata(), to.getContentMetadata());
       try {
-         AccessControlList bucketAcl = bucketAcls.get(from.getBucket());
+         AccessControlList bucketAcl = bucketAcls.getUnchecked(from.getBucket());
          if (bucketAcl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ))
             to.setPublicUri(from.getUri());
-      } catch (NullPointerException e) {
-         // MapMaker cannot return null, but a call to get acls can
+      } catch (CacheLoader.InvalidCacheLoadException e) {
+         // nulls not permitted from cache loader
       }
       to.setUri(from.getUri());
       to.setContainer(from.getBucket());

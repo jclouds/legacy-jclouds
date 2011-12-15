@@ -18,7 +18,6 @@
  */
 package org.jclouds.s3.blobstore.config;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
@@ -42,7 +41,9 @@ import org.jclouds.s3.domain.AccessControlList;
 import org.jclouds.s3.domain.BucketMetadata;
 
 import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -79,10 +80,11 @@ public class S3BlobStoreContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Map<String, AccessControlList> bucketAcls(final S3Client client) {
-      return new MapMaker().expireAfterWrite(30, TimeUnit.SECONDS).makeComputingMap(
-               new Function<String, AccessControlList>() {
-                  public AccessControlList apply(String bucketName) {
+   protected LoadingCache<String, AccessControlList> bucketAcls(final S3Client client) {
+      return CacheBuilder.newBuilder().expireAfterWrite(30, TimeUnit.SECONDS).build(
+               new CacheLoader<String, AccessControlList>() {
+                  @Override
+                  public AccessControlList load(String bucketName) {
                      return client.getBucketACL(bucketName);
                   }
 

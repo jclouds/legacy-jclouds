@@ -20,8 +20,6 @@ package org.jclouds.azureblob.blobstore.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Map;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -34,6 +32,8 @@ import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
 import org.jclouds.http.HttpUtils;
 
 import com.google.common.base.Function;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
  * @author Adrian Cole
@@ -41,11 +41,11 @@ import com.google.common.base.Function;
 @Singleton
 public class BlobPropertiesToBlobMetadata implements Function<BlobProperties, MutableBlobMetadata> {
    private final IfDirectoryReturnNameStrategy ifDirectoryReturnName;
-   private final Map<String, PublicAccess> containerAcls;
+   private final LoadingCache<String, PublicAccess> containerAcls;
 
    @Inject
    public BlobPropertiesToBlobMetadata(IfDirectoryReturnNameStrategy ifDirectoryReturnName,
-            Map<String, PublicAccess> containerAcls) {
+            LoadingCache<String, PublicAccess> containerAcls) {
       this.ifDirectoryReturnName = checkNotNull(ifDirectoryReturnName, "ifDirectoryReturnName");
       this.containerAcls = checkNotNull(containerAcls, "containerAcls");
    }
@@ -61,13 +61,14 @@ public class BlobPropertiesToBlobMetadata implements Function<BlobProperties, Mu
       to.setName(from.getName());
       to.setContainer(from.getContainer());
       to.setUri(from.getUrl());
-      try {
-         PublicAccess containerAcl = containerAcls.get(from.getContainer());
-         if (containerAcl != null && containerAcl != PublicAccess.PRIVATE)
-            to.setPublicUri(from.getUrl());
-      } catch (NullPointerException e) {
-         // MapMaker cannot return null, but a call to get acls can
-      }
+      if (from.getContainer() != null)
+         try {
+            PublicAccess containerAcl = containerAcls.getUnchecked(from.getContainer());
+            if (containerAcl != PublicAccess.PRIVATE)
+               to.setPublicUri(from.getUrl());
+         } catch (CacheLoader.InvalidCacheLoadException e) {
+            // nulls not permitted from cache loader
+         }
       String directoryName = ifDirectoryReturnName.execute(to);
       if (directoryName != null) {
          to.setName(directoryName);

@@ -42,7 +42,7 @@ import org.jclouds.rest.RestContextSpec;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
@@ -70,7 +70,7 @@ public abstract class BaseAWSEC2AsyncClientTest<T> extends RestClientTest<T> {
 
       @Provides
       @Singleton
-      Cache<RegionAndName, Image> provide(){
+      LoadingCache<RegionAndName, Image> provide(){
          return CacheBuilder.newBuilder().build(new CacheLoader<RegionAndName, Image>() {
 
             @Override

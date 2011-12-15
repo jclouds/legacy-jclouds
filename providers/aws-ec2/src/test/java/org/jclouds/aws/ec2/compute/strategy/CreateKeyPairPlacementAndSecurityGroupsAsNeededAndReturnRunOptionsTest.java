@@ -57,7 +57,7 @@ import org.jclouds.scriptbuilder.domain.Statements;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
@@ -934,8 +934,8 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
    private CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions setupStrategy() {
       Function<RegionAndName, KeyPair> makeKeyPair = createMock(Function.class);
       ConcurrentMap<RegionAndName, KeyPair> credentialsMap = createMock(ConcurrentMap.class);
-      Cache<RegionAndName, String> securityGroupMap = createMock(Cache.class);
-      Cache<RegionAndName, String> placementGroupMap = createMock(Cache.class);
+      LoadingCache<RegionAndName, String> securityGroupMap = createMock(LoadingCache.class);
+      LoadingCache<RegionAndName, String> placementGroupMap = createMock(LoadingCache.class);
       Function<RegionNameAndPublicKeyMaterial, KeyPair> importExistingKeyPair = createMock(Function.class);
       CreatePlacementGroupIfNeeded createPlacementGroupIfNeeded = createMock(CreatePlacementGroupIfNeeded.class);
 

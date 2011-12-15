@@ -18,7 +18,6 @@
  */
 package org.jclouds.azureblob.blobstore.config;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
@@ -40,8 +39,9 @@ import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.location.config.JustProviderLocationModule;
 
-import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -69,10 +69,11 @@ public class AzureBlobStoreContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Map<String, PublicAccess> containerAcls(final AzureBlobClient client) {
-      return new MapMaker().expireAfterWrite(30, TimeUnit.SECONDS).makeComputingMap(
-               new Function<String, PublicAccess>() {
-                  public PublicAccess apply(String container) {
+   protected LoadingCache<String, PublicAccess> containerAcls(final AzureBlobClient client) {
+      return CacheBuilder.newBuilder().expireAfterWrite(30, TimeUnit.SECONDS).build(
+               new CacheLoader<String, PublicAccess>() {
+                  @Override
+                  public PublicAccess load(String container) {
                      return client.getPublicAccessForContainer(container);
                   }
 

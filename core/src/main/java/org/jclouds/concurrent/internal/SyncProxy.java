@@ -32,14 +32,12 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Multimap;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.util.Throwables2;
 
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -50,12 +48,11 @@ import com.google.inject.ProvisionException;
  * 
  * @author Adrian Cole
  */
-@SuppressWarnings("deprecation")
 public class SyncProxy implements InvocationHandler {
 
    @SuppressWarnings("unchecked")
    public static <T> T proxy(Class<T> clazz, Object async,
-         @Named("sync") Cache<ClassMethodArgs, Object> delegateMap,
+         @Named("sync") LoadingCache<ClassMethodArgs, Object> delegateMap,
          Map<Class<?>, Class<?>> sync2Async, Map<String, Long> timeouts) throws IllegalArgumentException, SecurityException,
          NoSuchMethodException {
       return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz },
@@ -67,13 +64,13 @@ public class SyncProxy implements InvocationHandler {
    private final Map<Method, Method> methodMap;
    private final Map<Method, Method> syncMethodMap;
    private final Map<Method, Long> timeoutMap;
-   private final Cache<ClassMethodArgs, Object> delegateMap;
+   private final LoadingCache<ClassMethodArgs, Object> delegateMap;
    private final Map<Class<?>, Class<?>> sync2Async;
-   private static final Set<Method> objectMethods = ImmutableSet.of(Object.class.getMethods());
+   private static final Set<Method> objectMethods = ImmutableSet.copyOf(Object.class.getMethods());
 
    @Inject
    private SyncProxy(Class<?> declaring, Object async,
-         @Named("sync") Cache<ClassMethodArgs, Object> delegateMap, Map<Class<?>,
+         @Named("sync") LoadingCache<ClassMethodArgs, Object> delegateMap, Map<Class<?>,
            Class<?>> sync2Async, final Map<String, Long> timeouts)
          throws SecurityException, NoSuchMethodException {
       this.delegateMap = delegateMap;

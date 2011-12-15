@@ -142,7 +142,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Throwables;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableList;
@@ -174,24 +174,24 @@ public class RestAnnotationProcessor<T> {
    private final Class<T> declaring;
 
    // TODO replace with Table object
-   static final Cache<Method, Cache<Integer, Set<Annotation>>> methodToIndexOfParamToBinderParamAnnotation = createMethodToIndexOfParamToAnnotation(BinderParam.class);
-   static final Cache<Method, Cache<Integer, Set<Annotation>>> methodToIndexOfParamToWrapWithAnnotation = createMethodToIndexOfParamToAnnotation(WrapWith.class);
-   static final Cache<Method, Cache<Integer, Set<Annotation>>> methodToIndexOfParamToHeaderParamAnnotations = createMethodToIndexOfParamToAnnotation(HeaderParam.class);
-   static final Cache<Method, Cache<Integer, Set<Annotation>>> methodToIndexOfParamToEndpointAnnotations = createMethodToIndexOfParamToAnnotation(Endpoint.class);
-   static final Cache<Method, Cache<Integer, Set<Annotation>>> methodToIndexOfParamToEndpointParamAnnotations = createMethodToIndexOfParamToAnnotation(EndpointParam.class);
-   static final Cache<Method, Cache<Integer, Set<Annotation>>> methodToIndexOfParamToMatrixParamAnnotations = createMethodToIndexOfParamToAnnotation(MatrixParam.class);
-   static final Cache<Method, Cache<Integer, Set<Annotation>>> methodToIndexOfParamToFormParamAnnotations = createMethodToIndexOfParamToAnnotation(FormParam.class);
-   static final Cache<Method, Cache<Integer, Set<Annotation>>> methodToIndexOfParamToQueryParamAnnotations = createMethodToIndexOfParamToAnnotation(QueryParam.class);
-   static final Cache<Method, Cache<Integer, Set<Annotation>>> methodToIndexOfParamToPathParamAnnotations = createMethodToIndexOfParamToAnnotation(PathParam.class);
-   static final Cache<Method, Cache<Integer, Set<Annotation>>> methodToIndexOfParamToPostParamAnnotations = createMethodToIndexOfParamToAnnotation(PayloadParam.class);
-   static final Cache<Method, Cache<Integer, Set<Annotation>>> methodToIndexOfParamToPartParamAnnotations = createMethodToIndexOfParamToAnnotation(PartParam.class);
-   static final Cache<Method, Cache<Integer, Set<Annotation>>> methodToIndexOfParamToParamParserAnnotations = createMethodToIndexOfParamToAnnotation(ParamParser.class);
+   static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToBinderParamAnnotation = createMethodToIndexOfParamToAnnotation(BinderParam.class);
+   static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToWrapWithAnnotation = createMethodToIndexOfParamToAnnotation(WrapWith.class);
+   static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToHeaderParamAnnotations = createMethodToIndexOfParamToAnnotation(HeaderParam.class);
+   static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToEndpointAnnotations = createMethodToIndexOfParamToAnnotation(Endpoint.class);
+   static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToEndpointParamAnnotations = createMethodToIndexOfParamToAnnotation(EndpointParam.class);
+   static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToMatrixParamAnnotations = createMethodToIndexOfParamToAnnotation(MatrixParam.class);
+   static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToFormParamAnnotations = createMethodToIndexOfParamToAnnotation(FormParam.class);
+   static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToQueryParamAnnotations = createMethodToIndexOfParamToAnnotation(QueryParam.class);
+   static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToPathParamAnnotations = createMethodToIndexOfParamToAnnotation(PathParam.class);
+   static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToPostParamAnnotations = createMethodToIndexOfParamToAnnotation(PayloadParam.class);
+   static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToPartParamAnnotations = createMethodToIndexOfParamToAnnotation(PartParam.class);
+   static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToParamParserAnnotations = createMethodToIndexOfParamToAnnotation(ParamParser.class);
    static final Map<MethodKey, Method> delegationMap = newHashMap();
 
-   static Cache<Method, Cache<Integer, Set<Annotation>>> createMethodToIndexOfParamToAnnotation(
+   static LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> createMethodToIndexOfParamToAnnotation(
             final Class<? extends Annotation> annotation) {
-      return CacheBuilder.newBuilder().build(new CacheLoader<Method, Cache<Integer, Set<Annotation>>>() {
-         public Cache<Integer, Set<Annotation>> load(Method method) {
+      return CacheBuilder.newBuilder().build(new CacheLoader<Method, LoadingCache<Integer, Set<Annotation>>>() {
+         public LoadingCache<Integer, Set<Annotation>> load(Method method) {
             return CacheBuilder.newBuilder().build(CacheLoader.from(new GetAnnotationsForMethodParameterIndex(method, annotation)));
          }
       });
@@ -229,7 +229,7 @@ public class RestAnnotationProcessor<T> {
 
    };
 
-   static final Cache<Method, Set<Integer>> methodToIndexesOfOptions = CacheBuilder.newBuilder().build(
+   static final LoadingCache<Method, Set<Integer>> methodToIndexesOfOptions = CacheBuilder.newBuilder().build(
          new CacheLoader<Method, Set<Integer>>() {
             @Override
             public Set<Integer> load(Method method) {
@@ -246,7 +246,7 @@ public class RestAnnotationProcessor<T> {
    private final ParseSax.Factory parserFactory;
    private final HttpUtils utils;
    private final Provider<UriBuilder> uriBuilderProvider;
-   private final Cache<Class<?>, Boolean> seedAnnotationCache;
+   private final LoadingCache<Class<?>, Boolean> seedAnnotationCache;
    private final String apiVersion;
    private char[] skips;
 
@@ -308,7 +308,7 @@ public class RestAnnotationProcessor<T> {
 
    @SuppressWarnings("unchecked")
    @Inject
-   public RestAnnotationProcessor(Injector injector, Cache<Class<?>, Boolean> seedAnnotationCache,
+   public RestAnnotationProcessor(Injector injector, LoadingCache<Class<?>, Boolean> seedAnnotationCache,
          @Named(Constants.PROPERTY_API_VERSION) String apiVersion, ParseSax.Factory parserFactory, HttpUtils utils,
          TypeLiteral<T> typeLiteral) throws ExecutionException {
       this.declaring = (Class<T>) typeLiteral.getRawType();
@@ -1010,7 +1010,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    public static Map<Integer, Set<Annotation>> indexWithOnlyOneAnnotation(Method method, String description,
-         Cache<Method, Cache<Integer, Set<Annotation>>> toRefine) throws ExecutionException {
+         LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> toRefine) throws ExecutionException {
       Map<Integer, Set<Annotation>> indexToPayloadAnnotation = indexWithAtLeastOneAnnotation(method, toRefine);
       if (indexToPayloadAnnotation.size() > 1) {
          throw new IllegalStateException(String.format(
@@ -1021,7 +1021,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    private static Map<Integer, Set<Annotation>> indexWithAtLeastOneAnnotation(Method method,
-         Cache<Method, Cache<Integer, Set<Annotation>>> toRefine) throws ExecutionException {
+         LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> toRefine) throws ExecutionException {
       Map<Integer, Set<Annotation>> indexToPayloadAnnotation = filterValues(toRefine.get(method).asMap(),
             new Predicate<Set<Annotation>>() {
                public boolean apply(Set<Annotation> input) {
@@ -1061,7 +1061,7 @@ public class RestAnnotationProcessor<T> {
          final Object... args) throws ExecutionException {
       Multimap<String, String> headers = LinkedHashMultimap.create();
       addHeaderIfAnnotationPresentOnMethod(headers, method, tokenValues);
-      Cache<Integer, Set<Annotation>> indexToHeaderParam = methodToIndexOfParamToHeaderParamAnnotations.get(method);
+      LoadingCache<Integer, Set<Annotation>> indexToHeaderParam = methodToIndexOfParamToHeaderParamAnnotations.get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToHeaderParam.asMap().entrySet()) {
          for (Annotation key : entry.getValue()) {
             String value = args[entry.getKey()].toString();
@@ -1128,7 +1128,7 @@ public class RestAnnotationProcessor<T> {
 
    List<? extends Part> getParts(Method method, Object[] args, Iterable<Entry<String, String>> iterable) throws ExecutionException {
       List<Part> parts = newLinkedList();
-      Cache<Integer, Set<Annotation>> indexToPartParam = methodToIndexOfParamToPartParamAnnotations.get(method);
+      LoadingCache<Integer, Set<Annotation>> indexToPartParam = methodToIndexOfParamToPartParamAnnotations.get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToPartParam.asMap().entrySet()) {
          for (Annotation key : entry.getValue()) {
             PartParam param = (PartParam) key;
@@ -1168,9 +1168,9 @@ public class RestAnnotationProcessor<T> {
 
    private Multimap<String, String> getPathParamKeyValues(Method method, Object... args) throws ExecutionException {
       Multimap<String, String> pathParamValues = LinkedHashMultimap.create();
-      Cache<Integer, Set<Annotation>> indexToPathParam = methodToIndexOfParamToPathParamAnnotations.get(method);
+      LoadingCache<Integer, Set<Annotation>> indexToPathParam = methodToIndexOfParamToPathParamAnnotations.get(method);
 
-      Cache<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations.get(method);
+      LoadingCache<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations.get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToPathParam.asMap().entrySet()) {
          for (Annotation key : entry.getValue()) {
             Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
@@ -1205,9 +1205,9 @@ public class RestAnnotationProcessor<T> {
 
    private Multimap<String, String> getMatrixParamKeyValues(Method method, Object... args) throws ExecutionException {
       Multimap<String, String> matrixParamValues = LinkedHashMultimap.create();
-      Cache<Integer, Set<Annotation>> indexToMatrixParam = methodToIndexOfParamToMatrixParamAnnotations.get(method);
+      LoadingCache<Integer, Set<Annotation>> indexToMatrixParam = methodToIndexOfParamToMatrixParamAnnotations.get(method);
 
-      Cache<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations.get(method);
+      LoadingCache<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations.get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToMatrixParam.asMap().entrySet()) {
          for (Annotation key : entry.getValue()) {
             Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
@@ -1234,9 +1234,9 @@ public class RestAnnotationProcessor<T> {
 
    private Multimap<String, String> getFormParamKeyValues(Method method, Object... args) throws ExecutionException {
       Multimap<String, String> formParamValues = LinkedHashMultimap.create();
-      Cache<Integer, Set<Annotation>> indexToFormParam = methodToIndexOfParamToFormParamAnnotations.get(method);
+      LoadingCache<Integer, Set<Annotation>> indexToFormParam = methodToIndexOfParamToFormParamAnnotations.get(method);
 
-      Cache<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations.get(method);
+      LoadingCache<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations.get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToFormParam.asMap().entrySet()) {
          for (Annotation key : entry.getValue()) {
             Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
@@ -1265,9 +1265,9 @@ public class RestAnnotationProcessor<T> {
 
    private Multimap<String, String> getQueryParamKeyValues(Method method, Object... args) throws ExecutionException {
       Multimap<String, String> queryParamValues = LinkedHashMultimap.create();
-      Cache<Integer, Set<Annotation>> indexToQueryParam = methodToIndexOfParamToQueryParamAnnotations.get(method);
+      LoadingCache<Integer, Set<Annotation>> indexToQueryParam = methodToIndexOfParamToQueryParamAnnotations.get(method);
 
-      Cache<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations.get(method);
+      LoadingCache<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations.get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToQueryParam.asMap().entrySet()) {
          for (Annotation key : entry.getValue()) {
             Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
@@ -1294,8 +1294,8 @@ public class RestAnnotationProcessor<T> {
 
    private Map<String, String> buildPostParams(Method method, Object... args) throws ExecutionException {
       Map<String, String> postParams = newHashMap();
-      Cache<Integer, Set<Annotation>> indexToPathParam = methodToIndexOfParamToPostParamAnnotations.get(method);
-      Cache<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations.get(method);
+      LoadingCache<Integer, Set<Annotation>> indexToPathParam = methodToIndexOfParamToPostParamAnnotations.get(method);
+      LoadingCache<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations.get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToPathParam.asMap().entrySet()) {
          for (Annotation key : entry.getValue()) {
             Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());

@@ -52,7 +52,7 @@ import org.jclouds.logging.Logger;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
@@ -78,7 +78,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
    @VisibleForTesting
    final ComputeUtils utils;
    final InstancePresent instancePresent;
-   final Cache<RunningInstance, Credentials> instanceToCredentials;
+   final LoadingCache<RunningInstance, Credentials> instanceToCredentials;
    final Map<String, Credentials> credentialStore;
    final Provider<TemplateBuilder> templateBuilderProvider;
 
@@ -88,7 +88,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
             Provider<TemplateBuilder> templateBuilderProvider,
             CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
             InstancePresent instancePresent, Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
-            Cache<RunningInstance, Credentials> instanceToCredentials, Map<String, Credentials> credentialStore,
+            LoadingCache<RunningInstance, Credentials> instanceToCredentials, Map<String, Credentials> credentialStore,
             ComputeUtils utils) {
       this.client = checkNotNull(client, "client");
       this.templateBuilderProvider = checkNotNull(templateBuilderProvider, "templateBuilderProvider");

@@ -35,7 +35,7 @@ import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.internal.ClassMethodArgs;
 
 import com.google.common.base.Throwables;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheLoader;
 
 /**
@@ -48,13 +48,13 @@ import com.google.common.cache.CacheLoader;
 public class CreateClientForCaller extends CacheLoader<ClassMethodArgs, Object> {
    @Inject
    Injector injector;
-   private final Cache<ClassMethodArgs, Object> asyncMap;
-   private final Provider<Cache<ClassMethodArgs, Object>> delegateMap;
+   private final LoadingCache<ClassMethodArgs, Object> asyncMap;
+   private final Provider<LoadingCache<ClassMethodArgs, Object>> delegateMap;
    Map<Class<?>, Class<?>> sync2Async;
 
    @Inject
-   CreateClientForCaller(@Named("async") Cache<ClassMethodArgs, Object> asyncMap,
-            @Named("sync") Provider<Cache<ClassMethodArgs, Object>> delegateMap) {
+   CreateClientForCaller(@Named("async") LoadingCache<ClassMethodArgs, Object> asyncMap,
+            @Named("sync") Provider<LoadingCache<ClassMethodArgs, Object>> delegateMap) {
       this.asyncMap = asyncMap;
       this.delegateMap = delegateMap;
    }

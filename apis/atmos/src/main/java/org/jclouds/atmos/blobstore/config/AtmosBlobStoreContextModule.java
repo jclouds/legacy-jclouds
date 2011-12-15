@@ -18,7 +18,6 @@
  */
 package org.jclouds.atmos.blobstore.config;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
@@ -39,8 +38,9 @@ import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.location.config.JustProviderLocationModule;
 
-import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -68,15 +68,17 @@ public class AtmosBlobStoreContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Map<String, Boolean> isPublic(final AtmosClient client) {
-      return new MapMaker().expireAfterWrite(30, TimeUnit.SECONDS).makeComputingMap(new Function<String, Boolean>() {
-         public Boolean apply(String directory) {
-            return client.isPublic(directory);
-         }
+   protected LoadingCache<String, Boolean> isPublic(final AtmosClient client) {
+      return CacheBuilder.newBuilder().expireAfterWrite(30, TimeUnit.SECONDS).build(new CacheLoader<String, Boolean>() {
 
          @Override
          public String toString() {
             return "isPublic()";
+         }
+
+         @Override
+         public Boolean load(String arg0) throws Exception {
+            return client.isPublic(arg0);
          }
       });
    }

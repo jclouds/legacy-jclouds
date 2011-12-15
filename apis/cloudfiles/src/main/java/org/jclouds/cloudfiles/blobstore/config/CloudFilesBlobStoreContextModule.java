@@ -19,7 +19,6 @@
 package org.jclouds.cloudfiles.blobstore.config;
 
 import java.net.URI;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
@@ -34,8 +33,9 @@ import org.jclouds.openstack.swift.blobstore.SwiftBlobStore;
 import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
 import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlobMetadata;
 
-import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.inject.Provides;
 
 /**
@@ -46,9 +46,10 @@ public class CloudFilesBlobStoreContextModule extends SwiftBlobStoreContextModul
 
    @Provides
    @Singleton
-   protected Map<String, URI> cdnContainer(final CloudFilesClient client) {
-      return new MapMaker().expireAfterWrite(30, TimeUnit.SECONDS).makeComputingMap(new Function<String, URI>() {
-         public URI apply(String container) {
+   protected LoadingCache<String, URI> cdnContainer(final CloudFilesClient client) {
+      return CacheBuilder.newBuilder().expireAfterWrite(30, TimeUnit.SECONDS).build(new CacheLoader<String, URI>() {
+         @Override
+         public URI load(String container) {
             ContainerCDNMetadata md = client.getCDNMetadata(container);
             return md != null ? md.getCDNUri() : null;
          }

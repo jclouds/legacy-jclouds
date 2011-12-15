@@ -18,7 +18,6 @@
  */
 package org.jclouds.aws.s3.blobstore;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
@@ -48,6 +47,7 @@ import org.jclouds.s3.blobstore.functions.ObjectToBlobMetadata;
 import org.jclouds.s3.domain.AccessControlList;
 
 import com.google.common.base.Supplier;
+import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -65,7 +65,7 @@ public class AWSS3AsyncBlobStore extends S3AsyncBlobStore {
             BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
             BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
             BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
-            Provider<FetchBlobMetadata> fetchBlobMetadataProvider, Map<String, AccessControlList> bucketAcls,
+            Provider<FetchBlobMetadata> fetchBlobMetadataProvider, LoadingCache<String, AccessControlList> bucketAcls,
             Provider<AsyncMultipartUploadStrategy> multipartUploadStrategy) {
       super(context, blobUtils, service, defaultLocation, locations, async, sync, bucket2ResourceMd,
                container2BucketListOptions, bucket2ResourceList, object2Blob, blob2ObjectGetOptions, blob2Object,

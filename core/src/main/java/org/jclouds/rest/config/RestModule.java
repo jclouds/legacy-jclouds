@@ -40,7 +40,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.rest.internal.SeedAnnotationCache;
 
 import com.google.common.base.Function;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
@@ -77,14 +77,14 @@ public class RestModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Cache<Class<?>, Boolean> seedAnnotationCache(SeedAnnotationCache seedAnnotationCache) {
+   protected LoadingCache<Class<?>, Boolean> seedAnnotationCache(SeedAnnotationCache seedAnnotationCache) {
       return CacheBuilder.newBuilder().build(seedAnnotationCache);
    }
 
    @Provides
    @Singleton
    @Named("async")
-   Cache<ClassMethodArgs, Object> provideAsyncDelegateMap(CreateAsyncClientForCaller createAsyncClientForCaller) {
+   LoadingCache<ClassMethodArgs, Object> provideAsyncDelegateMap(CreateAsyncClientForCaller createAsyncClientForCaller) {
       return CacheBuilder.newBuilder().build(createAsyncClientForCaller);
    }
 
@@ -108,8 +108,8 @@ public class RestModule extends AbstractModule {
          // cannot use child injectors due to the super coarse guice lock on
          // Singleton
          util.setCaller(from);
-         Cache<ClassMethodArgs, Object> delegateMap = injector.getInstance(Key.get(
-                  new TypeLiteral<Cache<ClassMethodArgs, Object>>() {
+         LoadingCache<ClassMethodArgs, Object> delegateMap = injector.getInstance(Key.get(
+                  new TypeLiteral<LoadingCache<ClassMethodArgs, Object>>() {
                   }, Names.named("async")));
          AsyncRestClientProxy proxy = new AsyncRestClientProxy(injector, factory, util, typeLiteral, delegateMap);
          injector.injectMembers(proxy);

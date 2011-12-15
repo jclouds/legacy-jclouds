@@ -22,7 +22,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.concurrent.ExecutionException;
 
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.gson.JsonDeserializationContext;
@@ -56,7 +56,7 @@ public class EnumTypeAdapterThatReturnsFromValue<T extends Enum<T>> implements J
       }
    }
 
-   private final static Cache<Class<?>, Method> classToConvert = CacheBuilder.newBuilder()
+   private final static LoadingCache<Class<?>, Method> classToConvert = CacheBuilder.newBuilder()
          .build(new CacheLoader<Class<?>, Method>() {
 
             @Override

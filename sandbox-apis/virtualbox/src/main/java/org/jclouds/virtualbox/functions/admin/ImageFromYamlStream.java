@@ -36,7 +36,7 @@ import org.yaml.snakeyaml.constructor.Constructor;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.Iterables;
@@ -47,7 +47,7 @@ import com.google.common.collect.Maps;
  * @author Andrea Turli
  */
 @Singleton
-public class ImageFromYamlStream implements Function<InputStream, Cache<String, Image>> {
+public class ImageFromYamlStream implements Function<InputStream, LoadingCache<String, Image>> {
 
    /**
     * Type-safe config class for YAML
@@ -63,7 +63,7 @@ public class ImageFromYamlStream implements Function<InputStream, Cache<String, 
    }
 
    @Override
-   public Cache<String, Image> apply(InputStream source) {
+   public LoadingCache<String, Image> apply(InputStream source) {
 
       Constructor constructor = new Constructor(Config.class);
 
@@ -82,7 +82,7 @@ public class ImageFromYamlStream implements Function<InputStream, Cache<String, 
                   return image.getId();
                }
             });
-      Cache<String, Image> cache = CacheBuilder.newBuilder().build(CacheLoader.from(Functions.forMap(backingMap)));
+      LoadingCache<String, Image> cache = CacheBuilder.newBuilder().build(CacheLoader.from(Functions.forMap(backingMap)));
       for (String node : backingMap.keySet())
          cache.getUnchecked(node);
       return cache;

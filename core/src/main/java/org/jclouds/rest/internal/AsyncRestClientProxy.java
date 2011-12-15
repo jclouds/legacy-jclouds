@@ -48,7 +48,7 @@ import org.jclouds.util.Throwables2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
@@ -76,12 +76,12 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
 
    @Resource
    protected Logger logger = Logger.NULL;
-   private final Cache<ClassMethodArgs, Object> delegateMap;
+   private final LoadingCache<ClassMethodArgs, Object> delegateMap;
 
    @SuppressWarnings("unchecked")
    @Inject
    public AsyncRestClientProxy(Injector injector, Factory factory, RestAnnotationProcessor<T> util,
-            TypeLiteral<T> typeLiteral, @Named("async") Cache<ClassMethodArgs, Object> delegateMap) {
+            TypeLiteral<T> typeLiteral, @Named("async") LoadingCache<ClassMethodArgs, Object> delegateMap) {
       this.injector = injector;
       this.annotationProcessor = util;
       this.declaring = (Class<T>) typeLiteral.getRawType();

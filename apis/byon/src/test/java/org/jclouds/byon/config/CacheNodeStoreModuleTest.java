@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.Maps;
@@ -70,9 +70,9 @@ public class CacheNodeStoreModuleTest {
       Map<String, Node> map = Maps.newConcurrentMap();
 
       Injector injector = createInjectorWithProvidedMap(map);
-      assertEquals(injector.getInstance(Key.get(new TypeLiteral<Cache<String, Node>>() {
+      assertEquals(injector.getInstance(Key.get(new TypeLiteral<LoadingCache<String, Node>>() {
       })).asMap(), map);
-      Cache<String, Node> store = getStore(injector);
+      LoadingCache<String, Node> store = getStore(injector);
 
       for (int i = 0; i < 10; i++)
          check(map, store, "test" + i, "instance1" + i, "instancename" + i);
@@ -92,7 +92,7 @@ public class CacheNodeStoreModuleTest {
    public void testProvidedCacheConsistentAcrossMultipleInjectors() throws IOException {
       Map<String, Node> map = Maps.newConcurrentMap();
 
-      Cache<String, Node> cache = CacheBuilder.newBuilder().build(CacheLoader.from(Functions.forMap(map)));
+      LoadingCache<String, Node> cache = CacheBuilder.newBuilder().build(CacheLoader.from(Functions.forMap(map)));
 
       put(map, getStore(createInjectorWithProvidedCache(cache)), "test", "instance1", "instancename");
       checkConsistent(map, getStore(createInjectorWithProvidedCache(cache)), "test", "instance1", "instancename");
@@ -101,8 +101,8 @@ public class CacheNodeStoreModuleTest {
 
    }
 
-   private Cache<String, Node> getStore(Injector injector) {
-      return injector.getInstance(Key.get(new TypeLiteral<Cache<String, Node>>() {
+   private LoadingCache<String, Node> getStore(Injector injector) {
+      return injector.getInstance(Key.get(new TypeLiteral<LoadingCache<String, Node>>() {
       }));
    }
 
@@ -118,7 +118,7 @@ public class CacheNodeStoreModuleTest {
       });
    }
 
-   private Injector createInjectorWithProvidedCache(Cache<String, Node> cache) {
+   private Injector createInjectorWithProvidedCache(LoadingCache<String, Node> cache) {
       return Guice.createInjector(new CacheNodeStoreModule(cache), new AbstractModule() {
 
          @Override
@@ -130,14 +130,14 @@ public class CacheNodeStoreModuleTest {
       });
    }
 
-   private void check(Map<String, Node> map, Cache<String, Node> store, String key, String id, String name)
+   private void check(Map<String, Node> map, LoadingCache<String, Node> store, String key, String id, String name)
          throws IOException {
       put(map, store, key, id, name);
       checkConsistent(map, store, key, id, name);
       remove(map, store, key);
    }
 
-   private void remove(Map<String, Node> map, Cache<String, Node> store, String key) {
+   private void remove(Map<String, Node> map, LoadingCache<String, Node> store, String key) {
       store.invalidate(key);
       assertEquals(store.size(), 0);
       map.remove(key);
@@ -151,7 +151,7 @@ public class CacheNodeStoreModuleTest {
       assertEquals(map.get(key), null);
    }
 
-   private void checkConsistent(Map<String, Node> map, Cache<String, Node> store, String key, String id, String name)
+   private void checkConsistent(Map<String, Node> map, LoadingCache<String, Node> store, String key, String id, String name)
          throws IOException {
       assertEquals(map.size(), 1);
       if (store.size() == 0)
@@ -162,7 +162,7 @@ public class CacheNodeStoreModuleTest {
       assertEquals(store.getUnchecked(key), Node.builder().id(id).name(name).build());
    }
 
-   private void put(Map<String, Node> map, Cache<String, Node> store, String key, String id, String name) {
+   private void put(Map<String, Node> map, LoadingCache<String, Node> store, String key, String id, String name) {
       assertEquals(store.size(), 0);
       assertEquals(map.size(), 0);
       map.put(key, Node.builder().id(id).name(name).build());

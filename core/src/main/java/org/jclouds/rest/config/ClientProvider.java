@@ -27,7 +27,7 @@ import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.internal.ClassMethodArgs;
 
 import com.google.common.base.Throwables;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provider;
@@ -59,8 +59,8 @@ public class ClientProvider<S, A> implements Provider<S> {
    @Singleton
    public S get() {
       A client = (A) injector.getInstance(Key.get(asyncClientType));
-      Cache<ClassMethodArgs, Object> delegateMap = injector.getInstance(Key.get(
-               new TypeLiteral<Cache<ClassMethodArgs, Object>>() {
+      LoadingCache<ClassMethodArgs, Object> delegateMap = injector.getInstance(Key.get(
+               new TypeLiteral<LoadingCache<ClassMethodArgs, Object>>() {
                }, Names.named("sync")));
       try {
          return (S) SyncProxy.proxy(syncClientType, client, delegateMap, sync2Async,

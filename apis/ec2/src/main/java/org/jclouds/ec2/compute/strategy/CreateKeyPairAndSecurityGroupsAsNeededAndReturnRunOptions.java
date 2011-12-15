@@ -44,7 +44,7 @@ import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
@@ -59,14 +59,14 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
    @VisibleForTesting
    public final ConcurrentMap<RegionAndName, KeyPair> credentialsMap;
    @VisibleForTesting
-   public final Cache<RegionAndName, String> securityGroupMap;
+   public final LoadingCache<RegionAndName, String> securityGroupMap;
    @VisibleForTesting
    public final Provider<RunInstancesOptions> optionsProvider;
 
    @Inject
    public CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions(Function<RegionAndName, KeyPair> makeKeyPair,
             ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
-            @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap,
+            @Named("SECURITY") LoadingCache<RegionAndName, String> securityGroupMap,
             Provider<RunInstancesOptions> optionsProvider) {
       this.makeKeyPair = checkNotNull(makeKeyPair, "makeKeyPair");
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");

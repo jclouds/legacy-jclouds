@@ -47,7 +47,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -75,13 +75,13 @@ public class AWSEC2ImageSupplier implements Supplier<Set<? extends Image>> {
    private final String amiQuery;
    private final Iterable<String> clusterRegions;
    private final String ccAmiQuery;
-   private final Supplier<Cache<RegionAndName, ? extends Image>> cache;
+   private final Supplier<LoadingCache<RegionAndName, ? extends Image>> cache;
    
    @Inject
    protected AWSEC2ImageSupplier(@Region Set<String> regions,
             @Named(PROPERTY_EC2_AMI_QUERY) String amiQuery, @Named(PROPERTY_EC2_CC_REGIONS) String clusterRegions,
             @Named(PROPERTY_EC2_CC_AMI_QUERY) String ccAmiQuery, 
-            Supplier<Cache<RegionAndName, ? extends Image>> cache,
+            Supplier<LoadingCache<RegionAndName, ? extends Image>> cache,
             CallForImages.Factory factory, @ClusterCompute Set<String> clusterComputeIds,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.factory = factory;

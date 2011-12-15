@@ -57,7 +57,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -75,13 +76,13 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
    protected final Supplier<Set<? extends Location>> locations;
    protected final Supplier<Set<? extends Hardware>> hardware;
-   protected final Supplier<Cache<RegionAndName, ? extends Image>> imageMap;
+   protected final Supplier<LoadingCache<RegionAndName, ? extends Image>> imageMap;
    protected final Map<String, Credentials> credentialStore;
    protected final Map<InstanceState, NodeState> instanceToNodeState;
 
    @Inject
    protected RunningInstanceToNodeMetadata(Map<InstanceState, NodeState> instanceToNodeState,
-            Map<String, Credentials> credentialStore, Supplier<Cache<RegionAndName, ? extends Image>> imageMap,
+            Map<String, Credentials> credentialStore, Supplier<LoadingCache<RegionAndName, ? extends Image>> imageMap,
             @Memoized Supplier<Set<? extends Location>> locations, @Memoized Supplier<Set<? extends Hardware>> hardware) {
       this.locations = checkNotNull(locations, "locations");
       this.hardware = checkNotNull(hardware, "hardware");
@@ -133,7 +134,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
          Image image = imageMap.get().getUnchecked(regionAndName);
          if (image != null)
             builder.operatingSystem(image.getOperatingSystem());
-      } catch (NullPointerException e) {
+      } catch (CacheLoader.InvalidCacheLoadException e) {
          logger.debug("image not found for %s: %s", regionAndName, e);
       } catch (UncheckedExecutionException e) {
          logger.debug("error getting image for %s: %s", regionAndName, e);

@@ -33,7 +33,7 @@ import org.jclouds.encryption.bouncycastle.config.BouncyCastleCryptoModule;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
 
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
@@ -85,7 +85,7 @@ public class TestUtils {
       return null;
    }
 
-   public static ComputeServiceContext computeServiceForVirtualBox(Cache<String, Node> cache) {
+   public static ComputeServiceContext computeServiceForVirtualBox(LoadingCache<String, Node> cache) {
       return new ComputeServiceContextFactory().createContext("byon", "foo", "bar", ImmutableSet.<Module> of(
             new SshjSshClientModule(), new SLF4JLoggingModule(), new BouncyCastleCryptoModule(),
             new CacheNodeStoreModule(cache)));

@@ -59,7 +59,7 @@ import org.jclouds.rest.internal.RestContextImpl;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableMap;
@@ -128,7 +128,7 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Cache<RunningInstance, Credentials> credentialsMap(CacheLoader<RunningInstance, Credentials> in) {
+   protected LoadingCache<RunningInstance, Credentials> credentialsMap(CacheLoader<RunningInstance, Credentials> in) {
       return CacheBuilder.newBuilder().build(in);
    }
 
@@ -141,7 +141,7 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
    @Provides
    @Singleton
    @Named("SECURITY")
-   protected Cache<RegionAndName, String> securityGroupMap(CacheLoader<RegionAndName, String> in) {
+   protected LoadingCache<RegionAndName, String> securityGroupMap(CacheLoader<RegionAndName, String> in) {
       return CacheBuilder.newBuilder().build(in);
    }
    

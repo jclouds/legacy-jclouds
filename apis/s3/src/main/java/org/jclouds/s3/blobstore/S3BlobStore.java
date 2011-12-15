@@ -20,7 +20,6 @@ package org.jclouds.s3.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -51,10 +50,10 @@ import org.jclouds.s3.blobstore.functions.ContainerToBucketListOptions;
 import org.jclouds.s3.blobstore.functions.ObjectToBlob;
 import org.jclouds.s3.blobstore.functions.ObjectToBlobMetadata;
 import org.jclouds.s3.domain.AccessControlList;
-import org.jclouds.s3.domain.AccessControlList.GroupGranteeURI;
-import org.jclouds.s3.domain.AccessControlList.Permission;
 import org.jclouds.s3.domain.BucketMetadata;
 import org.jclouds.s3.domain.CannedAccessPolicy;
+import org.jclouds.s3.domain.AccessControlList.GroupGranteeURI;
+import org.jclouds.s3.domain.AccessControlList.Permission;
 import org.jclouds.s3.options.ListBucketOptions;
 import org.jclouds.s3.options.PutBucketOptions;
 import org.jclouds.s3.options.PutObjectOptions;
@@ -63,6 +62,8 @@ import org.jclouds.util.Assertions;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
 
 /**
@@ -80,7 +81,7 @@ public class S3BlobStore extends BaseBlobStore {
    private final ObjectToBlobMetadata object2BlobMd;
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
-   private final Map<String, AccessControlList> bucketAcls;
+   private final LoadingCache<String, AccessControlList> bucketAcls;
 
    @Inject
    protected S3BlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
@@ -88,7 +89,7 @@ public class S3BlobStore extends BaseBlobStore {
          BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
          BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
          BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
-         Provider<FetchBlobMetadata> fetchBlobMetadataProvider, Map<String, AccessControlList> bucketAcls) {
+         Provider<FetchBlobMetadata> fetchBlobMetadataProvider, LoadingCache<String, AccessControlList> bucketAcls) {
       super(context, blobUtils, defaultLocation, locations);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");
@@ -233,11 +234,11 @@ public class S3BlobStore extends BaseBlobStore {
    public String putBlob(String container, Blob blob) {
       PutObjectOptions options = new PutObjectOptions();
       try {
-         AccessControlList acl = bucketAcls.get(container);
+         AccessControlList acl = bucketAcls.getUnchecked(container);
          if (acl != null && acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ))
             options.withAcl(CannedAccessPolicy.PUBLIC_READ);
-      } catch (NullPointerException e) {
-         // MapMaker
+      } catch (CacheLoader.InvalidCacheLoadException e) {
+         // nulls not permitted from cache loader
       }
       return sync.putObject(container, blob2Object.apply(blob), options);
    }

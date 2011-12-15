@@ -59,7 +59,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.Maps;
@@ -106,7 +106,7 @@ public class ElasticStackComputeServiceContextModule
 
    @Provides
    @Singleton
-   protected Cache<String, DriveInfo> cache(GetDrive getDrive) {
+   protected LoadingCache<String, DriveInfo> cache(GetDrive getDrive) {
       return CacheBuilder.newBuilder().build(getDrive);
    }
 

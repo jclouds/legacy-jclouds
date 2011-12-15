@@ -34,7 +34,7 @@ import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
@@ -53,7 +53,7 @@ public class BYONComputeServiceContextModule extends
 
    @Provides
    @Singleton
-   Supplier provideApi(Supplier<Cache<String, Node>> in) {
+   Supplier provideApi(Supplier<LoadingCache<String, Node>> in) {
       return in;
    }
 

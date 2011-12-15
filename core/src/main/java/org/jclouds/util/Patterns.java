@@ -23,7 +23,7 @@ import java.net.URLEncoder;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 
@@ -50,7 +50,7 @@ public class Patterns {
    public static final Pattern TRAILING_SLASHES = Pattern.compile("[/]*$");
    public static final Pattern REST_CONTEXT_BUILDER = Pattern.compile("(.*ContextBuilder)<([^,]+), ?([^>]+)>");
 
-   public final static Cache<Character, Pattern> CHAR_TO_ENCODED_PATTERN = CacheBuilder.newBuilder()
+   public final static LoadingCache<Character, Pattern> CHAR_TO_ENCODED_PATTERN = CacheBuilder.newBuilder()
          .<Character, Pattern> build(new CacheLoader<Character, Pattern>() {
             @Override
             public Pattern load(Character plain) throws ExecutionException {
@@ -63,7 +63,7 @@ public class Patterns {
             }
          });
 
-   public final static Cache<Character, Pattern> CHAR_TO_PATTERN = CacheBuilder.newBuilder()
+   public final static LoadingCache<Character, Pattern> CHAR_TO_PATTERN = CacheBuilder.newBuilder()
          .<Character, Pattern> build(new CacheLoader<Character, Pattern>() {
             @Override
             public Pattern load(Character plain) {
@@ -71,7 +71,7 @@ public class Patterns {
             }
          });
 
-   public final static Cache<String, Pattern> TOKEN_TO_PATTERN = CacheBuilder.newBuilder()
+   public final static LoadingCache<String, Pattern> TOKEN_TO_PATTERN = CacheBuilder.newBuilder()
          .<String, Pattern> build(new CacheLoader<String, Pattern>() {
             @Override
             public Pattern load(String tokenValue) {

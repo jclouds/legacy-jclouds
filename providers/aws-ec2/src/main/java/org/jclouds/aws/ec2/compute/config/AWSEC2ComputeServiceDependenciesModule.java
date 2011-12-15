@@ -59,7 +59,7 @@ import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.Sets;
@@ -116,7 +116,7 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
    @Provides
    @Singleton
    @Named("PLACEMENT")
-   protected Cache<RegionAndName, String> placementGroupMap(CreatePlacementGroupIfNeeded in) {
+   protected LoadingCache<RegionAndName, String> placementGroupMap(CreatePlacementGroupIfNeeded in) {
       return CacheBuilder.newBuilder().build(in);
    }
 

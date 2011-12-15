@@ -45,7 +45,7 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
@@ -65,11 +65,11 @@ public class EC2ImageSupplier implements Supplier<Set<? extends Image>> {
    private final DescribeImagesParallel describer;
    private final String[] amiOwners;
    private final EC2ImageParser parser;
-   private final Supplier<Cache<RegionAndName, ? extends Image>> cache;
+   private final Supplier<LoadingCache<RegionAndName, ? extends Image>> cache;
 
    @Inject
    protected EC2ImageSupplier(@Region Set<String> regions, DescribeImagesParallel describer,
-         @Named(PROPERTY_EC2_AMI_OWNERS) String[] amiOwners, Supplier<Cache<RegionAndName, ? extends Image>> cache,
+         @Named(PROPERTY_EC2_AMI_OWNERS) String[] amiOwners, Supplier<LoadingCache<RegionAndName, ? extends Image>> cache,
          EC2ImageParser parser) {
       this.regions = regions;
       this.describer = describer;

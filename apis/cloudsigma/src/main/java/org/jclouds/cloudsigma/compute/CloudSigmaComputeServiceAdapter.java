@@ -58,7 +58,7 @@ import org.jclouds.logging.Logger;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
@@ -86,7 +86,7 @@ public class CloudSigmaComputeServiceAdapter implements
    private final Predicate<DriveInfo> driveNotClaimed;
    private final JustProvider locationSupplier;
    private final String defaultVncPassword;
-   private final Cache<String, DriveInfo> cache;
+   private final LoadingCache<String, DriveInfo> cache;
    private final ExecutorService executor;
 
    @Resource
@@ -96,7 +96,7 @@ public class CloudSigmaComputeServiceAdapter implements
    @Inject
    public CloudSigmaComputeServiceAdapter(CloudSigmaClient client, Predicate<DriveInfo> driveNotClaimed,
          JustProvider locationSupplier, @Named(CloudSigmaConstants.PROPERTY_VNC_PASSWORD) String defaultVncPassword,
-         Cache<String, DriveInfo> cache, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+         LoadingCache<String, DriveInfo> cache, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.client = checkNotNull(client, "client");
       this.driveNotClaimed = checkNotNull(driveNotClaimed, "driveNotClaimed");
       this.locationSupplier = checkNotNull(locationSupplier, "locationSupplier");

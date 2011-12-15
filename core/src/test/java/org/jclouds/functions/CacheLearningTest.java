@@ -24,7 +24,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.testng.annotations.Test;
 
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.util.concurrent.UncheckedExecutionException;
@@ -37,7 +37,7 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 public class CacheLearningTest {
    @Test
    public void howTo() throws ExecutionException {
-      Cache<String, String> cache = CacheBuilder.newBuilder().build(new CacheLoader<String, String>() {
+      LoadingCache<String, String> cache = CacheBuilder.newBuilder().build(new CacheLoader<String, String>() {
 
          @Override
          public String load(String key) throws Exception {
@@ -57,10 +57,17 @@ public class CacheLearningTest {
       try {
          cache.get("foo");
          assert false : "expected exception on miss";
-      } catch (NullPointerException e) {
-         assertEquals(e.getMessage(), "testLoader returned null for key foo.");
+      } catch (CacheLoader.InvalidCacheLoadException e) {
+         assertEquals(e.getMessage(), "CacheLoader returned null for key foo.");
       }
-
+      
+      try {
+         cache.getUnchecked("foo");
+         assert false : "expected exception on miss";
+      } catch (CacheLoader.InvalidCacheLoadException e) {
+         assertEquals(e.getMessage(), "CacheLoader returned null for key foo.");
+      }
+      
       assertEquals(cache.asMap().keySet().size(), 0);
       assertEquals(cache.asMap().size(), 0);
 

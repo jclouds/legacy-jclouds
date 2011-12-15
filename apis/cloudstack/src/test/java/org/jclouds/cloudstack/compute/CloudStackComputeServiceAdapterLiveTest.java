@@ -67,7 +67,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -119,7 +119,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
          @SuppressWarnings("unused")
          @Provides
          @Singleton
-         protected Cache<Long, Set<IPForwardingRule>> getIPForwardingRuleByVirtualMachine(
+         protected LoadingCache<Long, Set<IPForwardingRule>> getIPForwardingRuleByVirtualMachine(
                GetIPForwardingRulesByVirtualMachine getIPForwardingRule) {
             return CacheBuilder.newBuilder().build(getIPForwardingRule);
          }

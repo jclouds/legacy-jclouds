@@ -43,7 +43,7 @@ import org.jclouds.tools.ant.logging.config.AntLoggingModule;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Splitter;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableSet;
@@ -67,7 +67,7 @@ public class ComputeTaskUtils {
     *           allows access to the ant project to retrieve default properties needed for compute
     *           providers.
     */
-   static Cache<URI, ComputeServiceContext> buildComputeMap(final Provider<Project> projectProvider) {
+   static LoadingCache<URI, ComputeServiceContext> buildComputeMap(final Provider<Project> projectProvider) {
       return CacheBuilder.newBuilder().build(new CacheLoader<URI, ComputeServiceContext>() {
 
          @SuppressWarnings("unchecked")

@@ -34,7 +34,7 @@ import org.jclouds.ec2.domain.RunningInstance;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheLoader;
 
 /**
@@ -44,11 +44,11 @@ import com.google.common.cache.CacheLoader;
 @Singleton
 public class CredentialsForInstance extends CacheLoader<RunningInstance, Credentials> {
    private final ConcurrentMap<RegionAndName, KeyPair> credentialsMap;
-   private final Supplier<Cache<RegionAndName, ? extends Image>> imageMap;
+   private final Supplier<LoadingCache<RegionAndName, ? extends Image>> imageMap;
 
    @Inject
    CredentialsForInstance(ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
-         Supplier<Cache<RegionAndName, ? extends Image>> imageMap) {
+         Supplier<LoadingCache<RegionAndName, ? extends Image>> imageMap) {
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
       this.imageMap = imageMap;
    }

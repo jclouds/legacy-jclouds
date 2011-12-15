@@ -49,7 +49,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableSet;
@@ -73,7 +73,7 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
          @Memoized Supplier<Set<? extends Hardware>> sizes, Location defaultLocation,
          Provider<TemplateOptions> optionsProvider, Provider<TemplateBuilder> templateBuilderProvider) {
 
-      Cache<RegionAndName, ? extends Image> imageMap;
+      LoadingCache<RegionAndName, ? extends Image> imageMap;
       if (knownImage != null) {
          final RegionAndName knownRegionAndName = new RegionAndName(knownImage.getLocation().getId(), knownImage.getProviderId());
 
@@ -91,7 +91,7 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
       }
 
       return new EC2TemplateBuilderImpl(locations, images, sizes, Suppliers.ofInstance(defaultLocation),
-            optionsProvider, templateBuilderProvider, Suppliers.<Cache<RegionAndName, ? extends Image>>ofInstance(imageMap));
+            optionsProvider, templateBuilderProvider, Suppliers.<LoadingCache<RegionAndName, ? extends Image>>ofInstance(imageMap));
    }
 
    @SuppressWarnings("unchecked")

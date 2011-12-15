@@ -21,7 +21,6 @@ package org.jclouds.atmos.blobstore;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.atmos.options.PutOptions.Builder.publicRead;
 
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -54,6 +53,8 @@ import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
 
 import com.google.common.base.Supplier;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
  * @author Adrian Cole
@@ -69,7 +70,7 @@ public class AtmosBlobStore extends BaseBlobStore {
    private final Crypto crypto;
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
-   private final Map<String, Boolean> isPublic;
+   private final LoadingCache<String, Boolean> isPublic;
 
    @Inject
    AtmosBlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
@@ -78,7 +79,7 @@ public class AtmosBlobStore extends BaseBlobStore {
             BlobStoreListOptionsToListOptions container2ContainerListOptions,
             DirectoryEntryListToResourceMetadataList container2ResourceList, Crypto crypto,
             BlobToHttpGetOptions blob2ObjectGetOptions, Provider<FetchBlobMetadata> fetchBlobMetadataProvider,
-            Map<String, Boolean> isPublic) {
+            LoadingCache<String, Boolean> isPublic) {
       super(context, blobUtils, defaultLocation, locations);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");
@@ -212,10 +213,10 @@ public class AtmosBlobStore extends BaseBlobStore {
    public String putBlob(final String container, final Blob blob) {
       final org.jclouds.atmos.options.PutOptions options = new org.jclouds.atmos.options.PutOptions();
       try {
-         if (isPublic.get(container + "/"))
+         if (isPublic.getUnchecked(container + "/"))
             options.publicRead();
-      } catch (NullPointerException e) {
-         // MapMaker
+      } catch (CacheLoader.InvalidCacheLoadException e) {
+         // nulls not permitted
       }
       return AtmosUtils.putBlob(sync, crypto, blob2Object, container, blob, options);
    }

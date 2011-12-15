@@ -29,7 +29,7 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
@@ -125,7 +125,7 @@ public class RestClientModule<S, A> extends AbstractModule {
    @Provides
    @Singleton
    @Named("sync")
-   Cache<ClassMethodArgs, Object> provideSyncDelegateMap(
+   LoadingCache<ClassMethodArgs, Object> provideSyncDelegateMap(
          CreateClientForCaller createClientForCaller) {
       createClientForCaller.sync2Async = delegates;
       return CacheBuilder.newBuilder().build(createClientForCaller);

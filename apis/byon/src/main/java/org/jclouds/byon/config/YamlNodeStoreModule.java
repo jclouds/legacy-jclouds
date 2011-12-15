@@ -38,7 +38,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.io.InputSupplier;
@@ -67,9 +67,9 @@ public class YamlNodeStoreModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(new TypeLiteral<Supplier<Cache<String, Node>>>() {
+      bind(new TypeLiteral<Supplier<LoadingCache<String, Node>>>() {
       }).to(NodesParsedFromSupplier.class);
-      bind(new TypeLiteral<Function<InputStream, Cache<String, Node>>>() {
+      bind(new TypeLiteral<Function<InputStream, LoadingCache<String, Node>>>() {
       }).to(NodesFromYamlStream.class);
       bind(new TypeLiteral<Function<YamlNode, InputStream>>() {
       }).toInstance(org.jclouds.byon.domain.YamlNode.yamlNodeToInputStream);
@@ -103,7 +103,7 @@ public class YamlNodeStoreModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Cache<String, Node> provideNodeStore(Map<String, YamlNode> backing, Function<Node, YamlNode> yamlSerializer,
+   protected LoadingCache<String, Node> provideNodeStore(Map<String, YamlNode> backing, Function<Node, YamlNode> yamlSerializer,
          Function<YamlNode, Node> yamlDeserializer) {
       return CacheBuilder.newBuilder().build(CacheLoader.from(Functions.forMap(new TransformingMap<String, YamlNode, Node>(backing, yamlDeserializer, yamlSerializer))));
    }

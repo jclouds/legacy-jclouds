@@ -45,7 +45,7 @@ import org.jclouds.util.CredentialUtils;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Splitter;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
 import com.google.inject.Provider;
 
@@ -55,7 +55,7 @@ import com.google.inject.Provider;
  */
 public class ComputeTask extends Task {
 
-   private final Cache<URI, ComputeServiceContext> computeMap;
+   private final LoadingCache<URI, ComputeServiceContext> computeMap;
    private String provider;
    private String actions;
    private NodeElement nodeElement;
@@ -71,7 +71,7 @@ public class ComputeTask extends Task {
       }
    };
 
-   public ComputeTask(@Nullable Cache<URI, ComputeServiceContext> computeMap) {
+   public ComputeTask(@Nullable LoadingCache<URI, ComputeServiceContext> computeMap) {
       this.computeMap = computeMap != null ? computeMap : buildComputeMap(projectProvider);
    }
 

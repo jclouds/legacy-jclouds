@@ -24,12 +24,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
 
+import javax.annotation.Nullable;
+
 import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
-import sun.awt.image.ImageWatched;
-
-import javax.annotation.Nullable;
 
 /**
  * @author Dmitri Babaev

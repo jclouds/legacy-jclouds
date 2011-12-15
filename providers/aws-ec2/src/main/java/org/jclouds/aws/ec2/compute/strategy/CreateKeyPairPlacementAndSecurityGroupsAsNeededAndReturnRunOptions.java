@@ -46,7 +46,7 @@ import org.jclouds.logging.Logger;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 
 /**
  * 
@@ -59,7 +59,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    @VisibleForTesting
-   final Cache<RegionAndName, String> placementGroupMap;
+   final LoadingCache<RegionAndName, String> placementGroupMap;
    @VisibleForTesting
    final CreatePlacementGroupIfNeeded createPlacementGroupIfNeeded;
    @VisibleForTesting
@@ -68,9 +68,9 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
    @Inject
    public CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions(
          Function<RegionAndName, KeyPair> makeKeyPair, ConcurrentMap<RegionAndName, KeyPair> credentialsMap,
-         @Named("SECURITY") Cache<RegionAndName, String> securityGroupMap,
+         @Named("SECURITY") LoadingCache<RegionAndName, String> securityGroupMap,
          Provider<RunInstancesOptions> optionsProvider,
-         @Named("PLACEMENT") Cache<RegionAndName, String> placementGroupMap,
+         @Named("PLACEMENT") LoadingCache<RegionAndName, String> placementGroupMap,
          CreatePlacementGroupIfNeeded createPlacementGroupIfNeeded,
          Function<RegionNameAndPublicKeyMaterial, KeyPair> importExistingKeyPair) {
       super(makeKeyPair, credentialsMap, securityGroupMap, optionsProvider);

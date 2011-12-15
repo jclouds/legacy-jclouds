@@ -48,7 +48,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.UncheckedExecutionException;
@@ -74,13 +74,13 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
    private final FindLocationForVirtualMachine findLocationForVirtualMachine;
    private final FindHardwareForVirtualMachine findHardwareForVirtualMachine;
    private final FindImageForVirtualMachine findImageForVirtualMachine;
-   private final Cache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine;
+   private final LoadingCache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine;
 
    @Inject
    VirtualMachineToNodeMetadata(FindLocationForVirtualMachine findLocationForVirtualMachine,
          FindHardwareForVirtualMachine findHardwareForVirtualMachine,
          FindImageForVirtualMachine findImageForVirtualMachine,
-         Cache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine) {
+         LoadingCache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine) {
       this.findLocationForVirtualMachine = checkNotNull(findLocationForVirtualMachine, "findLocationForVirtualMachine");
       this.findHardwareForVirtualMachine = checkNotNull(findHardwareForVirtualMachine, "findHardwareForVirtualMachine");
       this.findImageForVirtualMachine = checkNotNull(findImageForVirtualMachine, "findImageForVirtualMachine");

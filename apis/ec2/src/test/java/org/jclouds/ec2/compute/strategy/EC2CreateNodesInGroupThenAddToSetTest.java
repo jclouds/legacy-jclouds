@@ -51,7 +51,7 @@ import org.jclouds.ec2.options.RunInstancesOptions;
 import org.jclouds.ec2.services.InstanceClient;
 import org.testng.annotations.Test;
 
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
@@ -222,7 +222,7 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize = createMock(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class);
       InstancePresent instancePresent = createMock(InstancePresent.class);
       RunningInstanceToNodeMetadata runningInstanceToNodeMetadata = createMock(RunningInstanceToNodeMetadata.class);
-      Cache<RunningInstance, Credentials> instanceToCredentials = createMock(Cache.class);
+      LoadingCache<RunningInstance, Credentials> instanceToCredentials = createMock(LoadingCache.class);
       Map<String, Credentials> credentialStore = createMock(Map.class);
       ComputeUtils utils = createMock(ComputeUtils.class);
       return new EC2CreateNodesInGroupThenAddToSet(client, Providers.<TemplateBuilder> of(template),

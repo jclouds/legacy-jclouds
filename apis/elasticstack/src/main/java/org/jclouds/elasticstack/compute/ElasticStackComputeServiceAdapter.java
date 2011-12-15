@@ -61,7 +61,7 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
@@ -79,7 +79,7 @@ public class ElasticStackComputeServiceAdapter implements
    private final ElasticStackClient client;
    private final Predicate<DriveInfo> driveNotClaimed;
    private final Map<String, WellKnownImage> preinstalledImages;
-   private final Cache<String, DriveInfo> cache;
+   private final LoadingCache<String, DriveInfo> cache;
    private final JustProvider locationSupplier;
    private final String defaultVncPassword;
    private final ExecutorService executor;
@@ -90,7 +90,7 @@ public class ElasticStackComputeServiceAdapter implements
 
    @Inject
    public ElasticStackComputeServiceAdapter(ElasticStackClient client, Predicate<DriveInfo> driveNotClaimed,
-         JustProvider locationSupplier, Map<String, WellKnownImage> preinstalledImages, Cache<String, DriveInfo> cache,
+         JustProvider locationSupplier, Map<String, WellKnownImage> preinstalledImages, LoadingCache<String, DriveInfo> cache,
          @Named(ElasticStackConstants.PROPERTY_VNC_PASSWORD) String defaultVncPassword,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.client = checkNotNull(client, "client");
