@@ -18,6 +18,7 @@
  */
 package org.jclouds.glesys.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -94,7 +95,27 @@ public class Memory {
    }
 
    @Override
+   public boolean equals(Object object) {
+      if (this == object) {
+         return true;
+      }
+      if (object instanceof Memory) {
+         Memory other = (Memory) object;
+         return Objects.equal(usage, other.usage)
+               && Objects.equal(size, other.size)
+               && Objects.equal(unit, other.unit);
+      } else {
+         return false;
+      }
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(usage, size, unit);
+   }
+
+   @Override
    public String toString() {
-      return String.format("Memory[usage=%d, size=%d, unit=%s]", usage, size, unit);
+      return String.format("[usage=%d, size=%d, unit=%s]", usage, size, unit);
    }
 }

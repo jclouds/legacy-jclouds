@@ -19,6 +19,7 @@
 package org.jclouds.glesys.domain;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 
@@ -27,13 +28,16 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Represents an 'uptime' duration of server in a Glesys cloud
+ *
  * @author Adam Lowe
+ * @see ServerStatus
  */
 public class ServerUptime {
    private final long time;
    private final String timeString;
 
-   public ServerUptime(long time) {
+   private ServerUptime(long time) {
       this.time = time;
       long days = TimeUnit.SECONDS.toDays(time);
       long hours = TimeUnit.SECONDS.toHours(time - TimeUnit.DAYS.toSeconds(days));
@@ -64,14 +68,14 @@ public class ServerUptime {
    }
 
    /**
-    * @param uptimeString a Glesys uptime string
+    * @param uptimeString a Glesys uptime string, ex. "0 0 0 0 0 10 1 1"
     */
    public static ServerUptime fromValue(String uptimeString) {
       return new ServerUptime(uptimeString);
    }
 
    /**
-    * @param time number of seconds
+    * @param time number of seconds the server has been up
     */
    public static ServerUptime fromValue(long time) {
       return new ServerUptime(time);
@@ -82,7 +86,22 @@ public class ServerUptime {
    }
 
    @Override
+   public boolean equals(Object object) {
+      if (this == object) {
+         return true;
+      }
+      return object instanceof ServerUptime
+            && Objects.equal(time, ((ServerUptime) object).getTime());
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(time);
+   }
+
+   @Override
    public String toString() {
       return timeString;
    }
+
 }
