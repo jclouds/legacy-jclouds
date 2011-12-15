@@ -38,7 +38,7 @@ public class SshAvailableLiveTest extends BaseVirtualBoxClientLiveTest {
    public void testSshDaemonIsRunning() {
       VirtualBoxManager manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
       ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest(
-              hostId, "localhost", guestId, "localhost", new Credentials("toor","password"));
+              hostId, "localhost", guestId, "localhost", new Credentials("toor", "password"));
 
       getNodeWithSshDaemonRunning(manager, localHostContext);
       ensureMachineIsLaunched(vmName);
@@ -68,14 +68,14 @@ public class SshAvailableLiveTest extends BaseVirtualBoxClientLiveTest {
 
          String workingDir = PropertyUtils.getWorkingDirFromProperty();
          StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
-         .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
-         .attachHardDisk(0, 1, workingDir + "/testadmin.vdi").build();
+                 .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
+                 .attachHardDisk(0, 1, workingDir + "/testadmin.vdi").build();
          VmSpecification vmSpecification = VmSpecification.builder().id(vmId).name(vmName).osTypeId("")
                  .controller(ideController)
                  .forceOverwrite(true).build();
 
-         return new IsoToIMachine(manager, guestId, vmSpecification, localHostContext,
-                 hostId, socketTester, "127.0.0.1", 8080, HEADLESS).apply(isoName);
+         return new IsoToIMachine(manager, guestId, localHostContext,
+                 hostId, socketTester, "127.0.0.1", 8080, HEADLESS).apply(vmSpecification);
       } catch (IllegalStateException e) {
          // already created
          return manager.getVBox().findMachine(vmName);

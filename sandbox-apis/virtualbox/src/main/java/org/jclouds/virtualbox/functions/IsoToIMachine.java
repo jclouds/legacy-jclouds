@@ -48,7 +48,7 @@ import static org.jclouds.virtualbox.util.MachineUtils.*;
 import static org.virtualbox_4_1.LockType.Shared;
 import static org.virtualbox_4_1.LockType.Write;
 
-public class IsoToIMachine implements Function<String, IMachine> {
+public class IsoToIMachine implements Function<VmSpecification, IMachine> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -56,7 +56,6 @@ public class IsoToIMachine implements Function<String, IMachine> {
 
    private final VirtualBoxManager manager;
    private String guestId;
-   private final VmSpecification vmSpecification;
    private final ComputeServiceContext context;
    private final String hostId;
    private final Predicate<IPSocket> socketTester;
@@ -65,13 +64,11 @@ public class IsoToIMachine implements Function<String, IMachine> {
    private final ExecutionType executionType;
 
    @Inject
-   public IsoToIMachine(VirtualBoxManager manager, String guestId,
-                        VmSpecification vmSpecification, ComputeServiceContext context,
+   public IsoToIMachine(VirtualBoxManager manager, String guestId, ComputeServiceContext context,
                         String hostId, Predicate<IPSocket> socketTester,
                         String webServerHost, int webServerPort, ExecutionType executionType) {
       this.manager = manager;
       this.guestId = guestId;
-      this.vmSpecification = vmSpecification;
       this.context = context;
       this.hostId = hostId;
       this.socketTester = socketTester;
@@ -81,7 +78,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
    }
 
    @Override
-   public IMachine apply(@Nullable String isoName) {
+   public IMachine apply(VmSpecification vmSpecification) {
 
       ensureWebServerIsRunning();
 
@@ -94,14 +91,12 @@ public class IsoToIMachine implements Function<String, IMachine> {
 
       Set<StorageController> controllers = vmSpecification.getControllers();
       if (controllers.isEmpty()) {
-         throw new IllegalStateException(missingIDEControllersMessage());
+         throw new IllegalStateException(missingIDEControllersMessage(vmSpecification));
       }
       StorageController controller = controllers.iterator().next();
       ensureMachineHasIDEControllerNamed(vmName, controller);
       setupHardDisksForController(vmName, controller);
-      setupDvdsForController(vmName, controller);
-      missingIDEControllersMessage();
-
+      setupDvdsForController(vmSpecification, vmName, controller);
 
       // NAT
       Map<Long, NatAdapter> natNetworkAdapters = vmSpecification.getNatNetworkAdapters();
@@ -143,7 +138,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
       return vm;
    }
 
-   private void setupDvdsForController(String vmName, StorageController controller) {
+   private void setupDvdsForController(VmSpecification vmSpecification, String vmName, StorageController controller) {
       Set<IsoImage> dvds = controller.getIsoImages();
       for (IsoImage dvd : dvds) {
          String dvdSource = dvd.getSourcePath();
@@ -168,7 +163,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
       }
    }
 
-   private String missingIDEControllersMessage() {
+   private String missingIDEControllersMessage(VmSpecification vmSpecification) {
       return String.format("First controller is not an IDE controller. Please verify that the VM spec is a correct master node: %s", vmSpecification);
    }
 

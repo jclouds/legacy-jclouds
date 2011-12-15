@@ -95,9 +95,9 @@ public class IsoToIMachineLiveTest extends BaseVirtualBoxClientLiveTest {
               .controller(ideController)
               .forceOverwrite(true)
               .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build()).build();
-      IMachine imageMachine = new IsoToIMachine(manager, guestId, vmSpecification, localHostContext, hostId,
+      IMachine imageMachine = new IsoToIMachine(manager, guestId, localHostContext, hostId,
               socketTester, "127.0.0.1", 8080, HEADLESS)
-              .apply("ubuntu-11.04-server-i386.iso");
+              .apply(vmSpecification);
 
       IMachineToImage iMachineToImage = new IMachineToImage(manager, map);
       Image newImage = iMachineToImage.apply(imageMachine);
