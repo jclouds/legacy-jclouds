@@ -79,7 +79,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
    @Test(dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsAndLogin() throws Exception {
       // note that this is sensitive to regions that quickly fill spot requests
-      String region = "us-west-2";
+      String region = "sa-east-1";
       
       AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi())
                .getSecurityGroupServices();

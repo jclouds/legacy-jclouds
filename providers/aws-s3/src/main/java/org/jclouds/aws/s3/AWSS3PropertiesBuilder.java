@@ -21,6 +21,7 @@ package org.jclouds.aws.s3;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.aws.domain.Region.AP_NORTHEAST_1;
 import static org.jclouds.aws.domain.Region.AP_SOUTHEAST_1;
+import static org.jclouds.aws.domain.Region.SA_EAST_1;
 import static org.jclouds.aws.domain.Region.US_STANDARD;
 import static org.jclouds.aws.domain.Region.US_WEST_1;
 import static org.jclouds.aws.domain.Region.US_WEST_2;
@@ -46,6 +47,7 @@ public class AWSS3PropertiesBuilder extends org.jclouds.s3.S3PropertiesBuilder {
       properties.setProperty(PROPERTY_REGION + "." + US_STANDARD + "." + ENDPOINT, "https://s3.amazonaws.com");
       properties.setProperty(PROPERTY_REGION + "." + US_WEST_1 + "." + ENDPOINT, "https://s3-us-west-1.amazonaws.com");
       properties.setProperty(PROPERTY_REGION + "." + US_WEST_2 + "." + ENDPOINT, "https://s3-us-west-2.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + SA_EAST_1 + "." + ENDPOINT, "https://s3-sa-east-1.amazonaws.com");
       properties.setProperty(PROPERTY_REGION + "." + "EU" + "." + ENDPOINT, "https://s3-eu-west-1.amazonaws.com");
       properties.setProperty(PROPERTY_REGION + "." + AP_SOUTHEAST_1 + "." + ENDPOINT,
             "https://s3-ap-southeast-1.amazonaws.com");

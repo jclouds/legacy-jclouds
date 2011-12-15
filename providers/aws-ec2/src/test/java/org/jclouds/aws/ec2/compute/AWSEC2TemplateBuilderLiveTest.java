@@ -314,7 +314,7 @@ public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    @Override
    protected Set<String> getIso3166Codes() {
-      return ImmutableSet.<String> of("US-VA", "US-CA", "IE", "SG", "JP-13");
+      return ImmutableSet.<String> of("US-VA", "US-CA", "US-OR", "BR-SP", "IE", "SG", "JP-13");
    }
 
 }
