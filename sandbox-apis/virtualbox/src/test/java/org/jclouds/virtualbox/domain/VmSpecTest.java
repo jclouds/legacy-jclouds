@@ -67,6 +67,7 @@ public class VmSpecTest {
               .id("MyVmId")
               .name("My VM")
               .osTypeId("Ubuntu")
+              .memoryMB(1024)
               .natNetworkAdapter(
                       0,
                       NatAdapter.builder().tcpRedirectRule("localhost", 2222, "", 22).build())

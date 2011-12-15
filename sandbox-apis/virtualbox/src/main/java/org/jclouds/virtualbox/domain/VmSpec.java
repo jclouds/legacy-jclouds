@@ -23,6 +23,7 @@ import com.google.common.base.Objects;
 
 import java.util.*;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -33,14 +34,16 @@ public class VmSpec {
    private final String vmName;
    private final String osTypeId;
    private final String vmId;
+   private final long memory;
    private final boolean forceOverwrite;
    private final Map<Long, NatAdapter> natNetworkAdapters;
    private final Set<StorageController> controllers;
 
-   public VmSpec(String vmId, String vmName, String osTypeId, boolean forceOverwrite, Set<StorageController> controllers, Map<Long, NatAdapter> natNetworkAdapters) {
+   public VmSpec(String vmId, String vmName, String osTypeId, long memory, boolean forceOverwrite, Set<StorageController> controllers, Map<Long, NatAdapter> natNetworkAdapters) {
       this.vmId = vmId;
       this.vmName = vmName;
       this.osTypeId = osTypeId;
+      this.memory = memory;
       this.controllers = controllers;
       this.forceOverwrite = forceOverwrite;
       this.natNetworkAdapters = natNetworkAdapters;
@@ -53,12 +56,13 @@ public class VmSpec {
    public static class Builder {
 
       private Set<StorageController> controllers = new HashSet<StorageController>();
+
       private String name;
       private String id;
       private String osTypeId = "";
       private boolean forceOverwrite;
       private Map<Long, NatAdapter> natNetworkAdapters = new HashMap<Long, NatAdapter>();
-
+      private long memory;
       public Builder controller(StorageController controller) {
          controllers.add(controller);
          return this;
@@ -89,12 +93,22 @@ public class VmSpec {
          return this;
       }
 
+      public Builder memoryMB(int memorySize) {
+         this.memory = (long) memorySize;
+         return this;
+      }
 
       public VmSpec build() {
          checkNotNull(name, "name");
          checkNotNull(id, "id");
-         return new VmSpec(id, name, osTypeId, forceOverwrite, controllers, natNetworkAdapters);
+         checkArgument(memory > 0, "Memory must be set");
+         return new VmSpec(id, name, osTypeId, memory, forceOverwrite, controllers, natNetworkAdapters);
       }
+
+
+   }
+   public String getVmId() {
+      return vmId;
    }
 
    public String getVmName() {
@@ -105,8 +119,8 @@ public class VmSpec {
       return osTypeId;
    }
 
-   public String getVmId() {
-      return vmId;
+   public long getMemory() {
+      return memory;
    }
 
    public boolean isForceOverwrite() {
@@ -129,6 +143,7 @@ public class VmSpec {
          return Objects.equal(vmId, other.vmId) &&
                  Objects.equal(vmName, other.vmName) &&
                  Objects.equal(osTypeId, other.osTypeId) &&
+                 Objects.equal(memory, other.memory) &&
                  Objects.equal(forceOverwrite, other.forceOverwrite) &&
                  Objects.equal(natNetworkAdapters, other.natNetworkAdapters) &&
                  Objects.equal(controllers, other.controllers);
@@ -138,7 +153,7 @@ public class VmSpec {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(vmId, vmName, osTypeId, forceOverwrite, natNetworkAdapters, controllers);
+      return Objects.hashCode(vmId, vmName, osTypeId, memory, forceOverwrite, natNetworkAdapters, controllers);
    }
 
    @Override
@@ -146,6 +161,7 @@ public class VmSpec {
       return "VmSpecification{" +
               "vmName='" + vmName + '\'' +
               ", osTypeId='" + osTypeId + '\'' +
+              ", memory='" + memory + '\'' +
               ", vmId='" + vmId + '\'' +
               ", forceOverwrite=" + forceOverwrite +
               ", natNetworkAdapters=" + natNetworkAdapters +

@@ -77,28 +77,28 @@ public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
    }
 
    @Override
-   public IMachine apply(VmSpec vmSpecification) {
+   public IMachine apply(VmSpec vmSpec) {
 
       ensureWebServerIsRunning();
 
-      final IMachine vm = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(vmSpecification);
+      final IMachine vm = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(vmSpec);
 
-      String vmName = vmSpecification.getVmName();
+      String vmName = vmSpec.getVmName();
 
       // Change RAM
-      ensureMachineHasMemory(vmName, 1024l);
+      ensureMachineHasMemory(vmName, vmSpec.getMemory());
 
-      Set<StorageController> controllers = vmSpecification.getControllers();
+      Set<StorageController> controllers = vmSpec.getControllers();
       if (controllers.isEmpty()) {
-         throw new IllegalStateException(missingIDEControllersMessage(vmSpecification));
+         throw new IllegalStateException(missingIDEControllersMessage(vmSpec));
       }
       StorageController controller = controllers.iterator().next();
       ensureMachineHasIDEControllerNamed(vmName, controller);
       setupHardDisksForController(vmName, controller);
-      setupDvdsForController(vmSpecification, vmName, controller);
+      setupDvdsForController(vmSpec, vmName, controller);
 
       // NAT
-      Map<Long, NatAdapter> natNetworkAdapters = vmSpecification.getNatNetworkAdapters();
+      Map<Long, NatAdapter> natNetworkAdapters = vmSpec.getNatNetworkAdapters();
       for (Map.Entry<Long, NatAdapter> natAdapterAndSlot : natNetworkAdapters.entrySet()) {
          long slotId = natAdapterAndSlot.getKey();
          NatAdapter natAdapter = natAdapterAndSlot.getValue();

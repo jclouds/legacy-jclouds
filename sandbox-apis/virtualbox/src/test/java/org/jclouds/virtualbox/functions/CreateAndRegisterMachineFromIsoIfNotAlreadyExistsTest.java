@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -49,7 +49,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       IVirtualBox vBox = createMock(IVirtualBox.class);
       String vmName = "jclouds-image-my-ubuntu-image";
 
-      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName).osTypeId("").build();
+      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName).osTypeId("").memoryMB(1024).build();
 
       IMachine createdMachine = createMock(IMachine.class);
 
@@ -90,7 +90,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       replay(manager, vBox);
 
-      VmSpec launchSpecification = VmSpec.builder().id("").name(vmName).osTypeId("").build();
+      VmSpec launchSpecification = VmSpec.builder().id("").name(vmName).osTypeId("").memoryMB(1024).build();
       new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(launchSpecification);
    }
 
@@ -111,7 +111,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       replay(manager, vBox);
 
-      VmSpec launchSpecification = VmSpec.builder().id("").name(vmName).osTypeId("").build();
+      VmSpec launchSpecification = VmSpec.builder().id("").name(vmName).osTypeId("").memoryMB(1024).build();
       new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(launchSpecification);
 
    }
