@@ -26,7 +26,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * A description of a Virtual Machine in VirtualBox.
  */
-public class VmSpecification {
+public class VmSpec {
 
    private final String vmName;
    private final String osTypeId;
@@ -35,7 +35,7 @@ public class VmSpecification {
    private final Map<Long, NatAdapter> natNetworkAdapters;
    private final Set<StorageController> controllers;
 
-   public VmSpecification(String vmId, String vmName, String osTypeId, boolean forceOverwrite, Set<StorageController> controllers, Map<Long, NatAdapter> natNetworkAdapters) {
+   public VmSpec(String vmId, String vmName, String osTypeId, boolean forceOverwrite, Set<StorageController> controllers, Map<Long, NatAdapter> natNetworkAdapters) {
       this.vmId = vmId;
       this.vmName = vmName;
       this.osTypeId = osTypeId;
@@ -88,10 +88,10 @@ public class VmSpecification {
       }
 
 
-      public VmSpecification build() {
+      public VmSpec build() {
          checkNotNull(name, "name");
          checkNotNull(id, "id");
-         return new VmSpecification(id, name, osTypeId, forceOverwrite, controllers, natNetworkAdapters);
+         return new VmSpec(id, name, osTypeId, forceOverwrite, controllers, natNetworkAdapters);
       }
    }
 
@@ -124,7 +124,7 @@ public class VmSpecification {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
-      VmSpecification that = (VmSpecification) o;
+      VmSpec that = (VmSpec) o;
 
       if (forceOverwrite != that.forceOverwrite) return false;
       if (controllers != null ? !controllers.equals(that.controllers) : that.controllers != null) return false;

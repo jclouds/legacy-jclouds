@@ -20,7 +20,7 @@
 package org.jclouds.virtualbox.functions;
 
 import com.google.common.base.Function;
-import org.jclouds.virtualbox.domain.VmSpecification;
+import org.jclouds.virtualbox.domain.VmSpec;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VBoxException;
@@ -31,7 +31,7 @@ import javax.annotation.Nullable;
 /**
  * @author Mattias Holmqvist
  */
-public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Function<VmSpecification, IMachine> {
+public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Function<VmSpec, IMachine> {
 
    private VirtualBoxManager manager;
 
@@ -40,7 +40,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
    }
 
    @Override
-   public IMachine apply(@Nullable VmSpecification launchSpecification) {
+   public IMachine apply(@Nullable VmSpec launchSpecification) {
       final IVirtualBox vBox = manager.getVBox();
       String vmName = launchSpecification.getVmName();
       try {
@@ -58,7 +58,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
       return e.getMessage().contains("VirtualBox error: Could not find a registered machine named ");
    }
 
-   private IMachine createMachine(IVirtualBox vBox, VmSpecification launchSpecification) {
+   private IMachine createMachine(IVirtualBox vBox, VmSpec launchSpecification) {
       // TODO: add support for settingsfile
       String settingsFile1 = null;
       IMachine newMachine = vBox.createMachine(settingsFile1, launchSpecification.getVmName(),

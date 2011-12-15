@@ -21,7 +21,7 @@ package org.jclouds.virtualbox.functions;
 
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.ErrorCode;
-import org.jclouds.virtualbox.domain.VmSpecification;
+import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExists;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
@@ -40,7 +40,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends B
    public void testCreateNewMachine() throws Exception {
       String vmName = "jclouds-test-create-1-node";
       new UnregisterMachineIfExists(manager, CleanupMode.Full).apply(vmName);
-      VmSpecification launchSpecification = VmSpecification.builder().id(vmName).name(vmName)
+      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName)
               .osTypeId("Debian").forceOverwrite(true).build();
       IMachine debianNode = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(launchSpecification);
       IMachine machine = manager.getVBox().findMachine(vmName);
@@ -52,7 +52,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends B
    public void testCreateNewMachineWithBadOsType() throws Exception {
       String vmName = "jclouds-test-create-2-node";
       new UnregisterMachineIfExists(manager, CleanupMode.Full).apply(vmName);
-      VmSpecification launchSpecification = VmSpecification.builder().id(vmName).name(vmName)
+      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName)
               .osTypeId("SomeWeirdUnknownOs").forceOverwrite(true).build();
       try {
          new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(launchSpecification);

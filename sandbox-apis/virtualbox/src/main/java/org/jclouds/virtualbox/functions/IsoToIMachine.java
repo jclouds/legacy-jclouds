@@ -26,7 +26,6 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshException;
@@ -48,7 +47,7 @@ import static org.jclouds.virtualbox.util.MachineUtils.*;
 import static org.virtualbox_4_1.LockType.Shared;
 import static org.virtualbox_4_1.LockType.Write;
 
-public class IsoToIMachine implements Function<VmSpecification, IMachine> {
+public class IsoToIMachine implements Function<VmSpec, IMachine> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -78,7 +77,7 @@ public class IsoToIMachine implements Function<VmSpecification, IMachine> {
    }
 
    @Override
-   public IMachine apply(VmSpecification vmSpecification) {
+   public IMachine apply(VmSpec vmSpecification) {
 
       ensureWebServerIsRunning();
 
@@ -138,7 +137,7 @@ public class IsoToIMachine implements Function<VmSpecification, IMachine> {
       return vm;
    }
 
-   private void setupDvdsForController(VmSpecification vmSpecification, String vmName, StorageController controller) {
+   private void setupDvdsForController(VmSpec vmSpecification, String vmName, StorageController controller) {
       Set<IsoImage> dvds = controller.getIsoImages();
       for (IsoImage dvd : dvds) {
          String dvdSource = dvd.getSourcePath();
@@ -163,7 +162,7 @@ public class IsoToIMachine implements Function<VmSpecification, IMachine> {
       }
    }
 
-   private String missingIDEControllersMessage(VmSpecification vmSpecification) {
+   private String missingIDEControllersMessage(VmSpec vmSpecification) {
       return String.format("First controller is not an IDE controller. Please verify that the VM spec is a correct master node: %s", vmSpecification);
    }
 

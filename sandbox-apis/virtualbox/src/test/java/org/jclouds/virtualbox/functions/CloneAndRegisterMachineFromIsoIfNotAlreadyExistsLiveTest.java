@@ -26,9 +26,8 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
-import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.StorageController;
-import org.jclouds.virtualbox.domain.VmSpecification;
+import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.util.PropertyUtils;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.*;
@@ -89,7 +88,7 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends Ba
          .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
          .attachHardDisk(0, 1, workingDir + "/testadmin.vdi")
          .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso").build();
-         VmSpecification vmSpecification = VmSpecification.builder().id(vmId).name(vmName).osTypeId(osTypeId)
+         VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).osTypeId(osTypeId)
                  .controller(ideController)
                  .forceOverwrite(true).build();
          return new IsoToIMachine(manager, guestId, localHostContext, hostId, socketTester,

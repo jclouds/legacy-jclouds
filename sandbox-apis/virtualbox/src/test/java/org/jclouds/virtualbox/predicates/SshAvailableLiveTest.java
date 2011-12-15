@@ -10,7 +10,7 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.domain.StorageController;
-import org.jclouds.virtualbox.domain.VmSpecification;
+import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.functions.IsoToIMachine;
 import org.jclouds.virtualbox.functions.LaunchMachineIfNotAlreadyRunning;
 import org.jclouds.virtualbox.util.PropertyUtils;
@@ -70,7 +70,7 @@ public class SshAvailableLiveTest extends BaseVirtualBoxClientLiveTest {
          StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
                  .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
                  .attachHardDisk(0, 1, workingDir + "/testadmin.vdi").build();
-         VmSpecification vmSpecification = VmSpecification.builder().id(vmId).name(vmName).osTypeId("")
+         VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).osTypeId("")
                  .controller(ideController)
                  .forceOverwrite(true).build();
 

@@ -49,7 +49,6 @@ import java.util.concurrent.TimeUnit;
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.virtualbox.domain.ExecutionType.GUI;
 import static org.jclouds.virtualbox.domain.ExecutionType.HEADLESS;
 import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
 import static org.testng.Assert.assertTrue;
@@ -91,7 +90,7 @@ public class IsoToIMachineLiveTest extends BaseVirtualBoxClientLiveTest {
               .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
               .attachHardDisk(0, 1, workingDir + "/testadmin.vdi")
               .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso").build();
-      VmSpecification vmSpecification = VmSpecification.builder().id(vmId).name(vmName).osTypeId(osTypeId)
+      VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).osTypeId(osTypeId)
               .controller(ideController)
               .forceOverwrite(true)
               .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build()).build();
