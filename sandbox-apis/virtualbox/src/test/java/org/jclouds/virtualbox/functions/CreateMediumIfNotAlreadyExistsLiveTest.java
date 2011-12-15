@@ -20,7 +20,9 @@
 package org.jclouds.virtualbox.functions;
 
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
+import org.jclouds.virtualbox.domain.DeviceDetails;
 import org.jclouds.virtualbox.domain.ErrorCode;
+import org.jclouds.virtualbox.domain.HardDisk;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.DeviceType;
 import org.virtualbox_4_1.VBoxException;
@@ -39,7 +41,8 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
    @Test
    public void testCreateMedium() throws Exception {
       String path = System.getProperty("user.home") + "/jclouds-virtualbox-test/test-medium-1.vdi";
-      new CreateMediumIfNotAlreadyExists(manager, "vdi", true).apply(path);
+      HardDisk hardDisk = new HardDisk(new DeviceDetails(0, 0, DeviceType.HardDisk), path, "vdi");
+      new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
       manager.getVBox().findMedium(path, DeviceType.HardDisk);
       assertFileCanBeDeleted(path);
    }
@@ -47,8 +50,9 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
    @Test
    public void testCreateMediumFailWhenUsingNonFullyQualifiedPath() throws Exception {
       String path = "test-medium-2.vdi";
+      HardDisk hardDisk = new HardDisk(new DeviceDetails(0, 0, DeviceType.HardDisk), path, "vdi");
       try {
-         new CreateMediumIfNotAlreadyExists(manager, "vdi", true).apply(path);
+         new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
          fail();
       } catch (VBoxException e) {
          ErrorCode errorCode = ErrorCode.valueOf(e);
@@ -59,8 +63,9 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
    @Test
    public void testCreateSameMediumTwiceWhenUsingOverwrite() throws Exception {
       String path = System.getProperty("user.home") + "/jclouds-virtualbox-test/test-medium-3.vdi";
-      new CreateMediumIfNotAlreadyExists(manager, "vdi", true).apply(path);
-      new CreateMediumIfNotAlreadyExists(manager, "vdi", true).apply(path);
+      HardDisk hardDisk = new HardDisk(new DeviceDetails(0, 0, DeviceType.HardDisk), path, "vdi");
+      new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
+      new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
       manager.getVBox().findMedium(path, DeviceType.HardDisk);
       assertFileCanBeDeleted(path);
    }

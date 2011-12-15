@@ -20,6 +20,7 @@
 package org.jclouds.virtualbox.functions;
 
 import com.google.common.base.Function;
+import org.jclouds.virtualbox.domain.VmSpecification;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VBoxException;
@@ -30,31 +31,24 @@ import javax.annotation.Nullable;
 /**
  * @author Mattias Holmqvist
  */
-public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Function<String, IMachine> {
+public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Function<VmSpecification, IMachine> {
 
-   private String osTypeId;
-   private String vmId;
-   private boolean forceOverwrite;
    private VirtualBoxManager manager;
 
-   public CreateAndRegisterMachineFromIsoIfNotAlreadyExists(String osTypeId, String vmId,
-                                                            boolean forceOverwrite, VirtualBoxManager manager) {
-      this.osTypeId = osTypeId;
-      this.vmId = vmId;
-      this.forceOverwrite = forceOverwrite;
+   public CreateAndRegisterMachineFromIsoIfNotAlreadyExists(VirtualBoxManager manager) {
       this.manager = manager;
    }
 
    @Override
-   public IMachine apply(@Nullable String vmName) {
-
+   public IMachine apply(@Nullable VmSpecification launchSpecification) {
       final IVirtualBox vBox = manager.getVBox();
+      String vmName = launchSpecification.getVmName();
       try {
          vBox.findMachine(vmName);
          throw new IllegalStateException("Machine " + vmName + " is already registered.");
       } catch (VBoxException e) {
          if (machineNotFoundException(e))
-            return createMachine(vBox, vmName);
+            return createMachine(vBox, launchSpecification);
          else
             throw e;
       }
@@ -64,10 +58,11 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
       return e.getMessage().contains("VirtualBox error: Could not find a registered machine named ");
    }
 
-   private IMachine createMachine(IVirtualBox vBox, String vmName) {
+   private IMachine createMachine(IVirtualBox vBox, VmSpecification launchSpecification) {
       // TODO: add support for settingsfile
       String settingsFile1 = null;
-      IMachine newMachine = vBox.createMachine(settingsFile1, vmName, osTypeId, vmId, forceOverwrite);
+      IMachine newMachine = vBox.createMachine(settingsFile1, launchSpecification.getVmName(),
+              launchSpecification.getOsTypeId(), launchSpecification.getVmId(), launchSpecification.isForceOverwrite());
       manager.getVBox().registerMachine(newMachine);
       return newMachine;
    }

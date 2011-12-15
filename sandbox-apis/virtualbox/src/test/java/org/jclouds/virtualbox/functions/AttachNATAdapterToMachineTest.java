@@ -19,35 +19,32 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.createNiceMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
-import static org.virtualbox_4_1.NATProtocol.TCP;
-import static org.virtualbox_4_1.NetworkAttachmentType.NAT;
-
-import org.jclouds.virtualbox.domain.RedirectRule;
+import org.jclouds.virtualbox.domain.NatAdapter;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INATEngine;
 import org.virtualbox_4_1.INetworkAdapter;
 import org.virtualbox_4_1.VBoxException;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.*;
+import static org.virtualbox_4_1.NATProtocol.TCP;
+import static org.virtualbox_4_1.NetworkAttachmentType.NAT;
+
 /**
  * @author Mattias Holmqvist
  */
-@Test(groups = "unit", testName = "AttachNATRedirectRuleToMachineTest")
-public class AttachNATRedirectRuleToMachineTest {
+@Test(groups = "unit", testName = "AttachNATAdapterToMachineTest")
+public class AttachNATAdapterToMachineTest {
 
    @Test
    public void testApplyNetworkingToNonExistingAdapter() throws Exception {
-      Long adapterId = 0l;
+      Long slotId = 0l;
       IMachine machine = createMock(IMachine.class);
       INetworkAdapter networkAdapter = createMock(INetworkAdapter.class);
       INATEngine natEngine = createMock(INATEngine.class);
 
-      expect(machine.getNetworkAdapter(adapterId)).andReturn(networkAdapter);
+      expect(machine.getNetworkAdapter(slotId)).andReturn(networkAdapter);
       networkAdapter.setAttachmentType(NAT);
       expect(networkAdapter.getNatDriver()).andReturn(natEngine);
       natEngine.addRedirect("guestssh", TCP, "127.0.0.1", 2222, "", 22);
@@ -55,15 +52,15 @@ public class AttachNATRedirectRuleToMachineTest {
       machine.saveSettings();
 
       replay(machine, networkAdapter, natEngine);
-
-      new AttachNATRedirectRuleToMachine(adapterId, new RedirectRule(TCP, "127.0.0.1", 2222, "", 22)).apply(machine);
+      NatAdapter natAdapter = NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
+      new AttachNATAdapterToMachine(slotId, natAdapter).apply(machine);
 
       verify(machine, networkAdapter, natEngine);
    }
 
    @Test(expectedExceptions = VBoxException.class)
    public void testRethrowInvalidAdapterSlotException() throws Exception {
-      Long adapterId = 30l;
+      Long slotId = 30l;
       IMachine machine = createMock(IMachine.class);
       INetworkAdapter networkAdapter = createMock(INetworkAdapter.class);
       INATEngine natEngine = createMock(INATEngine.class);
@@ -72,11 +69,12 @@ public class AttachNATRedirectRuleToMachineTest {
             + "(must be slot < RT_ELEMENTS(mNetworkAdapters)) (0x80070057)";
 
       VBoxException invalidSlotException = new VBoxException(createNiceMock(Throwable.class), error);
-      expect(machine.getNetworkAdapter(adapterId)).andThrow(invalidSlotException);
+      expect(machine.getNetworkAdapter(slotId)).andThrow(invalidSlotException);
 
       replay(machine, networkAdapter, natEngine);
 
-      new AttachNATRedirectRuleToMachine(adapterId, new RedirectRule(TCP, "127.0.0.1", 2222, "", 22)).apply(machine);
+      NatAdapter natAdapter = NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
+      new AttachNATAdapterToMachine(slotId, natAdapter).apply(machine);
 
       verify(machine, networkAdapter, natEngine);
    }

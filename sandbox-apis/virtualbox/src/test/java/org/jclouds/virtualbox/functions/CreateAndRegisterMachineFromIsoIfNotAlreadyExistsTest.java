@@ -29,6 +29,7 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import org.easymock.EasyMock;
+import org.jclouds.virtualbox.domain.VmSpecification;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IVirtualBox;
@@ -48,6 +49,8 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       IVirtualBox vBox = createMock(IVirtualBox.class);
       String vmName = "jclouds-image-my-ubuntu-image";
 
+      VmSpecification launchSpecification = VmSpecification.builder().id(vmName).name(vmName).osTypeId("").build();
+
       IMachine createdMachine = createMock(IMachine.class);
 
       expect(manager.getVBox()).andReturn(vBox).anyTimes();
@@ -62,13 +65,13 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       expectLastCall().andThrow(vBoxException);
 
       expect(vBox.createMachine(anyString(), eq(vmName), anyString(), anyString(), anyBoolean())).andReturn(
-            createdMachine).anyTimes();
+              createdMachine).anyTimes();
 
       vBox.registerMachine(createdMachine);
 
       replay(manager, vBox);
 
-      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists("", "", false, manager).apply(vmName);
+      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(launchSpecification);
 
       verify(manager, vBox);
    }
@@ -87,7 +90,8 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       replay(manager, vBox);
 
-      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists("", "", false, manager).apply(vmName);
+      VmSpecification launchSpecification = VmSpecification.builder().id("").name(vmName).osTypeId("").build();
+      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(launchSpecification);
    }
 
    @Test(expectedExceptions = VBoxException.class)
@@ -107,11 +111,12 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       replay(manager, vBox);
 
-      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists("", "", false, manager).apply(vmName);
+      VmSpecification launchSpecification = VmSpecification.builder().id("").name(vmName).osTypeId("").build();
+      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(launchSpecification);
 
    }
 
    private String anyString() {
-      return EasyMock.<String> anyObject();
+      return EasyMock.<String>anyObject();
    }
 }

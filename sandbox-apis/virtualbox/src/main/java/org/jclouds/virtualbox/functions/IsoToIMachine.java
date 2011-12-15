@@ -30,27 +30,23 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshException;
-import org.jclouds.virtualbox.domain.ExecutionType;
-import org.jclouds.virtualbox.domain.RedirectRule;
+import org.jclouds.virtualbox.domain.*;
 import org.jclouds.virtualbox.settings.KeyboardScancodes;
 import org.virtualbox_4_1.*;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
 import java.io.File;
+import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
-import static org.jclouds.virtualbox.util.MachineUtils.*;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKINGDIR;
-import static org.virtualbox_4_1.AccessMode.ReadOnly;
-import static org.virtualbox_4_1.DeviceType.DVD;
-import static org.virtualbox_4_1.DeviceType.HardDisk;
+import static org.jclouds.virtualbox.util.MachineUtils.*;
 import static org.virtualbox_4_1.LockType.Shared;
 import static org.virtualbox_4_1.LockType.Write;
-import static org.virtualbox_4_1.NATProtocol.TCP;
 
 public class IsoToIMachine implements Function<String, IMachine> {
 
@@ -58,40 +54,30 @@ public class IsoToIMachine implements Function<String, IMachine> {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private VirtualBoxManager manager;
-   private String adminDisk;
-   private String diskFormat;
-   private String vmName;
-   private String osTypeId;
-   private String vmId;
-   private String controllerIDE;
-   private boolean forceOverwrite;
-   private ComputeServiceContext context;
-   private String hostId;
+   private final VirtualBoxManager manager;
    private String guestId;
-   private Predicate<IPSocket> socketTester;
-   private String webServerHost;
-   private int webServerPort;
+   private final VmSpecification vmSpecification;
+   private final ComputeServiceContext context;
+   private final String hostId;
+   private final Predicate<IPSocket> socketTester;
+   private final String webServerHost;
+   private final int webServerPort;
+   private final ExecutionType executionType;
 
    @Inject
-   public IsoToIMachine(VirtualBoxManager manager, String adminDisk, String diskFormat,
-                        String vmName, String osTypeId, String vmId, boolean forceOverwrite, String controllerIDE,
-                        ComputeServiceContext context, String hostId, String guestId, Predicate<IPSocket> socketTester,
-                        String webServerHost, int webServerPort) {
+   public IsoToIMachine(VirtualBoxManager manager, String guestId,
+                        VmSpecification vmSpecification, ComputeServiceContext context,
+                        String hostId, Predicate<IPSocket> socketTester,
+                        String webServerHost, int webServerPort, ExecutionType executionType) {
       this.manager = manager;
-      this.adminDisk = adminDisk;
-      this.diskFormat = diskFormat;
-      this.vmName = vmName;
-      this.osTypeId = osTypeId;
-      this.vmId = vmId;
-      this.controllerIDE = controllerIDE;
-      this.forceOverwrite = forceOverwrite;
+      this.guestId = guestId;
+      this.vmSpecification = vmSpecification;
       this.context = context;
       this.hostId = hostId;
-      this.guestId = guestId;
       this.socketTester = socketTester;
       this.webServerHost = webServerHost;
       this.webServerPort = webServerPort;
+      this.executionType = executionType;
    }
 
    @Override
@@ -99,51 +85,37 @@ public class IsoToIMachine implements Function<String, IMachine> {
 
       ensureWebServerIsRunning();
 
-      final IMachine vm = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(osTypeId, vmId, forceOverwrite,
-              manager).apply(vmName);
+      final IMachine vm = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(vmSpecification);
 
-      final String defaultWorkingDir = System.getProperty("user.home") + "/jclouds-virtualbox-test";
-      final String workingDir = System.getProperty(VIRTUALBOX_WORKINGDIR, defaultWorkingDir);
+      String vmName = vmSpecification.getVmName();
 
       // Change RAM
       ensureMachineHasMemory(vmName, 1024l);
 
-      // IDE Controller
-      ensureMachineHasIDEControllerNamed(vmName, controllerIDE);
-
-      // Distribution medium
-      ensureMachineHasAttachedDistroMedium(isoName, workingDir, controllerIDE);
-
-      // DISK
-      final String adminDiskPath = workingDir + "/" + adminDisk;
-      if (new File(adminDiskPath).exists()) {
-         boolean deleted = new File(adminDiskPath).delete();
-         if (!deleted) {
-            logger.error(String.format("File %s could not be deleted.", adminDiskPath));
-         }
+      Set<StorageController> controllers = vmSpecification.getControllers();
+      if (controllers.isEmpty()) {
+         throw new IllegalStateException(missingIDEControllersMessage());
       }
+      StorageController controller = controllers.iterator().next();
+      ensureMachineHasIDEControllerNamed(vmName, controller);
+      setupHardDisksForController(vmName, controller);
+      setupDvdsForController(vmName, controller);
+      missingIDEControllersMessage();
 
-      // Create hard disk
-      final IMedium hardDisk = new CreateMediumIfNotAlreadyExists(manager, diskFormat, true).apply(adminDiskPath);
-
-      // Attach hard disk to machine
-      ensureMachineHasHardDiskAttached(vmName, hardDisk);
 
       // NAT
-      ensureNATNetworkingIsAppliedToMachine(vmName);
-
-      final String guestAdditionsDvd = workingDir + "/VBoxGuestAdditions_4.1.2.iso";
-      final IMedium guestAdditionsDvdMedium = manager.getVBox().openMedium(guestAdditionsDvd, DeviceType.DVD,
-              AccessMode.ReadOnly, forceOverwrite);
-
-      // Guest additions
-      ensureGuestAdditionsMediumIsAttached(vmName, guestAdditionsDvdMedium);
+      Map<Long, NatAdapter> natNetworkAdapters = vmSpecification.getNatNetworkAdapters();
+      for (Map.Entry<Long, NatAdapter> natAdapterAndSlot : natNetworkAdapters.entrySet()) {
+         long slotId = natAdapterAndSlot.getKey();
+         NatAdapter natAdapter = natAdapterAndSlot.getValue();
+         ensureNATNetworkingIsAppliedToMachine(vmName, slotId, natAdapter);
+      }
 
       // Launch machine and wait for it to come online
       ensureMachineIsLaunched(vmName);
 
-      final String installKeySequence = System.getProperty(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE, defaultInstallSequence());
-      sendKeyboardSequence(installKeySequence);
+      final String installKeySequence = System.getProperty(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE, defaultInstallSequence(vmName));
+      sendKeyboardSequence(installKeySequence, vmName);
 
       boolean sshDeamonIsRunning = false;
       while (!sshDeamonIsRunning) {
@@ -171,6 +143,35 @@ public class IsoToIMachine implements Function<String, IMachine> {
       return vm;
    }
 
+   private void setupDvdsForController(String vmName, StorageController controller) {
+      Set<IsoImage> dvds = controller.getIsoImages();
+      for (IsoImage dvd : dvds) {
+         String dvdSource = dvd.getSourcePath();
+         final IMedium dvdMedium = manager.getVBox().openMedium(dvdSource, DeviceType.DVD,
+                 AccessMode.ReadOnly, vmSpecification.isForceOverwrite());
+         ensureMachineDevicesAttached(vmName, dvdMedium, dvd.getDeviceDetails(), controller.getName());
+      }
+   }
+
+   private void setupHardDisksForController(String vmName, StorageController controller) {
+      Set<HardDisk> hardDisks = controller.getHardDisks();
+      for (HardDisk hardDisk : hardDisks) {
+         String sourcePath = hardDisk.getDiskPath();
+         if (new File(sourcePath).exists()) {
+            boolean deleted = new File(sourcePath).delete();
+            if (!deleted) {
+               logger.error(String.format("File %s could not be deleted.", sourcePath));
+            }
+         }
+         IMedium medium = new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
+         ensureMachineDevicesAttached(vmName, medium, hardDisk.getDeviceDetails(), controller.getName());
+      }
+   }
+
+   private String missingIDEControllersMessage() {
+      return String.format("First controller is not an IDE controller. Please verify that the VM spec is a correct master node: %s", vmSpecification);
+   }
+
    private void ensureWebServerIsRunning() {
       final IPSocket webServerSocket = new IPSocket(webServerHost, webServerPort);
       if (!socketTester.apply(webServerSocket)) {
@@ -179,52 +180,27 @@ public class IsoToIMachine implements Function<String, IMachine> {
    }
 
    private void ensureMachineIsLaunched(String vmName) {
-      applyForMachine(manager, vmName, new LaunchMachineIfNotAlreadyRunning(manager, ExecutionType.HEADLESS, ""));
+      applyForMachine(manager, vmName, new LaunchMachineIfNotAlreadyRunning(manager, executionType, ""));
    }
 
-   private void ensureGuestAdditionsMediumIsAttached(String vmName, final IMedium guestAdditionsDvdMedium) {
-      lockMachineAndApply(manager, Write, vmName, new AttachMediumToMachineIfNotAlreadyAttached(controllerIDE,
-              guestAdditionsDvdMedium, 1, 1, DeviceType.DVD));
-   }
-
-   private void ensureMachineHasHardDiskAttached(String vmName, IMedium hardDisk) {
-      lockMachineAndApply(manager, Write, vmName, new AttachMediumToMachineIfNotAlreadyAttached(controllerIDE,
-              hardDisk, 0, 1, HardDisk));
+   private void ensureMachineDevicesAttached(String vmName, IMedium medium, DeviceDetails deviceDetails, String controllerName) {
+      lockMachineAndApply(manager, Write, vmName, new AttachMediumToMachineIfNotAlreadyAttached(deviceDetails, medium, controllerName));
    }
 
    private void ensureMachineHasMemory(String vmName, final long memorySize) {
       lockMachineAndApply(manager, Write, vmName, new ApplyMemoryToMachine(memorySize));
    }
 
-   private void ensureNATNetworkingIsAppliedToMachine(String vmName) {
-      lockMachineAndApply(manager, Write, vmName, new AttachNATRedirectRuleToMachine(0l, new RedirectRule(TCP, "127.0.0.1", 2222, "", 22)));
+   private void ensureNATNetworkingIsAppliedToMachine(String vmName, long slotId, NatAdapter natAdapter) {
+      lockMachineAndApply(manager, Write, vmName, new AttachNATAdapterToMachine(slotId, natAdapter));
    }
 
-   private void ensureMachineHasAttachedDistroMedium(String isoName, String workingDir, String controllerIDE) {
-      final String pathToIsoFile = checkFileExists(workingDir + "/" + isoName);
-      final IMedium distroMedium = manager.getVBox().openMedium(pathToIsoFile, DVD, ReadOnly, forceOverwrite);
-      lockMachineAndApply(
-              manager,
-              Write,
-              vmName,
-              new AttachDistroMediumToMachine(checkNotNull(controllerIDE, "controllerIDE"), checkNotNull(distroMedium,
-                      "distroMedium")));
-   }
-
-   public static String checkFileExists(String filePath) {
-      if (new File(filePath).exists()) {
-         return filePath;
-      }
-      throw new IllegalStateException("File " + filePath + " does not exist.");
-   }
-
-   public void ensureMachineHasIDEControllerNamed(String vmName, String controllerIDE) {
+   public void ensureMachineHasIDEControllerNamed(String vmName, StorageController storageController) {
       lockMachineAndApply(manager, Write, checkNotNull(vmName, "vmName"),
-              new AddIDEControllerIfNotExists(checkNotNull(controllerIDE, "controllerIDE")));
+              new AddIDEControllerIfNotExists(checkNotNull(storageController, "storageController")));
    }
 
-
-   private String defaultInstallSequence() {
+   private String defaultInstallSequence(String vmName) {
       return "<Esc><Esc><Enter> "
               + "/install/vmlinuz noapic preseed/url=http://10.0.2.2:" + webServerPort + "/src/test/resources/preseed.cfg "
               + "debian-installer=en_US auto locale=en_US kbd-chooser/method=us " + "hostname=" + vmName + " "
@@ -233,7 +209,7 @@ public class IsoToIMachine implements Function<String, IMachine> {
               + "initrd=/install/initrd.gz -- <Enter>";
    }
 
-   private void sendKeyboardSequence(String keyboardSequence) {
+   private void sendKeyboardSequence(String keyboardSequence, String vmName) {
       String[] splitSequence = keyboardSequence.split(" ");
       StringBuilder sb = new StringBuilder();
       for (String line : splitSequence) {

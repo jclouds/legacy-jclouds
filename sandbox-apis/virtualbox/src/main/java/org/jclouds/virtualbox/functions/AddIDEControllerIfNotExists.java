@@ -21,6 +21,7 @@ package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.jclouds.virtualbox.domain.StorageController;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.StorageBus;
 import org.virtualbox_4_1.VBoxException;
@@ -33,16 +34,16 @@ import com.google.common.base.Function;
  * 
  */
 public class AddIDEControllerIfNotExists implements Function<IMachine, Void> {
-   private final String controllerName;
+   private final StorageController storageController;
 
-   public AddIDEControllerIfNotExists(String controllerName) {
-      this.controllerName = checkNotNull(controllerName, "controllerName");
+   public AddIDEControllerIfNotExists(StorageController storageController) {
+      this.storageController = checkNotNull(storageController, "storageController");
    }
 
    @Override
    public Void apply(IMachine machine) {
       try {
-         machine.addStorageController(controllerName, StorageBus.IDE);
+         machine.addStorageController(storageController.getName(), storageController.getBus());
          machine.saveSettings();
       } catch (VBoxException e) {
          if (!e.getMessage().contains("already exists"))
@@ -53,6 +54,6 @@ public class AddIDEControllerIfNotExists implements Function<IMachine, Void> {
 
    @Override
    public String toString() {
-      return String.format("addStorageController(%s, IDE)", controllerName);
+      return String.format("addStorageController(%s)", storageController);
    }
 }

@@ -19,6 +19,14 @@
 
 package org.jclouds.virtualbox.functions;
 
+import com.google.common.collect.Iterables;
+import org.jclouds.virtualbox.domain.DeviceDetails;
+import org.jclouds.virtualbox.domain.HardDisk;
+import org.jclouds.virtualbox.domain.StorageController;
+import org.testng.annotations.Test;
+import org.virtualbox_4_1.*;
+
+import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.easymock.EasyMock.anyLong;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
@@ -27,14 +35,6 @@ import static org.easymock.classextension.EasyMock.createNiceMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.virtualbox_4_1.DeviceType.HardDisk;
-
-import org.testng.annotations.Test;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMedium;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.IVirtualBox;
-import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.VirtualBoxManager;
 
 /**
  * @author Mattias Holmqvist
@@ -45,8 +45,8 @@ public class AttachMediumToMachineIfNotAlreadyAttachedTest {
    @Test
    public void testAttachHardDiskIfNotAttached() throws Exception {
 
-      String controllerIDE = "IDE Controller";
-      String adminDiskPath = "/Users/johndoe/jclouds-virtualbox-images/admin.vdi";
+      String controllerName = "IDE Controller";
+      String diskPath = "/Users/johndoe/jclouds-virtualbox-images/admin.vdi";
       String diskFormat = "vdi";
       int controllerPort = 0;
       int device = 1;
@@ -58,15 +58,22 @@ public class AttachMediumToMachineIfNotAlreadyAttachedTest {
       IProgress progress = createNiceMock(IProgress.class);
 
       expect(manager.getVBox()).andReturn(vBox).anyTimes();
-      expect(vBox.createHardDisk(diskFormat, adminDiskPath)).andReturn(hardDisk);
+      expect(vBox.createHardDisk(diskFormat, diskPath)).andReturn(hardDisk);
       expect(hardDisk.createBaseStorage(anyLong(), anyLong())).andReturn(progress);
 
-      machine.attachDevice(controllerIDE, controllerPort, device, HardDisk, hardDisk);
+      machine.attachDevice(controllerName, controllerPort, device, HardDisk, hardDisk);
       machine.saveSettings();
       replay(manager, machine, vBox, hardDisk);
 
-      new AttachMediumToMachineIfNotAlreadyAttached(controllerIDE, hardDisk, controllerPort, device, HardDisk)
-            .apply(machine);
+      StorageController controller = StorageController.builder()
+              .name(controllerName)
+              .bus(StorageBus.IDE)
+              .attachHardDisk(controllerPort, device, diskPath)
+              .build();
+
+
+      DeviceDetails deviceDetails = getOnlyElement(controller.getHardDisks()).getDeviceDetails();
+      new AttachMediumToMachineIfNotAlreadyAttached(deviceDetails, hardDisk, controllerName).apply(machine);
 
       verify(machine);
 
@@ -75,9 +82,9 @@ public class AttachMediumToMachineIfNotAlreadyAttachedTest {
    @Test
    public void testDoNothingIfAlreadyAttachedAttachHardDisk() throws Exception {
 
-      String controllerIDE = "IDE Controller";
+      String controllerName = "IDE Controller";
       int controllerPort = 0;
-      int device = 1;
+      int deviceSlot = 1;
 
       VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
       IMachine machine = createMock(IMachine.class);
@@ -92,14 +99,20 @@ public class AttachMediumToMachineIfNotAlreadyAttachedTest {
       String isoAlreadyAttachedException = errorBuilder.toString();
 
       VBoxException isoAttachedException = new VBoxException(createNiceMock(Throwable.class),
-            isoAlreadyAttachedException);
-      machine.attachDevice(controllerIDE, controllerPort, device, HardDisk, hardDisk);
+              isoAlreadyAttachedException);
+      machine.attachDevice(controllerName, controllerPort, deviceSlot, HardDisk, hardDisk);
       expectLastCall().andThrow(isoAttachedException);
 
       replay(manager, machine, vBox, hardDisk);
 
-      new AttachMediumToMachineIfNotAlreadyAttached(controllerIDE, hardDisk, controllerPort, device, HardDisk)
-            .apply(machine);
+      StorageController controller = StorageController.builder()
+              .name(controllerName)
+              .bus(StorageBus.IDE)
+              .attachHardDisk(controllerPort, deviceSlot, "/Users/mattias/jclouds-virtualbox-test/testadmin.vdi")
+              .build();
+
+      DeviceDetails deviceDetails = getOnlyElement(controller.getHardDisks()).getDeviceDetails();
+      new AttachMediumToMachineIfNotAlreadyAttached(deviceDetails, hardDisk, controllerName).apply(machine);
 
       verify(machine);
 
@@ -108,9 +121,9 @@ public class AttachMediumToMachineIfNotAlreadyAttachedTest {
    @Test(expectedExceptions = VBoxException.class)
    public void testFailOnOtherVBoxError() throws Exception {
 
-      String controllerIDE = "IDE Controller";
+      String controllerName = "IDE Controller";
       int controllerPort = 0;
-      int device = 1;
+      int deviceSlot = 1;
 
       VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
       IMachine machine = createMock(IMachine.class);
@@ -123,14 +136,21 @@ public class AttachMediumToMachineIfNotAlreadyAttachedTest {
       String isoAlreadyAttachedException = errorBuilder.toString();
 
       VBoxException isoAttachedException = new VBoxException(createNiceMock(Throwable.class),
-            isoAlreadyAttachedException);
-      machine.attachDevice(controllerIDE, controllerPort, device, HardDisk, hardDisk);
+              isoAlreadyAttachedException);
+      machine.attachDevice(controllerName, controllerPort, deviceSlot, HardDisk, hardDisk);
       expectLastCall().andThrow(isoAttachedException);
 
       replay(manager, machine, vBox, hardDisk);
 
-      new AttachMediumToMachineIfNotAlreadyAttached(controllerIDE, hardDisk, controllerPort, device, HardDisk)
-            .apply(machine);
+
+      StorageController controller = StorageController.builder()
+              .name(controllerName)
+              .bus(StorageBus.IDE)
+              .attachHardDisk(controllerPort, deviceSlot, "/Users/mattias/jclouds-virtualbox-test/testadmin.vdi")
+              .build();
+
+      DeviceDetails deviceDetails = getOnlyElement(controller.getHardDisks()).getDeviceDetails();
+      new AttachMediumToMachineIfNotAlreadyAttached(deviceDetails, hardDisk, controllerName).apply(machine);
 
    }
 

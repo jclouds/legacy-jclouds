@@ -19,44 +19,44 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static org.virtualbox_4_1.NetworkAttachmentType.NAT;
+
 import javax.annotation.Nullable;
 
-import org.virtualbox_4_1.DeviceType;
+import org.jclouds.virtualbox.domain.NatAdapter;
+import org.jclouds.virtualbox.domain.RedirectRule;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMedium;
-import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_1.INetworkAdapter;
 
 import com.google.common.base.Function;
 
 /**
  * @author Mattias Holmqvist
  */
-public class AttachDistroMediumToMachine implements Function<IMachine, Void> {
+public class AttachNATAdapterToMachine implements Function<IMachine, Void> {
 
-   private final String controllerIDE;
-   private final IMedium distroMedium;
+   private long adapterSlot;
+   private NatAdapter natAdapter;
 
-   public AttachDistroMediumToMachine(String controllerIDE, IMedium distroMedium) {
-      this.controllerIDE = controllerIDE;
-      this.distroMedium = distroMedium;
+   public AttachNATAdapterToMachine(long adapterSlot, NatAdapter natAdapter) {
+      this.adapterSlot = adapterSlot;
+      this.natAdapter = natAdapter;
    }
 
    @Override
    public Void apply(@Nullable IMachine machine) {
-      try {
-         int controllerPort = 0;
-         int device = 0;
-         machine.attachDevice(controllerIDE, controllerPort, device, DeviceType.DVD, distroMedium);
-         machine.saveSettings();
-      } catch (VBoxException e) {
-         if (!alreadyAttached(e))
-            throw e;
+      INetworkAdapter networkAdapter = machine.getNetworkAdapter(adapterSlot);
+      networkAdapter.setAttachmentType(NAT);
+      for (RedirectRule rule : natAdapter.getRedirectRules()) {
+         networkAdapter.getNatDriver().addRedirect("guestssh",
+                 rule.getProtocol(),
+                 rule.getHost(),
+                 rule.getHostPort(),
+                 rule.getGuest(),
+                 rule.getGuestPort());
       }
+      networkAdapter.setEnabled(true);
+      machine.saveSettings();
       return null;
    }
-
-   private boolean alreadyAttached(VBoxException e) {
-      return e.getMessage().contains("is already attached to port");
-   }
-
 }

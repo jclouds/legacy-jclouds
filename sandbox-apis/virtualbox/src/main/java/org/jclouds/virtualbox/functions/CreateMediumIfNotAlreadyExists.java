@@ -19,55 +19,49 @@
 
 package org.jclouds.virtualbox.functions;
 
-import javax.annotation.Nullable;
-
-import org.virtualbox_4_1.DeviceType;
-import org.virtualbox_4_1.IMedium;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.IVirtualBox;
-import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.VirtualBoxManager;
-
 import com.google.common.base.Function;
+import org.jclouds.virtualbox.domain.HardDisk;
+import org.virtualbox_4_1.*;
+
+import javax.annotation.Nullable;
 
 /**
  * @author Mattias Holmqvist
  */
-public class CreateMediumIfNotAlreadyExists implements Function<String, IMedium> {
+public class CreateMediumIfNotAlreadyExists implements Function<HardDisk, IMedium> {
 
    private final VirtualBoxManager manager;
-   private final String diskFormat;
    private boolean overwriteIfExists;
 
-   public CreateMediumIfNotAlreadyExists(VirtualBoxManager manager, String diskFormat, boolean overwriteIfExists) {
+   public CreateMediumIfNotAlreadyExists(VirtualBoxManager manager, boolean overwriteIfExists) {
       this.manager = manager;
-      this.diskFormat = diskFormat;
       this.overwriteIfExists = overwriteIfExists;
    }
 
    @Override
-   public IMedium apply(@Nullable String path) {
+   public IMedium apply(@Nullable HardDisk hardDisk) {
       IVirtualBox vBox = manager.getVBox();
       try {
-         final IMedium medium = vBox.findMedium(path, DeviceType.HardDisk);
+         String diskPath = hardDisk.getDiskPath();
+         final IMedium medium = vBox.findMedium(diskPath, DeviceType.HardDisk);
          if (overwriteIfExists) {
             final IProgress progress = medium.deleteStorage();
             progress.waitForCompletion(-1);
-            return createNewMedium(vBox, path);
+            return createNewMedium(vBox, hardDisk);
          } else {
-            throw new IllegalStateException("Medium for path " + path + " already exists.");
+            throw new IllegalStateException("Medium for path " + diskPath + " already exists.");
          }
       } catch (VBoxException e) {
          if (notFoundException(e))
-            return createNewMedium(vBox, path);
+            return createNewMedium(vBox, hardDisk);
          throw e;
       }
    }
 
-   private IMedium createNewMedium(IVirtualBox vBox, String path) {
-      IMedium hardDisk = vBox.createHardDisk(diskFormat, path);
-      createBaseStorage(hardDisk);
-      return hardDisk;
+   private IMedium createNewMedium(IVirtualBox vBox, HardDisk hardDisk) {
+      IMedium medium = vBox.createHardDisk(hardDisk.getDiskFormat(), hardDisk.getDiskPath());
+      createBaseStorage(medium);
+      return medium;
    }
 
    private boolean notFoundException(VBoxException e) {
@@ -78,7 +72,7 @@ public class CreateMediumIfNotAlreadyExists implements Function<String, IMedium>
       try {
          long size = 4L * 1024L * 1024L * 1024L - 4L;
          IProgress storageCreation = hardDisk.createBaseStorage(size,
-               (long) org.virtualbox_4_1.jaxws.MediumVariant.STANDARD.ordinal());
+                 (long) org.virtualbox_4_1.jaxws.MediumVariant.STANDARD.ordinal());
          storageCreation.waitForCompletion(-1);
       } catch (VBoxException e) {
          if (fileNotFoundException(e)) {
@@ -100,7 +94,7 @@ public class CreateMediumIfNotAlreadyExists implements Function<String, IMedium>
 
    private boolean storageAlreadyExists(VBoxException e) {
       return e.getMessage().contains("VirtualBox error: Storage for the medium ")
-            && e.getMessage().contains("is already created");
+              && e.getMessage().contains("is already created");
    }
 
 }

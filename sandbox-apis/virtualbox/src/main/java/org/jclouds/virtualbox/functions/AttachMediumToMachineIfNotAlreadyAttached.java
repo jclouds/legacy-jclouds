@@ -21,7 +21,7 @@ package org.jclouds.virtualbox.functions;
 
 import javax.annotation.Nullable;
 
-import org.virtualbox_4_1.DeviceType;
+import org.jclouds.virtualbox.domain.DeviceDetails;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IMedium;
 import org.virtualbox_4_1.VBoxException;
@@ -33,25 +33,20 @@ import com.google.common.base.Function;
  */
 public class AttachMediumToMachineIfNotAlreadyAttached implements Function<IMachine, Void> {
 
-   private String controllerIDE;
-   private IMedium medium;
-   private int controllerPort;
-   private int device;
-   private DeviceType deviceType;
+   private final DeviceDetails device;
+   private final IMedium medium;
+   private final String controllerName;
 
-   public AttachMediumToMachineIfNotAlreadyAttached(String controllerIDE, IMedium medium, int controllerPort,
-         int device, DeviceType deviceType) {
-      this.controllerIDE = controllerIDE;
-      this.medium = medium;
-      this.controllerPort = controllerPort;
+   public AttachMediumToMachineIfNotAlreadyAttached(DeviceDetails device, IMedium medium, String controllerName) {
       this.device = device;
-      this.deviceType = deviceType;
+      this.medium = medium;
+      this.controllerName = controllerName;
    }
 
    @Override
    public Void apply(@Nullable IMachine machine) {
       try {
-         machine.attachDevice(controllerIDE, controllerPort, device, deviceType, medium);
+         machine.attachDevice(controllerName, device.getPort(), device.getDeviceSlot(), device.getDeviceType(), medium);
          machine.saveSettings();
       } catch (VBoxException e) {
          if (!alreadyAttached(e))

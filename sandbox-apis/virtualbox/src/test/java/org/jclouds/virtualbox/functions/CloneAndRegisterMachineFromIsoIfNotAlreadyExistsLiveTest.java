@@ -19,24 +19,26 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
-import static org.testng.Assert.assertEquals;
-import static org.virtualbox_4_1.NetworkAttachmentType.Bridged;
-
-import java.util.concurrent.TimeUnit;
-
+import com.google.common.base.Predicate;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
+import org.jclouds.virtualbox.domain.HardDisk;
+import org.jclouds.virtualbox.domain.StorageController;
+import org.jclouds.virtualbox.domain.VmSpecification;
+import org.jclouds.virtualbox.util.PropertyUtils;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_1.*;
 
-import com.google.common.base.Predicate;
+import java.util.concurrent.TimeUnit;
+
+import static org.jclouds.virtualbox.domain.ExecutionType.HEADLESS;
+import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
+import static org.testng.Assert.assertEquals;
+import static org.virtualbox_4_1.NetworkAttachmentType.Bridged;
 
 /**
  * @author Andrea Turli
@@ -49,8 +51,6 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends Ba
    private String vmId = "jclouds-image-iso-1";
    private String osTypeId = "";
    private String controllerIDE = "IDE Controller";
-   private String diskFormat = "";
-   private String adminDisk = "testadmin.vdi";
    private String guestId = "guest";
    private String hostId = "host";
    private String snapshotName = "snap";
@@ -84,10 +84,17 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends Ba
    private IMachine getMasterNode(VirtualBoxManager manager, ComputeServiceContext localHostContext) {
       try {
          Predicate<IPSocket> socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 10, 1, TimeUnit.SECONDS);
-         return new IsoToIMachine(manager, adminDisk, diskFormat,
-                 vmName, osTypeId, vmId, forceOverwrite,
-                 controllerIDE, localHostContext, hostId, guestId, socketTester,
-                 "127.0.0.1", 8080).apply(isoName);
+         String workingDir = PropertyUtils.getWorkingDirFromProperty();
+         StorageController ideController = StorageController.builder().name(controllerIDE).bus(StorageBus.IDE)
+         .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
+         .attachHardDisk(0, 1, workingDir + "/testadmin.vdi")
+         .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso").build();
+         VmSpecification vmSpecification = VmSpecification.builder().id(vmId).name(vmName).osTypeId(osTypeId)
+                 .controller(ideController)
+                 .forceOverwrite(true).build();
+         return new IsoToIMachine(manager, guestId,
+                 vmSpecification, localHostContext, hostId, socketTester,
+                 "127.0.0.1", 8080, HEADLESS).apply(isoName);
       } catch (IllegalStateException e) {
          // already created
          return manager.getVBox().findMachine(vmName);

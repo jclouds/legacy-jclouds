@@ -19,22 +19,18 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.createNiceMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
-
+import org.jclouds.virtualbox.domain.StorageController;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IStorageController;
 import org.virtualbox_4_1.StorageBus;
 import org.virtualbox_4_1.VBoxException;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.*;
+
 /**
- * 
  * @author Adrian Cole
- * 
  */
 @Test(groups = "unit", testName = "AddIDEControllerIfNotExistsTest")
 public class AddIDEControllerIfNotExistsTest {
@@ -44,14 +40,15 @@ public class AddIDEControllerIfNotExistsTest {
       IMachine vm = createMock(IMachine.class);
 
       String controllerName = "IDE Controller";
+      StorageController storageController = StorageController.builder().bus(StorageBus.IDE).name(controllerName).build();
 
       expect(vm.addStorageController(controllerName, StorageBus.IDE)).andReturn(
-            createNiceMock(IStorageController.class));
+              createNiceMock(IStorageController.class));
       vm.saveSettings();
 
       replay(vm);
 
-      new AddIDEControllerIfNotExists(controllerName).apply(vm);
+      new AddIDEControllerIfNotExists(storageController).apply(vm);
 
       verify(vm);
    }
@@ -61,14 +58,15 @@ public class AddIDEControllerIfNotExistsTest {
       IMachine vm = createMock(IMachine.class);
 
       String controllerName = "IDE Controller";
+      StorageController storageController = StorageController.builder().bus(StorageBus.IDE).name(controllerName).build();
 
       expect(vm.addStorageController(controllerName, StorageBus.IDE)).andThrow(
-            new VBoxException(createNiceMock(Throwable.class),
-                  "VirtualBox error: Storage controller named 'IDE Controller' already exists (0x80BB000C)"));
+              new VBoxException(createNiceMock(Throwable.class),
+                      "VirtualBox error: Storage controller named 'IDE Controller' already exists (0x80BB000C)"));
 
       replay(vm);
 
-      new AddIDEControllerIfNotExists(controllerName).apply(vm);
+      new AddIDEControllerIfNotExists(storageController).apply(vm);
 
       verify(vm);
    }
@@ -78,13 +76,14 @@ public class AddIDEControllerIfNotExistsTest {
       IMachine vm = createMock(IMachine.class);
 
       String controllerName = "IDE Controller";
+      StorageController storageController = StorageController.builder().bus(StorageBus.IDE).name(controllerName).build();
 
       expect(vm.addStorageController(controllerName, StorageBus.IDE)).andThrow(
-            new VBoxException(createNiceMock(Throwable.class), "VirtualBox error: General Error"));
+              new VBoxException(createNiceMock(Throwable.class), "VirtualBox error: General Error"));
 
       replay(vm);
 
-      new AddIDEControllerIfNotExists(controllerName).apply(vm);
+      new AddIDEControllerIfNotExists(storageController).apply(vm);
 
       verify(vm);
    }

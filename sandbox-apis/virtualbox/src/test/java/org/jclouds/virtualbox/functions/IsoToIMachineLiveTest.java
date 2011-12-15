@@ -19,18 +19,9 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.collect.Iterables.any;
-import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
-import static org.testng.Assert.assertTrue;
-
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.inject.Guice;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
@@ -43,16 +34,25 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
+import org.jclouds.virtualbox.domain.*;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExists;
+import org.jclouds.virtualbox.util.PropertyUtils;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.VirtualBoxManager;
-
-import com.google.inject.Guice;
+import org.virtualbox_4_1.*;
 
 import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.virtualbox.domain.ExecutionType.GUI;
+import static org.jclouds.virtualbox.domain.ExecutionType.HEADLESS;
+import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author Andrea Turli, Mattias Holmqvist
@@ -62,20 +62,17 @@ public class IsoToIMachineLiveTest extends BaseVirtualBoxClientLiveTest {
 
    Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() {
    }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
-         .getInstance(Json.class));
+           .getInstance(Json.class));
 
-   private boolean forceOverwrite = true;
    private String vmId = "jclouds-image-iso-1";
    private String osTypeId = "";
-   private String controllerIDE = "IDE Controller";
-   private String diskFormat = "";
-   private String adminDisk = "testadmin.vdi";
+   private String ideControllerName = "IDE Controller";
    private String guestId = "guest";
    private String hostId = "host";
 
    private String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
 
-   @BeforeGroups(groups = { "live" })
+   @BeforeGroups(groups = {"live"})
    public void setUp() throws Exception {
       identity = "toor";
       credential = "password";
@@ -86,11 +83,21 @@ public class IsoToIMachineLiveTest extends BaseVirtualBoxClientLiveTest {
 
       VirtualBoxManager manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
       ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId,
-            "localhost", new Credentials("toor", "password"));
+              "localhost", new Credentials("toor", "password"));
       Predicate<IPSocket> socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 10, 1, TimeUnit.SECONDS);
-      IMachine imageMachine = new IsoToIMachine(manager, adminDisk, diskFormat, vmName, osTypeId, vmId,
-            forceOverwrite, controllerIDE, localHostContext, hostId, guestId, socketTester, "127.0.0.1", 8080)
-            .apply("ubuntu-11.04-server-i386.iso");
+
+      String workingDir = PropertyUtils.getWorkingDirFromProperty();
+      StorageController ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)
+              .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
+              .attachHardDisk(0, 1, workingDir + "/testadmin.vdi")
+              .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso").build();
+      VmSpecification vmSpecification = VmSpecification.builder().id(vmId).name(vmName).osTypeId(osTypeId)
+              .controller(ideController)
+              .forceOverwrite(true)
+              .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build()).build();
+      IMachine imageMachine = new IsoToIMachine(manager, guestId, vmSpecification, localHostContext, hostId,
+              socketTester, "127.0.0.1", 8080, HEADLESS)
+              .apply("ubuntu-11.04-server-i386.iso");
 
       IMachineToImage iMachineToImage = new IMachineToImage(manager, map);
       Image newImage = iMachineToImage.apply(imageMachine);

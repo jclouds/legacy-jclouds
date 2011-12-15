@@ -19,7 +19,9 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.easymock.EasyMock.anyLong;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.createNiceMock;
@@ -27,6 +29,9 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.testng.Assert.assertNotSame;
 
+import org.jclouds.virtualbox.domain.DeviceDetails;
+import org.jclouds.virtualbox.domain.HardDisk;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.DeviceType;
 import org.virtualbox_4_1.IMachine;
@@ -41,15 +46,24 @@ import org.virtualbox_4_1.VirtualBoxManager;
  */
 public class CreateMediumIfNotAlreadyExistsTest {
 
+   private String adminDiskPath;
+   private String diskFormat;
+
+   @BeforeMethod
+   public void setUp() throws Exception {
+      adminDiskPath = "/Users/johndoe/jclouds-virtualbox-images/admin.vdi";
+      diskFormat = "vdi";
+   }
+
    @Test
    public void testCreateMediumWhenDiskDoesNotExists() throws Exception {
-      String adminDiskPath = "/Users/johndoe/jclouds-virtualbox-images/admin.vdi";
-      String diskFormat = "vdi";
+
+      HardDisk hardDisk = createTestHardDisk();
 
       VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
       IMachine machine = createMock(IMachine.class);
       IVirtualBox vBox = createMock(IVirtualBox.class);
-      IMedium hardDisk = createMock(IMedium.class);
+      IMedium medium = createMock(IMedium.class);
       IProgress progress = createNiceMock(IProgress.class);
 
       StringBuilder errorBuilder = new StringBuilder();
@@ -61,13 +75,13 @@ public class CreateMediumIfNotAlreadyExistsTest {
       expect(manager.getVBox()).andReturn(vBox).anyTimes();
 
       VBoxException notFoundException = new VBoxException(createNiceMock(Throwable.class), errorMessage);
-      expect(vBox.findMedium(adminDiskPath, DeviceType.HardDisk)).andThrow(notFoundException);
-      expect(vBox.createHardDisk(diskFormat, adminDiskPath)).andReturn(hardDisk);
-      expect(hardDisk.createBaseStorage(anyLong(), anyLong())).andReturn(progress);
+      expect(vBox.findMedium(eq(adminDiskPath), eq(DeviceType.HardDisk))).andThrow(notFoundException);
+      expect(vBox.createHardDisk(diskFormat, adminDiskPath)).andReturn(medium);
+      expect(medium.createBaseStorage(anyLong(), anyLong())).andReturn(progress);
 
-      replay(manager, machine, vBox, hardDisk);
+      replay(manager, machine, vBox, medium);
 
-      new CreateMediumIfNotAlreadyExists(manager, diskFormat, true).apply(adminDiskPath);
+      new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
 
       verify(machine, vBox);
 
@@ -75,61 +89,58 @@ public class CreateMediumIfNotAlreadyExistsTest {
 
    @Test
    public void testDeleteAndCreateNewStorageWhenMediumExistsAndUsingOverwrite() throws Exception {
-      String adminDiskPath = "/Users/johndoe/jclouds-virtualbox-images/admin.vdi";
-      String diskFormat = "vdi";
+      HardDisk hardDisk = createTestHardDisk();
 
       VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
       IMachine machine = createMock(IMachine.class);
       IVirtualBox vBox = createMock(IVirtualBox.class);
-      IMedium hardDisk = createMock(IMedium.class);
+      IMedium medium = createMock(IMedium.class);
       IMedium newHardDisk = createMock(IMedium.class);
       IProgress progress = createNiceMock(IProgress.class);
 
       expect(manager.getVBox()).andReturn(vBox).anyTimes();
-      expect(vBox.findMedium(adminDiskPath, DeviceType.HardDisk)).andReturn(hardDisk);
+      expect(vBox.findMedium(adminDiskPath, DeviceType.HardDisk)).andReturn(medium);
 
-      expect(hardDisk.deleteStorage()).andReturn(progress);
+      expect(medium.deleteStorage()).andReturn(progress);
       expect(vBox.createHardDisk(diskFormat, adminDiskPath)).andReturn(newHardDisk);
       expect(newHardDisk.createBaseStorage(anyLong(), anyLong())).andReturn(progress);
 
-      replay(manager, machine, vBox, hardDisk, newHardDisk, progress);
+      replay(manager, machine, vBox, medium, newHardDisk, progress);
 
-      IMedium newDisk = new CreateMediumIfNotAlreadyExists(manager, diskFormat, true).apply(adminDiskPath);
+      IMedium newDisk = new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
 
-      verify(machine, vBox, hardDisk);
-      assertNotSame(newDisk, hardDisk);
+      verify(machine, vBox, medium);
+      assertNotSame(newDisk, medium);
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testFailWhenMediumExistsAndNotUsingOverwrite() throws Exception {
-      String adminDiskPath = "/Users/johndoe/jclouds-virtualbox-images/admin.vdi";
-      String diskFormat = "vdi";
+      HardDisk hardDisk = createTestHardDisk();
 
       VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
       IMachine machine = createMock(IMachine.class);
       IVirtualBox vBox = createMock(IVirtualBox.class);
-      IMedium hardDisk = createMock(IMedium.class);
+      IMedium medium = createMock(IMedium.class);
       IMedium newHardDisk = createMock(IMedium.class);
       IProgress progress = createNiceMock(IProgress.class);
 
       expect(manager.getVBox()).andReturn(vBox).anyTimes();
-      expect(vBox.findMedium(adminDiskPath, DeviceType.HardDisk)).andReturn(hardDisk);
+      expect(vBox.findMedium(adminDiskPath, DeviceType.HardDisk)).andReturn(medium);
 
-      replay(manager, machine, vBox, hardDisk, newHardDisk, progress);
+      replay(manager, machine, vBox, medium, newHardDisk, progress);
 
-      new CreateMediumIfNotAlreadyExists(manager, diskFormat, false).apply(adminDiskPath);
+      new CreateMediumIfNotAlreadyExists(manager, false).apply(hardDisk);
    }
 
    @Test(expectedExceptions = VBoxException.class)
    public void testFailOnOtherVBoxException() throws Exception {
 
-      String adminDiskPath = "/Users/johndoe/jclouds-virtualbox-images/admin.vdi";
-      String diskFormat = "vdi";
+      HardDisk hardDisk = createTestHardDisk();
 
       VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
       IMachine machine = createMock(IMachine.class);
       IVirtualBox vBox = createMock(IVirtualBox.class);
-      IMedium hardDisk = createMock(IMedium.class);
+      IMedium medium = createMock(IMedium.class);
       IProgress progress = createNiceMock(IProgress.class);
 
       String errorMessage = "VirtualBox error: Some other VBox error";
@@ -138,12 +149,16 @@ public class CreateMediumIfNotAlreadyExistsTest {
 
       VBoxException notFoundException = new VBoxException(createNiceMock(Throwable.class), errorMessage);
       expect(vBox.findMedium(adminDiskPath, DeviceType.HardDisk)).andThrow(notFoundException);
-      expect(vBox.createHardDisk(diskFormat, adminDiskPath)).andReturn(hardDisk);
-      expect(hardDisk.createBaseStorage(anyLong(), anyLong())).andReturn(progress);
+      expect(vBox.createHardDisk(diskFormat, adminDiskPath)).andReturn(medium);
+      expect(medium.createBaseStorage(anyLong(), anyLong())).andReturn(progress);
 
-      replay(manager, machine, vBox, hardDisk);
+      replay(manager, machine, vBox, medium);
 
-      new CreateMediumIfNotAlreadyExists(manager, diskFormat, true).apply(adminDiskPath);
+      new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
+   }
+
+   private HardDisk createTestHardDisk() {
+      return new HardDisk(new DeviceDetails(0, 0, DeviceType.HardDisk), adminDiskPath, diskFormat);
    }
 
 }
