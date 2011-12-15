@@ -44,19 +44,19 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", enabled = true, singleThreaded = true, testName = "TerremarkECloudClientLiveTest")
 public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest {
+
+   public TerremarkECloudClientLiveTest() {
+      this.provider = "trmk-ecloud";
+      this.itemName = "Ubuntu Server 10.04 x64";
+      this.expectedOs = "Ubuntu Linux (64-bit)";
+   }
+
    @Override
    protected Properties setupProperties() {
       Properties props = super.setupProperties();
       props.setProperty(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_VDC,
             ".* - " + System.getProperty("test.trmk-ecloud.datacenter", "MIA"));
       return props;
-   }
-
-   @BeforeClass
-   void setProvider() {
-      this.provider = "trmk-ecloud";
-      this.itemName = "Ubuntu Server 10.04 x64";
-      expectedOs = "Ubuntu Linux (64-bit)";
    }
 
    @Override
