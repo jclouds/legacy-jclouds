@@ -1,0 +1,670 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:elastichosts-lon-b:bundle:1.3.0-SNAPSHOT
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/workspace/git/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/workspace/git/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building jclouds ElasticHosts BlueSquare London provider 1.3.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ elastichosts-lon-b ---
+[INFO] Deleting /Users/adriancole/workspace/git/jclouds/providers/elastichosts-lon-b/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ elastichosts-lon-b ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-banned-dependencies) @ elastichosts-lon-b ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-java) @ elastichosts-lon-b ---
+[INFO] 
+[INFO] --- maven-remote-resources-plugin:1.2:process (process-remote-resources) @ elastichosts-lon-b ---
+[INFO] Setting property: classpath.resource.loader.class => 'org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader'.
+[INFO] Setting property: velocimacro.messages.on => 'false'.
+[INFO] Setting property: resource.loader => 'classpath'.
+[INFO] Setting property: resource.manager.logwhenfound => 'false'.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ elastichosts-lon-b ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/elastichosts-lon-b/src/main/clojure
+[INFO] Copying 2 resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ elastichosts-lon-b ---
+[INFO] Compiling 2 source files to /Users/adriancole/workspace/git/jclouds/providers/elastichosts-lon-b/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ elastichosts-lon-b ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/elastichosts-lon-b/src/test/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/elastichosts-lon-b/src/test/resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ elastichosts-lon-b ---
+[INFO] Compiling 4 source files to /Users/adriancole/workspace/git/jclouds/providers/elastichosts-lon-b/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.10:test (default-test) @ elastichosts-lon-b ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/elastichosts-lon-b/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.jclouds.elastichosts.ElasticHostsBlueSquareLondonProviderTest
+Starting test testInRestProperties(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonProviderTest)
+Starting test testWithId(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonProviderTest)
+Starting test testAllContains(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonProviderTest)
+Starting test testOfTypeContains(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonProviderTest)
+[pool-2-thread-2] Test testWithId(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonProviderTest) succeeded: 51ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testAllContains(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonProviderTest) succeeded: 47ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testOfTypeContains(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonProviderTest) succeeded: 49ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testInRestProperties(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonProviderTest) succeeded: 144ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.552 sec
+
+Results :
+
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.3.3:test (test-clojure) @ elastichosts-lon-b ---
+
+Testing user
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+[INFO] 
+[INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ elastichosts-lon-b ---
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ elastichosts-lon-b ---
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/elastichosts-lon-b/target/elastichosts-lon-b-1.3.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ elastichosts-lon-b ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ elastichosts-lon-b ---
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/elastichosts-lon-b/target/elastichosts-lon-b-1.3.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.10:test (integration) @ elastichosts-lon-b ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/elastichosts-lon-b/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Starting test testCreateDrive(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest)
+Starting test setServiceDefaults(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest)
+[pool-2-thread-1] Test setServiceDefaults(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testCompareSizes(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest)
+[pool-2-thread-2] Test testCreateDrive(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest) succeeded: 4567ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test testSetDriveData(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest)
+[pool-2-thread-2] Test testSetDriveData(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest) succeeded: 1794ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test testCreateAndStartServer(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest)
+Dec 15, 2011 3:48:22 AM org.jclouds.elasticstack.ElasticStackClientLiveTest testCreateAndStartServer
+INFO: preparing drive
+before prepare[size=1073741824, claimType=shared, readers=[ffffffff-ffff-ffff-ffff-ffffffffffff], uuid=65f0e731-2a2a-45ae-848e-026632ee5bb1, name=rediculous, tags=[networking, security, gateway], userMetadata={foo=bar}, status=active, user=2e5d4c10-eea0-4513-a28e-21bf1c8ccfdc, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
+[pool-2-thread-1] Test testCompareSizes(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 3, failed: 1, skipped: 0.
+[pool-2-thread-1] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 1, skipped: 1.
+Starting test testCorrectAuthException(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest)
+[pool-2-thread-1] Test testCorrectAuthException(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) succeeded: 1589ms
+Test suite progress: tests succeeded: 4, failed: 1, skipped: 1.
+Starting test testCreateAndRunAService(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest)
+Dec 15, 2011 3:48:26 AM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable com.google.common.util.concurrent.Futures$ChainingListenableFuture@34189cab with executor java.util.concurrent.ThreadPoolExecutor@3bd5b945
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.execute(ExecutorServiceModule.java:198)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:149)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:134)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+[pool-2-thread-1] Test testCreateAndRunAService(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 4, failed: 2, skipped: 1.
+[pool-2-thread-1] Test testCreateTwoNodesWithRunScript(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 4, failed: 2, skipped: 2.
+[pool-2-thread-1] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 4, failed: 2, skipped: 3.
+[pool-2-thread-1] Test testCredentialsCache(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 4, failed: 2, skipped: 4.
+[pool-2-thread-1] Test testGet(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 4, failed: 2, skipped: 5.
+Starting test testGetAssignableLocations(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest)
+Dec 15, 2011 3:48:37 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=elastichosts-lon-b, scope=PROVIDER, description=https://api.lon-b.elastichosts.com, parent=null, iso3166Codes=[GB-LND], metadata={}]
+[pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 5, failed: 2, skipped: 5.
+Starting test testImagesCache(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest)
+[pool-2-thread-1] Test testImagesCache(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 5, failed: 3, skipped: 5.
+Starting test testListImages(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest)
+[pool-2-thread-1] Test testListImages(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 5, failed: 4, skipped: 5.
+Starting test testListSizes(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest)
+[pool-2-thread-1] Test testListSizes(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) succeeded: 11ms
+Test suite progress: tests succeeded: 6, failed: 4, skipped: 5.
+[pool-2-thread-1] Test testReboot(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 4, skipped: 6.
+[pool-2-thread-1] Test testSuspendResume(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 4, skipped: 7.
+[pool-2-thread-1] Test testGetNodesWithDetails(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 4, skipped: 8.
+[pool-2-thread-1] Test testListNodes(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 4, skipped: 9.
+[pool-2-thread-1] Test testDestroyNodes(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 4, skipped: 10.
+[pool-2-thread-1] Test testTemplateMatch(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 4, skipped: 11.
+Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest)
+[pool-2-thread-1] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) succeeded: 880ms
+Test suite progress: tests succeeded: 7, failed: 4, skipped: 11.
+Starting test testOptionToNotBlock(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest)
+[pool-2-thread-1] Test testOptionToNotBlock(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 8, failed: 4, skipped: 11.
+after prepare[size=1073741824, claimType=shared, readers=[ffffffff-ffff-ffff-ffff-ffffffffffff], uuid=65f0e731-2a2a-45ae-848e-026632ee5bb1, name=rediculous, tags=[networking, security, gateway], userMetadata={foo=bar}, status=active, user=2e5d4c10-eea0-4513-a28e-21bf1c8ccfdc, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
+Dec 15, 2011 3:49:12 AM org.jclouds.elasticstack.ElasticStackClientLiveTest testCreateAndStartServer
+INFO: starting server
+{"status":"ACTIVE","started":"Jan 15, 1970 11:45:49 PM","user":"2e5d4c10-eea0-4513-a28e-21bf1c8ccfdc","metrics":{"txPackets":0,"tx":0,"rxPackets":0,"rx":0,"driveMetrics":{"ide:0:0":{"readBytes":0,"readRequests":0,"writeBytes":0,"writeRequests":0}}},"cpu":1000,"smp":1,"mem":512,"persistent":true,"devices":{"ide:0:0":{"bus":0,"unit":0,"driveUuid":"65f0e731-2a2a-45ae-848e-026632ee5bb1","mediaType":"DISK"}},"bootDeviceIds":["ide:0:0"],"nics":[{"dhcp":"109.104.101.76","model":"E1000","block":[]}],"vnc":{"ip":"109.104.101.76","password":"Il0veVNC","tls":false},"uuid":"98b9f077-4142-4b06-bda6-92a9d4f3c040","name":"adriancole.test","tags":[],"userMetadata":{}}
+[pool-2-thread-2] Test testCreateAndStartServer(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest) succeeded: 55679ms
+Test suite progress: tests succeeded: 9, failed: 4, skipped: 11.
+Starting test testConnectivity(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest)
+Dec 15, 2011 3:49:18 AM org.jclouds.elasticstack.ElasticStackClientLiveTest testConnectivity
+INFO: awaiting vnc: [address=109.104.101.76, port=5900]
+Dec 15, 2011 3:49:19 AM org.jclouds.elasticstack.ElasticStackClientLiveTest testConnectivity
+INFO: awaiting ssh: [address=109.104.101.76, port=22]
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+Filesystem           1K-blocks      Used Available Use% Mounted on
+/dev/sda               1032824    486980    494924  50% /
+none                    248456       160    248296   1% /dev
+none                    252964         0    252964   0% /dev/shm
+none                    252964        40    252924   1% /var/run
+none                    252964         0    252964   0% /var/lock
+none                    252964         0    252964   0% /lib/init/rw
+
+/dev/sda on / type ext3 (rw,noatime)
+proc on /proc type proc (rw)
+none on /sys type sysfs (rw,noexec,nosuid,nodev)
+none on /sys/fs/fuse/connections type fusectl (rw)
+none on /sys/kernel/debug type debugfs (rw)
+none on /sys/kernel/security type securityfs (rw)
+none on /dev type devtmpfs (rw,mode=0755)
+none on /dev/pts type devpts (rw,noexec,nosuid,gid=5,mode=0620)
+none on /dev/shm type tmpfs (rw,nosuid,nodev)
+none on /var/run type tmpfs (rw,nosuid,mode=0755)
+none on /var/lock type tmpfs (rw,noexec,nosuid,nodev)
+none on /lib/init/rw type tmpfs (rw,nosuid,mode=0755)
+none on /var/lib/ureadahead/debugfs type debugfs (rw,relatime)
+
+Linux ubuntu 2.6.32-25-generic #44-Ubuntu SMP Fri Sep 17 20:05:27 UTC 2010 x86_64 GNU/Linux
+
+[pool-2-thread-2] Test testConnectivity(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest) succeeded: 20880ms
+Test suite progress: tests succeeded: 10, failed: 4, skipped: 11.
+Starting test testLifeCycle(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest)
+[pool-2-thread-2] Test testLifeCycle(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest) succeeded: 10982ms
+Test suite progress: tests succeeded: 11, failed: 4, skipped: 11.
+Starting test testSetServerConfiguration(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest)
+[pool-2-thread-2] Test testSetServerConfiguration(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest) succeeded: 3843ms
+Test suite progress: tests succeeded: 12, failed: 4, skipped: 11.
+Starting test testDestroyServer(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest)
+[pool-2-thread-2] Test testDestroyServer(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest) succeeded: 1742ms
+Test suite progress: tests succeeded: 13, failed: 4, skipped: 11.
+Starting test testDestroyDrive(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest)
+[pool-2-thread-2] Test testDestroyDrive(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest) succeeded: 2838ms
+Test suite progress: tests succeeded: 14, failed: 4, skipped: 11.
+Starting test testWeCanReadAndWriteToDrive(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest)
+[pool-2-thread-2] Test testWeCanReadAndWriteToDrive(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest) succeeded: 4245ms
+Test suite progress: tests succeeded: 15, failed: 4, skipped: 11.
+Starting test testWeCopyADriveContentsViaGzip(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest)
+before image; drive 2[size=4194304, claimType=exclusive, readers=[], uuid=f8c51eb3-a538-40c1-a1a4-5ad3ea7d301e, name=adriancole.test2, tags=[], userMetadata={}, status=active, user=2e5d4c10-eea0-4513-a28e-21bf1c8ccfdc, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
+before image; drive 3[size=4194304, claimType=exclusive, readers=[], uuid=3f304089-6008-4779-ae76-236363788f99, name=adriancole.test3, tags=[], userMetadata={}, status=active, user=2e5d4c10-eea0-4513-a28e-21bf1c8ccfdc, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
+after image; drive 2[size=4194304, claimType=exclusive, readers=[], uuid=f8c51eb3-a538-40c1-a1a4-5ad3ea7d301e, name=adriancole.test2, tags=[], userMetadata={}, status=active, user=2e5d4c10-eea0-4513-a28e-21bf1c8ccfdc, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
+after image; drive 3[size=4194304, claimType=exclusive, readers=[], uuid=3f304089-6008-4779-ae76-236363788f99, name=adriancole.test3, tags=[], userMetadata={}, status=active, user=2e5d4c10-eea0-4513-a28e-21bf1c8ccfdc, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
+[pool-2-thread-2] Test testWeCopyADriveContentsViaGzip(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest) succeeded: 18865ms
+Test suite progress: tests succeeded: 16, failed: 4, skipped: 11.
+Starting test testCompareSizes(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testCompareSizes(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 16, failed: 5, skipped: 11.
+Starting test testDefaultTemplateBuilder(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testDefaultTemplateBuilder(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 16, failed: 6, skipped: 11.
+Starting test testFromTemplate(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testFromTemplate(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 16, failed: 7, skipped: 11.
+Starting test testGetAssignableLocations(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+location [id=elastichosts-lon-b, scope=PROVIDER, description=https://api.lon-b.elastichosts.com, parent=null, iso3166Codes=[GB-LND], metadata={}]
+[pool-2-thread-2] Test testGetAssignableLocations(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 17, failed: 7, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 8, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 9, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 10, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 11, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 12, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 13, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 14, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 15, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 16, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 17, skipped: 11.
+Starting test testTemplateBuilderCanUseImageId(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanUseImageId(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 18, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 19, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 20, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 21, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 22, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 23, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 24, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 25, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 26, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 27, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 28, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 29, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 30, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 31, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 32, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 33, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 34, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 35, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 36, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 37, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 38, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 39, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 40, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 41, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 42, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 43, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 44, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 45, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 46, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 47, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 48, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 49, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 50, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 51, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 52, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 53, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 54, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 55, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 56, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 57, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 58, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 59, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 60, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 61, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 62, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 63, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 64, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 65, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 66, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 67, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 68, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 69, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 70, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 71, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 72, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 73, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 74, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 75, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 76, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 77, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 78, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 79, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 80, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 81, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 82, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 83, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 84, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 85, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 86, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 87, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 88, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 89, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 90, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 91, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 92, skipped: 11.
+Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 93, skipped: 11.
+Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 94, skipped: 11.
+Starting test testTemplateBuilder(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilder(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 17, failed: 95, skipped: 11.
+Starting test testGetDrive(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest)
+[pool-2-thread-2] Test testGetDrive(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest) succeeded: 866ms
+Test suite progress: tests succeeded: 18, failed: 95, skipped: 11.
+Starting test testGetServer(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest)
+[pool-2-thread-2] Test testGetServer(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest) succeeded: 853ms
+Test suite progress: tests succeeded: 19, failed: 95, skipped: 11.
+Starting test testListDriveInfo(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest)
+[pool-2-thread-2] Test testListDriveInfo(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest) succeeded: 862ms
+Test suite progress: tests succeeded: 20, failed: 95, skipped: 11.
+Starting test testListDrives(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest)
+[pool-2-thread-2] Test testListDrives(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest) succeeded: 882ms
+Test suite progress: tests succeeded: 21, failed: 95, skipped: 11.
+Starting test testListServers(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest)
+[pool-2-thread-2] Test testListServers(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest) succeeded: 863ms
+Test suite progress: tests succeeded: 22, failed: 95, skipped: 11.
+Starting test testListServerInfo(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest)
+[pool-2-thread-2] Test testListServerInfo(org.jclouds.elastichosts.ElasticHostsBlueSquareLondonClientLiveTest) succeeded: 853ms
+Test suite progress: tests succeeded: 23, failed: 95, skipped: 11.
+Exception in thread "user thread 4" java.lang.IllegalStateException: interrupted calling get() on [[method=ElasticStackAsyncClient.destroyDrive, request=POST https://api.lon-b.elastichosts.com/drives/65f0e731-2a2a-45ae-848e-026632ee5bb1/destroy HTTP/1.1]], so could not run listeners
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:66)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:979)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1281)
+	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:218)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:237)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:59)
+	... 3 more
+Caused by: java.util.concurrent.ExecutionException: task submitted from the following trace
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:270)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:241)
+	... 4 more
+Tests run: 129, Failures: 95, Errors: 0, Skipped: 11, Time elapsed: 933.436 sec <<< FAILURE!
+
+Results :
+
+Failed tests:   testCompareSizes(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testCreateAndRunAService(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testImagesCache(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testListImages(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonComputeServiceLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testCompareSizes(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testDefaultTemplateBuilder(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testFromTemplate(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testTemplateBuilderCanUseImageId(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): 
+  testTemplateBuilderWithImageIdSpecified(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testTemplateBuilderWithLoginUserSpecified(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+  testTemplateBuilder(org.jclouds.elastichosts.compute.ElasticHostsBlueSquareLondonTemplateBuilderLiveTest): CacheLoader returned null for key d7736ff4-c045-46e0-bd62-f8719758d20d.
+
+Tests run: 129, Failures: 95, Errors: 0, Skipped: 11
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 15:45.417s
+[INFO] Finished at: Thu Dec 15 04:03:48 PST 2011
+[INFO] Final Memory: 20M/265M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project elastichosts-lon-b: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/adriancole/workspace/git/jclouds/providers/elastichosts-lon-b/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

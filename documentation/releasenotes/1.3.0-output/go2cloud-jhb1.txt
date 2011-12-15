@@ -53,19 +53,19 @@
  T E S T S
 -------------------------------------------------------
 Running org.jclouds.go2cloud.Go2CloudJohannesburg1ProviderTest
+Starting test testInRestProperties(org.jclouds.go2cloud.Go2CloudJohannesburg1ProviderTest)
 Starting test testWithId(org.jclouds.go2cloud.Go2CloudJohannesburg1ProviderTest)
 Starting test testAllContains(org.jclouds.go2cloud.Go2CloudJohannesburg1ProviderTest)
 Starting test testOfTypeContains(org.jclouds.go2cloud.Go2CloudJohannesburg1ProviderTest)
-Starting test testInRestProperties(org.jclouds.go2cloud.Go2CloudJohannesburg1ProviderTest)
-[pool-2-thread-3] Test testAllContains(org.jclouds.go2cloud.Go2CloudJohannesburg1ProviderTest) succeeded: 49ms
+[pool-2-thread-4] Test testOfTypeContains(org.jclouds.go2cloud.Go2CloudJohannesburg1ProviderTest) succeeded: 33ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testWithId(org.jclouds.go2cloud.Go2CloudJohannesburg1ProviderTest) succeeded: 51ms
+[pool-2-thread-3] Test testAllContains(org.jclouds.go2cloud.Go2CloudJohannesburg1ProviderTest) succeeded: 39ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testOfTypeContains(org.jclouds.go2cloud.Go2CloudJohannesburg1ProviderTest) succeeded: 53ms
+[pool-2-thread-2] Test testWithId(org.jclouds.go2cloud.Go2CloudJohannesburg1ProviderTest) succeeded: 42ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-[pool-2-thread-1] Test testInRestProperties(org.jclouds.go2cloud.Go2CloudJohannesburg1ProviderTest) succeeded: 98ms
+[pool-2-thread-1] Test testInRestProperties(org.jclouds.go2cloud.Go2CloudJohannesburg1ProviderTest) succeeded: 107ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.439 sec
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.461 sec
 
 Results :
 
@@ -103,65 +103,79 @@ Starting test setServiceDefaults(org.jclouds.go2cloud.compute.Go2CloudJohannesbu
 [pool-2-thread-1] Test setServiceDefaults(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
 Starting test testCompareSizes(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
-Dec 14, 2011 12:01:52 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
-INFO: smallest [id=cpu=1000.000000,ram=512,disk=1.000000, providerId=cpu=1000.000000,ram=512,disk=1.000000, name=null, processors=[[cores=1.0, speed=1000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], supportsImage=sizeLessThanOrEqual(1.0), tags=[]]
-Dec 14, 2011 12:01:52 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
-INFO: fastest [id=cpu=20000.000000,ram=512,disk=20.000000, providerId=cpu=20000.000000,ram=512,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
-Dec 14, 2011 12:01:52 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
-INFO: biggest [id=cpu=20000.000000,ram=8192,disk=20.000000, providerId=cpu=20000.000000,ram=8192,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=8192, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
-[pool-2-thread-1] Test testCompareSizes(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) succeeded: 3780ms
-Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-Starting test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
-[pool-2-thread-2] Test testCreateDrive(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 9196ms
-Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testCompareSizes(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 0.
+[pool-2-thread-1] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 1.
+Starting test testCorrectAuthException(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
+[pool-2-thread-2] Test testCreateDrive(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 3949ms
+Test suite progress: tests succeeded: 2, failed: 1, skipped: 1.
 Starting test testSetDriveData(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
+[pool-2-thread-1] Test testCorrectAuthException(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) succeeded: 965ms
+Test suite progress: tests succeeded: 3, failed: 1, skipped: 1.
+Starting test testCreateAndRunAService(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
+[pool-2-thread-1] Test testCreateAndRunAService(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 3, failed: 2, skipped: 1.
+[pool-2-thread-1] Test testCreateTwoNodesWithRunScript(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 2, skipped: 2.
+[pool-2-thread-1] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 2, skipped: 3.
+[pool-2-thread-1] Test testCredentialsCache(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 2, skipped: 4.
+[pool-2-thread-1] Test testGet(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 3, failed: 2, skipped: 5.
+Starting test testGetAssignableLocations(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
+Dec 15, 2011 4:51:47 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=go2cloud-jhb1, scope=PROVIDER, description=http://api.jhb1.go2cloud.co.za, parent=null, iso3166Codes=[ZA-GP], metadata={}]
+[pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) succeeded: 5ms
+Test suite progress: tests succeeded: 4, failed: 2, skipped: 5.
+Starting test testImagesCache(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
+[pool-2-thread-1] Test testImagesCache(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 4, failed: 3, skipped: 5.
+Starting test testListImages(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
 [pool-2-thread-2] Test testSetDriveData(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 7271ms
-Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 5, failed: 3, skipped: 5.
+[pool-2-thread-1] Test testListImages(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 5, failed: 4, skipped: 5.
 Starting test testCreateAndStartServer(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
-Dec 14, 2011 12:02:04 PM org.jclouds.elasticstack.ElasticStackClientLiveTest testCreateAndStartServer
+Starting test testListSizes(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
+Dec 15, 2011 4:51:49 AM org.jclouds.elasticstack.ElasticStackClientLiveTest testCreateAndStartServer
 INFO: preparing drive
-before prepare[size=1073741824, claimType=shared, readers=[ffffffff-ffff-ffff-ffff-ffffffffffff], uuid=1bb23b68-cd61-4f4b-a20e-f1fbdaf83d35, name=rediculous, tags=[networking, security, gateway], userMetadata={foo=bar}, status=active, user=69a8caa2-02d2-4aec-81d3-90969b1add57, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
-after prepare[size=1073741824, claimType=shared, readers=[ffffffff-ffff-ffff-ffff-ffffffffffff], uuid=1bb23b68-cd61-4f4b-a20e-f1fbdaf83d35, name=rediculous, tags=[networking, security, gateway], userMetadata={foo=bar}, status=active, user=69a8caa2-02d2-4aec-81d3-90969b1add57, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
-Dec 14, 2011 12:02:30 PM org.jclouds.elasticstack.ElasticStackClientLiveTest testCreateAndStartServer
+[pool-2-thread-1] Test testListSizes(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) succeeded: 9ms
+Test suite progress: tests succeeded: 6, failed: 4, skipped: 5.
+[pool-2-thread-1] Test testReboot(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 4, skipped: 6.
+[pool-2-thread-1] Test testSuspendResume(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 4, skipped: 7.
+[pool-2-thread-1] Test testGetNodesWithDetails(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 4, skipped: 8.
+[pool-2-thread-1] Test testListNodes(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 4, skipped: 9.
+[pool-2-thread-1] Test testDestroyNodes(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 4, skipped: 10.
+[pool-2-thread-1] Test testTemplateMatch(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 6, failed: 4, skipped: 11.
+Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
+before prepare[size=1073741824, claimType=shared, readers=[ffffffff-ffff-ffff-ffff-ffffffffffff], uuid=d3695b15-4bda-411c-8e61-7721d7dd3665, name=rediculous, tags=[networking, security, gateway], userMetadata={foo=bar}, status=active, user=69a8caa2-02d2-4aec-81d3-90969b1add57, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
+[pool-2-thread-1] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 5, skipped: 11.
+Starting test testOptionToNotBlock(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
+[pool-2-thread-1] Test testOptionToNotBlock(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 7, failed: 5, skipped: 11.
+after prepare[size=1073741824, claimType=shared, readers=[ffffffff-ffff-ffff-ffff-ffffffffffff], uuid=d3695b15-4bda-411c-8e61-7721d7dd3665, name=rediculous, tags=[networking, security, gateway], userMetadata={foo=bar}, status=active, user=69a8caa2-02d2-4aec-81d3-90969b1add57, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
+Dec 15, 2011 4:52:26 AM org.jclouds.elasticstack.ElasticStackClientLiveTest testCreateAndStartServer
 INFO: starting server
-{"status":"ACTIVE","started":"Jan 15, 1970 11:44:52 PM","user":"69a8caa2-02d2-4aec-81d3-90969b1add57","metrics":{"txPackets":0,"tx":0,"rxPackets":0,"rx":0,"driveMetrics":{"ide:0:0":{"readBytes":0,"readRequests":0,"writeBytes":0,"writeRequests":0}}},"cpu":1000,"smp":1,"mem":512,"persistent":true,"devices":{"ide:0:0":{"bus":0,"unit":0,"driveUuid":"1bb23b68-cd61-4f4b-a20e-f1fbdaf83d35","mediaType":"DISK"}},"bootDeviceIds":["ide:0:0"],"nics":[{"dhcp":"41.73.54.53","model":"E1000","mac":"02:00:29:49:36:35","block":[]}],"vnc":{"ip":"41.73.54.53","password":"Il0veVNC","tls":false},"uuid":"830f16f0-b1a3-42a6-943c-7709a9fe628d","name":"adriancole.test","tags":[],"userMetadata":{}}
-[pool-2-thread-2] Test testCreateAndStartServer(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 41984ms
-Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+{"status":"ACTIVE","started":"Jan 15, 1970 11:45:53 PM","user":"69a8caa2-02d2-4aec-81d3-90969b1add57","metrics":{"txPackets":0,"tx":0,"rxPackets":0,"rx":0,"driveMetrics":{"ide:0:0":{"readBytes":0,"readRequests":0,"writeBytes":0,"writeRequests":0}}},"cpu":1000,"smp":1,"mem":512,"persistent":true,"devices":{"ide:0:0":{"bus":0,"unit":0,"driveUuid":"d3695b15-4bda-411c-8e61-7721d7dd3665","mediaType":"DISK"}},"bootDeviceIds":["ide:0:0"],"nics":[{"dhcp":"41.73.54.76","model":"E1000","mac":"02:00:29:49:36:4c","block":[]}],"vnc":{"ip":"41.73.54.76","password":"Il0veVNC","tls":false},"uuid":"876bc2f2-244d-4a1c-bb42-e71727260012","name":"adriancole.test","tags":[],"userMetadata":{}}
+[pool-2-thread-2] Test testCreateAndStartServer(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 52989ms
+Test suite progress: tests succeeded: 8, failed: 5, skipped: 11.
 Starting test testConnectivity(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
-Dec 14, 2011 12:02:46 PM org.jclouds.elasticstack.ElasticStackClientLiveTest testConnectivity
-INFO: awaiting vnc: [address=41.73.54.53, port=5900]
-Dec 14, 2011 12:02:47 PM org.jclouds.elasticstack.ElasticStackClientLiveTest testConnectivity
-INFO: awaiting ssh: [address=41.73.54.53, port=22]
+Dec 15, 2011 4:52:42 AM org.jclouds.elasticstack.ElasticStackClientLiveTest testConnectivity
+INFO: awaiting vnc: [address=41.73.54.76, port=5900]
+Dec 15, 2011 4:52:42 AM org.jclouds.elasticstack.ElasticStackClientLiveTest testConnectivity
+INFO: awaiting ssh: [address=41.73.54.76, port=22]
 SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
 SLF4J: Defaulting to no-operation (NOP) logger implementation
 SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
-<< problem applying options to node(dfc58a66-aa8c-46cb-907c-a9de3bfd5b39): 
-org.jclouds.rest.AuthorizationException: (root:password@41.73.54.76:22) (root:password@41.73.54.76:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
-	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:411)
-	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:241)
-	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:252)
-	at org.jclouds.compute.callables.RunScriptOnNodeUsingSsh.call(RunScriptOnNodeUsingSsh.java:73)
-	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:69)
-	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:44)
-	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available authentication methods
-	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:114)
-	at net.schmizz.sshj.SSHClient.auth(SSHClient.java:204)
-	at net.schmizz.sshj.SSHClient.auth(SSHClient.java:189)
-	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:265)
-	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:235)
-	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:219)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:197)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:173)
-	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:222)
-	... 9 more
-Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
-	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
-	... 17 more
 Filesystem           1K-blocks      Used Available Use% Mounted on
 /dev/sda               1032472    502792    478080  52% /
 none                    245636       152    245484   1% /dev
@@ -184,393 +198,429 @@ none on /var/lib/ureadahead/debugfs type debugfs (rw,relatime)
 
 Linux ubuntu 2.6.35-27-generic #48-Ubuntu SMP Tue Feb 22 20:25:46 UTC 2011 x86_64 GNU/Linux
 
-[pool-2-thread-2] Test testConnectivity(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 12548ms
-Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testConnectivity(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 12340ms
+Test suite progress: tests succeeded: 9, failed: 5, skipped: 11.
 Starting test testLifeCycle(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
-[pool-2-thread-1] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) failed.
-Test suite progress: tests succeeded: 6, failed: 1, skipped: 0.
-Starting test testCorrectAuthException(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
-[pool-2-thread-1] Test testCorrectAuthException(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) succeeded: 994ms
-Test suite progress: tests succeeded: 7, failed: 1, skipped: 0.
-Starting test testCreateAndRunAService(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
-[pool-2-thread-2] Test testLifeCycle(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 21034ms
-Test suite progress: tests succeeded: 8, failed: 1, skipped: 0.
+[pool-2-thread-2] Test testLifeCycle(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 16076ms
+Test suite progress: tests succeeded: 10, failed: 5, skipped: 11.
 Starting test testSetServerConfiguration(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
-[pool-2-thread-2] Test testSetServerConfiguration(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 15799ms
-Test suite progress: tests succeeded: 9, failed: 1, skipped: 0.
+[pool-2-thread-2] Test testSetServerConfiguration(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 15548ms
+Test suite progress: tests succeeded: 11, failed: 5, skipped: 11.
 Starting test testDestroyServer(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
-[pool-2-thread-2] Test testDestroyServer(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 1908ms
-Test suite progress: tests succeeded: 10, failed: 1, skipped: 0.
+[pool-2-thread-2] Test testDestroyServer(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 2045ms
+Test suite progress: tests succeeded: 12, failed: 5, skipped: 11.
 Starting test testDestroyDrive(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
-[pool-2-thread-2] Test testDestroyDrive(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 8426ms
-Test suite progress: tests succeeded: 11, failed: 1, skipped: 0.
+[pool-2-thread-2] Test testDestroyDrive(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 8396ms
+Test suite progress: tests succeeded: 13, failed: 5, skipped: 11.
 Starting test testWeCanReadAndWriteToDrive(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
-[pool-2-thread-2] Test testWeCanReadAndWriteToDrive(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 10628ms
-Test suite progress: tests succeeded: 12, failed: 1, skipped: 0.
+[pool-2-thread-2] Test testWeCanReadAndWriteToDrive(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 11570ms
+Test suite progress: tests succeeded: 14, failed: 5, skipped: 11.
 Starting test testWeCopyADriveContentsViaGzip(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
-before image; drive 2[size=4194304, claimType=exclusive, readers=[], uuid=7c611e80-235b-4676-bf63-a1754fa54139, name=adriancole.test2, tags=[], userMetadata={}, status=active, user=69a8caa2-02d2-4aec-81d3-90969b1add57, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
-before image; drive 3[size=4194304, claimType=exclusive, readers=[], uuid=c14d33f3-46df-458d-bb0f-eed7e6404ca9, name=adriancole.test3, tags=[], userMetadata={}, status=active, user=69a8caa2-02d2-4aec-81d3-90969b1add57, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
-after image; drive 2[size=4194304, claimType=exclusive, readers=[], uuid=7c611e80-235b-4676-bf63-a1754fa54139, name=adriancole.test2, tags=[], userMetadata={}, status=active, user=69a8caa2-02d2-4aec-81d3-90969b1add57, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
-after image; drive 3[size=4194304, claimType=exclusive, readers=[], uuid=c14d33f3-46df-458d-bb0f-eed7e6404ca9, name=adriancole.test3, tags=[], userMetadata={}, status=active, user=69a8caa2-02d2-4aec-81d3-90969b1add57, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
-Dec 14, 2011 12:04:20 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << available node(dc10f4d0-3d52-4683-b772-f638c88c9ad6) os([name=Ubuntu 10.10, family=ubuntu, version=10.10, arch=null, is64Bit=true, description=img/Ubuntu 10.10/1]) in 68s
-[pool-2-thread-2] Test testWeCopyADriveContentsViaGzip(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 29284ms
-Test suite progress: tests succeeded: 13, failed: 1, skipped: 0.
+before image; drive 2[size=4194304, claimType=exclusive, readers=[], uuid=a0629943-cff3-4bcd-8474-5a60dcad82c9, name=adriancole.test2, tags=[], userMetadata={}, status=active, user=69a8caa2-02d2-4aec-81d3-90969b1add57, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
+before image; drive 3[size=4194304, claimType=exclusive, readers=[], uuid=1d0dd85f-f636-49d4-93cb-1cace108fec5, name=adriancole.test3, tags=[], userMetadata={}, status=active, user=69a8caa2-02d2-4aec-81d3-90969b1add57, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
+after image; drive 2[size=4194304, claimType=exclusive, readers=[], uuid=a0629943-cff3-4bcd-8474-5a60dcad82c9, name=adriancole.test2, tags=[], userMetadata={}, status=active, user=69a8caa2-02d2-4aec-81d3-90969b1add57, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
+after image; drive 3[size=4194304, claimType=exclusive, readers=[], uuid=1d0dd85f-f636-49d4-93cb-1cace108fec5, name=adriancole.test3, tags=[], userMetadata={}, status=active, user=69a8caa2-02d2-4aec-81d3-90969b1add57, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
+[pool-2-thread-2] Test testWeCopyADriveContentsViaGzip(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 25085ms
+Test suite progress: tests succeeded: 15, failed: 5, skipped: 11.
+Starting test testGetDrive(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
+[pool-2-thread-2] Test testGetDrive(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 3277ms
+Test suite progress: tests succeeded: 16, failed: 5, skipped: 11.
+Starting test testGetServer(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
+[pool-2-thread-2] Test testGetServer(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 2430ms
+Test suite progress: tests succeeded: 17, failed: 5, skipped: 11.
+Starting test testListDriveInfo(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
+[pool-2-thread-2] Test testListDriveInfo(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 846ms
+Test suite progress: tests succeeded: 18, failed: 5, skipped: 11.
+Starting test testListDrives(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
+[pool-2-thread-2] Test testListDrives(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 792ms
+Test suite progress: tests succeeded: 19, failed: 5, skipped: 11.
+Starting test testListServers(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
+[pool-2-thread-2] Test testListServers(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 842ms
+Test suite progress: tests succeeded: 20, failed: 5, skipped: 11.
+Starting test testListServerInfo(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
+[pool-2-thread-2] Test testListServerInfo(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 821ms
+Test suite progress: tests succeeded: 21, failed: 5, skipped: 11.
+Starting test testDefaultTemplateBuilder(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testDefaultTemplateBuilder(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 6, skipped: 11.
+Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 7, skipped: 11.
+Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 8, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 9, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 10, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 11, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 12, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 13, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 14, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 15, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 16, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 17, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 18, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 19, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 20, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 21, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 22, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 23, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 24, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 25, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 26, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 27, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 28, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 29, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 30, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 31, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 32, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 33, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 34, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 35, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 36, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 37, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 38, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 39, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 40, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 41, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 42, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 43, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 44, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 45, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 46, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 47, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 48, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 49, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 50, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 51, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 52, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 53, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 54, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 55, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 56, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 57, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 58, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 59, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 60, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 61, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 62, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 63, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 64, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 65, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 66, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 67, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 68, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 69, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 70, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 71, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 72, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 73, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 74, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 75, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 76, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 77, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 78, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 79, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 80, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 81, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 82, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 83, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 84, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 85, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 86, skipped: 11.
 Starting test testCompareSizes(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-smallest [id=cpu=1000.000000,ram=512,disk=1.000000, providerId=cpu=1000.000000,ram=512,disk=1.000000, name=null, processors=[[cores=1.0, speed=1000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], supportsImage=sizeLessThanOrEqual(1.0), tags=[]]
-fastest [id=cpu=20000.000000,ram=512,disk=20.000000, providerId=cpu=20000.000000,ram=512,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
-biggest [id=cpu=20000.000000,ram=8192,disk=20.000000, providerId=cpu=20000.000000,ram=8192,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=8192, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
-[pool-2-thread-2] Test testCompareSizes(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 3243ms
-Test suite progress: tests succeeded: 14, failed: 1, skipped: 0.
-Starting test testFromTemplate(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testFromTemplate(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 15, failed: 1, skipped: 0.
+[pool-2-thread-2] Test testCompareSizes(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 21, failed: 87, skipped: 11.
 Starting test testGetAssignableLocations(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
 location [id=go2cloud-jhb1, scope=PROVIDER, description=http://api.jhb1.go2cloud.co.za, parent=null, iso3166Codes=[ZA-GP], metadata={}]
 [pool-2-thread-2] Test testGetAssignableLocations(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 16, failed: 1, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 17, failed: 1, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 18, failed: 1, skipped: 0.
+Test suite progress: tests succeeded: 22, failed: 87, skipped: 11.
+Starting test testTemplateBuilderCanUseImageId(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanUseImageId(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 22, failed: 88, skipped: 11.
+Starting test testFromTemplate(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testFromTemplate(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 22, failed: 89, skipped: 11.
 Starting test testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
 [pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
-Test suite progress: tests succeeded: 18, failed: 2, skipped: 0.
+Test suite progress: tests succeeded: 22, failed: 90, skipped: 11.
 Starting test testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 19, failed: 2, skipped: 0.
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 22, failed: 91, skipped: 11.
 Starting test testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 20, failed: 2, skipped: 0.
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 22, failed: 92, skipped: 11.
 Starting test testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 21, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCanUseImageId(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanUseImageId(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 3187ms
-Test suite progress: tests succeeded: 22, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 23, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 24, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 25, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 26, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 27, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 28, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 29, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 30, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 31, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 32, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 33, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 34, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 35, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 3ms
-Test suite progress: tests succeeded: 36, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 37, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 38, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 39, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 40, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 41, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 42, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 43, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 44, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 45, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 46, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 47, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 48, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 49, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 50, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 51, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 15ms
-Test suite progress: tests succeeded: 52, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 53, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 54, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 55, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 56, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 3ms
-Test suite progress: tests succeeded: 57, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 58, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 59, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 60, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 61, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 62, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 63, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 64, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 65, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 66, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 67, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 68, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 69, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 70, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 71, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 72, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 73, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 74, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 75, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 76, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 77, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 78, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 79, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 80, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 81, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 82, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 83, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 84, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 85, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 86, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 87, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 88, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 89, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 90, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 91, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 92, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 93, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 94, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 95, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 96, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 97, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 98, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 99, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 100, failed: 2, skipped: 0.
-Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 6669ms
-Test suite progress: tests succeeded: 101, failed: 2, skipped: 0.
-Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 6657ms
-Test suite progress: tests succeeded: 102, failed: 2, skipped: 0.
-Starting test testDefaultTemplateBuilder(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
-[pool-2-thread-2] Test testDefaultTemplateBuilder(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 103, failed: 2, skipped: 0.
-Starting test testGetDrive(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
-[pool-2-thread-1] Test testCreateAndRunAService(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) failed.
-Test suite progress: tests succeeded: 103, failed: 3, skipped: 0.
-Starting test testCreateTwoNodesWithRunScript(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
-[pool-2-thread-2] Test testGetDrive(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 2881ms
-Test suite progress: tests succeeded: 104, failed: 3, skipped: 0.
-Starting test testGetServer(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
-[pool-2-thread-2] Test testGetServer(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 2306ms
-Test suite progress: tests succeeded: 105, failed: 3, skipped: 0.
-Starting test testListDriveInfo(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
-[pool-2-thread-2] Test testListDriveInfo(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 724ms
-Test suite progress: tests succeeded: 106, failed: 3, skipped: 0.
-Starting test testListDrives(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
-[pool-2-thread-2] Test testListDrives(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 719ms
-Test suite progress: tests succeeded: 107, failed: 3, skipped: 0.
-Starting test testListServers(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
-[pool-2-thread-2] Test testListServers(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 719ms
-Test suite progress: tests succeeded: 108, failed: 3, skipped: 0.
-Starting test testListServerInfo(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest)
-[pool-2-thread-2] Test testListServerInfo(org.jclouds.go2cloud.Go2CloudJohannesburg1ClientLiveTest) succeeded: 740ms
-Test suite progress: tests succeeded: 109, failed: 3, skipped: 0.
-[pool-2-thread-1] Test testCreateTwoNodesWithRunScript(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) failed.
-Test suite progress: tests succeeded: 109, failed: 4, skipped: 0.
-[pool-2-thread-1] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) skipped.
-Test suite progress: tests succeeded: 109, failed: 4, skipped: 1.
-[pool-2-thread-1] Test testCredentialsCache(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) skipped.
-Test suite progress: tests succeeded: 109, failed: 4, skipped: 2.
-[pool-2-thread-1] Test testGet(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) skipped.
-Test suite progress: tests succeeded: 109, failed: 4, skipped: 3.
-Starting test testGetAssignableLocations(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
-Dec 14, 2011 12:06:07 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
-WARNING: location [id=go2cloud-jhb1, scope=PROVIDER, description=http://api.jhb1.go2cloud.co.za, parent=null, iso3166Codes=[ZA-GP], metadata={}]
-[pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) succeeded: 19ms
-Test suite progress: tests succeeded: 110, failed: 4, skipped: 3.
-Starting test testImagesCache(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
-[pool-2-thread-1] Test testImagesCache(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 111, failed: 4, skipped: 3.
-Starting test testListImages(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
-[pool-2-thread-1] Test testListImages(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 112, failed: 4, skipped: 3.
-Starting test testListSizes(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
-[pool-2-thread-1] Test testListSizes(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 113, failed: 4, skipped: 3.
-[pool-2-thread-1] Test testReboot(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) skipped.
-Test suite progress: tests succeeded: 113, failed: 4, skipped: 4.
-[pool-2-thread-1] Test testSuspendResume(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) skipped.
-Test suite progress: tests succeeded: 113, failed: 4, skipped: 5.
-[pool-2-thread-1] Test testGetNodesWithDetails(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) skipped.
-Test suite progress: tests succeeded: 113, failed: 4, skipped: 6.
-[pool-2-thread-1] Test testListNodes(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) skipped.
-Test suite progress: tests succeeded: 113, failed: 4, skipped: 7.
-[pool-2-thread-1] Test testDestroyNodes(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) skipped.
-Test suite progress: tests succeeded: 113, failed: 4, skipped: 8.
-Starting test testTemplateMatch(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
-[pool-2-thread-1] Test testTemplateMatch(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 114, failed: 4, skipped: 8.
-Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
-[pool-2-thread-1] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) succeeded: 739ms
-Test suite progress: tests succeeded: 115, failed: 4, skipped: 8.
-Starting test testOptionToNotBlock(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest)
-[pool-2-thread-1] Test testOptionToNotBlock(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 116, failed: 4, skipped: 8.
-Tests run: 128, Failures: 4, Errors: 0, Skipped: 8, Time elapsed: 283.836 sec <<< FAILURE!
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 22, failed: 93, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 22, failed: 94, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 22, failed: 95, skipped: 11.
+Tests run: 128, Failures: 95, Errors: 0, Skipped: 11, Time elapsed: 261.594 sec <<< FAILURE!
 
 Results :
 
-Failed tests:   testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest): error runScript on filtered nodes options([loginUser=root, loginPasswordPresent=true, loginPrivateKeyPresent=false, shouldAuthenticateSudo=null, port:seconds=-1:-1, runAsRoot=false, blockOnComplete=true, wrapInInitScript=false])
-  testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): no image matched predicate: And(locationEqualsOrChildOf(go2cloud-jhb1),And(osFamily(windows),osVersion(^2008 R2$),os64Bit(true)))
-  testCreateAndRunAService(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest): (root:password@41.73.54.76:22) (root:password@41.73.54.76:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
-  testCreateTwoNodesWithRunScript(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest): error running 2 nodes tag(go2cloud-) location(go2cloud-jhb1) image(14c88d27-1f5e-4ad5-9f3a-28e5d2282f61) size(cpu=1000.000000,ram=512,disk=1.000000) options([inboundPorts=[22], privateKey=false, publicKey=false, runScript=true, blockUntilRunning=true, blockOnComplete=true, port:seconds=-1:-1, userMetadata: {}])
+Failed tests:   testCompareSizes(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest): CacheLoader returned null for key 77ad0ffe-9537-4c64-a8e3-10db185261c0.
+  testCreateAndRunAService(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest): CacheLoader returned null for key 77ad0ffe-9537-4c64-a8e3-10db185261c0.
+  testImagesCache(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest): CacheLoader returned null for key 77ad0ffe-9537-4c64-a8e3-10db185261c0.
+  testListImages(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest): CacheLoader returned null for key 77ad0ffe-9537-4c64-a8e3-10db185261c0.
+  testCorrectExceptionRunningNodesNotFound(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1ComputeServiceLiveTest): 
+  testDefaultTemplateBuilder(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): CacheLoader returned null for key 77ad0ffe-9537-4c64-a8e3-10db185261c0.
+  testTemplateBuilderWithImageIdSpecified(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): CacheLoader returned null for key 77ad0ffe-9537-4c64-a8e3-10db185261c0.
+  testTemplateBuilderWithLoginUserSpecified(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): CacheLoader returned null for key 77ad0ffe-9537-4c64-a8e3-10db185261c0.
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): 
+  testCompareSizes(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): CacheLoader returned null for key 77ad0ffe-9537-4c64-a8e3-10db185261c0.
+  testTemplateBuilderCanUseImageId(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): CacheLoader returned null for key 77ad0ffe-9537-4c64-a8e3-10db185261c0.
+  testFromTemplate(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): CacheLoader returned null for key 77ad0ffe-9537-4c64-a8e3-10db185261c0.
+  testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): CacheLoader returned null for key 77ad0ffe-9537-4c64-a8e3-10db185261c0.
+  testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): CacheLoader returned null for key 77ad0ffe-9537-4c64-a8e3-10db185261c0.
+  testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): CacheLoader returned null for key 77ad0ffe-9537-4c64-a8e3-10db185261c0.
+  testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): CacheLoader returned null for key 77ad0ffe-9537-4c64-a8e3-10db185261c0.
+  testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): CacheLoader returned null for key 77ad0ffe-9537-4c64-a8e3-10db185261c0.
+  testTemplateBuilderCanFind(org.jclouds.go2cloud.compute.Go2CloudJohannesburg1TemplateBuilderLiveTest): CacheLoader returned null for key 77ad0ffe-9537-4c64-a8e3-10db185261c0.
 
-Tests run: 128, Failures: 4, Errors: 0, Skipped: 8
+Tests run: 128, Failures: 95, Errors: 0, Skipped: 11
 
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 4:54.564s
-[INFO] Finished at: Wed Dec 14 12:06:30 PST 2011
+[INFO] Total time: 4:32.756s
+[INFO] Finished at: Thu Dec 15 04:55:58 PST 2011
 [INFO] Final Memory: 20M/265M
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project go2cloud-jhb1: There are test failures.

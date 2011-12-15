@@ -57,15 +57,15 @@ Starting test testInRestProperties(org.jclouds.epc.EucalyptusPartnerCloudS3Provi
 Starting test testWithId(org.jclouds.epc.EucalyptusPartnerCloudS3ProviderTest)
 Starting test testAllContains(org.jclouds.epc.EucalyptusPartnerCloudS3ProviderTest)
 Starting test testOfTypeContains(org.jclouds.epc.EucalyptusPartnerCloudS3ProviderTest)
-[pool-2-thread-4] Test testOfTypeContains(org.jclouds.epc.EucalyptusPartnerCloudS3ProviderTest) succeeded: 49ms
+[pool-2-thread-3] Test testAllContains(org.jclouds.epc.EucalyptusPartnerCloudS3ProviderTest) succeeded: 20ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testWithId(org.jclouds.epc.EucalyptusPartnerCloudS3ProviderTest) succeeded: 52ms
+[pool-2-thread-4] Test testOfTypeContains(org.jclouds.epc.EucalyptusPartnerCloudS3ProviderTest) succeeded: 20ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-[pool-2-thread-3] Test testAllContains(org.jclouds.epc.EucalyptusPartnerCloudS3ProviderTest) succeeded: 52ms
+[pool-2-thread-2] Test testWithId(org.jclouds.epc.EucalyptusPartnerCloudS3ProviderTest) succeeded: 21ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-[pool-2-thread-1] Test testInRestProperties(org.jclouds.epc.EucalyptusPartnerCloudS3ProviderTest) succeeded: 87ms
+[pool-2-thread-1] Test testInRestProperties(org.jclouds.epc.EucalyptusPartnerCloudS3ProviderTest) succeeded: 80ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.394 sec
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.404 sec
 
 Results :
 
@@ -100,79 +100,79 @@ Ran 0 tests containing 0 assertions.
 Running TestSuite
 *** containers to test: [adriancole-blobstore0, adriancole-blobstore1, adriancole-blobstore2, adriancole-blobstore3, adriancole-blobstore4, adriancole-blobstore5, adriancole-blobstore6, adriancole-blobstore7, adriancole-blobstore8, adriancole-blobstore9, adriancole-blobstore10, adriancole-blobstore11, adriancole-blobstore12, adriancole-blobstore13, adriancole-blobstore14]
 Starting test blobNotFound(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test blobNotFound(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1437ms
+[pool-4-thread-1] Test blobNotFound(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1901ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1843ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 2018ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1669ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1693ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1772ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 2145ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1986ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 2404ms
 Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1825ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1745ms
 Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1913ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1708ms
 Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1815ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1680ms
 Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 2437ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1765ms
 Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1766ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1730ms
 Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1802ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 2272ms
 Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1762ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1914ms
 Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
 Starting test deleteObjectNoContainer(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObjectNoContainer(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 97ms
+[pool-4-thread-1] Test deleteObjectNoContainer(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 121ms
 Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
 Starting test deleteObjectNotFound(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObjectNotFound(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1419ms
+[pool-4-thread-1] Test deleteObjectNotFound(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1519ms
 Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
 Starting test testBigFileGets(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testBigFileGets(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 28861ms
+[pool-4-thread-1] Test testBigFileGets(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 19197ms
 Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
 Starting test testGetIfMatch(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
 [pool-4-thread-1] Test testGetIfMatch(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) failed.
 Test suite progress: tests succeeded: 15, failed: 1, skipped: 0.
 Starting test testGetIfModifiedSince(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testGetIfModifiedSince(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 2789ms
+[pool-4-thread-1] Test testGetIfModifiedSince(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 2324ms
 Test suite progress: tests succeeded: 16, failed: 1, skipped: 0.
 Starting test testGetIfNoneMatch(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testGetIfNoneMatch(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 2202ms
+[pool-4-thread-1] Test testGetIfNoneMatch(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 2071ms
 Test suite progress: tests succeeded: 17, failed: 1, skipped: 0.
 Starting test testGetIfUnmodifiedSince(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testGetIfUnmodifiedSince(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 2389ms
+[pool-4-thread-1] Test testGetIfUnmodifiedSince(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 2069ms
 Test suite progress: tests succeeded: 18, failed: 1, skipped: 0.
 Starting test testMetadata(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testMetadata(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 2434ms
+[pool-4-thread-1] Test testMetadata(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 2107ms
 Test suite progress: tests succeeded: 19, failed: 1, skipped: 0.
 Starting test testPutFileParallel(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutFileParallel(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 28283ms
+[pool-4-thread-1] Test testPutFileParallel(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 28025ms
 Test suite progress: tests succeeded: 20, failed: 1, skipped: 0.
 Starting test testPutObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1884ms
+[pool-4-thread-1] Test testPutObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1699ms
 Test suite progress: tests succeeded: 21, failed: 1, skipped: 0.
 Starting test testPutObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1911ms
+[pool-4-thread-1] Test testPutObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1692ms
 Test suite progress: tests succeeded: 22, failed: 1, skipped: 0.
 Starting test testPutObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1802ms
+[pool-4-thread-1] Test testPutObject(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1921ms
 Test suite progress: tests succeeded: 23, failed: 1, skipped: 0.
 Starting test testPutObjectStream(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutObjectStream(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1370ms
+[pool-4-thread-1] Test testPutObjectStream(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 1394ms
 Test suite progress: tests succeeded: 24, failed: 1, skipped: 0.
 Starting test testGetRange(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest)
 [pool-4-thread-1] Test testGetRange(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 0ms
@@ -181,64 +181,64 @@ Starting test testGetTwoRanges(org.jclouds.epc.blobstore.EucalyptusPartnerCloudW
 [pool-4-thread-1] Test testGetTwoRanges(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 26, failed: 1, skipped: 0.
 Starting test testCopyUrl(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobLiveTest)
-[pool-4-thread-1] Test testCopyUrl(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobLiveTest) succeeded: 6666ms
+[pool-4-thread-1] Test testCopyUrl(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobLiveTest) succeeded: 6583ms
 Test suite progress: tests succeeded: 27, failed: 1, skipped: 0.
 Starting test testContains(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContains(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 1795ms
+[pool-4-thread-1] Test testContains(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 1681ms
 Test suite progress: tests succeeded: 28, failed: 1, skipped: 0.
 Starting test testEntrySet(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testEntrySet(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 4483ms
+[pool-4-thread-1] Test testEntrySet(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 4542ms
 Test suite progress: tests succeeded: 29, failed: 1, skipped: 0.
 Starting test testPut(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPut(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 2349ms
+[pool-4-thread-1] Test testPut(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 2079ms
 Test suite progress: tests succeeded: 30, failed: 1, skipped: 0.
 Starting test testPutAll(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAll(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 2458ms
+[pool-4-thread-1] Test testPutAll(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 2457ms
 Test suite progress: tests succeeded: 31, failed: 1, skipped: 0.
 Starting test testPutMoreThanSingleListing(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutMoreThanSingleListing(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 15938ms
+[pool-4-thread-1] Test testPutMoreThanSingleListing(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 18243ms
 Test suite progress: tests succeeded: 32, failed: 1, skipped: 0.
 Starting test testRemove(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testRemove(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 2591ms
+[pool-4-thread-1] Test testRemove(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 3064ms
 Test suite progress: tests succeeded: 33, failed: 1, skipped: 0.
 Starting test testValues(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testValues(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 2664ms
+[pool-4-thread-1] Test testValues(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 3500ms
 Test suite progress: tests succeeded: 34, failed: 1, skipped: 0.
 Starting test testClear(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testClear(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 2319ms
+[pool-4-thread-1] Test testClear(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 2347ms
 Test suite progress: tests succeeded: 35, failed: 1, skipped: 0.
 Starting test testContainsKey(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsKey(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 1900ms
+[pool-4-thread-1] Test testContainsKey(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 2191ms
 Test suite progress: tests succeeded: 36, failed: 1, skipped: 0.
 Starting test testDirectory(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testDirectory(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 10581ms
+[pool-4-thread-1] Test testDirectory(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 10908ms
 Test suite progress: tests succeeded: 37, failed: 1, skipped: 0.
 Starting test testIsEmpty(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testIsEmpty(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 2173ms
+[pool-4-thread-1] Test testIsEmpty(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 2202ms
 Test suite progress: tests succeeded: 38, failed: 1, skipped: 0.
 Starting test testKeySet(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testKeySet(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 2095ms
+[pool-4-thread-1] Test testKeySet(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 2088ms
 Test suite progress: tests succeeded: 39, failed: 1, skipped: 0.
 Starting test testListContainer(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainer(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 1637ms
+[pool-4-thread-1] Test testListContainer(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest) succeeded: 1843ms
 Test suite progress: tests succeeded: 40, failed: 1, skipped: 0.
 Starting test testSignGetUrl(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobSignerLiveTest)
-[pool-4-thread-1] Test testSignGetUrl(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobSignerLiveTest) succeeded: 1881ms
+[pool-4-thread-1] Test testSignGetUrl(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobSignerLiveTest) succeeded: 1670ms
 Test suite progress: tests succeeded: 41, failed: 1, skipped: 0.
 Starting test testSignGetUrlOptions(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobSignerLiveTest)
 [pool-4-thread-1] Test testSignGetUrlOptions(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobSignerLiveTest) failed.
 Test suite progress: tests succeeded: 41, failed: 2, skipped: 0.
 Starting test testSignPutUrl(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobSignerLiveTest)
-[pool-4-thread-1] Test testSignPutUrl(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobSignerLiveTest) succeeded: 1934ms
+[pool-4-thread-1] Test testSignPutUrl(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobSignerLiveTest) succeeded: 1961ms
 Test suite progress: tests succeeded: 42, failed: 2, skipped: 0.
 Starting test testSignRemoveUrl(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobSignerLiveTest)
-[pool-4-thread-1] Test testSignRemoveUrl(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobSignerLiveTest) succeeded: 1978ms
+[pool-4-thread-1] Test testSignRemoveUrl(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobSignerLiveTest) succeeded: 2460ms
 Test suite progress: tests succeeded: 43, failed: 2, skipped: 0.
 Starting test containerDoesntExist(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest)
-[pool-4-thread-1] Test containerDoesntExist(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 160ms
+[pool-4-thread-1] Test containerDoesntExist(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 138ms
 Test suite progress: tests succeeded: 44, failed: 2, skipped: 0.
 Starting test containerExists(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest)
-[pool-4-thread-1] Test containerExists(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 1626ms
+[pool-4-thread-1] Test containerExists(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 1850ms
 Test suite progress: tests succeeded: 45, failed: 2, skipped: 0.
 Starting test deleteContainerIfEmpty(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest)
 *** allocated new container adriancole-blobstore13...
@@ -265,25 +265,25 @@ org.jclouds.blobstore.ContainerNotFoundException: adriancole-blobstore13 not fou
 	at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
 	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:140)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
 	at $Proxy71.listBucket(Unknown Source)
-	at org.jclouds.s3.blobstore.S3BlobStore.list(S3BlobStore.java:150)
+	at org.jclouds.s3.blobstore.S3BlobStore.list(S3BlobStore.java:151)
 	at sun.reflect.GeneratedMethodAccessor8.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
 	at java.lang.reflect.Method.invoke(Method.java:597)
 	at com.google.inject.internal.DelegatingInvocationHandler.invoke(DelegatingInvocationHandler.java:37)
 	at $Proxy72.list(Unknown Source)
 	at org.jclouds.blobstore.strategy.internal.ConcatenateContainerLists.execute(ConcatenateContainerLists.java:59)
-	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.getResourcesToDelete(DeleteAllKeysInList.java:145)
-	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.execute(DeleteAllKeysInList.java:94)
+	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.getResourcesToDelete(DeleteAllKeysInList.java:146)
+	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.execute(DeleteAllKeysInList.java:96)
 	at org.jclouds.blobstore.util.internal.BlobUtilsImpl.clearContainer(BlobUtilsImpl.java:87)
 	at org.jclouds.blobstore.internal.BaseBlobStore.clearContainer(BaseBlobStore.java:166)
 	at org.jclouds.blobstore.internal.BaseBlobStore.clearContainer(BaseBlobStore.java:155)
-	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:173)
-	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:171)
+	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:174)
+	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:172)
 	at org.jclouds.util.Assertions.eventuallyTrue(Assertions.java:33)
-	at org.jclouds.s3.blobstore.S3BlobStore.clearAndDeleteContainer(S3BlobStore.java:171)
-	at org.jclouds.s3.blobstore.S3BlobStore.deleteContainer(S3BlobStore.java:162)
+	at org.jclouds.s3.blobstore.S3BlobStore.clearAndDeleteContainer(S3BlobStore.java:172)
+	at org.jclouds.s3.blobstore.S3BlobStore.deleteContainer(S3BlobStore.java:163)
 	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.deleteContainerOrWarnIfUnable(BaseBlobStoreIntegrationTest.java:165)
 	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.access$000(BaseBlobStoreIntegrationTest.java:61)
 	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest$7.run(BaseBlobStoreIntegrationTest.java:422)
@@ -303,25 +303,25 @@ org.jclouds.blobstore.ContainerNotFoundException: adriancole-blobstore13 not fou
 	at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
 	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:140)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
 	at $Proxy71.listBucket(Unknown Source)
-	at org.jclouds.s3.blobstore.S3BlobStore.list(S3BlobStore.java:150)
+	at org.jclouds.s3.blobstore.S3BlobStore.list(S3BlobStore.java:151)
 	at sun.reflect.GeneratedMethodAccessor8.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
 	at java.lang.reflect.Method.invoke(Method.java:597)
 	at com.google.inject.internal.DelegatingInvocationHandler.invoke(DelegatingInvocationHandler.java:37)
 	at $Proxy72.list(Unknown Source)
 	at org.jclouds.blobstore.strategy.internal.ConcatenateContainerLists.execute(ConcatenateContainerLists.java:59)
-	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.getResourcesToDelete(DeleteAllKeysInList.java:145)
-	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.execute(DeleteAllKeysInList.java:94)
+	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.getResourcesToDelete(DeleteAllKeysInList.java:146)
+	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.execute(DeleteAllKeysInList.java:96)
 	at org.jclouds.blobstore.util.internal.BlobUtilsImpl.clearContainer(BlobUtilsImpl.java:87)
 	at org.jclouds.blobstore.internal.BaseBlobStore.clearContainer(BaseBlobStore.java:166)
 	at org.jclouds.blobstore.internal.BaseBlobStore.clearContainer(BaseBlobStore.java:155)
-	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:173)
-	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:171)
+	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:174)
+	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:172)
 	at org.jclouds.util.Assertions.eventuallyTrue(Assertions.java:33)
-	at org.jclouds.s3.blobstore.S3BlobStore.clearAndDeleteContainer(S3BlobStore.java:171)
-	at org.jclouds.s3.blobstore.S3BlobStore.deleteContainer(S3BlobStore.java:162)
+	at org.jclouds.s3.blobstore.S3BlobStore.clearAndDeleteContainer(S3BlobStore.java:172)
+	at org.jclouds.s3.blobstore.S3BlobStore.deleteContainer(S3BlobStore.java:163)
 	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.deleteContainerOrWarnIfUnable(BaseBlobStoreIntegrationTest.java:165)
 	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.access$000(BaseBlobStoreIntegrationTest.java:61)
 	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest$7.run(BaseBlobStoreIntegrationTest.java:422)
@@ -331,45 +331,7 @@ org.jclouds.blobstore.ContainerNotFoundException: adriancole-blobstore13 not fou
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.submit(ExecutorServiceModule.java:182)
-	at org.jclouds.http.internal.BaseHttpCommandExecutorService.submit(BaseHttpCommandExecutorService.java:131)
-	at org.jclouds.http.TransformingHttpCommandExecutorServiceImpl.submit(TransformingHttpCommandExecutorServiceImpl.java:54)
-	at org.jclouds.http.TransformingHttpCommandImpl.execute(TransformingHttpCommandImpl.java:72)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFuture(AsyncRestClientProxy.java:156)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:126)
-	at $Proxy70.listBucket(Unknown Source)
-	at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:140)
-	at $Proxy71.listBucket(Unknown Source)
-	at org.jclouds.s3.blobstore.S3BlobStore.list(S3BlobStore.java:150)
-	at sun.reflect.GeneratedMethodAccessor8.invoke(Unknown Source)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at com.google.inject.internal.DelegatingInvocationHandler.invoke(DelegatingInvocationHandler.java:37)
-	at $Proxy72.list(Unknown Source)
-	at org.jclouds.blobstore.strategy.internal.ConcatenateContainerLists.execute(ConcatenateContainerLists.java:59)
-	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.getResourcesToDelete(DeleteAllKeysInList.java:145)
-	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.execute(DeleteAllKeysInList.java:94)
-	at org.jclouds.blobstore.util.internal.BlobUtilsImpl.clearContainer(BlobUtilsImpl.java:87)
-	at org.jclouds.blobstore.internal.BaseBlobStore.clearContainer(BaseBlobStore.java:166)
-	at org.jclouds.blobstore.internal.BaseBlobStore.clearContainer(BaseBlobStore.java:155)
-	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:173)
-	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:171)
-	at org.jclouds.util.Assertions.eventuallyTrue(Assertions.java:33)
-	at org.jclouds.s3.blobstore.S3BlobStore.clearAndDeleteContainer(S3BlobStore.java:171)
-	at org.jclouds.s3.blobstore.S3BlobStore.deleteContainer(S3BlobStore.java:162)
-	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.deleteContainerOrWarnIfUnable(BaseBlobStoreIntegrationTest.java:165)
-	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.access$000(BaseBlobStoreIntegrationTest.java:61)
-	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest$7.run(BaseBlobStoreIntegrationTest.java:422)
-	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
-	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-[pool-4-thread-1] Test deleteContainerIfEmpty(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 3575ms
+[pool-4-thread-1] Test deleteContainerIfEmpty(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 3171ms
 Test suite progress: tests succeeded: 46, failed: 2, skipped: 0.
 Starting test deleteContainerWithContents(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest)
 *** allocated new container adriancole-blobstore14...
@@ -396,25 +358,25 @@ org.jclouds.blobstore.ContainerNotFoundException: adriancole-blobstore14 not fou
 	at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
 	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:140)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
 	at $Proxy71.listBucket(Unknown Source)
-	at org.jclouds.s3.blobstore.S3BlobStore.list(S3BlobStore.java:150)
+	at org.jclouds.s3.blobstore.S3BlobStore.list(S3BlobStore.java:151)
 	at sun.reflect.GeneratedMethodAccessor8.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
 	at java.lang.reflect.Method.invoke(Method.java:597)
 	at com.google.inject.internal.DelegatingInvocationHandler.invoke(DelegatingInvocationHandler.java:37)
 	at $Proxy72.list(Unknown Source)
 	at org.jclouds.blobstore.strategy.internal.ConcatenateContainerLists.execute(ConcatenateContainerLists.java:59)
-	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.getResourcesToDelete(DeleteAllKeysInList.java:145)
-	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.execute(DeleteAllKeysInList.java:94)
+	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.getResourcesToDelete(DeleteAllKeysInList.java:146)
+	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.execute(DeleteAllKeysInList.java:96)
 	at org.jclouds.blobstore.util.internal.BlobUtilsImpl.clearContainer(BlobUtilsImpl.java:87)
 	at org.jclouds.blobstore.internal.BaseBlobStore.clearContainer(BaseBlobStore.java:166)
 	at org.jclouds.blobstore.internal.BaseBlobStore.clearContainer(BaseBlobStore.java:155)
-	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:173)
-	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:171)
+	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:174)
+	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:172)
 	at org.jclouds.util.Assertions.eventuallyTrue(Assertions.java:33)
-	at org.jclouds.s3.blobstore.S3BlobStore.clearAndDeleteContainer(S3BlobStore.java:171)
-	at org.jclouds.s3.blobstore.S3BlobStore.deleteContainer(S3BlobStore.java:162)
+	at org.jclouds.s3.blobstore.S3BlobStore.clearAndDeleteContainer(S3BlobStore.java:172)
+	at org.jclouds.s3.blobstore.S3BlobStore.deleteContainer(S3BlobStore.java:163)
 	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.deleteContainerOrWarnIfUnable(BaseBlobStoreIntegrationTest.java:165)
 	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.access$000(BaseBlobStoreIntegrationTest.java:61)
 	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest$7.run(BaseBlobStoreIntegrationTest.java:422)
@@ -434,25 +396,25 @@ org.jclouds.blobstore.ContainerNotFoundException: adriancole-blobstore14 not fou
 	at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
 	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:140)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
 	at $Proxy71.listBucket(Unknown Source)
-	at org.jclouds.s3.blobstore.S3BlobStore.list(S3BlobStore.java:150)
+	at org.jclouds.s3.blobstore.S3BlobStore.list(S3BlobStore.java:151)
 	at sun.reflect.GeneratedMethodAccessor8.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
 	at java.lang.reflect.Method.invoke(Method.java:597)
 	at com.google.inject.internal.DelegatingInvocationHandler.invoke(DelegatingInvocationHandler.java:37)
 	at $Proxy72.list(Unknown Source)
 	at org.jclouds.blobstore.strategy.internal.ConcatenateContainerLists.execute(ConcatenateContainerLists.java:59)
-	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.getResourcesToDelete(DeleteAllKeysInList.java:145)
-	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.execute(DeleteAllKeysInList.java:94)
+	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.getResourcesToDelete(DeleteAllKeysInList.java:146)
+	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.execute(DeleteAllKeysInList.java:96)
 	at org.jclouds.blobstore.util.internal.BlobUtilsImpl.clearContainer(BlobUtilsImpl.java:87)
 	at org.jclouds.blobstore.internal.BaseBlobStore.clearContainer(BaseBlobStore.java:166)
 	at org.jclouds.blobstore.internal.BaseBlobStore.clearContainer(BaseBlobStore.java:155)
-	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:173)
-	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:171)
+	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:174)
+	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:172)
 	at org.jclouds.util.Assertions.eventuallyTrue(Assertions.java:33)
-	at org.jclouds.s3.blobstore.S3BlobStore.clearAndDeleteContainer(S3BlobStore.java:171)
-	at org.jclouds.s3.blobstore.S3BlobStore.deleteContainer(S3BlobStore.java:162)
+	at org.jclouds.s3.blobstore.S3BlobStore.clearAndDeleteContainer(S3BlobStore.java:172)
+	at org.jclouds.s3.blobstore.S3BlobStore.deleteContainer(S3BlobStore.java:163)
 	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.deleteContainerOrWarnIfUnable(BaseBlobStoreIntegrationTest.java:165)
 	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.access$000(BaseBlobStoreIntegrationTest.java:61)
 	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest$7.run(BaseBlobStoreIntegrationTest.java:422)
@@ -462,155 +424,155 @@ org.jclouds.blobstore.ContainerNotFoundException: adriancole-blobstore14 not fou
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-[pool-4-thread-1] Test deleteContainerWithContents(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 3633ms
+[pool-4-thread-1] Test deleteContainerWithContents(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 3598ms
 Test suite progress: tests succeeded: 47, failed: 2, skipped: 0.
 Starting test testClearWhenContentsUnderPath(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testClearWhenContentsUnderPath(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 3972ms
+[pool-4-thread-1] Test testClearWhenContentsUnderPath(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 4024ms
 Test suite progress: tests succeeded: 48, failed: 2, skipped: 0.
 Starting test testDirectory(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testDirectory(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 8377ms
+[pool-4-thread-1] Test testDirectory(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 8320ms
 Test suite progress: tests succeeded: 49, failed: 2, skipped: 0.
 Starting test testListContainer(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainer(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 3571ms
+[pool-4-thread-1] Test testListContainer(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 3268ms
 Test suite progress: tests succeeded: 50, failed: 2, skipped: 0.
 Starting test testListContainerMarker(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest)
 [pool-4-thread-1] Test testListContainerMarker(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) failed.
 Test suite progress: tests succeeded: 50, failed: 3, skipped: 0.
 Starting test testListContainerMaxResults(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainerMaxResults(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 7994ms
+[pool-4-thread-1] Test testListContainerMaxResults(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 7225ms
 Test suite progress: tests succeeded: 51, failed: 3, skipped: 0.
 Starting test testListContainerPrefix(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainerPrefix(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 5534ms
+[pool-4-thread-1] Test testListContainerPrefix(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 5652ms
 Test suite progress: tests succeeded: 52, failed: 3, skipped: 0.
 Starting test testListRootUsesDelimiter(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testListRootUsesDelimiter(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 6770ms
+[pool-4-thread-1] Test testListRootUsesDelimiter(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 6069ms
 Test suite progress: tests succeeded: 53, failed: 3, skipped: 0.
 Starting test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 2050ms
+[pool-4-thread-1] Test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 2498ms
 Test suite progress: tests succeeded: 54, failed: 3, skipped: 0.
 Starting test testWithDetails(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testWithDetails(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 2111ms
+[pool-4-thread-1] Test testWithDetails(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest) succeeded: 2771ms
 Test suite progress: tests succeeded: 55, failed: 3, skipped: 0.
 Starting test testPublicAccess(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerLiveTest)
 *** allocated new container adriancole-blobstore9...
 *** allocated new container adriancole-blobstore918...
-[pool-4-thread-1] Test testPublicAccess(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerLiveTest) succeeded: 4147ms
+[pool-4-thread-1] Test testPublicAccess(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerLiveTest) succeeded: 4124ms
 Test suite progress: tests succeeded: 56, failed: 3, skipped: 0.
 Starting test testContainsBytesValue(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsBytesValue(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2010ms
+[pool-4-thread-1] Test testContainsBytesValue(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2085ms
 Test suite progress: tests succeeded: 57, failed: 3, skipped: 0.
 Starting test testContainsFileValue(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsFileValue(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 1897ms
+[pool-4-thread-1] Test testContainsFileValue(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 1840ms
 Test suite progress: tests succeeded: 58, failed: 3, skipped: 0.
 Starting test testContainsInputStreamValue(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsInputStreamValue(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 1724ms
+[pool-4-thread-1] Test testContainsInputStreamValue(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 1834ms
 Test suite progress: tests succeeded: 59, failed: 3, skipped: 0.
 Starting test testContainsStringValue(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsStringValue(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 1727ms
+[pool-4-thread-1] Test testContainsStringValue(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2056ms
 Test suite progress: tests succeeded: 60, failed: 3, skipped: 0.
 Starting test testEntrySet(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testEntrySet(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 4972ms
+[pool-4-thread-1] Test testEntrySet(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 5540ms
 Test suite progress: tests succeeded: 61, failed: 3, skipped: 0.
 Starting test testPut(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPut(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 3400ms
+[pool-4-thread-1] Test testPut(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 3416ms
 Test suite progress: tests succeeded: 62, failed: 3, skipped: 0.
 Starting test testPutAll(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAll(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 4057ms
+[pool-4-thread-1] Test testPutAll(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 4440ms
 Test suite progress: tests succeeded: 63, failed: 3, skipped: 0.
 Starting test testPutAllBytes(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAllBytes(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 3961ms
+[pool-4-thread-1] Test testPutAllBytes(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 5361ms
 Test suite progress: tests succeeded: 64, failed: 3, skipped: 0.
 Starting test testPutAllFiles(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAllFiles(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 4396ms
+[pool-4-thread-1] Test testPutAllFiles(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 6751ms
 Test suite progress: tests succeeded: 65, failed: 3, skipped: 0.
 Starting test testPutAllStrings(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAllStrings(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 3811ms
+[pool-4-thread-1] Test testPutAllStrings(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 5150ms
 Test suite progress: tests succeeded: 66, failed: 3, skipped: 0.
 Starting test testPutBytes(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutBytes(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2432ms
+[pool-4-thread-1] Test testPutBytes(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 3075ms
 Test suite progress: tests succeeded: 67, failed: 3, skipped: 0.
 Starting test testPutFile(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutFile(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2792ms
+[pool-4-thread-1] Test testPutFile(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2724ms
 Test suite progress: tests succeeded: 68, failed: 3, skipped: 0.
 Starting test testPutMoreThanSingleListing(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
 [pool-4-thread-1] Test testPutMoreThanSingleListing(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) failed.
 Test suite progress: tests succeeded: 68, failed: 4, skipped: 0.
 Starting test testPutString(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutString(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2408ms
+[pool-4-thread-1] Test testPutString(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2506ms
 Test suite progress: tests succeeded: 69, failed: 4, skipped: 0.
 Starting test testRemove(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testRemove(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2314ms
+[pool-4-thread-1] Test testRemove(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2485ms
 Test suite progress: tests succeeded: 70, failed: 4, skipped: 0.
 Starting test testValues(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testValues(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2203ms
+[pool-4-thread-1] Test testValues(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2304ms
 Test suite progress: tests succeeded: 71, failed: 4, skipped: 0.
 Starting test testClear(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testClear(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2534ms
+[pool-4-thread-1] Test testClear(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2739ms
 Test suite progress: tests succeeded: 72, failed: 4, skipped: 0.
 Starting test testContainsKey(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsKey(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2235ms
+[pool-4-thread-1] Test testContainsKey(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2057ms
 Test suite progress: tests succeeded: 73, failed: 4, skipped: 0.
 Starting test testDirectory(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testDirectory(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 10110ms
+[pool-4-thread-1] Test testDirectory(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 9875ms
 Test suite progress: tests succeeded: 74, failed: 4, skipped: 0.
 Starting test testIsEmpty(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testIsEmpty(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2034ms
+[pool-4-thread-1] Test testIsEmpty(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2226ms
 Test suite progress: tests succeeded: 75, failed: 4, skipped: 0.
 Starting test testKeySet(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testKeySet(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2073ms
+[pool-4-thread-1] Test testKeySet(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 2185ms
 Test suite progress: tests succeeded: 76, failed: 4, skipped: 0.
 Starting test testListContainer(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainer(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 1739ms
+[pool-4-thread-1] Test testListContainer(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest) succeeded: 1830ms
 Test suite progress: tests succeeded: 77, failed: 4, skipped: 0.
 Starting test containerDoesntExist(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest)
-[pool-4-thread-1] Test containerDoesntExist(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest) succeeded: 67ms
+[pool-4-thread-1] Test containerDoesntExist(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest) succeeded: 92ms
 Test suite progress: tests succeeded: 78, failed: 4, skipped: 0.
 Starting test testAllLocations(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest)
 *** allocated new container adriancole-blobstore7...
  >> creating container in location [id=Walrus, scope=REGION, description=Walrus, parent=eucalyptus-partnercloud-s3, iso3166Codes=[US-CA], metadata={}]
  << call complete.. checking
 *** allocated new container adriancole-blobstore720...
-[pool-4-thread-1] Test testAllLocations(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest) succeeded: 4047ms
+[pool-4-thread-1] Test testAllLocations(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest) succeeded: 3246ms
 Test suite progress: tests succeeded: 79, failed: 4, skipped: 0.
 Starting test testGetAssignableLocations(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest)
 location [id=Walrus, scope=REGION, description=Walrus, parent=eucalyptus-partnercloud-s3, iso3166Codes=[US-CA], metadata={}]
-[pool-4-thread-1] Test testGetAssignableLocations(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest) succeeded: 0ms
+[pool-4-thread-1] Test testGetAssignableLocations(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 80, failed: 4, skipped: 0.
 Starting test deleteContainerIfEmptyButHasContents(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest)
-[pool-4-thread-1] Test deleteContainerIfEmptyButHasContents(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 2168ms
+[pool-4-thread-1] Test deleteContainerIfEmptyButHasContents(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 1952ms
 Test suite progress: tests succeeded: 81, failed: 4, skipped: 0.
 Starting test deleteContainerIfEmptyNotFound(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest)
-[pool-4-thread-1] Test deleteContainerIfEmptyNotFound(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 103ms
+[pool-4-thread-1] Test deleteContainerIfEmptyNotFound(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 165ms
 Test suite progress: tests succeeded: 82, failed: 4, skipped: 0.
 Starting test testCopyCannedAccessPolicyPublic(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest)
 [pool-4-thread-1] Test testCopyCannedAccessPolicyPublic(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) failed.
 Test suite progress: tests succeeded: 82, failed: 5, skipped: 0.
 Starting test testCopyIfMatch(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest)
-[pool-4-thread-1] Test testCopyIfMatch(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 4092ms
+[pool-4-thread-1] Test testCopyIfMatch(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 5101ms
 Test suite progress: tests succeeded: 83, failed: 5, skipped: 0.
 Starting test testCopyIfModifiedSince(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest)
-[pool-4-thread-1] Test testCopyIfModifiedSince(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 4019ms
+[pool-4-thread-1] Test testCopyIfModifiedSince(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 3995ms
 Test suite progress: tests succeeded: 84, failed: 5, skipped: 0.
 Starting test testCopyIfNoneMatch(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest)
-[pool-4-thread-1] Test testCopyIfNoneMatch(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 5036ms
+[pool-4-thread-1] Test testCopyIfNoneMatch(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 5607ms
 Test suite progress: tests succeeded: 85, failed: 5, skipped: 0.
 Starting test testCopyIfUnmodifiedSince(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest)
-[pool-4-thread-1] Test testCopyIfUnmodifiedSince(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 3886ms
+[pool-4-thread-1] Test testCopyIfUnmodifiedSince(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 4624ms
 Test suite progress: tests succeeded: 86, failed: 5, skipped: 0.
 Starting test testCopyObject(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest)
-[pool-4-thread-1] Test testCopyObject(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 3660ms
+[pool-4-thread-1] Test testCopyObject(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 4728ms
 Test suite progress: tests succeeded: 87, failed: 5, skipped: 0.
 Starting test testCopyWithMetadata(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest)
-[pool-4-thread-1] Test testCopyWithMetadata(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 3980ms
+[pool-4-thread-1] Test testCopyWithMetadata(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 4249ms
 Test suite progress: tests succeeded: 88, failed: 5, skipped: 0.
 Starting test testMetadataContentEncoding(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest)
-[pool-4-thread-1] Test testMetadataContentEncoding(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 2159ms
+[pool-4-thread-1] Test testMetadataContentEncoding(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 1975ms
 Test suite progress: tests succeeded: 89, failed: 5, skipped: 0.
 Starting test testMetadataWithCacheControlAndContentDisposition(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest)
-[pool-4-thread-1] Test testMetadataWithCacheControlAndContentDisposition(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 1898ms
+[pool-4-thread-1] Test testMetadataWithCacheControlAndContentDisposition(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 2049ms
 Test suite progress: tests succeeded: 90, failed: 5, skipped: 0.
 Starting test testPrivateAclIsDefaultForObject(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest)
-[pool-4-thread-1] Test testPrivateAclIsDefaultForObject(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 1830ms
+[pool-4-thread-1] Test testPrivateAclIsDefaultForObject(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 2227ms
 Test suite progress: tests succeeded: 91, failed: 5, skipped: 0.
 Starting test testPublicReadOnObject(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest)
 [pool-4-thread-1] Test testPublicReadOnObject(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) failed.
@@ -619,49 +581,31 @@ Starting test testPublicWriteOnObject(org.jclouds.epc.EucalyptusPartnerCloudWalr
 [pool-4-thread-1] Test testPublicWriteOnObject(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) failed.
 Test suite progress: tests succeeded: 91, failed: 7, skipped: 0.
 Starting test testPutCannedAccessPolicyPublic(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest)
-[pool-4-thread-1] Test testPutCannedAccessPolicyPublic(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) failed.
-Test suite progress: tests succeeded: 91, failed: 8, skipped: 0.
+[pool-4-thread-1] Test testPutCannedAccessPolicyPublic(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) succeeded: 1839ms
+Test suite progress: tests succeeded: 92, failed: 7, skipped: 0.
 Starting test testUpdateObjectACL(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest)
 [pool-4-thread-1] Test testUpdateObjectACL(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest) failed.
-Test suite progress: tests succeeded: 91, failed: 9, skipped: 0.
-Exception in thread "user thread 93" java.lang.IllegalStateException: interrupted calling get() on [[method=WalrusAsyncClient.putBucketInRegion, request=PUT http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore6/ HTTP/1.1]], so could not run listeners
-	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:66)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-Caused by: java.lang.InterruptedException
-	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:979)
-	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1281)
-	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:218)
-	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:237)
-	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:59)
-	... 3 more
-Caused by: java.util.concurrent.ExecutionException: task submitted from the following trace
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:270)
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:241)
-	... 4 more
-Tests run: 100, Failures: 9, Errors: 0, Skipped: 0, Time elapsed: 437.927 sec <<< FAILURE!
+Test suite progress: tests succeeded: 92, failed: 8, skipped: 0.
+Tests run: 100, Failures: 8, Errors: 0, Skipped: 0, Time elapsed: 440.523 sec <<< FAILURE!
 
 Results :
 
-Failed tests:   testGetIfMatch(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest): request GET http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore14/apples HTTP/1.1 failed with code 412, error: AWSError{requestId='0cd88949-3561-45e9-bbe8-e36c1bb227e4', requestToken='null', code='PreconditionFailed', message='At least one of the pre-conditions you specified did not hold.', context='{Resource=apples etag: 869a42369bf5850326cf30eed63e9b44}'}
+Failed tests:   testGetIfMatch(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest): request GET http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore14/apples HTTP/1.1 failed with code 412, error: AWSError{requestId='07b4d966-cd5c-4ae3-8689-77a03f15cf07', requestToken='null', code='PreconditionFailed', message='At least one of the pre-conditions you specified did not hold.', context='{Resource=apples etag: 869a42369bf5850326cf30eed63e9b44}'}
   testSignGetUrlOptions(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusBlobSignerLiveTest): expected:<fo> but was:<f>
-  testListContainerMarker(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest): size should have been 25, but was 24: [[type=BLOB, id=null, name=z, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/z, userMetadata={}], [type=BLOB, id=null, name=p, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/p, userMetadata={}], [type=BLOB, id=null, name=c, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/c, userMetadata={}], [type=BLOB, id=null, name=u, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/u, userMetadata={}], [type=BLOB, id=null, name=h, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/h, userMetadata={}], [type=BLOB, id=null, name=d, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/d, userMetadata={}], [type=BLOB, id=null, name=l, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/l, userMetadata={}], [type=BLOB, id=null, name=v, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/v, userMetadata={}], [type=BLOB, id=null, name=g, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/g, userMetadata={}], [type=BLOB, id=null, name=r, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/r, userMetadata={}], [type=BLOB, id=null, name=w, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/w, userMetadata={}], [type=BLOB, id=null, name=j, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/j, userMetadata={}], [type=BLOB, id=null, name=y, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/y, userMetadata={}], [type=BLOB, id=null, name=t, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/t, userMetadata={}], [type=BLOB, id=null, name=o, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/o, userMetadata={}], [type=BLOB, id=null, name=e, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/e, userMetadata={}], [type=BLOB, id=null, name=n, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/n, userMetadata={}], [type=BLOB, id=null, name=f, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/f, userMetadata={}], [type=BLOB, id=null, name=x, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/x, userMetadata={}], [type=BLOB, id=null, name=m, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/m, userMetadata={}], [type=BLOB, id=null, name=q, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/q, userMetadata={}], [type=BLOB, id=null, name=s, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/s, userMetadata={}], [type=BLOB, id=null, name=i, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/i, userMetadata={}], [type=BLOB, id=null, name=k, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/k, userMetadata={}]]
+  testListContainerMarker(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusContainerIntegrationLiveTest): size should have been 25, but was 24: [[type=BLOB, id=null, name=g, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/g, userMetadata={}], [type=BLOB, id=null, name=x, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/x, userMetadata={}], [type=BLOB, id=null, name=r, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/r, userMetadata={}], [type=BLOB, id=null, name=h, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/h, userMetadata={}], [type=BLOB, id=null, name=n, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/n, userMetadata={}], [type=BLOB, id=null, name=y, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/y, userMetadata={}], [type=BLOB, id=null, name=s, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/s, userMetadata={}], [type=BLOB, id=null, name=w, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/w, userMetadata={}], [type=BLOB, id=null, name=v, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/v, userMetadata={}], [type=BLOB, id=null, name=m, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/m, userMetadata={}], [type=BLOB, id=null, name=o, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/o, userMetadata={}], [type=BLOB, id=null, name=j, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/j, userMetadata={}], [type=BLOB, id=null, name=z, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/z, userMetadata={}], [type=BLOB, id=null, name=i, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/i, userMetadata={}], [type=BLOB, id=null, name=u, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/u, userMetadata={}], [type=BLOB, id=null, name=d, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/d, userMetadata={}], [type=BLOB, id=null, name=f, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/f, userMetadata={}], [type=BLOB, id=null, name=k, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/k, userMetadata={}], [type=BLOB, id=null, name=t, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/t, userMetadata={}], [type=BLOB, id=null, name=c, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/c, userMetadata={}], [type=BLOB, id=null, name=q, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/q, userMetadata={}], [type=BLOB, id=null, name=p, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/p, userMetadata={}], [type=BLOB, id=null, name=e, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/e, userMetadata={}], [type=BLOB, id=null, name=l, location=null, uri=http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore3/l, userMetadata={}]]
   testPutMoreThanSingleListing(org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest): expected:<101> but was:<100>
   testCopyCannedAccessPolicyPublic(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest): Server returned HTTP response code: 403 for URL: http://partnercloud.eucalyptus.com:8773/services/Walrus/services/Walrus/adriancole-blobstore11/pears
-  testPublicReadOnObject(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest): Connection refused connecting to GET http://partnercloud.eucalyptus.com:8773/services/Walrus/ HTTP/1.1
-  testPublicWriteOnObject(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest): Connection refused connecting to PUT http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore4/ HTTP/1.1
-  testPutCannedAccessPolicyPublic(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest): Connection refused connecting to PUT http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore5/ HTTP/1.1
-  testUpdateObjectACL(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest): Connection refused connecting to PUT http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore6/ HTTP/1.1
+  testPublicReadOnObject(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest): expected:<2> but was:<3>
+  testPublicWriteOnObject(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest): expected:<3> but was:<2>
+  testUpdateObjectACL(org.jclouds.epc.EucalyptusPartnerCloudWalrusClientLiveTest): command: PUT http://partnercloud.eucalyptus.com:8773/services/Walrus/adriancole-blobstore6/private-acl?acl HTTP/1.1 failed with response: HTTP/1.1 400 Bad Request; content: [Failure: 400 Bad Request
 
-Tests run: 100, Failures: 9, Errors: 0, Skipped: 0
+Tests run: 100, Failures: 8, Errors: 0, Skipped: 0
 
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 7:34.239s
-[INFO] Finished at: Wed Dec 14 12:01:33 PST 2011
+[INFO] Total time: 7:30.375s
+[INFO] Finished at: Thu Dec 15 04:51:23 PST 2011
 [INFO] Final Memory: 20M/265M
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project eucalyptus-partnercloud-s3: There are test failures.

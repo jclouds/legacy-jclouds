@@ -57,15 +57,15 @@ Starting test testInRestProperties(org.jclouds.aws.cloudwatch.AWSCloudWatchProvi
 Starting test testAllContains(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest)
 Starting test testOfTypeContains(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest)
 Starting test testWithId(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest)
-[pool-2-thread-4] Test testOfTypeContains(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest) succeeded: 49ms
+[pool-2-thread-3] Test testAllContains(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest) succeeded: 59ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-[pool-2-thread-3] Test testAllContains(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest) succeeded: 50ms
+[pool-2-thread-4] Test testOfTypeContains(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest) succeeded: 62ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testWithId(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest) succeeded: 38ms
+[pool-2-thread-2] Test testWithId(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest) succeeded: 53ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-[pool-2-thread-1] Test testInRestProperties(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest) succeeded: 186ms
+[pool-2-thread-1] Test testInRestProperties(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest) succeeded: 127ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.802 sec
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.431 sec
 
 Results :
 
@@ -99,9 +99,9 @@ Ran 0 tests containing 0 assertions.
 -------------------------------------------------------
 Running org.jclouds.aws.cloudwatch.AWSCloudWatchClientLiveTest
 Starting test testGetMetricStatisticsInRegion(org.jclouds.aws.cloudwatch.AWSCloudWatchClientLiveTest)
-[pool-2-thread-1] Test testGetMetricStatisticsInRegion(org.jclouds.aws.cloudwatch.AWSCloudWatchClientLiveTest) succeeded: 7036ms
+[pool-2-thread-1] Test testGetMetricStatisticsInRegion(org.jclouds.aws.cloudwatch.AWSCloudWatchClientLiveTest) succeeded: 6794ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 10.184 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.191 sec
 
 Results :
 
@@ -120,7 +120,7 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 32.832s
-[INFO] Finished at: Wed Dec 14 22:12:42 PST 2011
+[INFO] Total time: 25.102s
+[INFO] Finished at: Thu Dec 15 00:16:06 PST 2011
 [INFO] Final Memory: 19M/265M
 [INFO] ------------------------------------------------------------------------

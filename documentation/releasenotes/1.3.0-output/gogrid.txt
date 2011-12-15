@@ -55,60 +55,60 @@
 Running TestSuite
 Starting test testWithWrapper(org.jclouds.gogrid.binders.BindIdsToQueryParamsTest)
 Starting test testWithPrimitive(org.jclouds.gogrid.binders.BindIdsToQueryParamsTest)
-[pool-2-thread-2] Test testWithPrimitive(org.jclouds.gogrid.binders.BindIdsToQueryParamsTest) succeeded: 73ms
+[pool-2-thread-2] Test testWithPrimitive(org.jclouds.gogrid.binders.BindIdsToQueryParamsTest) succeeded: 77ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-[pool-2-thread-1] Test testWithWrapper(org.jclouds.gogrid.binders.BindIdsToQueryParamsTest) succeeded: 85ms
+[pool-2-thread-1] Test testWithWrapper(org.jclouds.gogrid.binders.BindIdsToQueryParamsTest) succeeded: 101ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
 Starting test testBinding(org.jclouds.gogrid.binders.BindNamesToQueryParamsTest)
-[pool-3-thread-1] Test testBinding(org.jclouds.gogrid.binders.BindNamesToQueryParamsTest) succeeded: 2ms
+[pool-3-thread-1] Test testBinding(org.jclouds.gogrid.binders.BindNamesToQueryParamsTest) succeeded: 1ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
 Starting test testAllStatusCovered(org.jclouds.gogrid.compute.config.GoGridComputeServiceContextModuleTest)
-[pool-4-thread-1] Test testAllStatusCovered(org.jclouds.gogrid.compute.config.GoGridComputeServiceContextModuleTest) succeeded: 8ms
+[pool-4-thread-1] Test testAllStatusCovered(org.jclouds.gogrid.compute.config.GoGridComputeServiceContextModuleTest) succeeded: 11ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
 Starting test testApplySetsTagFromNameAndCredentialsFromName(org.jclouds.gogrid.compute.functions.ServerToNodeMetadataTest)
-[pool-5-thread-1] Test testApplySetsTagFromNameAndCredentialsFromName(org.jclouds.gogrid.compute.functions.ServerToNodeMetadataTest) succeeded: 206ms
+[pool-5-thread-1] Test testApplySetsTagFromNameAndCredentialsFromName(org.jclouds.gogrid.compute.functions.ServerToNodeMetadataTest) succeeded: 241ms
 Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
 Starting test testAs(org.jclouds.gogrid.compute.options.GoGridTemplateOptionsTest)
 [pool-6-thread-1] Test testAs(org.jclouds.gogrid.compute.options.GoGridTemplateOptionsTest) succeeded: 2ms
 Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
 Starting test testValid(org.jclouds.gogrid.functions.ParseCredentialsFromJsonResponseTest)
 Starting test testFailWhenTooManyPasswords(org.jclouds.gogrid.functions.ParseCredentialsFromJsonResponseTest)
-[pool-7-thread-1] Test testValid(org.jclouds.gogrid.functions.ParseCredentialsFromJsonResponseTest) succeeded: 133ms
+[pool-7-thread-1] Test testValid(org.jclouds.gogrid.functions.ParseCredentialsFromJsonResponseTest) succeeded: 148ms
 Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
-[pool-7-thread-2] Test testFailWhenTooManyPasswords(org.jclouds.gogrid.functions.ParseCredentialsFromJsonResponseTest) succeeded: 130ms
+[pool-7-thread-2] Test testFailWhenTooManyPasswords(org.jclouds.gogrid.functions.ParseCredentialsFromJsonResponseTest) succeeded: 124ms
 Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
 Starting test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseErrorFromJsonResponseTest)
 [pool-8-thread-1] Test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseErrorFromJsonResponseTest) succeeded: 4ms
 Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
 Starting test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseJobsFromJsonResponseTest)
-[pool-9-thread-1] Test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseJobsFromJsonResponseTest) succeeded: 15ms
+[pool-9-thread-1] Test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseJobsFromJsonResponseTest) succeeded: 10ms
 Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
 Starting test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseLoadBalancersFromJsonResponseTest)
-[pool-10-thread-1] Test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseLoadBalancersFromJsonResponseTest) succeeded: 8ms
+[pool-10-thread-1] Test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseLoadBalancersFromJsonResponseTest) succeeded: 12ms
 Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
 Starting test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseServerNameToCredentialsMapFromJsonResponseTest)
-[pool-11-thread-1] Test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseServerNameToCredentialsMapFromJsonResponseTest) succeeded: 18ms
+[pool-11-thread-1] Test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseServerNameToCredentialsMapFromJsonResponseTest) succeeded: 15ms
 Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
 Starting test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseServersFromJsonResponseTest)
-[pool-12-thread-1] Test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseServersFromJsonResponseTest) succeeded: 4ms
+[pool-12-thread-1] Test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseServersFromJsonResponseTest) succeeded: 5ms
 Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
 Starting test testAsync(org.jclouds.gogrid.GoGridAsyncClientTest)
 Starting test testSync(org.jclouds.gogrid.GoGridAsyncClientTest)
-[pool-13-thread-2] Test testAsync(org.jclouds.gogrid.GoGridAsyncClientTest) succeeded: 118ms
+[pool-13-thread-2] Test testAsync(org.jclouds.gogrid.GoGridAsyncClientTest) succeeded: 158ms
 Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
-[pool-13-thread-1] Test testSync(org.jclouds.gogrid.GoGridAsyncClientTest) succeeded: 117ms
+[pool-13-thread-1] Test testSync(org.jclouds.gogrid.GoGridAsyncClientTest) succeeded: 156ms
 Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
 Starting test testInRestProperties(org.jclouds.gogrid.GoGridProviderTest)
 Starting test testWithId(org.jclouds.gogrid.GoGridProviderTest)
 Starting test testAllContains(org.jclouds.gogrid.GoGridProviderTest)
-Starting test testOfTypeContains(org.jclouds.gogrid.GoGridProviderTest)
-[pool-14-thread-1] Test testInRestProperties(org.jclouds.gogrid.GoGridProviderTest) succeeded: 79ms
+[pool-14-thread-3] Test testAllContains(org.jclouds.gogrid.GoGridProviderTest) succeeded: 25ms
 Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
-[pool-14-thread-3] Test testAllContains(org.jclouds.gogrid.GoGridProviderTest) succeeded: 77ms
+[pool-14-thread-2] Test testWithId(org.jclouds.gogrid.GoGridProviderTest) succeeded: 28ms
 Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
-[pool-14-thread-4] Test testOfTypeContains(org.jclouds.gogrid.GoGridProviderTest) succeeded: 78ms
+[pool-14-thread-1] Test testInRestProperties(org.jclouds.gogrid.GoGridProviderTest) succeeded: 36ms
 Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
-[pool-14-thread-2] Test testWithId(org.jclouds.gogrid.GoGridProviderTest) succeeded: 85ms
+Starting test testOfTypeContains(org.jclouds.gogrid.GoGridProviderTest)
+[pool-14-thread-4] Test testOfTypeContains(org.jclouds.gogrid.GoGridProviderTest) succeeded: 1ms
 Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
 Starting test testHandler(org.jclouds.gogrid.handlers.GoGridErrorHandlerTest)
 [pool-15-thread-1] Test testHandler(org.jclouds.gogrid.handlers.GoGridErrorHandlerTest) succeeded: 7ms
@@ -120,120 +120,120 @@ Starting test testWith500LengthDescription(org.jclouds.gogrid.options.AddServerO
 [pool-16-thread-2] Test testWith500LengthDescription(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 2ms
 Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
 Starting test testWithDescription(org.jclouds.gogrid.options.AddServerOptionsTest)
-[pool-16-thread-3] Test testWithDescription(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 1ms
+[pool-16-thread-3] Test testWithDescription(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 0ms
 Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
 Starting test testWithDescriptionNPE(org.jclouds.gogrid.options.AddServerOptionsTest)
-[pool-16-thread-4] Test testWithDescriptionNPE(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
 Starting test testAsSandboxType(org.jclouds.gogrid.options.AddServerOptionsTest)
 [pool-16-thread-5] Test testAsSandboxType(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
 Starting test testAsSandboxTypeStatic(org.jclouds.gogrid.options.AddServerOptionsTest)
-[pool-16-thread-5] Test testAsSandboxTypeStatic(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
 Starting test testNullWithDescription(org.jclouds.gogrid.options.AddServerOptionsTest)
-[pool-16-thread-5] Test testNullWithDescription(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
+[pool-16-thread-3] Test testNullWithDescription(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
 Starting test testWith501LengthDescription(org.jclouds.gogrid.options.AddServerOptionsTest)
-[pool-16-thread-5] Test testWith501LengthDescription(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
+[pool-16-thread-3] Test testWith501LengthDescription(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
 Starting test testWithDescriptionStatic(org.jclouds.gogrid.options.AddServerOptionsTest)
-[pool-16-thread-5] Test testWithDescriptionStatic(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 0ms
+[pool-16-thread-5] Test testAsSandboxTypeStatic(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 12ms
+Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
+[pool-16-thread-3] Test testWithDescriptionStatic(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 10ms
+Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
+[pool-16-thread-4] Test testWithDescriptionNPE(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 15ms
 Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
 Starting test testPredicate(org.jclouds.gogrid.predicates.ServerLatestJobCompletedTest)
-[pool-17-thread-1] Test testPredicate(org.jclouds.gogrid.predicates.ServerLatestJobCompletedTest) succeeded: 35ms
+[pool-17-thread-1] Test testPredicate(org.jclouds.gogrid.predicates.ServerLatestJobCompletedTest) succeeded: 30ms
 Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
-Starting test testGetImagesByName(org.jclouds.gogrid.services.GridImageAsyncClientTest)
-Starting test testEditImageFriendlyName(org.jclouds.gogrid.services.GridImageAsyncClientTest)
 Starting test testEditImageDescription(org.jclouds.gogrid.services.GridImageAsyncClientTest)
+Starting test testGetImagesByName(org.jclouds.gogrid.services.GridImageAsyncClientTest)
 Starting test testGetImageListWithOptions(org.jclouds.gogrid.services.GridImageAsyncClientTest)
-[pool-18-thread-4] Test testEditImageDescription(org.jclouds.gogrid.services.GridImageAsyncClientTest) succeeded: 83ms
+Starting test testEditImageFriendlyName(org.jclouds.gogrid.services.GridImageAsyncClientTest)
+[pool-18-thread-2] Test testGetImageListWithOptions(org.jclouds.gogrid.services.GridImageAsyncClientTest) succeeded: 174ms
 Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
-[pool-18-thread-3] Test testGetImagesByName(org.jclouds.gogrid.services.GridImageAsyncClientTest) succeeded: 92ms
+[pool-18-thread-3] Test testGetImagesByName(org.jclouds.gogrid.services.GridImageAsyncClientTest) succeeded: 175ms
 Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
-[pool-18-thread-2] Test testGetImageListWithOptions(org.jclouds.gogrid.services.GridImageAsyncClientTest) succeeded: 81ms
+[pool-18-thread-1] Test testEditImageFriendlyName(org.jclouds.gogrid.services.GridImageAsyncClientTest) succeeded: 174ms
 Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
-[pool-18-thread-1] Test testEditImageFriendlyName(org.jclouds.gogrid.services.GridImageAsyncClientTest) succeeded: 93ms
+[pool-18-thread-4] Test testEditImageDescription(org.jclouds.gogrid.services.GridImageAsyncClientTest) succeeded: 181ms
 Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
-Starting test testGetAssignedIpList(org.jclouds.gogrid.services.GridIpAsyncClientTest)
 Starting test testGetIpListWithOptions(org.jclouds.gogrid.services.GridIpAsyncClientTest)
+Starting test testGetAssignedIpList(org.jclouds.gogrid.services.GridIpAsyncClientTest)
 [pool-19-thread-1] Test testGetAssignedIpList(org.jclouds.gogrid.services.GridIpAsyncClientTest) succeeded: 5ms
 Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
 [pool-19-thread-2] Test testGetIpListWithOptions(org.jclouds.gogrid.services.GridIpAsyncClientTest) succeeded: 5ms
 Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
+Starting test testGetJobsForServerName(org.jclouds.gogrid.services.GridJobAsyncClientTest)
 Starting test testGetJobListNoOptions(org.jclouds.gogrid.services.GridJobAsyncClientTest)
 [pool-20-thread-2] Test testGetJobListNoOptions(org.jclouds.gogrid.services.GridJobAsyncClientTest) succeeded: 2ms
 Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
-Starting test testGetJobsForServerName(org.jclouds.gogrid.services.GridJobAsyncClientTest)
-[pool-20-thread-3] Test testGetJobsForServerName(org.jclouds.gogrid.services.GridJobAsyncClientTest) succeeded: 4ms
-Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
 Starting test testGetJobListWithOptions(org.jclouds.gogrid.services.GridJobAsyncClientTest)
-[pool-20-thread-4] Test testGetJobListWithOptions(org.jclouds.gogrid.services.GridJobAsyncClientTest) succeeded: 16ms
-Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
 Starting test testGetJobsById(org.jclouds.gogrid.services.GridJobAsyncClientTest)
-[pool-20-thread-1] Test testGetJobsById(org.jclouds.gogrid.services.GridJobAsyncClientTest) succeeded: 2ms
+[pool-20-thread-3] Test testGetJobsForServerName(org.jclouds.gogrid.services.GridJobAsyncClientTest) succeeded: 30ms
+Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
+[pool-20-thread-1] Test testGetJobsById(org.jclouds.gogrid.services.GridJobAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
+[pool-20-thread-4] Test testGetJobListWithOptions(org.jclouds.gogrid.services.GridJobAsyncClientTest) succeeded: 9ms
 Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
 Starting test testEditLoadBalancer(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest)
-Starting test testDeleteLoadBalancerById(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest)
 Starting test testGetLoadBalancerList(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest)
-Starting test testEditLoadBalancerNamed(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest)
-Starting test testGetLoadBalancersByName(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest)
-[pool-21-thread-4] Test testDeleteLoadBalancerById(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest) succeeded: 8ms
+Starting test testDeleteLoadBalancerById(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest)
+[pool-21-thread-3] Test testGetLoadBalancerList(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest) succeeded: 3ms
 Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
 Starting test testAddLoadBalancer(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest)
-[pool-21-thread-2] Test testEditLoadBalancerNamed(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest) succeeded: 8ms
+[pool-21-thread-5] Test testEditLoadBalancer(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest) succeeded: 8ms
 Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
-[pool-21-thread-1] Test testGetLoadBalancersByName(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest) succeeded: 10ms
+[pool-21-thread-4] Test testDeleteLoadBalancerById(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest) succeeded: 1ms
 Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
-[pool-21-thread-3] Test testGetLoadBalancerList(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest) succeeded: 17ms
+Starting test testEditLoadBalancerNamed(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest)
+[pool-21-thread-2] Test testEditLoadBalancerNamed(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest) succeeded: 3ms
 Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
-[pool-21-thread-4] Test testAddLoadBalancer(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest) succeeded: 12ms
+Starting test testGetLoadBalancersByName(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest)
+[pool-21-thread-1] Test testGetLoadBalancersByName(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest) succeeded: 4ms
 Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
-[pool-21-thread-5] Test testEditLoadBalancer(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest) succeeded: 34ms
+[pool-21-thread-3] Test testAddLoadBalancer(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest) succeeded: 23ms
 Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
-Starting test testDeleteByName(org.jclouds.gogrid.services.GridServerAsyncClientTest)
-Starting test testGetServerListNoOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest)
-Starting test testServerCredentials(org.jclouds.gogrid.services.GridServerAsyncClientTest)
 Starting test testGetServersByName(org.jclouds.gogrid.services.GridServerAsyncClientTest)
-[pool-22-thread-5] Test testGetServersByName(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 5ms
+Starting test testGetServerListNoOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+Starting test testDeleteByName(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+Starting test testServerCredentials(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+Starting test testAddServerNoOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+[pool-22-thread-3] Test testDeleteByName(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 6ms
 Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
 Starting test testTypes(org.jclouds.gogrid.services.GridServerAsyncClientTest)
-[pool-22-thread-3] Test testDeleteByName(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 10ms
+[pool-22-thread-5] Test testGetServersByName(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 8ms
 Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
 Starting test testPowerServer(org.jclouds.gogrid.services.GridServerAsyncClientTest)
-[pool-22-thread-4] Test testGetServerListNoOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 11ms
+[pool-22-thread-4] Test testGetServerListNoOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 10ms
 Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
 Starting test testAddServerOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest)
-[pool-22-thread-5] Test testTypes(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 3ms
+[pool-22-thread-2] Test testServerCredentials(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 10ms
 Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
-[pool-22-thread-2] Test testServerCredentials(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 12ms
-Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
 Starting test testGetRamSizes(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+[pool-22-thread-5] Test testPowerServer(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 5ms
+Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
 Starting test testEditServerRam(org.jclouds.gogrid.services.GridServerAsyncClientTest)
-[pool-22-thread-2] Test testGetRamSizes(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 3ms
+[pool-22-thread-2] Test testGetRamSizes(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 2ms
 Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
-Starting test testEditServerType(org.jclouds.gogrid.services.GridServerAsyncClientTest)
 [pool-22-thread-5] Test testEditServerRam(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 2ms
 Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
-Starting test testGetServersById(org.jclouds.gogrid.services.GridServerAsyncClientTest)
-[pool-22-thread-2] Test testEditServerType(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 2ms
+Starting test testEditServerType(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+[pool-22-thread-3] Test testTypes(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 9ms
 Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
 Starting test testGetServerListWithOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest)
-[pool-22-thread-2] Test testGetServerListWithOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 3ms
+Starting test testGetServersById(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+[pool-22-thread-5] Test testGetServersById(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 2ms
 Test suite progress: tests succeeded: 55, failed: 0, skipped: 0.
-[pool-22-thread-4] Test testAddServerOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 10ms
-Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
-[pool-22-thread-3] Test testPowerServer(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 13ms
-Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
-[pool-22-thread-5] Test testGetServersById(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 6ms
-Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
 Starting test testEditServerDescription(org.jclouds.gogrid.services.GridServerAsyncClientTest)
-[pool-22-thread-2] Test testEditServerDescription(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 3ms
+[pool-22-thread-4] Test testAddServerOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 9ms
+Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
+[pool-22-thread-2] Test testEditServerType(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
+[pool-22-thread-5] Test testEditServerDescription(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 1ms
+Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
+[pool-22-thread-1] Test testAddServerNoOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 16ms
 Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
-Starting test testAddServerNoOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest)
-[pool-22-thread-1] Test testAddServerNoOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 3ms
+[pool-22-thread-3] Test testGetServerListWithOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 7ms
 Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
-Tests run: 60, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.424 sec
+Tests run: 60, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.07 sec
 
 Results :
 
@@ -275,7 +275,7 @@ Test suite progress: tests succeeded: 1, failed: 1, skipped: 0.
 [pool-2-thread-1] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) skipped.
 Test suite progress: tests succeeded: 1, failed: 1, skipped: 1.
 Starting test testCorrectAuthException(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)
-[pool-2-thread-1] Test testCorrectAuthException(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) succeeded: 329ms
+[pool-2-thread-1] Test testCorrectAuthException(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) succeeded: 340ms
 Test suite progress: tests succeeded: 2, failed: 1, skipped: 1.
 Starting test testCreateAndRunAService(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)
 [pool-2-thread-1] Test testCreateAndRunAService(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) failed.
@@ -289,13 +289,13 @@ Test suite progress: tests succeeded: 2, failed: 2, skipped: 4.
 [pool-2-thread-1] Test testGet(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) skipped.
 Test suite progress: tests succeeded: 2, failed: 2, skipped: 5.
 Starting test testGetAssignableLocations(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)
-Dec 14, 2011 12:07:00 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+Dec 15, 2011 4:56:27 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
 WARNING: location [id=1, scope=ZONE, description=US West 1 Datacenter, parent=gogrid, iso3166Codes=[US-CA], metadata={}]
-Dec 14, 2011 12:07:00 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+Dec 15, 2011 4:56:27 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
 WARNING: location [id=2, scope=ZONE, description=US East 1 Datacenter, parent=gogrid, iso3166Codes=[US-VA], metadata={}]
-Dec 14, 2011 12:07:00 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+Dec 15, 2011 4:56:27 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
 WARNING: location [id=3, scope=ZONE, description=EU-West-1 Datacenter, parent=gogrid, iso3166Codes=[BR-SP], metadata={}]
-[pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) succeeded: 27ms
+[pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) succeeded: 15ms
 Test suite progress: tests succeeded: 3, failed: 2, skipped: 5.
 Starting test testImagesCache(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)
 [pool-2-thread-1] Test testImagesCache(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) failed.
@@ -325,7 +325,7 @@ Starting test testResizeRam(org.jclouds.gogrid.compute.GoGridComputeServiceLiveT
 [pool-2-thread-1] Test testResizeRam(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) failed.
 Test suite progress: tests succeeded: 4, failed: 6, skipped: 11.
 Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)
-[pool-2-thread-1] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) succeeded: 437ms
+[pool-2-thread-1] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) succeeded: 564ms
 Test suite progress: tests succeeded: 5, failed: 6, skipped: 11.
 Starting test testDefaultTemplateBuilder(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testDefaultTemplateBuilder(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
@@ -604,92 +604,92 @@ Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.gogrid.compu
 [pool-2-thread-1] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
 Test suite progress: tests succeeded: 6, failed: 96, skipped: 11.
 Starting test testListImages(org.jclouds.gogrid.services.GridImageClientLiveTest)
-Dec 14, 2011 12:11:45 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:12 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 1057 is missing the createdon field
-Dec 14, 2011 12:11:45 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:13 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 1057 is missing the createdon field
-Dec 14, 2011 12:11:45 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:13 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 1058 is missing the createdon field
-Dec 14, 2011 12:11:45 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:13 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 1058 is missing the updatedon field
-Dec 14, 2011 12:11:45 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:13 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 1058 is missing the createdon field
-Dec 14, 2011 12:11:45 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:13 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 1058 is missing the updatedon field
-Dec 14, 2011 12:11:45 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:13 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 1059 is missing the createdon field
-Dec 14, 2011 12:11:45 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:13 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 1059 is missing the createdon field
-Dec 14, 2011 12:12:00 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:32 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 5489 is missing the createdon field
-Dec 14, 2011 12:12:01 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:33 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 5489 is missing the createdon field
-Dec 14, 2011 12:12:02 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:37 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 5823 is missing the createdon field
-Dec 14, 2011 12:12:03 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:38 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 5823 is missing the createdon field
-Dec 14, 2011 12:12:03 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:38 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 5824 is missing the createdon field
-Dec 14, 2011 12:12:03 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:38 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 5824 is missing the createdon field
-Dec 14, 2011 12:12:03 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:38 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 5825 is missing the createdon field
-Dec 14, 2011 12:12:03 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:38 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 5825 is missing the createdon field
-Dec 14, 2011 12:12:11 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:43 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 6675 is missing the createdon field
-Dec 14, 2011 12:12:11 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:43 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 6675 is missing the createdon field
-Dec 14, 2011 12:12:11 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:43 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 6676 is missing the createdon field
-Dec 14, 2011 12:12:12 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:43 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 6676 is missing the createdon field
-Dec 14, 2011 12:12:12 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:43 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 6677 is missing the createdon field
-Dec 14, 2011 12:12:12 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:44 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 6677 is missing the createdon field
-Dec 14, 2011 12:12:12 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:44 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 6678 is missing the createdon field
-Dec 14, 2011 12:12:12 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:44 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 6678 is missing the createdon field
-Dec 14, 2011 12:12:26 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:53 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 9928 is missing the createdon field
-Dec 14, 2011 12:12:27 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:54 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 9928 is missing the createdon field
-Dec 14, 2011 12:12:27 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:54 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 9929 is missing the createdon field
-Dec 14, 2011 12:12:27 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:54 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 9929 is missing the createdon field
-Dec 14, 2011 12:12:27 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:54 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 9930 is missing the createdon field
-Dec 14, 2011 12:12:27 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:54 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 9930 is missing the createdon field
-Dec 14, 2011 12:12:27 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:54 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 9931 is missing the createdon field
-Dec 14, 2011 12:12:28 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:55 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 9931 is missing the createdon field
-Dec 14, 2011 12:12:28 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:55 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 9932 is missing the createdon field
-Dec 14, 2011 12:12:28 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:55 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 9932 is missing the createdon field
-Dec 14, 2011 12:12:28 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:55 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 9933 is missing the createdon field
-Dec 14, 2011 12:12:28 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:55 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 9933 is missing the createdon field
-Dec 14, 2011 12:12:28 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:55 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 9934 is missing the createdon field
-Dec 14, 2011 12:12:29 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:55 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 9934 is missing the createdon field
-Dec 14, 2011 12:12:29 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:55 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 9935 is missing the createdon field
-Dec 14, 2011 12:12:29 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+Dec 15, 2011 5:00:57 AM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
 WARNING: image 9935 is missing the createdon field
-[pool-2-thread-1] Test testListImages(org.jclouds.gogrid.services.GridImageClientLiveTest) succeeded: 52678ms
+[pool-2-thread-1] Test testListImages(org.jclouds.gogrid.services.GridImageClientLiveTest) succeeded: 52941ms
 Test suite progress: tests succeeded: 7, failed: 96, skipped: 11.
 Starting test testListJobs(org.jclouds.gogrid.services.GridJobClientLiveTest)
-[pool-2-thread-1] Test testListJobs(org.jclouds.gogrid.services.GridJobClientLiveTest) succeeded: 11782ms
+[pool-2-thread-1] Test testListJobs(org.jclouds.gogrid.services.GridJobClientLiveTest) succeeded: 14911ms
 Test suite progress: tests succeeded: 8, failed: 96, skipped: 11.
-Tests run: 115, Failures: 96, Errors: 0, Skipped: 11, Time elapsed: 355.696 sec <<< FAILURE!
+Tests run: 115, Failures: 96, Errors: 0, Skipped: 11, Time elapsed: 298.052 sec <<< FAILURE!
 
 Results :
 
@@ -795,8 +795,8 @@ Tests run: 115, Failures: 96, Errors: 0, Skipped: 11
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 6:12.663s
-[INFO] Finished at: Wed Dec 14 12:12:45 PST 2011
+[INFO] Total time: 5:15.489s
+[INFO] Finished at: Thu Dec 15 05:01:15 PST 2011
 [INFO] Final Memory: 20M/265M
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project gogrid: There are test failures.
