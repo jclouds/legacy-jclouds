@@ -26,11 +26,13 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.location.Region;
+import org.jclouds.logging.Logger;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
@@ -53,6 +55,9 @@ public class ProvideRegionToURIViaProperties implements javax.inject.Provider<Ma
    private final Injector injector;
    private final Multimap<String, String> constants;
 
+   @Resource
+   protected Logger logger = Logger.NULL;
+   
    @Inject
    protected ProvideRegionToURIViaProperties(Injector injector, @Named("CONSTANTS") Multimap<String, String> constants) {
       this.injector = injector;
@@ -77,8 +82,7 @@ public class ProvideRegionToURIViaProperties implements javax.inject.Provider<Ma
          }
          return regions.build();
       } catch (ConfigurationException e) {
-         // this happens if regions property isn't set
-         // services not run by AWS may not have regions, so this is ok.
+         logger.warn("no region name to endpoint mappings configured!");
          return ImmutableMap.of();
       }
    }

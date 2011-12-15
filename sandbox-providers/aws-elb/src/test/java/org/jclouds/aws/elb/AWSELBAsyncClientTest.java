@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.elb.ELBAsyncClient;
+import org.jclouds.elb.ELBAsyncClientTest;
 import org.testng.annotations.Test;
 
 /**
@@ -31,10 +32,10 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "unit", testName = "aws.ELBAsyncClientTest")
-public class ELBAsyncClientTest extends org.jclouds.elb.ELBAsyncClientTest {
+@Test(groups = "unit", testName = "AWSELBAsyncClientTest")
+public class AWSELBAsyncClientTest extends ELBAsyncClientTest {
 
-   public ELBAsyncClientTest() {
+   public AWSELBAsyncClientTest() {
       this.provider = "aws-elb";
    }
 

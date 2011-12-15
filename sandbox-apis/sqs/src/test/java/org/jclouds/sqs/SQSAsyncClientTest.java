@@ -59,10 +59,6 @@ public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
    @RequiresHttp
    @ConfiguresRestClient
    private static final class TestSQSRestClientModule extends SQSRestClientModule {
-      @Override
-      protected void configure() {
-         super.configure();
-      }
 
       @Override
       protected String provideTimeStamp(final DateService dateService,

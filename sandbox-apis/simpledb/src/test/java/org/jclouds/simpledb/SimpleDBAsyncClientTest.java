@@ -22,11 +22,9 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
@@ -42,7 +40,6 @@ import org.jclouds.simpledb.options.ListDomainsOptions;
 import org.jclouds.simpledb.xml.ListDomainsResponseHandler;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
@@ -60,24 +57,6 @@ public class SimpleDBAsyncClientTest extends RestClientTest<SimpleDBAsyncClient>
    @RequiresHttp
    @ConfiguresRestClient
    private static final class TestSimpleDBRestClientModule extends SimpleDBRestClientModule {
-      @Override
-      protected void configure() {
-         super.configure();
-      }
-
-      @Override
-      protected void bindRegionsToProvider() {
-         bindRegionsToProvider(Regions.class);
-      }
-
-      static class Regions implements javax.inject.Provider<Map<String, URI>> {
-         @Override
-         public Map<String, URI> get() {
-            return ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI.create("https://sdb.eu-west-1.amazonaws.com"),
-                  Region.US_EAST_1, URI.create("https://sdb.us-east-1.amazonaws.com"), Region.US_WEST_1,
-                  URI.create("https://sdb.us-west-1.amazonaws.com"));
-         }
-      }
    }
 
    public void testListDomainsInRegion() throws SecurityException, NoSuchMethodException, IOException {

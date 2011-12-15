@@ -51,7 +51,6 @@ public class RegionToEndpointOrProviderIfNull implements Function<Object, URI> {
       this.defaultProvider = checkNotNull(defaultProvider, "defaultProvider");
       this.defaultUri = checkNotNull(defaultUri, "defaultUri");
       this.regionToEndpoint = checkNotNull(regionToEndpoint, "regionToEndpoint");
-      checkArgument(regionToEndpoint.size() > 0, "no region name to endpoint mappings configured!");
    }
 
    @Override

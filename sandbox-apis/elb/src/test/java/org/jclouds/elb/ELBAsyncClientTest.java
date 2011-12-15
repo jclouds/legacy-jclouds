@@ -22,14 +22,11 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.inject.Named;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.date.DateService;
 import org.jclouds.elb.config.ELBRestClientModule;
@@ -49,7 +46,6 @@ import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
@@ -173,20 +169,6 @@ public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
       protected String provideTimeStamp(final DateService dateService,
             @Named(Constants.PROPERTY_SESSION_INTERVAL) int expiration) {
          return "2009-11-08T15:54:08.897Z";
-      }
-
-      @Override
-      protected void bindRegionsToProvider() {
-         bindRegionsToProvider(Regions.class);
-      }
-
-      static class Regions implements javax.inject.Provider<Map<String, URI>> {
-         @Override
-         public Map<String, URI> get() {
-            return ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI.create("https://elb.eu-west-1.amazonaws.com"),
-                  Region.US_EAST_1, URI.create("https://elb.us-east-1.amazonaws.com"), Region.US_WEST_1,
-                  URI.create("https://elb.us-west-1.amazonaws.com"));
-         }
       }
    }
 
