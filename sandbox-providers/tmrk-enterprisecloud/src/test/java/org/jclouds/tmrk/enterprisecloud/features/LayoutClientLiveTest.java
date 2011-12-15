@@ -50,4 +50,13 @@ public class LayoutClientLiveTest extends BaseTerremarkEnterpriseCloudClientLive
    public void testGetMissingLayouts() {
       assertNull(client.getLayouts(URI.create("/cloudapi/ecloud/layout/environments/-1")));
    }
+
+   public void testGetLayoutsInComputePool() throws Exception {
+      DeviceLayout layout = client.getLayouts(URI.create("/cloudapi/ecloud/layout/computepools/89"));
+      assertNotNull(layout);
+   }
+
+   public void testGetMissingLayoutsInComputePool() {
+      assertNull(client.getLayouts(URI.create("/cloudapi/ecloud/layout/computepools/-1")));
+   }
 }

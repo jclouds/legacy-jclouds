@@ -39,10 +39,19 @@ import java.net.URISyntaxException;
 public class LayoutAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClientTest<LayoutAsyncClient> {
 
    public void testGetLayouts() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
-      Method method = LayoutAsyncClient.class.getMethod("getLayouts", URI.class);
-      HttpRequest httpRequest = processor.createRequest(method, URI.create("/cloudapi/ecloud/layout/environments/77"));
+      testCall("getLayouts","/cloudapi/ecloud/layout/environments/77");
+   }
 
-      assertRequestLineEquals(httpRequest, "GET https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/layout/environments/77 HTTP/1.1");
+   public void testGetLayoutsInComputePool() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      testCall("getLayoutsInComputePool","/cloudapi/ecloud/layout/computePools/89");
+   }
+   
+   private void testCall(String methodName, String uri) throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = LayoutAsyncClient.class.getMethod(methodName, URI.class);
+      HttpRequest httpRequest = processor.createRequest(method, URI.create(uri));
+
+      String requestLine = String.format("GET https://services-beta.enterprisecloud.terremark.com%s HTTP/1.1",uri);
+      assertRequestLineEquals(httpRequest, requestLine);
       assertNonPayloadHeadersEqual(httpRequest,
             "Accept: application/vnd.tmrk.cloud.deviceLayout\nx-tmrk-version: 2011-07-01\n");
       assertPayloadEquals(httpRequest, null, null, false);

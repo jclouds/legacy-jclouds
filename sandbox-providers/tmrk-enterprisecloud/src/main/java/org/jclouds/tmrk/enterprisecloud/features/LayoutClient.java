@@ -46,4 +46,14 @@ public interface LayoutClient {
     */
    DeviceLayout getLayouts(URI uri);
 
+   /**
+    * The Get Layouts by Compute Pool call returns information regarding the row and group of network hosts
+    * for a specified compute pool in an environment.
+    * Rows and groups allow aggregation of servers along logical boundaries defined by the organization.
+    * @param uri the uri based on the compute pool
+    *  e.g. /cloudapi/ecloud/layout/computePools/{id}
+    * @return the DeviceLayout
+    */
+   DeviceLayout getLayoutsInComputePool(URI uri);
+
 }

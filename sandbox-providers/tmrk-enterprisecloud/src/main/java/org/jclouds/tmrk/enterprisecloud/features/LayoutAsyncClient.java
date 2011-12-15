@@ -51,4 +51,12 @@ public interface LayoutAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<DeviceLayout> getLayouts(@EndpointParam URI uri);
 
+   /**
+    * @see LayoutClient#getLayoutsInComputePool
+    */
+   @GET
+   @Consumes("application/vnd.tmrk.cloud.deviceLayout")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<DeviceLayout> getLayoutsInComputePool(@EndpointParam URI uri);
 }
