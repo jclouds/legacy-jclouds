@@ -62,8 +62,7 @@ public class RegionToEndpointOrProviderIfNullTest {
       fn.apply("2");
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testMustHaveEndpoints() {
+   public void testOkIfNoRegionMappings() {
       new RegionToEndpointOrProviderIfNull("leader", URI.create("http://leader"), ImmutableMap.<String, URI> of());
    }
 
