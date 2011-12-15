@@ -100,14 +100,6 @@ public class VirtualMachine extends Resource<VirtualMachine> {
        }
 
        /**
-        * @see VirtualMachine#getToolsStatus()
-        */
-       public Builder toolStatus(ToolsStatus toolsStatus) {
-          this.toolsStatus = toolsStatus;
-          return this;
-       }
-
-       /**
         * @see VirtualMachine#isCustomizationPending()
         */
        public Builder customizationPending(boolean customizationPending) {
