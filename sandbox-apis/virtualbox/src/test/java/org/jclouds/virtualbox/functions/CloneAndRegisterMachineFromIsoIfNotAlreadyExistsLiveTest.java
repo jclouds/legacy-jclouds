@@ -91,7 +91,7 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends Ba
          VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).osTypeId(osTypeId)
                  .controller(ideController)
                  .forceOverwrite(true).build();
-         return new IsoToIMachine(manager, guestId, localHostContext, hostId, socketTester,
+         return new CreateAndInstallVm(manager, guestId, localHostContext, hostId, socketTester,
                  "127.0.0.1", 8080, HEADLESS).apply(vmSpecification);
       } catch (IllegalStateException e) {
          // already created

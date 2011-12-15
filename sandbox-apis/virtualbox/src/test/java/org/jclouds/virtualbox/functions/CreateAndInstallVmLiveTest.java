@@ -56,8 +56,8 @@ import static org.testng.Assert.assertTrue;
 /**
  * @author Andrea Turli, Mattias Holmqvist
  */
-@Test(groups = "live", singleThreaded = true, testName = "IsoToIMachineLiveTest")
-public class IsoToIMachineLiveTest extends BaseVirtualBoxClientLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "CreateAndInstallVmLiveTest")
+public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
 
    Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() {
    }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
@@ -94,7 +94,7 @@ public class IsoToIMachineLiveTest extends BaseVirtualBoxClientLiveTest {
               .controller(ideController)
               .forceOverwrite(true)
               .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build()).build();
-      IMachine imageMachine = new IsoToIMachine(manager, guestId, localHostContext, hostId,
+      IMachine imageMachine = new CreateAndInstallVm(manager, guestId, localHostContext, hostId,
               socketTester, "127.0.0.1", 8080, HEADLESS)
               .apply(vmSpecification);
 

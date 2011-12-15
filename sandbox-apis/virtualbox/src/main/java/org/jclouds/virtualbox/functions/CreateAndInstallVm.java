@@ -47,7 +47,7 @@ import static org.jclouds.virtualbox.util.MachineUtils.*;
 import static org.virtualbox_4_1.LockType.Shared;
 import static org.virtualbox_4_1.LockType.Write;
 
-public class IsoToIMachine implements Function<VmSpec, IMachine> {
+public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -63,9 +63,9 @@ public class IsoToIMachine implements Function<VmSpec, IMachine> {
    private final ExecutionType executionType;
 
    @Inject
-   public IsoToIMachine(VirtualBoxManager manager, String guestId, ComputeServiceContext context,
-                        String hostId, Predicate<IPSocket> socketTester,
-                        String webServerHost, int webServerPort, ExecutionType executionType) {
+   public CreateAndInstallVm(VirtualBoxManager manager, String guestId, ComputeServiceContext context,
+                             String hostId, Predicate<IPSocket> socketTester,
+                             String webServerHost, int webServerPort, ExecutionType executionType) {
       this.manager = manager;
       this.guestId = guestId;
       this.context = context;

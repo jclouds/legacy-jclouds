@@ -11,7 +11,7 @@ import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
-import org.jclouds.virtualbox.functions.IsoToIMachine;
+import org.jclouds.virtualbox.functions.CreateAndInstallVm;
 import org.jclouds.virtualbox.functions.LaunchMachineIfNotAlreadyRunning;
 import org.jclouds.virtualbox.util.PropertyUtils;
 import org.testng.annotations.Test;
@@ -74,7 +74,7 @@ public class SshAvailableLiveTest extends BaseVirtualBoxClientLiveTest {
                  .controller(ideController)
                  .forceOverwrite(true).build();
 
-         return new IsoToIMachine(manager, guestId, localHostContext,
+         return new CreateAndInstallVm(manager, guestId, localHostContext,
                  hostId, socketTester, "127.0.0.1", 8080, HEADLESS).apply(vmSpecification);
       } catch (IllegalStateException e) {
          // already created
