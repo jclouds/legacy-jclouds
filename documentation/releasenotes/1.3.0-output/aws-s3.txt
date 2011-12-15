@@ -53,166 +53,166 @@
  T E S T S
 -------------------------------------------------------
 Running TestSuite
-Starting test testPutBucketEu(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-Starting test testAllRegions(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-Starting test testBucketExists(org.jclouds.aws.s3.AWSS3AsyncClientTest)
 Starting test testDisableBucketLogging(org.jclouds.aws.s3.AWSS3AsyncClientTest)
+Starting test testAllRegions(org.jclouds.aws.s3.AWSS3AsyncClientTest)
 Starting test testDeleteObject(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-2] Test testAllRegions(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 79ms
+Starting test testPutBucketEu(org.jclouds.aws.s3.AWSS3AsyncClientTest)
+Starting test testBucketExists(org.jclouds.aws.s3.AWSS3AsyncClientTest)
+[pool-2-thread-2] Test testAllRegions(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 45ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
 Starting test testGetBucketPayer(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-3] Test testPutBucketEu(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 175ms
+[pool-2-thread-1] Test testDeleteObject(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 134ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
 Starting test testHeadObject(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-5] Test testBucketExists(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 193ms
+[pool-2-thread-5] Test testBucketExists(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 131ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
 Starting test testNewS3Object(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-5] Test testNewS3Object(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 6ms
+[pool-2-thread-5] Test testNewS3Object(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 0ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
 Starting test testListOwnedBuckets(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-1] Test testDeleteObject(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 202ms
+[pool-2-thread-4] Test testDisableBucketLogging(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 153ms
 Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
 Starting test testListBucket(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-4] Test testDisableBucketLogging(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 204ms
+[pool-2-thread-2] Test testGetBucketPayer(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 103ms
 Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
 Starting test testCopyObject(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-3] Test testHeadObject(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 60ms
+[pool-2-thread-3] Test testPutBucketEu(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 151ms
 Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
 Starting test testSetBucketPayerOwner(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-3] Test testSetBucketPayerOwner(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 8ms
+[pool-2-thread-1] Test testHeadObject(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 42ms
 Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
 Starting test testAbortMultipartUpload(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-3] Test testAbortMultipartUpload(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 6ms
+[pool-2-thread-2] Test testCopyObject(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 45ms
 Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
 Starting test testGetBucketLocation(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-5] Test testListOwnedBuckets(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 55ms
+[pool-2-thread-3] Test testSetBucketPayerOwner(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 39ms
 Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
 Starting test testGetBucketLogging(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-4] Test testCopyObject(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 59ms
+[pool-2-thread-4] Test testListBucket(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 57ms
 Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
 Starting test testDeleteBucketIfEmpty(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-5] Test testGetBucketLogging(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 33ms
+[pool-2-thread-3] Test testGetBucketLogging(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 11ms
 Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
 Starting test testObjectExists(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-1] Test testListBucket(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 92ms
+[pool-2-thread-4] Test testDeleteBucketIfEmpty(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 9ms
 Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
 Starting test testCompleteMultipartUpload(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-5] Test testObjectExists(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 11ms
+[pool-2-thread-5] Test testListOwnedBuckets(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 73ms
 Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
 Starting test testInitiateMultipartUpload(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-2] Test testGetBucketPayer(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 221ms
+[pool-2-thread-3] Test testObjectExists(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 90ms
 Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
 Starting test testGetObjectACL(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-4] Test testDeleteBucketIfEmpty(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 44ms
+[pool-2-thread-4] Test testCompleteMultipartUpload(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 121ms
 Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
 Starting test testPutObjectACL(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-1] Test testCompleteMultipartUpload(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 60ms
+[pool-2-thread-3] Test testGetObjectACL(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 74ms
 Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
 Starting test testPutBucketACL(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-2] Test testGetObjectACL(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 225ms
+[pool-2-thread-1] Test testAbortMultipartUpload(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 289ms
 Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
 Starting test testUploadPart(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-2] Test testUploadPart(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 6ms
+[pool-2-thread-1] Test testUploadPart(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 5ms
 Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
 Starting test testSetBucketPayerRequester(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-2] Test testSetBucketPayerRequester(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 3ms
+[pool-2-thread-1] Test testSetBucketPayerRequester(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 29ms
 Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
 Starting test testGetBucketACL(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-2] Test testGetBucketACL(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 12ms
+[pool-2-thread-4] Test testPutObjectACL(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 157ms
 Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
-Starting test testCopyObjectInvalidName(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-2] Test testCopyObjectInvalidName(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 1ms
+[pool-2-thread-3] Test testPutBucketACL(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 130ms
 Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
 Starting test testGetBucketLocationEU(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-2] Test testGetBucketLocationEU(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 16ms
+[pool-2-thread-3] Test testGetBucketLocationEU(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 29ms
 Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
 Starting test testPutBucketDefault(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-2] Test testPutBucketDefault(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 13ms
+Starting test testCopyObjectInvalidName(org.jclouds.aws.s3.AWSS3AsyncClientTest)
+[pool-2-thread-4] Test testCopyObjectInvalidName(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 1ms
 Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
 Starting test testPutObject(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-4] Test testPutObjectACL(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 633ms
+[pool-2-thread-3] Test testPutBucketDefault(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 25ms
 Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
 Starting test testGetObject(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-1] Test testPutBucketACL(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 590ms
+[pool-2-thread-1] Test testGetBucketACL(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 101ms
 Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
 Starting test testEnableBucketLoggingOwner(org.jclouds.aws.s3.AWSS3AsyncClientTest)
-[pool-2-thread-4] Test testGetObject(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 36ms
+[pool-2-thread-3] Test testGetObject(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 61ms
 Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
-[pool-2-thread-1] Test testEnableBucketLoggingOwner(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 42ms
+[pool-2-thread-1] Test testEnableBucketLoggingOwner(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 14ms
 Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
-[pool-2-thread-3] Test testGetBucketLocation(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 942ms
+[pool-2-thread-2] Test testGetBucketLocation(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 526ms
 Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
-[pool-2-thread-5] Test testInitiateMultipartUpload(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 1046ms
+[pool-2-thread-5] Test testInitiateMultipartUpload(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 507ms
 Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testPutObject(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 747ms
+[pool-2-thread-4] Test testPutObject(org.jclouds.aws.s3.AWSS3AsyncClientTest) succeeded: 473ms
 Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
 Starting test testInRestProperties(org.jclouds.aws.s3.AWSS3ProviderTest)
 Starting test testWithId(org.jclouds.aws.s3.AWSS3ProviderTest)
+[pool-5-thread-2] Test testWithId(org.jclouds.aws.s3.AWSS3ProviderTest) succeeded: 4ms
+Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
+[pool-5-thread-1] Test testInRestProperties(org.jclouds.aws.s3.AWSS3ProviderTest) succeeded: 27ms
+Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
 Starting test testAllContains(org.jclouds.aws.s3.AWSS3ProviderTest)
 Starting test testOfTypeContains(org.jclouds.aws.s3.AWSS3ProviderTest)
-[pool-5-thread-3] Test testAllContains(org.jclouds.aws.s3.AWSS3ProviderTest) succeeded: 4ms
-Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
-[pool-5-thread-4] Test testOfTypeContains(org.jclouds.aws.s3.AWSS3ProviderTest) succeeded: 5ms
-Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
-[pool-5-thread-2] Test testWithId(org.jclouds.aws.s3.AWSS3ProviderTest) succeeded: 8ms
+[pool-5-thread-3] Test testAllContains(org.jclouds.aws.s3.AWSS3ProviderTest) succeeded: 1ms
 Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
-[pool-5-thread-1] Test testInRestProperties(org.jclouds.aws.s3.AWSS3ProviderTest) succeeded: 29ms
+[pool-5-thread-4] Test testOfTypeContains(org.jclouds.aws.s3.AWSS3ProviderTest) succeeded: 1ms
 Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
 Starting test testWhenBucketRegionMappingInCache(org.jclouds.aws.s3.binders.AssignCorrectHostnameAndBindAsHostPrefixIfConfiguredTest)
 [pool-6-thread-1] Test testWhenBucketRegionMappingInCache(org.jclouds.aws.s3.binders.AssignCorrectHostnameAndBindAsHostPrefixIfConfiguredTest) succeeded: 1ms
 Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
 Starting test testWhenNoBucketRegionMappingInCache(org.jclouds.aws.s3.binders.AssignCorrectHostnameAndBindAsHostPrefixIfConfiguredTest)
-[pool-6-thread-2] Test testWhenNoBucketRegionMappingInCache(org.jclouds.aws.s3.binders.AssignCorrectHostnameAndBindAsHostPrefixIfConfiguredTest) succeeded: 0ms
+[pool-6-thread-2] Test testWhenNoBucketRegionMappingInCache(org.jclouds.aws.s3.binders.AssignCorrectHostnameAndBindAsHostPrefixIfConfiguredTest) succeeded: 1ms
 Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
+Starting test testExtendedPropertiesBind(org.jclouds.aws.s3.binders.BindObjectMetadataToRequestTest)
 Starting test testNullIsBad(org.jclouds.aws.s3.binders.BindObjectMetadataToRequestTest)
+Starting test testMustBeObjectMetadata(org.jclouds.aws.s3.binders.BindObjectMetadataToRequestTest)
 [pool-7-thread-4] Test testNullIsBad(org.jclouds.aws.s3.binders.BindObjectMetadataToRequestTest) succeeded: 0ms
 Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
+Starting test testNoKeyIsBad(org.jclouds.aws.s3.binders.BindObjectMetadataToRequestTest)
+[pool-7-thread-2] Test testNoKeyIsBad(org.jclouds.aws.s3.binders.BindObjectMetadataToRequestTest) succeeded: 1ms
+Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
+[pool-7-thread-5] Test testMustBeObjectMetadata(org.jclouds.aws.s3.binders.BindObjectMetadataToRequestTest) succeeded: 1ms
+Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
 Starting test testPassWithMinimumDetailsAndPayload5GB(org.jclouds.aws.s3.binders.BindObjectMetadataToRequestTest)
 [pool-7-thread-3] Test testPassWithMinimumDetailsAndPayload5GB(org.jclouds.aws.s3.binders.BindObjectMetadataToRequestTest) succeeded: 2ms
-Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
-Starting test testMustBeObjectMetadata(org.jclouds.aws.s3.binders.BindObjectMetadataToRequestTest)
-[pool-7-thread-5] Test testMustBeObjectMetadata(org.jclouds.aws.s3.binders.BindObjectMetadataToRequestTest) succeeded: 0ms
-Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
-Starting test testExtendedPropertiesBind(org.jclouds.aws.s3.binders.BindObjectMetadataToRequestTest)
-Starting test testNoKeyIsBad(org.jclouds.aws.s3.binders.BindObjectMetadataToRequestTest)
-[pool-7-thread-2] Test testNoKeyIsBad(org.jclouds.aws.s3.binders.BindObjectMetadataToRequestTest) succeeded: 0ms
 Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
-[pool-7-thread-1] Test testExtendedPropertiesBind(org.jclouds.aws.s3.binders.BindObjectMetadataToRequestTest) succeeded: 24ms
+[pool-7-thread-1] Test testExtendedPropertiesBind(org.jclouds.aws.s3.binders.BindObjectMetadataToRequestTest) succeeded: 11ms
 Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
 Starting test testPassWithMinimumDetailsAndPayload5GB(org.jclouds.aws.s3.binders.BindPartIdsAndETagsToRequestTest)
-[pool-8-thread-1] Test testPassWithMinimumDetailsAndPayload5GB(org.jclouds.aws.s3.binders.BindPartIdsAndETagsToRequestTest) succeeded: 1ms
+[pool-8-thread-1] Test testPassWithMinimumDetailsAndPayload5GB(org.jclouds.aws.s3.binders.BindPartIdsAndETagsToRequestTest) succeeded: 0ms
 Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
-Starting test testNullIsBad(org.jclouds.aws.s3.binders.BindPartIdsAndETagsToRequestTest)
 Starting test testEmptyIsBad(org.jclouds.aws.s3.binders.BindPartIdsAndETagsToRequestTest)
-[pool-8-thread-3] Test testNullIsBad(org.jclouds.aws.s3.binders.BindPartIdsAndETagsToRequestTest) succeeded: 0ms
-Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
 [pool-8-thread-2] Test testEmptyIsBad(org.jclouds.aws.s3.binders.BindPartIdsAndETagsToRequestTest) succeeded: 0ms
+Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
+Starting test testNullIsBad(org.jclouds.aws.s3.binders.BindPartIdsAndETagsToRequestTest)
+[pool-8-thread-3] Test testNullIsBad(org.jclouds.aws.s3.binders.BindPartIdsAndETagsToRequestTest) succeeded: 0ms
 Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
-Starting test testWithTimeout(org.jclouds.aws.s3.blobstore.strategy.internal.SequentialMultipartUploadStrategyTest)
-Starting test testLowerLimitFromWhereMultipartBecomeActive(org.jclouds.aws.s3.blobstore.strategy.internal.MpuPartitioningAlgorithmTest)
-Starting test testWhenPartsExceedsMaxNumberOfParts(org.jclouds.aws.s3.blobstore.strategy.internal.MpuPartitioningAlgorithmTest)
 Starting test testWithTwoParts(org.jclouds.aws.s3.blobstore.strategy.internal.SequentialMultipartUploadStrategyTest)
+Starting test testWithTimeout(org.jclouds.aws.s3.blobstore.strategy.internal.SequentialMultipartUploadStrategyTest)
 Starting test testWhenPartsHasToStartGrowingFromMagnitudeBase(org.jclouds.aws.s3.blobstore.strategy.internal.MpuPartitioningAlgorithmTest)
-[pool-9-thread-3] Test testWhenPartsHasToStartGrowingFromMagnitudeBase(org.jclouds.aws.s3.blobstore.strategy.internal.MpuPartitioningAlgorithmTest) succeeded: 107ms
+[pool-9-thread-3] Test testWhenPartsHasToStartGrowingFromMagnitudeBase(org.jclouds.aws.s3.blobstore.strategy.internal.MpuPartitioningAlgorithmTest) succeeded: 2ms
 Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
-[pool-9-thread-5] Test testLowerLimitFromWhereMultipartBecomeActive(org.jclouds.aws.s3.blobstore.strategy.internal.MpuPartitioningAlgorithmTest) succeeded: 114ms
+Starting test testWhenPartsExceedsMaxNumberOfParts(org.jclouds.aws.s3.blobstore.strategy.internal.MpuPartitioningAlgorithmTest)
+[pool-9-thread-4] Test testWhenPartsExceedsMaxNumberOfParts(org.jclouds.aws.s3.blobstore.strategy.internal.MpuPartitioningAlgorithmTest) succeeded: 1ms
 Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
-[pool-9-thread-4] Test testWhenPartsExceedsMaxNumberOfParts(org.jclouds.aws.s3.blobstore.strategy.internal.MpuPartitioningAlgorithmTest) succeeded: 110ms
-Starting test testWhenChunkSizeHasToStartGrowing(org.jclouds.aws.s3.blobstore.strategy.internal.MpuPartitioningAlgorithmTest)
+Starting test testLowerLimitFromWhereMultipartBecomeActive(org.jclouds.aws.s3.blobstore.strategy.internal.MpuPartitioningAlgorithmTest)
+[pool-9-thread-5] Test testLowerLimitFromWhereMultipartBecomeActive(org.jclouds.aws.s3.blobstore.strategy.internal.MpuPartitioningAlgorithmTest) succeeded: 0ms
 Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
-[pool-9-thread-3] Test testWhenChunkSizeHasToStartGrowing(org.jclouds.aws.s3.blobstore.strategy.internal.MpuPartitioningAlgorithmTest) succeeded: 0ms
+Starting test testWhenChunkSizeHasToStartGrowing(org.jclouds.aws.s3.blobstore.strategy.internal.MpuPartitioningAlgorithmTest)
+[pool-9-thread-5] Test testWhenChunkSizeHasToStartGrowing(org.jclouds.aws.s3.blobstore.strategy.internal.MpuPartitioningAlgorithmTest) succeeded: 0ms
 Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
-[pool-9-thread-1] Test testWithTwoParts(org.jclouds.aws.s3.blobstore.strategy.internal.SequentialMultipartUploadStrategyTest) succeeded: 684ms
+[pool-9-thread-1] Test testWithTwoParts(org.jclouds.aws.s3.blobstore.strategy.internal.SequentialMultipartUploadStrategyTest) succeeded: 277ms
 Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
-[pool-9-thread-2] Test testWithTimeout(org.jclouds.aws.s3.blobstore.strategy.internal.SequentialMultipartUploadStrategyTest) succeeded: 692ms
+[pool-9-thread-2] Test testWithTimeout(org.jclouds.aws.s3.blobstore.strategy.internal.SequentialMultipartUploadStrategyTest) succeeded: 269ms
 Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
 Starting test test(org.jclouds.aws.s3.functions.ETagFromHttpResponseViaRegexTest)
 [pool-10-thread-1] Test test(org.jclouds.aws.s3.functions.ETagFromHttpResponseViaRegexTest) succeeded: 1ms
 Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
 Starting test test(org.jclouds.aws.s3.functions.UploadIdFromHttpResponseViaRegexTest)
-[pool-11-thread-1] Test test(org.jclouds.aws.s3.functions.UploadIdFromHttpResponseViaRegexTest) succeeded: 0ms
+[pool-11-thread-1] Test test(org.jclouds.aws.s3.functions.UploadIdFromHttpResponseViaRegexTest) succeeded: 1ms
 Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
-Tests run: 53, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.89 sec
+Tests run: 53, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.797 sec
 
 Results :
 
@@ -246,38 +246,41 @@ Ran 0 tests containing 0 assertions.
 -------------------------------------------------------
 Running TestSuite
 *** containers to test: [adriancole-blobstore0, adriancole-blobstore1, adriancole-blobstore2, adriancole-blobstore3, adriancole-blobstore4, adriancole-blobstore5, adriancole-blobstore6, adriancole-blobstore7, adriancole-blobstore8, adriancole-blobstore9, adriancole-blobstore10, adriancole-blobstore11, adriancole-blobstore12, adriancole-blobstore13, adriancole-blobstore14, adriancole-blobstore15, adriancole-blobstore16, adriancole-blobstore17, adriancole-blobstore18, adriancole-blobstore19, adriancole-blobstore20, adriancole-blobstore21, adriancole-blobstore22, adriancole-blobstore23, adriancole-blobstore24]
-Starting test testCopyUrl(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobLiveTest)
+Starting test blobNotFound(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
 Starting test testContains(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
 Starting test testSignGetUrl(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobSignerLiveTest)
-Starting test blobNotFound(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
+Starting test testCopyUrl(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobLiveTest)
 Starting test testMultipartChunkedFileStream(org.jclouds.aws.s3.AWSS3ClientLiveTest)
-[pool-4-thread-4] Test testContains(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 26098ms
+[pool-4-thread-5] Test testSignGetUrl(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobSignerLiveTest) succeeded: 24511ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-Starting test testEntrySet(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
-[pool-4-thread-2] Test blobNotFound(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 26033ms
-Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-Starting test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-[pool-4-thread-5] Test testSignGetUrl(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobSignerLiveTest) succeeded: 26093ms
-Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
 Starting test testSignGetUrlOptions(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobSignerLiveTest)
-[pool-4-thread-3] Test testCopyUrl(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobLiveTest) succeeded: 28561ms
+[pool-4-thread-4] Test testContains(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 24586ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test testEntrySet(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
+[pool-4-thread-2] Test blobNotFound(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 24606ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
+[pool-4-thread-3] Test testCopyUrl(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobLiveTest) succeeded: 28217ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
 Starting test containerDoesntExist(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest)
-[pool-4-thread-3] Test containerDoesntExist(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 999ms
+[pool-4-thread-3] Test containerDoesntExist(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 3270ms
 Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
 Starting test containerExists(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testMultipartChunkedFileStream(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 32033ms
+[pool-4-thread-1] Test testMultipartChunkedFileStream(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 34586ms
 Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
 Starting test testMultipartSynchronously(org.jclouds.aws.s3.AWSS3ClientLiveTest)
-[pool-4-thread-5] Test testSignGetUrlOptions(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobSignerLiveTest) succeeded: 22940ms
+[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 42868ms
 Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
-Starting test testSignPutUrl(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobSignerLiveTest)
-[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 22986ms
-Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-[pool-4-thread-3] Test containerExists(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 23163ms
+[pool-4-thread-5] Test testSignGetUrlOptions(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobSignerLiveTest) succeeded: 42929ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+Starting test testSignPutUrl(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobSignerLiveTest)
+[pool-4-thread-3] Test containerExists(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 43534ms
 Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
 Starting test deleteContainerIfEmpty(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest)
+[pool-4-thread-4] Test testEntrySet(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 54369ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+Starting test testPut(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
 *** allocated new container adriancole-blobstore12...
 unable to delete container adriancole-blobstore12, ignoring...
 org.jclouds.blobstore.ContainerNotFoundException: adriancole-blobstore12.s3.amazonaws.com not found: The specified bucket does not exist
@@ -302,25 +305,25 @@ org.jclouds.blobstore.ContainerNotFoundException: adriancole-blobstore12.s3.amaz
 	at sun.reflect.GeneratedMethodAccessor10.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
 	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:140)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
 	at $Proxy73.listBucket(Unknown Source)
-	at org.jclouds.s3.blobstore.S3BlobStore.list(S3BlobStore.java:150)
+	at org.jclouds.s3.blobstore.S3BlobStore.list(S3BlobStore.java:151)
 	at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
 	at java.lang.reflect.Method.invoke(Method.java:597)
 	at com.google.inject.internal.DelegatingInvocationHandler.invoke(DelegatingInvocationHandler.java:37)
 	at $Proxy74.list(Unknown Source)
 	at org.jclouds.blobstore.strategy.internal.ConcatenateContainerLists.execute(ConcatenateContainerLists.java:59)
-	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.getResourcesToDelete(DeleteAllKeysInList.java:145)
-	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.execute(DeleteAllKeysInList.java:123)
+	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.getResourcesToDelete(DeleteAllKeysInList.java:146)
+	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.execute(DeleteAllKeysInList.java:96)
 	at org.jclouds.blobstore.util.internal.BlobUtilsImpl.clearContainer(BlobUtilsImpl.java:87)
 	at org.jclouds.blobstore.internal.BaseBlobStore.clearContainer(BaseBlobStore.java:166)
 	at org.jclouds.blobstore.internal.BaseBlobStore.clearContainer(BaseBlobStore.java:155)
-	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:173)
-	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:171)
+	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:174)
+	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:172)
 	at org.jclouds.util.Assertions.eventuallyTrue(Assertions.java:33)
-	at org.jclouds.s3.blobstore.S3BlobStore.clearAndDeleteContainer(S3BlobStore.java:171)
-	at org.jclouds.s3.blobstore.S3BlobStore.deleteContainer(S3BlobStore.java:162)
+	at org.jclouds.s3.blobstore.S3BlobStore.clearAndDeleteContainer(S3BlobStore.java:172)
+	at org.jclouds.s3.blobstore.S3BlobStore.deleteContainer(S3BlobStore.java:163)
 	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.deleteContainerOrWarnIfUnable(BaseBlobStoreIntegrationTest.java:165)
 	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.access$000(BaseBlobStoreIntegrationTest.java:61)
 	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest$7.run(BaseBlobStoreIntegrationTest.java:422)
@@ -330,53 +333,12 @@ org.jclouds.blobstore.ContainerNotFoundException: adriancole-blobstore12.s3.amaz
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.submit(ExecutorServiceModule.java:182)
-	at org.jclouds.http.internal.BaseHttpCommandExecutorService.submit(BaseHttpCommandExecutorService.java:131)
-	at org.jclouds.http.TransformingHttpCommandExecutorServiceImpl.submit(TransformingHttpCommandExecutorServiceImpl.java:54)
-	at org.jclouds.http.TransformingHttpCommandImpl.execute(TransformingHttpCommandImpl.java:72)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFuture(AsyncRestClientProxy.java:156)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:126)
-	at $Proxy72.listBucket(Unknown Source)
-	at sun.reflect.GeneratedMethodAccessor10.invoke(Unknown Source)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:140)
-	at $Proxy73.listBucket(Unknown Source)
-	at org.jclouds.s3.blobstore.S3BlobStore.list(S3BlobStore.java:150)
-	at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at com.google.inject.internal.DelegatingInvocationHandler.invoke(DelegatingInvocationHandler.java:37)
-	at $Proxy74.list(Unknown Source)
-	at org.jclouds.blobstore.strategy.internal.ConcatenateContainerLists.execute(ConcatenateContainerLists.java:59)
-	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.getResourcesToDelete(DeleteAllKeysInList.java:145)
-	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.execute(DeleteAllKeysInList.java:123)
-	at org.jclouds.blobstore.util.internal.BlobUtilsImpl.clearContainer(BlobUtilsImpl.java:87)
-	at org.jclouds.blobstore.internal.BaseBlobStore.clearContainer(BaseBlobStore.java:166)
-	at org.jclouds.blobstore.internal.BaseBlobStore.clearContainer(BaseBlobStore.java:155)
-	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:173)
-	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:171)
-	at org.jclouds.util.Assertions.eventuallyTrue(Assertions.java:33)
-	at org.jclouds.s3.blobstore.S3BlobStore.clearAndDeleteContainer(S3BlobStore.java:171)
-	at org.jclouds.s3.blobstore.S3BlobStore.deleteContainer(S3BlobStore.java:162)
-	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.deleteContainerOrWarnIfUnable(BaseBlobStoreIntegrationTest.java:165)
-	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.access$000(BaseBlobStoreIntegrationTest.java:61)
-	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest$7.run(BaseBlobStoreIntegrationTest.java:422)
-	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
-	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-[pool-4-thread-3] Test deleteContainerIfEmpty(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 6480ms
-Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
-Starting test deleteContainerWithContents(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest)
-[pool-4-thread-4] Test testEntrySet(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 35143ms
+[pool-4-thread-3] Test deleteContainerIfEmpty(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 6510ms
 Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
-Starting test testPut(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
-*** allocated new container adriancole-blobstore13...
-unable to delete container adriancole-blobstore13, ignoring...
-org.jclouds.blobstore.ContainerNotFoundException: adriancole-blobstore13.s3.amazonaws.com not found: The specified bucket does not exist
+Starting test deleteContainerWithContents(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest)
+*** allocated new container adriancole-blobstore14...
+unable to delete container adriancole-blobstore14, ignoring...
+org.jclouds.blobstore.ContainerNotFoundException: adriancole-blobstore14.s3.amazonaws.com not found: The specified bucket does not exist
 	at org.jclouds.s3.handlers.ParseS3ErrorFromXmlContent.refineException(ParseS3ErrorFromXmlContent.java:74)
 	at org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent.handleError(ParseAWSErrorFromXmlContent.java:88)
 	at org.jclouds.http.handlers.DelegatingErrorHandler.handleError(DelegatingErrorHandler.java:69)
@@ -398,25 +360,25 @@ org.jclouds.blobstore.ContainerNotFoundException: adriancole-blobstore13.s3.amaz
 	at sun.reflect.GeneratedMethodAccessor10.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
 	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:140)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
 	at $Proxy73.listBucket(Unknown Source)
-	at org.jclouds.s3.blobstore.S3BlobStore.list(S3BlobStore.java:150)
+	at org.jclouds.s3.blobstore.S3BlobStore.list(S3BlobStore.java:151)
 	at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
 	at java.lang.reflect.Method.invoke(Method.java:597)
 	at com.google.inject.internal.DelegatingInvocationHandler.invoke(DelegatingInvocationHandler.java:37)
 	at $Proxy74.list(Unknown Source)
 	at org.jclouds.blobstore.strategy.internal.ConcatenateContainerLists.execute(ConcatenateContainerLists.java:59)
-	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.getResourcesToDelete(DeleteAllKeysInList.java:145)
-	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.execute(DeleteAllKeysInList.java:94)
+	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.getResourcesToDelete(DeleteAllKeysInList.java:146)
+	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.execute(DeleteAllKeysInList.java:96)
 	at org.jclouds.blobstore.util.internal.BlobUtilsImpl.clearContainer(BlobUtilsImpl.java:87)
 	at org.jclouds.blobstore.internal.BaseBlobStore.clearContainer(BaseBlobStore.java:166)
 	at org.jclouds.blobstore.internal.BaseBlobStore.clearContainer(BaseBlobStore.java:155)
-	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:173)
-	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:171)
+	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:174)
+	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:172)
 	at org.jclouds.util.Assertions.eventuallyTrue(Assertions.java:33)
-	at org.jclouds.s3.blobstore.S3BlobStore.clearAndDeleteContainer(S3BlobStore.java:171)
-	at org.jclouds.s3.blobstore.S3BlobStore.deleteContainer(S3BlobStore.java:162)
+	at org.jclouds.s3.blobstore.S3BlobStore.clearAndDeleteContainer(S3BlobStore.java:172)
+	at org.jclouds.s3.blobstore.S3BlobStore.deleteContainer(S3BlobStore.java:163)
 	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.deleteContainerOrWarnIfUnable(BaseBlobStoreIntegrationTest.java:165)
 	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.access$000(BaseBlobStoreIntegrationTest.java:61)
 	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest$7.run(BaseBlobStoreIntegrationTest.java:422)
@@ -426,272 +388,310 @@ org.jclouds.blobstore.ContainerNotFoundException: adriancole-blobstore13.s3.amaz
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-[pool-4-thread-5] Test testSignPutUrl(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobSignerLiveTest) succeeded: 19917ms
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.submit(ExecutorServiceModule.java:182)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService.submit(BaseHttpCommandExecutorService.java:131)
+	at org.jclouds.http.TransformingHttpCommandExecutorServiceImpl.submit(TransformingHttpCommandExecutorServiceImpl.java:54)
+	at org.jclouds.http.TransformingHttpCommandImpl.execute(TransformingHttpCommandImpl.java:72)
+	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFuture(AsyncRestClientProxy.java:156)
+	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:126)
+	at $Proxy72.listBucket(Unknown Source)
+	at sun.reflect.GeneratedMethodAccessor10.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
+	at $Proxy73.listBucket(Unknown Source)
+	at org.jclouds.s3.blobstore.S3BlobStore.list(S3BlobStore.java:151)
+	at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at com.google.inject.internal.DelegatingInvocationHandler.invoke(DelegatingInvocationHandler.java:37)
+	at $Proxy74.list(Unknown Source)
+	at org.jclouds.blobstore.strategy.internal.ConcatenateContainerLists.execute(ConcatenateContainerLists.java:59)
+	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.getResourcesToDelete(DeleteAllKeysInList.java:146)
+	at org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList.execute(DeleteAllKeysInList.java:96)
+	at org.jclouds.blobstore.util.internal.BlobUtilsImpl.clearContainer(BlobUtilsImpl.java:87)
+	at org.jclouds.blobstore.internal.BaseBlobStore.clearContainer(BaseBlobStore.java:166)
+	at org.jclouds.blobstore.internal.BaseBlobStore.clearContainer(BaseBlobStore.java:155)
+	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:174)
+	at org.jclouds.s3.blobstore.S3BlobStore$2.get(S3BlobStore.java:172)
+	at org.jclouds.util.Assertions.eventuallyTrue(Assertions.java:33)
+	at org.jclouds.s3.blobstore.S3BlobStore.clearAndDeleteContainer(S3BlobStore.java:172)
+	at org.jclouds.s3.blobstore.S3BlobStore.deleteContainer(S3BlobStore.java:163)
+	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.deleteContainerOrWarnIfUnable(BaseBlobStoreIntegrationTest.java:165)
+	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.access$000(BaseBlobStoreIntegrationTest.java:61)
+	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest$7.run(BaseBlobStoreIntegrationTest.java:422)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 29288ms
 Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
-Starting test testSignRemoveUrl(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobSignerLiveTest)
-[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 20875ms
-Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-[pool-4-thread-1] Test testMultipartSynchronously(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 37765ms
+[pool-4-thread-5] Test testSignPutUrl(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobSignerLiveTest) succeeded: 29657ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+Starting test testSignRemoveUrl(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobSignerLiveTest)
+[pool-4-thread-3] Test deleteContainerWithContents(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 15932ms
 Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
-Starting test deleteContainerIfEmptyButHasContents(org.jclouds.aws.s3.AWSS3ClientLiveTest)
-[pool-4-thread-3] Test deleteContainerWithContents(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 11234ms
-Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
 Starting test testClearWhenContentsUnderPath(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest)
-[pool-4-thread-4] Test testPut(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 24152ms
+[pool-4-thread-1] Test testMultipartSynchronously(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 77889ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+Starting test deleteContainerIfEmptyButHasContents(org.jclouds.aws.s3.AWSS3ClientLiveTest)
+[pool-4-thread-4] Test testPut(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 36799ms
 Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
 Starting test testPutAll(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test deleteContainerIfEmptyButHasContents(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 16143ms
+[pool-4-thread-5] Test testSignRemoveUrl(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobSignerLiveTest) succeeded: 25729ms
 Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
-Starting test deleteContainerIfEmptyNotFound(org.jclouds.aws.s3.AWSS3ClientLiveTest)
-[pool-4-thread-1] Test deleteContainerIfEmptyNotFound(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 1313ms
+[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 26186ms
 Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
-Starting test testCopyCannedAccessPolicyPublic(org.jclouds.aws.s3.AWSS3ClientLiveTest)
-[pool-4-thread-5] Test testSignRemoveUrl(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobSignerLiveTest) succeeded: 20029ms
-Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
-Starting test testPublicAccess(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerLiveTest)
-*** allocated new container adriancole-blobstore22...
-*** allocated new container adriancole-blobstore2228...
-[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 26414ms
-Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-[pool-4-thread-3] Test testClearWhenContentsUnderPath(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 26210ms
-Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
+Starting test testPublicAccess(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerLiveTest)
+[pool-4-thread-3] Test testClearWhenContentsUnderPath(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 26930ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
 Starting test testDirectory(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest)
-[pool-4-thread-5] Test testPublicAccess(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerLiveTest) succeeded: 8059ms
+*** allocated new container adriancole-blobstore21...
+*** allocated new container adriancole-blobstore2128...
+[pool-4-thread-1] Test deleteContainerIfEmptyButHasContents(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 15992ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+Starting test deleteContainerIfEmptyNotFound(org.jclouds.aws.s3.AWSS3ClientLiveTest)
+[pool-4-thread-1] Test deleteContainerIfEmptyNotFound(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 472ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
+Starting test testCopyCannedAccessPolicyPublic(org.jclouds.aws.s3.AWSS3ClientLiveTest)
+[pool-4-thread-5] Test testPublicAccess(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerLiveTest) succeeded: 7248ms
 Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
 Starting test testContainsBytesValue(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-[pool-4-thread-4] Test testPutAll(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 23945ms
+[pool-4-thread-4] Test testPutAll(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 24842ms
 Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
 Starting test testPutMoreThanSingleListing(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
-[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 22499ms
+[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 23215ms
 Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-[pool-4-thread-5] Test testContainsBytesValue(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 24567ms
+[pool-4-thread-5] Test testContainsBytesValue(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 22043ms
 Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
 Starting test testContainsFileValue(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testCopyCannedAccessPolicyPublic(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 44790ms
+[pool-4-thread-3] Test testDirectory(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 39889ms
 Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
-Starting test testCopyIfMatch(org.jclouds.aws.s3.AWSS3ClientLiveTest)
-[pool-4-thread-3] Test testDirectory(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 42499ms
-Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
 Starting test testListContainer(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest)
-[pool-4-thread-4] Test testPutMoreThanSingleListing(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 30057ms
+[pool-4-thread-1] Test testCopyCannedAccessPolicyPublic(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 38729ms
+Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
+Starting test testCopyIfMatch(org.jclouds.aws.s3.AWSS3ClientLiveTest)
+[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 23905ms
 Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
-Starting test testRemove(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
-[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 21794ms
-Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-[pool-4-thread-5] Test testContainsFileValue(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 24411ms
+[pool-4-thread-4] Test testPutMoreThanSingleListing(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 30415ms
+Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
+Starting test testRemove(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
+[pool-4-thread-5] Test testContainsFileValue(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 21860ms
 Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
 Starting test testContainsInputStreamValue(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-[pool-4-thread-4] Test testRemove(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 25099ms
+[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 22636ms
 Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
-Starting test testValues(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
-[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 24259ms
-Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-[pool-4-thread-3] Test testListContainer(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 26028ms
-Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
+[pool-4-thread-3] Test testListContainer(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 28036ms
+Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
 Starting test testListContainerMarker(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest)
-[pool-4-thread-5] Test testContainsInputStreamValue(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 22123ms
-Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
+[pool-4-thread-5] Test testContainsInputStreamValue(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 21561ms
+Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
 Starting test testContainsStringValue(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testCopyIfMatch(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 37500ms
+[pool-4-thread-4] Test testRemove(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 24968ms
+Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
+Starting test testValues(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test testCopyIfMatch(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 37585ms
 Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
 Starting test testCopyIfModifiedSince(org.jclouds.aws.s3.AWSS3ClientLiveTest)
-[pool-4-thread-4] Test testValues(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 24364ms
+[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 20559ms
 Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
-Starting test testClear(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
-[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 24802ms
-Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-[pool-4-thread-5] Test testContainsStringValue(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 22073ms
+[pool-4-thread-4] Test testValues(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 19595ms
+Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
+Starting test testClear(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
+[pool-4-thread-5] Test testContainsStringValue(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 19767ms
 Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
 Starting test testEntrySet(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-[pool-4-thread-3] Test testListContainerMarker(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 37212ms
+[pool-4-thread-3] Test testListContainerMarker(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 27089ms
 Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
 Starting test testListContainerMaxResults(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testCopyIfModifiedSince(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 36536ms
+[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 22331ms
 Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
-Starting test testCopyIfNoneMatch(org.jclouds.aws.s3.AWSS3ClientLiveTest)
-[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 22719ms
-Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-[pool-4-thread-4] Test testClear(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 24147ms
-Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
+[pool-4-thread-4] Test testClear(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 27362ms
+Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
 Starting test testContainsKey(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
-[pool-4-thread-5] Test testEntrySet(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 30460ms
-Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
+[pool-4-thread-5] Test testEntrySet(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 27391ms
+Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
 Starting test testPut(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 22823ms
+[pool-4-thread-1] Test testCopyIfModifiedSince(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 40155ms
+Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
+Starting test testCopyIfNoneMatch(org.jclouds.aws.s3.AWSS3ClientLiveTest)
+[pool-4-thread-3] Test testListContainerMaxResults(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 33459ms
 Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
-[pool-4-thread-4] Test testContainsKey(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 22269ms
+Starting test testListContainerPrefix(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest)
+[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 23412ms
 Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-Starting test testDirectory(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
-[pool-4-thread-3] Test testListContainerMaxResults(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 33292ms
+[pool-4-thread-4] Test testContainsKey(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 20183ms
 Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
-Starting test testListContainerPrefix(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest)
-[pool-4-thread-5] Test testPut(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 24163ms
+Starting test testDirectory(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
+[pool-4-thread-5] Test testPut(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 26712ms
 Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
 Starting test testPutAll(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testCopyIfNoneMatch(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 38939ms
+[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 20594ms
 Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
-Starting test testCopyIfUnmodifiedSince(org.jclouds.aws.s3.AWSS3ClientLiveTest)
-[pool-4-thread-3] Test testListContainerPrefix(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 24925ms
-Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
-Starting test testListRootUsesDelimiter(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest)
-[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 26103ms
-Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-[pool-4-thread-5] Test testPutAll(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 23978ms
+[pool-4-thread-1] Test testCopyIfNoneMatch(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 38674ms
+Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
+Starting test testCopyIfUnmodifiedSince(org.jclouds.aws.s3.AWSS3ClientLiveTest)
+[pool-4-thread-3] Test testListContainerPrefix(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 33040ms
+Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
+Starting test testListRootUsesDelimiter(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest)
+[pool-4-thread-5] Test testPutAll(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 22477ms
 Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
 Starting test testPutAllBytes(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testCopyIfUnmodifiedSince(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 33998ms
+[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 26339ms
 Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
-Starting test testCopyObject(org.jclouds.aws.s3.AWSS3ClientLiveTest)
-[pool-4-thread-4] Test testDirectory(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 49178ms
-Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
-Starting test testIsEmpty(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
-[pool-4-thread-2] Test deleteObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 24334ms
-Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
 Starting test deleteObjectNoContainer(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-[pool-4-thread-2] Test deleteObjectNoContainer(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 1416ms
-Test suite progress: tests succeeded: 55, failed: 0, skipped: 0.
+[pool-4-thread-2] Test deleteObjectNoContainer(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 457ms
+Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
 Starting test deleteObjectNotFound(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-[pool-4-thread-5] Test testPutAllBytes(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 24903ms
-Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
+[pool-4-thread-5] Test testPutAllBytes(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 23611ms
+Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
 Starting test testPutAllFiles(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-[pool-4-thread-3] Test testListRootUsesDelimiter(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 33371ms
-Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
+[pool-4-thread-3] Test testListRootUsesDelimiter(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 33676ms
+Test suite progress: tests succeeded: 55, failed: 0, skipped: 0.
 Starting test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest)
-[pool-4-thread-4] Test testIsEmpty(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 22501ms
-Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
-Starting test testKeySet(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
-[pool-4-thread-2] Test deleteObjectNotFound(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 21026ms
-Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testCopyIfUnmodifiedSince(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 39949ms
+Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
+Starting test testCopyObject(org.jclouds.aws.s3.AWSS3ClientLiveTest)
+[pool-4-thread-2] Test deleteObjectNotFound(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 19774ms
+Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
 Starting test testBigFileGets(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-[pool-4-thread-1] Test testCopyObject(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 36194ms
-Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
-Starting test testCopyWithMetadata(org.jclouds.aws.s3.AWSS3ClientLiveTest)
-[pool-4-thread-3] Test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 23419ms
-Test suite progress: tests succeeded: 61, failed: 0, skipped: 0.
-Starting test testWithDetails(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest)
-[pool-4-thread-5] Test testPutAllFiles(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 24156ms
-Test suite progress: tests succeeded: 62, failed: 0, skipped: 0.
+[pool-4-thread-4] Test testDirectory(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 71905ms
+Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
+Starting test testIsEmpty(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
+[pool-4-thread-5] Test testPutAllFiles(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 24853ms
+Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
 Starting test testPutAllStrings(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-[pool-4-thread-4] Test testKeySet(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 30214ms
+[pool-4-thread-3] Test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 33490ms
+Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
+Starting test testWithDetails(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest)
+[pool-4-thread-4] Test testIsEmpty(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 28217ms
+Test suite progress: tests succeeded: 61, failed: 0, skipped: 0.
+Starting test testKeySet(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
+[pool-4-thread-5] Test testPutAllStrings(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 29964ms
+Test suite progress: tests succeeded: 62, failed: 0, skipped: 0.
+Starting test testPutBytes(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testCopyObject(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 46978ms
 Test suite progress: tests succeeded: 63, failed: 0, skipped: 0.
-Starting test testListContainer(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
-[pool-4-thread-3] Test testWithDetails(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 27034ms
+Starting test testCopyWithMetadata(org.jclouds.aws.s3.AWSS3ClientLiveTest)
+[pool-4-thread-3] Test testWithDetails(org.jclouds.aws.s3.blobstore.integration.AWSS3ContainerIntegrationLiveTest) succeeded: 24033ms
 Test suite progress: tests succeeded: 64, failed: 0, skipped: 0.
 Starting test containerDoesntExist(org.jclouds.aws.s3.blobstore.integration.AWSS3ServiceIntegrationLiveTest)
-[pool-4-thread-5] Test testPutAllStrings(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 32315ms
+[pool-4-thread-4] Test testKeySet(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 21558ms
 Test suite progress: tests succeeded: 65, failed: 0, skipped: 0.
-Starting test testPutBytes(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-[pool-4-thread-4] Test testListContainer(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 20831ms
+Starting test testListContainer(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest)
+[pool-4-thread-2] Test testBigFileGets(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 58638ms
 Test suite progress: tests succeeded: 66, failed: 0, skipped: 0.
-[pool-4-thread-1] Test testCopyWithMetadata(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 46522ms
-Test suite progress: tests succeeded: 67, failed: 0, skipped: 0.
-Starting test testMetadataContentEncoding(org.jclouds.aws.s3.AWSS3ClientLiveTest)
-[pool-4-thread-3] Test containerDoesntExist(org.jclouds.aws.s3.blobstore.integration.AWSS3ServiceIntegrationLiveTest) succeeded: 18544ms
-Test suite progress: tests succeeded: 68, failed: 0, skipped: 0.
-Starting test testAllLocations(org.jclouds.aws.s3.blobstore.integration.AWSS3ServiceIntegrationLiveTest)
-[pool-4-thread-2] Test testBigFileGets(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 58707ms
-Test suite progress: tests succeeded: 69, failed: 0, skipped: 0.
 Starting test testGetIfMatch(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
+[pool-4-thread-3] Test containerDoesntExist(org.jclouds.aws.s3.blobstore.integration.AWSS3ServiceIntegrationLiveTest) succeeded: 17261ms
+Test suite progress: tests succeeded: 67, failed: 0, skipped: 0.
+Starting test testAllLocations(org.jclouds.aws.s3.blobstore.integration.AWSS3ServiceIntegrationLiveTest)
+[pool-4-thread-5] Test testPutBytes(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 25702ms
+Test suite progress: tests succeeded: 68, failed: 0, skipped: 0.
+Starting test testPutFile(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
 *** allocated new container adriancole-blobstore5...
  >> creating container in location [id=EU, scope=REGION, description=EU, parent=aws-s3, iso3166Codes=[IE], metadata={}]
  << call complete.. checking
-[pool-4-thread-5] Test testPutBytes(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 25159ms
+[pool-4-thread-4] Test testListContainer(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobMapIntegrationLiveTest) succeeded: 24835ms
+Test suite progress: tests succeeded: 69, failed: 0, skipped: 0.
+[pool-4-thread-2] Test testGetIfMatch(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 24872ms
 Test suite progress: tests succeeded: 70, failed: 0, skipped: 0.
-Starting test testPutFile(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testMetadataContentEncoding(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 18246ms
-Test suite progress: tests succeeded: 71, failed: 0, skipped: 0.
-Starting test testMetadataWithCacheControlAndContentDisposition(org.jclouds.aws.s3.AWSS3ClientLiveTest)
-*** allocated new container adriancole-blobstore530...
-*** allocated new container adriancole-blobstore9...
- >> creating container in location [id=us-standard, scope=REGION, description=us-standard, parent=aws-s3, iso3166Codes=[US], metadata={}]
-[pool-4-thread-2] Test testGetIfMatch(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 27634ms
-Test suite progress: tests succeeded: 72, failed: 0, skipped: 0.
 Starting test testGetIfModifiedSince(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
- << call complete.. checking
-[pool-4-thread-5] Test testPutFile(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 22238ms
-Test suite progress: tests succeeded: 73, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testCopyWithMetadata(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 38559ms
+Test suite progress: tests succeeded: 71, failed: 0, skipped: 0.
+Starting test testMetadataContentEncoding(org.jclouds.aws.s3.AWSS3ClientLiveTest)
+*** allocated new container adriancole-blobstore530...
+[pool-4-thread-5] Test testPutFile(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 24038ms
+Test suite progress: tests succeeded: 72, failed: 0, skipped: 0.
 Starting test testPutMoreThanSingleListing(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testMetadataWithCacheControlAndContentDisposition(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 17906ms
-Test suite progress: tests succeeded: 74, failed: 0, skipped: 0.
-Starting test testPrivateAclIsDefaultForObject(org.jclouds.aws.s3.AWSS3ClientLiveTest)
-*** allocated new container adriancole-blobstore932...
-[pool-4-thread-1] Test testPrivateAclIsDefaultForObject(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 16834ms
-Test suite progress: tests succeeded: 75, failed: 0, skipped: 0.
-Starting test testPublicReadOnObject(org.jclouds.aws.s3.AWSS3ClientLiveTest)
-[pool-4-thread-2] Test testGetIfModifiedSince(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 25184ms
-Test suite progress: tests succeeded: 76, failed: 0, skipped: 0.
-Starting test testGetIfNoneMatch(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-*** allocated new container adriancole-blobstore16...
- >> creating container in location [id=us-west-1, scope=REGION, description=us-west-1, parent=aws-s3, iso3166Codes=[US-CA], metadata={}]
+*** allocated new container adriancole-blobstore8...
+ >> creating container in location [id=us-standard, scope=REGION, description=us-standard, parent=aws-s3, iso3166Codes=[US], metadata={}]
  << call complete.. checking
-[pool-4-thread-5] Test testPutMoreThanSingleListing(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 34754ms
-Test suite progress: tests succeeded: 77, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testMetadataContentEncoding(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 21006ms
+Test suite progress: tests succeeded: 73, failed: 0, skipped: 0.
+Starting test testMetadataWithCacheControlAndContentDisposition(org.jclouds.aws.s3.AWSS3ClientLiveTest)
+[pool-4-thread-2] Test testGetIfModifiedSince(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 26024ms
+Test suite progress: tests succeeded: 74, failed: 0, skipped: 0.
+Starting test testGetIfNoneMatch(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
+*** allocated new container adriancole-blobstore832...
+*** allocated new container adriancole-blobstore9...
+ >> creating container in location [id=us-west-1, scope=REGION, description=us-west-1, parent=aws-s3, iso3166Codes=[US-CA], metadata={}]
+[pool-4-thread-1] Test testMetadataWithCacheControlAndContentDisposition(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 21777ms
+Test suite progress: tests succeeded: 75, failed: 0, skipped: 0.
+Starting test testPrivateAclIsDefaultForObject(org.jclouds.aws.s3.AWSS3ClientLiveTest)
+ << call complete.. checking
+[pool-4-thread-5] Test testPutMoreThanSingleListing(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 34453ms
+Test suite progress: tests succeeded: 76, failed: 0, skipped: 0.
 Starting test testPutString(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPublicReadOnObject(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 21489ms
+[pool-4-thread-2] Test testGetIfNoneMatch(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 32443ms
+Test suite progress: tests succeeded: 77, failed: 0, skipped: 0.
+Starting test testGetIfUnmodifiedSince(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPrivateAclIsDefaultForObject(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 18518ms
 Test suite progress: tests succeeded: 78, failed: 0, skipped: 0.
-Starting test testPublicWriteOnObject(org.jclouds.aws.s3.AWSS3ClientLiveTest)
-*** allocated new container adriancole-blobstore1634...
-*** allocated new container adriancole-blobstore20...
+Starting test testPublicReadOnObject(org.jclouds.aws.s3.AWSS3ClientLiveTest)
+*** allocated new container adriancole-blobstore934...
+*** allocated new container adriancole-blobstore24...
  >> creating container in location [id=us-west-2, scope=REGION, description=us-west-2, parent=aws-s3, iso3166Codes=[US-OR], metadata={}]
  << call complete.. checking
-[pool-4-thread-2] Test testGetIfNoneMatch(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 25659ms
+[pool-4-thread-5] Test testPutString(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 27386ms
 Test suite progress: tests succeeded: 79, failed: 0, skipped: 0.
-Starting test testGetIfUnmodifiedSince(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPublicWriteOnObject(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 18200ms
-Test suite progress: tests succeeded: 80, failed: 0, skipped: 0.
-Starting test testPutCannedAccessPolicyPublic(org.jclouds.aws.s3.AWSS3ClientLiveTest)
-[pool-4-thread-5] Test testPutString(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 24216ms
-Test suite progress: tests succeeded: 81, failed: 0, skipped: 0.
 Starting test testRemove(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-*** allocated new container adriancole-blobstore2036...
-[pool-4-thread-2] Test testGetIfUnmodifiedSince(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 25699ms
-Test suite progress: tests succeeded: 82, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testPublicReadOnObject(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 23769ms
+Test suite progress: tests succeeded: 80, failed: 0, skipped: 0.
+Starting test testPublicWriteOnObject(org.jclouds.aws.s3.AWSS3ClientLiveTest)
+[pool-4-thread-2] Test testGetIfUnmodifiedSince(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 27059ms
+Test suite progress: tests succeeded: 81, failed: 0, skipped: 0.
 Starting test testGetRange(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutCannedAccessPolicyPublic(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 17544ms
-Test suite progress: tests succeeded: 83, failed: 0, skipped: 0.
-Starting test testUpdateObjectACL(org.jclouds.aws.s3.AWSS3ClientLiveTest)
-*** allocated new container adriancole-blobstore21...
+*** allocated new container adriancole-blobstore2436...
+*** allocated new container adriancole-blobstore2...
  >> creating container in location [id=sa-east-1, scope=REGION, description=sa-east-1, parent=aws-s3, iso3166Codes=[BR-SP], metadata={}]
  << call complete.. checking
-[pool-4-thread-5] Test testRemove(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 23448ms
-Test suite progress: tests succeeded: 84, failed: 0, skipped: 0.
+[pool-4-thread-5] Test testRemove(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 38073ms
+Test suite progress: tests succeeded: 82, failed: 0, skipped: 0.
 Starting test testValues(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-*** allocated new container adriancole-blobstore2138...
-[pool-4-thread-1] Test testUpdateObjectACL(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 21096ms
-Test suite progress: tests succeeded: 85, failed: 0, skipped: 0.
-[pool-4-thread-2] Test testGetRange(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 22753ms
-Test suite progress: tests succeeded: 86, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testPublicWriteOnObject(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 33082ms
+Test suite progress: tests succeeded: 83, failed: 0, skipped: 0.
+Starting test testPutCannedAccessPolicyPublic(org.jclouds.aws.s3.AWSS3ClientLiveTest)
+[pool-4-thread-2] Test testGetRange(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 38259ms
+Test suite progress: tests succeeded: 84, failed: 0, skipped: 0.
 Starting test testGetTwoRanges(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-*** allocated new container adriancole-blobstore7...
+*** allocated new container adriancole-blobstore238...
+*** allocated new container adriancole-blobstore1...
  >> creating container in location [id=ap-southeast-1, scope=REGION, description=ap-southeast-1, parent=aws-s3, iso3166Codes=[SG], metadata={}]
  << call complete.. checking
-[pool-4-thread-5] Test testValues(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 23525ms
-Test suite progress: tests succeeded: 87, failed: 0, skipped: 0.
-Starting test testClear(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-*** allocated new container adriancole-blobstore740...
-[pool-4-thread-2] Test testGetTwoRanges(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 22949ms
-Test suite progress: tests succeeded: 88, failed: 0, skipped: 0.
+[pool-4-thread-2] Test testGetTwoRanges(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 28469ms
+Test suite progress: tests succeeded: 85, failed: 0, skipped: 0.
 Starting test testMetadata(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-*** allocated new container adriancole-blobstore17...
+[pool-4-thread-5] Test testValues(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 41544ms
+Test suite progress: tests succeeded: 86, failed: 0, skipped: 0.
+Starting test testClear(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutCannedAccessPolicyPublic(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 35324ms
+Test suite progress: tests succeeded: 87, failed: 0, skipped: 0.
+Starting test testUpdateObjectACL(org.jclouds.aws.s3.AWSS3ClientLiveTest)
+*** allocated new container adriancole-blobstore140...
+*** allocated new container adriancole-blobstore10...
  >> creating container in location [id=ap-northeast-1, scope=REGION, description=ap-northeast-1, parent=aws-s3, iso3166Codes=[JP-13], metadata={}]
  << call complete.. checking
-[pool-4-thread-5] Test testClear(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 26549ms
+[pool-4-thread-1] Test testUpdateObjectACL(org.jclouds.aws.s3.AWSS3ClientLiveTest) succeeded: 20525ms
+Test suite progress: tests succeeded: 88, failed: 0, skipped: 0.
+[pool-4-thread-2] Test testMetadata(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 24728ms
 Test suite progress: tests succeeded: 89, failed: 0, skipped: 0.
-Starting test testContainsKey(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test testMetadata(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 23877ms
-Test suite progress: tests succeeded: 90, failed: 0, skipped: 0.
 Starting test testPutFileParallel(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-*** allocated new container adriancole-blobstore1742...
-[pool-4-thread-3] Test testAllLocations(org.jclouds.aws.s3.blobstore.integration.AWSS3ServiceIntegrationLiveTest) succeeded: 190214ms
+[pool-4-thread-5] Test testClear(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 29617ms
+Test suite progress: tests succeeded: 90, failed: 0, skipped: 0.
+Starting test testContainsKey(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
+*** allocated new container adriancole-blobstore1042...
+[pool-4-thread-3] Test testAllLocations(org.jclouds.aws.s3.blobstore.integration.AWSS3ServiceIntegrationLiveTest) succeeded: 220080ms
 Test suite progress: tests succeeded: 91, failed: 0, skipped: 0.
 Starting test testGetAssignableLocations(org.jclouds.aws.s3.blobstore.integration.AWSS3ServiceIntegrationLiveTest)
 location [id=EU, scope=REGION, description=EU, parent=aws-s3, iso3166Codes=[IE], metadata={}]
@@ -701,37 +701,37 @@ location [id=us-west-2, scope=REGION, description=us-west-2, parent=aws-s3, iso3
 location [id=sa-east-1, scope=REGION, description=sa-east-1, parent=aws-s3, iso3166Codes=[BR-SP], metadata={}]
 location [id=ap-southeast-1, scope=REGION, description=ap-southeast-1, parent=aws-s3, iso3166Codes=[SG], metadata={}]
 location [id=ap-northeast-1, scope=REGION, description=ap-northeast-1, parent=aws-s3, iso3166Codes=[JP-13], metadata={}]
-[pool-4-thread-3] Test testGetAssignableLocations(org.jclouds.aws.s3.blobstore.integration.AWSS3ServiceIntegrationLiveTest) succeeded: 3ms
+[pool-4-thread-3] Test testGetAssignableLocations(org.jclouds.aws.s3.blobstore.integration.AWSS3ServiceIntegrationLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 92, failed: 0, skipped: 0.
-[pool-4-thread-5] Test testContainsKey(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 42168ms
+[pool-4-thread-5] Test testContainsKey(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 41186ms
 Test suite progress: tests succeeded: 93, failed: 0, skipped: 0.
 Starting test testDirectory(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test testPutFileParallel(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 55225ms
+[pool-4-thread-2] Test testPutFileParallel(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 52294ms
 Test suite progress: tests succeeded: 94, failed: 0, skipped: 0.
 Starting test testPutObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-[pool-4-thread-2] Test testPutObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 38219ms
+[pool-4-thread-2] Test testPutObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 22357ms
 Test suite progress: tests succeeded: 95, failed: 0, skipped: 0.
 Starting test testPutObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-[pool-4-thread-5] Test testDirectory(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 72244ms
+[pool-4-thread-2] Test testPutObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 30143ms
 Test suite progress: tests succeeded: 96, failed: 0, skipped: 0.
-Starting test testIsEmpty(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test testPutObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 44658ms
-Test suite progress: tests succeeded: 97, failed: 0, skipped: 0.
 Starting test testPutObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-[pool-4-thread-5] Test testIsEmpty(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 38988ms
+[pool-4-thread-5] Test testDirectory(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 71116ms
+Test suite progress: tests succeeded: 97, failed: 0, skipped: 0.
+Starting test testIsEmpty(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
+[pool-4-thread-2] Test testPutObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 22443ms
 Test suite progress: tests succeeded: 98, failed: 0, skipped: 0.
-Starting test testKeySet(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test testPutObject(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 24976ms
-Test suite progress: tests succeeded: 99, failed: 0, skipped: 0.
 Starting test testPutObjectStream(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest)
-[pool-4-thread-5] Test testKeySet(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 24132ms
+[pool-4-thread-5] Test testIsEmpty(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 26217ms
+Test suite progress: tests succeeded: 99, failed: 0, skipped: 0.
+Starting test testKeySet(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
+[pool-4-thread-2] Test testPutObjectStream(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 21772ms
 Test suite progress: tests succeeded: 100, failed: 0, skipped: 0.
-Starting test testListContainer(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test testPutObjectStream(org.jclouds.aws.s3.blobstore.integration.AWSS3BlobIntegrationLiveTest) succeeded: 21119ms
+[pool-4-thread-5] Test testKeySet(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 24125ms
 Test suite progress: tests succeeded: 101, failed: 0, skipped: 0.
-[pool-4-thread-5] Test testListContainer(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 21377ms
+Starting test testListContainer(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest)
+[pool-4-thread-5] Test testListContainer(org.jclouds.aws.s3.blobstore.integration.AWSS3InputStreamMapIntegrationLiveTest) succeeded: 28486ms
 Test suite progress: tests succeeded: 102, failed: 0, skipped: 0.
-Tests run: 102, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 904.546 sec
+Tests run: 102, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 970.196 sec
 
 Results :
 
@@ -750,7 +750,7 @@ Tests run: 102, Failures: 0, Errors: 0, Skipped: 0
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 15:32.614s
-[INFO] Finished at: Wed Dec 14 22:52:01 PST 2011
+[INFO] Total time: 16:29.070s
+[INFO] Finished at: Thu Dec 15 00:11:05 PST 2011
 [INFO] Final Memory: 19M/265M
 [INFO] ------------------------------------------------------------------------

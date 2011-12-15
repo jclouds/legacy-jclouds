@@ -53,64 +53,64 @@
  T E S T S
 -------------------------------------------------------
 Running TestSuite
-Starting test testCreateFile(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
-Starting test testGetSystemMetadata(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
 Starting test testReadFile(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
+Starting test testGetSystemMetadata(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
+Starting test testCreateFile(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
 Starting test testDeletePath(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
 Starting test testListDirectory(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
-[pool-2-thread-5] Test testDeletePath(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 120ms
+[pool-2-thread-5] Test testDeletePath(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 95ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
 Starting test testListDirectoriesOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
-[pool-2-thread-2] Test testReadFile(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 221ms
+[pool-2-thread-5] Test testListDirectoriesOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 12ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
 Starting test testCreateDirectory(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
-[pool-2-thread-1] Test testListDirectory(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 221ms
+[pool-2-thread-5] Test testCreateDirectory(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 35ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testCreateDirectory(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 26ms
-Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
 Starting test testCreateFileOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
-Starting test testListDirectoryOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
-[pool-2-thread-5] Test testListDirectoriesOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 105ms
+[pool-2-thread-1] Test testListDirectory(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 92ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testGetSystemMetadata(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 178ms
 Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test testListDirectoryOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
 Starting test testIsPublic(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
-[pool-2-thread-5] Test testIsPublic(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 4ms
+[pool-2-thread-2] Test testReadFile(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 250ms
 Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testListDirectoryOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 5ms
-Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
-Starting test testUpdateFileOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
 Starting test testCreateDirectoryOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
-[pool-2-thread-5] Test testCreateDirectoryOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 4ms
+[pool-2-thread-2] Test testCreateDirectoryOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testListDirectoryOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 13ms
 Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
-[pool-2-thread-3] Test testGetSystemMetadata(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 285ms
-Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
 Starting test testNewObject(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
-[pool-2-thread-5] Test testNewObject(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 0ms
+[pool-2-thread-3] Test testNewObject(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 0ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+Starting test testListDirectories(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
+[pool-2-thread-3] Test testListDirectories(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 6ms
 Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
 Starting test testUpdateFile(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
-Starting test testListDirectories(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
-[pool-2-thread-3] Test testListDirectories(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 2ms
+Starting test testUpdateFileOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
+[pool-2-thread-1] Test testIsPublic(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 47ms
 Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
-[pool-2-thread-1] Test testCreateFileOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 337ms
+[pool-2-thread-4] Test testCreateFile(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 407ms
 Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testUpdateFileOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 327ms
+[pool-2-thread-5] Test testCreateFileOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 248ms
 Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
-[pool-2-thread-5] Test testUpdateFile(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 323ms
+[pool-2-thread-3] Test testUpdateFile(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 222ms
 Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testCreateFile(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 613ms
+[pool-2-thread-2] Test testUpdateFileOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 237ms
 Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
 Starting test testInRestProperties(org.jclouds.ninefold.storage.NinefoldStorageProviderTest)
 Starting test testWithId(org.jclouds.ninefold.storage.NinefoldStorageProviderTest)
-Starting test testAllContains(org.jclouds.ninefold.storage.NinefoldStorageProviderTest)
-Starting test testOfTypeContains(org.jclouds.ninefold.storage.NinefoldStorageProviderTest)
-[pool-5-thread-2] Test testWithId(org.jclouds.ninefold.storage.NinefoldStorageProviderTest) succeeded: 30ms
+[pool-5-thread-2] Test testWithId(org.jclouds.ninefold.storage.NinefoldStorageProviderTest) succeeded: 3ms
 Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
-[pool-5-thread-4] Test testOfTypeContains(org.jclouds.ninefold.storage.NinefoldStorageProviderTest) succeeded: 3ms
+Starting test testAllContains(org.jclouds.ninefold.storage.NinefoldStorageProviderTest)
+[pool-5-thread-3] Test testAllContains(org.jclouds.ninefold.storage.NinefoldStorageProviderTest) succeeded: 1ms
 Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
-[pool-5-thread-3] Test testAllContains(org.jclouds.ninefold.storage.NinefoldStorageProviderTest) succeeded: 5ms
+[pool-5-thread-1] Test testInRestProperties(org.jclouds.ninefold.storage.NinefoldStorageProviderTest) succeeded: 41ms
 Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
-[pool-5-thread-1] Test testInRestProperties(org.jclouds.ninefold.storage.NinefoldStorageProviderTest) succeeded: 40ms
+Starting test testOfTypeContains(org.jclouds.ninefold.storage.NinefoldStorageProviderTest)
+[pool-5-thread-4] Test testOfTypeContains(org.jclouds.ninefold.storage.NinefoldStorageProviderTest) succeeded: 1ms
 Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
-Tests run: 19, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.555 sec
+Tests run: 19, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.573 sec
 
 Results :
 
@@ -155,182 +155,182 @@ Test suite progress: tests succeeded: 0, failed: 0, skipped: 3.
 Starting test containerExists(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
 [pool-4-thread-5] Test containerExists(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) skipped.
 Test suite progress: tests succeeded: 0, failed: 0, skipped: 4.
-Starting test deleteContainerIfEmpty(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
-[pool-4-thread-5] Test deleteContainerIfEmpty(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 5.
-Starting test deleteContainerWithContents(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
-[pool-4-thread-5] Test deleteContainerWithContents(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 6.
-Starting test testClearWhenContentsUnderPath(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
-[pool-4-thread-5] Test testClearWhenContentsUnderPath(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 7.
-Starting test testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
-[pool-4-thread-5] Test testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 8.
-Starting test testListContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
-[pool-4-thread-5] Test testListContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 9.
-Starting test testListContainerPrefix(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
-[pool-4-thread-5] Test testListContainerPrefix(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 10.
-Starting test testListRootUsesDelimiter(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
-[pool-4-thread-5] Test testListRootUsesDelimiter(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 11.
-Starting test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
-[pool-4-thread-5] Test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 12.
-Starting test testWithDetails(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
-[pool-4-thread-5] Test testWithDetails(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 13.
-Starting test testPublicAccess(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerLiveTest)
-[pool-4-thread-5] Test testPublicAccess(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 14.
-Starting test testSignGetUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest)
 Starting test testContains(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
-Starting test testPutObjectStream(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
-Starting test testCopyUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobLiveTest)
-[pool-4-thread-2] Test testCopyUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 15.
-Starting test testEntrySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test testEntrySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 16.
-Starting test testPutAll(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test testPutAll(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 17.
-Starting test testPutAllBytes(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test testPutAllBytes(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 18.
-Starting test testPutAllFiles(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test testPutAllFiles(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 19.
-[pool-4-thread-4] Test testSignGetUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 20.
-Starting test testSignGetUrlOptions(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest)
-[pool-4-thread-4] Test testSignGetUrlOptions(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 21.
-Starting test testSignPutUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest)
-[pool-4-thread-4] Test testSignPutUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 22.
-Starting test testSignRemoveUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest)
-[pool-4-thread-4] Test testSignRemoveUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 23.
-Starting test testPutAllStrings(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test testPutAllStrings(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 24.
-Starting test testPutMoreThanSingleListing(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test testPutMoreThanSingleListing(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 25.
-Starting test testRemove(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test testRemove(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 26.
-Starting test testValues(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test testValues(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 27.
-Starting test testClear(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test testClear(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 28.
-Starting test testContainsKey(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test testContainsKey(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
-Starting test containerDoesntExist(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageServiceIntegrationLiveTest)
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 29.
-Starting test testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 30.
-Starting test testIsEmpty(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test testIsEmpty(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 31.
-Starting test testKeySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test testKeySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 32.
-Starting test testListContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
-[pool-4-thread-2] Test testListContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 33.
-[pool-4-thread-1] Test testPutObjectStream(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 34.
 [pool-4-thread-3] Test testContains(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 35.
-Starting test blobNotFound(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 5.
 Starting test testEntrySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test blobNotFound(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 36.
-[pool-4-thread-4] Test containerDoesntExist(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageServiceIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 37.
-Starting test testAllLocations(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageServiceIntegrationLiveTest)
-[pool-4-thread-4] Test testAllLocations(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageServiceIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 38.
-Starting test testGetAssignableLocations(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageServiceIntegrationLiveTest)
-[pool-4-thread-4] Test testGetAssignableLocations(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageServiceIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 39.
-Starting test testCreateDirectory(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest)
-[pool-4-thread-4] Test testCreateDirectory(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 40.
-Starting test testListDirectorys(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest)
-[pool-4-thread-4] Test testListDirectorys(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 41.
-Starting test deleteObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 42.
-Starting test deleteObjectNoContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObjectNoContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 43.
-Starting test deleteObjectNotFound(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObjectNotFound(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 44.
-Starting test testBigFileGets(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testBigFileGets(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 45.
-Starting test testPutFileParallel(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutFileParallel(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 46.
-Starting test testPutObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 47.
-Starting test testPutObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
 [pool-4-thread-3] Test testEntrySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 48.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 6.
 Starting test testPut(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
 [pool-4-thread-3] Test testPut(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 49.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 7.
 Starting test testPutAll(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
 [pool-4-thread-3] Test testPutAll(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 50.
-[pool-4-thread-4] Test testListOptions(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 51.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 8.
 Starting test testPutMoreThanSingleListing(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
 [pool-4-thread-3] Test testPutMoreThanSingleListing(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 52.
-[pool-4-thread-4] Test testFileOperations(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 53.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 9.
 Starting test testRemove(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
 [pool-4-thread-3] Test testRemove(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 54.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 10.
 Starting test testValues(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
 [pool-4-thread-3] Test testValues(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 55.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 11.
 Starting test testClear(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
 [pool-4-thread-3] Test testClear(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 56.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 12.
 Starting test testContainsKey(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
 [pool-4-thread-3] Test testContainsKey(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 57.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 13.
 Starting test testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
 [pool-4-thread-3] Test testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 58.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 14.
 Starting test testIsEmpty(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
 [pool-4-thread-3] Test testIsEmpty(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 59.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 15.
 Starting test testKeySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
 [pool-4-thread-3] Test testKeySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 60.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 16.
 Starting test testListContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
 [pool-4-thread-3] Test testListContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 61.
-[pool-4-thread-1] Test testPutObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 62.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 17.
+Starting test deleteContainerIfEmpty(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[pool-4-thread-5] Test deleteContainerIfEmpty(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 18.
+Starting test deleteContainerWithContents(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[pool-4-thread-5] Test deleteContainerWithContents(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 19.
+Starting test testClearWhenContentsUnderPath(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[pool-4-thread-5] Test testClearWhenContentsUnderPath(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 20.
+Starting test testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[pool-4-thread-5] Test testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 21.
+Starting test testListContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[pool-4-thread-5] Test testListContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 22.
+Starting test testListContainerPrefix(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[pool-4-thread-5] Test testListContainerPrefix(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 23.
+Starting test testListRootUsesDelimiter(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[pool-4-thread-5] Test testListRootUsesDelimiter(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 24.
+Starting test testPublicAccess(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerLiveTest)
+[pool-4-thread-3] Test testPublicAccess(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 25.
+Starting test testEntrySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-3] Test testEntrySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 26.
+Starting test testPutAll(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-3] Test testPutAll(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 27.
+Starting test testPutAllBytes(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+Starting test testSignGetUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest)
+Starting test testCopyUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobLiveTest)
+Starting test testPutObjectStream(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+[pool-4-thread-3] Test testPutAllBytes(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 28.
+[pool-4-thread-1] Test testPutObjectStream(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 29.
+Starting test blobNotFound(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+[pool-4-thread-1] Test blobNotFound(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 30.
+Starting test deleteObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 31.
+Starting test deleteObjectNoContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObjectNoContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 32.
+Starting test deleteObjectNotFound(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObjectNotFound(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 33.
+Starting test testBigFileGets(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testBigFileGets(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 34.
+Starting test testPutFileParallel(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPutFileParallel(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 35.
 Starting test testPutObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
 [pool-4-thread-1] Test testPutObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 36.
+Starting test testPutObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPutObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 37.
+Starting test testPutObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPutObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 38.
+[pool-4-thread-2] Test testCopyUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 39.
+[pool-4-thread-4] Test testSignGetUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 40.
+Starting test testSignGetUrlOptions(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest)
+[pool-4-thread-4] Test testSignGetUrlOptions(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 41.
+Starting test testSignPutUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest)
+[pool-4-thread-4] Test testSignPutUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 42.
+Starting test testSignRemoveUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest)
+[pool-4-thread-4] Test testSignRemoveUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 43.
+Starting test containerDoesntExist(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageServiceIntegrationLiveTest)
+[pool-4-thread-4] Test containerDoesntExist(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageServiceIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 44.
+Starting test testAllLocations(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageServiceIntegrationLiveTest)
+[pool-4-thread-4] Test testAllLocations(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageServiceIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 45.
+Starting test testGetAssignableLocations(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageServiceIntegrationLiveTest)
+[pool-4-thread-4] Test testGetAssignableLocations(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageServiceIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 46.
+Starting test testCreateDirectory(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest)
+[pool-4-thread-1] Test testCreateDirectory(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 47.
+Starting test testListDirectorys(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest)
+[pool-4-thread-1] Test testListDirectorys(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 48.
+[pool-4-thread-1] Test testListOptions(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 49.
+[pool-4-thread-1] Test testFileOperations(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 50.
+Starting test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[pool-4-thread-5] Test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 51.
+Starting test testWithDetails(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[pool-4-thread-5] Test testWithDetails(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 52.
+Starting test testPutAllFiles(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-3] Test testPutAllFiles(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 53.
+Starting test testPutAllStrings(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-3] Test testPutAllStrings(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 54.
+Starting test testPutMoreThanSingleListing(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-3] Test testPutMoreThanSingleListing(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 55.
+Starting test testRemove(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-3] Test testRemove(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 56.
+Starting test testValues(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-3] Test testValues(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 57.
+Starting test testClear(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-3] Test testClear(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 58.
+Starting test testContainsKey(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-3] Test testContainsKey(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 59.
+Starting test testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-3] Test testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 60.
+Starting test testIsEmpty(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-3] Test testIsEmpty(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 61.
+Starting test testKeySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-3] Test testKeySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 62.
+Starting test testListContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-3] Test testListContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) skipped.
 Test suite progress: tests succeeded: 0, failed: 0, skipped: 63.
-Tests run: 111, Failures: 1, Errors: 0, Skipped: 110, Time elapsed: 4.4 sec <<< FAILURE!
+Tests run: 111, Failures: 1, Errors: 0, Skipped: 110, Time elapsed: 4.448 sec <<< FAILURE!
 
 Results :
 
@@ -341,8 +341,8 @@ Tests run: 111, Failures: 1, Errors: 0, Skipped: 110
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 20.211s
-[INFO] Finished at: Wed Dec 14 12:22:00 PST 2011
+[INFO] Total time: 22.344s
+[INFO] Finished at: Wed Dec 14 23:55:30 PST 2011
 [INFO] Final Memory: 19M/265M
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project ninefold-storage: There are test failures.
