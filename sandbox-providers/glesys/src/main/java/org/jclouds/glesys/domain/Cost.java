@@ -18,6 +18,7 @@
  */
 package org.jclouds.glesys.domain;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -92,6 +93,26 @@ public class Cost {
     */
    public String getTimePeriod() {
       return timePeriod;
+   }
+
+   @Override
+   public boolean equals(Object object) {
+      if (this == object) {
+         return true;
+      }
+      if (object instanceof Cost) {
+         Cost other = (Cost) object;
+         return Objects.equal(amount, other.amount)
+               && Objects.equal(currency, other.currency)
+               && Objects.equal(timePeriod, other.timePeriod);
+      } else {
+         return false;
+      }
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(amount, currency, timePeriod);
    }
 
    @Override

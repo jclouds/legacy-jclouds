@@ -18,6 +18,8 @@
  */
 package org.jclouds.glesys.domain;
 
+import com.google.common.base.Objects;
+
 /**
  * Detailed information on Server disk usage
  *
@@ -90,8 +92,28 @@ public class Disk {
    }
 
    @Override
+   public boolean equals(Object object) {
+      if (this == object) {
+         return true;
+      }
+      if (object instanceof Disk) {
+         Disk other = (Disk) object;
+         return Objects.equal(used, other.used)
+               && Objects.equal(size, other.size)
+               && Objects.equal(unit, other.unit);
+      } else {
+         return false;
+      }
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(used, size, unit);
+   }
+   
+   @Override
    public String toString() {
-      return String.format("Disk[used=%d, size=%d, unit=%s]", used, size, unit);
+      return String.format("[used=%d, size=%d, unit=%s]", used, size, unit);
    }
 
 }

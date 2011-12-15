@@ -18,6 +18,9 @@
  */
 package org.jclouds.glesys.domain;
 
+import com.google.common.base.Objects;
+import org.jclouds.javax.annotation.Nullable;
+
 /**
  * Detailed information on Server cpu usage
  *
@@ -33,7 +36,7 @@ public class Cpu {
    public static class Builder {
       private double system;
       private double user;
-      private double nice;
+      private Double nice;
       private double idle;
       private String unit;
 
@@ -47,7 +50,7 @@ public class Cpu {
          return this;
       }
 
-      public Builder nice(double nice) {
+      public Builder nice(Double nice) {
          this.nice = nice;
          return this;
       }
@@ -73,11 +76,11 @@ public class Cpu {
 
    private final double system;
    private final double user;
-   private final double nice;
+   private final Double nice;
    private final double idle;
    private final String unit;
 
-   public Cpu(double system, double user, double nice, double idle, String unit) {
+   public Cpu(double system, double user, @Nullable Double nice, double idle, String unit) {
       this.system = system;
       this.user = user;
       this.nice = nice;
@@ -95,7 +98,7 @@ public class Cpu {
    /**
     * @return the user time in use in #unit
     */
-   public Double getUser() {
+   public double getUser() {
       return user;
    }
 
@@ -109,7 +112,7 @@ public class Cpu {
    /**
     * @return the idle time in #unit
     */
-   public Double getIdle() {
+   public double getIdle() {
       return idle;
    }
 
@@ -121,8 +124,30 @@ public class Cpu {
    }
 
    @Override
+   public boolean equals(Object object) {
+      if (this == object) {
+         return true;
+      }
+      if (object instanceof Cpu) {
+         Cpu other = (Cpu) object;
+         return Objects.equal(system, other.system)
+               && Objects.equal(user, other.user)
+               && Objects.equal(nice, other.nice)
+               && Objects.equal(idle, other.idle)
+               && Objects.equal(unit, other.unit);
+      } else {
+         return false;
+      }
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(system, user, nice, idle, unit);
+   }
+   
+   @Override
    public String toString() {
-      return String.format("Cpu[system=%f, user=%f, nice=%f, idle=%f, unit=%s]",
+      return String.format("[system=%f, user=%f, nice=%f, idle=%f, unit=%s]",
             system, user, nice, idle, unit);
    }
 }

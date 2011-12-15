@@ -18,6 +18,8 @@
  */
 package org.jclouds.glesys.domain;
 
+import com.google.common.base.Objects;
+
 /**
  * Detailed information server status including hardware usage (cpu, memory and disk), bandwidth and up-time.
  *
@@ -137,8 +139,31 @@ public class ServerStatus {
    }
 
    @Override
+   public boolean equals(Object object) {
+      if (this == object) {
+         return true;
+      }
+      if (object instanceof ServerStatus) {
+         final ServerStatus other = (ServerStatus) object;
+         return Objects.equal(state, other.state)
+               && Objects.equal(cpu, other.cpu)
+               && Objects.equal(memory, other.memory)
+               && Objects.equal(disk, other.disk)
+               && Objects.equal(bandwidth, other.bandwidth)
+               && uptime == other.uptime;
+      } else {
+         return false;
+      }
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(state, cpu, memory, disk, bandwidth, uptime);
+   }
+   
+   @Override
    public String toString() {
-      return String.format("Status[state=%s, cpu=%s, memory=%s, disk=%s, bandwidth=%s, uptime=%s]",
+      return String.format("[state=%s, cpu=%s, memory=%s, disk=%s, bandwidth=%s, uptime=%s]",
             state, cpu, memory, disk, bandwidth, uptime);
    }
 
