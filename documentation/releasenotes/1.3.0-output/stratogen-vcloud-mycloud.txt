@@ -304,3 +304,356 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud
 [pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
 Test suite progress: tests succeeded: 30, failed: 30, skipped: 10.
 Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 31, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 32, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 33, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 34, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 35, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 36, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 37, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 38, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 39, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 40, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 41, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 42, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 43, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 44, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 45, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 46, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 47, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 48, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 49, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 50, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 51, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 52, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 53, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 54, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 55, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 56, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 57, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 58, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 59, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 60, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 61, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 62, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 63, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 64, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 65, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 66, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 67, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 68, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 69, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 70, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 71, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 72, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 73, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 74, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 75, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 76, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 77, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 78, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 79, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 80, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 81, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 82, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 83, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 84, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 85, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 86, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 87, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 88, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 89, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 90, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 91, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 92, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 93, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 94, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 95, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 96, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 97, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 98, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 99, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 100, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 101, skipped: 10.
+Starting test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 102, skipped: 10.
+Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 103, skipped: 10.
+Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 104, skipped: 10.
+Starting test testDefaultTemplateBuilder(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testDefaultTemplateBuilder(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 30, failed: 105, skipped: 10.
+Tests run: 145, Failures: 105, Errors: 0, Skipped: 10, Time elapsed: 4,844.186 sec <<< FAILURE!
+
+Results :
+
+Failed tests:   testCompareSizes(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): request: GET https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-8eaea48f-8404-496e-aeb0-c2a2571a2689/ovf HTTP/1.1; cause: java.lang.NullPointerException: virtualSystem
+  testCompareSizes(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest): request: GET https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-8eaea48f-8404-496e-aeb0-c2a2571a2689/ovf HTTP/1.1; cause: java.lang.NullPointerException: virtualSystem
+  testCaptureVApp(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVAppTemplateClientLiveTest): request: GET https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-8eaea48f-8404-496e-aeb0-c2a2571a2689/ovf HTTP/1.1; cause: java.lang.NullPointerException: virtualSystem
+  testExtendedOptionsWithCustomizationScript(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVmClientLiveTest): request: GET https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-8eaea48f-8404-496e-aeb0-c2a2571a2689/ovf HTTP/1.1; cause: java.lang.NullPointerException: virtualSystem
+  testFindVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVAppTemplateClientLiveTest): expected:<Windows Server 2008 R2-copy-6ee8b0e2-7e52-4413-a6d8-84008be26e9f> but was:<Windows Server 2008 R2>
+  testFindVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest): expected:<Windows Server 2008 R2-copy-6ee8b0e2-7e52-4413-a6d8-84008be26e9f> but was:<Windows Server 2008 R2>
+  testFromTemplate(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): request: GET https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-8eaea48f-8404-496e-aeb0-c2a2571a2689/ovf HTTP/1.1; cause: java.lang.NullPointerException: virtualSystem
+  testImagesCache(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest): request: GET https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-8eaea48f-8404-496e-aeb0-c2a2571a2689/ovf HTTP/1.1; cause: java.lang.NullPointerException: virtualSystem
+  testGetOvfEnvelopeForVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVAppTemplateClientLiveTest): request: GET https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-8eaea48f-8404-496e-aeb0-c2a2571a2689/ovf HTTP/1.1; cause: java.lang.NullPointerException: virtualSystem
+  testGetVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVAppTemplateClientLiveTest): expected:<Windows Server 2008 R2-copy-6ee8b0e2-7e52-4413-a6d8-84008be26e9f> but was:<Windows Server 2008 R2>
+  testTemplateBuilderCanFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): request: GET https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-8eaea48f-8404-496e-aeb0-c2a2571a2689/ovf HTTP/1.1; cause: java.lang.NullPointerException: virtualSystem
+  testGetOvfEnvelopeForVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest): request: GET https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-8eaea48f-8404-496e-aeb0-c2a2571a2689/ovf HTTP/1.1; cause: java.lang.NullPointerException: virtualSystem
+  testListImages(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest): request: GET https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-8eaea48f-8404-496e-aeb0-c2a2571a2689/ovf HTTP/1.1; cause: java.lang.NullPointerException: virtualSystem
+  testGetVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.DeprecatedStratoGenVCloudMyCloudClientLiveTest): expected:<Windows Server 2008 R2-copy-6ee8b0e2-7e52-4413-a6d8-84008be26e9f> but was:<Windows Server 2008 R2>
+  testTemplateBuilderCanUseImageId(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): request: GET https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-8eaea48f-8404-496e-aeb0-c2a2571a2689/ovf HTTP/1.1; cause: java.lang.NullPointerException: virtualSystem
+  testListSizes(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest): request: GET https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-8eaea48f-8404-496e-aeb0-c2a2571a2689/ovf HTTP/1.1; cause: java.lang.NullPointerException: virtualSystem
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testOptionToNotBlock(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest): request: GET https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-8eaea48f-8404-496e-aeb0-c2a2571a2689/ovf HTTP/1.1; cause: java.lang.NullPointerException: virtualSystem
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilder(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest): request: GET https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-8eaea48f-8404-496e-aeb0-c2a2571a2689/ovf HTTP/1.1; cause: java.lang.NullPointerException: virtualSystem
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testCreateAndRunAService(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest): request: GET https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-8eaea48f-8404-496e-aeb0-c2a2571a2689/ovf HTTP/1.1; cause: java.lang.NullPointerException: virtualSystem
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): 
+  testTemplateBuilderWithImageIdSpecified(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): request: GET https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-8eaea48f-8404-496e-aeb0-c2a2571a2689/ovf HTTP/1.1; cause: java.lang.NullPointerException: virtualSystem
+  testTemplateBuilderWithLoginUserSpecified(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): request: GET https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-8eaea48f-8404-496e-aeb0-c2a2571a2689/ovf HTTP/1.1; cause: java.lang.NullPointerException: virtualSystem
+  testDefaultTemplateBuilder(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest): request: GET https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-8eaea48f-8404-496e-aeb0-c2a2571a2689/ovf HTTP/1.1; cause: java.lang.NullPointerException: virtualSystem
+
+Tests run: 145, Failures: 105, Errors: 0, Skipped: 10
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 1:20:57.913s
+[INFO] Finished at: Thu Dec 15 10:41:27 PST 2011
+[INFO] Final Memory: 20M/265M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project stratogen-vcloud-mycloud: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/adriancole/workspace/git/jclouds/providers/stratogen-vcloud-mycloud/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
