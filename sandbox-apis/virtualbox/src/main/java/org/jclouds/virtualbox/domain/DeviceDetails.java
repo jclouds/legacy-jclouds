@@ -42,6 +42,7 @@ public class DeviceDetails {
    private final DeviceType deviceType;
 
    public DeviceDetails(int port, int deviceSlot, DeviceType deviceType) {
+      checkNotNull(deviceType, "deviceType");
       this.port = port;
       this.deviceSlot = deviceSlot;
       this.deviceType = deviceType;

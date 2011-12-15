@@ -19,6 +19,7 @@
 
 package org.jclouds.virtualbox.domain;
 
+import com.google.common.base.Objects;
 import org.virtualbox_4_1.DeviceType;
 import org.virtualbox_4_1.StorageBus;
 
@@ -30,7 +31,7 @@ import static org.jclouds.virtualbox.domain.HardDisk.DEFAULT_DISK_FORMAT;
 
 /**
  * Represents a storage controller in a VirtualBox VM.
- *
+ * <p/>
  * name is the unique name of the controller.
  * bus is the type of connection bus for the controller
  * hardDisks contains the hard disks that are attached (or should be attached) to this controller
@@ -45,6 +46,10 @@ public class StorageController {
    private Set<IsoImage> isoImages;
 
    public StorageController(String name, StorageBus bus, Set<HardDisk> hardDisks, Set<IsoImage> isoImages) {
+      checkNotNull(name, "name");
+      checkNotNull(bus, "bus");
+      checkNotNull(hardDisks, "hardDisks");
+      checkNotNull(isoImages, "isoImages");
       this.name = name;
       this.bus = bus;
       this.hardDisks = hardDisks;
@@ -70,25 +75,19 @@ public class StorageController {
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      StorageController that = (StorageController) o;
-
-      if (bus != that.bus) return false;
-      if (isoImages != null ? !isoImages.equals(that.isoImages) : that.isoImages != null) return false;
-      if (hardDisks != null ? !hardDisks.equals(that.hardDisks) : that.hardDisks != null) return false;
-      if (name != null ? !name.equals(that.name) : that.name != null) return false;
-
-      return true;
+      if (o instanceof StorageController) {
+         StorageController other = (StorageController) o;
+         return Objects.equal(name, other.name) &&
+                 Objects.equal(bus, other.bus) &&
+                 Objects.equal(hardDisks, other.hardDisks) &&
+                 Objects.equal(isoImages, other.isoImages);
+      }
+      return false;
    }
 
    @Override
    public int hashCode() {
-      int result = name != null ? name.hashCode() : 0;
-      result = 31 * result + (bus != null ? bus.hashCode() : 0);
-      result = 31 * result + (hardDisks != null ? hardDisks.hashCode() : 0);
-      result = 31 * result + (isoImages != null ? isoImages.hashCode() : 0);
-      return result;
+      return Objects.hashCode(name, bus, hardDisks, isoImages);
    }
 
    @Override

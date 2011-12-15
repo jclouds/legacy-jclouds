@@ -22,6 +22,8 @@ package org.jclouds.virtualbox.domain;
 import com.google.common.base.Objects;
 import org.virtualbox_4_1.NATProtocol;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * @author Mattias Holmqvist
  */
@@ -34,6 +36,9 @@ public class RedirectRule {
    private final int guestPort;
 
    public RedirectRule(NATProtocol protocol, String host, int hostPort, String guest, int guestPort) {
+      checkNotNull(protocol);
+      checkNotNull(host);
+      checkNotNull(guest);
       this.protocol = protocol;
       this.host = host;
       this.hostPort = hostPort;

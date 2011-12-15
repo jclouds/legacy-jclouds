@@ -21,6 +21,8 @@ package org.jclouds.virtualbox.domain;
 
 import com.google.common.base.Objects;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Represents an optical medium (DVD) in a VirtualBox VM.
  * <p/>
@@ -32,6 +34,8 @@ public class IsoImage {
    private String sourcePath;
 
    public IsoImage(DeviceDetails deviceDetails, String sourcePath) {
+      checkNotNull(deviceDetails, "deviceDetails");
+      checkNotNull(sourcePath, "sourcePath");
       this.deviceDetails = deviceDetails;
       this.sourcePath = sourcePath;
    }

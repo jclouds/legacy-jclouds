@@ -26,6 +26,8 @@ import org.virtualbox_4_1.NATProtocol;
 import java.util.Collections;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Represents a NAT network adapter in VirtualBox.
  * <p/>
@@ -36,6 +38,7 @@ public class NatAdapter {
    private final Set<RedirectRule> redirectRules = Sets.newLinkedHashSet();
 
    public NatAdapter(Set<RedirectRule> redirectRules) {
+      checkNotNull(redirectRules);
       this.redirectRules.addAll(redirectRules);
    }
 

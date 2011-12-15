@@ -25,6 +25,7 @@ import java.util.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * A description of a Virtual Machine in VirtualBox.
@@ -40,6 +41,11 @@ public class VmSpec {
    private final Set<StorageController> controllers;
 
    public VmSpec(String vmId, String vmName, String osTypeId, long memory, boolean forceOverwrite, Set<StorageController> controllers, Map<Long, NatAdapter> natNetworkAdapters) {
+      checkNotNull(vmId, "vmId");
+      checkNotNull(vmName, "vmName");
+      checkArgument(memory > 0, "memory must be > 0");
+      checkNotNull(controllers, "controllers");
+      checkNotNull(natNetworkAdapters, "natNetworkAdapters");
       this.vmId = vmId;
       this.vmName = vmName;
       this.osTypeId = osTypeId;
