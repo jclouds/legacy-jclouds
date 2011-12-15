@@ -31,7 +31,7 @@ import java.net.URI;
 import static org.testng.Assert.assertEquals;
 
 /**
- * Tests behavior of {@code BindCreateSSHKeyToXmlPayloadTest}
+ * Tests behavior of {@code BindCreateSSHKeyToXmlPayload}
  * @author Jason King
  */
 @Test(groups = "unit", testName = "BindCreateSSHKeyToXmlPayloadTest")
