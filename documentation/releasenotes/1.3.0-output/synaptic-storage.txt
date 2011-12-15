@@ -1,0 +1,522 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:synaptic-storage:bundle:1.3.0-SNAPSHOT
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/workspace/git/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/workspace/git/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building jclouds Synaptic Storage as a Service provider 1.3.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ synaptic-storage ---
+[INFO] Deleting /Users/adriancole/workspace/git/jclouds/providers/synaptic-storage/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ synaptic-storage ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-banned-dependencies) @ synaptic-storage ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-java) @ synaptic-storage ---
+[INFO] 
+[INFO] --- maven-remote-resources-plugin:1.2:process (process-remote-resources) @ synaptic-storage ---
+[INFO] Setting property: classpath.resource.loader.class => 'org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader'.
+[INFO] Setting property: velocimacro.messages.on => 'false'.
+[INFO] Setting property: resource.loader => 'classpath'.
+[INFO] Setting property: resource.manager.logwhenfound => 'false'.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ synaptic-storage ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/synaptic-storage/src/main/clojure
+[INFO] Copying 1 resource
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ synaptic-storage ---
+[INFO] Compiling 2 source files to /Users/adriancole/workspace/git/jclouds/providers/synaptic-storage/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ synaptic-storage ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/synaptic-storage/src/test/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/synaptic-storage/src/test/resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ synaptic-storage ---
+[INFO] Compiling 13 source files to /Users/adriancole/workspace/git/jclouds/providers/synaptic-storage/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.10:test (default-test) @ synaptic-storage ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/synaptic-storage/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Starting test testSupportedProviders(org.jclouds.synaptic.storage.ProvidersInPropertiesTest)
+[pool-2-thread-1] Test testSupportedProviders(org.jclouds.synaptic.storage.ProvidersInPropertiesTest) succeeded: 97ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testGetSystemMetadata(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest)
+Starting test testReadFile(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest)
+Starting test testDeletePath(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest)
+Starting test testCreateFile(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest)
+Starting test testListDirectory(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest)
+[pool-3-thread-1] Test testListDirectory(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest) succeeded: 204ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test testListDirectoriesOptions(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest)
+[pool-3-thread-2] Test testReadFile(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest) succeeded: 230ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test testCreateDirectory(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest)
+[pool-3-thread-3] Test testGetSystemMetadata(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest) succeeded: 234ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Starting test testCreateFileOptions(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest)
+[pool-3-thread-5] Test testDeletePath(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest) succeeded: 237ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test testListDirectoryOptions(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest)
+[pool-3-thread-1] Test testListDirectoriesOptions(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest) succeeded: 31ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+Starting test testIsPublic(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest)
+[pool-3-thread-5] Test testListDirectoryOptions(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest) succeeded: 13ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+Starting test testCreateDirectoryOptions(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest)
+[pool-3-thread-2] Test testCreateDirectory(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest) succeeded: 48ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+Starting test testUpdateFileOptions(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest)
+[pool-3-thread-5] Test testCreateDirectoryOptions(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest) succeeded: 28ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+Starting test testNewObject(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest)
+[pool-3-thread-5] Test testNewObject(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest) succeeded: 0ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+Starting test testListDirectories(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest)
+[pool-3-thread-5] Test testListDirectories(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Starting test testUpdateFile(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest)
+[pool-3-thread-1] Test testIsPublic(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest) succeeded: 47ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+[pool-3-thread-2] Test testUpdateFileOptions(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest) succeeded: 245ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+[pool-3-thread-5] Test testUpdateFile(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest) succeeded: 247ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+[pool-3-thread-3] Test testCreateFileOptions(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest) succeeded: 300ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+[pool-3-thread-4] Test testCreateFile(org.jclouds.synaptic.storage.SynapticStorageAsyncClientTest) succeeded: 533ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
+Starting test testInRestProperties(org.jclouds.synaptic.storage.SynapticStorageProviderTest)
+Starting test testWithId(org.jclouds.synaptic.storage.SynapticStorageProviderTest)
+Starting test testAllContains(org.jclouds.synaptic.storage.SynapticStorageProviderTest)
+Starting test testOfTypeContains(org.jclouds.synaptic.storage.SynapticStorageProviderTest)
+[pool-6-thread-1] Test testInRestProperties(org.jclouds.synaptic.storage.SynapticStorageProviderTest) succeeded: 8ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
+[pool-6-thread-2] Test testWithId(org.jclouds.synaptic.storage.SynapticStorageProviderTest) succeeded: 7ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+[pool-6-thread-3] Test testAllContains(org.jclouds.synaptic.storage.SynapticStorageProviderTest) succeeded: 6ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+[pool-6-thread-4] Test testOfTypeContains(org.jclouds.synaptic.storage.SynapticStorageProviderTest) succeeded: 5ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+Tests run: 20, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.138 sec
+
+Results :
+
+Tests run: 20, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.3.3:test (test-clojure) @ synaptic-storage ---
+
+Testing user
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+[INFO] 
+[INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ synaptic-storage ---
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ synaptic-storage ---
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/synaptic-storage/target/synaptic-storage-1.3.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ synaptic-storage ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ synaptic-storage ---
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/synaptic-storage/target/synaptic-storage-1.3.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.10:test (integration) @ synaptic-storage ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/synaptic-storage/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+*** containers to test: [adriancole-blobstore0, adriancole-blobstore1, adriancole-blobstore2, adriancole-blobstore3, adriancole-blobstore4, adriancole-blobstore5, adriancole-blobstore6, adriancole-blobstore7, adriancole-blobstore8, adriancole-blobstore9]
+Starting test testListContainerMarker(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest)
+Starting test testCopyUrl(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobLiveTest)
+[pool-4-thread-5] Test testListContainerMarker(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest) succeeded: 49ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testListContainerMaxResults(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest)
+[pool-4-thread-5] Test testListContainerMaxResults(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test containerDoesntExist(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest)
+Starting test testContains(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest)
+[pool-4-thread-3] Test testContains(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test testEntrySet(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest)
+Starting test testSignGetUrl(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobSignerLiveTest)
+Starting test testPutObjectStream(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest)
+[pool-4-thread-5] Test containerDoesntExist(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest) succeeded: 675ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Starting test containerExists(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest)
+[pool-4-thread-5] Test containerExists(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest) succeeded: 5315ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test deleteContainerIfEmpty(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testPutObjectStream(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest) succeeded: 7758ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+Starting test blobNotFound(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest)
+[pool-4-thread-4] Test testSignGetUrl(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobSignerLiveTest) succeeded: 8852ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+Starting test testSignGetUrlOptions(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobSignerLiveTest)
+*** allocated new container adriancole-blobstore5...
+[pool-4-thread-1] Test blobNotFound(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest) succeeded: 5402ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest)
+[pool-4-thread-5] Test deleteContainerIfEmpty(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest) succeeded: 8512ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+Starting test deleteContainerWithContents(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest)
+[pool-4-thread-2] Test testCopyUrl(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobLiveTest) succeeded: 17124ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+Starting test testPublicAccess(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerLiveTest)
+[pool-4-thread-4] Test testSignGetUrlOptions(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobSignerLiveTest) succeeded: 8735ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Starting test testSignPutUrl(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobSignerLiveTest)
+[pool-4-thread-3] Test testEntrySet(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest) succeeded: 20921ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+Starting test testPut(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObject(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest) succeeded: 8871ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+Starting test deleteObjectNoContainer(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest)
+*** allocated new container adriancole-blobstore3...
+[pool-4-thread-4] Test testSignPutUrl(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobSignerLiveTest) succeeded: 5767ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+Starting test testSignRemoveUrl(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobSignerLiveTest)
+[pool-4-thread-1] Test deleteObjectNoContainer(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest) succeeded: 2111ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+Starting test deleteObjectNotFound(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest)
+*** allocated new container adriancole-blobstore9...
+[pool-4-thread-5] Test deleteContainerWithContents(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest) succeeded: 12120ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
+Starting test testClearWhenContentsUnderPath(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest)
+*** allocated new container adriancole-blobstore312...
+[pool-4-thread-2] Test testPublicAccess(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerLiveTest) succeeded: 11723ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
+Starting test testEntrySet(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test deleteObjectNotFound(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest) succeeded: 7438ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+Starting test testBigFileGets(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest)
+[pool-4-thread-3] Test testPut(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest) succeeded: 11507ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+Starting test testPutAll(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest)
+[pool-4-thread-4] Test testSignRemoveUrl(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobSignerLiveTest) succeeded: 9977ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+Exception in thread "user thread 1" java.lang.IllegalStateException: interrupted calling get() on [[method=AtmosAsyncClient.pathExists, request=HEAD https://storage.synaptic.att.com/rest/namespace/adriancole-blobstore6/hello HTTP/1.1]], so could not run listeners
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:66)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:979)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1281)
+	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:218)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:237)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:59)
+	... 3 more
+Caused by: java.util.concurrent.ExecutionException: task submitted from the following trace
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:270)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:241)
+	... 4 more
+Starting test containerDoesntExist(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageServiceIntegrationLiveTest)
+[pool-4-thread-4] Test containerDoesntExist(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageServiceIntegrationLiveTest) succeeded: 388ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
+Starting test testAllLocations(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageServiceIntegrationLiveTest)
+*** allocated new container adriancole-blobstore4...
+ >> creating container in location [id=synaptic-storage, scope=PROVIDER, description=https://storage.synaptic.att.com, parent=null, iso3166Codes=[US-VA, US-TX], metadata={}]
+ << call complete.. checking
+*** allocated new container adriancole-blobstore415...
+[pool-4-thread-4] Test testAllLocations(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageServiceIntegrationLiveTest) succeeded: 7748ms
+Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
+Starting test testGetAssignableLocations(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageServiceIntegrationLiveTest)
+location [id=synaptic-storage, scope=PROVIDER, description=https://storage.synaptic.att.com, parent=null, iso3166Codes=[US-VA, US-TX], metadata={}]
+[pool-4-thread-4] Test testGetAssignableLocations(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageServiceIntegrationLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
+Starting test testCreateDirectory(org.jclouds.synaptic.storage.SynapticStorageClientLiveTest)
+[pool-4-thread-3] Test testPutAll(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest) succeeded: 10858ms
+Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
+Starting test testPutMoreThanSingleListing(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest)
+[pool-4-thread-4] Test testCreateDirectory(org.jclouds.synaptic.storage.SynapticStorageClientLiveTest) succeeded: 4275ms
+Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
+Starting test testListDirectorys(org.jclouds.synaptic.storage.SynapticStorageClientLiveTest)
+[pool-4-thread-4] Test testListDirectorys(org.jclouds.synaptic.storage.SynapticStorageClientLiveTest) succeeded: 429ms
+Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
+Starting test testListOptions(org.jclouds.synaptic.storage.SynapticStorageClientLiveTest)
+confirmed deletion after 2517ms
+created string; 495ms
+[pool-4-thread-2] Test testEntrySet(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest) succeeded: 21398ms
+Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
+Starting test testPutAll(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest)
+confirmed deletion after 2579ms
+created string; 557ms
+confirmed deletion after 2695ms
+created string; 568ms
+[pool-4-thread-4] Test testListOptions(org.jclouds.synaptic.storage.SynapticStorageClientLiveTest) succeeded: 10201ms
+Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
+Starting test testFileOperations(org.jclouds.synaptic.storage.SynapticStorageClientLiveTest)
+creating
+confirmed deletion after 3268ms
+created string; 479ms
+overwriting
+confirmed deletion after 1183ms
+created string; 620ms
+upload/delete/create attempt 1 type stream
+confirmed deletion after 850ms
+created string; 569ms
+[pool-4-thread-5] Test testClearWhenContentsUnderPath(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest) succeeded: 41335ms
+Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
+Starting test testDirectory(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest)
+confirmed deletion after 1097ms
+[pool-4-thread-2] Test testPutAll(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest) succeeded: 21472ms
+Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
+Starting test testPutAllBytes(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest)
+confirmed deletion after 3555ms
+created string; 811ms
+upload/delete/create attempt 2 type stream
+confirmed deletion after 1105ms
+created string; 738ms
+confirmed deletion after 1220ms
+[pool-4-thread-3] Test testPutMoreThanSingleListing(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest) succeeded: 38269ms
+Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
+Starting test testRemove(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest)
+confirmed deletion after 4418ms
+created string; 597ms
+[pool-4-thread-1] Test testBigFileGets(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest) succeeded: 54647ms
+Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
+Starting test testPutFileParallel(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest)
+upload/delete/create attempt 3 type stream
+confirmed deletion after 1054ms
+created string; 483ms
+confirmed deletion after 952ms
+[pool-4-thread-2] Test testPutAllBytes(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest) succeeded: 18826ms
+Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
+Starting test testPutAllFiles(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest)
+confirmed deletion after 3030ms
+created string; 812ms
+upload/delete/create attempt 4 type stream
+confirmed deletion after 618ms
+created string; 477ms
+[pool-4-thread-3] Test testRemove(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest) succeeded: 15821ms
+Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
+Starting test testValues(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest)
+confirmed deletion after 630ms
+confirmed deletion after 2521ms
+created string; 436ms
+upload/delete/create attempt 5 type stream
+confirmed deletion after 582ms
+[pool-4-thread-2] Test testPutAllFiles(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest) succeeded: 11796ms
+Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
+Starting test testPutAllStrings(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest)
+created string; 561ms
+confirmed deletion after 588ms
+confirmed deletion after 2420ms
+created string; 476ms
+upload/delete/create attempt 6 type stream
+confirmed deletion after 649ms
+created string; 551ms
+[pool-4-thread-3] Test testValues(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest) succeeded: 13667ms
+Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
+Starting test testClear(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest)
+confirmed deletion after 603ms
+confirmed deletion after 2526ms
+[pool-4-thread-2] Test testPutAllStrings(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest) succeeded: 11490ms
+Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
+Starting test testPutMoreThanSingleListing(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest)
+created string; 422ms
+upload/delete/create attempt 7 type stream
+confirmed deletion after 624ms
+created string; 480ms
+confirmed deletion after 592ms
+confirmed deletion after 2966ms
+created string; 599ms
+[pool-4-thread-3] Test testClear(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest) succeeded: 11131ms
+Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
+Starting test testContainsKey(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest)
+upload/delete/create attempt 8 type stream
+[pool-4-thread-1] Test testPutFileParallel(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest) succeeded: 36409ms
+Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
+Starting test testPutObject(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest)
+confirmed deletion after 768ms
+created string; 7514ms
+confirmed deletion after 2616ms
+[pool-4-thread-5] Test testDirectory(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest) succeeded: 74784ms
+Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
+Starting test testListContainer(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest)
+confirmed deletion after 9650ms
+created string; 1172ms
+upload/delete/create attempt 9 type stream
+confirmed deletion after 1288ms
+created string; 1180ms
+confirmed deletion after 1028ms
+[pool-4-thread-1] Test testPutObject(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest) succeeded: 32211ms
+Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
+Starting test testPutObject(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest)
+[pool-4-thread-3] Test testContainsKey(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest) succeeded: 33983ms
+Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
+Starting test testDirectory(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest)
+confirmed deletion after 4789ms
+created string; 1267ms
+upload/delete/create attempt 10 type stream
+confirmed deletion after 1981ms
+created string; 413ms
+confirmed deletion after 626ms
+[pool-4-thread-1] Test testPutObject(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest) succeeded: 13729ms
+Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
+Starting test testPutObject(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest)
+[pool-4-thread-2] Test testPutMoreThanSingleListing(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest) succeeded: 55828ms
+Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
+Starting test testRemove(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest)
+confirmed deletion after 3248ms
+created string; 446ms
+upload/delete/create attempt 1 type string
+confirmed deletion after 613ms
+created string; 372ms
+confirmed deletion after 679ms
+confirmed deletion after 2441ms
+created string; 518ms
+upload/delete/create attempt 2 type string
+[pool-4-thread-1] Test testPutObject(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobIntegrationLiveTest) succeeded: 9564ms
+Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
+confirmed deletion after 605ms
+created string; 454ms
+confirmed deletion after 587ms
+[pool-4-thread-2] Test testRemove(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest) succeeded: 12806ms
+Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
+Starting test testValues(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest)
+confirmed deletion after 2359ms
+created string; 434ms
+upload/delete/create attempt 3 type string
+confirmed deletion after 602ms
+created string; 471ms
+confirmed deletion after 612ms
+confirmed deletion after 2379ms
+created string; 418ms
+upload/delete/create attempt 4 type string
+confirmed deletion after 654ms
+created string; 438ms
+[pool-4-thread-2] Test testValues(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest) succeeded: 9738ms
+Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
+Starting test testClear(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest)
+confirmed deletion after 587ms
+confirmed deletion after 2392ms
+created string; 474ms
+upload/delete/create attempt 5 type string
+confirmed deletion after 597ms
+created string; 430ms
+confirmed deletion after 597ms
+confirmed deletion after 2318ms
+[pool-4-thread-5] Test testListContainer(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest) succeeded: 59320ms
+Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
+Starting test testListContainerPrefix(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest)
+created string; 397ms
+[pool-4-thread-2] Test testClear(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest) succeeded: 10148ms
+Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
+Starting test testContainsKey(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest)
+upload/delete/create attempt 6 type string
+confirmed deletion after 623ms
+created string; 390ms
+confirmed deletion after 613ms
+confirmed deletion after 2424ms
+created string; 495ms
+upload/delete/create attempt 7 type string
+confirmed deletion after 581ms
+created string; 473ms
+[pool-4-thread-2] Test testContainsKey(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest) succeeded: 8947ms
+Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
+Starting test testDirectory(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest)
+confirmed deletion after 585ms
+confirmed deletion after 2350ms
+created string; 470ms
+upload/delete/create attempt 8 type string
+confirmed deletion after 668ms
+created string; 404ms
+confirmed deletion after 613ms
+confirmed deletion after 2326ms
+created string; 423ms
+upload/delete/create attempt 9 type string
+confirmed deletion after 602ms
+created string; 417ms
+confirmed deletion after 587ms
+confirmed deletion after 2316ms
+created string; 423ms
+upload/delete/create attempt 10 type string
+confirmed deletion after 578ms
+created string; 408ms
+confirmed deletion after 587ms
+[pool-4-thread-3] Test testDirectory(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest) failed.
+Test suite progress: tests succeeded: 50, failed: 1, skipped: 0.
+Starting test testIsEmpty(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest)
+confirmed deletion after 2263ms
+created string; 430ms
+[pool-4-thread-4] Test testFileOperations(org.jclouds.synaptic.storage.SynapticStorageClientLiveTest) succeeded: 177942ms
+Test suite progress: tests succeeded: 51, failed: 1, skipped: 0.
+[pool-4-thread-3] Test testIsEmpty(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest) succeeded: 9435ms
+Test suite progress: tests succeeded: 52, failed: 1, skipped: 0.
+Starting test testKeySet(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest)
+[pool-4-thread-3] Test testKeySet(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest) succeeded: 9189ms
+Test suite progress: tests succeeded: 53, failed: 1, skipped: 0.
+Starting test testListContainer(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest)
+[pool-4-thread-3] Test testListContainer(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest) succeeded: 5571ms
+Test suite progress: tests succeeded: 54, failed: 1, skipped: 0.
+[pool-4-thread-2] Test testDirectory(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest) failed.
+Test suite progress: tests succeeded: 54, failed: 2, skipped: 0.
+Starting test testIsEmpty(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-5] Test testListContainerPrefix(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest) succeeded: 75855ms
+Test suite progress: tests succeeded: 55, failed: 2, skipped: 0.
+Starting test testListRootUsesDelimiter(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest)
+[pool-4-thread-2] Test testIsEmpty(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest) succeeded: 10403ms
+Test suite progress: tests succeeded: 56, failed: 2, skipped: 0.
+Starting test testKeySet(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-2] Test testKeySet(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest) succeeded: 9418ms
+Test suite progress: tests succeeded: 57, failed: 2, skipped: 0.
+Starting test testListContainer(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest)
+[pool-4-thread-2] Test testListContainer(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest) succeeded: 5277ms
+Test suite progress: tests succeeded: 58, failed: 2, skipped: 0.
+[pool-4-thread-5] Test testListRootUsesDelimiter(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest) succeeded: 75624ms
+Test suite progress: tests succeeded: 59, failed: 2, skipped: 0.
+Starting test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest)
+[pool-4-thread-5] Test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest) succeeded: 16788ms
+Test suite progress: tests succeeded: 60, failed: 2, skipped: 0.
+Starting test testWithDetails(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest)
+[pool-4-thread-5] Test testWithDetails(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageContainerIntegrationLiveTest) succeeded: 10999ms
+Test suite progress: tests succeeded: 61, failed: 2, skipped: 0.
+Tests run: 63, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 427.575 sec <<< FAILURE!
+
+Results :
+
+Failed tests:   testDirectory(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageBlobMapIntegrationLiveTest): Sets differ: expected [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, apps/0, apps/1, apps/2, apps/3, apps/4, apps/5, apps/6, apps/7, apps/8, apps/9] but got [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  testDirectory(org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageInputStreamMapIntegrationLiveTest): Sets differ: expected [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, apps/0, apps/1, apps/2, apps/3, apps/4, apps/5, apps/6, apps/7, apps/8, apps/9] but got [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+Tests run: 63, Failures: 2, Errors: 0, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 7:25.882s
+[INFO] Finished at: Wed Dec 14 16:43:09 PST 2011
+[INFO] Final Memory: 19M/265M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project synaptic-storage: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/adriancole/workspace/git/jclouds/providers/synaptic-storage/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

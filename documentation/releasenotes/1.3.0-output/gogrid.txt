@@ -1,0 +1,811 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:gogrid:bundle:1.3.0-SNAPSHOT
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/workspace/git/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/workspace/git/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building jclouds GoGrid provider 1.3.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ gogrid ---
+[INFO] Deleting /Users/adriancole/workspace/git/jclouds/providers/gogrid/target
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ gogrid ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-banned-dependencies) @ gogrid ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-java) @ gogrid ---
+[INFO] 
+[INFO] --- maven-remote-resources-plugin:1.2:process (process-remote-resources) @ gogrid ---
+[INFO] Setting property: classpath.resource.loader.class => 'org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader'.
+[INFO] Setting property: velocimacro.messages.on => 'false'.
+[INFO] Setting property: resource.loader => 'classpath'.
+[INFO] Setting property: resource.manager.logwhenfound => 'false'.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ gogrid ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/gogrid/src/main/clojure
+[INFO] Copying 1 resource
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ gogrid ---
+[INFO] Compiling 91 source files to /Users/adriancole/workspace/git/jclouds/providers/gogrid/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ gogrid ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/gogrid/src/test/clojure
+[INFO] Copying 7 resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ gogrid ---
+[INFO] Compiling 28 source files to /Users/adriancole/workspace/git/jclouds/providers/gogrid/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.10:test (default-test) @ gogrid ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/gogrid/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Starting test testWithWrapper(org.jclouds.gogrid.binders.BindIdsToQueryParamsTest)
+Starting test testWithPrimitive(org.jclouds.gogrid.binders.BindIdsToQueryParamsTest)
+[pool-2-thread-2] Test testWithPrimitive(org.jclouds.gogrid.binders.BindIdsToQueryParamsTest) succeeded: 73ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testWithWrapper(org.jclouds.gogrid.binders.BindIdsToQueryParamsTest) succeeded: 85ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test testBinding(org.jclouds.gogrid.binders.BindNamesToQueryParamsTest)
+[pool-3-thread-1] Test testBinding(org.jclouds.gogrid.binders.BindNamesToQueryParamsTest) succeeded: 2ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test testAllStatusCovered(org.jclouds.gogrid.compute.config.GoGridComputeServiceContextModuleTest)
+[pool-4-thread-1] Test testAllStatusCovered(org.jclouds.gogrid.compute.config.GoGridComputeServiceContextModuleTest) succeeded: 8ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Starting test testApplySetsTagFromNameAndCredentialsFromName(org.jclouds.gogrid.compute.functions.ServerToNodeMetadataTest)
+[pool-5-thread-1] Test testApplySetsTagFromNameAndCredentialsFromName(org.jclouds.gogrid.compute.functions.ServerToNodeMetadataTest) succeeded: 206ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test testAs(org.jclouds.gogrid.compute.options.GoGridTemplateOptionsTest)
+[pool-6-thread-1] Test testAs(org.jclouds.gogrid.compute.options.GoGridTemplateOptionsTest) succeeded: 2ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+Starting test testValid(org.jclouds.gogrid.functions.ParseCredentialsFromJsonResponseTest)
+Starting test testFailWhenTooManyPasswords(org.jclouds.gogrid.functions.ParseCredentialsFromJsonResponseTest)
+[pool-7-thread-1] Test testValid(org.jclouds.gogrid.functions.ParseCredentialsFromJsonResponseTest) succeeded: 133ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+[pool-7-thread-2] Test testFailWhenTooManyPasswords(org.jclouds.gogrid.functions.ParseCredentialsFromJsonResponseTest) succeeded: 130ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+Starting test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseErrorFromJsonResponseTest)
+[pool-8-thread-1] Test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseErrorFromJsonResponseTest) succeeded: 4ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+Starting test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseJobsFromJsonResponseTest)
+[pool-9-thread-1] Test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseJobsFromJsonResponseTest) succeeded: 15ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+Starting test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseLoadBalancersFromJsonResponseTest)
+[pool-10-thread-1] Test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseLoadBalancersFromJsonResponseTest) succeeded: 8ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Starting test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseServerNameToCredentialsMapFromJsonResponseTest)
+[pool-11-thread-1] Test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseServerNameToCredentialsMapFromJsonResponseTest) succeeded: 18ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+Starting test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseServersFromJsonResponseTest)
+[pool-12-thread-1] Test testApplyInputStreamDetails(org.jclouds.gogrid.functions.ParseServersFromJsonResponseTest) succeeded: 4ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+Starting test testAsync(org.jclouds.gogrid.GoGridAsyncClientTest)
+Starting test testSync(org.jclouds.gogrid.GoGridAsyncClientTest)
+[pool-13-thread-2] Test testAsync(org.jclouds.gogrid.GoGridAsyncClientTest) succeeded: 118ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+[pool-13-thread-1] Test testSync(org.jclouds.gogrid.GoGridAsyncClientTest) succeeded: 117ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+Starting test testInRestProperties(org.jclouds.gogrid.GoGridProviderTest)
+Starting test testWithId(org.jclouds.gogrid.GoGridProviderTest)
+Starting test testAllContains(org.jclouds.gogrid.GoGridProviderTest)
+Starting test testOfTypeContains(org.jclouds.gogrid.GoGridProviderTest)
+[pool-14-thread-1] Test testInRestProperties(org.jclouds.gogrid.GoGridProviderTest) succeeded: 79ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
+[pool-14-thread-3] Test testAllContains(org.jclouds.gogrid.GoGridProviderTest) succeeded: 77ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
+[pool-14-thread-4] Test testOfTypeContains(org.jclouds.gogrid.GoGridProviderTest) succeeded: 78ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+[pool-14-thread-2] Test testWithId(org.jclouds.gogrid.GoGridProviderTest) succeeded: 85ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+Starting test testHandler(org.jclouds.gogrid.handlers.GoGridErrorHandlerTest)
+[pool-15-thread-1] Test testHandler(org.jclouds.gogrid.handlers.GoGridErrorHandlerTest) succeeded: 7ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+Starting test testAssignability(org.jclouds.gogrid.options.AddServerOptionsTest)
+[pool-16-thread-1] Test testAssignability(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
+Starting test testWith500LengthDescription(org.jclouds.gogrid.options.AddServerOptionsTest)
+[pool-16-thread-2] Test testWith500LengthDescription(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 2ms
+Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
+Starting test testWithDescription(org.jclouds.gogrid.options.AddServerOptionsTest)
+[pool-16-thread-3] Test testWithDescription(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
+Starting test testWithDescriptionNPE(org.jclouds.gogrid.options.AddServerOptionsTest)
+[pool-16-thread-4] Test testWithDescriptionNPE(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
+Starting test testAsSandboxType(org.jclouds.gogrid.options.AddServerOptionsTest)
+[pool-16-thread-5] Test testAsSandboxType(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
+Starting test testAsSandboxTypeStatic(org.jclouds.gogrid.options.AddServerOptionsTest)
+[pool-16-thread-5] Test testAsSandboxTypeStatic(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
+Starting test testNullWithDescription(org.jclouds.gogrid.options.AddServerOptionsTest)
+[pool-16-thread-5] Test testNullWithDescription(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
+Starting test testWith501LengthDescription(org.jclouds.gogrid.options.AddServerOptionsTest)
+[pool-16-thread-5] Test testWith501LengthDescription(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
+Starting test testWithDescriptionStatic(org.jclouds.gogrid.options.AddServerOptionsTest)
+[pool-16-thread-5] Test testWithDescriptionStatic(org.jclouds.gogrid.options.AddServerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
+Starting test testPredicate(org.jclouds.gogrid.predicates.ServerLatestJobCompletedTest)
+[pool-17-thread-1] Test testPredicate(org.jclouds.gogrid.predicates.ServerLatestJobCompletedTest) succeeded: 35ms
+Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
+Starting test testGetImagesByName(org.jclouds.gogrid.services.GridImageAsyncClientTest)
+Starting test testEditImageFriendlyName(org.jclouds.gogrid.services.GridImageAsyncClientTest)
+Starting test testEditImageDescription(org.jclouds.gogrid.services.GridImageAsyncClientTest)
+Starting test testGetImageListWithOptions(org.jclouds.gogrid.services.GridImageAsyncClientTest)
+[pool-18-thread-4] Test testEditImageDescription(org.jclouds.gogrid.services.GridImageAsyncClientTest) succeeded: 83ms
+Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
+[pool-18-thread-3] Test testGetImagesByName(org.jclouds.gogrid.services.GridImageAsyncClientTest) succeeded: 92ms
+Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
+[pool-18-thread-2] Test testGetImageListWithOptions(org.jclouds.gogrid.services.GridImageAsyncClientTest) succeeded: 81ms
+Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
+[pool-18-thread-1] Test testEditImageFriendlyName(org.jclouds.gogrid.services.GridImageAsyncClientTest) succeeded: 93ms
+Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
+Starting test testGetAssignedIpList(org.jclouds.gogrid.services.GridIpAsyncClientTest)
+Starting test testGetIpListWithOptions(org.jclouds.gogrid.services.GridIpAsyncClientTest)
+[pool-19-thread-1] Test testGetAssignedIpList(org.jclouds.gogrid.services.GridIpAsyncClientTest) succeeded: 5ms
+Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
+[pool-19-thread-2] Test testGetIpListWithOptions(org.jclouds.gogrid.services.GridIpAsyncClientTest) succeeded: 5ms
+Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
+Starting test testGetJobListNoOptions(org.jclouds.gogrid.services.GridJobAsyncClientTest)
+[pool-20-thread-2] Test testGetJobListNoOptions(org.jclouds.gogrid.services.GridJobAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
+Starting test testGetJobsForServerName(org.jclouds.gogrid.services.GridJobAsyncClientTest)
+[pool-20-thread-3] Test testGetJobsForServerName(org.jclouds.gogrid.services.GridJobAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
+Starting test testGetJobListWithOptions(org.jclouds.gogrid.services.GridJobAsyncClientTest)
+[pool-20-thread-4] Test testGetJobListWithOptions(org.jclouds.gogrid.services.GridJobAsyncClientTest) succeeded: 16ms
+Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
+Starting test testGetJobsById(org.jclouds.gogrid.services.GridJobAsyncClientTest)
+[pool-20-thread-1] Test testGetJobsById(org.jclouds.gogrid.services.GridJobAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
+Starting test testEditLoadBalancer(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest)
+Starting test testDeleteLoadBalancerById(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest)
+Starting test testGetLoadBalancerList(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest)
+Starting test testEditLoadBalancerNamed(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest)
+Starting test testGetLoadBalancersByName(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest)
+[pool-21-thread-4] Test testDeleteLoadBalancerById(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest) succeeded: 8ms
+Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
+Starting test testAddLoadBalancer(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest)
+[pool-21-thread-2] Test testEditLoadBalancerNamed(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest) succeeded: 8ms
+Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
+[pool-21-thread-1] Test testGetLoadBalancersByName(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest) succeeded: 10ms
+Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
+[pool-21-thread-3] Test testGetLoadBalancerList(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest) succeeded: 17ms
+Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
+[pool-21-thread-4] Test testAddLoadBalancer(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest) succeeded: 12ms
+Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
+[pool-21-thread-5] Test testEditLoadBalancer(org.jclouds.gogrid.services.GridLoadBalancerAsyncClientTest) succeeded: 34ms
+Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
+Starting test testDeleteByName(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+Starting test testGetServerListNoOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+Starting test testServerCredentials(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+Starting test testGetServersByName(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+[pool-22-thread-5] Test testGetServersByName(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 5ms
+Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
+Starting test testTypes(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+[pool-22-thread-3] Test testDeleteByName(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 10ms
+Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
+Starting test testPowerServer(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+[pool-22-thread-4] Test testGetServerListNoOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 11ms
+Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
+Starting test testAddServerOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+[pool-22-thread-5] Test testTypes(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
+[pool-22-thread-2] Test testServerCredentials(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 12ms
+Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
+Starting test testGetRamSizes(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+Starting test testEditServerRam(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+[pool-22-thread-2] Test testGetRamSizes(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
+Starting test testEditServerType(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+[pool-22-thread-5] Test testEditServerRam(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
+Starting test testGetServersById(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+[pool-22-thread-2] Test testEditServerType(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
+Starting test testGetServerListWithOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+[pool-22-thread-2] Test testGetServerListWithOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 55, failed: 0, skipped: 0.
+[pool-22-thread-4] Test testAddServerOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 10ms
+Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
+[pool-22-thread-3] Test testPowerServer(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 13ms
+Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
+[pool-22-thread-5] Test testGetServersById(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 6ms
+Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
+Starting test testEditServerDescription(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+[pool-22-thread-2] Test testEditServerDescription(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
+Starting test testAddServerNoOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest)
+[pool-22-thread-1] Test testAddServerNoOptions(org.jclouds.gogrid.services.GridServerAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
+Tests run: 60, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.424 sec
+
+Results :
+
+Tests run: 60, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.3.3:test (test-clojure) @ gogrid ---
+
+Testing user
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+[INFO] 
+[INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ gogrid ---
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ gogrid ---
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/gogrid/target/gogrid-1.3.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ gogrid ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ gogrid ---
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/gogrid/target/gogrid-1.3.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.10:test (integration) @ gogrid ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/gogrid/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Starting test setServiceDefaults(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)
+[pool-2-thread-1] Test setServiceDefaults(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testCompareSizes(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)
+[pool-2-thread-1] Test testCompareSizes(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 0.
+[pool-2-thread-1] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 1.
+Starting test testCorrectAuthException(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)
+[pool-2-thread-1] Test testCorrectAuthException(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) succeeded: 329ms
+Test suite progress: tests succeeded: 2, failed: 1, skipped: 1.
+Starting test testCreateAndRunAService(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)
+[pool-2-thread-1] Test testCreateAndRunAService(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 2, skipped: 1.
+[pool-2-thread-1] Test testCreateTwoNodesWithRunScript(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 2, skipped: 2.
+[pool-2-thread-1] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 2, skipped: 3.
+[pool-2-thread-1] Test testCredentialsCache(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 2, skipped: 4.
+[pool-2-thread-1] Test testGet(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 2, failed: 2, skipped: 5.
+Starting test testGetAssignableLocations(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)
+Dec 14, 2011 12:07:00 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=1, scope=ZONE, description=US West 1 Datacenter, parent=gogrid, iso3166Codes=[US-CA], metadata={}]
+Dec 14, 2011 12:07:00 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=2, scope=ZONE, description=US East 1 Datacenter, parent=gogrid, iso3166Codes=[US-VA], metadata={}]
+Dec 14, 2011 12:07:00 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=3, scope=ZONE, description=EU-West-1 Datacenter, parent=gogrid, iso3166Codes=[BR-SP], metadata={}]
+[pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) succeeded: 27ms
+Test suite progress: tests succeeded: 3, failed: 2, skipped: 5.
+Starting test testImagesCache(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)
+[pool-2-thread-1] Test testImagesCache(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 3, failed: 3, skipped: 5.
+Starting test testListImages(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)
+[pool-2-thread-1] Test testListImages(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 3, failed: 4, skipped: 5.
+Starting test testListSizes(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)
+[pool-2-thread-1] Test testListSizes(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 4, failed: 4, skipped: 5.
+Starting test testOptionToNotBlock(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)
+[pool-2-thread-1] Test testOptionToNotBlock(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 4, failed: 5, skipped: 5.
+[pool-2-thread-1] Test testReboot(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 4, failed: 5, skipped: 6.
+[pool-2-thread-1] Test testSuspendResume(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 4, failed: 5, skipped: 7.
+[pool-2-thread-1] Test testGetNodesWithDetails(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 4, failed: 5, skipped: 8.
+[pool-2-thread-1] Test testListNodes(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 4, failed: 5, skipped: 9.
+[pool-2-thread-1] Test testDestroyNodes(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 4, failed: 5, skipped: 10.
+[pool-2-thread-1] Test testTemplateMatch(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 4, failed: 5, skipped: 11.
+Starting test testResizeRam(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)
+[pool-2-thread-1] Test testResizeRam(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 4, failed: 6, skipped: 11.
+Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)
+[pool-2-thread-1] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) succeeded: 437ms
+Test suite progress: tests succeeded: 5, failed: 6, skipped: 11.
+Starting test testDefaultTemplateBuilder(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testDefaultTemplateBuilder(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 5, failed: 7, skipped: 11.
+Starting test testCompareSizes(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testCompareSizes(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 5, failed: 8, skipped: 11.
+Starting test testFromTemplate(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testFromTemplate(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 5, failed: 9, skipped: 11.
+Starting test testGetAssignableLocations(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+location [id=1, scope=ZONE, description=US West 1 Datacenter, parent=gogrid, iso3166Codes=[US-CA], metadata={}]
+location [id=2, scope=ZONE, description=US East 1 Datacenter, parent=gogrid, iso3166Codes=[US-VA], metadata={}]
+location [id=3, scope=ZONE, description=EU-West-1 Datacenter, parent=gogrid, iso3166Codes=[BR-SP], metadata={}]
+[pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 6, failed: 9, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 10, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 11, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 12, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 13, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 14, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 15, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 16, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 17, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 18, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 19, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 20, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 21, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 22, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 23, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 24, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 25, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 26, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 27, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 28, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 29, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 30, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 31, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 32, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 33, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 34, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 35, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 36, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 37, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 38, skipped: 11.
+Starting test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 39, skipped: 11.
+Starting test testTemplateBuilderCanUseImageId(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanUseImageId(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 40, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 41, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 42, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 43, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 44, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 45, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 46, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 47, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 48, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 49, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 50, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 51, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 52, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 53, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 54, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 55, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 56, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 57, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 58, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 59, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 60, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 61, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 62, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 63, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 64, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 65, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 66, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 67, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 68, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 69, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 70, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 71, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 72, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 73, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 74, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 75, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 76, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 77, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 78, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 79, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 80, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 81, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 82, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 83, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 84, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 85, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 86, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 87, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 88, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 89, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 90, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 91, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 92, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 93, skipped: 11.
+Starting test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 94, skipped: 11.
+Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 95, skipped: 11.
+Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 96, skipped: 11.
+Starting test testListImages(org.jclouds.gogrid.services.GridImageClientLiveTest)
+Dec 14, 2011 12:11:45 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 1057 is missing the createdon field
+Dec 14, 2011 12:11:45 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 1057 is missing the createdon field
+Dec 14, 2011 12:11:45 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 1058 is missing the createdon field
+Dec 14, 2011 12:11:45 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 1058 is missing the updatedon field
+Dec 14, 2011 12:11:45 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 1058 is missing the createdon field
+Dec 14, 2011 12:11:45 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 1058 is missing the updatedon field
+Dec 14, 2011 12:11:45 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 1059 is missing the createdon field
+Dec 14, 2011 12:11:45 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 1059 is missing the createdon field
+Dec 14, 2011 12:12:00 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 5489 is missing the createdon field
+Dec 14, 2011 12:12:01 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 5489 is missing the createdon field
+Dec 14, 2011 12:12:02 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 5823 is missing the createdon field
+Dec 14, 2011 12:12:03 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 5823 is missing the createdon field
+Dec 14, 2011 12:12:03 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 5824 is missing the createdon field
+Dec 14, 2011 12:12:03 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 5824 is missing the createdon field
+Dec 14, 2011 12:12:03 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 5825 is missing the createdon field
+Dec 14, 2011 12:12:03 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 5825 is missing the createdon field
+Dec 14, 2011 12:12:11 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 6675 is missing the createdon field
+Dec 14, 2011 12:12:11 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 6675 is missing the createdon field
+Dec 14, 2011 12:12:11 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 6676 is missing the createdon field
+Dec 14, 2011 12:12:12 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 6676 is missing the createdon field
+Dec 14, 2011 12:12:12 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 6677 is missing the createdon field
+Dec 14, 2011 12:12:12 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 6677 is missing the createdon field
+Dec 14, 2011 12:12:12 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 6678 is missing the createdon field
+Dec 14, 2011 12:12:12 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 6678 is missing the createdon field
+Dec 14, 2011 12:12:26 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 9928 is missing the createdon field
+Dec 14, 2011 12:12:27 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 9928 is missing the createdon field
+Dec 14, 2011 12:12:27 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 9929 is missing the createdon field
+Dec 14, 2011 12:12:27 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 9929 is missing the createdon field
+Dec 14, 2011 12:12:27 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 9930 is missing the createdon field
+Dec 14, 2011 12:12:27 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 9930 is missing the createdon field
+Dec 14, 2011 12:12:27 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 9931 is missing the createdon field
+Dec 14, 2011 12:12:28 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 9931 is missing the createdon field
+Dec 14, 2011 12:12:28 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 9932 is missing the createdon field
+Dec 14, 2011 12:12:28 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 9932 is missing the createdon field
+Dec 14, 2011 12:12:28 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 9933 is missing the createdon field
+Dec 14, 2011 12:12:28 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 9933 is missing the createdon field
+Dec 14, 2011 12:12:28 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 9934 is missing the createdon field
+Dec 14, 2011 12:12:29 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 9934 is missing the createdon field
+Dec 14, 2011 12:12:29 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 9935 is missing the createdon field
+Dec 14, 2011 12:12:29 PM org.jclouds.gogrid.services.GridImageClientLiveTest checkImage
+WARNING: image 9935 is missing the createdon field
+[pool-2-thread-1] Test testListImages(org.jclouds.gogrid.services.GridImageClientLiveTest) succeeded: 52678ms
+Test suite progress: tests succeeded: 7, failed: 96, skipped: 11.
+Starting test testListJobs(org.jclouds.gogrid.services.GridJobClientLiveTest)
+[pool-2-thread-1] Test testListJobs(org.jclouds.gogrid.services.GridJobClientLiveTest) succeeded: 11782ms
+Test suite progress: tests succeeded: 8, failed: 96, skipped: 11.
+Tests run: 115, Failures: 96, Errors: 0, Skipped: 11, Time elapsed: 355.696 sec <<< FAILURE!
+
+Results :
+
+Failed tests:   testCompareSizes(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest): this is only valid for images
+  testCreateAndRunAService(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest): this is only valid for images
+  testImagesCache(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest): this is only valid for images
+  testListImages(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest): this is only valid for images
+  testOptionToNotBlock(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest): this is only valid for images
+  testResizeRam(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest): this is only valid for images
+  testDefaultTemplateBuilder(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testCompareSizes(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testFromTemplate(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCanUseImageId(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderCannotFind(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): 
+  testTemplateBuilderWithImageIdSpecified(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+  testTemplateBuilderWithLoginUserSpecified(org.jclouds.gogrid.compute.GoGridTemplateBuilderLiveTest): this is only valid for images
+
+Tests run: 115, Failures: 96, Errors: 0, Skipped: 11
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 6:12.663s
+[INFO] Finished at: Wed Dec 14 12:12:45 PST 2011
+[INFO] Final Memory: 20M/265M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project gogrid: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/adriancole/workspace/git/jclouds/providers/gogrid/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
