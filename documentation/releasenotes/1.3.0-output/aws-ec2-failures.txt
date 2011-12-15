@@ -1,19 +1,10 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 154, Failures: 4, Errors: 0, Skipped: 0, Time elapsed: 1,259.655 sec <<< FAILURE!
-testExtendedOptionsAndLogin(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)  Time elapsed: 17.495 sec  <<< FAILURE!
-java.lang.NullPointerException
-	at java.lang.Class.isAssignableFrom(Native Method)
-	at org.jclouds.rest.RestContextSpec.<init>(RestContextSpec.java:60)
-	at org.jclouds.rest.RestContextFactory.createContextSpec(RestContextFactory.java:319)
-	at org.jclouds.rest.RestContextFactory.createContextBuilder(RestContextFactory.java:234)
-	at org.jclouds.rest.RestContextFactory.createContextBuilder(RestContextFactory.java:213)
-	at org.jclouds.rest.RestContextFactory.createContext(RestContextFactory.java:433)
-	at org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest.testExtendedOptionsAndLogin(AWSEC2ComputeServiceLiveTest.java:153)
-testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)  Time elapsed: 126.279 sec  <<< FAILURE!
+Tests run: 154, Failures: 4, Errors: 0, Skipped: 3, Time elapsed: 2,542.172 sec <<< FAILURE!
+testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)  Time elapsed: 8.004 sec  <<< FAILURE!
 java.lang.AssertionError: shouldn't pass with a bad password
-{[id=us-east-1/i-f248ba90, providerId=i-f248ba90, group=ec2-r, name=ec2-r-f248ba90, location=[id=us-east-1c, scope=ZONE, description=us-east-1c, parent=us-east-1, iso3166Codes=[US-VA], metadata={}], uri=null, imageId=us-east-1/ami-1b814f72, os=[name=null, family=amzn-linux, version=2011.09.2, arch=paravirtual, is64Bit=true, description=amazon/amzn-ami-2011.09.2.x86_64-ebs], state=RUNNING, loginPort=22, hostname=ip-10-195-174-135, privateAddresses=[10.195.174.135], publicAddresses=[50.19.147.154], hardware=[id=t1.micro, providerId=t1.micro, name=null, processors=[[cores=1.0, speed=1.0]], ram=630, volumes=[[id=vol-d11887bc, type=SAN, size=null, device=/dev/sda1, durable=true, isBootDevice=true]], supportsImage=And(requiresRootDeviceType(ebs),Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,ALWAYS_TRUE), tags=[]], loginUser=ec2-user, userMetadata={Name=ec2-r-f248ba90}, tags=[]]=[output=I put a bad password
+{[id=us-east-1/i-80de23e2, providerId=i-80de23e2, group=ec2-r, name=ec2-r-80de23e2, location=[id=us-east-1c, scope=ZONE, description=us-east-1c, parent=us-east-1, iso3166Codes=[US-VA], metadata={}], uri=null, imageId=us-east-1/ami-1b814f72, os=[name=null, family=amzn-linux, version=2011.09.2, arch=paravirtual, is64Bit=true, description=amazon/amzn-ami-2011.09.2.x86_64-ebs], state=RUNNING, loginPort=22, hostname=ip-10-243-151-25, privateAddresses=[10.243.151.25], publicAddresses=[184.73.64.41], hardware=[id=t1.micro, providerId=t1.micro, name=null, processors=[[cores=1.0, speed=1.0]], ram=630, volumes=[[id=vol-37dd435a, type=SAN, size=null, device=/dev/sda1, durable=true, isBootDevice=true]], supportsImage=And(requiresRootDeviceType(ebs),Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,ALWAYS_TRUE), tags=[]], loginUser=ec2-user, userMetadata={Name=ec2-r-80de23e2}, tags=[]]=[output=I put a bad password
 , error=, exitCode=0]}
 	at org.jclouds.compute.BaseComputeServiceLiveTest.tryBadPassword(BaseComputeServiceLiveTest.java:291)
 	at org.jclouds.compute.BaseComputeServiceLiveTest.testAScriptExecutionAfterBootWithBasicTemplate(BaseComputeServiceLiveTest.java:249)
@@ -37,12 +28,12 @@ java.lang.AssertionError: shouldn't pass with a bad password
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-test(org.jclouds.aws.ec2.services.TagClientLiveTest)  Time elapsed: 0.001 sec  <<< FAILURE!
+test(org.jclouds.aws.ec2.services.TagClientLiveTest)  Time elapsed: 0 sec  <<< FAILURE!
 java.lang.NullPointerException
 	at com.google.common.base.Preconditions.checkNotNull(Preconditions.java:187)
-	at com.google.common.collect.ImmutableList$Builder.add(ImmutableList.java:584)
+	at com.google.common.collect.ImmutableList$Builder.add(ImmutableList.java:571)
 	at org.jclouds.aws.ec2.services.TagClientLiveTest.test(TagClientLiveTest.java:119)
-deleteSecurityGroup(org.jclouds.aws.ec2.services.TagClientLiveTest)  Time elapsed: 0.01 sec  <<< FAILURE!
+deleteSecurityGroup(org.jclouds.aws.ec2.services.TagClientLiveTest)  Time elapsed: 0.006 sec  <<< FAILURE!
 java.lang.NullPointerException: GroupId
 	at com.google.common.base.Preconditions.checkNotNull(Preconditions.java:204)
 	at org.jclouds.rest.internal.RestAnnotationProcessor.getFormParamKeyValues(RestAnnotationProcessor.java:1250)
@@ -55,6 +46,30 @@ java.lang.NullPointerException: GroupId
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
 	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:140)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
 	at $Proxy82.deleteSecurityGroupInRegionById(Unknown Source)
 	at org.jclouds.aws.ec2.services.TagClientLiveTest.deleteSecurityGroup(TagClientLiveTest.java:109)
+testSuspendResume(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)  Time elapsed: 1,380.344 sec  <<< FAILURE!
+java.lang.AssertionError: [id=us-east-1/i-4adb2628, providerId=i-4adb2628, group=ec2-, name=ec2--4adb2628, location=[id=us-east-1c, scope=ZONE, description=us-east-1c, parent=us-east-1, iso3166Codes=[US-VA], metadata={}], uri=null, imageId=us-east-1/ami-1b814f72, os=[name=null, family=amzn-linux, version=2011.09.2, arch=paravirtual, is64Bit=true, description=amazon/amzn-ami-2011.09.2.x86_64-ebs], state=SUSPENDED, loginPort=22, hostname=null, privateAddresses=[], publicAddresses=[], hardware=[id=t1.micro, providerId=t1.micro, name=null, processors=[[cores=1.0, speed=1.0]], ram=630, volumes=[[id=vol-c7da44aa, type=SAN, size=null, device=/dev/sda1, durable=true, isBootDevice=true]], supportsImage=And(requiresRootDeviceType(ebs),Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,ALWAYS_TRUE), tags=[]], loginUser=null, userMetadata={Name=ec2--4adb2628}, tags=[]]
+	at org.jclouds.compute.BaseComputeServiceLiveTest.testGet(BaseComputeServiceLiveTest.java:486)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.testSuspendResume(BaseComputeServiceLiveTest.java:525)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:76)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
+	at org.testng.TestRunner.privateRun(TestRunner.java:749)
+	at org.testng.TestRunner.run(TestRunner.java:600)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:34)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:351)
+	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:147)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
