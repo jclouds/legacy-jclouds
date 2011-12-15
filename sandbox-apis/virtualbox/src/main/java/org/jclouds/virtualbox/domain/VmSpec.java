@@ -19,6 +19,8 @@
 
 package org.jclouds.virtualbox.domain;
 
+import com.google.common.base.Objects;
+
 import java.util.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -122,30 +124,21 @@ public class VmSpec {
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      VmSpec that = (VmSpec) o;
-
-      if (forceOverwrite != that.forceOverwrite) return false;
-      if (controllers != null ? !controllers.equals(that.controllers) : that.controllers != null) return false;
-      if (natNetworkAdapters != null ? !natNetworkAdapters.equals(that.natNetworkAdapters) : that.natNetworkAdapters != null)
-         return false;
-      if (osTypeId != null ? !osTypeId.equals(that.osTypeId) : that.osTypeId != null) return false;
-      if (vmId != null ? !vmId.equals(that.vmId) : that.vmId != null) return false;
-      if (vmName != null ? !vmName.equals(that.vmName) : that.vmName != null) return false;
-
-      return true;
+      if (o instanceof VmSpec) {
+         VmSpec other = (VmSpec) o;
+         return Objects.equal(vmId, other.vmId) &&
+                 Objects.equal(vmName, other.vmName) &&
+                 Objects.equal(osTypeId, other.osTypeId) &&
+                 Objects.equal(forceOverwrite, other.forceOverwrite) &&
+                 Objects.equal(natNetworkAdapters, other.natNetworkAdapters) &&
+                 Objects.equal(controllers, other.controllers);
+      }
+      return false;
    }
 
    @Override
    public int hashCode() {
-      int result = vmName != null ? vmName.hashCode() : 0;
-      result = 31 * result + (osTypeId != null ? osTypeId.hashCode() : 0);
-      result = 31 * result + (vmId != null ? vmId.hashCode() : 0);
-      result = 31 * result + (forceOverwrite ? 1 : 0);
-      result = 31 * result + (natNetworkAdapters != null ? natNetworkAdapters.hashCode() : 0);
-      result = 31 * result + (controllers != null ? controllers.hashCode() : 0);
-      return result;
+      return Objects.hashCode(vmId, vmName, osTypeId, forceOverwrite, natNetworkAdapters, controllers);
    }
 
    @Override

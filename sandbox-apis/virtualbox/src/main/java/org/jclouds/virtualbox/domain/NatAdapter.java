@@ -19,20 +19,21 @@
 
 package org.jclouds.virtualbox.domain;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 import org.virtualbox_4_1.NATProtocol;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Represents a NAT network adapter in VirtualBox.
- *
+ * <p/>
  * redirectRules are the redirect rules that are applied to the network adapter.
  */
 public class NatAdapter {
 
-   private final Set<RedirectRule> redirectRules = new HashSet<RedirectRule>();
+   private final Set<RedirectRule> redirectRules = Sets.newLinkedHashSet();
 
    public NatAdapter(Set<RedirectRule> redirectRules) {
       this.redirectRules.addAll(redirectRules);
@@ -44,8 +45,7 @@ public class NatAdapter {
 
    public static class Builder {
 
-      private Set<RedirectRule> redirectRules = new HashSet<RedirectRule>();
-      private long adapterSlot;
+      private Set<RedirectRule> redirectRules = Sets.newLinkedHashSet();
 
       public Builder tcpRedirectRule(String host, int hostPort, String guest, int guestPort) {
          redirectRules.add(new RedirectRule(NATProtocol.TCP, host, hostPort, guest, guestPort));
@@ -70,18 +70,16 @@ public class NatAdapter {
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      NatAdapter that = (NatAdapter) o;
-
-      if (redirectRules != null ? !redirectRules.equals(that.redirectRules) : that.redirectRules != null) return false;
-
-      return true;
+      if (o instanceof NatAdapter) {
+         NatAdapter other = (NatAdapter) o;
+         return Objects.equal(redirectRules, other.redirectRules);
+      }
+      return false;
    }
 
    @Override
    public int hashCode() {
-      return redirectRules != null ? redirectRules.hashCode() : 0;
+      return Objects.hashCode(redirectRules);
    }
 
    @Override

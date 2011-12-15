@@ -19,7 +19,10 @@
 
 package org.jclouds.virtualbox.domain;
 
+import com.google.common.base.Objects;
 import org.virtualbox_4_1.DeviceType;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Represents a specification for a device attachment.
@@ -56,4 +59,60 @@ public class DeviceDetails {
       return deviceType;
    }
 
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+
+      private int port;
+      private int deviceSlot;
+      private DeviceType deviceType;
+
+      public Builder port(int port) {
+         this.port = port;
+         return this;
+      }
+
+      public Builder deviceType(DeviceType deviceType) {
+         this.deviceType = deviceType;
+         return this;
+      }
+
+      public Builder deviceSlot(int slot) {
+         this.deviceSlot = slot;
+         return this;
+      }
+
+      public DeviceDetails build() {
+         checkNotNull(deviceType, "deviceType");
+         return new DeviceDetails(port, deviceSlot, deviceType);
+      }
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o instanceof DeviceDetails) {
+         DeviceDetails other = (DeviceDetails) o;
+         return Objects.equal(port, other.port) &&
+                 Objects.equal(deviceSlot, other.deviceSlot)
+                 && Objects.equal(deviceType, other.deviceType);
+      }
+      return false;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(port, deviceSlot, deviceType);
+   }
+
+   @Override
+   public String toString() {
+      return "DeviceDetails{" +
+              "port=" + port +
+              ", deviceSlot=" + deviceSlot +
+              ", deviceType=" + deviceType +
+              '}';
+   }
 }

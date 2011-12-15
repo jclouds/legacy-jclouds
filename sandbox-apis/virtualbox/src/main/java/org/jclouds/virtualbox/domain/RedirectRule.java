@@ -19,6 +19,7 @@
 
 package org.jclouds.virtualbox.domain;
 
+import com.google.common.base.Objects;
 import org.virtualbox_4_1.NATProtocol;
 
 /**
@@ -58,5 +59,35 @@ public class RedirectRule {
 
    public int getGuestPort() {
       return guestPort;
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o instanceof RedirectRule) {
+         RedirectRule other = (RedirectRule) o;
+         return Objects.equal(protocol, other.protocol) &&
+                 Objects.equal(host, other.host) &&
+                 Objects.equal(hostPort, other.hostPort) &&
+                 Objects.equal(guest, other.guest) &&
+                 Objects.equal(guestPort, other.guestPort);
+      }
+      return false;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(protocol, host, hostPort, guest, guestPort);
+   }
+
+   @Override
+   public String toString() {
+      return "RedirectRule{" +
+              "protocol=" + protocol +
+              ", host='" + host + '\'' +
+              ", hostPort=" + hostPort +
+              ", guest='" + guest + '\'' +
+              ", guestPort=" + guestPort +
+              '}';
    }
 }

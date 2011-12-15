@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -19,9 +19,11 @@
 
 package org.jclouds.virtualbox.domain;
 
+import com.google.common.base.Objects;
+
 /**
  * Represents an optical medium (DVD) in a VirtualBox VM.
- *
+ * <p/>
  * sourcePath is the location of the .iso file to load the medium from.
  * deviceDetails contains information about how the Dvd is attached to the StorageController.
  */
@@ -45,21 +47,17 @@ public class IsoImage {
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      IsoImage dvd = (IsoImage) o;
-
-      if (deviceDetails != null ? !deviceDetails.equals(dvd.deviceDetails) : dvd.deviceDetails != null) return false;
-      if (sourcePath != null ? !sourcePath.equals(dvd.sourcePath) : dvd.sourcePath != null) return false;
-
-      return true;
+      if (o instanceof IsoImage) {
+         IsoImage other = (IsoImage) o;
+         return Objects.equal(deviceDetails, other.deviceDetails) &&
+                 Objects.equal(sourcePath, other.sourcePath);
+      }
+      return false;
    }
 
    @Override
    public int hashCode() {
-      int result = deviceDetails != null ? deviceDetails.hashCode() : 0;
-      result = 31 * result + (sourcePath != null ? sourcePath.hashCode() : 0);
-      return result;
+      return Objects.hashCode(deviceDetails, sourcePath);
    }
 
    @Override
