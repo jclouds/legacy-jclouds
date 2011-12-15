@@ -107,6 +107,10 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
    protected VDC vdc;
    public static final String PREFIX = System.getProperty("user.name") + "-terremark";
 
+   public TerremarkClientLiveTest() {
+      this.provider = "trmk-vcloudexpress";
+   }
+   
    @Test
    public void testKeysList() throws Exception {
       for (Org org : orgs) {
@@ -455,12 +459,6 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
       }
 
    }
-
-   protected String provider = "trmk-vcloudexpress";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
