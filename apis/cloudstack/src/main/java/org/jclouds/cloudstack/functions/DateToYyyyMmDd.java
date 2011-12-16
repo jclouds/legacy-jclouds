@@ -16,29 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudstack.features;
+package org.jclouds.cloudstack.functions;
 
-import org.jclouds.cloudstack.domain.JobResult;
-import org.jclouds.cloudstack.domain.UsageRecord;
-import org.jclouds.cloudstack.options.GenerateUsageRecordsOptions;
-import org.jclouds.cloudstack.options.ListUsageRecordsOptions;
-import org.jclouds.concurrent.Timeout;
+import com.google.common.base.Function;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Provides synchronous access to CloudStack usage features.
- * <p/>
+ * Convert a Date object into a "yyyy-MM-dd" String
  *
- * @see org.jclouds.cloudstack.features.GlobalOfferingAsyncClient
- * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Global_Admin.html" />
  * @author Richard Downer
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface GlobalUsageClient {
+public class DateToYyyyMmDd implements Function<Object, String> {
 
-   JobResult generateUsageRecords(Date start, Date end, GenerateUsageRecordsOptions... options);
+   public String apply(Object input) {
+      checkNotNull(input, "input cannot be null");
+      checkArgument(input instanceof Date, "input must be a Date");
+
+      return new SimpleDateFormat("yyyy-MM-dd").format((Date)input);
+   }
 
 }

@@ -39,6 +39,56 @@ import java.util.TimeZone;
 @Test(groups = "unit", testName = "GlobalUsageAsyncClientTest")
 public class GlobalUsageAsyncClientTest extends BaseCloudStackAsyncClientTest<GlobalUsageAsyncClient> {
 
+   public void testGenerateUsageRecords() throws Exception {
+      Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+      c.set(Calendar.YEAR, 2012);
+      c.set(Calendar.MONTH, Calendar.JANUARY);
+      c.set(Calendar.DAY_OF_MONTH, 1);
+      Date start = c.getTime();
+      c.set(Calendar.DAY_OF_MONTH, 31);
+      Date end = c.getTime();
+
+      Method method = GlobalUsageAsyncClient.class.getMethod("generateUsageRecords",
+         Date.class, Date.class, GenerateUsageRecordsOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method, start, end);
+
+      assertRequestLineEquals(httpRequest,
+         "GET http://localhost:8080/client/api?response=json&command=generateUsageRecords&startdate=2012-01-01&enddate=2012-01-31 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testGenerateUsageRecordsOptions() throws Exception {
+      Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+      c.set(Calendar.YEAR, 2012);
+      c.set(Calendar.MONTH, Calendar.JANUARY);
+      c.set(Calendar.DAY_OF_MONTH, 1);
+      Date start = c.getTime();
+      c.set(Calendar.DAY_OF_MONTH, 31);
+      Date end = c.getTime();
+
+      Method method = GlobalUsageAsyncClient.class.getMethod("generateUsageRecords",
+         Date.class, Date.class, GenerateUsageRecordsOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method, start, end, GenerateUsageRecordsOptions.Builder.domainId(42));
+
+      assertRequestLineEquals(httpRequest,
+         "GET http://localhost:8080/client/api?response=json&command=generateUsageRecords&startdate=2012-01-01&enddate=2012-01-31&domainid=42 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+
+      checkFilters(httpRequest);
+   }
+
    @Override
    protected TypeLiteral<RestAnnotationProcessor<GlobalUsageAsyncClient>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<GlobalUsageAsyncClient>>() {

@@ -19,18 +19,18 @@
 package org.jclouds.cloudstack.features;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import org.jclouds.cloudstack.binders.BindEndDateAsYyyyMmDdToQueryParams;
-import org.jclouds.cloudstack.binders.BindStartDateAsYyyyMmDdToQueryParams;
 import org.jclouds.cloudstack.domain.JobResult;
 import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.functions.DateToYyyyMmDd;
 import org.jclouds.cloudstack.options.GenerateUsageRecordsOptions;
-import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.util.Date;
 
@@ -45,5 +45,11 @@ import java.util.Date;
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
 public interface GlobalUsageAsyncClient {
+
+   @GET
+   @QueryParams(keys = "command", values = "generateUsageRecords")
+   @SelectJson("generateusagerecordsresponse")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<JobResult> generateUsageRecords(@QueryParam("startdate") @ParamParser(DateToYyyyMmDd.class) Date start, @QueryParam("enddate") @ParamParser(DateToYyyyMmDd.class) Date end, GenerateUsageRecordsOptions... options);
 
 }
