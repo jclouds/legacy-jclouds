@@ -1,4 +1,0 @@
-<SshKey name="newName">
-    <Default>false</Default>
-    <FingerPrint>123</FingerPrint>
-</SshKey>

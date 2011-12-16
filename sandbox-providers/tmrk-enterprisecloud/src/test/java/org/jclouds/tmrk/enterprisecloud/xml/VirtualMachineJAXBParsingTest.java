@@ -35,7 +35,7 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.BaseRestClientTest;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.tmrk.enterprisecloud.domain.Layout;
+import org.jclouds.tmrk.enterprisecloud.domain.layout.Layout;
 import org.jclouds.tmrk.enterprisecloud.domain.hardware.HardwareConfiguration;
 import org.jclouds.tmrk.enterprisecloud.domain.hardware.VirtualDisk;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;

@@ -23,7 +23,6 @@ import com.google.common.collect.Sets;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -81,7 +80,7 @@ public class VirtualMachines {
    }
 
    @XmlElement(name = "VirtualMachine")
-   private LinkedHashSet<VirtualMachine> virtualMachines = Sets.newLinkedHashSet();
+   private Set<VirtualMachine> virtualMachines = Sets.newLinkedHashSet();
    
    public Set<VirtualMachine> getVirtualMachines() {
       return Collections.unmodifiableSet(virtualMachines);

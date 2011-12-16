@@ -34,6 +34,12 @@ import org.jclouds.tmrk.enterprisecloud.features.*;
 public interface TerremarkEnterpriseCloudAsyncClient {
 
    /**
+    * Provides asynchronous access to Layout features.
+    */
+   @Delegate
+   LayoutAsyncClient getLayoutClient();
+
+   /**
     * Provides asynchronous access to Location features.
     */
    @Delegate
