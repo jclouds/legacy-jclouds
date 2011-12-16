@@ -80,6 +80,7 @@ public class RetryablePredicate<T> implements Predicate<T> {
          }
       } catch (InterruptedException e) {
          logger.warn(e, "predicate %s on %s interrupted, returning false", input, predicate);
+         Thread.currentThread().interrupt();
       } catch (RuntimeException e) {
          if (getFirstThrowableOfType(e, ExecutionException.class) != null) {
             logger.warn(e, "predicate %s on %s errored [%s], returning false", input, predicate, e.getMessage());
@@ -97,8 +98,9 @@ public class RetryablePredicate<T> implements Predicate<T> {
    }
 
    protected long nextMaxInterval(long attempt, Date end) {
-      // FIXME i think this should be pow(1.5, attempt) -- or alternatively newInterval = oldInterval*1.5
-      long interval = (period * (long) Math.pow(attempt, 1.5));
+      // Interval increases exponentially, at a rate of nextInterval *= 1.5
+      // Note that attempt starts counting at 1
+      long interval = (long) (period * Math.pow(1.5, (attempt-1)));
       interval = interval > maxPeriod ? maxPeriod : interval;
       long max = end.getTime() - System.currentTimeMillis();
       return (interval > max) ? max : interval;
