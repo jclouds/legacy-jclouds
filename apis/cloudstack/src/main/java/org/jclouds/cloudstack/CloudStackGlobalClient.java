@@ -26,6 +26,7 @@ import org.jclouds.cloudstack.features.GlobalCapacityClient;
 import org.jclouds.cloudstack.features.GlobalHostClient;
 import org.jclouds.cloudstack.features.GlobalOfferingClient;
 import org.jclouds.cloudstack.features.GlobalStoragePoolClient;
+import org.jclouds.cloudstack.features.GlobalUsageClient;
 import org.jclouds.cloudstack.features.GlobalUserClient;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
@@ -88,4 +89,9 @@ public interface CloudStackGlobalClient extends CloudStackDomainClient {
    @Delegate
    GlobalStoragePoolClient getStoragePoolClient();
 
+   /**
+    * Provides synchronous access to Usage
+    */
+   @Delegate
+   GlobalUsageClient getUsageClient();
 }
