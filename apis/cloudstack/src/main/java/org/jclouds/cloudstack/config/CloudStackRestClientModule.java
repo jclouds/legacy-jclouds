@@ -60,6 +60,8 @@ import org.jclouds.cloudstack.features.GlobalOfferingAsyncClient;
 import org.jclouds.cloudstack.features.GlobalOfferingClient;
 import org.jclouds.cloudstack.features.GlobalStoragePoolAsyncClient;
 import org.jclouds.cloudstack.features.GlobalStoragePoolClient;
+import org.jclouds.cloudstack.features.GlobalUsageAsyncClient;
+import org.jclouds.cloudstack.features.GlobalUsageClient;
 import org.jclouds.cloudstack.features.GlobalUserAsyncClient;
 import org.jclouds.cloudstack.features.GlobalUserClient;
 import org.jclouds.cloudstack.features.GuestOSAsyncClient;
@@ -155,6 +157,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
          .put(GlobalOfferingClient.class, GlobalOfferingAsyncClient.class)//
          .put(GlobalHostClient.class, GlobalHostAsyncClient.class)//
          .put(GlobalStoragePoolClient.class, GlobalStoragePoolAsyncClient.class)//
+         .put(GlobalUsageClient.class, GlobalUsageAsyncClient.class)//
          .build();
 
    @Override
