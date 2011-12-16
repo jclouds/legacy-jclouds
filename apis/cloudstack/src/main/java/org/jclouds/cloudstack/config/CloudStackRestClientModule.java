@@ -60,6 +60,8 @@ import org.jclouds.cloudstack.features.GlobalOfferingAsyncClient;
 import org.jclouds.cloudstack.features.GlobalOfferingClient;
 import org.jclouds.cloudstack.features.GlobalStoragePoolAsyncClient;
 import org.jclouds.cloudstack.features.GlobalStoragePoolClient;
+import org.jclouds.cloudstack.features.GlobalUsageAsyncClient;
+import org.jclouds.cloudstack.features.GlobalUsageClient;
 import org.jclouds.cloudstack.features.GlobalUserAsyncClient;
 import org.jclouds.cloudstack.features.GlobalUserClient;
 import org.jclouds.cloudstack.features.GuestOSAsyncClient;
@@ -101,7 +103,6 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
-import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.location.Provider;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContext;
@@ -155,6 +156,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
          .put(GlobalOfferingClient.class, GlobalOfferingAsyncClient.class)//
          .put(GlobalHostClient.class, GlobalHostAsyncClient.class)//
          .put(GlobalStoragePoolClient.class, GlobalStoragePoolAsyncClient.class)//
+         .put(GlobalUsageClient.class, GlobalUsageAsyncClient.class)//
          .build();
 
    @Override
@@ -183,7 +185,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
 
    @Override
    protected void configure() {
-      bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+      bind(DateAdapter.class).to(CloudStackDateAdapter.class);
       bind(new TypeLiteral<RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient>>() {
       }).to(new TypeLiteral<RestContextImpl<CloudStackDomainClient, CloudStackDomainAsyncClient>>() {
       });

@@ -1,0 +1,1 @@
+{ "listusagerecordsresponse" : { "count":1 ,"usagerecord" : [  {"account":"admin","accountid":2,"domainid":1,"zoneid":1,"description":"Template Id:203 Size:3117171712","usage":"24 Hrs","usagetype":7,"rawusage":"24","templateid":0,"usageid":203,"size":3117171712,"startdate":"2011-12-15'T'00:00:00+00:00","enddate":"2011-12-15'T'23:59:59+00:00"} ] } }

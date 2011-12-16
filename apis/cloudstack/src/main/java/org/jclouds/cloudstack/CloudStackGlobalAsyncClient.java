@@ -24,6 +24,7 @@ import org.jclouds.cloudstack.features.GlobalCapacityAsyncClient;
 import org.jclouds.cloudstack.features.GlobalHostAsyncClient;
 import org.jclouds.cloudstack.features.GlobalOfferingAsyncClient;
 import org.jclouds.cloudstack.features.GlobalStoragePoolAsyncClient;
+import org.jclouds.cloudstack.features.GlobalUsageAsyncClient;
 import org.jclouds.cloudstack.features.GlobalUserAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 
@@ -84,4 +85,9 @@ public interface CloudStackGlobalAsyncClient extends CloudStackDomainAsyncClient
    @Delegate
    GlobalStoragePoolAsyncClient getStoragePoolClient();
 
+   /**
+    * Provides asynchronous access to Usage
+    */
+   @Delegate
+   GlobalUsageAsyncClient getUsageClient();
 }
