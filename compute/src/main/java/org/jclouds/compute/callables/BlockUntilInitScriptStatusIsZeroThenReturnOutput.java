@@ -70,6 +70,11 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFu
    public BlockUntilInitScriptStatusIsZeroThenReturnOutput(
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
             final ScriptStatusReturnsZero stateRunning, @Assisted final SudoAwareInitManager commandRunner) {
+      
+      long retryMaxWait = TimeUnit.DAYS.toMillis(365); // arbitrarily high value, but Long.MAX_VALUE doesn't work!
+      long retryPeriod = 500;
+      long retryMaxPeriod = 5000;
+      
       this.commandRunner = checkNotNull(commandRunner, "commandRunner");
       this.userThreads = checkNotNull(userThreads, "userThreads");
       this.notRunningAnymore = new RetryablePredicate<String>(new Predicate<String>() {
@@ -78,8 +83,7 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFu
          public boolean apply(String arg0) {
             return commandRunner.runAction(arg0).getOutput().trim().equals("");
          }
-         // arbitrarily high value, but Long.MAX_VALUE doesn't work!
-      }, TimeUnit.DAYS.toMillis(365)) {
+      }, retryMaxWait, retryPeriod, retryMaxPeriod, TimeUnit.MILLISECONDS) {
          /**
           * make sure we stop the retry loop if someone cancelled the future, this keeps threads
           * from being consumed on dead tasks
