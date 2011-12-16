@@ -28,8 +28,6 @@ import java.util.concurrent.TimeoutException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.domain.ExecResponse;
@@ -43,7 +41,9 @@ import org.jclouds.ssh.SshClient;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.AbstractFuture;
+import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.google.inject.name.Named;
 
 /**
  * A future that works in tandem with a task that was invoked by {@link InitBuilder}
@@ -69,11 +69,12 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFu
    @Inject
    public BlockUntilInitScriptStatusIsZeroThenReturnOutput(
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
+            ComputeServiceConstants.InitStatusProperties properties,
             final ScriptStatusReturnsZero stateRunning, @Assisted final SudoAwareInitManager commandRunner) {
       
       long retryMaxWait = TimeUnit.DAYS.toMillis(365); // arbitrarily high value, but Long.MAX_VALUE doesn't work!
-      long retryPeriod = 500;
-      long retryMaxPeriod = 5000;
+      long retryInitialPeriod = properties.initStatusInitialPeriod;
+      long retryMaxPeriod = properties.initStatusMaxPeriod;
       
       this.commandRunner = checkNotNull(commandRunner, "commandRunner");
       this.userThreads = checkNotNull(userThreads, "userThreads");
@@ -83,7 +84,7 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFu
          public boolean apply(String arg0) {
             return commandRunner.runAction(arg0).getOutput().trim().equals("");
          }
-      }, retryMaxWait, retryPeriod, retryMaxPeriod, TimeUnit.MILLISECONDS) {
+      }, retryMaxWait, retryInitialPeriod, retryMaxPeriod, TimeUnit.MILLISECONDS) {
          /**
           * make sure we stop the retry loop if someone cancelled the future, this keeps threads
           * from being consumed on dead tasks
