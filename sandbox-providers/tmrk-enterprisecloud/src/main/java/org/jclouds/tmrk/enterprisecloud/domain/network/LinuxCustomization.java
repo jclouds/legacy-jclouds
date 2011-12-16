@@ -40,7 +40,7 @@ public class LinuxCustomization {
 
    public static class Builder {
 
-      private NetworkSettings networkSettings;
+      private NetworkSettings networkSettings = NetworkSettings.builder().build();
       private AnonymousResource sshKey;
 
       /**

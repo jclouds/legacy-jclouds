@@ -39,7 +39,7 @@ public class NetworkSettings {
 
    public static class Builder {
 
-      private NetworkAdapterSettings networkAdapterSettings;
+      private NetworkAdapterSettings networkAdapterSettings = NetworkAdapterSettings.builder().build();
       private DnsSettings dnsSettings;
 
       /**

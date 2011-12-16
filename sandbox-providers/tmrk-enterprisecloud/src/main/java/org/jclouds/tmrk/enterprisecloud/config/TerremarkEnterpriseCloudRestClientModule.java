@@ -18,10 +18,7 @@
  */
 package org.jclouds.tmrk.enterprisecloud.config;
 
-import java.io.IOException;
-import java.util.Map;
-
-import com.google.inject.Provides;
+import com.google.common.collect.ImmutableMap;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
@@ -36,11 +33,7 @@ import org.jclouds.tmrk.enterprisecloud.TerremarkEnterpriseCloudClient;
 import org.jclouds.tmrk.enterprisecloud.features.*;
 import org.jclouds.tmrk.enterprisecloud.handlers.TerremarkEnterpriseCloudErrorHandler;
 
-import com.google.common.collect.ImmutableMap;
-import org.jclouds.util.Strings2;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
+import java.util.Map;
 
 /**
  * Configures the TerremarkEnterpriseCloud connection.
@@ -53,6 +46,7 @@ public class TerremarkEnterpriseCloudRestClientModule extends
       RestClientModule<TerremarkEnterpriseCloudClient, TerremarkEnterpriseCloudAsyncClient> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
+         .put(LayoutClient.class, LayoutAsyncClient.class)
          .put(LocationClient.class, LocationAsyncClient.class)
          .put(NetworkClient.class, NetworkAsyncClient.class)
          .put(ResourceClient.class, ResourceAsyncClient.class)

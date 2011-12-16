@@ -20,7 +20,7 @@ package org.jclouds.tmrk.enterprisecloud.domain.vm;
 
 import com.google.common.collect.Sets;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.tmrk.enterprisecloud.domain.LayoutRequest;
+import org.jclouds.tmrk.enterprisecloud.domain.layout.LayoutRequest;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
 
 import javax.xml.bind.annotation.XmlAttribute;
