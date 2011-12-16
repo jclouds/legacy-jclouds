@@ -81,6 +81,6 @@ public class CreateUniqueKeyPair implements Function<OrgAndName, KeyPair> {
    }
 
    private String getNextName(String keyPairName) {
-      return "jclouds#" + keyPairName + "#" + randomSuffix.get();
+      return "jclouds_" + keyPairName.replaceAll("-", "_") + "_" + randomSuffix.get();
    }
 }
