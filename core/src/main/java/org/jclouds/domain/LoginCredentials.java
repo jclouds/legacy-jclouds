@@ -18,6 +18,8 @@
  */
 package org.jclouds.domain;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.util.CredentialUtils;
 
@@ -25,7 +27,6 @@ import org.jclouds.util.CredentialUtils;
  * @author Adrian Cole
  */
 public class LoginCredentials extends Credentials {
-
    public static Builder builder(Credentials creds) {
       if (creds == null)
          return builder();
@@ -40,10 +41,9 @@ public class LoginCredentials extends Credentials {
    }
 
    public static class Builder extends Credentials.Builder<LoginCredentials> {
-
       private boolean authenticateSudo;
-      private String password;
-      private String privateKey;
+      private Optional<String> password;
+      private Optional<String> privateKey;
 
       public Builder identity(String identity) {
          return Builder.class.cast(super.identity(identity));
@@ -54,20 +54,30 @@ public class LoginCredentials extends Credentials {
       }
 
       public Builder password(String password) {
-         this.password = password;
+         this.password = Optional.fromNullable(password);
+         return this;
+      }
+
+      public Builder noPassword() {
+         this.password = Optional.absent();
          return this;
       }
 
       public Builder privateKey(String privateKey) {
-         this.privateKey = privateKey;
+         this.privateKey = Optional.fromNullable(privateKey);
+         return this;
+      }
+
+      public Builder noPrivateKey() {
+         this.privateKey = Optional.absent();
          return this;
       }
 
       public Builder credential(String credential) {
          if (CredentialUtils.isPrivateKeyCredential(credential))
-            return privateKey(credential);
+            return noPassword().privateKey(credential);
          else if (credential != null)
-            return password(credential);
+            return password(credential).noPrivateKey();
          return this;
       }
 
@@ -84,12 +94,21 @@ public class LoginCredentials extends Credentials {
    }
 
    private final boolean authenticateSudo;
-   private final String password;
-   private final String privateKey;
+   private final Optional<String> password;
+   private final Optional<String> privateKey;
 
-   public LoginCredentials(String username, @Nullable String password, @Nullable String privateKey,
-         boolean authenticateSudo) {
-      super(username, CredentialUtils.isPrivateKeyCredential(privateKey) ? privateKey : password);
+   public LoginCredentials(String username, boolean authenticateSudo) {
+      this(username, Optional.<String>absent(), Optional.<String>absent(), authenticateSudo);
+   }
+
+   public LoginCredentials(String username, @Nullable String password, @Nullable String privateKey, boolean authenticateSudo) {
+      this(username, Optional.fromNullable(password), Optional.fromNullable(privateKey), authenticateSudo);
+   }
+
+   public LoginCredentials(String username, @Nullable Optional<String> password, @Nullable Optional<String> privateKey, boolean authenticateSudo) {
+      super(username, privateKey != null && privateKey.isPresent() && CredentialUtils.isPrivateKeyCredential(privateKey.get())
+                    ? privateKey.get()
+                    : (password != null && password.isPresent() ? password.get() : null));
       this.authenticateSudo = authenticateSudo;
       this.password = password;
       this.privateKey = privateKey;
@@ -103,11 +122,47 @@ public class LoginCredentials extends Credentials {
    }
 
    /**
+    * @return true if a password is available
+    */
+   public boolean hasPassword() {
+      return password != null && password.isPresent();
+   }
+
+   /**
+    * @return true if a password was set
+    */
+   public boolean hasPasswordOption() {
+      return password != null;
+   }
+
+   /**
     * @return the password of the login user or null
     */
    @Nullable
    public String getPassword() {
+      return hasPassword() ? password.get() : null;
+   }
+
+   /**
+    * @return the optional password of the user or null
+    */
+   @Nullable
+   public Optional<String> getOptionalPassword() {
       return password;
+   }
+
+   /**
+    * @return true if a private key is available
+    */
+   public boolean hasPrivateKey() {
+      return privateKey != null && privateKey.isPresent();
+   }
+
+   /**
+    * @return true if a password was set
+    */
+   public boolean hasPrivateKeyOption() {
+      return privateKey != null;
    }
 
    /**
@@ -115,6 +170,14 @@ public class LoginCredentials extends Credentials {
     */
    @Nullable
    public String getPrivateKey() {
+      return  hasPrivateKey() ? privateKey.get() : null;
+   }
+
+   /**
+    * @return the optional private ssh key of the user or null
+    */
+   @Nullable
+   public Optional<String> getOptionalPrivateKey() {
       return privateKey;
    }
 
@@ -132,47 +195,27 @@ public class LoginCredentials extends Credentials {
 
    @Override
    public Builder toBuilder() {
-      return new Builder().user(identity).password(password).privateKey(privateKey).authenticateSudo(authenticateSudo);
-   }
-
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + (authenticateSudo ? 1231 : 1237);
-      result = prime * result + ((password == null) ? 0 : password.hashCode());
-      result = prime * result + ((privateKey == null) ? 0 : privateKey.hashCode());
-      return result;
+      Builder builder = new Builder().user(identity).authenticateSudo(authenticateSudo);
+      if (password != null) {
+         if (password.isPresent()) {
+            builder = builder.password(password.get());
+         } else {
+            builder = builder.noPassword();
+         }
+      }
+      if (privateKey != null) {
+         if (privateKey.isPresent()) {
+            builder = builder.privateKey(privateKey.get());
+         } else {
+            builder = builder.noPrivateKey();
+         }
+      }
+      return builder;
    }
 
    @Override
    public String toString() {
-      return "[user=" + getUser() + ", passwordPresent=" + (password != null) + ", privateKeyPresent="
-            + (privateKey != null) + ", shouldAuthenticateSudo=" + authenticateSudo + "]";
+      return "[user=" + getUser() + ", passwordPresent=" + hasPassword() + ", privateKeyPresent="
+            + hasPrivateKey() + ", shouldAuthenticateSudo=" + authenticateSudo + "]";
    }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      LoginCredentials other = (LoginCredentials) obj;
-      if (authenticateSudo != other.authenticateSudo)
-         return false;
-      if (password == null) {
-         if (other.password != null)
-            return false;
-      } else if (!password.equals(other.password))
-         return false;
-      if (privateKey == null) {
-         if (other.privateKey != null)
-            return false;
-      } else if (!privateKey.equals(other.privateKey))
-         return false;
-      return true;
-   }
-
 }

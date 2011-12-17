@@ -21,6 +21,7 @@ package org.jclouds.compute.options;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.base.Optional;
 import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
@@ -38,7 +39,7 @@ public class RunScriptOptions {
     * Default options. The default settings are:
     * <ul>
     * <li>override the credentials with ones supplied in call to
-    * {@link org.jclouds.compute.ComputeService#runScriptOnNodesWithTag}</li>
+    * {@link org.jclouds.compute.ComputeService#runScriptOnNodesMatching}</li>
     * <li>run the script as root (versus running with current privileges)</li>
     * </ul>
     */
@@ -185,8 +186,8 @@ public class RunScriptOptions {
 
    protected String loginUser;
    protected Boolean authenticateSudo;
-   protected String loginPassword;
-   protected String loginPrivateKey;
+   protected Optional<String> loginPassword;
+   protected Optional<String> loginPrivateKey;
 
    @Deprecated
    public RunScriptOptions overrideCredentialsWith(Credentials overridingCredentials) {
@@ -196,8 +197,8 @@ public class RunScriptOptions {
    public RunScriptOptions overrideLoginCredentials(LoginCredentials overridingCredentials) {
       checkNotNull(overridingCredentials, "overridingCredentials");
       this.loginUser = overridingCredentials.getUser();
-      this.loginPassword = overridingCredentials.getPassword();
-      this.loginPrivateKey = overridingCredentials.getPrivateKey();
+      this.loginPassword = overridingCredentials.getOptionalPassword();
+      this.loginPrivateKey = overridingCredentials.getOptionalPrivateKey();
       this.authenticateSudo = overridingCredentials.shouldAuthenticateSudo() ? true : null;
       return this;
    }
@@ -217,22 +218,24 @@ public class RunScriptOptions {
    public RunScriptOptions overrideLoginCredentialWith(String loginCredential) {
       checkNotNull(loginCredential, "loginCredential");
       if (CredentialUtils.isPrivateKeyCredential(loginCredential)) {
-         this.loginPrivateKey = loginCredential;
+         this.loginPrivateKey = Optional.of(loginCredential);
+         this.loginPassword = Optional.absent();
       } else {
-         this.loginPassword = loginCredential;
+         this.loginPrivateKey = Optional.absent();
+         this.loginPassword = Optional.of(loginCredential);
       }
       return this;
    }
 
    public RunScriptOptions overrideLoginPassword(String password) {
       checkNotNull(password, "password");
-      this.loginPassword = password;
+      this.loginPassword = Optional.of(password);
       return this;
    }
 
    public RunScriptOptions overrideLoginPrivateKey(String privateKey) {
       checkNotNull(privateKey, "privateKey");
-      this.loginPrivateKey = privateKey;
+      this.loginPrivateKey = Optional.of(privateKey);
       return this;
    }
 
@@ -339,19 +342,46 @@ public class RunScriptOptions {
     */
    @Deprecated
    public Credentials getOverridingCredentials() {
-      return DefaultCredentialsFromImageOrOverridingCredentials.overrideDefaultCredentialsWithOptionsIfPresent(null,
-            this);
+      return DefaultCredentialsFromImageOrOverridingCredentials.overrideDefaultCredentialsWithOptionsIfPresent(null, this);
    }
    
    /**
-    * 
+    * @return true if the login password has been configured
+    */
+   public boolean hasLoginPasswordOption() {
+      return loginPassword != null;
+   }
+
+   /**
+    * @return true if the login password is set
+    */
+   public boolean hasLoginPassword() {
+      return hasLoginPasswordOption() && loginPassword.isPresent();
+   }
+
+   /**
+    *
     * @return the login password for
     *         {@link org.jclouds.compute.ComputeService#runScriptOnNode}. By
     *         default, null.
     */
    @Nullable
    public String getLoginPassword() {
-      return loginPassword;
+      return hasLoginPassword() ? loginPassword.get() : null;
+   }
+
+   /**
+    * @return true if the login ssh key has been configured
+    */
+   public boolean hasLoginPrivateKeyOption() {
+      return loginPrivateKey != null;
+   }
+
+   /**
+    * @return true if the login ssh key is set
+    */
+   public boolean hasLoginPrivateKey() {
+      return hasLoginPrivateKeyOption() && loginPrivateKey.isPresent();
    }
 
    /**
@@ -362,7 +392,7 @@ public class RunScriptOptions {
     */
    @Nullable
    public String getLoginPrivateKey() {
-      return loginPrivateKey;
+      return hasLoginPrivateKey() ? loginPrivateKey.get() : null;
    }
 
    /**

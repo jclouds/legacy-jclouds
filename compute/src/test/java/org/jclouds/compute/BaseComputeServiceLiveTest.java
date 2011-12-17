@@ -286,7 +286,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
                runningInGroup(group),
                "echo I put a bad password",
                wrapInInitScript(false).runAsRoot(false).overrideLoginCredentials(
-                     LoginCredentials.builder().user(good.identity).credential(null).privateKey(null).password("romeo")
+                     LoginCredentials.builder().user(good.identity).noPrivateKey().password("romeo")
                            .build()));
          assert responses.size() == 0 : "shouldn't pass with a bad password\n" + responses;
       } catch (AssertionError e) {
