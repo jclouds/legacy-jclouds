@@ -18,26 +18,37 @@
  */
 package org.jclouds.predicates;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Stopwatch;
 import com.google.common.base.Supplier;
 
 /**
  * 
  * @author Adrian Cole
- * 
  */
-@Test(groups = "unit", sequential = true)
+@Test(groups = "unit", singleThreaded = true)
 public class RetryablePredicateTest {
-   public static int SLOW_BUILD_SERVER_GRACE = 100;
+   // Grace must be reasonably big; Thread.sleep can take a bit longer to wake up sometimes...
+   public static int SLOW_BUILD_SERVER_GRACE = 250;
+   
+   private Stopwatch stopwatch;
 
+   @BeforeMethod
+   public void setUp() {
+      stopwatch = new Stopwatch();
+   }
+   
    @Test
    void testFalseOnIllegalStateExeception() {
       ensureImmediateReturnFor(new IllegalStateException());
@@ -74,7 +85,8 @@ public class RetryablePredicateTest {
                   }
 
                }, 3, 1, TimeUnit.SECONDS);
-      Date startPlusThird = new Date(System.currentTimeMillis() + 1000);
+      
+      stopwatch.start();
       assert !predicate.apply(new Supplier<String>() {
 
          @Override
@@ -83,76 +95,94 @@ public class RetryablePredicateTest {
          }
 
       });
-      Date now = new Date();
-      assert now.compareTo(startPlusThird) < 0 : String.format("%s should be less than %s", now.getTime(),
-               startPlusThird.getTime());
+      long duration = stopwatch.elapsedMillis();
+      assertOrdered(duration, SLOW_BUILD_SERVER_GRACE);
    }
 
    @Test
    void testAlwaysTrue() {
+      // will call once immediately
       RetryablePredicate<String> predicate = new RetryablePredicate<String>(Predicates.<String> alwaysTrue(), 3, 1,
                TimeUnit.SECONDS);
-      Date startPlusThird = new Date(System.currentTimeMillis() + 1000);
+      stopwatch.start();
       predicate.apply("");
-      Date now = new Date();
-      assert now.compareTo(startPlusThird) < 0 : String.format("%s should be less than %s", now.getTime(),
-               startPlusThird.getTime());
+      long duration = stopwatch.elapsedMillis();
+      assertOrdered(duration, SLOW_BUILD_SERVER_GRACE);
    }
 
    @Test
    void testAlwaysFalseMillis() {
+      // maxWait=3; period=1; maxPeriod defaults to 1*10
+      // will call at 0, 1, 1+(1*1.5), 3
       RetryablePredicate<String> predicate = new RetryablePredicate<String>(Predicates.<String> alwaysFalse(), 3, 1,
                TimeUnit.SECONDS);
-      Date startPlus3Seconds = new Date(System.currentTimeMillis() + 3000);
-      Date startPlus4Seconds = new Date(System.currentTimeMillis() + 4000 + SLOW_BUILD_SERVER_GRACE);
+      stopwatch.start();
       predicate.apply("");
-      Date now = new Date();
-      assert now.compareTo(startPlus3Seconds) >= 0 : String.format("%s should be less than %s", startPlus3Seconds
-               .getTime(), now.getTime());
-      assert now.compareTo(startPlus4Seconds) <= 0 : String.format("%s should be greater than %s", startPlus4Seconds
-               .getTime(), now.getTime());
-
-   }
-
-   private static class ThirdTimeTrue implements Predicate<String> {
-
-      private int count = 0;
-
-      @Override
-      public boolean apply(String input) {
-         return count++ == 2;
-      }
-
+      long duration = stopwatch.elapsedMillis();
+      assertOrdered(3000, duration, 3000+SLOW_BUILD_SERVER_GRACE);
    }
 
    @Test
    void testThirdTimeTrue() {
-      RetryablePredicate<String> predicate = new RetryablePredicate<String>(new ThirdTimeTrue(), 3, 1, TimeUnit.SECONDS);
+      // maxWait=4; period=1; maxPeriod defaults to 1*10
+      // will call at 0, 1, 1+(1*1.5)
+      RepeatedAttemptsPredicate rawPredicate = new RepeatedAttemptsPredicate(2);
+      RetryablePredicate<String> predicate = new RetryablePredicate<String>(rawPredicate, 4, 1, TimeUnit.SECONDS);
 
-      Date startPlus = new Date(System.currentTimeMillis() + 1000);
-      Date startPlus3 = new Date(System.currentTimeMillis() + 3000 + SLOW_BUILD_SERVER_GRACE);
-
+      stopwatch.start();
       predicate.apply("");
-      Date now = new Date();
-      assert now.compareTo(startPlus) >= 0 : String.format("%s should be greater than %s", now.getTime(), startPlus
-               .getTime());
-      assert now.compareTo(startPlus3) <= 0 : String.format("%s should be greater than %s", startPlus3.getTime(), now
-               .getTime());
+      long duration = stopwatch.elapsedMillis();
+      
+      assertOrdered(2500, duration, 2500+SLOW_BUILD_SERVER_GRACE);
+      assertCallFrequency(rawPredicate.callTimes, 0, 1000, 1000+1500);
    }
 
    @Test
    void testThirdTimeTrueLimitedMaxInterval() {
-      RetryablePredicate<String> predicate = new RetryablePredicate<String>(new ThirdTimeTrue(), 3, 1, 1,
+      // maxWait=3; period=1; maxPeriod=1
+      // will call at 0, 1, 1+1
+      RepeatedAttemptsPredicate rawPredicate = new RepeatedAttemptsPredicate(2);
+      RetryablePredicate<String> predicate = new RetryablePredicate<String>(rawPredicate, 3, 1, 1,
                TimeUnit.SECONDS);
 
-      Date startPlus = new Date(System.currentTimeMillis() + 1000);
-      Date startPlus2 = new Date(System.currentTimeMillis() + 2000 + SLOW_BUILD_SERVER_GRACE);
-
+      stopwatch.start();
       predicate.apply("");
-      Date now = new Date();
-      assert now.compareTo(startPlus) >= 0 : String.format("%s should be greater than %s", now.getTime(), startPlus
-               .getTime());
-      assert now.compareTo(startPlus2) <= 0 : String.format("%s should be greater than %s", startPlus2.getTime(), now
-               .getTime());
+      long duration = stopwatch.elapsedMillis();
+      
+      assertOrdered(2000, duration, 2000+SLOW_BUILD_SERVER_GRACE);
+      assertCallFrequency(rawPredicate.callTimes, 0, 1000, 2000);
+   }
+   
+   private static class RepeatedAttemptsPredicate implements Predicate<String> {
+      final List<Long> callTimes = new ArrayList<Long>();
+      private final int succeedOnAttempt;
+      private final Stopwatch stopwatch;
+      private int count = 0;
+      
+      RepeatedAttemptsPredicate(int succeedOnAttempt) {
+         this.succeedOnAttempt = succeedOnAttempt;
+         this.stopwatch = new Stopwatch();
+         stopwatch.start();
+      }
+      @Override
+      public boolean apply(String input) {
+         callTimes.add(stopwatch.elapsedMillis());
+         return count++ == succeedOnAttempt;
+      }
+   }
+   
+   private void assertCallFrequency(List<Long> actual, Integer... expected) {
+      Assert.assertEquals(actual.size(), expected.length);
+      for (int i = 0; i < expected.length; i++) {
+         long callTime = actual.get(i);
+         assertOrdered(expected[i], callTime, expected[i]+SLOW_BUILD_SERVER_GRACE);
+      }
+   }
+   
+   private void assertOrdered(long... vals) {
+      long prevVal = vals[0];
+      for (long val : vals) {
+         assert val >= prevVal : String.format("%s should be ordered", vals);
+      }
    }
 }

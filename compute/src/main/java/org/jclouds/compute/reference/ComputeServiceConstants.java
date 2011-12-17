@@ -36,9 +36,13 @@ public interface ComputeServiceConstants {
    public static final String PROPERTY_TIMEOUT_NODE_SUSPENDED = "jclouds.compute.timeout.node-suspended";
    public static final String PROPERTY_TIMEOUT_SCRIPT_COMPLETE = "jclouds.compute.timeout.script-complete";
    public static final String PROPERTY_TIMEOUT_PORT_OPEN = "jclouds.compute.timeout.port-open";
+   
+   public static final String PROPERTY_INIT_STATUS_INITIAL_PERIOD = "jclouds.compute.init-status.initial-period";
+   public static final String PROPERTY_INIT_STATUS_MAX_PERIOD = "jclouds.compute.init-status.max-period";
+
    /**
-    * comma-separated nodes that we shouldn't attempt to list as they are dead in the provider for
-    * some reason.
+    * comma-separated nodes that we shouldn't attempt to list as they are dead
+    * in the provider for some reason.
     */
    public static final String PROPERTY_BLACKLIST_NODES = "jclouds.compute.blacklist-nodes";
 
@@ -52,6 +56,17 @@ public interface ComputeServiceConstants {
     * </pre>
     */
    public static final String PROPERTY_OS_VERSION_MAP_JSON = "jclouds.compute.os-version-map-json";
+
+   @Singleton
+   public static class InitStatusProperties {
+      @Inject(optional = true)
+      @Named(PROPERTY_INIT_STATUS_INITIAL_PERIOD)
+      public long initStatusInitialPeriod = 500;
+
+      @Inject(optional = true)
+      @Named(PROPERTY_INIT_STATUS_MAX_PERIOD)
+      public long initStatusMaxPeriod = 5000;
+   }
 
    @Singleton
    public static class ReferenceData {
