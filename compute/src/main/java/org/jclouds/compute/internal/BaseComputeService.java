@@ -661,10 +661,20 @@ public class BaseComputeService implements ComputeService {
       Builder builder = LoginCredentials.builder(node.getCredentials());
       if (options.getLoginUser() != null)
          builder.user(options.getLoginUser());
-      if (options.getLoginPassword() != null)
-         builder.password(options.getLoginPassword());
-      if (options.getLoginPrivateKey() != null)
-         builder.privateKey(options.getLoginPrivateKey());
+      if (options.hasLoginPasswordOption()) {
+          if (options.hasLoginPassword()) {
+             builder.password(options.getLoginPassword());
+          } else {
+             builder.noPassword();
+          }
+      }
+      if (options.hasLoginPrivateKeyOption()) {
+          if (options.hasLoginPrivateKey()) {
+             builder.privateKey(options.getLoginPrivateKey());
+          } else {
+             builder.noPrivateKey();
+          }
+      }
       if (options.shouldAuthenticateSudo() != null)
          builder.authenticateSudo(true);
       return NodeMetadataBuilder.fromNodeMetadata(node).credentials(builder.build()).build();
