@@ -18,7 +18,10 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.inject.TypeLiteral;
+import java.lang.reflect.Method;
+import java.util.Calendar;
+import java.util.Date;
+
 import org.jclouds.cloudstack.options.GenerateUsageRecordsOptions;
 import org.jclouds.cloudstack.options.ListUsageRecordsOptions;
 import org.jclouds.http.HttpRequest;
@@ -27,10 +30,7 @@ import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
-import java.lang.reflect.Method;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code GlobalUsageAsyncClient}
@@ -41,7 +41,7 @@ import java.util.TimeZone;
 public class GlobalUsageAsyncClientTest extends BaseCloudStackAsyncClientTest<GlobalUsageAsyncClient> {
 
    public void testGenerateUsageRecords() throws Exception {
-      Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+      Calendar c = Calendar.getInstance();
       c.set(Calendar.YEAR, 2012);
       c.set(Calendar.MONTH, Calendar.JANUARY);
       c.set(Calendar.DAY_OF_MONTH, 1);
@@ -66,7 +66,7 @@ public class GlobalUsageAsyncClientTest extends BaseCloudStackAsyncClientTest<Gl
    }
 
    public void testGenerateUsageRecordsOptions() throws Exception {
-      Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+      Calendar c = Calendar.getInstance();
       c.set(Calendar.YEAR, 2012);
       c.set(Calendar.MONTH, Calendar.JANUARY);
       c.set(Calendar.DAY_OF_MONTH, 1);
@@ -91,7 +91,7 @@ public class GlobalUsageAsyncClientTest extends BaseCloudStackAsyncClientTest<Gl
    }
 
    public void testListUsageRecords() throws Exception {
-      Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+      Calendar c = Calendar.getInstance();
       c.set(Calendar.YEAR, 2012);
       c.set(Calendar.MONTH, Calendar.JANUARY);
       c.set(Calendar.DAY_OF_MONTH, 1);
@@ -116,7 +116,7 @@ public class GlobalUsageAsyncClientTest extends BaseCloudStackAsyncClientTest<Gl
    }
 
    public void testListUsageRecordsOptions() throws Exception {
-      Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+      Calendar c = Calendar.getInstance();
       c.set(Calendar.YEAR, 2012);
       c.set(Calendar.MONTH, Calendar.JANUARY);
       c.set(Calendar.DAY_OF_MONTH, 1);
