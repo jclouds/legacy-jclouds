@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import com.google.common.base.Joiner;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -32,6 +33,9 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Supplier;
+import org.testng.collections.Lists;
+
+import static org.testng.Assert.fail;
 
 /**
  * 
@@ -119,7 +123,7 @@ public class RetryablePredicateTest {
       stopwatch.start();
       predicate.apply("");
       long duration = stopwatch.elapsedMillis();
-      assertOrdered(3000, duration, 3000+SLOW_BUILD_SERVER_GRACE);
+      assertOrdered(2998, duration, 3000+SLOW_BUILD_SERVER_GRACE);
    }
 
    @Test
@@ -179,10 +183,19 @@ public class RetryablePredicateTest {
       }
    }
    
-   private void assertOrdered(long... vals) {
-      long prevVal = vals[0];
-      for (long val : vals) {
-         assert val >= prevVal : String.format("%s should be ordered", vals);
+   private void assertOrdered(long... values) {
+      long prevVal = values[0];
+      for (long val : values) {
+         if (val < prevVal) {
+            fail(String.format("%s should be ordered", asString(values)));
+         }
       }
+   }
+
+   private String asString(long... values) {
+      List<Long> result = Lists.newArrayList(values.length);
+      for(long element : values) result.add(element);
+
+      return "[" + Joiner.on(", ").join(result) + "]";
    }
 }
