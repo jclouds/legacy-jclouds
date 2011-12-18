@@ -20,18 +20,23 @@
 package org.jclouds.virtualbox.functions.admin;
 
 
-import com.google.common.base.Function;
+import java.util.List;
+
+import javax.annotation.Nullable;
+import javax.annotation.Resource;
+import javax.inject.Named;
+
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.domain.ErrorCode;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IMedium;
+import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import javax.annotation.Nullable;
-import javax.annotation.Resource;
-import javax.inject.Named;
+import com.google.common.base.Function;
 
 public class UnregisterMachineIfExists implements Function<String, Void> {
 
@@ -49,9 +54,11 @@ public class UnregisterMachineIfExists implements Function<String, Void> {
 
    @Override
    public Void apply(@Nullable String vmName) {
+      List<IMedium> mediaToBeDeleted = null;
+      IMachine machine = null;
       try {
-         IMachine machine = manager.getVBox().findMachine(vmName);
-         machine.unregister(mode);
+         machine = manager.getVBox().findMachine(vmName);
+         mediaToBeDeleted = machine.unregister(mode);
       } catch (VBoxException e) {
          ErrorCode errorCode = ErrorCode.valueOf(e);
          switch (errorCode) {
@@ -61,6 +68,16 @@ public class UnregisterMachineIfExists implements Function<String, Void> {
             default:
                throw e;
          }
+      }
+      /**
+       * deletion of all files is currently disabled on Windows/x64 to
+prevent a crash
+       */
+      try {
+              IProgress deletion = machine.delete(mediaToBeDeleted);
+              deletion.waitForCompletion(-1);
+      } catch (Exception e) {
+              e.printStackTrace();
       }
       return null;
    }

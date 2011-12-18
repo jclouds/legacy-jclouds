@@ -90,7 +90,7 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
               .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
               .attachHardDisk(0, 1, workingDir + "/testadmin.vdi")
               .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso").build();
-      VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).osTypeId(osTypeId)
+      VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).memoryMB(512).osTypeId(osTypeId)
               .controller(ideController)
               .forceOverwrite(true)
               .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build()).build();
