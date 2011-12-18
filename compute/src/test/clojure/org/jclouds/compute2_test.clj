@@ -42,7 +42,7 @@ list, Alan Dipert and MeikelBrandmeyer."
 (deftest os-families-test
   (is (some #{"centos"} (map str (os-families)))))
 
-(def compute-stub (compute-service "stub" "" "" :extensions [(ssh-test/ssh-test-client ssh-test/no-op-ssh-client)]))
+(def compute-stub (compute-service "stub" "compute2.clj" "" :extensions [(ssh-test/ssh-test-client ssh-test/no-op-ssh-client)]))
 
 (defn clean-stub-fixture
   "This should allow basic tests to easily be run with another service."
@@ -58,7 +58,7 @@ list, Alan Dipert and MeikelBrandmeyer."
   (is (compute-service? compute-stub)))
 
 (deftest as-compute-service-test
-  (is (compute-service? (compute-service "stub" "user" "password")))
+  (is (compute-service? (compute-service "stub" "compute2.clj" "")))
   (is (compute-service? compute-stub))
   (is (compute-service? (compute-service (compute-context compute-stub)))))
 
@@ -119,7 +119,7 @@ list, Alan Dipert and MeikelBrandmeyer."
       (run-script-on-node compute-stub "nonexistingnode" echo script-options)))))
 
 (deftest build-template-test
-  (let [service (compute-service "stub" "user" "password")]
+  (let [service (compute-service "stub" "compute2.clj" "")]
     (testing "nullary"
       (is (>= (-> (build-template service {:fastest true})
                   bean :hardware bean :processors first bean :cores)

@@ -19,15 +19,17 @@
 package org.jclouds.compute.stub.config;
 
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import org.jclouds.Constants;
 import org.jclouds.compute.JCloudsNativeComputeServiceAdapter;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -46,8 +48,8 @@ import org.jclouds.rest.ResourceNotFoundException;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList.Builder;
 
 /**
  * 
@@ -57,6 +59,7 @@ import com.google.common.collect.ImmutableSet;
 public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAdapter {
    private final Supplier<Location> location;
    private final ConcurrentMap<String, NodeMetadata> nodes;
+   private final ExecutorService ioThreads;
    private final Provider<Integer> idProvider;
    private final String publicIpPrefix;
    private final String privateIpPrefix;
@@ -65,11 +68,13 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
    private final Map<OsFamily, Map<String, String>> osToVersionMap;
 
    @Inject
-   public StubComputeServiceAdapter(ConcurrentMap<String, NodeMetadata> nodes, Supplier<Location> location,
-         @Named("NODE_ID") Provider<Integer> idProvider, @Named("PUBLIC_IP_PREFIX") String publicIpPrefix,
-         @Named("PRIVATE_IP_PREFIX") String privateIpPrefix, @Named("PASSWORD_PREFIX") String passwordPrefix,
-         JustProvider locationSupplier, Map<OsFamily, Map<String, String>> osToVersionMap) {
+   public StubComputeServiceAdapter(ConcurrentMap<String, NodeMetadata> nodes,
+            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads, Supplier<Location> location,
+            @Named("NODE_ID") Provider<Integer> idProvider, @Named("PUBLIC_IP_PREFIX") String publicIpPrefix,
+            @Named("PRIVATE_IP_PREFIX") String privateIpPrefix, @Named("PASSWORD_PREFIX") String passwordPrefix,
+            JustProvider locationSupplier, Map<OsFamily, Map<String, String>> osToVersionMap) {
       this.nodes = nodes;
+      this.ioThreads=ioThreads;
       this.location = location;
       this.idProvider = idProvider;
       this.publicIpPrefix = publicIpPrefix;
@@ -79,6 +84,28 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       this.osToVersionMap = osToVersionMap;
    }
 
+   protected void setStateOnNode(NodeState state, NodeMetadata node) {
+      nodes.put(node.getId(), NodeMetadataBuilder.fromNodeMetadata(node).state(state).build());
+   }
+
+   protected void setStateOnNodeAfterDelay(final NodeState state, final NodeMetadata node, final long millis) {
+      if (millis == 0l)
+         setStateOnNode(state, node);
+      else
+         ioThreads.execute(new Runnable() {
+
+            @Override
+            public void run() {
+               try {
+                  Thread.sleep(millis);
+               } catch (InterruptedException e) {
+                  Throwables.propagate(e);
+               }
+               setStateOnNode(state, node);
+            }
+
+         });
+   }
    @Override
    public NodeWithInitialCredentials createNodeWithGroupEncodedIntoName(String group, String name, Template template) {
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
@@ -99,7 +126,7 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       builder.credentials(LoginCredentials.builder().user("root").password(passwordPrefix + id).build());
       NodeMetadata node = builder.build();
       nodes.put(node.getId(), node);
-      StubComputeServiceDependenciesModule.setState(node, NodeState.RUNNING, 100);
+      setStateOnNodeAfterDelay(NodeState.RUNNING, node, 100);
       return new NodeWithInitialCredentials(node);
    }
 
@@ -149,9 +176,9 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       NodeMetadata node = nodes.get(id);
       if (node == null)
          return;
-      StubComputeServiceDependenciesModule.setState(node, NodeState.PENDING, 0);
-      StubComputeServiceDependenciesModule.setState(node, NodeState.TERMINATED, 50);
-      StubComputeServiceDependenciesModule.service.execute(new Runnable() {
+      setStateOnNodeAfterDelay(NodeState.PENDING, node, 0);
+      setStateOnNodeAfterDelay(NodeState.TERMINATED, node, 50);
+      ioThreads.execute(new Runnable() {
 
          @Override
          public void run() {
@@ -172,8 +199,8 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       NodeMetadata node = nodes.get(id);
       if (node == null)
          throw new ResourceNotFoundException("node not found: " + id);
-      StubComputeServiceDependenciesModule.setState(node, NodeState.PENDING, 0);
-      StubComputeServiceDependenciesModule.setState(node, NodeState.RUNNING, 50);
+      setStateOnNode(NodeState.PENDING, node);
+      setStateOnNodeAfterDelay(NodeState.RUNNING, node, 50);
    }
 
    @Override
@@ -185,8 +212,8 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
          return;
       if (node.getState() != NodeState.SUSPENDED)
          throw new IllegalStateException("to resume a node, it must be in suspended state, not: " + node.getState());
-      StubComputeServiceDependenciesModule.setState(node, NodeState.PENDING, 0);
-      StubComputeServiceDependenciesModule.setState(node, NodeState.RUNNING, 50);
+      setStateOnNode(NodeState.PENDING, node);
+      setStateOnNodeAfterDelay(NodeState.RUNNING, node, 50);
    }
 
    @Override
@@ -198,7 +225,7 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
          return;
       if (node.getState() != NodeState.RUNNING)
          throw new IllegalStateException("to suspend a node, it must be in running state, not: " + node.getState());
-      StubComputeServiceDependenciesModule.setState(node, NodeState.PENDING, 0);
-      StubComputeServiceDependenciesModule.setState(node, NodeState.SUSPENDED, 50);
+      setStateOnNode(NodeState.PENDING, node);
+      setStateOnNodeAfterDelay(NodeState.SUSPENDED, node, 50);
    }
 }

@@ -20,8 +20,7 @@ package org.jclouds.compute.stub.config;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
@@ -30,15 +29,17 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.SocketOpen;
+import org.jclouds.rest.annotations.Identity;
 
-import com.google.common.base.Throwables;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -54,23 +55,38 @@ public class StubComputeServiceDependenciesModule extends AbstractModule {
 
    }
 
-   protected static final ConcurrentMap<String, NodeMetadata> backing = new ConcurrentHashMap<String, NodeMetadata>();
+   // STUB STUFF STATIC SO MULTIPLE CONTEXTS CAN SEE IT
+   protected static final LoadingCache<String, ConcurrentMap<String, NodeMetadata>> backing = CacheBuilder.newBuilder()
+            .build(new CacheLoader<String, ConcurrentMap<String, NodeMetadata>>() {
 
-   // implementation details below
+               @Override
+               public ConcurrentMap<String, NodeMetadata> load(String arg0) throws Exception {
+                  return new ConcurrentHashMap<String, NodeMetadata>();
+               }
+
+            });
+
    @Provides
    @Singleton
-   ConcurrentMap<String, NodeMetadata> provideNodes() {
-      return backing;
+   protected ConcurrentMap<String, NodeMetadata> provideNodesForIdentity(@Identity String identity)
+            throws ExecutionException {
+      return backing.get(identity);
    }
 
-   // STUB STUFF STATIC SO MULTIPLE CONTEXTS CAN SEE IT
-   private static final AtomicInteger nodeIds = new AtomicInteger(0);
-   static final ExecutorService service = Executors.newCachedThreadPool();
+   protected static final LoadingCache<String, AtomicInteger> nodeIds = CacheBuilder.newBuilder().build(
+            new CacheLoader<String, AtomicInteger>() {
+
+               @Override
+               public AtomicInteger load(String arg0) throws Exception {
+                  return new AtomicInteger(0);
+               }
+
+            });
 
    @Provides
    @Named("NODE_ID")
-   Integer provideNodeId() {
-      return nodeIds.incrementAndGet();
+   protected Integer provideNodeIdForIdentity(@Identity String identity) throws ExecutionException {
+      return nodeIds.get(identity).incrementAndGet();
    }
 
    @Singleton
@@ -120,29 +136,6 @@ public class StubComputeServiceDependenciesModule extends AbstractModule {
          return node != null && node.getState() == NodeState.RUNNING;
       }
 
-   }
-
-   protected static void nodeWithState(NodeMetadata node, NodeState state) {
-      backing.put(node.getId(), NodeMetadataBuilder.fromNodeMetadata(node).state(state).build());
-   }
-
-   public static void setState(final NodeMetadata node, final NodeState state, final long millis) {
-      if (millis == 0l)
-         nodeWithState(node, state);
-      else
-         service.execute(new Runnable() {
-
-            @Override
-            public void run() {
-               try {
-                  Thread.sleep(millis);
-               } catch (InterruptedException e) {
-                  Throwables.propagate(e);
-               }
-               nodeWithState(node, state);
-            }
-
-         });
    }
 
    static Hardware stub(String type, int cores, int ram, float disk) {

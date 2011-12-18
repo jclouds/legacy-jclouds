@@ -42,13 +42,13 @@ list, Alan Dipert and MeikelBrandmeyer."
         (destroy-node (.getId node)))
       (f))))
 
-(use-fixtures :each (clean-stub-fixture "stub" "" ""))
+(use-fixtures :each (clean-stub-fixture "stub" "compute.clj" ""))
 
 (deftest compute-service?-test
   (is (compute-service? *compute*)))
 
 (deftest as-compute-service-test
-  (is (compute-service? (compute-service "stub" "user" "password")))
+  (is (compute-service? (compute-service "stub" "compute.clj" "")))
   (is (compute-service? (as-compute-service *compute*)))
   (is (compute-service? (as-compute-service (compute-context *compute*)))))
 
@@ -90,7 +90,7 @@ list, Alan Dipert and MeikelBrandmeyer."
   (is (terminated? (first (nodes-with-tag "deprecated")))))
 
 (deftest build-template-test
-  (let [service (compute-service "stub" "user" "password")]
+  (let [service (compute-service "stub" "compute.clj" "")]
     (testing "nullary"
       (is (>= (-> (build-template service {:fastest true})
                   bean :hardware bean :processors first bean :cores)
