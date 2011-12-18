@@ -31,10 +31,15 @@ public interface EC2Constants {
     * the ami owners you wish to use in {@link ComputeService}
     */
    public static final String PROPERTY_EC2_AMI_OWNERS = "jclouds.ec2.ami-owners";
-  
+
    /**
     * Eventual consistency delay for retrieving a security group after it is created (in ms)
     */
    public static final String PROPERTY_EC2_TIMEOUT_SECURITYGROUP_PRESENT = "jclouds.ec2.timeout.securitygroup-present";
 
+   /**
+    * Whenever a node is created, automatically allocate and assign an elastic ip address, also
+    * deallocate when the node is destroyed.
+    */
+   public static final String PROPERTY_EC2_AUTO_ALLOCATE_ELASTIC_IPS = "jclouds.ec2.auto-allocate-elastic-ips";
 }
