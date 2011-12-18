@@ -258,7 +258,9 @@ Here's an example of creating and running a small linux node in the group webser
 (defn terminated?
   "Predicate for the node being halted."
   [#^NodeMetadata node]
-  (state-predicate node TERMINATED))
+  (or
+    (= node nil)
+    (state-predicate node TERMINATED)))
 
 (defn suspended?
   "Predicate for the node being suspended."

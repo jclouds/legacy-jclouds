@@ -308,7 +308,9 @@ See http://code.google.com/p/jclouds for details."
 (defn terminated?
   "Predicate for the node being halted."
   [#^NodeMetadata node]
-  (state-predicate node TERMINATED))
+  (or
+    (= node nil)
+    (state-predicate node TERMINATED)))
 
 (defn suspended?
   "Predicate for the node being suspended."
