@@ -30,7 +30,7 @@ import static org.easymock.classextension.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.*;
 
 @Test(groups = "unit", testName = "UnregisterMachineIfExistsTest")
-public class UnregisterMachineIfExistsTest {
+public class UnregisterMachineIfExistsAndDeleteItsMediaTest {
 
    @Test
    public void testUnregisterExistingMachine() throws Exception {
@@ -50,7 +50,7 @@ public class UnregisterMachineIfExistsTest {
 
       replay(manager, vBox, registeredMachine);
 
-      new UnregisterMachineIfExists(manager, mode).apply(vmName);
+      new UnregisterMachineIfExistsAndDeleteItsMedia(manager, mode).apply(vmName);
    }
 
 }

@@ -19,7 +19,6 @@
 
 package org.jclouds.virtualbox.functions.admin;
 
-
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -37,8 +36,9 @@ import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 
-public class UnregisterMachineIfExists implements Function<String, Void> {
+public class UnregisterMachineIfExistsAndDeleteItsMedia implements Function<String, Void> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -47,7 +47,7 @@ public class UnregisterMachineIfExists implements Function<String, Void> {
    private VirtualBoxManager manager;
    private CleanupMode mode;
 
-   public UnregisterMachineIfExists(VirtualBoxManager manager, CleanupMode mode) {
+   public UnregisterMachineIfExistsAndDeleteItsMedia(VirtualBoxManager manager, CleanupMode mode) {
       this.manager = manager;
       this.mode = mode;
    }
@@ -62,23 +62,31 @@ public class UnregisterMachineIfExists implements Function<String, Void> {
       } catch (VBoxException e) {
          ErrorCode errorCode = ErrorCode.valueOf(e);
          switch (errorCode) {
-            case VBOX_E_OBJECT_NOT_FOUND:
-               logger.debug("Machine %s does not exists, cannot unregister", vmName);
-               break;
-            default:
-               throw e;
+         case VBOX_E_OBJECT_NOT_FOUND:
+            logger.debug("Machine %s does not exists, cannot unregister",
+                  vmName);
+            break;
+         default:
+            throw e;
          }
       }
       /**
-       * deletion of all files is currently disabled on Windows/x64 to
-prevent a crash
+       * deletion of all files is currently disabled on Windows/x64 to prevent a
+       * crash
        */
       try {
-              IProgress deletion = machine.delete(mediaToBeDeleted);
-              deletion.waitForCompletion(-1);
+         IProgress deletion = machine.delete(mediaToBeDeleted);
+         deletion.waitForCompletion(-1);
       } catch (Exception e) {
-              e.printStackTrace();
+         logger.error(e, "Problem in deleting the media attached to %s", machine.getName());
+         propagate(e);
       }
+      return null;
+   }
+
+   protected <T> T propagate(Exception e) {
+      Throwables.propagate(e);
+      assert false;
       return null;
    }
 }

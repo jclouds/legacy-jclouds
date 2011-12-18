@@ -19,9 +19,19 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.inject.Guice;
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.virtualbox.domain.ExecutionType.HEADLESS;
+import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Nullable;
+
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
@@ -34,24 +44,21 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
-import org.jclouds.virtualbox.domain.*;
-import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExists;
+import org.jclouds.virtualbox.domain.NatAdapter;
+import org.jclouds.virtualbox.domain.StorageController;
+import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
 import org.jclouds.virtualbox.util.PropertyUtils;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.*;
+import org.virtualbox_4_1.CleanupMode;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.StorageBus;
+import org.virtualbox_4_1.VirtualBoxManager;
 
-import javax.annotation.Nullable;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.collect.Iterables.any;
-import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.virtualbox.domain.ExecutionType.HEADLESS;
-import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
-import static org.testng.Assert.assertTrue;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.inject.Guice;
 
 /**
  * @author Andrea Turli, Mattias Holmqvist
@@ -75,7 +82,7 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
    public void setUp() throws Exception {
       identity = "toor";
       credential = "password";
-      new UnregisterMachineIfExists(manager, CleanupMode.Full).apply(vmName);
+      new UnregisterMachineIfExistsAndDeleteItsMedia(manager, CleanupMode.Full).apply(vmName);
    }
 
    public void testCreateImageMachineFromIso() throws Exception {
