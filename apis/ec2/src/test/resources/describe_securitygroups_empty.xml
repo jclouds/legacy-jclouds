@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<DescribeSecurityGroupsResponse xmlns="http://ec2.amazonaws.com/doc/2010-06-15/">
+  <requestId>L6EFIZVPJS76T3K5-0UV</requestId>
+  <securityGroupInfo>
+
+    <item>
+      <ipPermissions>
+        <item>
+          <toPort>22</toPort>
+          <ipProtocol>tcp</ipProtocol>
+          <ipRanges>
+            <item>
+              <cidrIp>0.0.0.0/0</cidrIp>
+            </item>
+          </ipRanges>
+          <groups/>
+          <fromPort>22</fromPort>
+        </item>
+
+        <item>
+          <toPort/>
+          <ipProtocol/>
+          <ipRanges/>
+          <groups>
+            <item>
+              <groupName>jclouds#cluster#world</groupName>
+              <userId>UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM</userId>
+            </item>
+          </groups>
+          <fromPort/>
+        </item>
+      </ipPermissions>
+      <groupName>jclouds#cluster#world</groupName>
+      <groupDescription>Cluster</groupDescription>
+      <ownerId>UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM</ownerId>
+    </item>
+
+  </securityGroupInfo>
+</DescribeSecurityGroupsResponse>
