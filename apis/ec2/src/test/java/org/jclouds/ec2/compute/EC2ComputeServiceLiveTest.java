@@ -20,11 +20,17 @@ package org.jclouds.ec2.compute;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertFalse;
 
+import java.io.IOException;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
@@ -39,20 +45,27 @@ import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.KeyPair;
+import org.jclouds.ec2.domain.PublicIpInstanceIdPair;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.domain.Snapshot;
 import org.jclouds.ec2.domain.Volume;
+import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.ec2.services.ElasticBlockStoreClient;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.jclouds.ec2.services.SecurityGroupClient;
+import org.jclouds.http.HttpResponseException;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.net.IPSocket;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.util.InetAddresses2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -164,6 +177,63 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       }
    }
 
+   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
+   public void testAutoIpAllocation() throws Exception {
+      ComputeServiceContext context = null;
+      String group = this.group + "aip";
+
+      try {
+         Properties overrides = setupProperties();
+         overrides.setProperty(EC2Constants.PROPERTY_EC2_AUTO_ALLOCATE_ELASTIC_IPS, "true");
+
+         context = new ComputeServiceContextFactory().createContext(provider,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+
+         // create a node
+         Set<? extends NodeMetadata> nodes =
+               context.getComputeService().createNodesInGroup(group, 1);
+         assertTrue(nodes.size() == 1);
+
+         // Get public IPs (on EC2 we should get 2, on Nova only 1)
+         NodeMetadata node = Iterables.get(nodes, 0);
+         String region = node.getLocation().getParent().getId();
+         Set<String> publicIps = node.getPublicAddresses();
+
+         // Check that all ips are public and port 22 is accessible
+         for (String ip: publicIps) {
+            assertFalse(InetAddresses2.isPrivateIPAddress(ip));
+            IPSocket socket = new IPSocket(ip, 22);
+            assert socketTester.apply(socket) : String.format("failed to open socket %s on node %s", socket,
+                  node);
+         }
+
+         // check that there is an elastic ip correlating to it
+         EC2Client ec2 = EC2Client.class.cast(context.getProviderSpecificContext().getApi());
+         Set<PublicIpInstanceIdPair> ipidpairs =
+               ec2.getElasticIPAddressServices().describeAddressesInRegion(region, publicIps.toArray(new String[0]));
+         assertTrue(ipidpairs.size() == 1);
+
+         // check that the elastic ip is in node.publicAddresses
+         PublicIpInstanceIdPair ipidpair = Iterables.get(ipidpairs, 0);
+         assertTrue(ipidpair.getInstanceId() == node.getId());
+         
+         // delete the node
+         context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
+
+         // check that the ip is deallocated
+         try {
+            ec2.getElasticIPAddressServices().describeAddressesInRegion(region, ipidpair.getPublicIp());
+            assert false;
+         } catch (HttpResponseException e) {
+            // do nothing. .. it is expected to fail.
+         }
+
+      } finally {
+         if (context != null)
+            context.close();
+      }
+   }
+   
    /**
     * Note we cannot use the micro size as it has no ephemeral space.
     */
