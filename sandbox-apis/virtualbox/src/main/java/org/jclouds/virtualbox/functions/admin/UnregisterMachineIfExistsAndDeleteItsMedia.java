@@ -19,21 +19,26 @@
 
 package org.jclouds.virtualbox.functions.admin;
 
-
-import com.google.common.base.Function;
-import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.logging.Logger;
-import org.jclouds.virtualbox.domain.ErrorCode;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.VirtualBoxManager;
+import java.util.List;
 
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
-public class UnregisterMachineIfExists implements Function<String, Void> {
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.logging.Logger;
+import org.jclouds.virtualbox.domain.ErrorCode;
+import org.virtualbox_4_1.CleanupMode;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IMedium;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_1.VirtualBoxManager;
+
+import com.google.common.base.Function;
+import com.google.common.base.Throwables;
+
+public class UnregisterMachineIfExistsAndDeleteItsMedia implements Function<String, Void> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -42,26 +47,46 @@ public class UnregisterMachineIfExists implements Function<String, Void> {
    private VirtualBoxManager manager;
    private CleanupMode mode;
 
-   public UnregisterMachineIfExists(VirtualBoxManager manager, CleanupMode mode) {
+   public UnregisterMachineIfExistsAndDeleteItsMedia(VirtualBoxManager manager, CleanupMode mode) {
       this.manager = manager;
       this.mode = mode;
    }
 
    @Override
    public Void apply(@Nullable String vmName) {
+      List<IMedium> mediaToBeDeleted = null;
+      IMachine machine = null;
       try {
-         IMachine machine = manager.getVBox().findMachine(vmName);
-         machine.unregister(mode);
+         machine = manager.getVBox().findMachine(vmName);
+         mediaToBeDeleted = machine.unregister(mode);
       } catch (VBoxException e) {
          ErrorCode errorCode = ErrorCode.valueOf(e);
          switch (errorCode) {
-            case VBOX_E_OBJECT_NOT_FOUND:
-               logger.debug("Machine %s does not exists, cannot unregister", vmName);
-               break;
-            default:
-               throw e;
+         case VBOX_E_OBJECT_NOT_FOUND:
+            logger.debug("Machine %s does not exists, cannot unregister",
+                  vmName);
+            break;
+         default:
+            throw e;
          }
       }
+      /**
+       * deletion of all files is currently disabled on Windows/x64 to prevent a
+       * crash
+       */
+      try {
+         IProgress deletion = machine.delete(mediaToBeDeleted);
+         deletion.waitForCompletion(-1);
+      } catch (Exception e) {
+         logger.error(e, "Problem in deleting the media attached to %s", machine.getName());
+         propagate(e);
+      }
+      return null;
+   }
+
+   protected <T> T propagate(Exception e) {
+      Throwables.propagate(e);
+      assert false;
       return null;
    }
 }
