@@ -51,4 +51,8 @@ public class SaxUtils {
       return returnVal.equals("") ? null : returnVal;
    }
 
+   public static String currentOrNegative(StringBuilder currentText) {
+      String returnVal = currentText.toString().trim();
+      return returnVal.equals("") ? "-1" : returnVal;
+   }
 }
