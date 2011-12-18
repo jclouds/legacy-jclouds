@@ -19,17 +19,17 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
+
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.ErrorCode;
 import org.jclouds.virtualbox.domain.VmSpec;
-import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExists;
+import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VBoxException;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.fail;
 
 /**
  * @author Mattias Holmqvist
@@ -39,19 +39,19 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends B
    @Test
    public void testCreateNewMachine() throws Exception {
       String vmName = "jclouds-test-create-1-node";
-      new UnregisterMachineIfExists(manager, CleanupMode.Full).apply(vmName);
+      new UnregisterMachineIfExistsAndDeleteItsMedia(manager, CleanupMode.Full).apply(vmName);
       VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName)
               .osTypeId("Debian").forceOverwrite(true).build();
       IMachine debianNode = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(launchSpecification);
       IMachine machine = manager.getVBox().findMachine(vmName);
       assertEquals(debianNode.getName(), machine.getName());
-      new UnregisterMachineIfExists(manager, CleanupMode.Full).apply(vmName);
+      new UnregisterMachineIfExistsAndDeleteItsMedia(manager, CleanupMode.Full).apply(vmName);
    }
 
    @Test
    public void testCreateNewMachineWithBadOsType() throws Exception {
       String vmName = "jclouds-test-create-2-node";
-      new UnregisterMachineIfExists(manager, CleanupMode.Full).apply(vmName);
+      new UnregisterMachineIfExistsAndDeleteItsMedia(manager, CleanupMode.Full).apply(vmName);
       VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName)
               .osTypeId("SomeWeirdUnknownOs").forceOverwrite(true).build();
       try {
