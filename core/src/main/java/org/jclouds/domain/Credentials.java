@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.List;
 
+import com.google.common.base.Objects;
 import org.jclouds.util.Strings2;
 
 import com.google.common.base.Splitter;
@@ -82,34 +83,26 @@ public class Credentials {
    }
 
    @Override
+   public String toString() {
+      return "[identity=" + identity + ", credential=" + credential + "]";
+   }
+
+   @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((credential == null) ? 0 : credential.hashCode());
-      result = prime * result + ((identity == null) ? 0 : identity.hashCode());
-      return result;
+      return Objects.hashCode(identity, credential);
    }
 
    @Override
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (obj == null)
-         return false;
       if (!(obj instanceof Credentials))
          return false;
       Credentials other = (Credentials) obj;
-      if (credential == null) {
-         if (other.credential != null)
-            return false;
-      } else if (!credential.equals(other.credential))
+      if (!Objects.equal(identity, other.identity))
          return false;
-      if (identity == null) {
-         if (other.identity != null)
-            return false;
-      } else if (!identity.equals(other.identity))
+      if (!Objects.equal(credential, other.credential))
          return false;
       return true;
    }
-
 }

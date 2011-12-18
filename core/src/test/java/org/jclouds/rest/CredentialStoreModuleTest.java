@@ -19,6 +19,8 @@
 package org.jclouds.rest;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -26,6 +28,7 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.common.base.Joiner;
 import org.jclouds.crypto.PemsTest;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
@@ -53,8 +56,12 @@ public class CredentialStoreModuleTest {
 
    @DataProvider(name = "credentials")
    public Object[][] createData() {
-      return new Object[][] { { "root", PemsTest.PRIVATE_KEY }, { "identity", "Base64==" },
-            { "user@domain", "pa$sw@rd" }, { "user", "unic₪de" } };
+      return new Object[][] {
+            { "root", PemsTest.PRIVATE_KEY },
+            { "identity", "Base64==" },
+            { "user@domain", "pa$sw@rd" },
+            { "user", "unic₪de" }
+      };
    }
 
    @Test(dataProvider = "credentials")
@@ -172,6 +179,10 @@ public class CredentialStoreModuleTest {
          Credentials creds, String expected) throws IOException {
       assertEquals(store.size(), 1);
       assertEquals(map.size(), 1);
+      assertTrue(store.containsKey(key));
+      //System.out.println("YYYYYY " + store.get(key));
+      //System.err.println("YYYYYY " + store.get(key));
+      assertTrue(store.containsValue(creds));
       // checkRepeatedRead
       assertEquals(store.get(key), creds);
       assertEquals(store.get(key), creds);
@@ -187,6 +198,10 @@ public class CredentialStoreModuleTest {
    protected void put(Map<String, InputStream> map, Map<String, Credentials> store, String key, Credentials creds) {
       assertEquals(store.size(), 0);
       assertEquals(map.size(), 0);
+      assertFalse(store.containsKey(key));
+      assertFalse(store.containsValue(creds));
       store.put(key, creds);
+      //System.err.printf("XXXXXXXXXX\n\nStore has %n: %s\n\nXXXXXXXXXX\n", store.size(), Joiner.on(", ").withKeyValueSeparator("=").useForNull("<<EMPTY>>").join(store));
+      //System.out.printf("XXXXXXXXXX\n\nStore has %n: %s\n\nXXXXXXXXXX\n", store.size(), Joiner.on(", ").withKeyValueSeparator("=").useForNull("<<EMPTY>>").join(store));
    }
 }
