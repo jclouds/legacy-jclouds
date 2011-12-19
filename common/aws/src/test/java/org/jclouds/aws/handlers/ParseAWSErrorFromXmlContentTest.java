@@ -34,6 +34,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.io.Payloads;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.InsufficientResourcesException;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Strings2;
@@ -72,6 +73,17 @@ public class ParseAWSErrorFromXmlContentTest {
    public void test400WithUnsupportedCodeMakesUnsupportedOperationException() {
       assertCodeMakes("POST", URI.create("https://ec2.us-west-1.amazonaws.com/"), 400, "",
                "<Error><Code>UnsupportedOperation</Code></Error>", UnsupportedOperationException.class);
+   }
+   
+   @Test
+   public void test400WithAddressLimitExceededCodeMakesInsufficientResourcesException() {
+      assertCodeMakes(
+               "POST",
+               URI.create("https://ec2.us-east-1.amazonaws.com/"),
+               400,
+               "",
+               "<Response><Errors><Error><Code>AddressLimitExceeded</Code><Message>Too many addresses allocated</Message></Error></Errors><RequestID>c14f531a-cc35-4b48-8149-2655c7e6dc76</RequestID></Response>",
+               InsufficientResourcesException.class);
    }
 
    @Test
