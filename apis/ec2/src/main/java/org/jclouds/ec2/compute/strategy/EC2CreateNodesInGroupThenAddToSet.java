@@ -198,7 +198,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
          // block until instance is running
          logger.debug(">> awaiting status running instance(%s)", coordinates);
          nodeRunning.apply(runningInstanceToNodeMetadata.apply(startedInstance));
-         logger.debug("<< running instance(%s)", coordinates);
+         logger.trace("<< running instance(%s)", coordinates);
          logger.debug(">> associating elastic IP %s to instance %s", ip, coordinates);
          client.getElasticIPAddressServices().associateAddressInRegion(region, ip, id);
          logger.trace("<< associated elastic IP %s to instance %s", ip, coordinates);

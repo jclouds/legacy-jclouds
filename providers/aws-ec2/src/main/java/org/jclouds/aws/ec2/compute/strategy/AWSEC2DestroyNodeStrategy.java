@@ -67,7 +67,7 @@ public class AWSEC2DestroyNodeStrategy extends EC2DestroyNodeStrategy {
             credentialStore.remove("node#" + region + "/" + spotId);
          } catch (NoSuchElementException e) {
          }
-         super.destroyInstanceInRegion(region, id);
+         super.destroyInstanceInRegion(id, region);
       } else {
          client.getSpotInstanceServices().cancelSpotInstanceRequestsInRegion(region, spotId);
          credentialStore.remove("node#" + region + "/" + id);
