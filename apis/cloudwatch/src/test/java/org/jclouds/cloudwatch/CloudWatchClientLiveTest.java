@@ -23,8 +23,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
+import java.util.Set;
 
 import org.jclouds.Constants;
+import org.jclouds.cloudwatch.domain.Datapoint;
+import org.jclouds.logging.Logger;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
@@ -89,7 +92,10 @@ public class CloudWatchClientLiveTest {
    protected void getMetricStatisticsInRegion(String region) {
       Calendar cal = Calendar.getInstance();
       cal.add(Calendar.MINUTE, -1);
-      assert client.getMetricStatisticsInRegion(region, "CPUUtilization", cal.getTime(), new Date(), 60, "Average") != null;
+
+      Set<Datapoint> datapoints = client.getMetricStatisticsInRegion(
+         region, "CPUUtilization", cal.getTime(), new Date(), 60, "Average");
+      assert datapoints != null;
    }
 
    @AfterTest
