@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.inject.Provider;
 
 import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.util.BlobUtils;
@@ -46,11 +45,6 @@ public class FileSystemBlobUtilsImpl implements BlobUtils {
    public FileSystemBlobUtilsImpl(FilesystemStorageStrategy storageStrategy, Provider<BlobBuilder> blobBuilders) {
       this.storageStrategy = checkNotNull(storageStrategy, "Filesystem Storage Strategy");
       this.blobBuilders = checkNotNull(blobBuilders, "Filesystem  blobBuilders");
-   }
-
-   @Override
-   public Blob newBlob(String name) {
-      return blobBuilder().name(name).build();
    }
 
    @Override

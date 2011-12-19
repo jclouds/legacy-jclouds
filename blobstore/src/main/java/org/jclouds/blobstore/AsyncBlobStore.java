@@ -47,12 +47,6 @@ public interface AsyncBlobStore {
    BlobStoreContext getContext();
 
    /**
-    * @see BlobStore#newBlob
-    */
-   @Deprecated
-   Blob newBlob(String name);
-
-   /**
     * @see BlobStore#blobBuilder
     */
    BlobBuilder blobBuilder(String name);

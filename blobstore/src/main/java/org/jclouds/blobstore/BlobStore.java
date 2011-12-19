@@ -48,14 +48,6 @@ public interface BlobStore {
    BlobStoreContext getContext();
 
    /**
-    * creates a new blob with the specified name.
-    * 
-    * @see #blobBuilder
-    */
-   @Deprecated
-   Blob newBlob(String name);
-
-   /**
     * 
     * @return builder for creating new {@link Blob}s
     */

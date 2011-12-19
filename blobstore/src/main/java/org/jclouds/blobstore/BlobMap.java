@@ -34,12 +34,6 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(BlobMapImpl.class)
 public interface BlobMap extends ListableMap<String, Blob> {
-   /**
-    * @see #blobBuilder
-    * @param name
-    */
-   @Deprecated
-   Blob newBlob(String name);
 
    /**
     * 

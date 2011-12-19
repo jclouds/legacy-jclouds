@@ -67,14 +67,6 @@ public abstract class BaseBlobStore implements BlobStore {
    }
 
    /**
-    * invokes {@link BlobUtilsImpl#newBlob }
-    */
-   @Override
-   public Blob newBlob(String name) {
-      return blobUtils.newBlob(name);
-   }
-
-   /**
     * invokes {@link BlobUtilsImpl#blobBuilder }
     */
    @Override

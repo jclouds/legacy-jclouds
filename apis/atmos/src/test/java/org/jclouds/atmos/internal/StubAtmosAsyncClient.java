@@ -103,9 +103,7 @@ public class StubAtmosAsyncClient implements AtmosAsyncClient {
 
          public URI apply(Boolean from) {
             if (path != null) {
-               Blob blob = blobStore.newBlob(path + "/");
-               blob.getMetadata().getContentMetadata().setContentType("application/directory");
-               blob.setPayload("");
+               Blob blob = blobStore.blobBuilder(path + "/").payload("").contentType("application/directory").build();
                blobStore.putBlob(container, blob);
             }
             return URI.create("http://stub/containers/" + container);

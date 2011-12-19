@@ -76,14 +76,6 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
    }
 
    /**
-    * invokes {@link BlobUtilsImpl#newBlob }
-    */
-   @Override
-   public Blob newBlob(String name) {
-      return blobUtils.newBlob(name);
-   }
-
-   /**
     * invokes {@link BlobUtilsImpl#blobBuilder }
     */
    @Override

@@ -138,12 +138,10 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
             responses.put(i, this.exec.submit(new Callable<Void>() {
 
-               @SuppressWarnings("deprecation")
                @Override
                public Void call() throws Exception {
                   String name = blobCount.incrementAndGet() + "";
-                  Blob blob = context.getBlobStore().newBlob(name);
-                  blob.setPayload(testPayload);
+                  Blob blob = context.getBlobStore().blobBuilder(name).payload(testPayload).build();
                   context.getBlobStore().putBlob(container, blob);
                   assertConsistencyAwareBlobExists(container, name);
                   blob = context.getBlobStore().getBlob(container, name);

@@ -124,11 +124,6 @@ public class BlobMapImpl extends BaseBlobMap<Blob> implements BlobMap {
    }
 
    @Override
-   public Blob newBlob(String name) {
-      return blobBuilder().name(name).build();
-   }
-
-   @Override
    public BlobBuilder blobBuilder() {
       return blobBuilders.get();
    }

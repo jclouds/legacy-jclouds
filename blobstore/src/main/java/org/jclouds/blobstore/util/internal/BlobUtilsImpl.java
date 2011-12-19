@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
@@ -60,12 +59,7 @@ public class BlobUtilsImpl implements BlobUtils {
       this.rmDirStrategy = checkNotNull(rmDirStrategy, "rmDirStrategy");
       this.countBlobsStrategy = checkNotNull(countBlobsStrategy, "countBlobsStrategy");
    }
-
-   @Override
-   public Blob newBlob(String name) {
-      return blobBuilder().name(name).build();
-   }
-
+   
    @Override
    public BlobBuilder blobBuilder() {
       return blobBuilders.get();

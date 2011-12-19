@@ -283,7 +283,7 @@ Note: (apply concat coll) or (lazy-cat coll) are not lazy wrt coll itself."
              (.. blobstore getContext getSigner) container-name path)
        :put (.signPutBlob
              (.. blobstore getContext getSigner) container-name
-             (doto (.newBlob blobstore path)
+             (doto (.build (.blobBuilder blobstore path))
                (.setPayload
                 (let [payload (PhantomPayload.)
                       metadata (.getContentMetadata payload)]
@@ -369,8 +369,9 @@ example:
     ([#^String name payload]
      (blob name payload *blobstore*))
     ([#^String name payload #^BlobStore blobstore]
-      (doto (.newBlob blobstore name)
-                 (.setPayload payload))))
+      (.build 
+        (.payload 
+          (.blobBuilder blobstore name) payload))))
 
 (defn blob2
   "Create a new blob with the specified payload and options."
