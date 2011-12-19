@@ -44,7 +44,7 @@ public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTes
    
    @Override
    protected void testGetObjectContentType(SwiftObject getBlob) {
-      assertEquals(getBlob.getInfo().getContentType(), "application/unknown");
+      assertEquals(getBlob.getInfo().getContentType(), "application/x-www-form-urlencoded");
    }
 
    @Test
