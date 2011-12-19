@@ -22,7 +22,6 @@ The following is the list of providers that are supported by the jclouds API.
  * eucalyptus (generic)
  * eucalyptus-partnercloud-ec2
  * gogrid
- * hpcloud-compute
  * nova
  * openhosting-east1
  * serverlove-z1-man
