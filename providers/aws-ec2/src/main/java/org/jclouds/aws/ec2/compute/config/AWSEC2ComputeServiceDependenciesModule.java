@@ -78,8 +78,6 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
       bind(TemplateBuilder.class).to(EC2TemplateBuilderImpl.class);
       bind(TemplateOptions.class).to(AWSEC2TemplateOptions.class);
       bind(ComputeService.class).to(AWSEC2ComputeService.class);
-      bind(new TypeLiteral<Function<RunningInstance, NodeMetadata>>() {
-      }).to(RunningInstanceToNodeMetadata.class);
       bind(new TypeLiteral<CacheLoader<RunningInstance, Credentials>>() {
       }).to(CredentialsForInstance.class);
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
