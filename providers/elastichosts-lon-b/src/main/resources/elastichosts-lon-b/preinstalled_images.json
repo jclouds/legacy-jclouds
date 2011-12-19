@@ -1,13 +1,13 @@
 [
   {
-      "uuid": "d7736ff4-c045-46e0-bd62-f8719758d20d",
+      "uuid": "e994eedf-ce5c-4efd-9d0d-a16f690004f7",
       "description": "CentOS Linux 6.0",
       "osFamily": "CENTOS",
       "osVersion": "6.0",
       "size": "3"
   },
   {
-      "uuid": "b9593943-e252-4895-8715-ad04e55f5dda",
+      "uuid": "e97e0a2a-08d7-4624-b796-708f2adfc6b0",
       "description": "Debian Linux 6.0",
       "osFamily": "DEBIAN",
       "osVersion": "6.0",
@@ -21,7 +21,7 @@
       "size": "1"
   },
   {
-      "uuid": "7738b8be-0812-4bec-9b82-aa9df29db110",
+      "uuid": "13f9f85d-ed1c-4fb0-aa26-3e84da826faf",
       "description": "Ubuntu Linux 11.10",
       "osFamily": "UBUNTU",
       "osVersion": "11.10",
