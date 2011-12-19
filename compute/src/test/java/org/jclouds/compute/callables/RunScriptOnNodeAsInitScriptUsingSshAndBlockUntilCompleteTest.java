@@ -25,6 +25,10 @@ import static org.easymock.EasyMock.verify;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.testng.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.easymock.IAnswer;
 import org.jclouds.Constants;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -36,6 +40,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.predicates.RetryablePredicateTest;
 import org.jclouds.scriptbuilder.InitBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
@@ -43,6 +48,7 @@ import org.jclouds.ssh.SshClient;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
@@ -99,6 +105,37 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest {
    }
 
    public void testDefault() {
+      runDefaults(null, 1);
+   }
+   
+   @Test
+   public void testRepeatedlyChecksIfInitScriptCompleted() {
+      final List<Long> callTimes = new ArrayList<Long>();
+      final int succeedOnAttempt = 3;
+      final Stopwatch stopwatch = new Stopwatch();
+      stopwatch.start();
+      
+      IAnswer<ExecResponse> answerForScriptStatus = new IAnswer<ExecResponse>() {
+         private int count = 0;
+         @Override
+         public ExecResponse answer() throws Throwable {
+            callTimes.add(stopwatch.elapsedMillis());
+            String stdout = (++count < succeedOnAttempt) ? "someresult" : ""; 
+            return new ExecResponse(stdout, "", 1);
+         }
+      };
+
+      runDefaults(answerForScriptStatus, succeedOnAttempt);
+      
+      // Expect checking-status to be called repeatedly, until process had finished
+      RetryablePredicateTest.assertCallTimes(callTimes, 0, 500, (int)(500+(500*1.5)));
+   }
+   
+   /**
+    * @param answerForScriptStatus Answer to use for `jclouds-script-0 status`, or null for default of succeed immediately
+    * @param timesForScriptStatus  Num times to expect call for `jclouds-script-0 status`; ignored if answer is null
+    */
+   private void runDefaults(IAnswer<ExecResponse> answerForScriptStatus, int timesForScriptStatus) {
       Statement command = exec("doFoo");
       NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.RUNNING).credentials(
             new LoginCredentials("tester", "testpassword!", null, false)).build();
@@ -124,7 +161,11 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest {
       expect(sshClient.exec("sudo ./jclouds-script-0 start")).andReturn(new ExecResponse("", "", 0));
 
       // signal the command completed
-      expect(sshClient.exec("./jclouds-script-0 status")).andReturn(new ExecResponse("", "", 1));
+      if (answerForScriptStatus == null) {
+         expect(sshClient.exec("./jclouds-script-0 status")).andReturn(new ExecResponse("", "", 1)).times(1);
+      } else {
+         expect(sshClient.exec("./jclouds-script-0 status")).andAnswer(answerForScriptStatus).times(timesForScriptStatus);
+      }
       expect(sshClient.exec("./jclouds-script-0 tail")).andReturn(new ExecResponse("out", "", 0));
       expect(sshClient.exec("./jclouds-script-0 tailerr")).andReturn(new ExecResponse("err", "", 0));
 
@@ -242,4 +283,5 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest {
 
       verify(sshClient);
    }
+   
 }
