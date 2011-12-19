@@ -16,22 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.swift.reference;
+package org.jclouds.hpcloud.object.storage.reference;
+
+import org.jclouds.openstack.swift.reference.SwiftHeaders;
+
 
 /**
- * @author Adrian Cole
+ * Additional headers specified by HP Cloud Object Storage REST API.
+ * 
+ * @see <a href="https://manage.hpcloud.com/pages/build/docs/object-storage/api" />
+ * @author Jeremy Daggett
  * 
  */
-public interface SwiftHeaders {
-
-   public static final String ACCOUNT_BYTES_USED = "X-Account-Bytes-Used";
-   public static final String ACCOUNT_CONTAINER_COUNT = "X-Account-Container-Count";
-   public static final String CONTAINER_BYTES_USED = "X-Container-Bytes-Used";
-   public static final String CONTAINER_OBJECT_COUNT = "X-Container-Object-Count";
-   public static final String CONTAINER_METADATA_PREFIX = "X-Container-Meta-";
-   public static final String USER_METADATA_PREFIX = "X-Object-Meta-";
+public interface HPCloudObjectStorageHeaders extends SwiftHeaders {
    
-   public static final String CONTAINER_READ = "X-Container-Read";
-   public static final String CONTAINER_WRITE = "X-Container-Write";
+   public static final String CDN_ENABLED = "X-Cdn-Enabled";
+   public static final String CDN_LOG_RETENTION = "X-Log-Retention";
+   public static final String CDN_REFERRER_ACL = "X-Referrer-ACL";
+   public static final String CDN_TTL = "X-Ttl";
+   public static final String CDN_URI = "X-Cdn-Uri";
+   public static final String CDN_USER_AGENT_ACL = "X-User-Agent-ACL";
 
 }

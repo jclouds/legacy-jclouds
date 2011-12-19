@@ -16,49 +16,54 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.swift.functions;
+package org.jclouds.hpcloud.object.storage.functions;
 
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.URI;
+import java.util.Set;
+import java.util.SortedSet;
 
+import org.jclouds.hpcloud.object.storage.domain.ContainerCDNMetadata;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.openstack.swift.domain.ContainerMetadata;
-import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code ParseContainerListFromJsonResponse}
+ * Tests behavior of {@code ParseContainerCDNMetadataListFromJsonResponse}
  * 
- * @author Adrian Cole
+ * @author Jeremy Daggett
  */
 @Test(groups = "unit")
-public class ParseContainerListFromJsonResponseTest {
+public class ParseContainerCDNMetadataListFromJsonResponseTest {
    Injector i = Guice.createInjector(new GsonModule());
 
    @Test
    public void testApplyInputStream() {
-      InputStream is = Strings2
-               .toInputStream("[ {\"name\":\"test_container_1\",\"count\":2,\"bytes\":78}, {\"name\":\"test_container_2\",\"count\":1,\"bytes\":17} ]   ");
-      Map<String, String> meta = new HashMap<String, String>();
 
-      List<ContainerMetadata> expects = ImmutableList.of(new ContainerMetadata("test_container_1", 2, 78, null, meta),
-               new ContainerMetadata("test_container_2", 1, 17, null, meta));
-      ParseJson<List<ContainerMetadata>> parser = i.getInstance(Key
-               .get(new TypeLiteral<ParseJson<List<ContainerMetadata>>>() {
+      InputStream is = getClass().getResourceAsStream("/test_list_cdn.json");
+      
+      Set<ContainerCDNMetadata> expects = ImmutableSortedSet.of(
+		  new ContainerCDNMetadata("hpcloud-blobstore.testCDNOperationsContainerWithCDN", false, 3600, 
+				  URI.create("https://cdnmgmt.hpcloud.net:8080/v1/AUTH_test/")), 
+		  new ContainerCDNMetadata("hpcloud-blobstore5", true, 28800, 
+				  URI.create("https://cdnmgmt.hpcloud.net:8080/v1/AUTH_test/")),
+          new ContainerCDNMetadata("hpcloud-cfcdnint.testCDNOperationsContainerWithCDN", false, 3600, 
+        		  URI.create("https://cdnmgmt.hpcloud.net:8080/v1/AUTH_test/")));
+      
+      ParseJson<SortedSet<ContainerCDNMetadata>> parser = i.getInstance(Key
+               .get(new TypeLiteral<ParseJson<SortedSet<ContainerCDNMetadata>>>() {
                }));
+      
       assertEquals(parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is))), expects);
    }
 }

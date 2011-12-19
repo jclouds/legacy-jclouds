@@ -16,22 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.swift.reference;
 
 /**
- * @author Adrian Cole
+ * This package contains properties and reference data used in HP Cloud Object Storage.
  * 
+ * @author Jeremy Daggett
  */
-public interface SwiftHeaders {
-
-   public static final String ACCOUNT_BYTES_USED = "X-Account-Bytes-Used";
-   public static final String ACCOUNT_CONTAINER_COUNT = "X-Account-Container-Count";
-   public static final String CONTAINER_BYTES_USED = "X-Container-Bytes-Used";
-   public static final String CONTAINER_OBJECT_COUNT = "X-Container-Object-Count";
-   public static final String CONTAINER_METADATA_PREFIX = "X-Container-Meta-";
-   public static final String USER_METADATA_PREFIX = "X-Object-Meta-";
-   
-   public static final String CONTAINER_READ = "X-Container-Read";
-   public static final String CONTAINER_WRITE = "X-Container-Write";
-
-}
+package org.jclouds.hpcloud.object.storage.reference;

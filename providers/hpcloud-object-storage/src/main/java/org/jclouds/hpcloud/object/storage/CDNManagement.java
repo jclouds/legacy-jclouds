@@ -16,22 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.swift.reference;
+package org.jclouds.hpcloud.object.storage;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
 
 /**
- * @author Adrian Cole
+ * Represents a component related to HP Cloud Services Content Delivery Network.
+ * 
+ * @see <a href="https://manage.hpcloud.com/pages/build/docs/object-storage/api">HP Cloud Object Storage API</a>
+ * @author Jeremy Daggett
  * 
  */
-public interface SwiftHeaders {
-
-   public static final String ACCOUNT_BYTES_USED = "X-Account-Bytes-Used";
-   public static final String ACCOUNT_CONTAINER_COUNT = "X-Account-Container-Count";
-   public static final String CONTAINER_BYTES_USED = "X-Container-Bytes-Used";
-   public static final String CONTAINER_OBJECT_COUNT = "X-Container-Object-Count";
-   public static final String CONTAINER_METADATA_PREFIX = "X-Container-Meta-";
-   public static final String USER_METADATA_PREFIX = "X-Object-Meta-";
-   
-   public static final String CONTAINER_READ = "X-Container-Read";
-   public static final String CONTAINER_WRITE = "X-Container-Write";
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface CDNManagement {
 
 }

@@ -16,22 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.swift.reference;
+package org.jclouds.hpcloud.object.storage.blobstore.functions;
+
+import java.net.URI;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.jclouds.hpcloud.object.storage.HPCloudObjectStorageClient;
+
+import com.google.common.base.Function;
 
 /**
- * @author Adrian Cole
  * 
+ * @author Adrian Cole
  */
-public interface SwiftHeaders {
+@Singleton
+public class EnableCDNAndCache implements Function<String, URI> {
+   private final Map<String, URI> cdnContainer;
+   private final HPCloudObjectStorageClient sync;
 
-   public static final String ACCOUNT_BYTES_USED = "X-Account-Bytes-Used";
-   public static final String ACCOUNT_CONTAINER_COUNT = "X-Account-Container-Count";
-   public static final String CONTAINER_BYTES_USED = "X-Container-Bytes-Used";
-   public static final String CONTAINER_OBJECT_COUNT = "X-Container-Object-Count";
-   public static final String CONTAINER_METADATA_PREFIX = "X-Container-Meta-";
-   public static final String USER_METADATA_PREFIX = "X-Object-Meta-";
-   
-   public static final String CONTAINER_READ = "X-Container-Read";
-   public static final String CONTAINER_WRITE = "X-Container-Write";
+   @Inject
+   public EnableCDNAndCache(HPCloudObjectStorageClient sync, Map<String, URI> cdnContainer) {
+      this.sync = sync;
+      this.cdnContainer = cdnContainer;
+   }
+
+   @Override
+   public URI apply(String input) {
+      URI uri = sync.enableCDN(input);
+      cdnContainer.put(input, uri);
+      return uri;
+   }
 
 }

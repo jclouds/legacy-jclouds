@@ -100,5 +100,10 @@
             <artifactId>filesystem</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>hpcloud-object-storage</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

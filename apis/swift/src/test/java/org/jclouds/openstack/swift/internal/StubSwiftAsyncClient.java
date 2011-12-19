@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -41,6 +42,7 @@ import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
+import org.jclouds.openstack.swift.SwiftAsyncClient;
 import org.jclouds.openstack.swift.blobstore.functions.BlobToObject;
 import org.jclouds.openstack.swift.blobstore.functions.ListContainerOptionsToBlobStoreListContainerOptions;
 import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlob;
@@ -145,8 +147,8 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
             org.jclouds.openstack.swift.options.ListContainerOptions... options) {
       return immediateFuture(Sets.newHashSet(Iterables.transform(blobStore.getContainerToBlobs().keySet(),
                new Function<String, ContainerMetadata>() {
-                  public ContainerMetadata apply(String name) {
-                     return new ContainerMetadata(name, -1, -1);
+                  public ContainerMetadata apply(String name) {              	 
+                     return new ContainerMetadata(name, -1, -1, null, new HashMap<String,String>());
                   }
                })));
    }
