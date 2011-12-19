@@ -22,7 +22,6 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.glesys.domain.Archive;
 import org.jclouds.glesys.domain.ArchiveAllowedArguments;
 import org.jclouds.glesys.domain.ArchiveDetails;
-import org.jclouds.glesys.domain.Invoice;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;

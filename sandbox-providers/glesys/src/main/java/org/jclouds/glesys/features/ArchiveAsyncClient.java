@@ -22,7 +22,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.glesys.domain.Archive;
 import org.jclouds.glesys.domain.ArchiveAllowedArguments;
 import org.jclouds.glesys.domain.ArchiveDetails;
-import org.jclouds.glesys.domain.Invoice;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -39,7 +38,7 @@ import java.util.Set;
  * <p/>
  *
  * @author Adam Lowe
- * @see InvoiceClient
+ * @see ArchiveClient
  * @see <a href="https://customer.glesys.com/api.php" />
  */
 @RequestFilters(BasicAuthentication.class)
