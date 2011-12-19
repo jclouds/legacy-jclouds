@@ -125,7 +125,7 @@ public class NetworkReference extends BaseNamedResource<NetworkReference> {
       /**
        * @see NetworkReference#getIpAddresses
        */
-      public Builder gatewayAddress(IpAddresses ipAddresses) {
+      public Builder ipAddresses(IpAddresses ipAddresses) {
          this.ipAddresses = ipAddresses;
          return this;
       }
@@ -136,7 +136,12 @@ public class NetworkReference extends BaseNamedResource<NetworkReference> {
       }
 
       public Builder fromNetworkReference(NetworkReference in) {
-         return fromNamedResource(in).networkType(in.getNetworkType());
+         return fromNamedResource(in).address(in.getAddress())
+                                     .networkType(in.getNetworkType())
+                                     .broadcastAddress(in.getBroadcastAddress())
+                                     .gatewayAddress(in.getGatewayAddress())
+                                     .rnatAddress(in.getRnatAddress())
+                                     .ipAddresses(in.getIpAddresses());
       }
 
       /**

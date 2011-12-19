@@ -108,7 +108,7 @@ public class VirtualMachineClientLiveTest extends BaseTerremarkEnterpriseCloudCl
 
    public void testCreateVirtualMachineFromTemplate() throws Exception {
       CreateVirtualMachine.Builder builder = CreateVirtualMachine.builder();
-      builder.name("VirtualMachine2")
+      builder.name("vmDMZ1")
             .processorCount(2)
             .memory(ResourceCapacity.builder().value(1024).unit("MB").build());
 
@@ -119,18 +119,21 @@ public class VirtualMachineClientLiveTest extends BaseTerremarkEnterpriseCloudCl
       AnonymousResource sshKey = AnonymousResource.builder().href(URI.create("/cloudapi/ecloud/admin/sshkeys/77")).type("application/vnd.tmrk.cloud.admin.sshKey").build();
 
       NamedResource network = NamedResource.builder()
-            .href(URI.create("/cloudapi/ecloud/networks/3936"))
-            .name("10.146.204.64/28")
+            .href(URI.create("/cloudapi/ecloud/networks/3933"))
+            .name("10.146.205.128/27")
             .type("application/vnd.tmrk.cloud.network")
             .build();
 
       NetworkAdapterSetting adapterSetting = NetworkAdapterSetting.builder()
             .network(network)
-            .ipAddress("10.146.204.68")
+            .ipAddress("10.146.205.131")
             .build();
 
       NetworkAdapterSettings adapterSettings = NetworkAdapterSettings.builder()
             .addNetworkAdapterSetting(adapterSetting).build();
+
+      //DNS Settings are optional - and default to the data center dns settings if custom values are not provided.
+      //DnsSettings dnsSettings = DnsSettings.builder().primaryDns("10.1.1.1").secondaryDns("10.1.1.2").build();
       NetworkSettings networkSettings = NetworkSettings.builder().networkAdapterSettings(adapterSettings).build();
 
       LinuxCustomization linuxCustomization = LinuxCustomization.builder()
@@ -145,8 +148,11 @@ public class VirtualMachineClientLiveTest extends BaseTerremarkEnterpriseCloudCl
       VirtualMachine vm = client.createVirtualMachineFromTemplate(URI.create("/cloudapi/ecloud/virtualMachines/computePools/89/action/createVirtualMachine"), builder.build());
       assertNotNull(vm);
 
+      // For ssh login - next steps are:
+      // - Create an internet service for ssh (TCP port 22) on a public ip address
+      // - Create a node service to bind the port to the vm itself
       // TODO: Check that the VM is created OK.
-      // TODO: DNSSettings are missing
+      System.out.println(vm);
       //client.remove(vm.getHref()); //remove once verified - there needs to be no running tasks.
    }
 }
