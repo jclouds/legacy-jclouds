@@ -97,10 +97,13 @@ public class TagClientLiveTest {
       context = computeContext.getProviderSpecificContext();
       client = context.getApi().getTagServices();
       try {
-         testGroup = context.getApi().getSecurityGroupServices()
-               .createSecurityGroupInRegionAndReturnId(null, "test-group", "test-group");
+         testGroup = context.getApi().getSecurityGroupServices().createSecurityGroupInRegionAndReturnId(null,
+                  "test-group", "test-group");
       } catch (IllegalStateException e) {
          // already exists
+         testGroup = Iterables.get(
+                  context.getApi().getSecurityGroupServices().describeSecurityGroupsInRegion(null, "test-group"), 0)
+                  .getId();
       }
    }
 
