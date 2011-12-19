@@ -19,13 +19,18 @@
 
 package org.jclouds.virtualbox.domain;
 
-import com.google.common.base.Objects;
-
-import java.util.*;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.virtualbox_4_1.CleanupMode;
+
+import com.google.common.base.Objects;
 
 /**
  * A description of a Virtual Machine in VirtualBox.
@@ -39,8 +44,9 @@ public class VmSpec {
    private final boolean forceOverwrite;
    private final Map<Long, NatAdapter> natNetworkAdapters;
    private final Set<StorageController> controllers;
+   private final CleanupMode cleanupMode;
 
-   public VmSpec(String vmId, String vmName, String osTypeId, long memory, boolean forceOverwrite, Set<StorageController> controllers, Map<Long, NatAdapter> natNetworkAdapters) {
+   public VmSpec(String vmId, String vmName, String osTypeId, long memory, boolean forceOverwrite, Set<StorageController> controllers, Map<Long, NatAdapter> natNetworkAdapters, CleanupMode cleanupMode) {
       checkNotNull(vmId, "vmId");
       checkNotNull(vmName, "vmName");
       checkArgument(memory > 0, "memory must be > 0");
@@ -53,6 +59,7 @@ public class VmSpec {
       this.controllers = controllers;
       this.forceOverwrite = forceOverwrite;
       this.natNetworkAdapters = natNetworkAdapters;
+      this.cleanupMode = cleanupMode;
    }
 
    public static Builder builder() {
@@ -69,6 +76,8 @@ public class VmSpec {
       private boolean forceOverwrite;
       private Map<Long, NatAdapter> natNetworkAdapters = new HashMap<Long, NatAdapter>();
       private long memory;
+      private CleanupMode cleanUpMode;
+      
       public Builder controller(StorageController controller) {
          controllers.add(controller);
          return this;
@@ -103,12 +112,17 @@ public class VmSpec {
          this.memory = (long) memorySize;
          return this;
       }
+      
+      public Builder cleanUpMode(CleanupMode cleanupMode) {
+         this.cleanUpMode = cleanupMode;
+         return this;
+      }      
 
       public VmSpec build() {
          checkNotNull(name, "name");
          checkNotNull(id, "id");
          checkArgument(memory > 0, "Memory must be set");
-         return new VmSpec(id, name, osTypeId, memory, forceOverwrite, controllers, natNetworkAdapters);
+         return new VmSpec(id, name, osTypeId, memory, forceOverwrite, controllers, natNetworkAdapters, cleanUpMode);
       }
 
 
@@ -139,6 +153,10 @@ public class VmSpec {
 
    public Map<Long, NatAdapter> getNatNetworkAdapters() {
       return Collections.unmodifiableMap(natNetworkAdapters);
+   }
+
+   public CleanupMode getCleanupMode() {
+      return cleanupMode;
    }
 
    @Override

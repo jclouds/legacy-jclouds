@@ -19,15 +19,24 @@
 
 package org.jclouds.virtualbox.functions.admin;
 
-import org.testng.annotations.Test;
-import org.virtualbox_4_1.*;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.createNiceMock;
+import static org.easymock.classextension.EasyMock.replay;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.*;
+import org.jclouds.virtualbox.domain.VmSpec;
+import org.testng.annotations.Test;
+import org.virtualbox_4_1.CleanupMode;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IMedium;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.IVirtualBox;
+import org.virtualbox_4_1.VirtualBoxManager;
 
 @Test(groups = "unit", testName = "UnregisterMachineIfExistsTest")
 public class UnregisterMachineIfExistsAndDeleteItsMediaTest {
@@ -37,20 +46,29 @@ public class UnregisterMachineIfExistsAndDeleteItsMediaTest {
       VirtualBoxManager manager = createMock(VirtualBoxManager.class);
       IVirtualBox vBox = createMock(IVirtualBox.class);
       IMachine registeredMachine = createMock(IMachine.class);
-      List<IMedium> mediums = Collections.emptyList();
+      IProgress progress = createNiceMock(IProgress.class);
+      List<IMedium> media = new ArrayList<IMedium>();
+      List<IMedium> mediums = Collections.unmodifiableList(media);
 
       CleanupMode mode = CleanupMode.Full;
-      String vmName = "jclouds-image-example-machine";
+      String vmName = "jclouds-image-example-machine-to-be-destroyed";
+      
+      String vmId = "jclouds-image-iso-unregister";
+      VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).memoryMB(512) .cleanUpMode(mode)
+            .build();
 
       expect(manager.getVBox()).andReturn(vBox).anyTimes();
       expect(vBox.findMachine(vmName)).andReturn(registeredMachine);
 
       expect(registeredMachine.unregister(mode)).andReturn(mediums);
       expectLastCall().anyTimes();
+      
+      expect(registeredMachine.delete(mediums)).andReturn(progress);
+      expectLastCall().anyTimes();
 
-      replay(manager, vBox, registeredMachine);
+      replay(manager, vBox, registeredMachine, progress);
 
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager, mode).apply(vmName);
+      new UnregisterMachineIfExistsAndDeleteItsMedia(manager, mode).apply(vmSpecification);
    }
 
 }
