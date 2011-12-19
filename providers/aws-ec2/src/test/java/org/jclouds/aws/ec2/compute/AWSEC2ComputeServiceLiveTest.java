@@ -155,8 +155,9 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
          try {
             Set<Datapoint> datapoints = monitoringContext.getApi().getMetricStatisticsInRegion(instance.getRegion(),
-                     "CPUUtilization", before, new Date(), 60, "Average");
-            assert datapoints != null;
+                     "CPUUtilization", "AWS/EC2", before, new Date(), 60, "Average");
+            assert datapoints != null && datapoints.size() > 0;
+
          } finally {
             monitoringContext.close();
          }

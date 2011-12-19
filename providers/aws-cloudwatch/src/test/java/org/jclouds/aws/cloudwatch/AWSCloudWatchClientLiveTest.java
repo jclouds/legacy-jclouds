@@ -36,7 +36,7 @@ public class AWSCloudWatchClientLiveTest extends CloudWatchClientLiveTest {
    @Test
    public void testGetMetricStatisticsInRegion() {
       for (String region : Region.DEFAULT_REGIONS) {
-         getMetricStatisticsInRegion(region);
+         getEC2MetricStatisticsInRegion(region);
       }
    }
 }

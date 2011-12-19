@@ -27,7 +27,6 @@ import java.util.Set;
 
 import org.jclouds.Constants;
 import org.jclouds.cloudwatch.domain.Datapoint;
-import org.jclouds.logging.Logger;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
@@ -86,16 +85,17 @@ public class CloudWatchClientLiveTest {
 
    @Test
    protected void testGetMetricStatisticsInRegion() {
-      getMetricStatisticsInRegion(null);
+      getEC2MetricStatisticsInRegion(null);
    }
 
-   protected void getMetricStatisticsInRegion(String region) {
+   protected Set<Datapoint> getEC2MetricStatisticsInRegion(String region) {
       Calendar cal = Calendar.getInstance();
-      cal.add(Calendar.MINUTE, -1);
+      cal.add(Calendar.MINUTE, -60 * 24 * 3); // 3 days
 
       Set<Datapoint> datapoints = client.getMetricStatisticsInRegion(
-         region, "CPUUtilization", cal.getTime(), new Date(), 60, "Average");
-      assert datapoints != null;
+         region, "CPUUtilization", "AWS/EC2", cal.getTime(), new Date(), 180, "Average");
+
+      return checkNotNull(datapoints, "Got null response for EC2 datapoints in region ");
    }
 
    @AfterTest
