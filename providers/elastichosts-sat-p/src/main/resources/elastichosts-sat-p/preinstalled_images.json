@@ -1,16 +1,16 @@
 [
   {
-      "uuid": "38df0986-4d85-4b76-b502-3878ffc80161",
-      "description": "CentOS Linux 5.5",
+      "uuid": "73f7cc6a-1c48-418a-80de-886b28a56a4d",
+      "description": "CentOS Linux 6.0",
       "osFamily": "CENTOS",
-      "osVersion": "5.5",
+      "osVersion": "6.0",
       "size": "3"
   },
   {
-      "uuid": "980cf63c-f21e-4382-997b-6541d5809629",
-      "description": "Debian Linux 5.0",
+      "uuid": "9405cddf-8d01-472c-b7e3-e8c062dcde51",
+      "description": "Debian Linux 6.0",
       "osFamily": "DEBIAN",
-      "osVersion": "5.0",
+      "osVersion": "6.0",
       "size": "1"
   },
   {
@@ -28,10 +28,10 @@
       "size": "1"
   },
   {
-      "uuid": "2bae7a5a-7a56-4d02-a711-ed90f25b74a3",
-      "description": "Ubuntu Linux 10.10",
+      "uuid": "8d8aee18-8744-452c-94b2-69a2a34b8460",
+      "description": "Ubuntu Linux 11.10",
       "osFamily": "UBUNTU",
-      "osVersion": "10.10",
+      "osVersion": "11.10",
       "size": "1"
   },
   {
@@ -56,7 +56,7 @@
       "size": "13"
   },
   {
-      "uuid": "10a88d1c-6575-46e3-8d2c-7744065ea530",
+      "uuid": "b17ebce6-61b4-4dcc-9654-41c9fc847e01",
       "description": "Windows Server 2008 Standard R2",
       "osFamily": "WINDOWS",
       "osVersion": "2008 R2",
