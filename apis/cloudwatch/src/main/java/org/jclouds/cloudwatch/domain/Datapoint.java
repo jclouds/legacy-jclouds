@@ -56,7 +56,7 @@ public class Datapoint {
     * return Average of samples for the datapoint.
     */
    @Nullable
-   Double getAverage() {
+   public Double getAverage() {
       return average;
    }
 
@@ -64,7 +64,7 @@ public class Datapoint {
     * return Maximum of the samples used for the datapoint.
     */
    @Nullable
-   Double getMaximum() {
+   public Double getMaximum() {
       return maximum;
    }
 
@@ -72,7 +72,7 @@ public class Datapoint {
     * return Minimum of samples for the datapoint.
     */
    @Nullable
-   Double getMinimum() {
+   public Double getMinimum() {
       return minimum;
    }
 
@@ -80,7 +80,7 @@ public class Datapoint {
     * return Indicates the beginning of the time aggregation for this value and samples.
     */
    @Nullable
-   Date getTimestamp() {
+   public Date getTimestamp() {
       return timestamp;
    }
 
@@ -88,7 +88,7 @@ public class Datapoint {
     * return The number of Measurements that contributed to the aggregate value of this datapoint.
     */
    @Nullable
-   Double getSamples() {
+   public Double getSamples() {
       return samples;
    }
 
@@ -96,7 +96,7 @@ public class Datapoint {
     * return Sum of samples for the datapoint.
     */
    @Nullable
-   Double getSum() {
+   public Double getSum() {
       return sum;
    }
 
@@ -104,7 +104,7 @@ public class Datapoint {
     * return Standard unit used for the datapoint.
     */
    @Nullable
-   StandardUnit getUnit() {
+   public StandardUnit getUnit() {
       return unit;
    }
 
@@ -112,7 +112,7 @@ public class Datapoint {
     * return CustomUnit defined for the datapoint.
     */
    @Nullable
-   String getCustomUnit() {
+   public String getCustomUnit() {
       return customUnit;
    }
 
