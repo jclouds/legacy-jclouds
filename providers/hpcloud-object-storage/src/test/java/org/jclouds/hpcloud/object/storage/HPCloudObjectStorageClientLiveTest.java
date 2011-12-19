@@ -44,7 +44,7 @@ public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTes
    
    @Override
    protected void testGetObjectContentType(SwiftObject getBlob) {
-      assertEquals(getBlob.getInfo().getContentType(), "application/x-www-form-urlencoded");
+      assertEquals(getBlob.getInfo().getContentType(), "application/unknown");
    }
 
    @Test
@@ -111,6 +111,7 @@ public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTes
             }
          }));
          */
+
          cdnMetadataList = getApi().listCDNContainers(
                   ListCDNContainerOptions.Builder.afterMarker(
                            containerNameWithCDN.substring(0, containerNameWithCDN.length() - 1)).maxResults(1));
