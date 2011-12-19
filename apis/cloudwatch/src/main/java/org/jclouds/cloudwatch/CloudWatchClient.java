@@ -51,13 +51,15 @@ public interface CloudWatchClient {
     * 
     * @param region
     *           region to gather metrics in
-    * @param measureName
+    * @param metricName
     *           The measure name that corresponds to the measure for the gathered metric.
     *           <p/>
     *           note
     *           <p/>
     *           Must be a valid collected metric with the corresponding measure name, please see
     *           Available Amazon CloudWatch Metrics
+    * @param namespace
+    *           The namespace of the metric (e.g. AWS/EC2)
     * @param startTime
     *           The timestamp of the first datapoint to return, inclusive. We round your value down
     *           to the nearest minute. You can set your start time for more than two weeks in the
@@ -70,7 +72,7 @@ public interface CloudWatchClient {
     * @param statistics
     *           The statistics to be returned for the given metric. ex. Average
     */
-   Set<Datapoint> getMetricStatisticsInRegion(@Nullable String region, String measureName, Date startTime,
-            Date endTime, int period, String statistics);
+   Set<Datapoint> getMetricStatisticsInRegion(@Nullable String region, String metricName, String namespace,
+            Date startTime, Date endTime, int period, String statistics);
 
 }
