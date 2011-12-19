@@ -19,19 +19,18 @@
 package org.jclouds.glesys.parse;
 
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.core.MediaType;
-import java.util.*;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.jclouds.glesys.config.GleSYSParserModule;
-import org.jclouds.glesys.domain.ServerCreatedIp;
 import org.jclouds.glesys.domain.ServerCreated;
+import org.jclouds.glesys.domain.ServerCreatedIp;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
 
 /**
  * @author Adam Lowe
@@ -48,9 +47,7 @@ public class ParseServerCreatedTest extends BaseItemParserTest<ServerCreated> {
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
    public ServerCreated expected() {
-      List<ServerCreatedIp> ips = new ArrayList<ServerCreatedIp>();
-      ips.add(ServerCreatedIp.builder().ip("109.74.10.27").version(4).cost(2.00).build());
-      return ServerCreated.builder().id("xm3630641").hostname("jclouds-test-host").port(ips).build();
+      return ServerCreated.builder().id("xm3630641").hostname("jclouds-test-host").ips(ServerCreatedIp.builder().ip("109.74.10.27").version(4).cost(2.00).build()).build();
    }
     
 
