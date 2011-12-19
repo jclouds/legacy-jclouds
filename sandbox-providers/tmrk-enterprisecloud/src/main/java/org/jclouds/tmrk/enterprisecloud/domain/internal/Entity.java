@@ -153,6 +153,6 @@ public class Entity<T extends Entity<T>> extends Resource<T> {
 
    @Override
    public String string() {
-     return super.string()+", name="+name+", tasks="+tasks;
+     return super.string()+", tasks="+tasks;
    }
 }

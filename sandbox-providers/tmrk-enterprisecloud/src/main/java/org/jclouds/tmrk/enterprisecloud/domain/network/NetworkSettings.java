@@ -86,6 +86,12 @@ public class NetworkSettings {
       return networkAdapterSettings;
    }
 
+   /**
+    * DnsSettings is optional.
+    * If not included, defaults to DNS for the data center.
+    * PrimaryDns is required if DnsSettings is included.
+    * @return
+    */
    public DnsSettings getDnsSettings() {
       return dnsSettings;
    }
