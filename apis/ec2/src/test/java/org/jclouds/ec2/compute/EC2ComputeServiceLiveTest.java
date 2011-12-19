@@ -225,6 +225,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          }
 
       } finally {
+         context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
          if (context != null)
             context.close();
       }
