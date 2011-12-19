@@ -61,7 +61,7 @@ public class BackoffLimitedRetryHandlerTest {
 
    @Test
    void testExponentialBackoffDelayDefaultMaxInterval500() throws InterruptedException {
-      long period = 100;
+      long period = 500;
       long acceptableDelay = period - 1;
 
       long startTime = System.nanoTime();
