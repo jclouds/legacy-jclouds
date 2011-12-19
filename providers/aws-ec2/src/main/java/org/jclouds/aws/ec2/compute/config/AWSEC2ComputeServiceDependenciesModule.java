@@ -38,7 +38,6 @@ import org.jclouds.aws.ec2.predicates.PlacementGroupDeleted;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.options.TemplateOptions;
@@ -48,8 +47,8 @@ import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.ec2.compute.functions.CredentialsForInstance;
+import org.jclouds.ec2.compute.functions.LoadPublicIpForInstanceOrNull;
 import org.jclouds.ec2.compute.functions.RegionAndIdToImage;
-import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
@@ -67,6 +66,7 @@ import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.google.inject.name.Names;
 
 /**
  * 
@@ -81,7 +81,9 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
       bind(new TypeLiteral<CacheLoader<RunningInstance, Credentials>>() {
       }).to(CredentialsForInstance.class);
       bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
-      }).to(CreateSecurityGroupIfNeeded.class);
+      }).annotatedWith(Names.named("SECURITY")).to(CreateSecurityGroupIfNeeded.class);
+      bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
+      }).annotatedWith(Names.named("ELASTICIP")).to(LoadPublicIpForInstanceOrNull.class);    
       bind(new TypeLiteral<Function<RegionAndName, KeyPair>>() {
       }).to(CreateUniqueKeyPair.class);
       bind(new TypeLiteral<Function<RegionNameAndPublicKeyMaterial, KeyPair>>() {

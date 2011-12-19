@@ -25,13 +25,16 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.domain.Credentials;
+import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.strategy.EC2DestroyNodeStrategy;
 
+import com.google.common.cache.Cache;
 import com.google.common.collect.Iterables;
 
 /**
@@ -46,14 +49,15 @@ public class AWSEC2DestroyNodeStrategy extends EC2DestroyNodeStrategy {
 
    @Inject
    protected AWSEC2DestroyNodeStrategy(AWSEC2Client client, GetNodeMetadataStrategy getNode,
+            @Named("ELASTICIP") Cache<RegionAndName, String> elasticIpCache,
             Map<String, Credentials> credentialStore) {
-      super(client, getNode);
+      super(client, getNode, elasticIpCache);
       this.client = checkNotNull(client, "client");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
    }
 
    @Override
-   protected void destroyInstanceInRegion(String region, String id) {
+   protected void destroyInstanceInRegion(String id, String region) {
       String spotId = id;
       if (id.indexOf("sir-") != 0) {
          try {

@@ -20,8 +20,7 @@ package org.jclouds.ec2.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -34,8 +33,12 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.logging.Logger;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.cache.Cache;
 
 /**
  * 
@@ -48,14 +51,19 @@ public class EC2DestroyNodeStrategy implements DestroyNodeStrategy {
    protected Logger logger = Logger.NULL;
    protected final EC2Client client;
    protected final GetNodeMetadataStrategy getNode;
+   protected final Cache<RegionAndName, String> elasticIpCache;
+
    @Inject
    @Named(EC2Constants.PROPERTY_EC2_AUTO_ALLOCATE_ELASTIC_IPS)
+   @VisibleForTesting
    boolean autoAllocateElasticIps = false;
 
    @Inject
-   protected EC2DestroyNodeStrategy(EC2Client client, GetNodeMetadataStrategy getNode) {
+   protected EC2DestroyNodeStrategy(EC2Client client, GetNodeMetadataStrategy getNode,
+            @Named("ELASTICIP") Cache<RegionAndName, String> elasticIpCache) {
       this.client = checkNotNull(client, "client");
       this.getNode = checkNotNull(getNode, "getNode");
+      this.elasticIpCache = checkNotNull(elasticIpCache, "elasticIpCache");
    }
 
    @Override
@@ -63,25 +71,36 @@ public class EC2DestroyNodeStrategy implements DestroyNodeStrategy {
       String[] parts = AWSUtils.parseHandle(id);
       String region = parts[0];
       String instanceId = parts[1];
-      Set<String> publicIps = getNode.getNode(id).getPublicAddresses();
 
-      releaseElasticIpInRegion(region, instanceId, publicIps);
-      destroyInstanceInRegion(region, instanceId);
+      // TODO: can there be multiple?
+      releaseAnyPublicIpForInstanceInRegion(instanceId, region);
+      destroyInstanceInRegion(instanceId, region);
       return getNode.getNode(id);
    }
 
-   protected void releaseElasticIpInRegion(String region, String instanceId, Set<String> publicIps) {
-       if (!autoAllocateElasticIps)
-           return;
+   protected void releaseAnyPublicIpForInstanceInRegion(String instanceId, String region) {
+      if (!autoAllocateElasticIps)
+         return;
+      try {
+         String ip = elasticIpCache.get(new RegionAndName(region, instanceId));
+         logger.debug(">> disassociating elastic IP %s", ip);
+         client.getElasticIPAddressServices().disassociateAddressInRegion(region, ip);
+         logger.trace("<< disassociated elastic IP %s", ip);
+         elasticIpCache.invalidate(new RegionAndName(region, instanceId));
+         logger.debug(">> releasing elastic IP %s", ip);
+         client.getElasticIPAddressServices().releaseAddressInRegion(region, ip);
+         logger.trace("<< released elastic IP %s", ip);
+      } catch (NullPointerException e) {
+         // no ip was found
+         return;
+      } catch (ExecutionException e) {
+         // don't propagate as we need to clean up the node regardless
+         logger.warn(e, "error cleaning up elastic ip for instance %s/%s", region, instanceId);
+      }
 
-       Iterator<String> it = publicIps.iterator();
-       while (it.hasNext()) {
-          String publicIp = (String)it.next();
-          client.getElasticIPAddressServices().disassociateAddressInRegion(region, publicIp);
-          client.getElasticIPAddressServices().releaseAddressInRegion(region, publicIp);
-       }
    }
-   protected void destroyInstanceInRegion(String region, String instanceId) {
+
+   protected void destroyInstanceInRegion(String instanceId, String region) {
       client.getInstanceServices().terminateInstancesInRegion(region, instanceId);
    }
 }
