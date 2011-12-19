@@ -19,10 +19,9 @@
 package org.jclouds.ec2.compute;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -30,7 +29,6 @@ import java.util.Set;
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
@@ -181,7 +179,6 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public void testAutoIpAllocation() throws Exception {
       ComputeServiceContext context = null;
       String group = this.group + "aip";
-
       try {
          Properties overrides = setupProperties();
          overrides.setProperty(EC2Constants.PROPERTY_EC2_AUTO_ALLOCATE_ELASTIC_IPS, "true");
@@ -211,7 +208,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          EC2Client ec2 = EC2Client.class.cast(context.getProviderSpecificContext().getApi());
          Set<PublicIpInstanceIdPair> ipidpairs =
                ec2.getElasticIPAddressServices().describeAddressesInRegion(region, publicIps.toArray(new String[0]));
-         assertTrue(ipidpairs.size() == 1);
+         assert (ipidpairs.size() == 1) : ipidpairs;
 
          // check that the elastic ip is in node.publicAddresses
          PublicIpInstanceIdPair ipidpair = Iterables.get(ipidpairs, 0);

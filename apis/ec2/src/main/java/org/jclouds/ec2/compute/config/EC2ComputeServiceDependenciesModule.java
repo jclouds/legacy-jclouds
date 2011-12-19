@@ -45,6 +45,7 @@ import org.jclouds.ec2.compute.functions.AddElasticIpsToNodemetadata;
 import org.jclouds.ec2.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.ec2.compute.functions.CredentialsForInstance;
+import org.jclouds.ec2.compute.functions.LoadPublicIpForInstanceOrNull;
 import org.jclouds.ec2.compute.functions.RegionAndIdToImage;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
@@ -62,9 +63,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
@@ -72,6 +73,7 @@ import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 /**
  * 
@@ -80,11 +82,11 @@ import com.google.inject.TypeLiteral;
 public class EC2ComputeServiceDependenciesModule extends AbstractModule {
 
    public static final Map<InstanceState, NodeState> instanceToNodeState = ImmutableMap
-         .<InstanceState, NodeState> builder().put(InstanceState.PENDING, NodeState.PENDING)
-         .put(InstanceState.RUNNING, NodeState.RUNNING).put(InstanceState.SHUTTING_DOWN, NodeState.PENDING)
-         .put(InstanceState.TERMINATED, NodeState.TERMINATED).put(InstanceState.STOPPING, NodeState.PENDING)
-         .put(InstanceState.STOPPED, NodeState.SUSPENDED).put(InstanceState.UNRECOGNIZED, NodeState.UNRECOGNIZED)
-         .build();
+            .<InstanceState, NodeState> builder().put(InstanceState.PENDING, NodeState.PENDING).put(
+                     InstanceState.RUNNING, NodeState.RUNNING).put(InstanceState.SHUTTING_DOWN, NodeState.PENDING).put(
+                     InstanceState.TERMINATED, NodeState.TERMINATED).put(InstanceState.STOPPING, NodeState.PENDING)
+            .put(InstanceState.STOPPED, NodeState.SUSPENDED).put(InstanceState.UNRECOGNIZED, NodeState.UNRECOGNIZED)
+            .build();
 
    @Singleton
    @Provides
@@ -99,12 +101,14 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       bind(ComputeService.class).to(EC2ComputeService.class);
       bind(new TypeLiteral<CacheLoader<RunningInstance, Credentials>>() {
       }).to(CredentialsForInstance.class);
-      bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
-      }).to(CreateSecurityGroupIfNeeded.class);
       bind(new TypeLiteral<Function<RegionAndName, KeyPair>>() {
       }).to(CreateUniqueKeyPair.class);
       bind(new TypeLiteral<CacheLoader<RegionAndName, Image>>() {
       }).to(RegionAndIdToImage.class);
+      bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
+      }).annotatedWith(Names.named("SECURITY")).to(CreateSecurityGroupIfNeeded.class);
+      bind(new TypeLiteral<CacheLoader<RegionAndName, String>>() {
+      }).annotatedWith(Names.named("ELASTICIP")).to(LoadPublicIpForInstanceOrNull.class);      
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<EC2Client, EC2AsyncClient>>() {
       }).in(Scopes.SINGLETON);
@@ -113,6 +117,9 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       }).in(Scopes.SINGLETON);
    }
 
+   /**
+    * only add the overhead of looking up ips when we have enabled the auto-allocate functionality
+    */
    @Provides
    @Singleton
    public Function<RunningInstance, NodeMetadata> bindNodeConverter(RunningInstanceToNodeMetadata baseConverter,
@@ -148,20 +155,29 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
    protected ConcurrentMap<RegionAndName, KeyPair> keypairMap(Injector i) {
       return Maps.newConcurrentMap();
    }
-   
+
    @Provides
    @Singleton
    @Named("SECURITY")
-   protected LoadingCache<RegionAndName, String> securityGroupMap(CacheLoader<RegionAndName, String> in) {
+   protected LoadingCache<RegionAndName, String> securityGroupMap(
+            @Named("SECURITY") CacheLoader<RegionAndName, String> in) {
       return CacheBuilder.newBuilder().build(in);
    }
-   
+
+   @Provides
+   @Singleton
+   @Named("ELASTICIP")
+   protected LoadingCache<RegionAndName, String> instanceToElasticIp(
+            @Named("ELASTICIP") CacheLoader<RegionAndName, String> in) {
+      return CacheBuilder.newBuilder().build(in);
+   }
+
    @Provides
    @Singleton
    @Named("SECURITY")
    protected Predicate<RegionAndName> securityGroupEventualConsistencyDelay(SecurityGroupPresent in,
-         @Named(PROPERTY_EC2_TIMEOUT_SECURITYGROUP_PRESENT) long msDelay) {
+            @Named(PROPERTY_EC2_TIMEOUT_SECURITYGROUP_PRESENT) long msDelay) {
       return new RetryablePredicate<RegionAndName>(in, msDelay, 100l, TimeUnit.MILLISECONDS);
    }
-   
+
 }

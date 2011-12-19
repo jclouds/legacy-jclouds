@@ -18,23 +18,24 @@
  */
 package org.jclouds.ec2.compute.functions;
 
-import java.util.Set;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.domain.PublicIpInstanceIdPair;
+import org.jclouds.ec2.compute.domain.RegionAndName;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Splitter;
+import com.google.common.base.Throwables;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
 /**
  * This class searches for elastic ip addresses that are associated with the node, and adds them to
@@ -45,61 +46,29 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class AddElasticIpsToNodemetadata implements Function<NodeMetadata, NodeMetadata> {
 
-   private final EC2Client client;
+   private final LoadingCache<RegionAndName, String> cache;
 
    @Inject
-   AddElasticIpsToNodemetadata(EC2Client client) {
-      this.client = client;
+   protected AddElasticIpsToNodemetadata(@Named("ELASTICIP") LoadingCache<RegionAndName, String> cache) {
+      this.cache = checkNotNull(cache, "cache");
    }
 
+   //TODO: can there be multiple elastic ips on one instance?
    @Override
    public NodeMetadata apply(NodeMetadata arg0) {
       String[] parts = AWSUtils.parseHandle(arg0.getId());
       String region = parts[0];
       String instanceId = parts[1];
-
-      Iterable<PublicIpInstanceIdPair> elasticIpsAssociatedWithNode = ipAddressPairsAssignedToInstance(region,
-            instanceId);
-
-      Set<String> publicIps = extractIpAddressFromPairs(elasticIpsAssociatedWithNode);
-
-      return addPublicIpsToNode(publicIps, arg0);
-   }
-
-   @VisibleForTesting
-   NodeMetadata addPublicIpsToNode(Set<String> publicIps, NodeMetadata arg0) {
-      if (publicIps.size() > 0)
-         arg0 = NodeMetadataBuilder.fromNodeMetadata(arg0).publicAddresses(
-                  Iterables.concat(publicIps, arg0.getPublicAddresses())).build();
-      return arg0;
-   }
-
-   @VisibleForTesting
-   Set<String> extractIpAddressFromPairs(Iterable<PublicIpInstanceIdPair> elasticIpsAssociatedWithNode) {
-      Set<String> publicIps = ImmutableSet.copyOf(Iterables.transform(elasticIpsAssociatedWithNode,
-               new Function<PublicIpInstanceIdPair, String>() {
-
-                  @Override
-                  public String apply(PublicIpInstanceIdPair arg0) {
-                     return arg0.getPublicIp();
-                  }
-
-               }));
-      return publicIps;
-   }
-
-   @VisibleForTesting
-   Iterable<PublicIpInstanceIdPair> ipAddressPairsAssignedToInstance(String region, final String instanceId) {
-      Iterable<PublicIpInstanceIdPair> elasticIpsAssociatedWithNode = Iterables.filter(client
-               .getElasticIPAddressServices().describeAddressesInRegion(region),
-               new Predicate<PublicIpInstanceIdPair>() {
-
-                  @Override
-                  public boolean apply(PublicIpInstanceIdPair in) {
-                     return instanceId.equals(in.getInstanceId());
-                  }
-               });
-      return elasticIpsAssociatedWithNode;
+      try {
+         String publicIp = cache.get(new RegionAndName(region, instanceId));
+         return NodeMetadataBuilder.fromNodeMetadata(arg0).publicAddresses(
+                  ImmutableSet.<String> builder().addAll(arg0.getPublicAddresses()).add(publicIp).build()).build();
+      } catch (CacheLoader.InvalidCacheLoadException e) {
+         // no ip was found
+         return arg0;
+      } catch (ExecutionException e) {
+         throw Throwables.propagate(e);
+      }
    }
 
 }

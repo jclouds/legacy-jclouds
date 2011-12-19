@@ -45,6 +45,7 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Credentials;
+import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.strategy.EC2CreateNodesInGroupThenAddToSet;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.options.RunInstancesOptions;
@@ -52,6 +53,7 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -76,6 +78,8 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
    @Inject
    protected AWSEC2CreateNodesInGroupThenAddToSet(
             AWSEC2Client client,
+            @Named("ELASTICIP") LoadingCache<RegionAndName, String> elasticIpCache,
+            @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
             AWSEC2AsyncClient aclient,
             @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames,
             Provider<TemplateBuilder> templateBuilderProvider,
@@ -84,8 +88,8 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
             Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
             LoadingCache<RunningInstance, Credentials> instanceToCredentials, Map<String, Credentials> credentialStore,
             ComputeUtils utils, SpotInstanceRequestToAWSRunningInstance spotConverter) {
-      super(client, templateBuilderProvider, createKeyPairAndSecurityGroupsAsNeededAndReturncustomize, instancePresent,
-               runningInstanceToNodeMetadata, instanceToCredentials, credentialStore, utils);
+      super(client, elasticIpCache, nodeRunning, templateBuilderProvider, createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
+               instancePresent, runningInstanceToNodeMetadata, instanceToCredentials, credentialStore, utils);
       this.client = checkNotNull(client, "client");
       this.aclient = checkNotNull(aclient, "aclient");
       this.spotConverter = checkNotNull(spotConverter, "spotConverter");

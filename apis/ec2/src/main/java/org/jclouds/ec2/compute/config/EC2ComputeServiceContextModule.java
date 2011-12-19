@@ -44,8 +44,8 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
-import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -70,7 +70,7 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
    protected void installDependencies(){
       install(new EC2ComputeServiceDependenciesModule());
    }
-
+   
    @Override
    protected boolean shouldParseImagesOnDemand(Injector injector) {
       // If no owners to query, then will never lookup all images
