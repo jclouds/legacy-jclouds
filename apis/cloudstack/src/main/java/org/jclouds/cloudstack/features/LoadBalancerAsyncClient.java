@@ -32,10 +32,11 @@ import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.ListLoadBalancerRulesOptions;
 import org.jclouds.functions.JoinOnComma;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
@@ -58,7 +59,7 @@ public interface LoadBalancerAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listLoadBalancerRules")
-   @Unwrap(depth = 2)
+   @SelectJson("loadbalancerrule")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<LoadBalancerRule>> listLoadBalancerRules(ListLoadBalancerRulesOptions... options);
@@ -68,7 +69,8 @@ public interface LoadBalancerAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listLoadBalancerRules")
-   @Unwrap(depth = 3, edgeCollection = Set.class)
+   @SelectJson("loadbalancerrule")
+   @OnlyElement
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<LoadBalancerRule> getLoadBalancerRule(@QueryParam("id") long id);
@@ -78,7 +80,7 @@ public interface LoadBalancerAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "createLoadBalancerRule")
-   @Unwrap(depth = 2)
+   @SelectJson("loadbalancerrule")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<LoadBalancerRule> createLoadBalancerRuleForPublicIP(@QueryParam("publicipid") long publicIPId,
          @QueryParam("algorithm") Algorithm algorithm, @QueryParam("name") String name,
@@ -89,7 +91,7 @@ public interface LoadBalancerAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "deleteLoadBalancerRule")
-   @Unwrap(depth = 2)
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Long> deleteLoadBalancerRule(@QueryParam("id") long id);
@@ -100,7 +102,7 @@ public interface LoadBalancerAsyncClient {
    @GET
    @QueryParams(keys = "command", values = "assignToLoadBalancerRule")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Unwrap(depth = 2)
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> assignVirtualMachinesToLoadBalancerRule(@QueryParam("id") long id,
          @QueryParam("virtualmachineids") @ParamParser(JoinOnComma.class) Iterable<Long> virtualMachineIds);
@@ -111,7 +113,7 @@ public interface LoadBalancerAsyncClient {
    @GET
    @QueryParams(keys = "command", values = "assignToLoadBalancerRule")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Unwrap(depth = 2)
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> assignVirtualMachinesToLoadBalancerRule(@QueryParam("id") long id,
          @QueryParam("virtualmachineids") @ParamParser(JoinOnComma.class) long... virtualMachineIds);
@@ -122,7 +124,7 @@ public interface LoadBalancerAsyncClient {
    @GET
    @QueryParams(keys = "command", values = "removeFromLoadBalancerRule")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Unwrap(depth = 2)
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> removeVirtualMachinesFromLoadBalancerRule(@QueryParam("id") long id,
          @QueryParam("virtualmachineids") @ParamParser(JoinOnComma.class) Iterable<Long> virtualMachineIds);
@@ -133,7 +135,7 @@ public interface LoadBalancerAsyncClient {
    @GET
    @QueryParams(keys = "command", values = "removeFromLoadBalancerRule")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Unwrap(depth = 2)
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> removeVirtualMachinesFromLoadBalancerRule(@QueryParam("id") long id,
          @QueryParam("virtualmachineids") @ParamParser(JoinOnComma.class) long... virtualMachineIds);
@@ -143,7 +145,7 @@ public interface LoadBalancerAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listLoadBalancerRuleInstances")
-   @Unwrap(depth = 2)
+   @SelectJson("loadbalancerrule")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<VirtualMachine>> listVirtualMachinesAssignedToLoadBalancerRule(@QueryParam("id") long id);

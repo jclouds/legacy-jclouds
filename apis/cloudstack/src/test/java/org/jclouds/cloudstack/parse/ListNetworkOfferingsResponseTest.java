@@ -18,18 +18,17 @@
  */
 package org.jclouds.cloudstack.parse;
 
+import static org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType.REQUIRED;
+
 import java.util.Set;
 
 import org.jclouds.cloudstack.domain.NetworkOffering;
-import org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType;
 import org.jclouds.cloudstack.domain.TrafficType;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-
-import static org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType.REQUIRED;
 
 /**
  * @author Adrian Cole

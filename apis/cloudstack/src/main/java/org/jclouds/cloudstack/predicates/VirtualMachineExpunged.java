@@ -18,17 +18,17 @@
  */
 package org.jclouds.cloudstack.predicates;
 
-import com.google.common.base.Predicate;
-import com.google.inject.Inject;
-import org.jclouds.cloudstack.CloudStackClient;
-import org.jclouds.cloudstack.domain.VirtualMachine;
-import org.jclouds.cloudstack.domain.VirtualMachine.State;
-import org.jclouds.logging.Logger;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.logging.Logger;
+
+import com.google.common.base.Predicate;
+import com.google.inject.Inject;
 
 /**
  * 

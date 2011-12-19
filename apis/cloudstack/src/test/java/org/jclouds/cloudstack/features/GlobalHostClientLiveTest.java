@@ -18,14 +18,12 @@
  */
 package org.jclouds.cloudstack.features;
 
-import org.jclouds.cloudstack.domain.Host;
-import org.jclouds.logging.Logger;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import org.jclouds.cloudstack.domain.Host;
+import org.testng.annotations.Test;
 
 /**
  * Tests behavior of {@code GlobalHostClient}

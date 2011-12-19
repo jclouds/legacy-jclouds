@@ -18,9 +18,10 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Date;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.gson.annotations.SerializedName;
 
 /**

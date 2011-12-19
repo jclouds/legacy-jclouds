@@ -19,10 +19,6 @@
 package org.jclouds.cloudstack.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.cloudstack.domain.AsyncJob.ResultCode.FAIL;
-import static org.jclouds.cloudstack.domain.AsyncJob.ResultCode.SUCCESS;
-import static org.jclouds.cloudstack.domain.AsyncJob.Status.FAILED;
-import static org.jclouds.cloudstack.domain.AsyncJob.Status.SUCCEEDED;
 
 import javax.annotation.Resource;
 import javax.inject.Singleton;

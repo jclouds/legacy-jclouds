@@ -18,10 +18,9 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.domain.Host;
-import org.jclouds.cloudstack.domain.NetworkType;
-import org.jclouds.cloudstack.domain.TrafficType;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Options used to control what hosts information is returned

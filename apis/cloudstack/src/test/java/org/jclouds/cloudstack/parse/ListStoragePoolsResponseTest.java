@@ -18,22 +18,17 @@
  */
 package org.jclouds.cloudstack.parse;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Injector;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Set;
+import java.util.TimeZone;
+
 import org.jclouds.cloudstack.domain.StoragePool;
-import org.jclouds.cloudstack.functions.ParseIdToNameFromHttpResponse;
-import org.jclouds.http.HttpResponse;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 

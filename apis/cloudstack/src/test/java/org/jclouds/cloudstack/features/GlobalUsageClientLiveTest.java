@@ -18,33 +18,19 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.cloudstack.domain.DiskOffering;
-import org.jclouds.cloudstack.domain.JobResult;
-import org.jclouds.cloudstack.domain.NetworkOffering;
-import org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType;
-import org.jclouds.cloudstack.domain.ServiceOffering;
-import org.jclouds.cloudstack.domain.StorageType;
-import org.jclouds.cloudstack.domain.UsageRecord;
-import org.jclouds.cloudstack.options.GenerateUsageRecordsOptions;
-import org.jclouds.cloudstack.options.ListUsageRecordsOptions;
-import org.jclouds.cloudstack.options.UpdateDiskOfferingOptions;
-import org.jclouds.cloudstack.options.UpdateNetworkOfferingOptions;
-import org.jclouds.cloudstack.options.UpdateServiceOfferingOptions;
-import org.jclouds.logging.Logger;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
 import java.util.TimeZone;
 
-import static com.google.common.collect.Iterables.getFirst;
-import static org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType.OPTIONAL;
-import static org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType.REQUIRED;
-import static org.jclouds.cloudstack.options.CreateDiskOfferingOptions.Builder.diskSizeInGB;
-import static org.jclouds.cloudstack.options.CreateServiceOfferingOptions.Builder.highlyAvailable;
-import static org.testng.Assert.*;
+import org.jclouds.cloudstack.domain.JobResult;
+import org.jclouds.cloudstack.domain.UsageRecord;
+import org.jclouds.cloudstack.options.GenerateUsageRecordsOptions;
+import org.jclouds.cloudstack.options.ListUsageRecordsOptions;
+import org.testng.annotations.Test;
 
 /**
  * Tests behavior of {@code GlobalUsageClient}

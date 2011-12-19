@@ -18,10 +18,11 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType.DEFAULT;
+
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-import org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType;
 import org.jclouds.cloudstack.options.ListDiskOfferingsOptions;
 import org.jclouds.cloudstack.options.ListNetworkOfferingsOptions;
 import org.jclouds.cloudstack.options.ListServiceOfferingsOptions;
@@ -35,8 +36,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
 import com.google.inject.TypeLiteral;
-
-import static org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType.DEFAULT;
 
 /**
  * Tests behavior of {@code OfferingAsyncClient}

@@ -90,7 +90,7 @@ public interface VirtualMachineAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "rebootVirtualMachine")
-   @Unwrap(depth = 2)
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> rebootVirtualMachine(@QueryParam("id") long id);
 
@@ -99,7 +99,7 @@ public interface VirtualMachineAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "startVirtualMachine")
-   @Unwrap(depth = 2)
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> startVirtualMachine(@QueryParam("id") long id);
 
@@ -108,7 +108,7 @@ public interface VirtualMachineAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "stopVirtualMachine")
-   @Unwrap(depth = 2)
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> stopVirtualMachine(@QueryParam("id") long id);
 
@@ -117,7 +117,7 @@ public interface VirtualMachineAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "resetPasswordForVirtualMachine")
-   @Unwrap(depth = 2)
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> resetPasswordForVirtualMachine(@QueryParam("id") long id);
 
@@ -126,7 +126,7 @@ public interface VirtualMachineAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "changeServiceForVirtualMachine")
-   @Unwrap(depth = 2)
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> changeServiceForVirtualMachine(@QueryParam("id") long id);
 
@@ -135,7 +135,7 @@ public interface VirtualMachineAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "updateVirtualMachine")
-   @Unwrap(depth = 2)
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> updateVirtualMachine(@QueryParam("id") long id);
 
@@ -144,7 +144,7 @@ public interface VirtualMachineAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "destroyVirtualMachine")
-   @Unwrap(depth = 2)
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Long> destroyVirtualMachine(@QueryParam("id") long id);

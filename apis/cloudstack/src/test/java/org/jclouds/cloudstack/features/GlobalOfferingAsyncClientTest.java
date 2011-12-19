@@ -18,7 +18,8 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.inject.TypeLiteral;
+import java.lang.reflect.Method;
+
 import org.jclouds.cloudstack.options.CreateDiskOfferingOptions;
 import org.jclouds.cloudstack.options.CreateServiceOfferingOptions;
 import org.jclouds.cloudstack.options.UpdateDiskOfferingOptions;
@@ -31,10 +32,7 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-
-import static org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType.DEFAULT;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code GlobalOfferingAsyncClient}

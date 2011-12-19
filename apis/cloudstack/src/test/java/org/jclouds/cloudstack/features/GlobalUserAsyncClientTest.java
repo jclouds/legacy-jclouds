@@ -18,9 +18,9 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.inject.TypeLiteral;
+import java.lang.reflect.Method;
+
 import org.jclouds.cloudstack.options.CreateUserOptions;
-import org.jclouds.cloudstack.options.UpdateAccountOptions;
 import org.jclouds.cloudstack.options.UpdateUserOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
@@ -29,7 +29,7 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
-import java.lang.reflect.Method;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code GlobalUserAsyncClient}

@@ -18,9 +18,9 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.Date;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * @author Richard Downer

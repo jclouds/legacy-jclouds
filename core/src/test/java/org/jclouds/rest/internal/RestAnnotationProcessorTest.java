@@ -99,9 +99,6 @@ import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.http.functions.UnwrapOnlyJsonValueInSet;
-import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
-import org.jclouds.http.functions.UnwrapOnlyNestedJsonValueInSet;
 import org.jclouds.http.internal.PayloadEnclosingImpl;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.http.options.GetOptions;
@@ -899,26 +896,8 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       @GET
       @Path("/")
-      @Unwrap(depth = 2)
-      @Consumes(MediaType.APPLICATION_JSON)
-      ListenableFuture<? extends Set<String>> testUnwrapDepth2();
-
-      @GET
-      @Path("/")
-      @Unwrap(depth = 2)
-      @Consumes(MediaType.APPLICATION_JSON)
-      ListenableFuture<Long> testUnwrapDepth2Long();
-
-      @GET
-      @Path("/")
       @SelectJson("jobid")
       ListenableFuture<Long> selectLong();
-
-      @GET
-      @Path("/")
-      @Unwrap(depth = 2, edgeCollection = Set.class)
-      @Consumes(MediaType.APPLICATION_JSON)
-      ListenableFuture<String> testUnwrapDepth2Set();
 
       @GET
       @Path("/")
@@ -926,12 +905,6 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       @OnlyElement
       @Consumes(MediaType.APPLICATION_JSON)
       ListenableFuture<String> selectOnlyElement();
-
-      @GET
-      @Path("/")
-      @Unwrap(depth = 3, edgeCollection = Set.class)
-      @Consumes(MediaType.APPLICATION_JSON)
-      ListenableFuture<String> testUnwrapDepth3();
 
       @Target({ ElementType.METHOD })
       @Retention(RetentionPolicy.RUNTIME)
@@ -1137,68 +1110,6 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @SuppressWarnings("unchecked")
-   public void testUnwrapDepth2() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TestPut.class.getMethod("testUnwrapDepth2");
-      HttpRequest request = factory(TestPut.class).createRequest(method);
-
-      assertResponseParserClassEquals(method, request, UnwrapOnlyNestedJsonValue.class);
-      // now test that it works!
-
-      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
-            .createResponseParser(parserFactory, injector, method, request);
-
-      assertEquals(parser.apply(new HttpResponse(200, "ok",
-            newStringPayload("{\"runit\":{\"runit\":[\"0.7.0\",\"0.7.1\"]}}"))), ImmutableSet.of("0.7.0", "0.7.1"));
-
-      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":{}}"))),
-            ImmutableSet.<String> of());
-   }
-
-   @SuppressWarnings("unchecked")
-   public void testUnwrapDepth2Set() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TestPut.class.getMethod("testUnwrapDepth2Set");
-      HttpRequest request = factory(TestPut.class).createRequest(method);
-
-      assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValueInSet.class);
-      // now test that it works!
-
-      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
-            .createResponseParser(parserFactory, injector, method, request);
-
-      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":[\"0.7.0\"]}"))), "0.7.0");
-
-      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":[]}"))), null);
-   }
-
-   @SuppressWarnings("unchecked")
-   public void testSelectOnlyElement() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TestPut.class.getMethod("selectOnlyElement");
-      HttpRequest request = factory(TestPut.class).createRequest(method);
-
-      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
-            .createResponseParser(parserFactory, injector, method, request);
-
-      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":[\"0.7.0\"]}"))), "0.7.0");
-
-      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":[]}"))), null);
-   }
-
-   @SuppressWarnings("unchecked")
-   public void testUnwrapDepth2Long() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TestPut.class.getMethod("testUnwrapDepth2Long");
-      HttpRequest request = factory(TestPut.class).createRequest(method);
-
-      assertResponseParserClassEquals(method, request, UnwrapOnlyNestedJsonValue.class);
-      // now test that it works!
-
-      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
-            .createResponseParser(parserFactory, injector, method, request);
-
-      assertEquals(parser.apply(new HttpResponse(200, "ok",
-            newStringPayload("{ \"destroyvirtualmachineresponse\" : {\"jobid\":4} }"))), new Long(4));
-   }
-
-   @SuppressWarnings("unchecked")
    public void selectLong() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestPut.class.getMethod("selectLong");
       HttpRequest request = factory(TestPut.class).createRequest(method);
@@ -1211,52 +1122,6 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       assertEquals(parser.apply(new HttpResponse(200, "ok",
             newStringPayload("{ \"destroyvirtualmachineresponse\" : {\"jobid\":4} }"))), new Long(4));
-   }
-
-   @SuppressWarnings("unchecked")
-   public void testUnwrapDepth3() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TestPut.class.getMethod("testUnwrapDepth3");
-      HttpRequest request = factory(TestPut.class).createRequest(method);
-
-      assertResponseParserClassEquals(method, request, UnwrapOnlyNestedJsonValueInSet.class);
-      // now test that it works!
-
-      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
-            .createResponseParser(parserFactory, injector, method, request);
-
-      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":{\"runit\":[\"0.7.0\"]}}"))),
-            "0.7.0");
-   }
-
-   @SuppressWarnings("unchecked")
-   public void testUnwrapDepth3None() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TestPut.class.getMethod("testUnwrapDepth3");
-      HttpRequest request = factory(TestPut.class).createRequest(method);
-
-      assertResponseParserClassEquals(method, request, UnwrapOnlyNestedJsonValueInSet.class);
-      // now test that it works!
-
-      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
-            .createResponseParser(parserFactory, injector, method, request);
-
-      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":{\"runit\":[]}}"))), null);
-      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":{}}"))), null);
-
-   }
-
-   @SuppressWarnings("unchecked")
-   @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testUnwrapDepth3TooMany() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TestPut.class.getMethod("testUnwrapDepth3");
-      HttpRequest request = factory(TestPut.class).createRequest(method);
-
-      assertResponseParserClassEquals(method, request, UnwrapOnlyNestedJsonValueInSet.class);
-      // now test that it works!
-
-      Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
-            .createResponseParser(parserFactory, injector, method, request);
-
-      parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":{\"runit\":[\"0.7.0\",\"0.7.1\"]}}")));
    }
 
    static class TestRequestFilter1 implements HttpRequestFilter {

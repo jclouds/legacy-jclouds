@@ -47,9 +47,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
@@ -78,6 +78,7 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
@@ -85,10 +86,6 @@ import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.http.functions.UnwrapOnlyJsonValueInSet;
-import org.jclouds.http.functions.UnwrapOnlyNestedJsonValue;
-import org.jclouds.http.functions.UnwrapOnlyNestedJsonValueInSet;
-import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.internal.ClassMethodArgs;
@@ -142,18 +139,18 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Throwables;
-import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -844,23 +841,11 @@ public class RestAnnotationProcessor<T> {
       return returnVal;
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings({ "unchecked" })
    public static Key<? extends Function<HttpResponse, ?>> getJsonParserKeyForMethodAnType(Method method, Type returnVal) {
       ParameterizedType parserType;
       if (method.isAnnotationPresent(Unwrap.class)) {
-         int depth = method.getAnnotation(Unwrap.class).depth();
-         Class edgeCollection = method.getAnnotation(Unwrap.class).edgeCollection();
-         if (depth == 1 && edgeCollection == Map.class)
-            parserType = Types.newParameterizedType(UnwrapOnlyJsonValue.class, returnVal);
-         else if (depth == 2 && edgeCollection == Map.class)
-            parserType = Types.newParameterizedType(UnwrapOnlyNestedJsonValue.class, returnVal);
-         else if (depth == 2 && edgeCollection == Set.class)
-            parserType = Types.newParameterizedType(UnwrapOnlyJsonValueInSet.class, returnVal);
-         else if (depth == 3 && edgeCollection == Set.class)
-            parserType = Types.newParameterizedType(UnwrapOnlyNestedJsonValueInSet.class, returnVal);
-         else
-            throw new IllegalStateException(String.format("depth(%d) edgeCollection(%s) not yet supported for @Unwrap",
-                  depth, edgeCollection));
+         parserType = Types.newParameterizedType(UnwrapOnlyJsonValue.class, returnVal);
       } else {
          parserType = Types.newParameterizedType(ParseJson.class, returnVal);
       }

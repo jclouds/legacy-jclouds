@@ -18,15 +18,15 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType;
-import org.testng.annotations.Test;
-
 import static org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType.OPTIONAL;
 import static org.jclouds.cloudstack.options.UpdateNetworkOfferingOptions.Builder.availability;
 import static org.jclouds.cloudstack.options.UpdateNetworkOfferingOptions.Builder.displayText;
 import static org.jclouds.cloudstack.options.UpdateNetworkOfferingOptions.Builder.name;
 import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@code UpdateNetworkOfferingOptions}

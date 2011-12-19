@@ -67,17 +67,23 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
       prefix += "rule";
       try {
          network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.hasLoadBalancerService());
-         Long defaultTemplate = (imageId != null && !"".equals(imageId)) ? new Long(imageId) : null;
-         vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network,
-               defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()), client, jobComplete,
-               virtualMachineRunning);
-         if (vm.getPassword() != null)
-            password = vm.getPassword();
       } catch (NoSuchElementException e) {
          networksDisabled = true;
       }
    }
 
+   public void testCreateVm() {
+      if (networksDisabled)
+         return;
+      Long defaultTemplate = (imageId != null && !"".equals(imageId)) ? new Long(imageId) : null;
+      vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network,
+            defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()), client, jobComplete,
+            virtualMachineRunning);
+      if (vm.getPassword() != null)
+         password = vm.getPassword();
+   }
+
+   @Test(dependsOnMethods = "testCreateVm")
    public void testCreateLoadBalancerRule() throws Exception {
       if (networksDisabled)
          return;
@@ -134,8 +140,8 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testRemoveFromLoadBalancerRule() throws Exception {
       if (networksDisabled)
          throw new SshException();
-      assertTrue(jobComplete.apply(client.getLoadBalancerClient().removeVirtualMachinesFromLoadBalancerRule(rule.getId(),
-            vm.getId())));
+      assertTrue(jobComplete.apply(client.getLoadBalancerClient().removeVirtualMachinesFromLoadBalancerRule(
+            rule.getId(), vm.getId())));
       assertEquals(client.getLoadBalancerClient().listVirtualMachinesAssignedToLoadBalancerRule(rule.getId()).size(), 0);
       assertEquals(rule.getState(), State.ADD);
       checkSSH(new IPSocket(ip.getIPAddress(), 22));

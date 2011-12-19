@@ -18,7 +18,6 @@
  */
 package org.jclouds.cloudstack.parse;
 
-import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.cloudstack.domain.JobResult;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.rest.annotations.SelectJson;

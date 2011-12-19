@@ -18,15 +18,12 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import com.google.common.collect.Maps;
-import com.google.gson.annotations.SerializedName;
-import org.omg.CORBA.UNKNOWN;
-
-import java.util.Date;
-import java.util.Map;
-
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
+
+import java.util.Date;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents a host issued by Cloudstack

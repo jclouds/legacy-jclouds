@@ -37,7 +37,6 @@ import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
@@ -92,7 +91,7 @@ public interface SecurityGroupAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "authorizeSecurityGroupIngress")
-   @Unwrap(depth = 2)
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> authorizeIngressPortsToCIDRs(@QueryParam("securitygroupid") long securityGroupId,
          @QueryParam("protocol") String protocol, @QueryParam("startport") int startPort,
@@ -105,7 +104,7 @@ public interface SecurityGroupAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "authorizeSecurityGroupIngress")
-   @Unwrap(depth = 2)
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> authorizeIngressPortsToSecurityGroups(@QueryParam("securitygroupid") long securityGroupId,
          @QueryParam("protocol") String protocol, @QueryParam("startport") int startPort,
@@ -118,7 +117,7 @@ public interface SecurityGroupAsyncClient {
     */
    @GET
    @QueryParams(keys = { "command", "protocol" }, values = { "authorizeSecurityGroupIngress", "ICMP" })
-   @Unwrap(depth = 2)
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> authorizeIngressICMPToCIDRs(@QueryParam("securitygroupid") long securityGroupId,
          @QueryParam("icmpcode") int ICMPCode, @QueryParam("icmptype") int ICMPType,
@@ -130,7 +129,7 @@ public interface SecurityGroupAsyncClient {
     */
    @GET
    @QueryParams(keys = { "command", "protocol" }, values = { "authorizeSecurityGroupIngress", "ICMP" })
-   @Unwrap(depth = 2)
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> authorizeIngressICMPToSecurityGroups(@QueryParam("securitygroupid") long securityGroupId,
          @QueryParam("icmpcode") int ICMPCode, @QueryParam("icmptype") int ICMPType,
@@ -143,7 +142,7 @@ public interface SecurityGroupAsyncClient {
    @GET
    @QueryParams(keys = "command", values = "revokeSecurityGroupIngress")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   @Unwrap(depth = 2)
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> revokeIngressRule(@QueryParam("id") long id, AccountInDomainOptions... options);
 

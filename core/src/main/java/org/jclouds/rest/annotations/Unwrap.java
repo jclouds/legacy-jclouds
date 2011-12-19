@@ -23,7 +23,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import java.util.Map;
 
 /**
  * Unwraps the only value in a nested json reponse
@@ -35,48 +34,6 @@ import java.util.Map;
 @Target(METHOD)
 @Retention(RUNTIME)
 public @interface Unwrap {
-   /**
-    * level to unwrap.
-    * 
-    * ex. if default (1)
-    * 
-    * { "foo" :"bar" } becomes "bar"
-    * 
-    * ex. if (2)
-    * 
-    * { "foo" : {"bar" : ["baz"]} } becomes ["baz"]
-    * 
-    * <h4>Deprecation</h4>
-    * <p/>
-    * Note that using @SelectJson("bar") is more effective than guessing the
-    * depth
-    * 
-    * @see SelectJson
-    */
-   @Deprecated
-   int depth() default 1;
 
-   /**
-    * final collection type
-    * 
-    * ex. if depth(2), edgeCollection(Map.class)
-    * 
-    * { "foo" : {"bar" : ["baz"]} } becomes ["baz"]
-    * 
-    * ex. if depth(3), edgeCollection(Set.class)
-    * 
-    * { "foo" : {"bar" : ["baz"]} } becomes "baz"
-    * 
-    * <h4>Note</h4> only Map and Set are valid
-    * <p/>
-    * <h4>Deprecation</h4>
-    * <p/>
-    * Note that using @SelectJson("bar") @OnlyElement will have the same effect
-    * 
-    * @see SelectJson
-    * @see OnlyElement
-    */
-   @Deprecated
-   Class<?> edgeCollection() default Map.class;
 
 }
