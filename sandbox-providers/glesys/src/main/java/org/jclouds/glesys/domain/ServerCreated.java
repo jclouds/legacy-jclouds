@@ -2,6 +2,7 @@ package org.jclouds.glesys.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.base.Objects;
@@ -28,9 +29,13 @@ public class ServerCreated {
          this.id = id;
          return this;
       }
-      public Builder port(List<ServerCreatedIp> ips) {
+      public Builder ips(List<ServerCreatedIp> ips) {
          this.ips = ips;
          return this;
+      }
+
+      public Builder ips(ServerCreatedIp... ips) {
+         return ips(Arrays.asList(ips));
       }
       
       public Builder hostname(String hostname) {
@@ -43,7 +48,7 @@ public class ServerCreated {
       }
       
       public Builder fromServerCreated(ServerCreated in) {
-         return id(in.getId()).hostname(in.getHostname()).port(in.getIps());
+         return id(in.getId()).hostname(in.getHostname()).ips(in.getIps());
       }
    }
 

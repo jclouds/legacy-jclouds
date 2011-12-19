@@ -18,16 +18,15 @@
  */
 package org.jclouds.glesys.features;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import com.google.common.base.Predicate;
+import org.jclouds.glesys.domain.*;
+import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.Test;
 
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.glesys.domain.*;
-import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.Test;
+import static org.testng.Assert.*;
 
 /**
  * Tests behavior of {@code ServerClient}
@@ -42,12 +41,25 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       super.setupClient();
       client = context.getApi().getServerClient();
    }
-
-   private ServerClient client;
    
+   public static class ServerStatePredicate implements Predicate<ServerClient> {
+      private ServerState state;
+      private String serverId;
+      public ServerStatePredicate(ServerState state, String serverId) {
+         this.state = state;
+         this.serverId = serverId;
+      }
+      @Override
+      public boolean apply(ServerClient client) {
+         return client.getServerStatus(serverId) != null && client.getServerStatus(serverId).getState() == state;
+      }
+   }
+   
+   private ServerClient client;
+      
    @Test
    public void testAllowedArguments() throws Exception {
-      Map<String,ServerAllowedArguments> templates = client.getAllowedArguments();
+      Map<String,ServerAllowedArguments> templates = client.getServerAllowedArguments();
       
       assertTrue(templates.containsKey("OpenVZ"));
       assertTrue(templates.containsKey("Xen"));

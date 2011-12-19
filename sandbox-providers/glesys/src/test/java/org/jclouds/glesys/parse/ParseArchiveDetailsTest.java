@@ -18,40 +18,44 @@
  */
 package org.jclouds.glesys.parse;
 
-
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.jclouds.glesys.config.GleSYSParserModule;
-import org.jclouds.glesys.domain.ServerCreated;
-import org.jclouds.glesys.domain.ServerCreatedIp;
+import org.jclouds.glesys.domain.Archive;
+import org.jclouds.glesys.domain.ArchiveDetails;
 import org.jclouds.json.BaseItemParserTest;
+import org.jclouds.json.BaseParserTest;
+import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
+import java.util.Set;
 
 /**
- * @author Adam Lowe
+ * 
+ * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ParseServerCreatedTest")
-public class ParseServerCreatedTest extends BaseItemParserTest<ServerCreated> {
+@Test(groups = "unit", testName = "ParseArchiveDetailsTest")
+public class ParseArchiveDetailsTest extends BaseItemParserTest<ArchiveDetails> {
 
    @Override
    public String resource() {
-      return "/server_created.json";
+      return "/archive_details.json";
    }
 
    @Override
-   @SelectJson("server")
+   @SelectJson("details")
    @Consumes(MediaType.APPLICATION_JSON)
-   public ServerCreated expected() {
-      return ServerCreated.builder().id("xm3630641").hostname("jclouds-test-host").ips(ServerCreatedIp.builder().ip("109.74.10.27").version(4).cost(2.00).build()).build();
+   public ArchiveDetails expected() {
+      return ArchiveDetails.builder().username("xxxxxx_test1").totalSize("30 GB").freeSize("30 GB").locked(false).build();
    }
-    
 
    protected Injector injector() {
       return Guice.createInjector(new GleSYSParserModule(), new GsonModule());
    }
+
 }
