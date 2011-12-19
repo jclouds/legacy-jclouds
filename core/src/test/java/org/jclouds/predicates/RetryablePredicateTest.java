@@ -18,13 +18,15 @@
  */
 package org.jclouds.predicates;
 
+import static org.testng.Assert.fail;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import com.google.common.base.Joiner;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -33,9 +35,6 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Supplier;
-import org.testng.collections.Lists;
-
-import static org.testng.Assert.fail;
 
 /**
  * 
@@ -45,7 +44,10 @@ import static org.testng.Assert.fail;
 public class RetryablePredicateTest {
    // Grace must be reasonably big; Thread.sleep can take a bit longer to wake up sometimes...
    public static int SLOW_BUILD_SERVER_GRACE = 250;
-   
+
+   // Sometimes returns sooner than timer would predict (e.g. observed 2999ms, when expected 3000ms)
+   public static int EARLY_RETURN_GRACE = 10;
+
    private Stopwatch stopwatch;
 
    @BeforeMethod
@@ -123,7 +125,7 @@ public class RetryablePredicateTest {
       stopwatch.start();
       predicate.apply("");
       long duration = stopwatch.elapsedMillis();
-      assertOrdered(2998, duration, 3000+SLOW_BUILD_SERVER_GRACE);
+      assertOrdered(3000-EARLY_RETURN_GRACE, duration, 3000+SLOW_BUILD_SERVER_GRACE);
    }
 
    @Test
@@ -137,8 +139,8 @@ public class RetryablePredicateTest {
       predicate.apply("");
       long duration = stopwatch.elapsedMillis();
       
-      assertOrdered(2500, duration, 2500+SLOW_BUILD_SERVER_GRACE);
-      assertCallFrequency(rawPredicate.callTimes, 0, 1000, 1000+1500);
+      assertOrdered(2500-EARLY_RETURN_GRACE, duration, 2500+SLOW_BUILD_SERVER_GRACE);
+      assertCallTimes(rawPredicate.callTimes, 0, 1000, 1000+1500);
    }
 
    @Test
@@ -153,8 +155,8 @@ public class RetryablePredicateTest {
       predicate.apply("");
       long duration = stopwatch.elapsedMillis();
       
-      assertOrdered(2000, duration, 2000+SLOW_BUILD_SERVER_GRACE);
-      assertCallFrequency(rawPredicate.callTimes, 0, 1000, 2000);
+      assertOrdered(2000-EARLY_RETURN_GRACE, duration, 2000+SLOW_BUILD_SERVER_GRACE);
+      assertCallTimes(rawPredicate.callTimes, 0, 1000, 2000);
    }
    
    private static class RepeatedAttemptsPredicate implements Predicate<String> {
@@ -175,27 +177,21 @@ public class RetryablePredicateTest {
       }
    }
    
-   private void assertCallFrequency(List<Long> actual, Integer... expected) {
+   @Test(enabled=false) // not a test, but picked up as such because public
+   public static void assertCallTimes(List<Long> actual, Integer... expected) {
       Assert.assertEquals(actual.size(), expected.length);
       for (int i = 0; i < expected.length; i++) {
          long callTime = actual.get(i);
-         assertOrdered(expected[i], callTime, expected[i]+SLOW_BUILD_SERVER_GRACE);
+         assertOrdered(expected[i]-EARLY_RETURN_GRACE, callTime, expected[i]+SLOW_BUILD_SERVER_GRACE);
       }
    }
    
-   private void assertOrdered(long... values) {
+   private static void assertOrdered(long... values) {
       long prevVal = values[0];
       for (long val : values) {
          if (val < prevVal) {
-            fail(String.format("%s should be ordered", asString(values)));
+            fail(String.format("%s should be ordered", Arrays.toString(values)));
          }
       }
-   }
-
-   private String asString(long... values) {
-      List<Long> result = Lists.newArrayList(values.length);
-      for(long element : values) result.add(element);
-
-      return "[" + Joiner.on(", ").join(result) + "]";
    }
 }
