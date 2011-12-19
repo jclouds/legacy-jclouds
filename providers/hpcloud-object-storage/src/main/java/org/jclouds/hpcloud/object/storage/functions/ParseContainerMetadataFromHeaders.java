@@ -20,18 +20,19 @@ package org.jclouds.hpcloud.object.storage.functions;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import java.util.Map.Entry;
 
-import org.jclouds.blobstore.reference.BlobStoreConstants;
+import javax.inject.Inject;
+
 import org.jclouds.date.DateService;
-import org.jclouds.hpcloud.object.storage.reference.HPCloudObjectStorageHeaders;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
+import org.jclouds.openstack.swift.reference.SwiftHeaders;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 
 /**
@@ -44,14 +45,11 @@ public class ParseContainerMetadataFromHeaders implements Function<HttpResponse,
       InvocationContext<ParseContainerMetadataFromHeaders> {
 
    private final DateService dateParser;
-   private final String metadataPrefix;
    private GeneratedHttpRequest<?> request;
 
    @Inject
-   public ParseContainerMetadataFromHeaders(DateService dateParser,
-         @Named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
+   public ParseContainerMetadataFromHeaders(DateService dateParser) {
       this.dateParser = dateParser;
-      this.metadataPrefix = metadataPrefix;
    }
 
    public ContainerMetadata apply(HttpResponse from) {
@@ -59,26 +57,25 @@ public class ParseContainerMetadataFromHeaders implements Function<HttpResponse,
       
       to.setName(request.getArgs().get(0).toString());
       
-      to.setReadACL(from.getFirstHeaderOrNull(HPCloudObjectStorageHeaders.CONTAINER_READ));
+      to.setReadACL(from.getFirstHeaderOrNull(SwiftHeaders.CONTAINER_READ));
  
-      to.setBytes(new Long(from.getFirstHeaderOrNull(HPCloudObjectStorageHeaders.CONTAINER_BYTES_USED)));
-      to.setCount(new Long(from.getFirstHeaderOrNull(HPCloudObjectStorageHeaders.CONTAINER_OBJECT_COUNT)));
+      to.setBytes(new Long(from.getFirstHeaderOrNull(SwiftHeaders.CONTAINER_BYTES_USED)));
+      to.setCount(new Long(from.getFirstHeaderOrNull(SwiftHeaders.CONTAINER_OBJECT_COUNT)));
       
-      //addUserMetadataTo(from, to);
+      addUserMetadataTo(from, to);
       
       return to;
    }
 
-   /*
+   
    @VisibleForTesting
    void addUserMetadataTo(HttpResponse from, ContainerMetadata metadata) {
       for (Entry<String, String> header : from.getHeaders().entries()) {
-         if (header.getKey() != null && header.getKey().startsWith(metadataPrefix))
-            metadata.getMetadata().put((header.getKey().substring(metadataPrefix.length())).toLowerCase(),
+         if (header.getKey() != null && header.getKey().startsWith(SwiftHeaders.CONTAINER_METADATA_PREFIX))
+            metadata.getMetadata().put((header.getKey().substring(SwiftHeaders.CONTAINER_METADATA_PREFIX.length())).toLowerCase(),
                   header.getValue());
       }
    }
-   */
    
    @Override
    public ParseContainerMetadataFromHeaders setContext(HttpRequest request) {

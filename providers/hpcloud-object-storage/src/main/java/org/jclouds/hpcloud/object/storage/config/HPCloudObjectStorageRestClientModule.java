@@ -18,6 +18,8 @@
  */
 package org.jclouds.hpcloud.object.storage.config;
 
+import static org.jclouds.hpcloud.object.storage.reference.HPCloudObjectStorageConstants.PROPERTY_CDN_ENDPOINT;
+
 import java.net.URI;
 
 import javax.inject.Named;
@@ -34,7 +36,6 @@ import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.config.BaseSwiftRestClientModule;
 import org.jclouds.rest.ConfiguresRestClient;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Provides;
 
 /**
@@ -64,15 +65,12 @@ public class HPCloudObjectStorageRestClientModule extends BaseSwiftRestClientMod
    @Provides
    @Singleton
    @CDNManagement
-   protected URI provideCDNUrl(AuthenticationResponse response) {
-	  @Named("jclouds.hpcloud-object-storage.cdn.endpoint")
-	  @VisibleForTesting
-	  String cdnEndpoint = "https://cdnmgmt.hpcloud.net:8080/v1/AUTH_test/";
-	   
+   protected URI provideCDNUrl(AuthenticationResponse response, @Named(PROPERTY_CDN_ENDPOINT) String cdnEndpoint) {
+	 
 	  if (response.getServices().get(AuthHeaders.CDN_MANAGEMENT_URL) == null) {
-	     return URI.create(cdnEndpoint);
+	     return URI.create(cdnEndpoint + response.getServices().get(AuthHeaders.STORAGE_URL).getPath());
 	  }
-	  
+	  // Placeholder for when the Object Storage service returns the CDN Management URL in the headers 
       return response.getServices().get(AuthHeaders.CDN_MANAGEMENT_URL);
    }
 }

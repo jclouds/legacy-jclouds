@@ -18,12 +18,11 @@
  */
 package org.jclouds.hpcloud.object.storage.options;
 
+import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jclouds.hpcloud.object.storage.reference.HPCloudObjectStorageHeaders;
 import org.jclouds.http.options.BaseHttpRequestOptions;
-
-import com.google.common.collect.Multimap;
+import org.jclouds.openstack.swift.reference.SwiftHeaders;
 
 /**
  * Contains options supported in the REST API for the Create Container operation.
@@ -39,14 +38,14 @@ public class CreateContainerOptions extends BaseHttpRequestOptions {
    /**
     * A name-value pair to associate with the container as metadata.
     */
-   public CreateContainerOptions withMetadata(Multimap<String, String> metadata) {
-      for (Entry<String, String> entry : metadata.entries()) {
-    	  System.err.println(entry.getValue());
-         if (entry.getKey().startsWith(HPCloudObjectStorageHeaders.USER_METADATA_PREFIX))
+   public CreateContainerOptions withMetadata(Map<String, String> metadata) {
+      for (Entry<String, String> entry : metadata.entrySet()) {
+         if (entry.getKey().startsWith(SwiftHeaders.CONTAINER_METADATA_PREFIX)) {
             this.headers.put(entry.getKey(), entry.getValue());
-         else
-            this.headers.put(HPCloudObjectStorageHeaders.USER_METADATA_PREFIX + entry.getKey(), 
+      	 } else {
+            this.headers.put(SwiftHeaders.CONTAINER_METADATA_PREFIX + entry.getKey(), 
             		    entry.getValue());
+   	     }
       }
       return this;
    }
@@ -56,7 +55,7 @@ public class CreateContainerOptions extends BaseHttpRequestOptions {
     * Indicates whether a container may be accessed publicly
     */
    public CreateContainerOptions withPublicAccess() {
-      this.headers.put(HPCloudObjectStorageHeaders.CONTAINER_READ, ".r:*,.rlistings");
+      this.headers.put(SwiftHeaders.CONTAINER_READ, ".r:*,.rlistings");
       return this;
    }
 
@@ -73,7 +72,7 @@ public class CreateContainerOptions extends BaseHttpRequestOptions {
       /**
        * @see CreateContainerOptions#withMetadata(Multimap<String, String>)
        */ 
-      public static CreateContainerOptions withMetadata(Multimap<String, String> metadata) {
+      public static CreateContainerOptions withMetadata(Map<String, String> metadata) {
          CreateContainerOptions options = new CreateContainerOptions();
          return (CreateContainerOptions) options.withMetadata(metadata);
       }

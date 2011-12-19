@@ -48,8 +48,8 @@ public class PublicUriForObjectInfo implements Function<ObjectInfo, URI> {
       if (from == null)
          return null;
       try {
-         return uriBuilders.get().uri(cdnContainer.get(from.getContainer())).path(from.getName()).replaceQuery("")
-                  .build();
+    	 return uriBuilders.get().uri(cdnContainer.get(from.getContainer())).path(from.getName()).replaceQuery("")
+                 .build();
       } catch (NullPointerException e) {
          // MapMaker constructed maps are not allowed to return null;
          return null;

@@ -20,11 +20,11 @@ package org.jclouds.hpcloud.object.storage.options;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.hpcloud.object.storage.reference.HPCloudObjectStorageHeaders;
+import org.jclouds.openstack.swift.reference.SwiftHeaders;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Tests behavior of {@code CreateContainerOptions}
@@ -36,35 +36,35 @@ public class CreateContainerOptionsTest {
 
    public void testPublicAccess() {
       CreateContainerOptions options = new CreateContainerOptions().withPublicAccess();
-      assertEquals(ImmutableList.of(".r:*,.rlistings"), options.buildRequestHeaders().get(
-               "X-Container-Read"));
+      assertEquals(ImmutableList.of(".r:*,.rlistings"), 
+    		       options.buildRequestHeaders().get("X-Container-Read"));
    }
 
    public void testPublicAccessStatic() {
       CreateContainerOptions options = CreateContainerOptions.Builder.withPublicAccess();
-      assertEquals(ImmutableList.of(".r:*,.rlistings"), options.buildRequestHeaders().get(
-               "X-Container-Read"));
+      assertEquals(ImmutableList.of(".r:*,.rlistings"), 
+    		       options.buildRequestHeaders().get("X-Container-Read"));
    }
 
    public void testMetadata() {
-      CreateContainerOptions options = new CreateContainerOptions().withMetadata(ImmutableMultimap
+      CreateContainerOptions options = new CreateContainerOptions().withMetadata(ImmutableMap
                .of("test", "foo"));
       assertEquals(ImmutableList.of("foo"), options.buildRequestHeaders().get(
-               HPCloudObjectStorageHeaders.USER_METADATA_PREFIX + "test"));
+               SwiftHeaders.CONTAINER_METADATA_PREFIX + "test"));
    }
 
    public void testMetadataAlreadyPrefixed() {
-      CreateContainerOptions options = new CreateContainerOptions().withMetadata(ImmutableMultimap
-               .of(HPCloudObjectStorageHeaders.USER_METADATA_PREFIX + "test", "foo"));
+      CreateContainerOptions options = new CreateContainerOptions().withMetadata(ImmutableMap
+               .of(SwiftHeaders.CONTAINER_METADATA_PREFIX + "test", "foo"));
       assertEquals(ImmutableList.of("foo"), options.buildRequestHeaders().get(
-               HPCloudObjectStorageHeaders.USER_METADATA_PREFIX + "test"));
+    		  SwiftHeaders.CONTAINER_METADATA_PREFIX + "test"));
    }
 
    public void testMetadataStatic() {
       CreateContainerOptions options = CreateContainerOptions.Builder
-               .withMetadata(ImmutableMultimap.of("test", "foo"));
+               .withMetadata(ImmutableMap.of("test", "foo"));
       assertEquals(ImmutableList.of("foo"), options.buildRequestHeaders().get(
-               HPCloudObjectStorageHeaders.USER_METADATA_PREFIX + "test"));
+    		  SwiftHeaders.CONTAINER_METADATA_PREFIX + "test"));
    }
 
 }

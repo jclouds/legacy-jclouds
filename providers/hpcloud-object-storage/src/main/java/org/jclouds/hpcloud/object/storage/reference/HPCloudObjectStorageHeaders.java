@@ -36,8 +36,4 @@ public interface HPCloudObjectStorageHeaders extends SwiftHeaders {
    public static final String CDN_TTL = "X-Ttl";
    public static final String CDN_URI = "X-Cdn-Uri";
    public static final String CDN_USER_AGENT_ACL = "X-User-Agent-ACL";
-   
-   public static final String CONTAINER_READ = "X-Container-Read";
-   public static final String CONTAINER_WRITE = "X-Container-Write";
-
 }

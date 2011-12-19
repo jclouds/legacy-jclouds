@@ -18,9 +18,6 @@
  */
 package org.jclouds.openstack.swift.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.net.URI;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -38,18 +35,18 @@ public class ContainerMetadata implements Comparable<ContainerMetadata> {
    private long bytes;
    @SerializedName("X-Container-Read")
    private String readACL;
-   //private Map<String, String> metadata = Maps.newLinkedHashMap();
+   private Map<String, String> metadata = Maps.newLinkedHashMap();
 
    
    public ContainerMetadata() {
    }
 
-   public ContainerMetadata(String name, long count, long bytes, String readACL) {
+   public ContainerMetadata(String name, long count, long bytes, String readACL, Map<String, String> metadata) {
       this.name = name;
       this.count = count;
       this.bytes = bytes;
       this.readACL = readACL;
-      //this.metadata = metadata;
+      this.metadata = metadata;
    }
 
    public long getCount() {
@@ -86,10 +83,11 @@ public class ContainerMetadata implements Comparable<ContainerMetadata> {
 	   this.readACL = readACL;
 	   
    }
-   /*public Map<String, String> getMetadata() {
+   
+   public Map<String, String> getMetadata() {
       return metadata;
    }
-   */
+   
    
    @Override
    public int hashCode() {
