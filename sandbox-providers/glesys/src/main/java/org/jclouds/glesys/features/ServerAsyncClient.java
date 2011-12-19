@@ -96,13 +96,13 @@ public interface ServerAsyncClient {
 
 
    /**
-    * @see ServerClient#getAllowedArguments
+    * @see ServerClient#getServerAllowedArguments
     */
    @GET
    @Path("/server/allowedarguments/format/json")
    @SelectJson("argumentslist")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Map<String, ServerAllowedArguments>> getAllowedArguments();
+   ListenableFuture<Map<String, ServerAllowedArguments>> getServerAllowedArguments();
    
    /**
     * @see ServerClient#getTemplates

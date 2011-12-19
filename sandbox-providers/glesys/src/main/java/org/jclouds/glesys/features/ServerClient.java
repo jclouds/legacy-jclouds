@@ -95,7 +95,7 @@ public interface ServerClient {
     *
     * @return a map of argument lists, keyed on platform
     */
-   Map<String, ServerAllowedArguments> getAllowedArguments();
+   Map<String, ServerAllowedArguments> getServerAllowedArguments();
 
    /**
     * Reset the fail count for a server limit (for OpenVZ only).

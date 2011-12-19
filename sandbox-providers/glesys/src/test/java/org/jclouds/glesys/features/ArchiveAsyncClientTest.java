@@ -16,38 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.glesys;
+package org.jclouds.glesys.features;
 
-import org.jclouds.glesys.features.ArchiveAsyncClient;
-import org.jclouds.glesys.features.IpAsyncClient;
-import org.jclouds.glesys.features.ServerAsyncClient;
-import org.jclouds.rest.annotations.Delegate;
+import com.google.inject.TypeLiteral;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.testng.annotations.Test;
 
 /**
- * Provides asynchronous access to GleSYS via their REST API.
- * <p/>
+ * Tests annotation parsing of {@code IpAsyncClient}
  * 
- * @see GleSYSClient
- * @see <a href="https://customer.glesys.com/api.php" />
  * @author Adrian Cole
  */
-public interface GleSYSAsyncClient {
+@Test(groups = "unit", testName = "ArchiveAsyncClientTest")
+public class ArchiveAsyncClientTest extends BaseGleSYSAsyncClientTest<ArchiveAsyncClient> {
 
-   /**
-    * Provides asynchronous access to Server features.
-    */
-   @Delegate
-   ServerAsyncClient getServerClient();
-
-   /**
-    * Provides asynchronous access to Ip Address features.
-    */
-   @Delegate
-   IpAsyncClient getIpClient();
-
-   /**
-    * Provides asynchronous access to Archive features.
-    */
-   @Delegate
-   ArchiveAsyncClient getArchiveClient();
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<ArchiveAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<ArchiveAsyncClient>>() {
+      };
+   }
 }

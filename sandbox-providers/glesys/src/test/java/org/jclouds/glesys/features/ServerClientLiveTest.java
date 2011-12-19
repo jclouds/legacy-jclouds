@@ -18,16 +18,20 @@
  */
 package org.jclouds.glesys.features;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
-
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
+import com.google.common.base.Predicate;
 import org.jclouds.glesys.domain.*;
+import org.jclouds.predicates.RetryablePredicate;
+import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
+
+import javax.annotation.Nullable;
+
+import static org.testng.Assert.*;
 
 /**
  * Tests behavior of {@code ServerClient}
@@ -43,11 +47,81 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       client = context.getApi().getServerClient();
    }
 
+   @AfterGroups(groups={"live"})
+   public void teardownClient() {
+      if (serverId != null) {
+         client.stopServer(serverId);
+         assert notRunning.apply(client);
+         client.destroyServer(serverId, 0);
+      }
+   }
+   
+   public static class ServerStatePredicate implements Predicate<ServerClient> {
+      private ServerState state;
+      private String serverId;
+      public ServerStatePredicate(ServerState state, String serverId) {
+         this.state = state;
+         this.serverId = serverId;
+      }
+      @Override
+      public boolean apply(ServerClient client) {
+         return client.getServerStatus(serverId) != null && client.getServerStatus(serverId).getState() == state;
+      }
+   }
+   
    private ServerClient client;
+   
+   private String serverId;
+   private RetryablePredicate<ServerClient> running;
+   private RetryablePredicate<ServerClient> notRunning;
+   
+   @Test
+   public void testCreateServer() throws Exception {
+      ServerCreated server = client.createServer("Falkenberg", "OpenVZ", "jclouds-test2", "Ubuntu 10.04 LTS 32-bit", 5, 512, 1, "password", 50, "jclouds live test server", null);
+
+      serverId = server.getId();
+
+      running = new RetryablePredicate<ServerClient>(new ServerStatePredicate(ServerState.RUNNING, server.getId()), 180, 20, TimeUnit.SECONDS) ;
+      notRunning = new RetryablePredicate<ServerClient>(new ServerStatePredicate(ServerState.UNRECOGNIZED, server.getId()), 180, 20, TimeUnit.SECONDS);
+
+      assertNotNull(serverId);
+      assertEquals(server.getHostname(), "jclouds-test2");
+      assertTrue(!server.getIps().isEmpty(), "Server has no ip address!");
+      
+      for(int i=0; i<600; i++) {
+         System.out.println(client.getServerStatus(serverId));
+         Thread.sleep(1000);
+      }
+
+      fail();
+      assert running.apply(client);
+   }
+
+   @Test(dependsOnMethods = "testCreateServer")
+   public void testStartServer() throws Exception {
+      client.startServer(serverId);
+      assert running.apply(client);
+   }
+
+   @Test(dependsOnMethods = "testStartServer")
+   public void testStopServer() throws Exception {
+      client.stopServer(serverId);
+      ServerStatus details = client.getServerStatus(serverId);
+      
+      // TODO correct status of stopped server
+      assert notRunning.apply(client);
+   }
+
+   @Test(dependsOnMethods = "testCreateServer")
+   public void testRebootServer() throws Exception {
+      client.rebootServer(serverId);
+      assert notRunning.apply(client);
+      assert running.apply(client);
+   }
    
    @Test
    public void testAllowedArguments() throws Exception {
-      Map<String,ServerAllowedArguments> templates = client.getAllowedArguments();
+      Map<String,ServerAllowedArguments> templates = client.getServerAllowedArguments();
       
       assertTrue(templates.containsKey("OpenVZ"));
       assertTrue(templates.containsKey("Xen"));
