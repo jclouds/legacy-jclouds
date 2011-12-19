@@ -23,9 +23,9 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
 /**
- * Tests annotation parsing of {@code IpAsyncClient}
+ * Tests annotation parsing of {@code ArchiveAsyncClient}
  * 
- * @author Adrian Cole
+ * @author Adam Lowe
  */
 @Test(groups = "unit", testName = "ArchiveAsyncClientTest")
 public class ArchiveAsyncClientTest extends BaseGleSYSAsyncClientTest<ArchiveAsyncClient> {

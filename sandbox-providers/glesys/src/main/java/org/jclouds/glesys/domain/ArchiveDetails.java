@@ -3,7 +3,7 @@ package org.jclouds.glesys.domain;
 /**
  * Detailed information about an archive volume.
  * 
- * @Author Adam Lowe
+ * @author Adam Lowe
  * @see <a href= "https://customer.glesys.com/api.php?a=doc#archive_details" />
  */
 public class ArchiveDetails extends Archive {

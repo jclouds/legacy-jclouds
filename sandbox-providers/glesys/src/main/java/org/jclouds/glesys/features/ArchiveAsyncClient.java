@@ -34,7 +34,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.Set;
 
 /**
- * Provides asynchronous access to Invoice data via the Glesys REST API.
+ * Provides asynchronous access to Archive data via the Glesys REST API.
  * <p/>
  *
  * @author Adam Lowe

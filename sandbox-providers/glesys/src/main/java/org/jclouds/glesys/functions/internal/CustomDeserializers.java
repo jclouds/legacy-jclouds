@@ -10,7 +10,7 @@ import org.jclouds.glesys.domain.ServerUptime;
 import java.lang.reflect.Type;
 
 /**
- * @Author Adam Lowe
+ * @author Adam Lowe
  */
 public class CustomDeserializers {
 

@@ -35,9 +35,9 @@ import static com.google.common.base.Predicates.equalTo;
 import static org.testng.Assert.*;
 
 /**
- * Tests behavior of {@code ServerClient}
+ * Tests behavior of {@code ArchiveClient}
  *
- * @author Adrian Cole
+ * @author Adam Lowe
  */
 @Test(groups = "live", testName = "ArchiveClientLiveTest")
 public class ArchiveClientLiveTest extends BaseGleSYSClientLiveTest {
@@ -60,7 +60,7 @@ public class ArchiveClientLiveTest extends BaseGleSYSClientLiveTest {
    public void teardownClient() {
       int before = client.listArchives().size();
       client.deleteArchive(archiveUser);
-      assert archiveCounter.apply(before - 1);
+      assertTrue(archiveCounter.apply(before - 1));
    }
 
    private ArchiveClient client;
@@ -70,12 +70,12 @@ public class ArchiveClientLiveTest extends BaseGleSYSClientLiveTest {
    @Test
    public void testAllowedArguments() throws Exception {
       ArchiveAllowedArguments args = client.getArchiveAllowedArguments();
-      assert args != null;
-      assert args.getArchiveSizes() != null : args;
-      assert args.getArchiveSizes().size() > 0 : args;
+      assertNotNull(args);
+      assertNotNull(args.getArchiveSizes());
+      assertTrue(args.getArchiveSizes().size() > 0);
       
       for (int size : args.getArchiveSizes()) {
-         assert size > 0 : args;
+         assertTrue(size > 0);
       }
    }
    
@@ -90,7 +90,7 @@ public class ArchiveClientLiveTest extends BaseGleSYSClientLiveTest {
       
       client.createArchive(archiveUser, "password", 10);
 
-      assert archiveCounter.apply(before + 1);
+      assertTrue(archiveCounter.apply(before + 1));
    }
 
    @Test(dependsOnMethods = "testCreateArchive")
@@ -107,17 +107,17 @@ public class ArchiveClientLiveTest extends BaseGleSYSClientLiveTest {
       // TODO assert something useful!
    }
 
-   // TODO
+   // TODO enable this once issue is resolved
    @Test(enabled=false, dependsOnMethods = "testCreateArchive")
    public void testResizeArchive() throws Exception {
-      client.resizeArchive(archiveUser, 20);
+      client.resizeArchive(archiveUser, 30);
 
-      assert new RetryablePredicate<String>(
+      assertTrue(new RetryablePredicate<String>(
             new Predicate<String>() {
                public boolean apply(String value){
                   return client.archiveDetails(archiveUser) != null && value.equals(client.archiveDetails(archiveUser).getTotalSize());
                }
-            }, 30, 1, TimeUnit.SECONDS).apply("20 GB");
+            }, 30, 1, TimeUnit.SECONDS).apply("20 GB"));
    }
 
 }

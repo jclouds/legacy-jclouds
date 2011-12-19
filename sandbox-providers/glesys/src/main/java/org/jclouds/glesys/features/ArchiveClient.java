@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Provides synchronous access to Invoice requests.
+ * Provides synchronous access to Archive requests.
  * <p/>
  *
  * @author Adam Lowe
