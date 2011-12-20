@@ -35,10 +35,10 @@
 
     <properties>
         <test.initializer>org.jclouds.hpcloud.object.storage.blobstore.integration.HPCloudObjectStorageTestInitializer</test.initializer>
-        <test.hpcloud-object-storage.endpoint>${test.hpcloud-object-storage.endpoint}</test.hpcloud-object-storage.endpoint>
+        <test.hpcloud-object-storage.endpoint>https://region-a.geo-1.objects.hpcloudsvc.com/auth</test.hpcloud-object-storage.endpoint>
         <test.hpcloud-object-storage.apiversion>1.1</test.hpcloud-object-storage.apiversion>
-        <test.hpcloud-object-storage.identity>${test.hpcloud-object-storage.identity}</test.hpcloud-object-storage.identity>
-        <test.hpcloud-object-storage.credential>${test.hpcloud-object-storage.credential}</test.hpcloud-object-storage.credential>        
+        <test.hpcloud-object-storage.identity>FIXME_IDENTITY</test.hpcloud-object-storage.identity>
+        <test.hpcloud-object-storage.credential>FIXME_CREDENTIAL</test.hpcloud-object-storage.credential>        
     </properties>
 
     <dependencies>
