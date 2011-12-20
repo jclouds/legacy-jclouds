@@ -87,7 +87,7 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
       String workingDir = PropertyUtils.getWorkingDirFromProperty();
       ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)
               .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
-              .attachHardDisk(0, 1, workingDir + "/testadmin.vdi")
+              .attachHardDisk(0, 1, workingDir + "/testadmin.vdi", "testadmin")
               .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso").build();
       vmSpecification = VmSpec.builder().id(vmId).name(vmName).memoryMB(512).osTypeId(osTypeId)
               .controller(ideController)
@@ -95,7 +95,7 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
               .cleanUpMode(CleanupMode.DetachAllReturnHardDisksOnly)
               .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build()).build();
       
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager, CleanupMode.Full).apply(vmSpecification);
+      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(vmSpecification);
    }
 
    public void testCreateImageMachineFromIso() throws Exception {
@@ -115,9 +115,7 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
       // YAML the image desc
       Set<? extends Image> images = context.getComputeService().listImages();
       Iterable<String> imageIds = transform(images, extractId());
-
       assertTrue(any(imageIds, equalTo(newImage.getId())));
-
    }
 
    private Function<Image, String> extractId() {

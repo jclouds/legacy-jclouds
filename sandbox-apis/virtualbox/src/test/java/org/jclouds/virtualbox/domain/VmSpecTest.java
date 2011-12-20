@@ -75,6 +75,6 @@ public class VmSpecTest {
               .controller(
                       StorageController.builder().name("Controller")
                               .bus(StorageBus.IDE)
-                              .attachHardDisk(0, 0, "/tmp/tempdisk.vdi").build());
+                              .attachHardDisk(0, 0, "/tmp/tempdisk.vdi", "tempdisk").build());
    }
 }

@@ -19,7 +19,6 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.easymock.EasyMock.anyLong;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -48,11 +47,14 @@ public class CreateMediumIfNotAlreadyExistsTest {
 
    private String adminDiskPath;
    private String diskFormat;
+   private String diskName;
+
 
    @BeforeMethod
    public void setUp() throws Exception {
       adminDiskPath = "/Users/johndoe/jclouds-virtualbox-images/admin.vdi";
       diskFormat = "vdi";
+      diskName = "diskName";
    }
 
    @Test
@@ -158,7 +160,7 @@ public class CreateMediumIfNotAlreadyExistsTest {
    }
 
    private HardDisk createTestHardDisk() {
-      return new HardDisk(new DeviceDetails(0, 0, DeviceType.HardDisk), adminDiskPath, diskFormat);
+      return new HardDisk(new DeviceDetails(0, 0, DeviceType.HardDisk), adminDiskPath, diskFormat, diskName);
    }
 
 }

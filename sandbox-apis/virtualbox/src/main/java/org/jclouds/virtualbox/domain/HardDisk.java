@@ -26,6 +26,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * A representation of a hard disk in a VirtualBox VM.
  * <p/>
+ * name is a description to identify the hard disk.
  * diskPath is an absolute path to the file that is the location of the storage for the hard disk.
  * diskFormat is any of the formats supported by ISystemProperties.getMediumFormats() in the VirtualBox API.
  * This call is platform-dependent so the supported formats differ from host to host. The default format used is VDI.
@@ -35,17 +36,20 @@ public class HardDisk {
 
    public static final String DEFAULT_DISK_FORMAT = "vdi";
 
+   private final String name;
    private final String diskFormat;
    private final String diskPath;
    private final DeviceDetails deviceDetails;
 
-   public HardDisk(DeviceDetails deviceDetails, String diskPath, String diskFormat) {
+   public HardDisk(DeviceDetails deviceDetails, String diskPath, String diskFormat, String name) {
       checkNotNull(deviceDetails, "deviceDetails");
       checkNotNull(diskPath, "diskPath");
       checkNotNull(diskFormat, "diskFormat");
+      checkNotNull(name, "name");
       this.diskPath = diskPath;
       this.diskFormat = diskFormat;
       this.deviceDetails = deviceDetails;
+      this.name = name;
    }
 
    public String getDiskPath() {
@@ -60,21 +64,26 @@ public class HardDisk {
       return deviceDetails;
    }
 
-   @Override
+   public String getName() {
+		return name;
+	}
+
+	@Override
    public boolean equals(Object o) {
       if (this == o) return true;
       if (o instanceof HardDisk) {
          HardDisk hardDisk = (HardDisk) o;
          return Objects.equal(deviceDetails, hardDisk.deviceDetails) &&
                  Objects.equal(diskFormat, hardDisk.diskFormat) &&
-                 Objects.equal(diskPath, hardDisk.diskPath);
+                 Objects.equal(diskPath, hardDisk.diskPath) &&
+                 Objects.equal(name, hardDisk.name);
       }
       return false;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(diskPath, diskFormat, deviceDetails);
+      return Objects.hashCode(diskPath, diskFormat, deviceDetails, name);
    }
 
    @Override
@@ -83,6 +92,7 @@ public class HardDisk {
               "diskFormat='" + diskFormat + '\'' +
               ", diskPath='" + diskPath + '\'' +
               ", deviceDetails=" + deviceDetails +
+              ", name=" + name +
               '}';
    }
 }

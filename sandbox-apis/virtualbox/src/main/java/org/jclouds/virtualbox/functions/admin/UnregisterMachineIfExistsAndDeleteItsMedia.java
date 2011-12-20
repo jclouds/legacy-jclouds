@@ -82,15 +82,11 @@ public class UnregisterMachineIfExistsAndDeleteItsMedia implements Function<VmSp
             }
          } catch (Exception e) {
             logger.error(e, "Problem in deleting the media attached to %s", machine.getName());
-            propagate(e);
+            Throwables.propagate(e);
          }
       }
       return null;
    }
 
-   protected <T> T propagate(Exception e) {
-      Throwables.propagate(e);
-      assert false;
-      return null;
-   }
+
 }
