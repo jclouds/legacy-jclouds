@@ -36,6 +36,7 @@ import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.util.PropertyUtils;
 import org.testng.annotations.Test;
+import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.StorageBus;
@@ -92,8 +93,10 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends Ba
          .attachHardDisk(0, 1, workingDir + "/testadmin.vdi", "testadmin")
          .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso").build();
          VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).osTypeId(osTypeId)
-                 .controller(ideController)
-                 .forceOverwrite(true).build();
+         		.memoryMB(512)
+         		.cleanUpMode(CleanupMode.Full)
+               .controller(ideController)
+               .forceOverwrite(true).build();
          return new CreateAndInstallVm(manager, guestId, localHostContext, hostId, socketTester,
                  "127.0.0.1", 8080, HEADLESS).apply(vmSpecification);
       } catch (IllegalStateException e) {

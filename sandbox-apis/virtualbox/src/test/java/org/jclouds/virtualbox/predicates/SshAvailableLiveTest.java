@@ -71,6 +71,7 @@ public class SshAvailableLiveTest extends BaseVirtualBoxClientLiveTest {
                  .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
                  .attachHardDisk(0, 1, workingDir + "/testadmin.vdi", "testadmin").build();
          VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).osTypeId("")
+         		  .memoryMB(512)
                  .controller(ideController)
                  .forceOverwrite(true).build();
 
