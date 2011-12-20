@@ -28,13 +28,13 @@ import static org.jclouds.location.predicates.LocationPredicates.isZoneOrRegionW
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.ToIdAndScope;
 
