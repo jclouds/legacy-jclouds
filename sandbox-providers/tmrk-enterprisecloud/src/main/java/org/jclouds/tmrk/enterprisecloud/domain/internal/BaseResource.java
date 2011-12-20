@@ -82,7 +82,7 @@ public class BaseResource<T extends BaseResource<T>> {
    protected URI href;
 
    protected BaseResource(URI href, String type) {
-      this.type = checkNotNull(type, "type");
+      this.type = type;
       this.href = checkNotNull(href, "href");
    }
 
