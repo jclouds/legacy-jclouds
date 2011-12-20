@@ -207,7 +207,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
       this.publicPort = publicPort;
       this.state = state;
       this.zoneId = zoneId;
-      this.CIDRs = Sets.newHashSet(CIDRs);
+      this.CIDRs = ImmutableSet.copyOf(CIDRs);
 
    }
 
@@ -299,7 +299,7 @@ public class LoadBalancerRule implements Comparable<LoadBalancerRule> {
     * @return the cidr list to forward traffic from
     */
    public Set<String> getCIDRs() {
-      return Collections.unmodifiableSet(CIDRs);
+      return CIDRs;
    }
 
    /**

@@ -1,0 +1,2 @@
+{ "listloadbalancerrulesresponse" : { "count":1 ,"loadbalancerrule" : [
+    {"id":93,"name":"Ranny","publicipid":10,"publicip":"10.27.27.59","publicport":"80","privateport":"80","algorithm":"roundrobin","cidrlist":"","account":"admin","domainid":1,"domain":"ROOT","state":"Add","zoneid":1} ] } }
