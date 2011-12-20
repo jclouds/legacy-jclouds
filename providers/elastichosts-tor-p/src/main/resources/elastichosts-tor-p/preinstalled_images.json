@@ -1,0 +1,65 @@
+[
+  {
+      "uuid": "73f7cc6a-1c48-418a-80de-886b28a56a4d",
+      "description": "CentOS Linux 6.0",
+      "osFamily": "CENTOS",
+      "osVersion": "6.0",
+      "size": "3"
+  },
+  {
+      "uuid": "9405cddf-8d01-472c-b7e3-e8c062dcde51",
+      "description": "Debian Linux 6.0",
+      "osFamily": "DEBIAN",
+      "osVersion": "6.0",
+      "size": "1"
+  },
+  {
+      "uuid": "aee5589a-88c3-43ef-bb0a-9cab6e64192d",
+      "description": "Ubuntu Linux 10.04",
+      "osFamily": "UBUNTU",
+      "osVersion": "10.04",
+      "size": "1"
+  },
+  {
+      "uuid": "8d8aee18-8744-452c-94b2-69a2a34b8460",
+      "description": "Ubuntu Linux 11.10",
+      "osFamily": "UBUNTU",
+      "osVersion": "11.10",
+      "size": "1"
+  },
+  {
+      "uuid": "b9d0eb72-d273-43f1-98e3-0d4b87d372c0",
+      "description": "Windows Web Server 2008",
+      "osFamily": "WINDOWS",
+      "osVersion": "2008",
+      "size": "13"
+  },
+  {
+      "uuid": "b405b598-4ae4-4ba8-8a2b-a9487d693f34",
+      "description": "Windows Web Server 2008 R2",
+      "osFamily": "WINDOWS",
+      "osVersion": "2008 R2",
+      "size": "13"
+  },
+  {
+      "uuid": "9397d327-3bf6-46a2-abf6-69553dbb6927",
+      "description": "Windows Web Server 2008 R2 + SQL Server",
+      "osFamily": "WINDOWS",
+      "osVersion": "2008 R2",
+      "size": "13"
+  },
+  {
+      "uuid": "b17ebce6-61b4-4dcc-9654-41c9fc847e01",
+      "description": "Windows Server 2008 Standard R2",
+      "osFamily": "WINDOWS",
+      "osVersion": "2008 R2",
+      "size": "13"
+  },
+  {
+      "uuid": "662c5b3f-9828-4aa2-a866-7cfa53798cdf",
+      "description": "Windows Server 2008 Standard R2 + SQL Server",
+      "osFamily": "WINDOWS",
+      "osVersion": "2008 R2",
+      "size": "13"
+  }
+]
