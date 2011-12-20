@@ -108,6 +108,7 @@ public interface NovaAsyncClient {
    @POST
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
+   @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"reboot\":%7B\"type\":\"{type}\"%7D%7D")
    ListenableFuture<Void> rebootServer(@PathParam("id") int id, @PayloadParam("type") RebootType rebootType);
@@ -118,6 +119,7 @@ public interface NovaAsyncClient {
    @POST
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
+   @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"resize\":%7B\"flavorId\":{flavorId}%7D%7D")
    ListenableFuture<Void> resizeServer(@PathParam("id") int id, @PayloadParam("flavorId") int flavorId);
@@ -128,6 +130,7 @@ public interface NovaAsyncClient {
    @POST
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
+   @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"confirmResize\":null}")
    ListenableFuture<Void> confirmResizeServer(@PathParam("id") int id);
@@ -138,6 +141,7 @@ public interface NovaAsyncClient {
    @POST
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
+   @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("{\"revertResize\":null}")
    ListenableFuture<Void> revertResizeServer(@PathParam("id") int id);
@@ -160,6 +164,7 @@ public interface NovaAsyncClient {
    @POST
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
+   @Consumes
    @MapBinder(RebuildServerOptions.class)
    ListenableFuture<Void> rebuildServer(@PathParam("id") int id, RebuildServerOptions... options);
 
@@ -169,6 +174,7 @@ public interface NovaAsyncClient {
     */
    @POST
    @Path("/servers/{id}/action")
+   @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"changePassword\":%7B\"adminPass\":\"{adminPass}\"%7D%7D")
    ListenableFuture<Void> changeAdminPass(@PathParam("id") int id, @PayloadParam("adminPass") String adminPass);
@@ -178,6 +184,7 @@ public interface NovaAsyncClient {
     */
    @PUT
    @Path("/servers/{id}")
+   @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"server\":%7B\"name\":\"{name}\"%7D%7D")
    ListenableFuture<Void> renameServer(@PathParam("id") int id, @PayloadParam("name") String newName);
@@ -253,6 +260,7 @@ public interface NovaAsyncClient {
     */
    @DELETE
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Consumes
    @Path("/images/{id}")
    ListenableFuture<Boolean> deleteImage(@PathParam("id") int id);
 

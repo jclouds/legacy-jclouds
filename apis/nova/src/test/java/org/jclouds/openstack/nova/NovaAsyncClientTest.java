@@ -139,7 +139,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       HttpRequest request = processor.createRequest(method, 2);
 
       assertRequestLineEquals(request, "DELETE http://endpoint/vapiversion/images/2 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "");
+      assertNonPayloadHeadersEqual(request, "Accept: */*\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
@@ -446,7 +446,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       HttpRequest request = processor.createRequest(method, 2, "foo");
 
       assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers/2/action HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "");
+      assertNonPayloadHeadersEqual(request, "Accept: */*\n");
       assertPayloadEquals(request, "{\"changePassword\":{\"adminPass\":\"foo\"}}", MediaType.APPLICATION_JSON, false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -462,7 +462,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       HttpRequest request = processor.createRequest(method, 2, "foo");
 
       assertRequestLineEquals(request, "PUT http://endpoint/vapiversion/servers/2 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "");
+      assertNonPayloadHeadersEqual(request, "Accept: */*\n");
       assertPayloadEquals(request, "{\"server\":{\"name\":\"foo\"}}", MediaType.APPLICATION_JSON, false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -547,7 +547,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       HttpRequest request = processor.createRequest(method, 3);
 
       assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers/3/action?format=json HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "");
+      assertNonPayloadHeadersEqual(request, "Accept: */*\n");
       assertPayloadEquals(request, "{\"rebuild\":{}}", MediaType.APPLICATION_JSON, false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -564,7 +564,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       HttpRequest request = processor.createRequest(method, 3, withImage("2"));
 
       assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers/3/action?format=json HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "");
+      assertNonPayloadHeadersEqual(request, "Accept: */*\n");
       assertPayloadEquals(request, "{\"rebuild\":{\"imageRef\":\"2\"}}", MediaType.APPLICATION_JSON, false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -580,7 +580,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       HttpRequest request = processor.createRequest(method, 2, RebootType.HARD);
 
       assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers/2/action?format=json HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "");
+      assertNonPayloadHeadersEqual(request, "Accept: */*\n");
       assertPayloadEquals(request, "{\"reboot\":{\"type\":\"HARD\"}}", MediaType.APPLICATION_JSON, false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -596,7 +596,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       HttpRequest request = processor.createRequest(method, 2, 3);
 
       assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers/2/action?format=json HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "");
+      assertNonPayloadHeadersEqual(request, "Accept: */*\n");
       assertPayloadEquals(request, "{\"resize\":{\"flavorId\":3}}", MediaType.APPLICATION_JSON, false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -612,7 +612,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       HttpRequest request = processor.createRequest(method, 2);
 
       assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers/2/action?format=json HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "");
+      assertNonPayloadHeadersEqual(request, "Accept: */*\n");
       assertPayloadEquals(request, "{\"confirmResize\":null}", MediaType.APPLICATION_JSON, false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -627,7 +627,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       HttpRequest request = processor.createRequest(method, 2);
 
       assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers/2/action?format=json HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "");
+      assertNonPayloadHeadersEqual(request, "Accept: */*\n");
       assertPayloadEquals(request, "{\"revertResize\":null}", MediaType.APPLICATION_JSON, false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
