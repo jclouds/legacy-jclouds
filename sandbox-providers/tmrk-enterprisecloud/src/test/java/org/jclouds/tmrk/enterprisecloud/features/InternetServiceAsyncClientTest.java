@@ -23,6 +23,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.tmrk.enterprisecloud.domain.service.internet.InternetService;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -54,7 +55,26 @@ public class InternetServiceAsyncClientTest extends BaseTerremarkEnterpriseCloud
       checkFilters(httpRequest);
    }
 
+   public void testEditInternetService() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = InternetServiceAsyncClient.class.getMethod("editInternetService", InternetService.class);
+      
+      URI uri = URI.create("/cloudapi/ecloud/internetservices/797");
+      InternetService service = InternetService.builder().href(uri).build();
+      
+      HttpRequest httpRequest = processor.createRequest(method, service);
 
+      String requestLine = "PUT https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/internetservices/797 HTTP/1.1";
+      assertRequestLineEquals(httpRequest, requestLine);
+      assertNonPayloadHeadersEqual(httpRequest,
+            "Accept: application/vnd.tmrk.cloud.internetService\nx-tmrk-version: 2011-07-01\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+   
    @Override
    protected TypeLiteral<RestAnnotationProcessor<InternetServiceAsyncClient>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<InternetServiceAsyncClient>>() {

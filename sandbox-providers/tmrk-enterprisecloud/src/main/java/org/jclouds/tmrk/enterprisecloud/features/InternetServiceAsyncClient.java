@@ -22,10 +22,13 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.tmrk.enterprisecloud.domain.Task;
 import org.jclouds.tmrk.enterprisecloud.domain.service.internet.InternetService;
+import org.jclouds.tmrk.enterprisecloud.functions.URISource;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import java.net.URI;
 
 /**
@@ -50,4 +53,13 @@ public interface InternetServiceAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<InternetService> getInternetService(@EndpointParam URI uri);
+
+   /**
+    * @see org.jclouds.tmrk.enterprisecloud.features.InternetServiceClient#editInternetService
+    */
+   @PUT
+   @Consumes("application/vnd.tmrk.cloud.internetService")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Task> editInternetService(@EndpointParam(parser = URISource.GetURI.class) InternetService internetService);
 }

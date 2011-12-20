@@ -18,6 +18,7 @@
  */
 package org.jclouds.tmrk.enterprisecloud.features;
 
+import org.jclouds.tmrk.enterprisecloud.domain.Task;
 import org.jclouds.tmrk.enterprisecloud.domain.service.internet.InternetService;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -42,13 +43,39 @@ public class InternetServiceClientLiveTest extends BaseTerremarkEnterpriseCloudC
 
    private InternetServiceClient client;
 
-   public void testGetLayouts() throws Exception {
-      //TODO: THe URI should come from the environment
-      InternetService internetService = client.getInternetService(URI.create("/cloudapi/ecloud/internetservices/797"));
+   public void testGetInternetService() throws Exception {
+      //TODO: The URI should come from the environment
+      //TODO: Should create a new service edit it then delete it.
+      //TODO: Need a retryable predicate to wait until the task is done.
+      URI uri = URI.create("/cloudapi/ecloud/internetservices/797");
+      InternetService internetService = client.getInternetService(uri);
       assertNotNull(internetService);
+      /*
+      final String originalName = internetService.getName();
+      final String newName = originalName+"edited";
+      boolean enable = !internetService.isEnabled();
+
+      // Change the name and enabled flag
+      testEditInternetService(internetService.getHref(),newName,enable);
+      internetService = client.getInternetService(uri);
+      assertEquals(internetService.getName(),newName);
+      assertEquals(internetService.isEnabled(),enable);
+
+      // Change it back again
+      enable = !internetService.isEnabled();
+      testEditInternetService(internetService.getHref(),originalName,enable);
+      assertEquals(internetService.getName(),originalName);
+      assertEquals(internetService.isEnabled(),enable);
+      */
    }
 
-   public void testGetMissingLayouts() {
+   public void testGetMissingInternetService() {
       assertNull(client.getInternetService(URI.create("/cloudapi/ecloud/internetservices/-1")));
+   }
+
+   private void testEditInternetService(URI uri, String name, boolean enable) {
+      InternetService service = InternetService.builder().href(uri).name(name).enabled(enable).build();
+      Task task = client.editInternetService(service);
+      //TODO: Wait for task to complete.
    }
 }

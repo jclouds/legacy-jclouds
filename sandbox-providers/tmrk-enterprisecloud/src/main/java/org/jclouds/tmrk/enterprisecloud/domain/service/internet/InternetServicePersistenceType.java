@@ -24,8 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
-import static com.google.common.base.CaseFormat.LOWER_CAMEL;
-import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
+import static com.google.common.base.CaseFormat.*;
 
 /**
  * <xs:complexType name="InternetServiceType">
@@ -43,7 +42,8 @@ public class InternetServicePersistenceType {
       SOURCE_IP;
 
       public String value() {
-         return UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
+         String lower = UPPER_UNDERSCORE.to(LOWER_CAMEL,name());
+         return LOWER_CAMEL.to(UPPER_CAMEL,lower);
       }
    }
    
@@ -59,7 +59,7 @@ public class InternetServicePersistenceType {
    public static class Builder {
 
        private PersistenceType persistenceType;
-       private int timeout;
+       private int timeout = -1;
              
        /**
         * @see org.jclouds.tmrk.enterprisecloud.domain.service.internet.InternetServicePersistenceType#getPersistenceType
@@ -99,7 +99,7 @@ public class InternetServicePersistenceType {
    private PersistenceType persistenceType;
 
    @XmlElement(name = "Timeout")
-   private int timeout;
+   private int timeout = -1;
 
    public PersistenceType getPersistenceType() {
       return persistenceType;

@@ -104,7 +104,7 @@ public class InternetServiceJAXBParsingTest extends BaseRestClientTest {
       assertTrue(internetService.isEnabled());
       assertEquals(internetService.getPublicIp(), NamedResource.builder().href(URI.create("/cloudapi/ecloud/publicips/3929")).type("application/vnd.tmrk.cloud.publicIp").name("208.39.65.40").build());
       assertEquals(internetService.getPersistence().getPersistenceType(), InternetServicePersistenceType.PersistenceType.NONE);
-      assertEquals(internetService.getPersistence().getTimeout(), 0); //Default value
+      assertEquals(internetService.getPersistence().getTimeout(), -1); //Default value
       assertEquals(internetService.getMonitor(),NamedResource.builder().href(URI.create("/cloudapi/ecloud/internetservices/797/monitor")).type("application/vnd.tmrk.cloud.defaultMonitor").build());
       assertNodeServices(internetService.getNodeServices());
 
