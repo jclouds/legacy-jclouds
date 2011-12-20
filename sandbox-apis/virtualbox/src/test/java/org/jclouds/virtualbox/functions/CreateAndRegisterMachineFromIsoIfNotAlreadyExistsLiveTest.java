@@ -58,7 +58,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends B
 	@Test
    public void testCreateNewMachine() throws Exception {
       String vmName = "jclouds-test-create-1-node";
-      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName).controller(ideController).cleanUpMode(mode)
+      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName).memoryMB(512).controller(ideController).cleanUpMode(mode)
             .osTypeId("Debian").forceOverwrite(true).build();
       new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(launchSpecification);
       IMachine debianNode = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(launchSpecification);
@@ -70,7 +70,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends B
    @Test
    public void testCreateNewMachineWithBadOsType() throws Exception {
       String vmName = "jclouds-test-create-2-node";
-      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName).controller(ideController).cleanUpMode(mode)
+      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName).memoryMB(512).controller(ideController).cleanUpMode(mode)
             .osTypeId("SomeWeirdUnknownOs").forceOverwrite(true).build();
       new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(launchSpecification);
 

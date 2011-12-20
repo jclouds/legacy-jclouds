@@ -68,7 +68,7 @@ public class UnregisterMachineIfExistsAndDeleteItsMediaTest {
       VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).memoryMB(512).osTypeId(osTypeId)
               .controller(ideController)
               .forceOverwrite(true)
-              .cleanUpMode(CleanupMode.DetachAllReturnHardDisksOnly)
+              .cleanUpMode(CleanupMode.Full)
               .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build()).build();      
 
       expect(manager.getVBox()).andReturn(vBox).anyTimes();

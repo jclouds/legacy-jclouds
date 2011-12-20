@@ -20,6 +20,7 @@
 package org.jclouds.virtualbox.domain;
 
 import org.testng.annotations.Test;
+import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.StorageBus;
 
 import static org.testng.Assert.assertEquals;
@@ -63,11 +64,12 @@ public class VmSpecTest {
    }
 
    private VmSpec.Builder defaultVm() {
-      return VmSpec.builder()
+		return VmSpec.builder()
               .id("MyVmId")
               .name("My VM")
               .osTypeId("Ubuntu")
               .memoryMB(1024)
+              .cleanUpMode(CleanupMode.Full)
               .natNetworkAdapter(
                       0,
                       NatAdapter.builder().tcpRedirectRule("localhost", 2222, "", 22).build())
