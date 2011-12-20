@@ -19,7 +19,7 @@
 package org.jclouds.tmrk.enterprisecloud.domain.resource;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.tmrk.enterprisecloud.domain.internal.AnonymousResource;
+import org.jclouds.tmrk.enterprisecloud.domain.NamedResource;
 
 import javax.xml.bind.annotation.XmlElement;
 
@@ -40,13 +40,13 @@ public class ComputePoolPerformanceStatistic {
    }
 
    public static class Builder {
-      private AnonymousResource cpu;
-      private AnonymousResource memory;
+      private NamedResource cpu;
+      private NamedResource memory;
 
      /**
       * @see org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolPerformanceStatistic#getCpu
       */
-      public Builder cpu(AnonymousResource cpu) {
+      public Builder cpu(NamedResource cpu) {
          this.cpu = cpu;
          return this;
       }
@@ -54,7 +54,7 @@ public class ComputePoolPerformanceStatistic {
       /**
        * @see org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolPerformanceStatistic#getMemory
        */
-      public Builder memory(AnonymousResource memory) {
+      public Builder memory(NamedResource memory) {
          this.memory = memory;
          return this;
       }
@@ -69,12 +69,12 @@ public class ComputePoolPerformanceStatistic {
    }
 
    @XmlElement(name = "Cpu", required = false)
-   private AnonymousResource cpu;
+   private NamedResource cpu;
 
    @XmlElement(name = "Memory", required = false)
-   private AnonymousResource memory;
+   private NamedResource memory;
 
-   private ComputePoolPerformanceStatistic(@Nullable AnonymousResource cpu, @Nullable AnonymousResource memory) {
+   private ComputePoolPerformanceStatistic(@Nullable NamedResource cpu, @Nullable NamedResource memory) {
       this.cpu = cpu;
       this.memory = memory;
     }
@@ -83,11 +83,11 @@ public class ComputePoolPerformanceStatistic {
        //For JAXB
    }
 
-   public AnonymousResource getCpu() {
+   public NamedResource getCpu() {
       return cpu;
    }
 
-   public AnonymousResource getMemory() {
+   public NamedResource getMemory() {
       return memory;
    }
 

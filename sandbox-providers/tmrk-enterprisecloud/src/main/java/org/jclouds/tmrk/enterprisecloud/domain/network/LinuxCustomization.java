@@ -19,7 +19,7 @@
 package org.jclouds.tmrk.enterprisecloud.domain.network;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.tmrk.enterprisecloud.domain.internal.AnonymousResource;
+import org.jclouds.tmrk.enterprisecloud.domain.NamedResource;
 
 import javax.xml.bind.annotation.XmlElement;
 
@@ -41,7 +41,7 @@ public class LinuxCustomization {
    public static class Builder {
 
       private NetworkSettings networkSettings = NetworkSettings.builder().build();
-      private AnonymousResource sshKey;
+      private NamedResource sshKey;
 
       /**
        * @see org.jclouds.tmrk.enterprisecloud.domain.network.LinuxCustomization#getNetworkSettings
@@ -54,7 +54,7 @@ public class LinuxCustomization {
       /**
        * @see org.jclouds.tmrk.enterprisecloud.domain.network.LinuxCustomization#getSshKey
        */
-      public Builder sshKey(AnonymousResource sshKey) {
+      public Builder sshKey(NamedResource sshKey) {
          this.sshKey = sshKey;
          return this;
       }
@@ -72,9 +72,9 @@ public class LinuxCustomization {
    private NetworkSettings networkSettings;
 
    @XmlElement(name = "SshKey", required = false)
-   private AnonymousResource sshKey;
+   private NamedResource sshKey;
 
-   public LinuxCustomization(@Nullable NetworkSettings networkSettings, @Nullable AnonymousResource sshKey) {
+   public LinuxCustomization(@Nullable NetworkSettings networkSettings, @Nullable NamedResource sshKey) {
       this.networkSettings = networkSettings;
       this.sshKey = sshKey;
    }
@@ -87,7 +87,7 @@ public class LinuxCustomization {
       return networkSettings;
    }
 
-   public AnonymousResource getSshKey() {
+   public NamedResource getSshKey() {
       return sshKey;
    }
 

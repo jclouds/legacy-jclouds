@@ -19,9 +19,9 @@
 package org.jclouds.tmrk.enterprisecloud.domain.vm;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.tmrk.enterprisecloud.domain.internal.AnonymousResource;
-import org.jclouds.tmrk.enterprisecloud.domain.layout.LayoutRequest;
+import org.jclouds.tmrk.enterprisecloud.domain.NamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
+import org.jclouds.tmrk.enterprisecloud.domain.layout.LayoutRequest;
 import org.jclouds.tmrk.enterprisecloud.domain.network.LinuxCustomization;
 import org.jclouds.tmrk.enterprisecloud.domain.network.WindowsCustomization;
 
@@ -57,7 +57,7 @@ public class CreateVirtualMachine extends CreateVirtualMachineRequest {
       private LinuxCustomization linuxCustomization;
       private WindowsCustomization windowsCustomization;
       private boolean poweredOn;
-      private AnonymousResource template;
+      private NamedResource template;
 
       /**
        * @see CreateVirtualMachine#getLinuxCustomization
@@ -87,7 +87,7 @@ public class CreateVirtualMachine extends CreateVirtualMachineRequest {
       /**
        * @see CreateVirtualMachine#getTemplate
        */
-      public Builder template(AnonymousResource template) {
+      public Builder template(NamedResource template) {
          this.template = template;
          return this;
       }
@@ -164,13 +164,13 @@ public class CreateVirtualMachine extends CreateVirtualMachineRequest {
    private boolean poweredOn;
 
    @XmlElement(name = "Template", required = false)
-   private AnonymousResource template;
+   private NamedResource template;
 
 
    private CreateVirtualMachine(String name, int processorCount, ResourceCapacity memory,
                                 @Nullable String description, @Nullable LayoutRequest layout, @Nullable Set<String> tags,
                                 @Nullable LinuxCustomization linuxCustomization, @Nullable WindowsCustomization windowsCustomization,
-                                boolean poweredOn, @Nullable AnonymousResource template) {
+                                boolean poweredOn, @Nullable NamedResource template) {
       super(name,processorCount,memory,description,layout,tags);
       this.linuxCustomization = linuxCustomization;
       this.windowsCustomization = windowsCustomization;
@@ -194,7 +194,7 @@ public class CreateVirtualMachine extends CreateVirtualMachineRequest {
       return poweredOn;
    }
 
-   public AnonymousResource getTemplate() {
+   public NamedResource getTemplate() {
       return template;
    }
 
