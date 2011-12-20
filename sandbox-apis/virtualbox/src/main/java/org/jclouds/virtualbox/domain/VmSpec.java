@@ -52,6 +52,7 @@ public class VmSpec {
       checkArgument(memory > 0, "memory must be > 0");
       checkNotNull(controllers, "controllers");
       checkNotNull(natNetworkAdapters, "natNetworkAdapters");
+      checkNotNull(cleanupMode, "cleanupMode");
       this.vmId = vmId;
       this.vmName = vmName;
       this.osTypeId = osTypeId;
@@ -170,7 +171,8 @@ public class VmSpec {
                  Objects.equal(memory, other.memory) &&
                  Objects.equal(forceOverwrite, other.forceOverwrite) &&
                  Objects.equal(natNetworkAdapters, other.natNetworkAdapters) &&
-                 Objects.equal(controllers, other.controllers);
+                 Objects.equal(controllers, other.controllers) &&
+                 Objects.equal(cleanupMode, other.cleanupMode);
       }
       return false;
    }
@@ -190,6 +192,7 @@ public class VmSpec {
               ", forceOverwrite=" + forceOverwrite +
               ", natNetworkAdapters=" + natNetworkAdapters +
               ", controllers=" + controllers +
+              ", cleanupMode=" + cleanupMode +
               '}';
    }
 }

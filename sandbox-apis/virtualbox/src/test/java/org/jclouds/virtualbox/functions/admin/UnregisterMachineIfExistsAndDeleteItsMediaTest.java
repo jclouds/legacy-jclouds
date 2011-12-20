@@ -68,7 +68,7 @@ public class UnregisterMachineIfExistsAndDeleteItsMediaTest {
 
       replay(manager, vBox, registeredMachine, progress);
 
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager, mode).apply(vmSpecification);
+      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(vmSpecification);
    }
 
 }
