@@ -41,7 +41,7 @@ public class HPCloudObjectStoragePropertiesBuilder extends SwiftPropertiesBuilde
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-NV");
-      properties.setProperty(PROPERTY_ENDPOINT, "https://region-a.geo-1.objects.hpcloudsvc.com/auth/");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://region-a.geo-1.objects.hpcloudsvc.com/auth");
       properties.setProperty(PROPERTY_API_VERSION, OpenStackAuthAsyncClient.VERSION);
       properties.setProperty(PROPERTY_CDN_ENDPOINT, "https://region-a.geo-1.cdnmgmt.hpcloudsvc.com");
       return properties;
