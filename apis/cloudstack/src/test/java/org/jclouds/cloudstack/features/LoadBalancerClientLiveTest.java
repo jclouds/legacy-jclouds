@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import static com.google.common.collect.Iterables.find;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
@@ -87,7 +88,8 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testCreateLoadBalancerRule() throws Exception {
       if (networksDisabled)
          return;
-      while (rule == null) {
+      int attempts = 0;
+      while (rule == null && attempts < 50) {
          ip = reuseOrAssociate.apply(network);
          try {
             rule = client.getLoadBalancerClient().createLoadBalancerRuleForPublicIP(ip.getId(), Algorithm.LEASTCONN,
@@ -96,6 +98,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
             // very likely an ip conflict, so retry;
          }
       }
+      assertNotNull(rule, "Failed to get a load balancer rule after "+attempts+" attempts");
       assert (rule.getPublicIPId() == ip.getId()) : rule;
       assertEquals(rule.getPublicPort(), 22);
       assertEquals(rule.getPrivatePort(), 22);
