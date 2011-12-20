@@ -39,6 +39,7 @@ import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 
 public class UnregisterMachineIfExistsAndDeleteItsMedia implements Function<VmSpec, Void> {
 
@@ -48,7 +49,7 @@ public class UnregisterMachineIfExistsAndDeleteItsMedia implements Function<VmSp
 
    private VirtualBoxManager manager;
 
-   public UnregisterMachineIfExistsAndDeleteItsMedia(VirtualBoxManager manager, CleanupMode mode) {
+   public UnregisterMachineIfExistsAndDeleteItsMedia(VirtualBoxManager manager) {
       this.manager = manager;
    }
 
@@ -75,7 +76,7 @@ public class UnregisterMachineIfExistsAndDeleteItsMedia implements Function<VmSp
          try {
             for (IMedium iMedium : mediaToBeDeleted) {
                if(iMedium.getDeviceType().equals(DeviceType.HardDisk)) {
-                  IProgress deletion = machine.delete(mediaToBeDeleted);
+                  IProgress deletion = machine.delete(Lists.newArrayList(iMedium));
                   deletion.waitForCompletion(-1);
                }
             }
