@@ -54,6 +54,10 @@ public class PublicUriForObjectInfo implements Function<ObjectInfo, URI> {
       } catch (CacheLoader.InvalidCacheLoadException e) {
          // nulls not permitted from cache loader
          return null;
+      } catch (NullPointerException e) {
+         // nulls not permitted from cache loader
+         // TODO this shouldn't occur when the above exception is reliably presented
+         return null;
       }
    }
 }
