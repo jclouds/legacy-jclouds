@@ -18,13 +18,21 @@
  */
 package org.jclouds.hpcloud.object.storage.blobstore.integration;
 
+import java.util.Set;
+
 import org.jclouds.openstack.swift.blobstore.integration.SwiftServiceIntegrationLiveTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Jeremy Daggett
  */
 @Test(groups = "live")
 public class HPCloudObjectStorageServiceIntegrationLiveTest extends SwiftServiceIntegrationLiveTest {
+   @Override
+   protected Set<String> getIso3166Codes() {
+      return ImmutableSet.<String> of("US-NV");
+   }
 
 }
