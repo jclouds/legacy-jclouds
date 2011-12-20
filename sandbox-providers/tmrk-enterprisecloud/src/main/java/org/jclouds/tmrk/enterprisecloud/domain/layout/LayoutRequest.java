@@ -19,7 +19,7 @@
 package org.jclouds.tmrk.enterprisecloud.domain.layout;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.tmrk.enterprisecloud.domain.internal.AnonymousResource;
+import org.jclouds.tmrk.enterprisecloud.domain.NamedResource;
 
 import javax.xml.bind.annotation.XmlElement;
 
@@ -61,15 +61,15 @@ public class LayoutRequest {
    }
 
    public static class Builder {
-      private AnonymousResource row;
-      private AnonymousResource group;
+      private NamedResource row;
+      private NamedResource group;
       private String newRow;
       private String newGroup;
 
      /**
       * @see LayoutRequest#getRow
       */
-      public Builder row(AnonymousResource row) {
+      public Builder row(NamedResource row) {
          this.row = row;
          return this;
       }
@@ -77,7 +77,7 @@ public class LayoutRequest {
       /**
        * @see LayoutRequest#getGroup
        */
-      public Builder group(AnonymousResource group) {
+      public Builder group(NamedResource group) {
          this.group = group;
          return this;
       }
@@ -108,10 +108,10 @@ public class LayoutRequest {
    }
 
    @XmlElement(name = "Row", required = false)
-   private AnonymousResource row;
+   private NamedResource row;
 
    @XmlElement(name = "Group", required = false)
-   private AnonymousResource group;
+   private NamedResource group;
 
    @XmlElement(name = "NewRow", required = false)
    private String newRow;
@@ -120,7 +120,7 @@ public class LayoutRequest {
    private String newGroup;
 
 
-   private LayoutRequest(@Nullable AnonymousResource row, @Nullable AnonymousResource group, @Nullable String newRow, @Nullable String newGroup) {
+   private LayoutRequest(@Nullable NamedResource row, @Nullable NamedResource group, @Nullable String newRow, @Nullable String newGroup) {
       this.row = row;
       this.group = group;
       this.newRow = newRow;
@@ -131,11 +131,11 @@ public class LayoutRequest {
        //For JAXB
    }
 
-   public AnonymousResource getRow() {
+   public NamedResource getRow() {
       return row;
    }
 
-   public AnonymousResource getGroup() {
+   public NamedResource getGroup() {
       return group;
    }
 

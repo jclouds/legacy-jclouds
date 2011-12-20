@@ -18,6 +18,8 @@
  */
 package org.jclouds.tmrk.enterprisecloud.domain.internal;
 
+import org.jclouds.tmrk.enterprisecloud.functions.URISource;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import java.net.URI;
 import java.util.Map;
@@ -30,7 +32,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Adrian Cole
  * 
  */
-public class BaseResource<T extends BaseResource<T>> {
+public class BaseResource<T extends BaseResource<T>> implements URISource {
 
    public static <T extends BaseResource<T>> Builder<T> builder() {
       return new Builder<T>();
@@ -82,7 +84,7 @@ public class BaseResource<T extends BaseResource<T>> {
    protected URI href;
 
    protected BaseResource(URI href, String type) {
-      this.type = checkNotNull(type, "type");
+      this.type = type;
       this.href = checkNotNull(href, "href");
    }
 
@@ -106,6 +108,13 @@ public class BaseResource<T extends BaseResource<T>> {
       return href;
    }
 
+   /**
+    * @see #getHref
+    */
+   public URI getURI() {
+      return getHref();
+   }
+   
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;

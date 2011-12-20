@@ -83,7 +83,7 @@ public class BaseNamedResource<T extends BaseNamedResource<T>> extends BaseResou
 
    protected BaseNamedResource(URI href, String type, String name) {
       super(href, type);
-      this.name = checkNotNull(name, "name");
+      this.name = name;
    }
 
    protected BaseNamedResource() {

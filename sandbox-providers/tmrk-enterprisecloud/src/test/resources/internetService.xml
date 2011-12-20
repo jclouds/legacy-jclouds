@@ -1,0 +1,97 @@
+<InternetService href="/cloudapi/ecloud/internetservices/797" name="ssh"
+                 type="application/vnd.tmrk.cloud.internetService"
+                 xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <Links>
+        <Link href="/cloudapi/ecloud/publicips/3929" name="208.39.65.40"
+              type="application/vnd.tmrk.cloud.publicIp" rel="up"/>
+    </Links>
+    <Actions>
+        <Action href="/cloudapi/ecloud/internetservices/797" name="edit"
+                type="application/vnd.tmrk.cloud.internetService"/>
+        <Action href="/cloudapi/ecloud/nodeservices/internetservices/797/action/createnodeservice"
+                name="createNodeService"
+                type="application/vnd.tmrk.cloud.createNodeService"/>
+        <Action href="/cloudapi/ecloud/internetservices/797" name="remove"
+                actionDisabled="disabled"/>
+        <Action href="/cloudapi/ecloud/internetservices/797/action/createecvmonitor"
+                name="createEcvMonitor"
+                type="application/vnd.tmrk.cloud.createEcvMonitor"
+                actionDisabled="disabled"/>
+        <Action href="/cloudapi/ecloud/internetservices/797/action/createhttpmonitor"
+                name="createHttpMonitor"
+                type="application/vnd.tmrk.cloud.createHttpMonitor"
+                actionDisabled="disabled"/>
+        <Action href="/cloudapi/ecloud/internetservices/797/action/createpingmonitor"
+                name="createPingMonitor"
+                type="application/vnd.tmrk.cloud.createPingMonitor"/>
+        <Action href="/cloudapi/ecloud/internetservices/797/action/createdefaultmonitor"
+                name="createDefaultMonitor" actionDisabled="disabled"/>
+        <Action href="/cloudapi/ecloud/internetservices/797/action/createloopbackmonitor"
+                name="createLoopbackMonitor"/>
+    </Actions>
+    <Tasks>
+        <Task href="/cloudapi/ecloud/tasks/30926"
+              type="application/vnd.tmrk.cloud.task">
+            <Operation>Add Internet Service</Operation>
+            <Status>Complete</Status>
+            <ImpactedItem href="/cloudapi/ecloud/internetservices/797"
+                          name="208.39.65.40"
+                          type="application/vnd.tmrk.cloud.internetService"/>
+            <StartTime>2011-12-19T19:34:33.57Z</StartTime>
+            <CompletedTime>2011-12-19T19:34:36.03Z</CompletedTime>
+            <Notes>Name: ssh
+                Public IP: 208.39.65.40
+                Protocol: TCP
+                Port: 22
+                Persistence: N/A
+                Persistence Type: NONE
+                Redirect URL:
+                State: Enabled
+                Trusted Network Group: ANY
+            </Notes>
+            <InitiatedBy href="/cloudapi/ecloud/admin/users/1804"
+                         name="Jason King"
+                         type="application/vnd.tmrk.cloud.admin.user"/>
+        </Task>
+        <TotalCount>1</TotalCount>
+    </Tasks>
+    <Protocol>TCP</Protocol>
+    <Port>22</Port>
+    <Enabled>true</Enabled>
+    <Description>this is ssh</Description>
+    <PublicIp href="/cloudapi/ecloud/publicips/3929" name="208.39.65.40"
+              type="application/vnd.tmrk.cloud.publicIp"/>
+    <Persistence>
+        <Type>None</Type>
+    </Persistence>
+    <Monitor href="/cloudapi/ecloud/internetservices/797/monitor"
+             type="application/vnd.tmrk.cloud.defaultMonitor"/>
+    <NodeServices>
+        <NodeService href="/cloudapi/ecloud/nodeservices/606" name="ssh"
+                     type="application/vnd.tmrk.cloud.nodeService">
+            <Links>
+                <Link href="/cloudapi/ecloud/internetservices/797" name="ssh"
+                      type="application/vnd.tmrk.cloud.internetService"
+                      rel="up"/>
+            </Links>
+            <Actions>
+                <Action href="/cloudapi/ecloud/nodeservices/606" name="edit"
+                        type="application/vnd.tmrk.cloud.nodeService"/>
+                <Action href="/cloudapi/ecloud/nodeservices/606" name="remove"/>
+            </Actions>
+            <IpAddress
+                    href="/cloudapi/ecloud/ipaddresses/networks/3933/10.146.205.131"
+                    name="10.146.205.131">
+                <Network href="/cloudapi/ecloud/networks/3933"
+                         name="10.146.205.128/27"
+                         type="application/vnd.tmrk.cloud.network"/>
+                <Host href="/cloudapi/ecloud/networkhosts/7144" name="vmDMZ1"
+                      type="application/vnd.tmrk.cloud.networkHost"/>
+            </IpAddress>
+            <Protocol>TCP</Protocol>
+            <Port>22</Port>
+            <Enabled>true</Enabled>
+            <Description/>
+        </NodeService>
+    </NodeServices>
+</InternetService>

@@ -35,7 +35,7 @@ import org.jclouds.rest.BaseRestClientTest;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.tmrk.enterprisecloud.domain.Link;
-import org.jclouds.tmrk.enterprisecloud.domain.internal.AnonymousResource;
+import org.jclouds.tmrk.enterprisecloud.domain.NamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.resource.ComputePoolPerformanceStatistics;
 import org.jclouds.tmrk.enterprisecloud.features.ResourceAsyncClient;
 import org.testng.annotations.BeforeClass;
@@ -102,8 +102,8 @@ public class ComputePoolPerformanceStatisticsJAXBParsingTest extends BaseRestCli
       assertEquals(stats.getDaily().getMemory(), createResource("memory", "daily"));
    }
 
-   private AnonymousResource createResource(String type, String period) {
-      return AnonymousResource.builder().href(URI.create("/cloudapi/ecloud/computepools/89/usage/"+type+"/performancestatistics/"+period))
+   private NamedResource createResource(String type, String period) {
+      return NamedResource.builder().href(URI.create("/cloudapi/ecloud/computepools/89/usage/"+type+"/performancestatistics/"+period))
                                    .type("application/vnd.tmrk.cloud.performanceStatistics")
                                    .build();
    }

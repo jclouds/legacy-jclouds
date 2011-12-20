@@ -22,7 +22,7 @@ import com.jamesmurty.utils.XMLBuilder;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 import org.jclouds.rest.binders.BindToStringPayload;
-import org.jclouds.tmrk.enterprisecloud.domain.internal.AnonymousResource;
+import org.jclouds.tmrk.enterprisecloud.domain.NamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.layout.LayoutRequest;
 import org.jclouds.tmrk.enterprisecloud.domain.network.LinuxCustomization;
 import org.jclouds.tmrk.enterprisecloud.domain.network.NetworkAdapterSetting;
@@ -76,7 +76,7 @@ public class BindCreateVirtualMachineKeyToXmlPayload implements Binder {
          final String description = vmData.getDescription();
          final LayoutRequest layout = vmData.getLayout();
          final String poweredOn = Boolean.toString(vmData.isPoweredOn());
-         final AnonymousResource template = vmData.getTemplate();
+         final NamedResource template = vmData.getTemplate();
 
          XMLBuilder builder = XMLBuilder.create("CreateVirtualMachine").a("name",name)
                                            .e("ProcessorCount").t(processorCount).up()
