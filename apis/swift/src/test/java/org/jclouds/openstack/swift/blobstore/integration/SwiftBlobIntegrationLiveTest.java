@@ -20,9 +20,8 @@ package org.jclouds.openstack.swift.blobstore.integration;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import static org.testng.AssertJUnit.assertEquals;
 
 /**
  * 
@@ -52,5 +51,12 @@ public class SwiftBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
       assert blob.getPayload().getContentMetadata().getContentLanguage() == null;
       assert blob.getMetadata().getContentMetadata().getContentLanguage() == null;
    }
-
+   
+   // swift doesn't support quotes
+   @Override
+   @DataProvider(name = "delete")
+   public Object[][] createData() {
+      return new Object[][] { { "normal" }, { "sp ace" }, { "qu?stion" }, { "unic₪de" }, { "path/foo" }, { "colon:" },
+               { "asteri*k" }, { "{great<r}" }, { "lesst>en" }, { "p|pe" } };
+   }
 }
