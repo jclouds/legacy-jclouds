@@ -19,13 +19,17 @@
 package org.jclouds.cloudstack.config;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Singleton;
 
+import com.google.common.collect.Sets;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.Account.State;
+import org.jclouds.cloudstack.domain.LoadBalancerRule;
 import org.jclouds.cloudstack.domain.User;
 
 import com.google.common.collect.ImmutableMap;
@@ -45,6 +49,51 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public class CloudStackParserModule extends AbstractModule {
+
+   @Singleton
+   public static class LoadBalancerRuleAdapter implements JsonSerializer<LoadBalancerRule>, JsonDeserializer<LoadBalancerRule> {
+
+      public JsonElement serialize(LoadBalancerRule src, Type typeOfSrc, JsonSerializationContext context) {
+         return context.serialize(src);
+      }
+
+      public LoadBalancerRule deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+            throws JsonParseException {
+         return apply(context.<LoadBalancerRuleInternal> deserialize(json, LoadBalancerRuleInternal.class));
+      }
+
+      public LoadBalancerRule apply(LoadBalancerRuleInternal in) {
+         Set<String> cidrSet = Sets.newHashSet(in.CIDRs.split(","));
+         return LoadBalancerRule.builder().id(in.id).account(in.account).algorithm(in.algorithm)
+            .description(in.description).domain(in.domain).domainId(in.domainId).name(in.name)
+            .privatePort(in.privatePort).publicIP(in.publicIP).publicIPId(in.publicIPId)
+            .publicPort(in.publicPort).state(in.state).CIDRs(cidrSet).zoneId(in.zoneId).build();
+      }
+
+      static final class LoadBalancerRuleInternal {
+         private long id;
+         private String account;
+         private LoadBalancerRule.Algorithm algorithm;
+         private String description;
+         private String domain;
+         @SerializedName("domainid")
+         private long domainId;
+         private String name;
+         @SerializedName("privateport")
+         private int privatePort;
+         @SerializedName("publicip")
+         private String publicIP;
+         @SerializedName("publicipid")
+         private long publicIPId;
+         @SerializedName("publicport")
+         private int publicPort;
+         private LoadBalancerRule.State state;
+         @SerializedName("cidrlist")
+         private String CIDRs;
+         @SerializedName("zoneId")
+         private long zoneId;
+      }
+   }
 
    @Singleton
    public static class BreakGenericSetAdapter implements JsonSerializer<Account>, JsonDeserializer<Account> {
@@ -134,7 +183,7 @@ public class CloudStackParserModule extends AbstractModule {
    @Override
    protected void configure() {
       bind(new TypeLiteral<Map<Type, Object>>() {
-      }).toInstance(ImmutableMap.<Type, Object> of(Account.class, new BreakGenericSetAdapter()));
+      }).toInstance(ImmutableMap.<Type, Object> of(Account.class, new BreakGenericSetAdapter(), LoadBalancerRule.class, new LoadBalancerRuleAdapter()));
    }
 
 }
