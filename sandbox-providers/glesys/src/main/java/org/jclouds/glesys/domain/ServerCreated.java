@@ -82,18 +82,13 @@ public class ServerCreated {
       if (this == object) {
          return true;
       }
-      if (object instanceof ServerCreated) {
-         final ServerCreated other = (ServerCreated) object;
-         return Objects.equal(id, other.id)
-               && Objects.equal(ips, other.ips);
-      } else {
-         return false;
-      }
+      return object instanceof ServerCreated
+            && Objects.equal(id, ((ServerCreated) object).id);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(id, ips);
+      return Objects.hashCode(id);
    }
    
    @Override

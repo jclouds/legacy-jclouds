@@ -161,27 +161,4 @@ public class ServerDetails extends Server {
             hostname, datacenter, platform, description, cpuCores, memory, disk, cost);
    }
 
-   @Override
-   public int hashCode() {
-      return super.hashCode() + Objects.hashCode(description, cpuCores, disk, memory, cost);
-   }
-
-   @Override
-   public boolean equals(Object object) {
-      if (this == object) {
-         return true;
-      }
-      if (object instanceof ServerDetails) {
-         final ServerDetails other = (ServerDetails) object;
-         return super.equals(other)
-               && Objects.equal(description, other.description) 
-               && Objects.equal(cpuCores, other.cpuCores)
-               && Objects.equal(disk, other.disk)
-               && Objects.equal(memory, other.memory)
-               && Objects.equal(cost, other.cost);
-      } else {
-         return false;
-      }
-   }
-
 }

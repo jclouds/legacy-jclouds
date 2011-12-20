@@ -46,7 +46,7 @@ public interface ServerAsyncClient {
    /**
     * @see ServerClient#listServers
     */
-   @GET
+   @POST
    @Path("/server/list/format/json")
    @SelectJson("servers")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -56,43 +56,43 @@ public interface ServerAsyncClient {
    /**
     * @see ServerClient#getServerDetails
     */
-   @GET
-   @Path("/server/details/serverid/{id}/format/json")
+   @POST
+   @Path("/server/details/format/json")
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ServerDetails> getServerDetails(@PathParam("id") String id);
+   ListenableFuture<ServerDetails> getServerDetails(@FormParam("serverid") String id);
 
    /**
     * @see ServerClient#getServerStatus
     */
-   @GET
-   @Path("/server/status/serverid/{id}/format/json")
+   @POST
+   @Path("/server/status/format/json")
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ServerStatus> getServerStatus(@PathParam("id") String id);
+   ListenableFuture<ServerStatus> getServerStatus(@FormParam("serverid") String id);
 
    /**
     * @see ServerClient#getServerLimits
     */
-   @GET
-   @Path("/server/limits/serverid/{id}/format/json")
+   @POST
+   @Path("/server/limits/format/json")
    @SelectJson("limits")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<SortedMap<String, ServerLimit>> getServerLimits(@PathParam("id") String id);
+   ListenableFuture<SortedMap<String, ServerLimit>> getServerLimits(@FormParam("serverid") String id);
 
 
    /**
     * @see ServerClient#getServerConsole
     */
-   @GET
-   @Path("/server/console/serverid/{id}/format/json")
+   @POST
+   @Path("/server/console/format/json")
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ServerConsole> getServerConsole(@PathParam("id") String id);
+   ListenableFuture<ServerConsole> getServerConsole(@FormParam("serverid") String id);
 
 
    /**
@@ -116,30 +116,30 @@ public interface ServerAsyncClient {
    /**
     * @see ServerClient#stopServer
     */
-   @GET
+   @POST
    @Path("/server/resetlimit/serverid/{id}/type/{type}/format/json")
-   ListenableFuture<Void> resetServerLimit(@PathParam("id") String id, @PathParam("type") String type);
+   ListenableFuture<Void> resetServerLimit(@FormParam("id") String id, @FormParam("type") String type);
 
    /**
     * @see ServerClient#rebootServer
     */
-   @GET
-   @Path("/server/reboot/serverid/{id}/format/json")
-   ListenableFuture<Void> rebootServer(@PathParam("id") String id);
+   @POST
+   @Path("/server/reboot/format/json")
+   ListenableFuture<Void> rebootServer(@FormParam("id") String id);
 
    /**
     * @see ServerClient#startServer
     */
-   @GET
-   @Path("/server/start/serverid/{id}/format/json")
-   ListenableFuture<Void> startServer(@PathParam("id") String id);
+   @POST
+   @Path("/server/start/format/json")
+   ListenableFuture<Void> startServer(@FormParam("id") String id);
 
    /**
     * @see ServerClient#stopServer
     */
-   @GET
-   @Path("/server/stop/serverid/{id}/format/json")
-   ListenableFuture<Void> stopServer(@PathParam("id") String id);
+   @POST
+   @Path("/server/stop/format/json")
+   ListenableFuture<Void> stopServer(@FormParam("id") String id);
 
    /**
     * @see ServerClient#createServer

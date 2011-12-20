@@ -47,7 +47,7 @@ public interface ArchiveAsyncClient {
    /**
     * @see ArchiveClient#listArchives
     */
-   @GET
+   @POST
    @Path("/archive/list/format/json")
    @SelectJson("archives")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -57,7 +57,7 @@ public interface ArchiveAsyncClient {
    /**
     * @see ArchiveClient#archiveDetails
     */
-   @GET
+   @POST
    @Path("/archive/details/format/json")
    @SelectJson("details")
    @Consumes(MediaType.APPLICATION_JSON)

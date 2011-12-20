@@ -18,57 +18,108 @@
  */
 package org.jclouds.glesys.features;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-
+import com.google.inject.TypeLiteral;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
+import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
-import com.google.inject.TypeLiteral;
+import java.io.IOException;
+import java.lang.reflect.Method;
 
 /**
  * Tests annotation parsing of {@code ServerAsyncClient}
- * 
+ *
  * @author Adrian Cole
+ * @author Adam Lowe
  */
 @Test(groups = "unit", testName = "ServerAsyncClientTest")
 public class ServerAsyncClientTest extends BaseGleSYSAsyncClientTest<ServerAsyncClient> {
 
-   public void testListServers() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ServerAsyncClient.class.getMethod("listServers");
+   public void testListServers() throws Exception {
+      testVoidArgsMethod("listServers", "list", "POST", ReturnEmptySetOnNotFoundOr404.class);
+   }
+   
+   public void testGetAllowedArguments() throws Exception {
+      testVoidArgsMethod("getServerAllowedArguments", "allowedarguments", "GET", MapHttp4xxCodesToExceptions.class);
+   }
+
+   public void testGetTemplates() throws Exception {
+      testVoidArgsMethod("getTemplates", "templates", "GET", MapHttp4xxCodesToExceptions.class);
+   }
+
+   public void testGetServer() throws Exception {
+      testServerMethod("getServerDetails", "details");
+   }
+
+   public void testGetgetServerStatus() throws Exception {
+      testServerMethod("getServerStatus", "status");
+   }
+
+   public void testGetServerLimits() throws Exception {
+      testServerMethod("getServerLimits", "limits");
+   }
+
+   public void testGetServerConsole() throws Exception {
+      testServerMethod("getServerConsole", "console");
+   }
+
+   public void testStartServer() throws Exception {
+      testServerMethodVoidReturn("startServer", "start");
+   }
+   
+   public void testStopServer() throws Exception {
+      testServerMethodVoidReturn("stopServer", "stop");
+   }
+
+   public void testRebootServer() throws Exception {
+      testServerMethodVoidReturn("rebootServer", "reboot");
+   }
+
+   protected void testVoidArgsMethod(String localMethod, String remoteCall, String httpMethod, Class exceptionParser) throws Exception {
+      Method method = ServerAsyncClient.class.getMethod(localMethod);
       HttpRequest httpRequest = processor.createRequest(method);
 
-      assertRequestLineEquals(httpRequest, "GET https://api.glesys.com/server/list/format/json HTTP/1.1");
+      assertRequestLineEquals(httpRequest, httpMethod + " https://api.glesys.com/server/" + remoteCall + "/format/json HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+      assertExceptionParserClassEquals(method, exceptionParser);
 
       checkFilters(httpRequest);
-
    }
 
-   public void testGetServer() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ServerAsyncClient.class.getMethod("getServerDetails", String.class);
+   protected void testServerMethod(String localMethod, String remoteMethod) throws Exception {
+       testServerMethod(localMethod, remoteMethod, "serverid", true);
+   }
+   
+   protected void testServerMethodVoidReturn(String localMethod, String remoteMethod) throws Exception {
+      testServerMethod(localMethod, remoteMethod, "id", false);
+   }
+ 
+   protected void testServerMethod(String localMethod, String remoteMethod, String serverIdField, boolean acceptHeader) throws Exception {
+      Method method = ServerAsyncClient.class.getMethod(localMethod, String.class);
       HttpRequest httpRequest = processor.createRequest(method, "abcd");
 
       assertRequestLineEquals(httpRequest,
-            "GET https://api.glesys.com/server/details/serverid/abcd/format/json HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null, null, false);
+            "POST https://api.glesys.com/server/" + remoteMethod + "/format/json HTTP/1.1");
 
-      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
+      if (acceptHeader) {
+         assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+         assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
+         assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      }
+
+      assertPayloadEquals(httpRequest, serverIdField + "=abcd", "application/x-www-form-urlencoded", false);
+
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
-
    }
 
    @Override
