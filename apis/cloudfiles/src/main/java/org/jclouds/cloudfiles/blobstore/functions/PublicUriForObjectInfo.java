@@ -36,6 +36,7 @@ import com.google.common.cache.LoadingCache;
  */
 @Singleton
 public class PublicUriForObjectInfo implements Function<ObjectInfo, URI> {
+   
    private final LoadingCache<String, URI> cdnContainer;
    private final Provider<UriBuilder> uriBuilders;
 
