@@ -30,36 +30,44 @@ import org.jclouds.hpcloud.object.storage.options.ListCDNContainerOptions;
 import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
 
+import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides synchronous access to HP Cloud Object Storage via the REST API.
  * 
- * <p/>All commands return a ListenableFuture of the result. Any exceptions incurred
- * during processing will be wrapped in an {@link ExecutionException} as documented in
- * {@link ListenableFuture#get()}.
+ * <p/>
+ * All commands return a ListenableFuture of the result. Any exceptions incurred during processing
+ * will be wrapped in an {@link ExecutionException} as documented in {@link ListenableFuture#get()}.
  * 
  * @see HPCloudObjectStorageClient
- * @see <a href="https://manage.hpcloud.com/pages/build/docs/object-storage/api">HP Cloud Object Storage API</a>
+ * @see <a href="https://manage.hpcloud.com/pages/build/docs/object-storage/api">HP Cloud Object
+ *      Storage API</a>
  * @author Jeremy Daggett
  */
 @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
 public interface HPCloudObjectStorageClient extends CommonSwiftClient {
 
    boolean createContainer(String container, CreateContainerOptions... options);
-   
+
+   ContainerMetadata getContainerMetadata(String container);
+
+   @Beta
    Set<ContainerCDNMetadata> listCDNContainers(ListCDNContainerOptions... options);
 
+   @Beta
    ContainerCDNMetadata getCDNMetadata(String container);
-   
-   ContainerMetadata getContainerMetadata(String container);
-   
+
+   @Beta
    URI enableCDN(String container, long ttl);
 
+   @Beta
    URI enableCDN(String container);
 
+   @Beta
    URI updateCDN(String container, long ttl);
 
+   @Beta
    boolean disableCDN(String container);
 
 }

@@ -34,33 +34,21 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
+@Test(groups = "live", testName = "HPCloudObjectStorageClientLiveTest")
 public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTest<HPCloudObjectStorageClient> {
-   
+
    @Override
    public HPCloudObjectStorageClient getApi() {
       return (HPCloudObjectStorageClient) context.getProviderSpecificContext().getApi();
    }
-   
+
    @Override
    protected void testGetObjectContentType(SwiftObject getBlob) {
       assertEquals(getBlob.getInfo().getContentType(), "application/x-www-form-urlencoded");
    }
 
-   @Test
-   public void testListCDNContainers() {
-	   // FIXFIX improve
-	   /*
-	   try {
-	       Set<ContainerCDNMetadata> cdnMetadataList = getApi().listCDNContainers();
-	       System.err.println(cdnMetadataList);
-        } catch (Exception e) {
-       	   e.printStackTrace();
-        }
-        */
-   }
-   
-   @Test
+   // CDN service due to go live Q1 2012
+   @Test(enabled = false)
    public void testCDNOperations() throws Exception {
       final long minimumTTL = 60 * 60; // The minimum TTL is 1 hour
 
@@ -72,7 +60,7 @@ public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTes
             getApi().disableCDN(containerNameWithCDN);
             getApi().disableCDN(containerNameWithoutCDN);
          } catch (Exception e) {
-        	 e.printStackTrace();
+            e.printStackTrace();
          }
          ContainerCDNMetadata cdnMetadata = null;
 
@@ -86,8 +74,7 @@ public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTes
          assertTrue(cdnMetadata.isCDNEnabled());
 
          assertEquals(cdnMetadata.getCDNUri(), cdnUri);
-         
-         
+
          cdnMetadata = getApi().getCDNMetadata(containerNameWithoutCDN);
          assert cdnMetadata == null || !cdnMetadata.isCDNEnabled() : containerNameWithoutCDN
                   + " should not have metadata";
@@ -103,14 +90,13 @@ public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTes
          final long initialTTL = cdnMetadata.getTTL();
          assertTrue(cdnMetadataList.contains(new ContainerCDNMetadata(containerNameWithCDN, true, initialTTL, cdnUri)));
 
-         /* Test listing with options FIXFIX
-         cdnMetadataList = getApi().listCDNContainers(ListCDNContainerOptions.Builder.enabledOnly());
-         assertTrue(Iterables.all(cdnMetadataList, new Predicate<ContainerCDNMetadata>() {
-            public boolean apply(ContainerCDNMetadata cdnMetadata) {
-               return cdnMetadata.isCDNEnabled();
-            }
-         }));
-         */
+         /*
+          * Test listing with options FIXFIX cdnMetadataList =
+          * getApi().listCDNContainers(ListCDNContainerOptions.Builder.enabledOnly());
+          * assertTrue(Iterables.all(cdnMetadataList, new Predicate<ContainerCDNMetadata>() { public
+          * boolean apply(ContainerCDNMetadata cdnMetadata) { return cdnMetadata.isCDNEnabled(); }
+          * }));
+          */
 
          cdnMetadataList = getApi().listCDNContainers(
                   ListCDNContainerOptions.Builder.afterMarker(
@@ -149,7 +135,7 @@ public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTes
          cdnMetadata = getApi().getCDNMetadata(containerNameWithCDN);
          assertEquals(cdnMetadata.isCDNEnabled(), false);
       } catch (Exception e) {
-    	  e.printStackTrace();
+         e.printStackTrace();
       } finally {
          recycleContainer(containerNameWithCDN);
          recycleContainer(containerNameWithoutCDN);

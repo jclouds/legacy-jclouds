@@ -52,6 +52,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 
+import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -73,6 +74,7 @@ public interface HPCloudObjectStorageAsyncClient extends CommonSwiftAsyncClient 
    /**
     * @see HPCloudObjectStorageClient#listCDNContainers(ListCDNContainerOptions)
     */
+   @Beta
    @GET
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
@@ -83,6 +85,7 @@ public interface HPCloudObjectStorageAsyncClient extends CommonSwiftAsyncClient 
    /**
     * @see HPCloudObjectStorageClient#getCDNMetadata(String)
     */
+   @Beta
    @HEAD
    @ResponseParser(ParseContainerCDNMetadataFromHeaders.class)
    @ExceptionParser(ReturnNullOnContainerNotFound.class)
@@ -93,6 +96,7 @@ public interface HPCloudObjectStorageAsyncClient extends CommonSwiftAsyncClient 
    /**
     * @see HPCloudObjectStorageClient#getCDNMetadata(String)
     */ 
+   @Beta
    @HEAD
    @ResponseParser(ParseContainerMetadataFromHeaders.class)
    @ExceptionParser(ReturnNullOnContainerNotFound.class)
@@ -110,6 +114,7 @@ public interface HPCloudObjectStorageAsyncClient extends CommonSwiftAsyncClient 
    /**
     * @see HPCloudObjectStorageClient#enableCDN(String, long)
     */
+   @Beta
    @PUT
    @Path("/{container}")
    @Headers(keys = HPCloudObjectStorageHeaders.CDN_ENABLED, values = "True")
@@ -121,6 +126,7 @@ public interface HPCloudObjectStorageAsyncClient extends CommonSwiftAsyncClient 
    /**
     * @see HPCloudObjectStorageClient#enableCDN(String)
     */
+   @Beta
    @PUT
    @Path("/{container}")
    @Headers(keys = HPCloudObjectStorageHeaders.CDN_ENABLED, values = "True")
@@ -131,6 +137,7 @@ public interface HPCloudObjectStorageAsyncClient extends CommonSwiftAsyncClient 
    /**
     * @see HPCloudObjectStorageClient#updateCDN(String, long)
     */
+   @Beta
    @POST
    @Path("/{container}")
    @ResponseParser(ParseCDNUriFromHeaders.class)
@@ -141,6 +148,7 @@ public interface HPCloudObjectStorageAsyncClient extends CommonSwiftAsyncClient 
    /**
     * @see HPCloudObjectStorageClient#disableCDN(String)
     */
+   @Beta
    @PUT
    @Path("/{container}")
    @Headers(keys = HPCloudObjectStorageHeaders.CDN_ENABLED, values = "False")
