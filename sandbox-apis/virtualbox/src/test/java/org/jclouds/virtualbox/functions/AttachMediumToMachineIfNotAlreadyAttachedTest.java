@@ -19,13 +19,6 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.collect.Iterables;
-import org.jclouds.virtualbox.domain.DeviceDetails;
-import org.jclouds.virtualbox.domain.HardDisk;
-import org.jclouds.virtualbox.domain.StorageController;
-import org.testng.annotations.Test;
-import org.virtualbox_4_1.*;
-
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.easymock.EasyMock.anyLong;
 import static org.easymock.EasyMock.expect;
@@ -35,6 +28,17 @@ import static org.easymock.classextension.EasyMock.createNiceMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.virtualbox_4_1.DeviceType.HardDisk;
+
+import org.jclouds.virtualbox.domain.DeviceDetails;
+import org.jclouds.virtualbox.domain.StorageController;
+import org.testng.annotations.Test;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IMedium;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.IVirtualBox;
+import org.virtualbox_4_1.StorageBus;
+import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_1.VirtualBoxManager;
 
 /**
  * @author Mattias Holmqvist
@@ -47,6 +51,7 @@ public class AttachMediumToMachineIfNotAlreadyAttachedTest {
 
       String controllerName = "IDE Controller";
       String diskPath = "/Users/johndoe/jclouds-virtualbox-images/admin.vdi";
+      String diskName = "admin";
       String diskFormat = "vdi";
       int controllerPort = 0;
       int device = 1;
@@ -68,7 +73,7 @@ public class AttachMediumToMachineIfNotAlreadyAttachedTest {
       StorageController controller = StorageController.builder()
               .name(controllerName)
               .bus(StorageBus.IDE)
-              .attachHardDisk(controllerPort, device, diskPath)
+              .attachHardDisk(controllerPort, device, diskPath, diskName)
               .build();
 
 
@@ -108,7 +113,7 @@ public class AttachMediumToMachineIfNotAlreadyAttachedTest {
       StorageController controller = StorageController.builder()
               .name(controllerName)
               .bus(StorageBus.IDE)
-              .attachHardDisk(controllerPort, deviceSlot, "/Users/mattias/jclouds-virtualbox-test/testadmin.vdi")
+              .attachHardDisk(controllerPort, deviceSlot, "/Users/mattias/jclouds-virtualbox-test/testadmin.vdi", "testadmin")
               .build();
 
       DeviceDetails deviceDetails = getOnlyElement(controller.getHardDisks()).getDeviceDetails();
@@ -146,7 +151,7 @@ public class AttachMediumToMachineIfNotAlreadyAttachedTest {
       StorageController controller = StorageController.builder()
               .name(controllerName)
               .bus(StorageBus.IDE)
-              .attachHardDisk(controllerPort, deviceSlot, "/Users/mattias/jclouds-virtualbox-test/testadmin.vdi")
+              .attachHardDisk(controllerPort, deviceSlot, "/Users/mattias/jclouds-virtualbox-test/testadmin.vdi", "testadmin")
               .build();
 
       DeviceDetails deviceDetails = getOnlyElement(controller.getHardDisks()).getDeviceDetails();

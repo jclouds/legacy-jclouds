@@ -69,7 +69,7 @@ public class SshAvailableLiveTest extends BaseVirtualBoxClientLiveTest {
          String workingDir = PropertyUtils.getWorkingDirFromProperty();
          StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
                  .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
-                 .attachHardDisk(0, 1, workingDir + "/testadmin.vdi").build();
+                 .attachHardDisk(0, 1, workingDir + "/testadmin.vdi", "testadmin").build();
          VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).osTypeId("")
                  .controller(ideController)
                  .forceOverwrite(true).build();

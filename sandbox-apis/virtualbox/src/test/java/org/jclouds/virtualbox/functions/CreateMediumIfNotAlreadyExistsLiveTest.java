@@ -41,7 +41,7 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
    @Test
    public void testCreateMedium() throws Exception {
       String path = System.getProperty("user.home") + "/jclouds-virtualbox-test/test-medium-1.vdi";
-      HardDisk hardDisk = new HardDisk(new DeviceDetails(0, 0, DeviceType.HardDisk), path, "vdi");
+      HardDisk hardDisk = new HardDisk(new DeviceDetails(0, 0, DeviceType.HardDisk), path, "vdi", "vdi");
       new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
       manager.getVBox().findMedium(path, DeviceType.HardDisk);
       assertFileCanBeDeleted(path);
@@ -50,7 +50,7 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
    @Test
    public void testCreateMediumFailWhenUsingNonFullyQualifiedPath() throws Exception {
       String path = "test-medium-2.vdi";
-      HardDisk hardDisk = new HardDisk(new DeviceDetails(0, 0, DeviceType.HardDisk), path, "vdi");
+      HardDisk hardDisk = new HardDisk(new DeviceDetails(0, 0, DeviceType.HardDisk), path, "vdi", "vdi");
       try {
          new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
          fail();
@@ -63,7 +63,7 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
    @Test
    public void testCreateSameMediumTwiceWhenUsingOverwrite() throws Exception {
       String path = System.getProperty("user.home") + "/jclouds-virtualbox-test/test-medium-3.vdi";
-      HardDisk hardDisk = new HardDisk(new DeviceDetails(0, 0, DeviceType.HardDisk), path, "vdi");
+      HardDisk hardDisk = new HardDisk(new DeviceDetails(0, 0, DeviceType.HardDisk), path, "vdi", "vdi");
       new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
       new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
       manager.getVBox().findMedium(path, DeviceType.HardDisk);

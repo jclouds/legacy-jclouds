@@ -20,13 +20,24 @@
 package org.jclouds.virtualbox.domain;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.javax.annotation.Nullable;
 import org.virtualbox_4_1.DeviceType;
+import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.StorageBus;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.domain.HardDisk.DEFAULT_DISK_FORMAT;
 
 /**
@@ -62,6 +73,12 @@ public class StorageController {
 
    public StorageBus getBus() {
       return bus;
+   }
+
+   public HardDisk getHardDisk(String diskName) {
+
+      final Iterable<HardDisk> hardDisks = filter(getHardDisks(), new HardDiskPredicate(diskName));
+      return Iterables.getOnlyElement(hardDisks);
    }
 
    public Set<HardDisk> getHardDisks() {
@@ -126,13 +143,13 @@ public class StorageController {
          return this;
       }
 
-      public Builder attachHardDisk(int controllerPort, int deviceSlot, String diskPath) {
-         hardDisks.add(new HardDisk(new DeviceDetails(controllerPort, deviceSlot, DeviceType.HardDisk), diskPath, DEFAULT_DISK_FORMAT));
+      public Builder attachHardDisk(int controllerPort, int deviceSlot, String diskPath, String name) {
+         hardDisks.add(new HardDisk(new DeviceDetails(controllerPort, deviceSlot, DeviceType.HardDisk), diskPath, DEFAULT_DISK_FORMAT, name));
          return this;
       }
 
-      public Builder attachHardDisk(int controllerPort, int deviceSlot, String diskPath, String diskFormat) {
-         hardDisks.add(new HardDisk(new DeviceDetails(controllerPort, deviceSlot, DeviceType.HardDisk), diskPath, diskFormat));
+      public Builder attachHardDisk(int controllerPort, int deviceSlot, String diskPath, String diskFormat, String name) {
+         hardDisks.add(new HardDisk(new DeviceDetails(controllerPort, deviceSlot, DeviceType.HardDisk), diskPath, diskFormat, name));
          return this;
       }
 
@@ -141,6 +158,19 @@ public class StorageController {
          checkNotNull(bus);
          return new StorageController(name, bus, hardDisks, dvds);
       }
-
    }
+   
+   public class HardDiskPredicate implements Predicate<HardDisk>  {
+   	
+   	private String diskName;
+   	
+      public HardDiskPredicate(String diskName) {
+         this.diskName = diskName;
+      }
+   	
+      @Override
+      public boolean apply(@Nullable HardDisk hardDisk) {
+         return hardDisk.getName().equals(diskName);
+      }
+   };
 }
