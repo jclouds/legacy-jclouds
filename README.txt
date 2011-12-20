@@ -28,7 +28,7 @@ our compute api supports: aws-ec2, gogrid, cloudservers-us, stub (in-memory), de
            to all of these providers
 
 our blobstore api supports: aws-s3, cloudfiles-us, cloudfiles-uk, filesystem,
-                            azureblob, atmos (generic), synaptic-storage, 
+                            azureblob, atmos (generic), synaptic-storage, hpcloud-objectstorage-las,
                             cloudonestorage, walrus(generic), ninefold-storage,
                             eucalyptus-partnercloud-s3, swift (generic), transient (in-mem)
  

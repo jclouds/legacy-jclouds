@@ -102,7 +102,7 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.provider</groupId>
-            <artifactId>hpcloud-object-storage</artifactId>
+            <artifactId>hpcloud-objectstorage-lvs</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
