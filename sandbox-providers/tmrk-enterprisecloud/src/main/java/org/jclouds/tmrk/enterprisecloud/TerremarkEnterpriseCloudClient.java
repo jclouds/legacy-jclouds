@@ -38,6 +38,12 @@ import org.jclouds.tmrk.enterprisecloud.features.*;
 public interface TerremarkEnterpriseCloudClient {
 
    /**
+    * Provides synchronous access to Internet Service features.
+    */
+   @Delegate
+   InternetServiceClient getInternetServiceClient();
+
+   /**
     * Provides synchronous access to Layout features.
     */
    @Delegate

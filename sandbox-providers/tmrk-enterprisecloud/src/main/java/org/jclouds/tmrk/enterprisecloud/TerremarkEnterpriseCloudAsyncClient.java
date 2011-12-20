@@ -34,6 +34,12 @@ import org.jclouds.tmrk.enterprisecloud.features.*;
 public interface TerremarkEnterpriseCloudAsyncClient {
 
    /**
+    * Provides asynchronous access to Internet Service features.
+    */
+   @Delegate
+   InternetServiceAsyncClient getInternetServiceClient();
+
+   /**
     * Provides asynchronous access to Layout features.
     */
    @Delegate

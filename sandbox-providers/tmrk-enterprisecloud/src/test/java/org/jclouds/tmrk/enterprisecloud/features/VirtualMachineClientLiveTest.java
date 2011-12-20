@@ -22,7 +22,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import org.jclouds.tmrk.enterprisecloud.domain.NamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.hardware.HardwareConfiguration;
-import org.jclouds.tmrk.enterprisecloud.domain.internal.AnonymousResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
 import org.jclouds.tmrk.enterprisecloud.domain.layout.LayoutRequest;
 import org.jclouds.tmrk.enterprisecloud.domain.network.*;
@@ -112,11 +111,11 @@ public class VirtualMachineClientLiveTest extends BaseTerremarkEnterpriseCloudCl
             .processorCount(2)
             .memory(ResourceCapacity.builder().value(1024).unit("MB").build());
 
-      AnonymousResource group = AnonymousResource.builder().href(URI.create("/cloudapi/ecloud/layoutgroups/308")).type("application/vnd.tmrk.cloud.layoutGroup").build();
+      NamedResource group = NamedResource.builder().href(URI.create("/cloudapi/ecloud/layoutgroups/308")).type("application/vnd.tmrk.cloud.layoutGroup").build();
       builder.layout(LayoutRequest.builder().group(group).build());
       builder.description("This is my first VM");
       builder.tags(ImmutableSet.of("Web"));
-      AnonymousResource sshKey = AnonymousResource.builder().href(URI.create("/cloudapi/ecloud/admin/sshkeys/77")).type("application/vnd.tmrk.cloud.admin.sshKey").build();
+      NamedResource sshKey = NamedResource.builder().href(URI.create("/cloudapi/ecloud/admin/sshkeys/77")).type("application/vnd.tmrk.cloud.admin.sshKey").build();
 
       NamedResource network = NamedResource.builder()
             .href(URI.create("/cloudapi/ecloud/networks/3933"))
@@ -142,7 +141,7 @@ public class VirtualMachineClientLiveTest extends BaseTerremarkEnterpriseCloudCl
             .build();
       builder.linuxCustomization(linuxCustomization);
 
-      AnonymousResource template = AnonymousResource.builder().href(URI.create("/cloudapi/ecloud/templates/6/computepools/89")).type("application/vnd.tmrk.cloud.template").build();
+      NamedResource template = NamedResource.builder().href(URI.create("/cloudapi/ecloud/templates/6/computepools/89")).type("application/vnd.tmrk.cloud.template").build();
       builder.template(template);
 
       VirtualMachine vm = client.createVirtualMachineFromTemplate(URI.create("/cloudapi/ecloud/virtualMachines/computePools/89/action/createVirtualMachine"), builder.build());
