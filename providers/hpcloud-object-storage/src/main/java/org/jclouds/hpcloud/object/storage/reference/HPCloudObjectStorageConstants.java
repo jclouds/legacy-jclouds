@@ -26,9 +26,4 @@ package org.jclouds.hpcloud.object.storage.reference;
  */
 public interface HPCloudObjectStorageConstants {
 
-   /**
-    * The CDN Endpoint property
-    */
-   public static final String PROPERTY_CDN_ENDPOINT = "jclouds.hpcloud-object-storage.cdn.endpoint";
-
 }

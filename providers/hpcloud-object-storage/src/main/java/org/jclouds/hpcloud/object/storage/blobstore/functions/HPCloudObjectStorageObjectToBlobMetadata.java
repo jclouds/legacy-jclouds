@@ -31,20 +31,16 @@ import org.jclouds.openstack.swift.domain.ObjectInfo;
  */
 @Singleton
 public class HPCloudObjectStorageObjectToBlobMetadata extends ObjectToBlobMetadata {
-   private final PublicUriForObjectInfo publicUriForObjectInfo;
 
    @Inject
-   public HPCloudObjectStorageObjectToBlobMetadata(IfDirectoryReturnNameStrategy ifDirectoryReturnName,
-            PublicUriForObjectInfo publicUriForObjectInfo) {
+   public HPCloudObjectStorageObjectToBlobMetadata(IfDirectoryReturnNameStrategy ifDirectoryReturnName) {
       super(ifDirectoryReturnName);
-      this.publicUriForObjectInfo = publicUriForObjectInfo;
    }
 
    public MutableBlobMetadata apply(ObjectInfo from) {
       if (from == null)
          return null;
       MutableBlobMetadata to = super.apply(from);
-      to.setPublicUri(publicUriForObjectInfo.apply(from));
       return to;
    }
 }

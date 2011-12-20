@@ -18,36 +18,22 @@
  */
 package org.jclouds.hpcloud.object.storage;
 
-import java.net.URI;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.functions.ReturnNullOnContainerNotFound;
-import org.jclouds.hpcloud.object.storage.domain.ContainerCDNMetadata;
-import org.jclouds.hpcloud.object.storage.functions.ParseCDNUriFromHeaders;
-import org.jclouds.hpcloud.object.storage.functions.ParseContainerCDNMetadataFromHeaders;
 import org.jclouds.hpcloud.object.storage.functions.ParseContainerMetadataFromHeaders;
 import org.jclouds.hpcloud.object.storage.options.CreateContainerOptions;
-import org.jclouds.hpcloud.object.storage.options.ListCDNContainerOptions;
-import org.jclouds.hpcloud.object.storage.reference.HPCloudObjectStorageHeaders;
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.Storage;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.Headers;
-import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
@@ -72,28 +58,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface HPCloudObjectStorageAsyncClient extends CommonSwiftAsyncClient {
 
    /**
-    * @see HPCloudObjectStorageClient#listCDNContainers(ListCDNContainerOptions)
-    */
-   @Beta
-   @GET
-   @Consumes(MediaType.APPLICATION_JSON)
-   @QueryParams(keys = "format", values = "json")
-   @Path("/")
-   @Endpoint(CDNManagement.class)
-   ListenableFuture<? extends Set<ContainerCDNMetadata>> listCDNContainers(ListCDNContainerOptions... options);
-   
-   /**
-    * @see HPCloudObjectStorageClient#getCDNMetadata(String)
-    */
-   @Beta
-   @HEAD
-   @ResponseParser(ParseContainerCDNMetadataFromHeaders.class)
-   @ExceptionParser(ReturnNullOnContainerNotFound.class)
-   @Path("/{container}")
-   @Endpoint(CDNManagement.class)
-   ListenableFuture<ContainerCDNMetadata> getCDNMetadata(@PathParam("container") String container);
-   
-   /**
     * @see HPCloudObjectStorageClient#getCDNMetadata(String)
     */ 
    @Beta
@@ -111,48 +75,5 @@ public interface HPCloudObjectStorageAsyncClient extends CommonSwiftAsyncClient 
    ListenableFuture<Boolean> createContainer(@PathParam("container") String container, 
 		    CreateContainerOptions... options);
 
-   /**
-    * @see HPCloudObjectStorageClient#enableCDN(String, long)
-    */
-   @Beta
-   @PUT
-   @Path("/{container}")
-   @Headers(keys = HPCloudObjectStorageHeaders.CDN_ENABLED, values = "True")
-   @ResponseParser(ParseCDNUriFromHeaders.class)
-   @Endpoint(CDNManagement.class)
-   ListenableFuture<URI> enableCDN(@PathParam("container") String container,
-            @HeaderParam(HPCloudObjectStorageHeaders.CDN_TTL) long ttl);
-
-   /**
-    * @see HPCloudObjectStorageClient#enableCDN(String)
-    */
-   @Beta
-   @PUT
-   @Path("/{container}")
-   @Headers(keys = HPCloudObjectStorageHeaders.CDN_ENABLED, values = "True")
-   @ResponseParser(ParseCDNUriFromHeaders.class)
-   @Endpoint(CDNManagement.class)
-   ListenableFuture<URI> enableCDN(@PathParam("container") String container);
-
-   /**
-    * @see HPCloudObjectStorageClient#updateCDN(String, long)
-    */
-   @Beta
-   @POST
-   @Path("/{container}")
-   @ResponseParser(ParseCDNUriFromHeaders.class)
-   @Endpoint(CDNManagement.class)
-   ListenableFuture<URI> updateCDN(@PathParam("container") String container,
-            @HeaderParam(HPCloudObjectStorageHeaders.CDN_TTL) long ttl);
-
-   /**
-    * @see HPCloudObjectStorageClient#disableCDN(String)
-    */
-   @Beta
-   @PUT
-   @Path("/{container}")
-   @Headers(keys = HPCloudObjectStorageHeaders.CDN_ENABLED, values = "False")
-   @Endpoint(CDNManagement.class)
-   ListenableFuture<Boolean> disableCDN(@PathParam("container") String container);
 
 }

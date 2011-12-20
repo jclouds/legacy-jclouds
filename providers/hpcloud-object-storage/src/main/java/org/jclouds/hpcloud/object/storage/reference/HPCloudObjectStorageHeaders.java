@@ -29,12 +29,5 @@ import org.jclouds.openstack.swift.reference.SwiftHeaders;
  * 
  */
 public interface HPCloudObjectStorageHeaders extends SwiftHeaders {
-   
-   public static final String CDN_ENABLED = "X-Cdn-Enabled";
-   public static final String CDN_LOG_RETENTION = "X-Log-Retention";
-   public static final String CDN_REFERRER_ACL = "X-Referrer-ACL";
-   public static final String CDN_TTL = "X-Ttl";
-   public static final String CDN_URI = "X-Cdn-Uri";
-   public static final String CDN_USER_AGENT_ACL = "X-User-Agent-ACL";
 
 }

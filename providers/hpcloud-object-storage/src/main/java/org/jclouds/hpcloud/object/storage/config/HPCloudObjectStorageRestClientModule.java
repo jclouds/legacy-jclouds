@@ -18,19 +18,11 @@
  */
 package org.jclouds.hpcloud.object.storage.config;
 
-import static org.jclouds.hpcloud.object.storage.reference.HPCloudObjectStorageConstants.PROPERTY_CDN_ENDPOINT;
-
-import java.net.URI;
-
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.hpcloud.object.storage.CDNManagement;
 import org.jclouds.hpcloud.object.storage.HPCloudObjectStorageAsyncClient;
 import org.jclouds.hpcloud.object.storage.HPCloudObjectStorageClient;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
-import org.jclouds.openstack.reference.AuthHeaders;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.config.BaseSwiftRestClientModule;
@@ -44,8 +36,9 @@ import com.google.inject.Provides;
  */
 @ConfiguresRestClient
 @RequiresHttp
-public class HPCloudObjectStorageRestClientModule extends BaseSwiftRestClientModule<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient> {
-	
+public class HPCloudObjectStorageRestClientModule extends
+         BaseSwiftRestClientModule<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient> {
+
    public HPCloudObjectStorageRestClientModule() {
       super(HPCloudObjectStorageClient.class, HPCloudObjectStorageAsyncClient.class);
    }
@@ -62,15 +55,4 @@ public class HPCloudObjectStorageRestClientModule extends BaseSwiftRestClientMod
       return in;
    }
 
-   @Provides
-   @Singleton
-   @CDNManagement
-   protected URI provideCDNUrl(AuthenticationResponse response, @Named(PROPERTY_CDN_ENDPOINT) String cdnEndpoint) {
-	 
-	  if (response.getServices().get(AuthHeaders.CDN_MANAGEMENT_URL) == null) {
-	     return URI.create(cdnEndpoint + response.getServices().get(AuthHeaders.STORAGE_URL).getPath());
-	  }
-	  // Placeholder for when the Object Storage service returns the CDN Management URL in the headers 
-      return response.getServices().get(AuthHeaders.CDN_MANAGEMENT_URL);
-   }
 }

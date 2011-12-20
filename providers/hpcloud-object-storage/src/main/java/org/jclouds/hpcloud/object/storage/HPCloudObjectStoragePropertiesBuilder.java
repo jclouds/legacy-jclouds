@@ -21,7 +21,6 @@ package org.jclouds.hpcloud.object.storage;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
-import static org.jclouds.hpcloud.object.storage.reference.HPCloudObjectStorageConstants.PROPERTY_CDN_ENDPOINT;
 
 import java.util.Properties;
 
@@ -43,13 +42,6 @@ public class HPCloudObjectStoragePropertiesBuilder extends SwiftPropertiesBuilde
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-NV");
       properties.setProperty(PROPERTY_ENDPOINT, "https://region-a.geo-1.objects.hpcloudsvc.com/auth");
       properties.setProperty(PROPERTY_API_VERSION, OpenStackAuthAsyncClient.VERSION);
-      properties.setProperty(PROPERTY_CDN_ENDPOINT, "https://region-a.geo-1.cdnmgmt.hpcloudsvc.com");
       return properties;
    }
-
-   protected HPCloudObjectStoragePropertiesBuilder withCDNEndpoint(String endpoint) {
-      properties.setProperty(PROPERTY_CDN_ENDPOINT, endpoint);
-      return this;
-   }
-	   
 }
