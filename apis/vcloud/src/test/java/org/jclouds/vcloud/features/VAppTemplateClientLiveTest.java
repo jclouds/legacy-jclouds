@@ -49,7 +49,6 @@ import com.google.common.collect.ImmutableMap;
  */
 @Test(groups = "live", enabled = true, singleThreaded = true, testName = "VAppTemplateClientLiveTest")
 public class VAppTemplateClientLiveTest extends BaseVCloudClientLiveTest {
-
    @Test
    public void testGetVAppTemplate() throws Exception {
       Org org = getVCloudApi().getOrgClient().findOrgNamed(null);
@@ -60,8 +59,9 @@ public class VAppTemplateClientLiveTest extends BaseVCloudClientLiveTest {
                CatalogItem item = getVCloudApi().getCatalogClient().getCatalogItem(resource.getHref());
                if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
                   VAppTemplate template = getVCloudApi().getVAppTemplateClient().getVAppTemplate(item.getEntity().getHref());
-                  if (template != null){
-                     assertEquals(template.getName(),item.getEntity().getName());
+                  if (template != null) {
+                     // the UUID in the href is the only way to actually link templates
+                     assertEquals(template.getHref(), item.getEntity().getHref());
                   } else {
                      // null can be no longer available or auth exception
                   }
@@ -100,7 +100,8 @@ public class VAppTemplateClientLiveTest extends BaseVCloudClientLiveTest {
                   VAppTemplate template = getVCloudApi().getVAppTemplateClient().findVAppTemplateInOrgCatalogNamed(
                            org.getName(), response.getName(), item.getEntity().getName());
                   if (template != null) {
-                     assertEquals(template.getName(), item.getEntity().getName());
+                     // the UUID in the href is the only way to actually link templates
+                     assertEquals(template.getHref(), item.getEntity().getHref());
                   } else {
                      // null can be no longer available or auth exception
                   }
