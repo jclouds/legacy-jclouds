@@ -1,9 +1,11 @@
 package org.jclouds.tmrk.enterprisecloud.functions;
 
 import com.google.common.base.Function;
+import org.jclouds.tmrk.enterprisecloud.domain.vm.CreateVirtualMachine;
 
 import java.net.URI;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -27,7 +29,7 @@ public interface URISource {
        */
       @Override
       public URI apply(Object source) {
-         checkNotNull(source,"source");
+         checkArgument(checkNotNull(source, "source") instanceof URISource, "this function is only valid for URISource instances");
          URISource uriSource = URISource.class.cast(source);
          return uriSource.getURI();
       }
