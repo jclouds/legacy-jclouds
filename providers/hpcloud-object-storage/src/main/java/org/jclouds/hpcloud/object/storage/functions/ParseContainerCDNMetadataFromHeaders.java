@@ -21,8 +21,8 @@ package org.jclouds.hpcloud.object.storage.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 
-import java.util.List;
 import java.net.URI;
+import java.util.List;
 
 import org.jclouds.hpcloud.object.storage.domain.ContainerCDNMetadata;
 import org.jclouds.hpcloud.object.storage.reference.HPCloudObjectStorageHeaders;
@@ -33,7 +33,6 @@ import org.jclouds.rest.InvocationContext;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 
 /**
  * This parses {@link AccountMetadata} from HTTP headers.

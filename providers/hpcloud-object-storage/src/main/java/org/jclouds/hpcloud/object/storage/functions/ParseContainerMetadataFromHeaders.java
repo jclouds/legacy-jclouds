@@ -22,9 +22,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Map.Entry;
 
-import javax.inject.Inject;
-
-import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
@@ -43,14 +40,7 @@ import com.google.common.base.Function;
  */
 public class ParseContainerMetadataFromHeaders implements Function<HttpResponse, ContainerMetadata>,
       InvocationContext<ParseContainerMetadataFromHeaders> {
-
-   private final DateService dateParser;
    private GeneratedHttpRequest<?> request;
-
-   @Inject
-   public ParseContainerMetadataFromHeaders(DateService dateParser) {
-      this.dateParser = dateParser;
-   }
 
    public ContainerMetadata apply(HttpResponse from) {
       ContainerMetadata to = new ContainerMetadata();
