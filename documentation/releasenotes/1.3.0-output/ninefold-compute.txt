@@ -53,19 +53,19 @@
  T E S T S
 -------------------------------------------------------
 Running org.jclouds.ninefold.compute.NinefoldComputeProviderTest
+Starting test testInRestProperties(org.jclouds.ninefold.compute.NinefoldComputeProviderTest)
 Starting test testWithId(org.jclouds.ninefold.compute.NinefoldComputeProviderTest)
 Starting test testAllContains(org.jclouds.ninefold.compute.NinefoldComputeProviderTest)
-Starting test testInRestProperties(org.jclouds.ninefold.compute.NinefoldComputeProviderTest)
 Starting test testOfTypeContains(org.jclouds.ninefold.compute.NinefoldComputeProviderTest)
-[pool-2-thread-3] Test testAllContains(org.jclouds.ninefold.compute.NinefoldComputeProviderTest) succeeded: 83ms
+[pool-2-thread-3] Test testAllContains(org.jclouds.ninefold.compute.NinefoldComputeProviderTest) succeeded: 23ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testWithId(org.jclouds.ninefold.compute.NinefoldComputeProviderTest) succeeded: 83ms
+[pool-2-thread-4] Test testOfTypeContains(org.jclouds.ninefold.compute.NinefoldComputeProviderTest) succeeded: 22ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testOfTypeContains(org.jclouds.ninefold.compute.NinefoldComputeProviderTest) succeeded: 70ms
+[pool-2-thread-2] Test testWithId(org.jclouds.ninefold.compute.NinefoldComputeProviderTest) succeeded: 61ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-[pool-2-thread-1] Test testInRestProperties(org.jclouds.ninefold.compute.NinefoldComputeProviderTest) succeeded: 109ms
+[pool-2-thread-1] Test testInRestProperties(org.jclouds.ninefold.compute.NinefoldComputeProviderTest) succeeded: 78ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.429 sec
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.357 sec
 
 Results :
 
@@ -102,22 +102,22 @@ Starting test testOptionToNotBlock(org.jclouds.ninefold.compute.compute.Ninefold
 [pool-2-thread-1] Test testOptionToNotBlock(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
 Starting test setServiceDefaults(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
-[pool-2-thread-1] Test setServiceDefaults(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test setServiceDefaults(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
 Starting test testCompareSizes(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
-Dec 19, 2011 10:43:31 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+Dec 20, 2011 10:16:49 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
 INFO: smallest [id=105, providerId=105, name=Compute Micro PRD, processors=[[cores=1.0, speed=1200.0]], ram=384, volumes=[], supportsImage=ALWAYS_TRUE, tags=[]]
-Dec 19, 2011 10:43:31 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+Dec 20, 2011 10:16:49 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
 INFO: fastest [id=70, providerId=70, name=Compute XLarge PRD, processors=[[cores=8.0, speed=1200.0]], ram=13928, volumes=[], supportsImage=ALWAYS_TRUE, tags=[]]
-Dec 19, 2011 10:43:31 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+Dec 20, 2011 10:16:49 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
 INFO: biggest [id=70, providerId=70, name=Compute XLarge PRD, processors=[[cores=8.0, speed=1200.0]], ram=13928, volumes=[], supportsImage=ALWAYS_TRUE, tags=[]]
-[pool-2-thread-1] Test testCompareSizes(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 5992ms
+[pool-2-thread-1] Test testCompareSizes(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 7009ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
 Starting test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
 [pool-2-thread-1] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) failed.
 Test suite progress: tests succeeded: 3, failed: 1, skipped: 0.
 Starting test testCorrectAuthException(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
-[pool-2-thread-1] Test testCorrectAuthException(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 1243ms
+[pool-2-thread-1] Test testCorrectAuthException(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 1048ms
 Test suite progress: tests succeeded: 4, failed: 1, skipped: 0.
 Starting test testCreateAndRunAService(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
 [pool-2-thread-1] Test testCreateAndRunAService(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) failed.
@@ -132,18 +132,18 @@ Test suite progress: tests succeeded: 4, failed: 3, skipped: 2.
 [pool-2-thread-1] Test testGet(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) skipped.
 Test suite progress: tests succeeded: 4, failed: 3, skipped: 3.
 Starting test testGetAssignableLocations(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
-Dec 19, 2011 10:47:23 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+Dec 20, 2011 10:19:53 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
 WARNING: location [id=1, scope=ZONE, description=Sydney, parent=ninefold-compute, iso3166Codes=[], metadata={}]
-[pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 850ms
+[pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 949ms
 Test suite progress: tests succeeded: 5, failed: 3, skipped: 3.
 Starting test testImagesCache(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
-[pool-2-thread-1] Test testImagesCache(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 2779ms
+[pool-2-thread-1] Test testImagesCache(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 3329ms
 Test suite progress: tests succeeded: 6, failed: 3, skipped: 3.
 Starting test testListImages(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
-[pool-2-thread-1] Test testListImages(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testListImages(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 7, failed: 3, skipped: 3.
 Starting test testListSizes(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
-[pool-2-thread-1] Test testListSizes(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 997ms
+[pool-2-thread-1] Test testListSizes(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 779ms
 Test suite progress: tests succeeded: 8, failed: 3, skipped: 3.
 [pool-2-thread-1] Test testReboot(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) skipped.
 Test suite progress: tests succeeded: 8, failed: 3, skipped: 4.
@@ -159,23 +159,23 @@ Starting test testTemplateMatch(org.jclouds.ninefold.compute.compute.NinefoldCom
 [pool-2-thread-1] Test testTemplateMatch(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 9, failed: 3, skipped: 8.
 Starting test testAssignability(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
-[pool-2-thread-1] Test testAssignability(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 133ms
+[pool-2-thread-1] Test testAssignability(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 105ms
 Test suite progress: tests succeeded: 10, failed: 3, skipped: 8.
 Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
-[pool-2-thread-1] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 2852ms
+[pool-2-thread-1] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 2795ms
 Test suite progress: tests succeeded: 11, failed: 3, skipped: 8.
 Starting test testCompareSizes(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 smallest [id=105, providerId=105, name=Compute Micro PRD, processors=[[cores=1.0, speed=1200.0]], ram=384, volumes=[], supportsImage=ALWAYS_TRUE, tags=[]]
 fastest [id=70, providerId=70, name=Compute XLarge PRD, processors=[[cores=8.0, speed=1200.0]], ram=13928, volumes=[], supportsImage=ALWAYS_TRUE, tags=[]]
 biggest [id=70, providerId=70, name=Compute XLarge PRD, processors=[[cores=8.0, speed=1200.0]], ram=13928, volumes=[], supportsImage=ALWAYS_TRUE, tags=[]]
-[pool-2-thread-1] Test testCompareSizes(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 5407ms
+[pool-2-thread-1] Test testCompareSizes(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 5381ms
 Test suite progress: tests succeeded: 12, failed: 3, skipped: 8.
 Starting test testFromTemplate(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testFromTemplate(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
+[pool-2-thread-1] Test testFromTemplate(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 13, failed: 3, skipped: 8.
 Starting test testGetAssignableLocations(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 location [id=1, scope=ZONE, description=Sydney, parent=ninefold-compute, iso3166Codes=[], metadata={}]
-[pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 14, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCanFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
@@ -199,7 +199,7 @@ Starting test testTemplateBuilderCanFind(org.jclouds.ninefold.compute.compute.Ni
 [pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 21, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCanFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 22, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCanFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
@@ -208,64 +208,64 @@ Starting test testTemplateBuilderCanFind(org.jclouds.ninefold.compute.compute.Ni
 [pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 24, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCanFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 25, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCanUseImageId(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCanUseImageId(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 5204ms
+[pool-2-thread-1] Test testTemplateBuilderCanUseImageId(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 5376ms
 Test suite progress: tests succeeded: 26, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 27, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 28, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 29, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 30, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 31, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 32, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 33, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 34, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 35, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 36, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 37, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 38, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 39, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 40, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 9ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 41, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 42, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 43, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 44, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
@@ -274,64 +274,64 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 46, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 47, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 48, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 49, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 3ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 50, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 51, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 52, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 53, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 54, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 55, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 56, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 57, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 58, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 59, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 60, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 61, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 62, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 63, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 64, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 65, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 66, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
@@ -343,7 +343,7 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 69, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 70, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
@@ -352,7 +352,7 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 72, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 73, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
@@ -361,16 +361,16 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 75, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 76, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 77, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 78, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 79, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
@@ -385,13 +385,13 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 83, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 84, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 85, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 86, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
@@ -400,25 +400,25 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 88, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 89, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 90, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 91, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 92, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 93, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 94, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 95, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
@@ -430,18 +430,18 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 98, failed: 3, skipped: 8.
 Starting test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 99, failed: 3, skipped: 8.
 Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 9734ms
+[pool-2-thread-1] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 8784ms
 Test suite progress: tests succeeded: 100, failed: 3, skipped: 8.
 Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 9152ms
+[pool-2-thread-1] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 8656ms
 Test suite progress: tests succeeded: 101, failed: 3, skipped: 8.
 Starting test testDefaultTemplateBuilder(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testDefaultTemplateBuilder(org.jclouds.ninefold.compute.compute.NinefoldComputeTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 102, failed: 3, skipped: 8.
-Tests run: 113, Failures: 3, Errors: 0, Skipped: 8, Time elapsed: 295.9 sec <<< FAILURE!
+Tests run: 113, Failures: 3, Errors: 0, Skipped: 8, Time elapsed: 306.45 sec <<< FAILURE!
 
 Results :
 
@@ -454,8 +454,8 @@ Tests run: 113, Failures: 3, Errors: 0, Skipped: 8
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 5:10.816s
-[INFO] Finished at: Mon Dec 19 22:48:18 PST 2011
+[INFO] Total time: 5:16.450s
+[INFO] Finished at: Tue Dec 20 10:21:46 PST 2011
 [INFO] Final Memory: 20M/265M
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project ninefold-compute: There are test failures.
