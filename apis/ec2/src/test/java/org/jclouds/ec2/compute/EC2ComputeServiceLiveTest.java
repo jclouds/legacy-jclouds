@@ -18,14 +18,11 @@
  */
 package org.jclouds.ec2.compute;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
-
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.google.common.base.Splitter;
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -68,6 +65,8 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.Module;
+
+import static org.testng.Assert.*;
 
 /**
  * 
@@ -175,7 +174,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       }
    }
 
-   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
+   @Test(enabled = true) //, dependsOnMethods = "testCompareSizes")
    public void testAutoIpAllocation() throws Exception {
       ComputeServiceContext context = null;
       String group = this.group + "aip";
@@ -189,42 +188,40 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          // create a node
          Set<? extends NodeMetadata> nodes =
                context.getComputeService().createNodesInGroup(group, 1);
-         assertTrue(nodes.size() == 1);
+         assertEquals(nodes.size(), 1, "One node should have been created");
 
-         // Get public IPs (on EC2 we should get 2, on Nova only 1)
+         // Get public IPs (We should get 1)
          NodeMetadata node = Iterables.get(nodes, 0);
          String region = node.getLocation().getParent().getId();
          Set<String> publicIps = node.getPublicAddresses();
+         assertFalse(Iterables.isEmpty(publicIps), String.format("no public addresses attached to node %s", node));
+         assertEquals(Iterables.size(publicIps), 1);
 
-         // Check that all ips are public and port 22 is accessible
-         for (String ip: publicIps) {
-            assertFalse(InetAddresses2.isPrivateIPAddress(ip));
-            IPSocket socket = new IPSocket(ip, 22);
-            assert socketTester.apply(socket) : String.format("failed to open socket %s on node %s", socket,
-                  node);
-         }
+         // Check that the address is public and port 22 is accessible
+         String ip = Iterables.getOnlyElement(publicIps);
+         assertFalse(InetAddresses2.isPrivateIPAddress(ip));
+         IPSocket socket = new IPSocket(ip, 22);
+         assertTrue(socketTester.apply(socket), String.format("failed to open socket %s on node %s", socket, node));
 
          // check that there is an elastic ip correlating to it
          EC2Client ec2 = EC2Client.class.cast(context.getProviderSpecificContext().getApi());
          Set<PublicIpInstanceIdPair> ipidpairs =
                ec2.getElasticIPAddressServices().describeAddressesInRegion(region, publicIps.toArray(new String[0]));
-         assert (ipidpairs.size() == 1) : ipidpairs;
+         assertEquals(ipidpairs.size(), 1, String.format("there should only be one address pair (%s)",
+               Iterables.toString(ipidpairs)));
 
          // check that the elastic ip is in node.publicAddresses
          PublicIpInstanceIdPair ipidpair = Iterables.get(ipidpairs, 0);
-         assertTrue(ipidpair.getInstanceId() == node.getId());
+         assertEquals(region + "/" + ipidpair.getInstanceId(), node.getId());
          
          // delete the node
          context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
 
          // check that the ip is deallocated
-         try {
-            ec2.getElasticIPAddressServices().describeAddressesInRegion(region, ipidpair.getPublicIp());
-            assert false;
-         } catch (HttpResponseException e) {
-            // do nothing. .. it is expected to fail.
-         }
-
+         Set<PublicIpInstanceIdPair> ipidcheck =
+                 ec2.getElasticIPAddressServices().describeAddressesInRegion(region, ipidpair.getPublicIp());
+         assertTrue(Iterables.isEmpty(ipidcheck), String.format("there should be no address pairs (%s)",
+               Iterables.toString(ipidcheck)));
       } finally {
          context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
          if (context != null)
