@@ -145,7 +145,7 @@ public interface LoadBalancerAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listLoadBalancerRuleInstances")
-   @SelectJson("loadbalancerrule")
+   @SelectJson("loadbalancerruleinstance")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<VirtualMachine>> listVirtualMachinesAssignedToLoadBalancerRule(@QueryParam("id") long id);
