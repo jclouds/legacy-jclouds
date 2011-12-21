@@ -72,6 +72,7 @@ public class BindDriveDataToPlainTextStringTest {
       //
             .size(8589934592l)//
             .claimType(ClaimType.SHARED)//
+            .tags(ImmutableSet.of("foo", "bar", "baz"))//
             .readers(ImmutableSet.of("ffffffff-ffff-ffff-ffff-ffffffffffff"))//
             .use(ImmutableSet.of("tag1", "tag2"))//
             .build();
