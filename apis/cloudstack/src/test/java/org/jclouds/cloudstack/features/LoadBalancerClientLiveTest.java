@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Predicates;
 import org.jclouds.cloudstack.domain.AsyncJob;
+import org.jclouds.cloudstack.domain.JobResult;
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
 import org.jclouds.cloudstack.domain.LoadBalancerRule.Algorithm;
 import org.jclouds.cloudstack.domain.LoadBalancerRule.State;
@@ -121,10 +122,18 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testAssignToLoadBalancerRule() throws Exception {
       if (networksDisabled)
          return;
-      assertTrue(jobComplete.apply(client.getLoadBalancerClient().assignVirtualMachinesToLoadBalancerRule(rule.getId(),
-            vm.getId())));
-      assertEquals(client.getLoadBalancerClient().listVirtualMachinesAssignedToLoadBalancerRule(rule.getId()).size(), 1);
+      long jobId = client.getLoadBalancerClient().assignVirtualMachinesToLoadBalancerRule(rule.getId(),
+         vm.getId());
+      assertTrue(jobComplete.apply(jobId));
+      AsyncJob<JobResult> result = client.getAsyncJobClient().getAsyncJob(jobId);
+      assertTrue(result.hasSucceed());
+      Set<VirtualMachine> machines = client.getLoadBalancerClient().listVirtualMachinesAssignedToLoadBalancerRule(rule.getId());
+      assertEquals(machines.size(), 1);
       assertTrue(loadBalancerRuleActive.apply(rule), rule.toString());
+   }
+
+   @Test(dependsOnMethods = "testAssignToLoadBalancerRule")
+   public void testCanSshInThroughNewLoadBalancerRule() throws Exception {
       loopAndCheckSSH();
    }
 
