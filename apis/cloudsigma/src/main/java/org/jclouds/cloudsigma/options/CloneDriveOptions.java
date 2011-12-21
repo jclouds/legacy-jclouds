@@ -21,6 +21,7 @@ package org.jclouds.cloudsigma.options;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -61,16 +62,18 @@ public class CloneDriveOptions {
       return this;
    }
 
-   public CloneDriveOptions tags(Iterable<String> tags) {
+   public CloneDriveOptions tags(String... tags) {
       // Affinity is conveyed using regular tags; make sure to preserve any already-set affinity tag.
       String currentTagsString = options.remove("tags");
       Set<String> currentTags = (currentTagsString == null) ? new HashSet<String>() :
-         Sets.newHashSet(Splitter.on(' ').split(currentTagsString));
+         Sets.newLinkedHashSet(Splitter.on(' ').split(currentTagsString));
 
-      Set<String> newTags = Sets.newHashSet(tags);
-      if (currentTags.contains(SSD_AFFINITY_TAG)) {
+      Set<String> newTags = new LinkedHashSet<String>();
+      for (String tag : tags)
+          newTags.add(tag);
+      
+      if (currentTags.contains(SSD_AFFINITY_TAG))
           newTags.add(SSD_AFFINITY_TAG);
-      }
       
       options.put("tags", Joiner.on(' ').join(newTags));
       return this;
@@ -83,8 +86,8 @@ public class CloneDriveOptions {
    public CloneDriveOptions affinity(AffinityType affinity) {
       // Affinity is conveyed using regular tags; make sure to avoid multiple affinity tags in the options.
       String currentTagsString = options.remove("tags");
-      Set<String> tags = (currentTagsString == null) ? new HashSet<String>() :
-         Sets.newHashSet(Splitter.on(' ').split(currentTagsString));
+      Set<String> tags = (currentTagsString == null) ? new LinkedHashSet<String>() :
+         Sets.newLinkedHashSet(Splitter.on(' ').split(currentTagsString));
       
       switch (affinity) {
       // SSD affinity is conveyed as a special tag: "affinity:ssd".
@@ -117,7 +120,7 @@ public class CloneDriveOptions {
       /**
        * @see CloneDriveOptions#tags
        */
-      public static CloneDriveOptions tags(Iterable<String> tags) {
+      public static CloneDriveOptions tags(String... tags) {
           CloneDriveOptions options = new CloneDriveOptions();
           return options.tags(tags);
       }
