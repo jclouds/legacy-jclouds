@@ -47,10 +47,9 @@ public interface PopulateDefaultLoginCredentialsForImageStrategy extends Functio
    Credentials execute(Object resourceToAuthenticate);
    
    /**
-    * 
     * Processes the cloud-specific resources to determine the login credentials.
     * 
-    * @param resourceToAuthenticate
+    * @param image
     *           this is the cloud-specific representation of the image object.
     * @return credentials parsed from the image if not null
     */

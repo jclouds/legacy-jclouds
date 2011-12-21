@@ -115,7 +115,7 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
 
    public void testListISOsOptions() throws NoSuchMethodException {
       Method method = ISOAsyncClient.class.getMethod("listISOs", ListISOsOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListISOsOptions.Builder.accountInDomain("fred", 5).bootable(true).hypervisor("xen").id(3).isoFilter(ISO.ISOFilter.featured).isPublic(true).isReady(true).keyword("bob").name("bob's iso").zoneId(7));
+      HttpRequest httpRequest = processor.createRequest(method, ListISOsOptions.Builder.accountInDomain("fred", 5).bootable().hypervisor("xen").id(3).isoFilter(ISO.ISOFilter.featured).isPublic().isReady().keyword("bob").name("bob's iso").zoneId(7));
 
       assertRequestLineEquals(httpRequest,
          "GET http://localhost:8080/client/api?response=json&command=listISOs&account=fred&domainid=5&bootable=true&hypervisor=xen&id=3&isofilter=featured&ispublic=true&isready=true&keyword=bob&name=bob%27s%20iso&zoneid=7 HTTP/1.1");
