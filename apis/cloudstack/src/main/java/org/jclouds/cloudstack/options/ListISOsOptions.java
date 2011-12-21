@@ -22,6 +22,8 @@ import org.jclouds.cloudstack.domain.ISO;
 
 import com.google.common.collect.ImmutableSet;
 
+import java.util.Set;
+
 /**
  * Options for the ISO listISOs method.
  *
@@ -30,14 +32,24 @@ import com.google.common.collect.ImmutableSet;
  * @author Richard Downer
  */
 public class ListISOsOptions extends AccountInDomainOptions {
-
    public static final ListISOsOptions NONE = new ListISOsOptions();
 
+   private static final Set<String> TRUE = ImmutableSet.of(Boolean.toString(true));
+   private static final Set<String> FALSE = ImmutableSet.of(Boolean.toString(false));
+
    /**
-    * @param bootable true if the ISO is bootable, false otherwise
+    * the ISO is bootable
     */
-   public ListISOsOptions bootable(boolean bootable) {
-      this.queryParameters.replaceValues("bootable", ImmutableSet.of(bootable + ""));
+   public ListISOsOptions bootable() {
+      this.queryParameters.replaceValues("bootable", TRUE);
+      return this;
+   }
+
+   /**
+    * the ISO is bootable
+    */
+   public ListISOsOptions notBootable() {
+      this.queryParameters.replaceValues("bootable", FALSE);
       return this;
    }
 
@@ -45,7 +57,7 @@ public class ListISOsOptions extends AccountInDomainOptions {
     * @param hypervisor the hypervisor for which to restrict the search
     */
    public ListISOsOptions hypervisor(String hypervisor) {
-      this.queryParameters.replaceValues("hypervisor", ImmutableSet.of(hypervisor + ""));
+      this.queryParameters.replaceValues("hypervisor", ImmutableSet.of(hypervisor));
       return this;
    }
 
@@ -53,7 +65,7 @@ public class ListISOsOptions extends AccountInDomainOptions {
     * @param id list all isos by id
     */
    public ListISOsOptions id(long id) {
-      this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
+      this.queryParameters.replaceValues("id", ImmutableSet.of(Long.toString(id)));
       return this;
    }
 
@@ -61,23 +73,39 @@ public class ListISOsOptions extends AccountInDomainOptions {
     * @param isoFilter possible values are "featured", "self", "self-executable","executable", and "community".
     */
    public ListISOsOptions isoFilter(ISO.ISOFilter isoFilter) {
-      this.queryParameters.replaceValues("isofilter", ImmutableSet.of(isoFilter + ""));
+      this.queryParameters.replaceValues("isofilter", ImmutableSet.of(isoFilter.name()));
       return this;
    }
 
    /**
-    * @param isPublic true if the ISO is publicly available to all users, false otherwise.
+    * the ISO is publicly available to all users
     */
-   public ListISOsOptions isPublic(boolean isPublic) {
-      this.queryParameters.replaceValues("ispublic", ImmutableSet.of(isPublic + ""));
+   public ListISOsOptions isPublic() {
+      this.queryParameters.replaceValues("ispublic", TRUE);
       return this;
    }
 
    /**
-    * @param isReady true if this ISO is ready to be deployed
+    * the ISO is not publicly available to all users
     */
-   public ListISOsOptions isReady(boolean isReady) {
-      this.queryParameters.replaceValues("isready", ImmutableSet.of(isReady + ""));
+   public ListISOsOptions isPrivate() {
+      this.queryParameters.replaceValues("ispublic", FALSE);
+      return this;
+   }
+
+   /**
+    * this ISO is ready to be deployed
+    */
+   public ListISOsOptions isReady() {
+      this.queryParameters.replaceValues("isready", TRUE);
+      return this;
+   }
+
+   /**
+    * this ISO is not ready to be deployed
+    */
+   public ListISOsOptions isNotReady() {
+      this.queryParameters.replaceValues("isready", FALSE);
       return this;
    }
 
@@ -85,7 +113,7 @@ public class ListISOsOptions extends AccountInDomainOptions {
     * @param keyword List by keyword
     */
    public ListISOsOptions keyword(String keyword) {
-      this.queryParameters.replaceValues("keyword", ImmutableSet.of(keyword + ""));
+      this.queryParameters.replaceValues("keyword", ImmutableSet.of(keyword));
       return this;
    }
 
@@ -93,7 +121,7 @@ public class ListISOsOptions extends AccountInDomainOptions {
     * @param name list all isos by name
     */
    public ListISOsOptions name(String name) {
-      this.queryParameters.replaceValues("name", ImmutableSet.of(name + ""));
+      this.queryParameters.replaceValues("name", ImmutableSet.of(name));
       return this;
    }
 
@@ -101,12 +129,11 @@ public class ListISOsOptions extends AccountInDomainOptions {
     * @param zoneId the ID of the zone
     */
    public ListISOsOptions zoneId(long zoneId) {
-      this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
+      this.queryParameters.replaceValues("zoneid", ImmutableSet.of(Long.toString(zoneId)));
       return this;
    }
 
    public static class Builder {
-
       /**
        * @param account the account of the ISO file. Must be used with the domainId parameter.
        */
@@ -115,10 +142,17 @@ public class ListISOsOptions extends AccountInDomainOptions {
       }
 
       /**
-       * @param bootable true if the ISO is bootable, false otherwise
+       * the ISO is bootable
        */
-      public static ListISOsOptions bootable(boolean bootable) {
-         return new ListISOsOptions().bootable(bootable);
+      public static ListISOsOptions bootable() {
+         return new ListISOsOptions().bootable();
+      }
+
+      /**
+       * the ISO is bootable
+       */
+      public static ListISOsOptions notBootable() {
+         return new ListISOsOptions().notBootable();
       }
 
       /**
@@ -150,17 +184,31 @@ public class ListISOsOptions extends AccountInDomainOptions {
       }
 
       /**
-       * @param isPublic true if the ISO is publicly available to all users, false otherwise.
+       * the ISO is publicly available to all users
        */
-      public static ListISOsOptions isPublic(boolean isPublic) {
-         return new ListISOsOptions().isPublic(isPublic);
+      public static ListISOsOptions isPublic() {
+         return new ListISOsOptions().isPublic();
       }
 
       /**
-       * @param isReady true if this ISO is ready to be deployed
+       * the ISO is not publicly available to all users
        */
-      public static ListISOsOptions isReady(boolean isReady) {
-         return new ListISOsOptions().isReady(isReady);
+      public static ListISOsOptions isPrivate() {
+         return new ListISOsOptions().isPrivate();
+      }
+
+      /**
+       * this ISO is ready to be deployed
+       */
+      public static ListISOsOptions isReady() {
+         return new ListISOsOptions().isReady();
+      }
+
+      /**
+       * this ISO is not ready to be deployed
+       */
+      public static ListISOsOptions isNotReady() {
+         return new ListISOsOptions().isNotReady();
       }
 
       /**
@@ -184,5 +232,4 @@ public class ListISOsOptions extends AccountInDomainOptions {
          return new ListISOsOptions().zoneId(zoneId);
       }
    }
-
 }
