@@ -20,12 +20,15 @@ package org.jclouds.cloudstack.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.jclouds.cloudstack.domain.GuestIPType;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkService;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
+
+import javax.annotation.Nullable;
 
 /**
  * 
@@ -75,6 +78,21 @@ public class NetworkPredicates {
       }
    }
 
+   public static enum IsVirtualNetwork implements Predicate<Network> {
+      INSTANCE;
+
+      @Override
+      public boolean apply(Network arg0) {
+         boolean network = isVirtualNetwork.apply(checkNotNull(arg0, "network").getGuestIPType());
+         return network;
+      }
+
+      @Override
+      public String toString() {
+         return isVirtualNetwork.toString();
+      }
+   }
+
    public static class NetworkServiceNamed implements Predicate<NetworkService> {
       private final String name;
 
@@ -93,6 +111,24 @@ public class NetworkPredicates {
       }
    }
 
+   public static class GuestIPTypeIs implements Predicate<GuestIPType> {
+      private final GuestIPType guestIPType;
+
+      public GuestIPTypeIs(GuestIPType guestIPType) {
+         this.guestIPType = guestIPType;
+      }
+
+      @Override
+      public boolean apply(@Nullable GuestIPType guestIPType) {
+         return guestIPType == this.guestIPType;
+      }
+
+      @Override
+      public String toString() {
+         return "guestIPTypeIs(" + guestIPType + ')';
+      }
+   }
+   
    public static class CapabilitiesInclude implements Predicate<NetworkService> {
       private final String capability;
 
@@ -119,6 +155,8 @@ public class NetworkPredicates {
 
    public static Predicate<NetworkService> isLoadBalancerService = new NetworkServiceNamed("Lb");
 
+   public static Predicate<GuestIPType> isVirtualNetwork = new GuestIPTypeIs(GuestIPType.VIRTUAL);
+
    /**
     * 
     * @return true, if the network supports static NAT.
@@ -136,11 +174,19 @@ public class NetworkPredicates {
    }
 
    /**
-    * 
+    *
     * @return true, if the network supports load balancing.
     */
    public static Predicate<Network> hasLoadBalancerService() {
       return HasLoadBalancerService.INSTANCE;
+   }
+
+   /**
+    *
+    * @return true, if the network is a virtual network.
+    */
+   public static Predicate<Network> isVirtualNetwork() {
+      return IsVirtualNetwork.INSTANCE;
    }
 
    /**

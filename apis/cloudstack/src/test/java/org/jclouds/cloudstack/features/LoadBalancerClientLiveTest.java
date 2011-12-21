@@ -28,6 +28,9 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.base.Predicates;
+import org.jclouds.cloudstack.domain.AsyncJob;
+import org.jclouds.cloudstack.domain.JobResult;
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
 import org.jclouds.cloudstack.domain.LoadBalancerRule.Algorithm;
 import org.jclouds.cloudstack.domain.LoadBalancerRule.State;
@@ -67,7 +70,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
             TimeUnit.SECONDS);
       prefix += "rule";
       try {
-         network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.hasLoadBalancerService());
+         network = find(client.getNetworkClient().listNetworks(), Predicates.and(NetworkPredicates.hasLoadBalancerService(), NetworkPredicates.isVirtualNetwork()));
       } catch (NoSuchElementException e) {
          networksDisabled = true;
       }
@@ -89,13 +92,18 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
       if (networksDisabled)
          return;
       int attempts = 0;
-      while (rule == null && attempts < 50) {
+      while (rule == null && attempts < 10) {
          ip = reuseOrAssociate.apply(network);
          try {
-            rule = client.getLoadBalancerClient().createLoadBalancerRuleForPublicIP(ip.getId(), Algorithm.LEASTCONN,
+            Long jobId = client.getLoadBalancerClient().createLoadBalancerRuleForPublicIP(ip.getId(), Algorithm.LEASTCONN,
                   prefix, 22, 22);
+            assertTrue(jobComplete.apply(jobId));
+            AsyncJob<LoadBalancerRule> asyncJob = client.getAsyncJobClient().getAsyncJob(jobId);
+            LoadBalancerRule result = asyncJob.getResult();
+            rule = result;
          } catch (IllegalStateException e) {
             // very likely an ip conflict, so retry;
+            attempts++;
          }
       }
       assertNotNull(rule, "Failed to get a load balancer rule after "+attempts+" attempts");
@@ -114,10 +122,18 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testAssignToLoadBalancerRule() throws Exception {
       if (networksDisabled)
          return;
-      assertTrue(jobComplete.apply(client.getLoadBalancerClient().assignVirtualMachinesToLoadBalancerRule(rule.getId(),
-            vm.getId())));
-      assertEquals(client.getLoadBalancerClient().listVirtualMachinesAssignedToLoadBalancerRule(rule.getId()).size(), 1);
+      long jobId = client.getLoadBalancerClient().assignVirtualMachinesToLoadBalancerRule(rule.getId(),
+         vm.getId());
+      assertTrue(jobComplete.apply(jobId));
+      AsyncJob<JobResult> result = client.getAsyncJobClient().getAsyncJob(jobId);
+      assertTrue(result.hasSucceed());
+      Set<VirtualMachine> machines = client.getLoadBalancerClient().listVirtualMachinesAssignedToLoadBalancerRule(rule.getId());
+      assertEquals(machines.size(), 1);
       assertTrue(loadBalancerRuleActive.apply(rule), rule.toString());
+   }
+
+   @Test(dependsOnMethods = "testAssignToLoadBalancerRule")
+   public void testCanSshInThroughNewLoadBalancerRule() throws Exception {
       loopAndCheckSSH();
    }
 
