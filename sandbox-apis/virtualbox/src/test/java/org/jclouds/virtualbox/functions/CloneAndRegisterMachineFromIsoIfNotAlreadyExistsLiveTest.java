@@ -32,6 +32,7 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
+import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.util.PropertyUtils;
@@ -90,7 +91,8 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends Ba
          String workingDir = PropertyUtils.getWorkingDirFromProperty();
          StorageController ideController = StorageController.builder().name(controllerIDE).bus(StorageBus.IDE)
          .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
-         .attachHardDisk(0, 1, workingDir + "/testadmin.vdi", "testadmin")
+         .attachHardDisk(HardDisk.builder().diskpath(workingDir + "/testadmin.vdi")
+            .controllerPort(0).deviceSlot(1).build())
          .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso").build();
          VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).osTypeId(osTypeId)
          		.memoryMB(512)

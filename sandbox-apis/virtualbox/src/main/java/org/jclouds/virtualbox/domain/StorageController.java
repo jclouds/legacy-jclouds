@@ -78,7 +78,7 @@ public class StorageController {
    public HardDisk getHardDisk(String diskName) {
 
       final Iterable<HardDisk> hardDisks = filter(getHardDisks(), new HardDiskPredicate(diskName));
-      return Iterables.getOnlyElement(hardDisks);
+      return Iterables.getFirst(hardDisks, HardDisk.builder().diskpath("notfound").controllerPort(0).deviceSlot(0).build());
    }
 
    public Set<HardDisk> getHardDisks() {
@@ -143,13 +143,8 @@ public class StorageController {
          return this;
       }
 
-      public Builder attachHardDisk(int controllerPort, int deviceSlot, String diskPath, String name) {
-         hardDisks.add(new HardDisk(new DeviceDetails(controllerPort, deviceSlot, DeviceType.HardDisk), diskPath, DEFAULT_DISK_FORMAT, name));
-         return this;
-      }
-
-      public Builder attachHardDisk(int controllerPort, int deviceSlot, String diskPath, String diskFormat, String name) {
-         hardDisks.add(new HardDisk(new DeviceDetails(controllerPort, deviceSlot, DeviceType.HardDisk), diskPath, diskFormat, name));
+      public Builder attachHardDisk(HardDisk hardDisk) {
+         hardDisks.add(hardDisk);
          return this;
       }
 
@@ -160,7 +155,7 @@ public class StorageController {
       }
    }
    
-   public class HardDiskPredicate implements Predicate<HardDisk>  {
+   private class HardDiskPredicate implements Predicate<HardDisk>  {
    	
    	private String diskName;
    	

@@ -24,6 +24,7 @@ import static org.testng.Assert.fail;
 
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.ErrorCode;
+import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
@@ -51,7 +52,8 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends B
       String workingDir = PropertyUtils.getWorkingDirFromProperty();
       ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)
               .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
-              .attachHardDisk(0, 1, workingDir + "/testadmin.vdi", "testadmin")
+              .attachHardDisk(HardDisk.builder().diskpath(workingDir + "/testadmin.vdi")
+                    .controllerPort(0).deviceSlot(1).build())
               .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso").build();
       }
 

@@ -19,12 +19,12 @@
 
 package org.jclouds.virtualbox.domain;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.StorageBus;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 
 public class VmSpecTest {
 
@@ -77,6 +77,8 @@ public class VmSpecTest {
               .controller(
                       StorageController.builder().name("Controller")
                               .bus(StorageBus.IDE)
-                              .attachHardDisk(0, 0, "/tmp/tempdisk.vdi", "tempdisk").build());
+                              .attachHardDisk(HardDisk.builder().diskpath("/tmp/tempdisk.vdi")
+                                    .controllerPort(0).deviceSlot(0).build())
+                              .build());
    }
 }

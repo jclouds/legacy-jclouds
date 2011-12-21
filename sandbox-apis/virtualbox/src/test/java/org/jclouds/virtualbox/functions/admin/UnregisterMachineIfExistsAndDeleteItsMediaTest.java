@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.NatAdapter;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
@@ -63,7 +64,7 @@ public class UnregisterMachineIfExistsAndDeleteItsMediaTest {
       String workingDir = PropertyUtils.getWorkingDirFromProperty();
       StorageController ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)
               .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
-              .attachHardDisk(0, 1, workingDir + "/testadmin.vdi", "testadmin")
+              .attachHardDisk(HardDisk.builder().diskpath(workingDir + "/testadmin.vdi").controllerPort(0).deviceSlot(1).build())
               .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso").build();
       VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).memoryMB(512).osTypeId(osTypeId)
               .controller(ideController)

@@ -28,7 +28,6 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.testng.Assert.assertNotSame;
 
-import org.jclouds.virtualbox.domain.DeviceDetails;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -160,7 +159,7 @@ public class CreateMediumIfNotAlreadyExistsTest {
    }
 
    private HardDisk createTestHardDisk() {
-      return new HardDisk(new DeviceDetails(0, 0, DeviceType.HardDisk), adminDiskPath, diskFormat, diskName);
+      return HardDisk.builder().diskpath(adminDiskPath).controllerPort(0).deviceSlot(0).build();
    }
 
 }
