@@ -218,12 +218,10 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
 
          // check that the ip is deallocated
-         try {
-            ec2.getElasticIPAddressServices().describeAddressesInRegion(region, ipidpair.getPublicIp());
-            fail("address has not been deallocated");
-         } catch (HttpResponseException e) {
-            // do nothing ... this is expected to fail
-         }
+         Set<PublicIpInstanceIdPair> ipidcheck =
+                 ec2.getElasticIPAddressServices().describeAddressesInRegion(region, ipidpair.getPublicIp());
+         assertTrue(Iterables.isEmpty(ipidcheck), String.format("there should be no address pairs (%s)",
+               Iterables.toString(ipidcheck)));
       } finally {
          context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
          if (context != null)
