@@ -20,10 +20,17 @@ package org.jclouds.cloudsigma.options;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import org.jclouds.cloudsigma.domain.AffinityType;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * Contains options supported for clone drive operations. <h2>
@@ -53,6 +60,35 @@ public class CloneDriveOptions {
       return this;
    }
 
+   /**
+    * specifies whether the new drive has 'HDD' affinity (the default) or 'SSD' (for solid-state drives)
+    */
+   public CloneDriveOptions affinity(AffinityType affinity) {
+      final String SSD_AFFINITY_TAG = "affinity:ssd";
+      
+      // Affinity is conveyed using regular tags; make sure to avoid multiple affinity tags in the options.
+      String currentTagsString = options.remove("tags");
+      Set<String> tags = (currentTagsString == null) ? new HashSet<String>() :
+         Sets.newHashSet(Splitter.on(' ').split(currentTagsString));
+      
+      switch (affinity) {
+      // SSD affinity is conveyed as a special tag: "affinity:ssd".
+      case SSD:
+         tags.add(SSD_AFFINITY_TAG);
+         break;
+      
+      // HDD affinity (the default) is conveyed by the *absence* of the "affinity:ssd" tag.
+      case HDD:
+         tags.remove(SSD_AFFINITY_TAG);
+         break;
+      }
+      
+      if (!tags.isEmpty())
+          options.put("tags", Joiner.on(' ').join(tags));
+      
+      return this;
+   }
+   
    public static class Builder {
 
       /**
@@ -63,6 +99,14 @@ public class CloneDriveOptions {
          return options.size(size);
       }
 
+      /**
+       * @see CloneDriveOptions#affinity
+       */
+      public static CloneDriveOptions affinity(AffinityType affinity) {
+          CloneDriveOptions options = new CloneDriveOptions();
+          return options.affinity(affinity);
+      }
+      
    }
 
    public Map<String, String> getOptions() {
