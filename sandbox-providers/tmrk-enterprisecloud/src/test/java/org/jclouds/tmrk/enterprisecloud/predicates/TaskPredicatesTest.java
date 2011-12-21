@@ -50,24 +50,24 @@ public class TaskPredicatesTest  {
    }
    
    public void testCompleteOrSuccess() {
-      assertTrue(completeOrSuccess().apply(task.toBuilder().status(Task.Status.COMPLETE).build()));
-      assertTrue(completeOrSuccess().apply(task.toBuilder().status(Task.Status.SUCCESS).build()));
-      assertFalse(completeOrSuccess().apply(task.toBuilder().status(Task.Status.RUNNING).build()));
-      assertFalse(completeOrSuccess().apply(task.toBuilder().status(Task.Status.QUEUED).build()));
+      assertTrue(completeOrSuccess(null).apply(task.toBuilder().status(Task.Status.COMPLETE).build()));
+      assertTrue(completeOrSuccess(null).apply(task.toBuilder().status(Task.Status.SUCCESS).build()));
+      assertFalse(completeOrSuccess(null).apply(task.toBuilder().status(Task.Status.RUNNING).build()));
+      assertFalse(completeOrSuccess(null).apply(task.toBuilder().status(Task.Status.QUEUED).build()));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
    public void testCompleteOrSuccessWhenNull() {
-      TaskPredicates.completeOrSuccess().apply(null);
+      TaskPredicates.completeOrSuccess(null).apply(null);
    }
 
    @Test(expectedExceptions = RuntimeException.class)
    public void testCompleteOrSuccessWhenFailure() {
-      TaskPredicates.completeOrSuccess().apply(task.toBuilder().status(Task.Status.FAILED).build());
+      TaskPredicates.completeOrSuccess(null).apply(task.toBuilder().status(Task.Status.FAILED).build());
    }
 
    @Test(expectedExceptions = RuntimeException.class)
    public void testCompleteOrSuccessWhenError() {
-      TaskPredicates.completeOrSuccess().apply(task.toBuilder().status(Task.Status.ERROR).build());
+      TaskPredicates.completeOrSuccess(null).apply(task.toBuilder().status(Task.Status.ERROR).build());
    }
 }

@@ -20,6 +20,7 @@ package org.jclouds.tmrk.enterprisecloud.predicates;
 
 import com.google.common.base.Predicate;
 import org.jclouds.tmrk.enterprisecloud.domain.Task;
+import org.jclouds.tmrk.enterprisecloud.features.TaskClient;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -29,11 +30,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class TaskPredicates {
    
-   public static Predicate<Task> completeOrSuccess() {
+   private TaskClient client;
+   
+   public static Predicate<Task> completeOrSuccess(final TaskClient client) {
       return new Predicate<Task>() {
          @Override
          public boolean apply(Task task) {
             checkNotNull(task,"task cannot be null");
+            if(client!=null) {
+               task = client.getTask(task.getURI());
+            }
             switch(task.getStatus()) {
                case QUEUED:
                case RUNNING:
