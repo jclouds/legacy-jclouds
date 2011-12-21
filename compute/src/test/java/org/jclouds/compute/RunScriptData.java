@@ -48,7 +48,7 @@ import com.google.common.collect.ImmutableSet;
 public class RunScriptData {
 
    public static final URI JDK7_URL = URI.create(System.getProperty("test.jdk7-url",
-         "http://download.oracle.com/otn-pub/java/jdk/7u1-b08/jdk-7u1-linux-x64.tar.gz"));
+         "http://download.oracle.com/otn-pub/java/jdk/7u2-b13/jdk-7u2-linux-x64.tar.gz"));
    public static final URI JBOSS7_URL = URI.create(System.getProperty("test.jboss7-url",//
          "http://download.jboss.org/jbossas/7.0/jboss-as-7.0.2.Final/jboss-as-web-7.0.2.Final.tar.gz"));
 
