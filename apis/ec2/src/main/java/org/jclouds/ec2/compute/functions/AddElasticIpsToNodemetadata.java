@@ -52,7 +52,11 @@ public class AddElasticIpsToNodemetadata implements Function<NodeMetadata, NodeM
       this.cache = checkNotNull(cache, "cache");
    }
 
-   //TODO: can there be multiple elastic ips on one instance?
+   // Note: Instances only have one Internet routable IP address. When an Elastic IP is associated to an
+   // instance, the instance's existing Public IP address mapping is removed and is no longer valid for this instance
+   // http://aws.amazon.com/articles/1346
+
+   // TODO can there be multiple elastic ips on one instance?
    @Override
    public NodeMetadata apply(NodeMetadata arg0) {
       String[] parts = AWSUtils.parseHandle(arg0.getId());
@@ -60,8 +64,9 @@ public class AddElasticIpsToNodemetadata implements Function<NodeMetadata, NodeM
       String instanceId = parts[1];
       try {
          String publicIp = cache.get(new RegionAndName(region, instanceId));
-         return NodeMetadataBuilder.fromNodeMetadata(arg0).publicAddresses(
-                  ImmutableSet.<String> builder().addAll(arg0.getPublicAddresses()).add(publicIp).build()).build();
+         // Replace existing public addresses with elastic IP (see note above)
+         return NodeMetadataBuilder.fromNodeMetadata(arg0)
+                 .publicAddresses(ImmutableSet.<String> builder().add(publicIp).build()).build();
       } catch (NullPointerException e) {
          // no ip was found
          return arg0;
