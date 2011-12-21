@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
 import java.util.Map;
 
 /**
- * Tests annotation parsing of {@code ArchiveAsyncClient}
+ * Tests annotation parsing of {@code DomainAsyncClient}
  * 
  * @author Adam Lowe
  */

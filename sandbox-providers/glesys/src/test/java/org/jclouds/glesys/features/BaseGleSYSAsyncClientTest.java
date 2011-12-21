@@ -41,6 +41,7 @@ import static org.testng.Assert.*;
 
 /**
  * @author Adrian Cole
+ * @author Adam Lowe
  */
 public abstract class BaseGleSYSAsyncClientTest<T> extends RestClientTest<T> {
    protected Class asyncClientClass;
