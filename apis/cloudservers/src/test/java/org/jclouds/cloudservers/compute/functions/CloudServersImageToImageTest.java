@@ -29,7 +29,6 @@ import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.LoginCredentials;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
@@ -44,22 +43,18 @@ public class CloudServersImageToImageTest {
 
    @Test
    public void testApplyWhereImageNotFound() throws UnknownHostException {
-      assertEquals(
-            convertImage(),
-            new ImageBuilder()
-                  .name("CentOS 5.2")
-                  .operatingSystem(
-                        new OperatingSystem.Builder().family(OsFamily.CENTOS).version("5.2").description("CentOS 5.2").is64Bit(true)
-                              .build()).description("CentOS 5.2").defaultCredentials(LoginCredentials.builder().user("root").build())
-                  .ids("2").version("1286712000000").build());
+      assertEquals(convertImage(), new ImageBuilder().name("CentOS 5.2").operatingSystem(
+               new OperatingSystem.Builder().family(OsFamily.CENTOS).version("5.2").description("CentOS 5.2").is64Bit(
+                        true).build()).description("CentOS 5.2").ids("2").version("1286712000000").build());
    }
 
    public static Image convertImage() {
       org.jclouds.cloudservers.domain.Image image = ParseImageFromJsonResponseTest.parseImage();
 
-      CloudServersImageToImage parser = new CloudServersImageToImage(new CloudServersImageToOperatingSystem(new BaseComputeServiceContextModule() {
-      }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
-            .getInstance(Json.class))));
+      CloudServersImageToImage parser = new CloudServersImageToImage(new CloudServersImageToOperatingSystem(
+               new BaseComputeServiceContextModule() {
+               }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice
+                        .createInjector(new GsonModule()).getInstance(Json.class))));
 
       return parser.apply(image);
    }

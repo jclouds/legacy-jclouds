@@ -27,12 +27,14 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.cloudservers.CloudServersClient;
+import org.jclouds.compute.config.ComputeServiceAdapterContextModule.AddDefaultCredentialsToImage;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.cloudservers.CloudServersClient;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -50,20 +52,23 @@ public class CloudServersImageSupplier implements Supplier<Set<? extends Image>>
 
    protected final CloudServersClient sync;
    protected final Function<org.jclouds.cloudservers.domain.Image, Image> cloudServersImageToImage;
+   protected final AddDefaultCredentialsToImage addDefaultCredentialsToImage;
 
    @Inject
    CloudServersImageSupplier(CloudServersClient sync,
-            Function<org.jclouds.cloudservers.domain.Image, Image> cloudServersImageToImage) {
+            Function<org.jclouds.cloudservers.domain.Image, Image> cloudServersImageToImage,
+            AddDefaultCredentialsToImage addDefaultCredentialsToImage) {
       this.sync = sync;
       this.cloudServersImageToImage = cloudServersImageToImage;
+      this.addDefaultCredentialsToImage = addDefaultCredentialsToImage;
    }
 
    @Override
    public Set<? extends Image> get() {
       Set<Image> images;
       logger.debug(">> providing images");
-      images = Sets.<Image> newLinkedHashSet(Iterables.transform(sync.listImages(withDetails()),
-               cloudServersImageToImage));
+      images = Sets.<Image> newLinkedHashSet(Iterables.transform(sync.listImages(withDetails()), Functions.compose(
+               addDefaultCredentialsToImage, cloudServersImageToImage)));
       logger.debug("<< images(%d)", images.size());
       return images;
    }

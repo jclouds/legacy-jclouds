@@ -39,11 +39,9 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.LoginCredentials;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Suppliers;
@@ -59,47 +57,13 @@ public class ServerToNodeMetadataTest {
    Location provider = new LocationBuilder().scope(LocationScope.ZONE).id("dallas").description("description").build();
 
    @Test
-   public void testApplyWhereImageAndHardwareNotFoundButCredentialsFound() throws UnknownHostException {
-      LoginCredentials creds = LoginCredentials.builder().user("root").password("abcde").build();
-
-      Map<ServerStatus, NodeState> serverStateToNodeState = CloudServersComputeServiceDependenciesModule.serverToNodeState;
-      Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of();
-      Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
-      Server server = ParseServerFromJsonResponseTest.parseServer();
-
-      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, ImmutableMap
-               .<String, Credentials> of("node#1234", creds), Suppliers.<Set<? extends Image>> ofInstance(images),
-               Suppliers.ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
-
-      NodeMetadata metadata = parser.apply(server);
-
-      assertEquals(
-            metadata,
-            new NodeMetadataBuilder()
-                  .state(NodeState.PENDING)
-                  .publicAddresses(ImmutableSet.of("67.23.10.132", "67.23.10.131"))
-                  .privateAddresses(ImmutableSet.of("10.176.42.16"))
-                  .imageId("2")
-                  .id("1234")
-                  .providerId("1234")
-                  .name("sample-server")
-                  .hostname("sample-server")
-                  .credentials(creds)
-                  .location(
-                        new LocationBuilder().scope(LocationScope.HOST).id("e4d909c290d0fb1ca068ffaddf22cbd0")
-                              .description("e4d909c290d0fb1ca068ffaddf22cbd0").parent(provider).build())
-                  .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
-   }
-
-   @Test
    public void testApplyWhereImageAndHardwareNotFound() throws UnknownHostException {
       Map<ServerStatus, NodeState> serverStateToNodeState = CloudServersComputeServiceDependenciesModule.serverToNodeState;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of();
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
       Server server = ParseServerFromJsonResponseTest.parseServer();
 
-      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, ImmutableMap
-               .<String, Credentials> of(), Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
+      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
                .ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
 
       NodeMetadata metadata = parser.apply(server);
@@ -130,8 +94,7 @@ public class ServerToNodeMetadataTest {
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
       Server server = ParseServerFromJsonResponseTest.parseServer();
 
-      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, ImmutableMap
-               .<String, Credentials> of(), Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
+      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
                .ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
 
       NodeMetadata metadata = parser.apply(server);
@@ -164,8 +127,7 @@ public class ServerToNodeMetadataTest {
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of(FlavorToHardwareTest.convertFlavor());
       Server server = ParseServerFromJsonResponseTest.parseServer();
 
-      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, ImmutableMap
-               .<String, Credentials> of(), Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
+      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
                .ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
 
       NodeMetadata metadata = parser.apply(server);
