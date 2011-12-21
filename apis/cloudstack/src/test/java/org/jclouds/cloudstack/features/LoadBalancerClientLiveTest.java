@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
+import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
 import org.jclouds.cloudstack.domain.LoadBalancerRule.Algorithm;
 import org.jclouds.cloudstack.domain.LoadBalancerRule.State;
@@ -94,8 +94,12 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
       while (rule == null && attempts < 10) {
          ip = reuseOrAssociate.apply(network);
          try {
-            rule = client.getLoadBalancerClient().createLoadBalancerRuleForPublicIP(ip.getId(), Algorithm.LEASTCONN,
+            Long jobId = client.getLoadBalancerClient().createLoadBalancerRuleForPublicIP(ip.getId(), Algorithm.LEASTCONN,
                   prefix, 22, 22);
+            assertTrue(jobComplete.apply(jobId));
+            AsyncJob<LoadBalancerRule> asyncJob = client.getAsyncJobClient().getAsyncJob(jobId);
+            LoadBalancerRule result = asyncJob.getResult();
+            rule = result;
          } catch (IllegalStateException e) {
             // very likely an ip conflict, so retry;
             attempts++;
