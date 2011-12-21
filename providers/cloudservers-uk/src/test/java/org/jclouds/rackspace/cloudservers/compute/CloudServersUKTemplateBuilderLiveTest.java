@@ -43,7 +43,7 @@ public class CloudServersUKTemplateBuilderLiveTest extends BaseTemplateBuilderLi
    public CloudServersUKTemplateBuilderLiveTest() {
       provider = "cloudservers-uk";
    }
-
+   
    @Override
    protected Predicate<OsFamilyVersion64Bit> defineUnsupportedOperatingSystems() {
       return Predicates.not(new Predicate<OsFamilyVersion64Bit>() {
@@ -51,15 +51,17 @@ public class CloudServersUKTemplateBuilderLiveTest extends BaseTemplateBuilderLi
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
-            case UBUNTU:
-               return !(input.version.startsWith("12.04") || input.version.startsWith("11.10")) && input.is64Bit;
-            case DEBIAN:
-               return input.is64Bit && !input.version.matches("[56].0");
-            case CENTOS:
-               return !(input.version.matches("5.[0237]") || input.version.equals("6.0")) && input.is64Bit;
-            case WINDOWS:
-               return input.version.equals("2008 SP2") || input.version.equals("")
-                     || (input.version.equals("2008 R2") && input.is64Bit);
+               case UBUNTU:
+                  return (input.version.equals("") || input.version.equals("10.04") || input.version.startsWith("11"))
+                           && input.is64Bit;
+               case DEBIAN:
+                  return input.is64Bit && !input.version.matches("[56].0");
+               case CENTOS:
+                  return (input.version.equals("") || input.version.equals("5.6") || input.version.equals("6.0"))
+                           && input.is64Bit;
+               case WINDOWS:
+                  return input.version.equals("2008 SP2") || input.version.equals("")
+                           || (input.version.equals("2008 R2") && input.is64Bit);
             default:
                return false;
             }
@@ -72,7 +74,7 @@ public class CloudServersUKTemplateBuilderLiveTest extends BaseTemplateBuilderLi
    public void testTemplateBuilder() {
       Template defaultTemplate = this.context.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.04");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.10");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getLocation().getId(), provider);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);

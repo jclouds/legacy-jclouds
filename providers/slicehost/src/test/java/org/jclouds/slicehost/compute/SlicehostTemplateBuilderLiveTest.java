@@ -53,18 +53,16 @@ public class SlicehostTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
                case UBUNTU:
-               return !(input.version.startsWith("11.10") || input.version.equals("8.04") || (input.version
-                     .equals("11.04") && !input.is64Bit));
+                  return (input.version.equals("") || input.version.equals("10.04") || input.version.startsWith("11"))
+                           && input.is64Bit;
                case DEBIAN:
-                  return !(input.version.equals("6.0") && !input.is64Bit);
-               case RHEL:
-                  return input.version.equals("") && input.is64Bit;
+                  return input.is64Bit;
                case CENTOS:
-                  return input.version.equals("") || input.version.matches("5.[45]")
-                           || (input.version.matches("5.[06]") && input.is64Bit);
+                  return (input.version.equals("") || input.version.matches("5.[0456]") || input.version.equals("6.0"))
+                           && input.is64Bit;
                case WINDOWS:
-                  return input.version.equals("") || (input.version.equals("2008 SP2") && !input.is64Bit)
-                           || input.version.equals("") || (input.version.equals("2008 R2") && input.is64Bit);
+                  return input.version.equals("2008 SP2") || input.version.equals("")
+                           || ((input.version.equals("2003") || input.version.equals("2008 R2")) && input.is64Bit);
                default:
                   return false;
             }
@@ -73,10 +71,15 @@ public class SlicehostTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
       });
    }
 
+   @Override
+   public void testFromTemplate() {
+      // TODO: multiple servers match
+   }
+
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.04");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.10");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(getCores(defaultTemplate.getHardware()), 0.25d);
