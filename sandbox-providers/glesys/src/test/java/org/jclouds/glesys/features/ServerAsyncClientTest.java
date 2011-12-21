@@ -18,7 +18,9 @@
  */
 package org.jclouds.glesys.features;
 
+import com.google.common.collect.Maps;
 import com.google.inject.TypeLiteral;
+import org.jclouds.glesys.options.*;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
@@ -29,6 +31,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * Tests annotation parsing of {@code ServerAsyncClient}
@@ -39,87 +42,82 @@ import java.lang.reflect.Method;
 @Test(groups = "unit", testName = "ServerAsyncClientTest")
 public class ServerAsyncClientTest extends BaseGleSYSAsyncClientTest<ServerAsyncClient> {
 
+   public ServerAsyncClientTest() {
+      asyncClientClass = ServerAsyncClient.class;
+      remoteServicePrefix = "server";
+   }
+   
+   private Map.Entry<String, String> serverIdOnly = newEntry("serverid", "abcd");
+   
    public void testListServers() throws Exception {
-      testVoidArgsMethod("listServers", "list", "POST", ReturnEmptySetOnNotFoundOr404.class);
+      testMethod("listServers", "list", "POST", true, ReturnEmptySetOnNotFoundOr404.class);
    }
    
    public void testGetAllowedArguments() throws Exception {
-      testVoidArgsMethod("getServerAllowedArguments", "allowedarguments", "GET", MapHttp4xxCodesToExceptions.class);
+      testMethod("getServerAllowedArguments", "allowedarguments", "GET", true, MapHttp4xxCodesToExceptions.class);
    }
 
    public void testGetTemplates() throws Exception {
-      testVoidArgsMethod("getTemplates", "templates", "GET", MapHttp4xxCodesToExceptions.class);
+      testMethod("getTemplates", "templates", "GET", true, MapHttp4xxCodesToExceptions.class);
    }
 
    public void testGetServer() throws Exception {
-      testServerMethod("getServerDetails", "details");
+      testMethod("getServerDetails", "details", "POST", true, ReturnNullOnNotFoundOr404.class, serverIdOnly);
+   }
+   
+   @Test
+   public void testCreateServer() throws Exception {
+      testMethod("createServer", "create", "POST", true, MapHttp4xxCodesToExceptions.class,
+            newEntry("datacenter", "Falkenberg"), newEntry("platform", "OpenVZ"),
+            newEntry("hostname", "jclouds-test"), newEntry("template", "Ubuntu%2032-bit"),
+            newEntry("disksize", 5), newEntry("memorysize", 512), newEntry("cpucores", 1),
+            newEntry("rootpw", "password"), newEntry("transfer", 50));
+      testMethod("createServer", "create", "POST", true, MapHttp4xxCodesToExceptions.class,
+            newEntry("datacenter", "Falkenberg"), newEntry("platform", "OpenVZ"),
+            newEntry("hostname", "jclouds-test"), newEntry("template", "Ubuntu%2032-bit"),
+            newEntry("disksize", 5), newEntry("memorysize", 512), newEntry("cpucores", 1),
+            newEntry("rootpw", "password"), newEntry("transfer", 50), 
+            ServerCreateOptions.Builder.description("Description-of-server").ip("10.0.0.1"));
    }
 
-   public void testGetgetServerStatus() throws Exception {
-      testServerMethod("getServerStatus", "status");
+   @Test
+   public void testEditServer() throws Exception {
+      testMethod("editServer", "edit", "POST", false, MapHttp4xxCodesToExceptions.class, serverIdOnly);
+      testMethod("editServer", "edit", "POST", false, MapHttp4xxCodesToExceptions.class, serverIdOnly,
+            ServerEditOptions.Builder.description("Description-of-server").disksize(1).memorysize(512).cpucores(1).hostname("jclouds-test"));
+   }
+
+   @Test
+   public void testCloneServer() throws Exception {
+      testMethod("cloneServer", "clone", "POST", false, MapHttp4xxCodesToExceptions.class, serverIdOnly, newEntry("hostname", "somename"));
+      testMethod("cloneServer", "clone", "POST", false, MapHttp4xxCodesToExceptions.class, serverIdOnly, newEntry("hostname", "somename"),
+            ServerCloneOptions.Builder.description("Description-of-server").disksize(1).memorysize(512).cpucores(1).hostname("jclouds-test"));
+   }
+
+   public void testGetServerStatus() throws Exception {
+      testMethod("getServerStatus", "status", "POST", true, ReturnNullOnNotFoundOr404.class, serverIdOnly);
+      testMethod("getServerStatus", "status", "POST", true, ReturnNullOnNotFoundOr404.class, serverIdOnly, ServerStatusOptions.Builder.state());
    }
 
    public void testGetServerLimits() throws Exception {
-      testServerMethod("getServerLimits", "limits");
+      testMethod("getServerLimits", "limits", "POST", true, ReturnNullOnNotFoundOr404.class, serverIdOnly);
    }
 
    public void testGetServerConsole() throws Exception {
-      testServerMethod("getServerConsole", "console");
+      testMethod("getServerConsole", "console", "POST", true, ReturnNullOnNotFoundOr404.class, serverIdOnly);
    }
 
    public void testStartServer() throws Exception {
-      testServerMethodVoidReturn("startServer", "start");
+      testMethod("startServer", "start", "POST", false, MapHttp4xxCodesToExceptions.class, serverIdOnly);
    }
    
    public void testStopServer() throws Exception {
-      testServerMethodVoidReturn("stopServer", "stop");
+      testMethod("stopServer", "stop", "POST", false, MapHttp4xxCodesToExceptions.class, serverIdOnly);
+      testMethod("stopServer", "stop", "POST", false, MapHttp4xxCodesToExceptions.class, serverIdOnly, ServerStopOptions.Builder.hard());
    }
 
    public void testRebootServer() throws Exception {
-      testServerMethodVoidReturn("rebootServer", "reboot");
-   }
-
-   protected void testVoidArgsMethod(String localMethod, String remoteCall, String httpMethod, Class exceptionParser) throws Exception {
-      Method method = ServerAsyncClient.class.getMethod(localMethod);
-      HttpRequest httpRequest = processor.createRequest(method);
-
-      assertRequestLineEquals(httpRequest, httpMethod + " https://api.glesys.com/server/" + remoteCall + "/format/json HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, null, null, false);
-
-      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, exceptionParser);
-
-      checkFilters(httpRequest);
-   }
-
-   protected void testServerMethod(String localMethod, String remoteMethod) throws Exception {
-       testServerMethod(localMethod, remoteMethod, "serverid", true);
-   }
-   
-   protected void testServerMethodVoidReturn(String localMethod, String remoteMethod) throws Exception {
-      testServerMethod(localMethod, remoteMethod, "id", false);
-   }
- 
-   protected void testServerMethod(String localMethod, String remoteMethod, String serverIdField, boolean acceptHeader) throws Exception {
-      Method method = ServerAsyncClient.class.getMethod(localMethod, String.class);
-      HttpRequest httpRequest = processor.createRequest(method, "abcd");
-
-      assertRequestLineEquals(httpRequest,
-            "POST https://api.glesys.com/server/" + remoteMethod + "/format/json HTTP/1.1");
-
-      if (acceptHeader) {
-         assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
-         assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
-         assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
-      }
-
-      assertPayloadEquals(httpRequest, serverIdField + "=abcd", "application/x-www-form-urlencoded", false);
-
-      assertSaxResponseParserClassEquals(method, null);
-
-      checkFilters(httpRequest);
+      testMethod("rebootServer", "reboot", "POST", false, MapHttp4xxCodesToExceptions.class, serverIdOnly);
    }
 
    @Override

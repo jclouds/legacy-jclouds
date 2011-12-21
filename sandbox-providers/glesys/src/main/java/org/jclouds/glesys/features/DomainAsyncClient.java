@@ -25,10 +25,15 @@ import org.jclouds.glesys.options.DomainOptions;
 import org.jclouds.glesys.options.DomainRecordAddOptions;
 import org.jclouds.glesys.options.DomainRecordModifyOptions;
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import java.util.Set;
 
@@ -50,6 +55,7 @@ public interface DomainAsyncClient {
    @Path("/domain/list/format/json")
    @SelectJson("domains")
    @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<Domain>> listDomains();
 
    /**
@@ -57,43 +63,37 @@ public interface DomainAsyncClient {
     */
    @POST
    @Path("/domain/add/format/json")
-   @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Void> addDomain(@FormParam("name") String domain, DomainOptions... options);
+   ListenableFuture<Void> addDomain(@FormParam("name") String name, DomainOptions... options);
 
    /**
     * @see DomainClient#editDomain
     */
    @POST
-   @Path("/domain/add/format/json")
-   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/domain/edit/format/json")
    ListenableFuture<Void> editDomain(@FormParam("domain") String domain, DomainOptions... options);
 
    @POST
    @Path("/domain/delete/format/json")
-   @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Void> deleteDomain(@FormParam("domain") String domain);
 
-   @GET
-   @Path("/domain/list_records/domain/{domain}/format/json")
+   @POST
+   @Path("/domain/list_records/format/json")
    @SelectJson("records")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Set<DomainRecord>> listRecords(@PathParam("domain") String domain);
+   ListenableFuture<Set<DomainRecord>> listRecords(@FormParam("domain") String domain);
 
    @POST
    @Path("/domain/add_record/format/json")
-   @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Void> addRecord(@FormParam("domain") String domain, @FormParam("host") String host,
                                     @FormParam("type") String type, @FormParam("data") String data,
                                     DomainRecordAddOptions... options);
 
    @POST
    @Path("/domain/update_record/format/json")
-   @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Void> editRecord(@FormParam("record_id") String record_id, DomainRecordModifyOptions... options);
 
    @POST
    @Path("/domain/delete_record/format/json")
-   @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Void> deleteRecord(@FormParam("record_id") String recordId);
 
 }

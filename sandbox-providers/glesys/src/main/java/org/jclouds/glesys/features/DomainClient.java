@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
  * <p/>
  *
  * @author Adam Lowe
- * @see InvoiceAsyncClient
+ * @see DomainAsyncClient
  * @see <a href="https://customer.glesys.com/api.php" />
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
@@ -49,14 +49,16 @@ public interface DomainClient {
    /**
     * Add a domain to the Glesys dns-system
     *
-    * @param domain the name of the domain to add.
+    * @param domain  the name of the domain to add.
+    * @param options optional parameters
     */
    void addDomain(String domain, DomainOptions... options);
 
    /**
     * Add a domain to the Glesys dns-system
     *
-    * @param domain the name of the domain to add.
+    * @param domain  the name of the domain to add.
+    * @param options optional parameters
     */
    void editDomain(String domain, DomainOptions... options);
 
@@ -77,7 +79,7 @@ public interface DomainClient {
    /**
     * Add a DNS Record
     *
-    * @param domain
+    * @param domain the domain to add the record to
     * @param host
     * @param type
     * @param data

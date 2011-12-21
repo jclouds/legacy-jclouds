@@ -20,6 +20,7 @@ package org.jclouds.glesys.features;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.glesys.domain.*;
+import org.jclouds.glesys.options.*;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -71,7 +72,7 @@ public interface ServerAsyncClient {
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ServerStatus> getServerStatus(@FormParam("serverid") String id);
+   ListenableFuture<ServerStatus> getServerStatus(@FormParam("serverid") String id, ServerStatusOptions... options);
 
    /**
     * @see ServerClient#getServerLimits
@@ -117,29 +118,29 @@ public interface ServerAsyncClient {
     * @see ServerClient#stopServer
     */
    @POST
-   @Path("/server/resetlimit/serverid/{id}/type/{type}/format/json")
-   ListenableFuture<Void> resetServerLimit(@FormParam("id") String id, @FormParam("type") String type);
+   @Path("/server/resetlimit/format/json")
+   ListenableFuture<Void> resetServerLimit(@FormParam("serverid") String id, @FormParam("type") String type);
 
    /**
     * @see ServerClient#rebootServer
     */
    @POST
    @Path("/server/reboot/format/json")
-   ListenableFuture<Void> rebootServer(@FormParam("id") String id);
+   ListenableFuture<Void> rebootServer(@FormParam("serverid") String id);
 
    /**
     * @see ServerClient#startServer
     */
    @POST
    @Path("/server/start/format/json")
-   ListenableFuture<Void> startServer(@FormParam("id") String id);
+   ListenableFuture<Void> startServer(@FormParam("serverid") String id);
 
    /**
     * @see ServerClient#stopServer
     */
    @POST
    @Path("/server/stop/format/json")
-   ListenableFuture<Void> stopServer(@FormParam("id") String id);
+   ListenableFuture<Void> stopServer(@FormParam("serverid") String id, ServerStopOptions... options);
 
    /**
     * @see ServerClient#createServer
@@ -157,25 +158,26 @@ public interface ServerAsyncClient {
                                        @FormParam("cpucores") int cpucores,
                                        @FormParam("rootpw") String rootpw,
                                        @FormParam("transfer") int transfer,
-                                       String description,
-                                       String ip);
+                                       ServerCreateOptions... options);
 
    /**
-    * @see ServerClient#createServer
+    * @see ServerClient#cloneServer
     */
    @POST
    @Path("/server/clone/format/json")
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<ServerCreated> cloneServer(@FormParam("serverid") String serverid,
-                                                @FormParam("hostname") String hostname,
-                                                @FormParam("disksize") int diskSize,
-                                                @FormParam("memorysize") int memorySize,
-                                                @FormParam("cpucores") int cpucores,
-                                                @FormParam("transfer") int transfer,
-                                                @FormParam("description") String description,
-                                                @FormParam("datacenter") String dataCenter);
-   
+                                               @FormParam("hostname") String hostname,
+                                               ServerCloneOptions... options);
+
+   /**
+    * @see ServerClient#editServer
+    */
+   @POST
+   @Path("/server/edit/format/json")
+   ListenableFuture<Void> editServer(@FormParam("serverid") String serverid, ServerEditOptions... options);
+
    /**
     * @see ServerClient#destroyServer
     */

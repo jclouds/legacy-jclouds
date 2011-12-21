@@ -99,6 +99,7 @@ public interface ArchiveAsyncClient {
    @Path("/archive/allowedarguments/format/json")
    @SelectJson("argumentslist")
    @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<ArchiveAllowedArguments> getArchiveAllowedArguments();
 
 }
