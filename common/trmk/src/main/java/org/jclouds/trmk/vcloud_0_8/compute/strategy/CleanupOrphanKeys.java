@@ -24,8 +24,8 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
-import static org.jclouds.compute.predicates.NodePredicates.parentLocationId;
 import static org.jclouds.compute.predicates.NodePredicates.inGroup;
+import static org.jclouds.compute.predicates.NodePredicates.parentLocationId;
 
 import java.util.Map;
 
@@ -61,11 +61,8 @@ public class CleanupOrphanKeys {
    }
 
    public void execute(Iterable<? extends NodeMetadata> deadOnes) {
-      // TODO refactor so that admin passwords are cached properly, probably as a list value in the
-      // credentialStore
       for (NodeMetadata node : deadOnes){
          credentialStore.remove("node#" + node.getId());
-         credentialStore.remove("node#" + node.getId() + "#adminPassword");
       }
       Iterable<OrgAndName> orgGroups = filter(transform(deadOnes, nodeToOrgAndName), notNull());
       for (OrgAndName orgGroup : orgGroups) {

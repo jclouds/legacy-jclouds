@@ -20,7 +20,6 @@ package org.jclouds.trmk.vcloud_0_8.compute;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
@@ -51,9 +50,6 @@ import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.scriptbuilder.functions.InitAdminAccess;
-import org.jclouds.trmk.vcloud_0_8.compute.domain.KeyPairCredentials;
-import org.jclouds.trmk.vcloud_0_8.compute.domain.OrgAndName;
-import org.jclouds.trmk.vcloud_0_8.compute.functions.NodeMetadataToOrgAndName;
 import org.jclouds.trmk.vcloud_0_8.compute.options.TerremarkVCloudTemplateOptions;
 import org.jclouds.trmk.vcloud_0_8.compute.strategy.CleanupOrphanKeys;
 
@@ -81,8 +77,7 @@ public class TerremarkVCloudComputeService extends BaseComputeService {
          InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
          RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
          PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, CleanupOrphanKeys cleanupOrphanKeys,
-         ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap, NodeMetadataToOrgAndName nodeToOrgAndName) {
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, CleanupOrphanKeys cleanupOrphanKeys) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
             runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, resumeNodeStrategy,
             suspendNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated,

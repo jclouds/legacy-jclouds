@@ -64,7 +64,7 @@ public class ImageForVCloudExpressVAppTemplate implements Function<VAppTemplate,
       builder.location(findLocationForResource.apply(checkNotNull(parent, "parent")));
       builder.description(from.getDescription() != null ? from.getDescription() : from.getName());
       builder.operatingSystem(osParser.apply(from.getName()));
-      builder.defaultCredentials(credentialsProvider.execute(from));
+      builder.defaultCredentials(credentialsProvider.apply(from));
       return builder.build();
    }
 }

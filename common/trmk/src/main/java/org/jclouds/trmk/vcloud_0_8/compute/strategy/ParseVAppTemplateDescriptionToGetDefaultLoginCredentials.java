@@ -66,7 +66,7 @@ public class ParseVAppTemplateDescriptionToGetDefaultLoginCredentials extends Re
       } else {
          Matcher matcher = USER_PASSWORD_PATTERN.matcher(search);
          if (matcher.find()) {
-            return LoginCredentials.builder().user(matcher.group(1)).password(matcher.group(2)).build();
+            return LoginCredentials.builder().user(matcher.group(1)).password(matcher.group(2)).authenticateSudo(true).build();
          } else {
             logger.warn("could not parse username/password for image: " + template.getHref() + "\n" + search);
             return null;

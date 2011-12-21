@@ -20,8 +20,8 @@ package org.jclouds.trmk.ecloud;
 
 import static org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 
-import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Map.Entry;
 
 import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
@@ -34,7 +34,6 @@ import org.jclouds.trmk.vcloud_0_8.domain.PublicIpAddress;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions;
 import org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -66,7 +65,7 @@ public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest {
 
    @Override
    protected SshClient getConnectionFor(IPSocket socket) {
-      return sshFactory.create(socket, new Credentials("ecloud", "TmrkCl0ud1s#1!"));
+      return sshFactory.create(socket, new Credentials("ecloud", "$Ep455l0ud!2"));
    }
 
    @Override

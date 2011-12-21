@@ -40,6 +40,7 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.trmk.vcloud_0_8.compute.TerremarkVCloudComputeClient;
 import org.jclouds.trmk.vcloud_0_8.compute.domain.KeyPairCredentials;
 import org.jclouds.trmk.vcloud_0_8.compute.domain.OrgAndName;
@@ -105,27 +106,18 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
       builder.privateAddresses(computeClient.getPrivateAddresses(from.getHref()));
       String group = parseGroupFromName(from.getName());
       builder.group(group);
+
       // node-specific credentials override those from cache based on group
       if (group != null && !credentialStore.containsKey("node#" + from.getHref().toASCIIString())) {
-         installCredentialsFromCache(from.getHref(), URI.create(vdcLocation.getParent().getId()), group, builder);
+         OrgAndName orgAndName = new OrgAndName(URI.create(vdcLocation.getParent().getId()), group);
+         if (credentialsMap.containsKey(orgAndName)) {
+            builder.credentials(LoginCredentials.builder(credentialsMap.get(orgAndName)).build());
+         }
       } else {
-         builder.credentials(credentialStore.get("node#" + from.getHref().toASCIIString()));
+         builder.credentials(LoginCredentials.builder(credentialStore.get("node#" + from.getHref().toASCIIString()))
+                  .build());
       }
+      
       return builder.build();
-   }
-
-   protected void installCredentialsFromCache(URI nodeId, URI orgId, String group, NodeMetadataBuilder builder) {
-      OrgAndName orgAndName = new OrgAndName(orgId, group);
-      if (credentialsMap.containsKey(orgAndName)) {
-         Credentials creds = credentialsMap.get(orgAndName);
-         builder.credentials(creds);
-         credentialStore.put("node#" + nodeId, creds);
-      }
-      // this is going to need refactoring.. we really need a credential list in
-      // the store per node.
-      String adminPasswordKey = "node#" + nodeId + "#adminPassword";
-      if (credentialStore.containsKey(adminPasswordKey)) {
-         builder.adminPassword(credentialStore.get(adminPasswordKey).credential);
-      }
    }
 }

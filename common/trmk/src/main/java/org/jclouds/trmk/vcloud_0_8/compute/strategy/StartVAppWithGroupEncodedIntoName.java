@@ -65,15 +65,8 @@ public class StartVAppWithGroupEncodedIntoName implements CreateNodeWithGroupEnc
                .getImage().getId()), name, options, template.getOptions().getInboundPorts());
       NodeMetadata node = vAppToNodeMetadata.apply(vApp);
       NodeMetadataBuilder builder = NodeMetadataBuilder.fromNodeMetadata(node);
-      // TODO refactor this so that it is automatic in any provider
-      if (template.getImage().getAdminPassword() != null) {
-         builder.adminPassword(template.getImage().getAdminPassword());
-         // this is going to need refactoring.. we really need a credential list in the store per
-         // node.  we need to store the credential here explicitly, as there's no connection from a node
-         // in vcloud to the image it was created with.
-         credentialStore.put("node#" + node.getId() + "#adminPassword", new Credentials("root", template.getImage()
-                  .getAdminPassword()));
-      }
+      if (template.getImage().getDefaultCredentials() != null)
+         credentialStore.put("node#" + node.getId(), template.getImage().getDefaultCredentials());
       return builder.build();
    }
 
