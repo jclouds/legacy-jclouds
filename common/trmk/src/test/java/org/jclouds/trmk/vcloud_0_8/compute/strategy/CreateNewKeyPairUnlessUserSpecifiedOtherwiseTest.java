@@ -27,14 +27,16 @@ import static org.jclouds.trmk.vcloud_0_8.compute.options.TerremarkVCloudTemplat
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
-import org.jclouds.trmk.vcloud_0_8.compute.domain.KeyPairCredentials;
+import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.trmk.vcloud_0_8.compute.domain.OrgAndName;
 import org.jclouds.trmk.vcloud_0_8.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.trmk.vcloud_0_8.compute.options.TerremarkVCloudTemplateOptions;
-import org.jclouds.trmk.vcloud_0_8.compute.strategy.CreateNewKeyPairUnlessUserSpecifiedOtherwise;
 import org.jclouds.trmk.vcloud_0_8.domain.KeyPair;
+import org.jclouds.trmk.vcloud_0_8.xml.KeyPairHandlerTest;
 import org.testng.annotations.Test;
 
 /**
@@ -47,34 +49,25 @@ public class CreateNewKeyPairUnlessUserSpecifiedOtherwiseTest {
       // setup constants
       URI org = URI.create("org1");
       String identity = "identity";
-      String tag = "tag";
-      OrgAndName orgAndName = new OrgAndName(org, "tag");
-      String systemGeneratedFingerprint = "systemGeneratedKeyPairfinger";
+      String group = "group";
       TerremarkVCloudTemplateOptions options = new TerremarkVCloudTemplateOptions();
 
       // create mocks
       CreateNewKeyPairUnlessUserSpecifiedOtherwise strategy = setupStrategy();
-      KeyPairCredentials keyPairCredentials = createMock(KeyPairCredentials.class);
-      KeyPair keyPair = createMock(KeyPair.class);
+      LoginCredentials keyPairCredentials = LoginCredentials.builder().privateKey(KeyPairHandlerTest.keyPair.getPrivateKey()).build();
 
       // setup expectations
-      expect(strategy.credentialsMap.containsKey(orgAndName)).andReturn(true);
-      expect(strategy.credentialsMap.get(orgAndName)).andReturn(keyPairCredentials);
-      expect(keyPairCredentials.getKeyPair()).andReturn(keyPair);
-      expect(keyPair.getFingerPrint()).andReturn(systemGeneratedFingerprint).atLeastOnce();
+      expect(strategy.credentialStore.containsKey("group#group")).andReturn(true);
+      expect(strategy.credentialStore.get("group#group")).andReturn(keyPairCredentials);
 
       // replay mocks
-      replay(keyPair);
-      replay(keyPairCredentials);
       replayStrategy(strategy);
 
       // run
-      strategy.execute(org, tag, identity, options);
-      assertEquals(options.getSshKeyFingerprint(), "systemGeneratedKeyPairfinger");
+      strategy.execute(org, group, identity, options);
+      assertEquals(options.getSshKeyFingerprint(), KeyPairHandlerTest.keyPair.getFingerPrint());
 
       // verify mocks
-      verify(keyPair);
-      verify(keyPairCredentials);
       verifyStrategy(strategy);
    }
 
@@ -82,7 +75,7 @@ public class CreateNewKeyPairUnlessUserSpecifiedOtherwiseTest {
       // setup constants
       URI org = URI.create("org1");
       String identity = "identity";
-      String tag = "tag";
+      String group = "group";
       TerremarkVCloudTemplateOptions options = sshKeyFingerprint("fingerprintFromUser");
 
       // create mocks
@@ -94,7 +87,7 @@ public class CreateNewKeyPairUnlessUserSpecifiedOtherwiseTest {
       replayStrategy(strategy);
 
       // run
-      strategy.execute(org, tag, identity, options);
+      strategy.execute(org, group, identity, options);
       assertEquals(options.getSshKeyFingerprint(), "fingerprintFromUser");
 
       // verify mocks
@@ -108,30 +101,27 @@ public class CreateNewKeyPairUnlessUserSpecifiedOtherwiseTest {
       // setup constants
       URI org = URI.create("org1");
       String identity = "identity";
-      String tag = "tag";
+      String group = "group";
       String systemGeneratedFingerprint = "systemGeneratedKeyPairfinger";
-      String privateKey = "privateKey";
       TerremarkVCloudTemplateOptions options = new TerremarkVCloudTemplateOptions();
-      OrgAndName orgAndName = new OrgAndName(org, "tag");
 
       // create mocks
       CreateNewKeyPairUnlessUserSpecifiedOtherwise strategy = setupStrategy();
-      KeyPairCredentials keyPairCredentials = createMock(KeyPairCredentials.class);
+      LoginCredentials keyPairCredentials = LoginCredentials.builder().privateKey(KeyPairHandlerTest.keyPair.getPrivateKey()).build();
       KeyPair keyPair = createMock(KeyPair.class);
 
       // setup expectations
-      expect(strategy.credentialsMap.containsKey(orgAndName)).andReturn(false);
-      expect(strategy.createUniqueKeyPair.apply(orgAndName)).andReturn(keyPair);
-      expect(keyPair.getFingerPrint()).andReturn(systemGeneratedFingerprint).atLeastOnce();
-      expect(keyPair.getPrivateKey()).andReturn(privateKey).atLeastOnce();
-      expect(strategy.credentialsMap.put(orgAndName, keyPairCredentials)).andReturn(null);
+      expect(strategy.credentialStore.containsKey("group#group")).andReturn(false);
+      expect(strategy.createUniqueKeyPair.apply(new OrgAndName(org, "group"))).andReturn(keyPair);
+      expect(keyPair.getFingerPrint()).andReturn(KeyPairHandlerTest.keyPair.getFingerPrint()).atLeastOnce();
+      expect(strategy.credentialStore.put("group#group", keyPairCredentials)).andReturn(null);
 
       // replay mocks
       replay(keyPair);
       replayStrategy(strategy);
 
       // run
-      strategy.execute(org, tag, identity, options);
+      strategy.execute(org, group, identity, options);
       assertEquals(options.getSshKeyFingerprint(), systemGeneratedFingerprint);
 
       // verify mocks
@@ -143,43 +133,40 @@ public class CreateNewKeyPairUnlessUserSpecifiedOtherwiseTest {
       // setup constants
       URI org = URI.create("org1");
       String identity = "identity";
-      String tag = "tag";
+      String group = "group";
       TerremarkVCloudTemplateOptions options = noKeyPair();
 
       // create mocks
       CreateNewKeyPairUnlessUserSpecifiedOtherwise strategy = setupStrategy();
-      KeyPair keyPair = createMock(KeyPair.class);
 
       // setup expectations
 
       // replay mocks
-      replay(keyPair);
       replayStrategy(strategy);
 
       // run
-      strategy.execute(org, tag, identity, options);
+      strategy.execute(org, group, identity, options);
       assertEquals(options.getSshKeyFingerprint(), null);
 
       // verify mocks
-      verify(keyPair);
       verifyStrategy(strategy);
    }
 
    private void verifyStrategy(CreateNewKeyPairUnlessUserSpecifiedOtherwise strategy) {
-      verify(strategy.credentialsMap);
+      verify(strategy.credentialStore);
       verify(strategy.createUniqueKeyPair);
    }
 
    @SuppressWarnings("unchecked")
    private CreateNewKeyPairUnlessUserSpecifiedOtherwise setupStrategy() {
-      ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap = createMock(ConcurrentMap.class);
+      Map<String, Credentials> credentialStore = createMock(ConcurrentMap.class);
       CreateUniqueKeyPair createUniqueKeyPair = createMock(CreateUniqueKeyPair.class);
 
-      return new CreateNewKeyPairUnlessUserSpecifiedOtherwise(credentialsMap, createUniqueKeyPair);
+      return new CreateNewKeyPairUnlessUserSpecifiedOtherwise(credentialStore, createUniqueKeyPair);
    }
 
    private void replayStrategy(CreateNewKeyPairUnlessUserSpecifiedOtherwise strategy) {
-      replay(strategy.credentialsMap);
+      replay(strategy.credentialStore);
       replay(strategy.createUniqueKeyPair);
    }
 

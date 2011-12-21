@@ -69,8 +69,9 @@ public class CleanupOrphanKeys {
          Iterable<? extends NodeMetadata> nodesInOrg = listNodes.listDetailsOnNodesMatching(parentLocationId(orgGroup
                   .getOrg().toASCIIString()));
          Iterable<? extends NodeMetadata> nodesInGroup = filter(nodesInOrg, inGroup(orgGroup.getName()));
-         if (size(nodesInGroup) == 0 || all(nodesInGroup, TERMINATED))
+         if (size(nodesInGroup) == 0 || all(nodesInGroup, TERMINATED)){
             deleteKeyPair.execute(orgGroup);
+         }
       }
    }
 

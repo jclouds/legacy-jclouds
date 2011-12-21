@@ -18,13 +18,17 @@
  */
 package org.jclouds.trmk.vcloud_0_8.compute.strategy;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.net.URI;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.trmk.vcloud_0_8.compute.domain.KeyPairCredentials;
+import org.jclouds.crypto.SshKeys;
+import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.trmk.vcloud_0_8.compute.domain.OrgAndName;
 import org.jclouds.trmk.vcloud_0_8.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.trmk.vcloud_0_8.compute.options.TerremarkVCloudTemplateOptions;
@@ -39,30 +43,41 @@ import com.google.common.annotations.VisibleForTesting;
  */
 @Singleton
 public class CreateNewKeyPairUnlessUserSpecifiedOtherwise {
-   final ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap;
+   final Map<String, Credentials> credentialStore;
    @VisibleForTesting
    final CreateUniqueKeyPair createUniqueKeyPair;
 
    @Inject
-   CreateNewKeyPairUnlessUserSpecifiedOtherwise(ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap,
-         CreateUniqueKeyPair createUniqueKeyPair) {
-      this.credentialsMap = credentialsMap;
+   CreateNewKeyPairUnlessUserSpecifiedOtherwise(Map<String, Credentials> credentialStore,
+            CreateUniqueKeyPair createUniqueKeyPair) {
+      this.credentialStore = credentialStore;
       this.createUniqueKeyPair = createUniqueKeyPair;
    }
 
    @VisibleForTesting
-   public void execute(URI org, String tag, String identity, TerremarkVCloudTemplateOptions options) {
+   public void execute(URI org, String group, String identity, TerremarkVCloudTemplateOptions options) {
       String sshKeyFingerprint = options.getSshKeyFingerprint();
       boolean shouldAutomaticallyCreateKeyPair = options.shouldAutomaticallyCreateKeyPair();
       if (sshKeyFingerprint == null && shouldAutomaticallyCreateKeyPair) {
-         OrgAndName orgAndName = new OrgAndName(org, tag);
-         if (credentialsMap.containsKey(orgAndName)) {
-            options.sshKeyFingerprint(credentialsMap.get(orgAndName).getKeyPair().getFingerPrint());
-         } else {
-            KeyPair keyPair = createUniqueKeyPair.apply(orgAndName);
-            credentialsMap.put(orgAndName, new KeyPairCredentials(identity, keyPair));
-            options.sshKeyFingerprint(keyPair.getFingerPrint());
+
+         // make sure that we don't request multiple keys simultaneously
+         synchronized (credentialStore) {
+            // if there is already a keypair for the group specified, use it
+            if (credentialStore.containsKey("group#" + group)) {
+               LoginCredentials creds = LoginCredentials.fromCredentials(credentialStore.get("group#" + group));
+               checkState(creds.getOptionalPrivateKey().isPresent(),
+                        "incorrect state: should have private key for: %s", creds);
+               options.sshKeyFingerprint(SshKeys.fingerprintPrivateKey(creds.getPrivateKey()));
+            } else {
+               // otherwise create a new keypair and key it under the group
+               KeyPair keyPair = createUniqueKeyPair.apply(new OrgAndName(org, group));
+               credentialStore.put("group#" + group, LoginCredentials.builder().user(identity).privateKey(
+                        keyPair.getPrivateKey()).build());
+               options.sshKeyFingerprint(keyPair.getFingerPrint());
+            }
          }
+
       }
+
    }
 }

@@ -20,8 +20,6 @@ package org.jclouds.trmk.vcloud_0_8.compute.config;
 
 import java.security.SecureRandom;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -41,7 +39,6 @@ import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
 import org.jclouds.trmk.vcloud_0_8.compute.TerremarkVCloudComputeService;
-import org.jclouds.trmk.vcloud_0_8.compute.domain.KeyPairCredentials;
 import org.jclouds.trmk.vcloud_0_8.compute.domain.OrgAndName;
 import org.jclouds.trmk.vcloud_0_8.compute.functions.ImagesInVCloudExpressOrg;
 import org.jclouds.trmk.vcloud_0_8.compute.functions.NodeMetadataToOrgAndName;
@@ -124,12 +121,6 @@ public class TerremarkVCloudComputeServiceContextModule extends BaseComputeServi
          }
       };
 
-   }
-
-   @Provides
-   @Singleton
-   ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap() {
-      return new ConcurrentHashMap<OrgAndName, KeyPairCredentials>();
    }
 
    @Named("PASSWORD")

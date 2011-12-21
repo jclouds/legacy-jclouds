@@ -24,12 +24,12 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
-import org.jclouds.trmk.vcloud_0_8.compute.domain.KeyPairCredentials;
 import org.jclouds.trmk.vcloud_0_8.compute.domain.OrgAndName;
-import org.jclouds.trmk.vcloud_0_8.compute.strategy.DeleteKeyPair;
 import org.jclouds.trmk.vcloud_0_8.domain.KeyPair;
 import org.testng.annotations.Test;
 
@@ -78,7 +78,7 @@ public class DeleteKeyPairTest {
       expect(keyPair.getName()).andReturn("jclouds_" + orgTag.getName() + "_123").atLeastOnce();
       expect(keyPair.getId()).andReturn(URI.create("1245"));
       strategy.terremarkClient.deleteKeyPair(URI.create("1245"));
-      expect(strategy.credentialsMap.remove(orgTag)).andReturn(null);
+      expect(strategy.credentialStore.remove("group#tag")).andReturn(null);
 
       // replay mocks
       replay(keyPair);
@@ -119,20 +119,20 @@ public class DeleteKeyPairTest {
    }
 
    private void verifyStrategy(DeleteKeyPair strategy) {
-      verify(strategy.credentialsMap);
+      verify(strategy.credentialStore);
       verify(strategy.terremarkClient);
    }
 
    @SuppressWarnings("unchecked")
    private DeleteKeyPair setupStrategy() {
-      ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap = createMock(ConcurrentMap.class);
+      Map<String, Credentials> credentialStore = createMock(ConcurrentMap.class);
       TerremarkVCloudClient terremarkClient = createMock(TerremarkVCloudClient.class);
 
-      return new DeleteKeyPair(terremarkClient, credentialsMap);
+      return new DeleteKeyPair(terremarkClient, credentialStore);
    }
 
    private void replayStrategy(DeleteKeyPair strategy) {
-      replay(strategy.credentialsMap);
+      replay(strategy.credentialStore);
       replay(strategy.terremarkClient);
    }
 

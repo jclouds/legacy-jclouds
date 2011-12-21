@@ -21,10 +21,8 @@ package org.jclouds.trmk.vcloud_0_8.compute.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
-import java.net.URI;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -42,8 +40,6 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.trmk.vcloud_0_8.compute.TerremarkVCloudComputeClient;
-import org.jclouds.trmk.vcloud_0_8.compute.domain.KeyPairCredentials;
-import org.jclouds.trmk.vcloud_0_8.compute.domain.OrgAndName;
 import org.jclouds.trmk.vcloud_0_8.domain.Status;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 
@@ -62,20 +58,17 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
    protected final FindLocationForResource findLocationForResourceInVDC;
    protected final HardwareForVCloudExpressVApp hardwareForVCloudExpressVApp;
    protected final Map<Status, NodeState> vAppStatusToNodeState;
-   protected final ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap;
 
    @Inject
    protected VAppToNodeMetadata(TerremarkVCloudComputeClient computeClient, Map<String, Credentials> credentialStore,
             Map<Status, NodeState> vAppStatusToNodeState, HardwareForVCloudExpressVApp hardwareForVCloudExpressVApp,
-            FindLocationForResource findLocationForResourceInVDC, @Memoized Supplier<Set<? extends Image>> images,
-            ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap) {
+            FindLocationForResource findLocationForResourceInVDC, @Memoized Supplier<Set<? extends Image>> images) {
       this.images = checkNotNull(images, "images");
       this.hardwareForVCloudExpressVApp = checkNotNull(hardwareForVCloudExpressVApp, "hardwareForVCloudExpressVApp");
       this.findLocationForResourceInVDC = checkNotNull(findLocationForResourceInVDC, "findLocationForResourceInVDC");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.computeClient = checkNotNull(computeClient, "computeClient");
       this.vAppStatusToNodeState = checkNotNull(vAppStatusToNodeState, "vAppStatusToNodeState");
-      this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
    }
 
    @Override
@@ -106,18 +99,8 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
       builder.privateAddresses(computeClient.getPrivateAddresses(from.getHref()));
       String group = parseGroupFromName(from.getName());
       builder.group(group);
-
-      // node-specific credentials override those from cache based on group
-      if (group != null && !credentialStore.containsKey("node#" + from.getHref().toASCIIString())) {
-         OrgAndName orgAndName = new OrgAndName(URI.create(vdcLocation.getParent().getId()), group);
-         if (credentialsMap.containsKey(orgAndName)) {
-            builder.credentials(LoginCredentials.builder(credentialsMap.get(orgAndName)).build());
-         }
-      } else {
-         builder.credentials(LoginCredentials.builder(credentialStore.get("node#" + from.getHref().toASCIIString()))
-                  .build());
-      }
-      
+      builder.credentials(LoginCredentials.fromCredentials(credentialStore
+               .get("node#" + from.getHref().toASCIIString())));
       return builder.build();
    }
 }

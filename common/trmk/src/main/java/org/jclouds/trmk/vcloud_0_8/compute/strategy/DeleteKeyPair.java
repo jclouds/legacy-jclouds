@@ -18,7 +18,7 @@
  */
 package org.jclouds.trmk.vcloud_0_8.compute.strategy;
 
-import java.util.concurrent.ConcurrentMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -26,9 +26,9 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
-import org.jclouds.trmk.vcloud_0_8.compute.domain.KeyPairCredentials;
 import org.jclouds.trmk.vcloud_0_8.compute.domain.OrgAndName;
 import org.jclouds.trmk.vcloud_0_8.domain.KeyPair;
 
@@ -44,12 +44,12 @@ public class DeleteKeyPair {
    protected Logger logger = Logger.NULL;
 
    final TerremarkVCloudClient terremarkClient;
-   final ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap;
+   final Map<String, Credentials> credentialStore;
 
    @Inject
-   DeleteKeyPair(TerremarkVCloudClient terremarkClient, ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap) {
+   DeleteKeyPair(TerremarkVCloudClient terremarkClient, Map<String, Credentials> credentialStore) {
       this.terremarkClient = terremarkClient;
-      this.credentialsMap = credentialsMap;
+      this.credentialStore = credentialStore;
    }
 
    public void execute(OrgAndName orgTag) {
@@ -57,9 +57,8 @@ public class DeleteKeyPair {
          if (keyPair.getName().matches("jclouds_" + orgTag.getName().replaceAll("-", "_") + "_[0-9a-f]+")) {
             logger.debug(">> deleting keyPair(%s)", keyPair.getName());
             terremarkClient.deleteKeyPair(keyPair.getId());
-            // TODO: test this clear happens
-            credentialsMap.remove(orgTag);
             logger.debug("<< deleted keyPair(%s)", keyPair.getName());
+            credentialStore.remove("group#" + orgTag.getName());
          }
       }
    }

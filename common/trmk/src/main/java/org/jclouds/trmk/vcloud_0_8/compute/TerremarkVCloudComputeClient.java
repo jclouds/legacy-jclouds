@@ -25,9 +25,9 @@ import static org.jclouds.trmk.vcloud_0_8.options.AddInternetServiceOptions.Buil
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -35,9 +35,9 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
@@ -70,23 +70,18 @@ public class TerremarkVCloudComputeClient {
    protected Logger logger = Logger.NULL;
 
    protected final TerremarkVCloudClient client;
-   protected final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider;
    protected final Provider<String> passwordGenerator;
-   protected final Map<String, Credentials> credentialStore;
    protected final InternetServiceAndPublicIpAddressSupplier internetServiceAndPublicIpAddressSupplier;
    protected final Map<Status, NodeState> vAppStatusToNodeState;
    protected final Predicate<URI> taskTester;
 
    @Inject
    protected TerremarkVCloudComputeClient(TerremarkVCloudClient client,
-         PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
          @Named("PASSWORD") Provider<String> passwordGenerator, Predicate<URI> successTester,
          Map<Status, NodeState> vAppStatusToNodeState, Map<String, Credentials> credentialStore,
          InternetServiceAndPublicIpAddressSupplier internetServiceAndPublicIpAddressSupplier) {
       this.client = client;
-      this.credentialsProvider = credentialsProvider;
       this.passwordGenerator = passwordGenerator;
-      this.credentialStore = credentialStore;
       this.internetServiceAndPublicIpAddressSupplier = internetServiceAndPublicIpAddressSupplier;
       this.vAppStatusToNodeState = vAppStatusToNodeState;
       this.taskTester = successTester;
@@ -95,7 +90,48 @@ public class TerremarkVCloudComputeClient {
    protected Status getStatus(VApp vApp) {
       return vApp.getStatus();
    }
+   
+   public ComputeServiceAdapter.NodeAndInitialCredentials<VApp> startAndReturnCredentials(@Nullable URI VDC, URI templateId, String name, InstantiateVAppTemplateOptions options,
+            int... portsToOpen) {
+      // we only get IP addresses after "deploy"
+      if (portsToOpen.length > 0 && !options.shouldBlock())
+         throw new IllegalArgumentException("We cannot open ports on terremark unless we can deploy the vapp");
+      String password = null;
+      VAppTemplate template = client.getVAppTemplate(templateId);
+      if (template.getDescription().indexOf("Windows") != -1) {
+         password = passwordGenerator.get();
+         options.getProperties().put("password", password);
+      }
+      checkNotNull(options, "options");
+      logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) options(%s) ", VDC, templateId, name, options);
 
+      VApp vAppResponse = client.instantiateVAppTemplateInVDC(VDC, templateId, name, options);
+      logger.debug("<< instantiated VApp(%s)", vAppResponse.getName());
+      if (options.shouldDeploy()) {
+         logger.debug(">> deploying vApp(%s)", vAppResponse.getName());
+
+         Task task = client.deployVApp(vAppResponse.getHref());
+         if (options.shouldBlock()) {
+            if (!taskTester.apply(task.getHref())) {
+               throw new RuntimeException(String.format("failed to %s %s: %s", "deploy", vAppResponse.getName(), task));
+            }
+            logger.debug("<< deployed vApp(%s)", vAppResponse.getName());
+            if (options.shouldPowerOn()) {
+               logger.debug(">> powering vApp(%s)", vAppResponse.getName());
+               task = client.powerOnVApp(vAppResponse.getHref());
+               if (!taskTester.apply(task.getHref())) {
+                  throw new RuntimeException(String.format("failed to %s %s: %s", "powerOn", vAppResponse.getName(),
+                        task));
+               }
+               logger.debug("<< on vApp(%s)", vAppResponse.getName());
+            }
+         }
+      }
+      if (portsToOpen.length > 0)
+         createPublicAddressMappedToPorts(vAppResponse.getHref(), portsToOpen);
+      return new ComputeServiceAdapter.NodeAndInitialCredentials<VApp>(vAppResponse, vAppResponse.getHref().toASCIIString(), password!= null?LoginCredentials.builder().password(password).build():null);
+   }
+   
    /**
     * Runs through all commands necessary to startup a vApp, opening at least
     * one ip address to the public network. These are the steps:
@@ -125,49 +161,8 @@ public class TerremarkVCloudComputeClient {
     *         </ol>
     */
    public VApp start(@Nullable URI VDC, URI templateId, String name, InstantiateVAppTemplateOptions options,
-         int... portsToOpen) {
-      // we only get IP addresses after "deploy"
-      if (portsToOpen.length > 0 && !options.shouldBlock())
-         throw new IllegalArgumentException("We cannot open ports on terremark unless we can deploy the vapp");
-      String password = null;
-      VAppTemplate template = client.getVAppTemplate(templateId);
-      if (template.getDescription().indexOf("Windows") != -1) {
-         password = passwordGenerator.get();
-         options.getProperties().put("password", password);
-      }
-      LoginCredentials defaultCredentials = credentialsProvider.apply(template);
-      checkNotNull(options, "options");
-      logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) options(%s) ", VDC, templateId, name, options);
-
-      VApp vAppResponse = client.instantiateVAppTemplateInVDC(VDC, templateId, name, options);
-      logger.debug("<< instantiated VApp(%s)", vAppResponse.getName());
-      if (options.shouldDeploy()) {
-         logger.debug(">> deploying vApp(%s)", vAppResponse.getName());
-
-         Task task = client.deployVApp(vAppResponse.getHref());
-         if (options.shouldBlock()) {
-            if (!taskTester.apply(task.getHref())) {
-               throw new RuntimeException(String.format("failed to %s %s: %s", "deploy", vAppResponse.getName(), task));
-            }
-            logger.debug("<< deployed vApp(%s)", vAppResponse.getName());
-            if (options.shouldPowerOn()) {
-               logger.debug(">> powering vApp(%s)", vAppResponse.getName());
-               task = client.powerOnVApp(vAppResponse.getHref());
-               if (!taskTester.apply(task.getHref())) {
-                  throw new RuntimeException(String.format("failed to %s %s: %s", "powerOn", vAppResponse.getName(),
-                        task));
-               }
-               logger.debug("<< on vApp(%s)", vAppResponse.getName());
-            }
-         }
-      }
-      if (password != null) {
-         credentialStore.put("node#" + vAppResponse.getHref().toASCIIString(), new Credentials(
-               defaultCredentials.identity, password));
-      }
-      if (portsToOpen.length > 0)
-         createPublicAddressMappedToPorts(vAppResponse.getHref(), portsToOpen);
-      return vAppResponse;
+            int... portsToOpen) {
+      return startAndReturnCredentials(VDC, templateId, name, options, portsToOpen).getNode();
    }
 
    public String createPublicAddressMappedToPorts(URI vAppId, int... ports) {

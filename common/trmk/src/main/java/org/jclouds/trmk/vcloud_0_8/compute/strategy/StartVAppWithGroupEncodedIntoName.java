@@ -26,11 +26,13 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
+import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.trmk.vcloud_0_8.compute.TerremarkVCloudComputeClient;
 import org.jclouds.trmk.vcloud_0_8.compute.functions.TemplateToInstantiateOptions;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
@@ -46,28 +48,34 @@ public class StartVAppWithGroupEncodedIntoName implements CreateNodeWithGroupEnc
    protected final TerremarkVCloudComputeClient computeClient;
    protected final TemplateToInstantiateOptions getOptions;
    protected final Function<VApp, NodeMetadata> vAppToNodeMetadata;
-   private final Map<String, Credentials> credentialStore;
+   protected final Map<String, Credentials> credentialStore;
+   protected final PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate;
+
 
    @Inject
    protected StartVAppWithGroupEncodedIntoName(TerremarkVCloudComputeClient computeClient,
             Function<VApp, NodeMetadata> vAppToNodeMetadata, TemplateToInstantiateOptions getOptions,
-            Map<String, Credentials> credentialStore) {
+            Map<String, Credentials> credentialStore, PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate) {
       this.computeClient = computeClient;
       this.vAppToNodeMetadata = vAppToNodeMetadata;
       this.getOptions = checkNotNull(getOptions, "getOptions");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
+      this.prioritizeCredentialsFromTemplate = checkNotNull(prioritizeCredentialsFromTemplate, "prioritizeCredentialsFromTemplate");
    }
-
    @Override
    public NodeMetadata createNodeWithGroupEncodedIntoName(String group, String name, Template template) {
       InstantiateVAppTemplateOptions options = getOptions.apply(template);
-      VApp vApp = computeClient.start(URI.create(template.getLocation().getId()), URI.create(template
+      NodeAndInitialCredentials<VApp> from = computeClient.startAndReturnCredentials(URI.create(template.getLocation().getId()), URI.create(template
                .getImage().getId()), name, options, template.getOptions().getInboundPorts());
-      NodeMetadata node = vAppToNodeMetadata.apply(vApp);
-      NodeMetadataBuilder builder = NodeMetadataBuilder.fromNodeMetadata(node);
-      if (template.getImage().getDefaultCredentials() != null)
-         credentialStore.put("node#" + node.getId(), template.getImage().getDefaultCredentials());
-      return builder.build();
+      LoginCredentials fromNode = from.getCredentials();
+      if (credentialStore.containsKey("group#" + group)) {
+         fromNode = fromNode == null ? LoginCredentials.fromCredentials(credentialStore.get("group#" + group))
+                  : fromNode.toBuilder().privateKey(credentialStore.get("group#" + group).credential).build();
+      }
+      LoginCredentials creds = prioritizeCredentialsFromTemplate.apply(template, fromNode);
+      if (creds != null)
+         credentialStore.put("node#" + from.getNodeId(), creds);
+      return vAppToNodeMetadata.apply(from.getNode());
    }
 
 }

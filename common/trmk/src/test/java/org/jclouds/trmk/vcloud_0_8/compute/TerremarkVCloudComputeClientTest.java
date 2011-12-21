@@ -31,10 +31,11 @@ import java.util.Map;
 
 import javax.inject.Provider;
 
+import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
-import org.jclouds.trmk.vcloud_0_8.compute.strategy.ParseVAppTemplateDescriptionToGetDefaultLoginCredentials;
 import org.jclouds.trmk.vcloud_0_8.domain.Status;
 import org.jclouds.trmk.vcloud_0_8.domain.Task;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
@@ -88,7 +89,7 @@ public class TerremarkVCloudComputeClientTest {
       Map<Status, NodeState> vAppStatusToNodeState = createMock(Map.class);
 
       TerremarkVCloudComputeClient computeClient = new TerremarkVCloudComputeClient(client,
-            new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(null), new Provider<String>() {
+            new Provider<String>() {
 
                @Override
                public String get() {
@@ -106,10 +107,11 @@ public class TerremarkVCloudComputeClientTest {
       replay(notFoundTester);
       replay(vAppStatusToNodeState);
 
-      VApp response = computeClient.start(vdcURI, templateURI, "name", new InstantiateVAppTemplateOptions());
+      NodeAndInitialCredentials<VApp> response = computeClient.startAndReturnCredentials(vdcURI, templateURI, "name", new InstantiateVAppTemplateOptions());
 
-      assertEquals(response.getHref().toASCIIString(), "vapp");
-      assertEquals(credentialStore.get("node#vapp"), new Credentials("Administrator", "password"));
+      assertEquals(response.getNodeId(), "vapp");
+      assertEquals(response.getNode(),vApp);
+      assertEquals(response.getCredentials(), LoginCredentials.builder().password("password").build());
 
       verify(vdc);
       verify(template);
