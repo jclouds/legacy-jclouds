@@ -22,13 +22,14 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.*;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.tmrk.enterprisecloud.binders.BindCreateInternetServiceToXmlPayload;
+import org.jclouds.tmrk.enterprisecloud.binders.BindInternetServiceToXmlPayload;
 import org.jclouds.tmrk.enterprisecloud.domain.Task;
 import org.jclouds.tmrk.enterprisecloud.domain.service.internet.InternetService;
 import org.jclouds.tmrk.enterprisecloud.functions.URISource;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import java.net.URI;
 
 /**
@@ -58,8 +59,19 @@ public interface InternetServiceAsyncClient {
     * @see org.jclouds.tmrk.enterprisecloud.features.InternetServiceClient#editInternetService
     */
    @PUT
+   @Produces(MediaType.APPLICATION_XML)
+   @Consumes("application/vnd.tmrk.cloud.task")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Task> editInternetService(@EndpointParam(parser = URISource.GetURI.class) @BinderParam(BindInternetServiceToXmlPayload.class) InternetService internetService);
+
+   /**
+    * @see org.jclouds.tmrk.enterprisecloud.features.InternetServiceClient#editInternetService
+    */
+   @POST
+   @Produces(MediaType.APPLICATION_XML)
    @Consumes("application/vnd.tmrk.cloud.internetService")
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Task> editInternetService(@EndpointParam(parser = URISource.GetURI.class) InternetService internetService);
+   InternetService createInternetService(@EndpointParam URI uri, @BinderParam(BindCreateInternetServiceToXmlPayload.class)InternetService data);
 }

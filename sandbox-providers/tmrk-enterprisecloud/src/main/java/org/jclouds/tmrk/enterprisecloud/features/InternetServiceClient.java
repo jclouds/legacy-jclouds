@@ -75,4 +75,27 @@ public interface InternetServiceClient {
     * @return the Task representing the create action
     */
    Task editInternetService(InternetService service);
+
+   /**
+    * The createInternetService call creates an Internet service on a public IP address in an environment.
+    * If successful, the call returns information regarding the Internet service that was created.
+    * Input InternetService object Properties:
+    * The name is required and may not be that of another Internet service.
+    * Protocol is required.
+    * Port is required and must be in the range of 1 to 65535.
+    * Enabled is required.
+    * Type refers to the method for persisting a connection session.
+    * If Timeout is absent with a type of SourceIp then Timeout defaults to 2 minutes.
+    * Omit Timeout if type is None.
+    *
+    * Note: The href of the InternetService data parameter is not used.
+    * When creating the input object you may use any value or an empty URI
+    * e.g. java.net.URI.create("")
+    *
+    * @param uri The uri of the call based on the public IP identifier
+    * e.g. /cloudapi/ecloud/internetServices/publicIps/{public IP identifier}/action/createInternetService
+    * @param data The input internet service data used to create the service
+    * @return
+    */
+   InternetService createInternetService(URI uri, InternetService data);
 }
