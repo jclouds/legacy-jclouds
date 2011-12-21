@@ -89,13 +89,14 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
       if (networksDisabled)
          return;
       int attempts = 0;
-      while (rule == null && attempts < 50) {
+      while (rule == null && attempts < 10) {
          ip = reuseOrAssociate.apply(network);
          try {
             rule = client.getLoadBalancerClient().createLoadBalancerRuleForPublicIP(ip.getId(), Algorithm.LEASTCONN,
                   prefix, 22, 22);
          } catch (IllegalStateException e) {
             // very likely an ip conflict, so retry;
+            attempts++;
          }
       }
       assertNotNull(rule, "Failed to get a load balancer rule after "+attempts+" attempts");
