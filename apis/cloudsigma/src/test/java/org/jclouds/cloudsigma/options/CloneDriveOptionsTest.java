@@ -101,16 +101,30 @@ public class CloneDriveOptionsTest {
    }
    
    @Test
-   public void testHddAffinityWithTags() {
+   public void testHddAffinityBeforeTags() {
        CloneDriveOptions options = new CloneDriveOptions().affinity(AffinityType.HDD);
        options.tags("foo", "bar", "baz");
        assertEquals(options.getOptions().get("tags"), "foo bar baz");
    }
    
    @Test
-   public void testSsdAffinityWithTags() {
+   public void testSsdAffinityBeforeTags() {
        CloneDriveOptions options = new CloneDriveOptions().affinity(AffinityType.SSD);
        options.tags("foo", "bar", "baz");
+       assertEquals(options.getOptions().get("tags"), "foo bar baz affinity:ssd");
+   }
+   
+   @Test
+   public void testHddAffinityAfterTags() {
+       CloneDriveOptions options = new CloneDriveOptions().tags("foo", "bar", "baz");
+       options.affinity(AffinityType.HDD);
+       assertEquals(options.getOptions().get("tags"), "foo bar baz");
+   }
+   
+   @Test
+   public void testSsdAffinityAfterTags() {
+       CloneDriveOptions options = new CloneDriveOptions().tags("foo", "bar", "baz");
+       options.affinity(AffinityType.SSD);
        assertEquals(options.getOptions().get("tags"), "foo bar baz affinity:ssd");
    }
    
