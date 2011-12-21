@@ -28,6 +28,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
 import org.jclouds.cloudstack.domain.LoadBalancerRule.Algorithm;
 import org.jclouds.cloudstack.domain.LoadBalancerRule.State;
@@ -67,7 +69,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
             TimeUnit.SECONDS);
       prefix += "rule";
       try {
-         network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.hasLoadBalancerService());
+         network = find(client.getNetworkClient().listNetworks(), Predicates.and(NetworkPredicates.hasLoadBalancerService(), NetworkPredicates.isVirtualNetwork()));
       } catch (NoSuchElementException e) {
          networksDisabled = true;
       }
