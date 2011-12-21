@@ -30,6 +30,7 @@ import org.jclouds.aws.ec2.services.AWSSecurityGroupClient;
 import org.jclouds.cloudwatch.CloudWatchAsyncClient;
 import org.jclouds.cloudwatch.CloudWatchClient;
 import org.jclouds.cloudwatch.domain.Datapoint;
+import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
@@ -155,7 +156,8 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
          try {
             Set<Datapoint> datapoints = monitoringContext.getApi().getMetricStatisticsInRegion(instance.getRegion(),
-                     "CPUUtilization", "AWS/EC2", before, new Date(), 60, "Average");
+                     "CPUUtilization", "AWS/EC2", before, new Date(), 60, "Average",
+                     GetMetricStatisticsOptions.Builder.instanceId(instance.getId()));
             assert datapoints != null && datapoints.size() > 0;
 
          } finally {
