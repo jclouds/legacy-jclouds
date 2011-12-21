@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.google.common.base.Splitter;
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -172,7 +173,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       }
    }
 
-   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
+   @Test(enabled = true) //, dependsOnMethods = "testCompareSizes")
    public void testAutoIpAllocation() throws Exception {
       ComputeServiceContext context = null;
       String group = this.group + "aip";
@@ -210,7 +211,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
          // check that the elastic ip is in node.publicAddresses
          PublicIpInstanceIdPair ipidpair = Iterables.get(ipidpairs, 0);
-         assertEquals(ipidpair.getInstanceId(), node.getId());
+         assertEquals(region + "/" + ipidpair.getInstanceId(), node.getId());
          
          // delete the node
          context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
