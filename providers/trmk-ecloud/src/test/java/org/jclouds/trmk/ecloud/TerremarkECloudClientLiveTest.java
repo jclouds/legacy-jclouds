@@ -23,7 +23,7 @@ import static org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions
 import java.util.Properties;
 import java.util.Map.Entry;
 
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.trmk.ecloud.suppliers.TerremarkECloudInternetServiceAndPublicIpAddressSupplier;
@@ -65,7 +65,7 @@ public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest {
 
    @Override
    protected SshClient getConnectionFor(IPSocket socket) {
-      return sshFactory.create(socket, new Credentials("ecloud", "$Ep455l0ud!2"));
+      return sshFactory.create(socket, LoginCredentials.builder().user("ecloud").password("TmrkCl0ud1s#1!").build());
    }
 
    @Override
