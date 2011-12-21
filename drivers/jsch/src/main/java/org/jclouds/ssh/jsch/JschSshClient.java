@@ -25,6 +25,8 @@ import static com.google.common.base.Predicates.instanceOf;
 import static com.google.common.base.Predicates.or;
 import static com.google.common.base.Throwables.getCausalChain;
 import static com.google.common.collect.Iterables.any;
+import static org.jclouds.crypto.CryptoStreams.hex;
+import static org.jclouds.crypto.CryptoStreams.md5;
 import static org.jclouds.crypto.SshKeys.fingerprintPrivateKey;
 import static org.jclouds.crypto.SshKeys.sha1PrivateKey;
 
@@ -134,8 +136,8 @@ public class JschSshClient implements SshClient {
       this.timeout = timeout;
       this.password = password;
       this.privateKey = privateKey;
-      if ( privateKey==null ) {
-          this.toString = String.format("%s:password@%s:%d", username, host, port);
+      if (privateKey == null) {
+         this.toString = String.format("%s:pw[%s]@%s:%d", username, hex(md5(password.getBytes())), host, port);
       } else {
           String fingerPrint = fingerprintPrivateKey(new String(privateKey));
           String sha1 = sha1PrivateKey(new String(privateKey));
