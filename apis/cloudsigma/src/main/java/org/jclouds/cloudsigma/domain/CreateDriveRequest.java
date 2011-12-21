@@ -89,7 +89,7 @@ public class CreateDriveRequest extends Drive {
       }
 
       public CreateDriveRequest build() {
-         return new CreateDriveRequest(name, size, claimType, readers, use, encryptionCipher, avoid);
+         return new CreateDriveRequest(name, size, claimType, affinity, readers, use, encryptionCipher, avoid);
       }
    }
 
@@ -97,9 +97,9 @@ public class CreateDriveRequest extends Drive {
    @Nullable
    private final String encryptionCipher;
 
-   public CreateDriveRequest(String name, long size, @Nullable ClaimType claimType, Iterable<String> readers,
-         Iterable<String> use, @Nullable String encryptionCipher, Iterable<String> avoid) {
-      super(null, name, size, claimType, readers, use);
+   public CreateDriveRequest(String name, long size, @Nullable ClaimType claimType, AffinityType affinity,
+         Iterable<String> readers, Iterable<String> use, @Nullable String encryptionCipher, Iterable<String> avoid) {
+      super(null, name, size, claimType, affinity, readers, use);
       this.encryptionCipher = encryptionCipher;
       this.avoid = ImmutableSet.copyOf(checkNotNull(avoid, "avoid"));
    }

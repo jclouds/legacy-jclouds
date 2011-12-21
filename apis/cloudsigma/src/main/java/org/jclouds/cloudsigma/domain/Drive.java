@@ -34,6 +34,7 @@ public class Drive extends Item {
    public static class Builder extends Item.Builder {
       protected long size;
       protected ClaimType claimType = ClaimType.EXCLUSIVE;
+      protected AffinityType affinity = AffinityType.HDD;
       protected Set<String> readers = ImmutableSet.of();
 
       public Builder claimType(ClaimType claimType) {
@@ -41,6 +42,11 @@ public class Drive extends Item {
          return this;
       }
 
+      public Builder affinity(AffinityType affinity) {
+          this.affinity = affinity;
+          return this;
+      }
+      
       public Builder readers(Iterable<String> readers) {
          this.readers = ImmutableSet.copyOf(checkNotNull(readers, "readers"));
          return this;
@@ -76,7 +82,7 @@ public class Drive extends Item {
       }
 
       public Drive build() {
-         return new Drive(uuid, name, size, claimType, readers, use);
+         return new Drive(uuid, name, size, claimType, affinity, readers, use);
       }
 
       @Override
@@ -84,6 +90,7 @@ public class Drive extends Item {
          final int prime = 31;
          int result = super.hashCode();
          result = prime * result + ((claimType == null) ? 0 : claimType.hashCode());
+         result = prime * result + ((affinity == null) ? 0 : affinity.hashCode());
          result = prime * result + ((readers == null) ? 0 : readers.hashCode());
          result = prime * result + (int) (size ^ (size >>> 32));
          return result;
@@ -100,6 +107,8 @@ public class Drive extends Item {
          Builder other = (Builder) obj;
          if (claimType != other.claimType)
             return false;
+         if (affinity != other.affinity)
+             return false;
          if (readers == null) {
             if (other.readers != null)
                return false;
@@ -113,13 +122,15 @@ public class Drive extends Item {
 
    protected final long size;
    protected final ClaimType claimType;
+   protected final AffinityType affinity;
    protected final Set<String> readers;
 
-   public Drive(@Nullable String uuid, String name, long size, @Nullable ClaimType claimType, Iterable<String> readers,
-         Iterable<String> use) {
+   public Drive(@Nullable String uuid, String name, long size, @Nullable ClaimType claimType,
+         AffinityType affinity, Iterable<String> readers, Iterable<String> use) {
       super(uuid, name, use);
       this.size = size;
       this.claimType = checkNotNull(claimType, "set claimType to exclusive, not null");
+      this.affinity = checkNotNull(affinity, "affinity");
       this.readers = ImmutableSet.copyOf(checkNotNull(readers, "readers"));
    }
 
@@ -133,6 +144,13 @@ public class Drive extends Item {
       return claimType;
    }
 
+   /**
+    * @return either 'HDD' (the default) or 'SSD' (for solid-state drives)
+    */
+   public AffinityType getAffinity() {
+       return affinity;
+   }
+   
    /**
     * 
     * @return list of users allowed to read from a drive or 'ffffffff-ffff-ffff-ffff-ffffffffffff'
@@ -155,6 +173,7 @@ public class Drive extends Item {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((claimType == null) ? 0 : claimType.hashCode());
+      result = prime * result + ((affinity == null) ? 0 : affinity.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((readers == null) ? 0 : readers.hashCode());
       result = prime * result + (int) (size ^ (size >>> 32));
@@ -173,6 +192,8 @@ public class Drive extends Item {
       Drive other = (Drive) obj;
       if (claimType != other.claimType)
          return false;
+      if (affinity != other.affinity)
+          return false;
       if (name == null) {
          if (other.name != null)
             return false;

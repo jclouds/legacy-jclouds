@@ -68,12 +68,12 @@ public class DriveData extends Drive {
       }
 
       public DriveData build() {
-         return new DriveData(uuid, name, size, claimType, readers, use);
+         return new DriveData(uuid, name, size, claimType, affinity, readers, use);
       }
    }
 
    public DriveData(@Nullable String uuid, String name, long size, @Nullable ClaimType claimType,
-         Iterable<String> readers, Iterable<String> use) {
-      super(uuid, name, size, claimType, readers, use);
+         AffinityType affinity, Iterable<String> readers, Iterable<String> use) {
+      super(uuid, name, size, claimType, affinity, readers, use);
    }
 }

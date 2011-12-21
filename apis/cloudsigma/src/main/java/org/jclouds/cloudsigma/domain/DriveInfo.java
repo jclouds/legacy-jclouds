@@ -195,7 +195,7 @@ public class DriveInfo extends Drive {
        */
       @Override
       public DriveInfo build() {
-         return new DriveInfo(uuid, name, size, claimType, readers, use, status, user, claimed, encryptionCipher,
+         return new DriveInfo(uuid, name, size, claimType, affinity, readers, use, status, user, claimed, encryptionCipher,
                imaging, metrics, autoexpanding, bits, description, driveType, encryptionKey, free, installNotes, os,
                type, url);
       }
@@ -221,12 +221,12 @@ public class DriveInfo extends Drive {
    private final DriveType type;
    private final URI url;
 
-   public DriveInfo(String uuid, String name, long size, ClaimType claimType, Iterable<String> readers,
+   public DriveInfo(String uuid, String name, long size, ClaimType claimType, AffinityType affinity, Iterable<String> readers,
          Iterable<String> use, DriveStatus status, String user, Set<String> claimed, String encryptionCipher,
          String imaging, DriveMetrics metrics, Boolean autoexpanding, Integer bits, String description,
          Iterable<String> driveType, String encryptionKey, Boolean free, String installNotes, String os,
          DriveType type, URI url) {
-      super(uuid, name, size, claimType, readers, use);
+      super(uuid, name, size, claimType, affinity, readers, use);
       this.status = status;
       this.user = user;
       this.claimed = ImmutableSet.copyOf(checkNotNull(claimed, "claimed"));
