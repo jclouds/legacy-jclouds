@@ -19,6 +19,8 @@ U * Licensed to jclouds, Inc. (jclouds) under one or more
 
 package org.jclouds.virtualbox.functions.admin;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -28,9 +30,8 @@ import javax.inject.Named;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.domain.ErrorCode;
+import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
-import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.DeviceType;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IMedium;
 import org.virtualbox_4_1.IProgress;
@@ -38,10 +39,13 @@ import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-public class UnregisterMachineIfExistsAndDeleteItsMedia implements Function<VmSpec, Void> {
+public class UnregisterMachineIfExistsAndDeleteItsMedia implements
+      Function<VmSpec, Void> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -72,21 +76,41 @@ public class UnregisterMachineIfExistsAndDeleteItsMedia implements Function<VmSp
          }
       }
 
-      if(!mediaToBeDeleted.isEmpty()) {
+      List<IMedium> filteredMediaToBeDeleted = Lists.newArrayList(Iterables
+            .filter(mediaToBeDeleted, new AutoDeleteHardDiskPredicate(vmSpec)));
+
+      checkNotNull(filteredMediaToBeDeleted);
+      if (!filteredMediaToBeDeleted.isEmpty()) {
          try {
-            for (IMedium iMedium : mediaToBeDeleted) {
-               if(iMedium.getDeviceType().equals(DeviceType.HardDisk)) {
-                  IProgress deletion = machine.delete(Lists.newArrayList(iMedium));
-                  deletion.waitForCompletion(-1);
-               }
-            }
+            IProgress deletion = machine.delete(filteredMediaToBeDeleted);
+            deletion.waitForCompletion(-1);
+
          } catch (Exception e) {
-            logger.error(e, "Problem in deleting the media attached to %s", machine.getName());
+            logger.error(e, "Problem in deleting the media attached to %s",
+                  machine.getName());
             Throwables.propagate(e);
          }
       }
       return null;
    }
 
+   private class AutoDeleteHardDiskPredicate implements Predicate<IMedium> {
+
+      private VmSpec vmSpec;
+
+      public AutoDeleteHardDiskPredicate(VmSpec vmSpec) {
+         this.vmSpec = vmSpec;
+      }
+
+      @Override
+      public boolean apply(IMedium medium) {
+         for (StorageController controller : vmSpec.getControllers()) {
+            if (controller.getHardDisk(medium.getName()).isAutoDelete())
+               return true;
+         }
+         return false;
+      }
+
+   };
 
 }

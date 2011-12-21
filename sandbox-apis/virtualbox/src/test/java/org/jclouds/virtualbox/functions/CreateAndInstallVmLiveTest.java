@@ -44,6 +44,7 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
+import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.NatAdapter;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
@@ -85,14 +86,16 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
       credential = "password";
       
       String workingDir = PropertyUtils.getWorkingDirFromProperty();
+      HardDisk hardDisk = HardDisk.builder().diskpath(workingDir + "/testadmin.vdi").autoDelete(true)
+            .controllerPort(0).deviceSlot(1).build();
       ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)
               .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
-              .attachHardDisk(0, 1, workingDir + "/testadmin.vdi", "testadmin")
+              .attachHardDisk(hardDisk)
               .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso").build();
       vmSpecification = VmSpec.builder().id(vmId).name(vmName).memoryMB(512).osTypeId(osTypeId)
               .controller(ideController)
               .forceOverwrite(true)
-              .cleanUpMode(CleanupMode.DetachAllReturnHardDisksOnly)
+              .cleanUpMode(CleanupMode.Full)
               .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build()).build();
       
       new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(vmSpecification);
