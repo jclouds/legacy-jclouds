@@ -33,6 +33,7 @@ import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.cloudwatch.config.CloudWatchRestClientModule;
+import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.cloudwatch.xml.GetMetricStatisticsResponseHandler;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
@@ -62,21 +63,22 @@ public class CloudWatchAsyncClientTest extends RestClientTest<CloudWatchAsyncCli
    public void testRegisterInstancesWithMeasure() throws SecurityException, NoSuchMethodException, IOException {
       Date date = new Date(10000000l);
       Method method = CloudWatchAsyncClient.class.getMethod("getMetricStatisticsInRegion", String.class, String.class,
-            String.class, Date.class, Date.class, int.class, String.class);
-      HttpRequest request = processor.createRequest(method, (String) null, "CPUUtilization", "AWS/EC2", date, date, 60, "Average");
+            String.class, Date.class, Date.class, int.class, String.class, GetMetricStatisticsOptions[].class);
+      HttpRequest request = processor.createRequest(method, (String) null, "CPUUtilization", "AWS/EC2", date, date, 60, "Average",
+         GetMetricStatisticsOptions.Builder.instanceId("i-12312313"));
 
       assertRequestLineEquals(request, "POST https://monitoring.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: monitoring.us-east-1.amazonaws.com\n");
       try {
          assertPayloadEquals(
                request,
-               "Version=2010-08-01&Action=GetMetricStatistics&Statistics.member.1=Average&StartTime=1970-01-01T02%3A46%3A40Z&Namespace=AWS%2FEC2&&MetricName=CPUUtilization&EndTime=1970-01-01T02%3A46%3A40Z&Period=60",
+               "Version=2010-08-01&Action=GetMetricStatistics&Statistics.member.1=Average&StartTime=1970-01-01T02%3A46%3A40Z&Namespace=AWS%2FEC2&&MetricName=CPUUtilization&EndTime=1970-01-01T02%3A46%3A40Z&Period=60&Dimensions.member.1=InstanceId%3Di-12312313",
                "application/x-www-form-urlencoded", false);
       } catch (AssertionError e) {
          // mvn 3.0 osx 10.6.5 somehow sorts differently
          assertPayloadEquals(
                request,
-               "Version=2010-08-01&Action=GetMetricStatistics&Statistics.member.1=Average&Period=60&Namespace=AWS%2FEC2&MetricName=CPUUtilization&StartTime=1970-01-01T02%3A46%3A40Z&EndTime=1970-01-01T02%3A46%3A40Z",
+               "Version=2010-08-01&Action=GetMetricStatistics&Statistics.member.1=Average&Period=60&Namespace=AWS%2FEC2&MetricName=CPUUtilization&StartTime=1970-01-01T02%3A46%3A40Z&EndTime=1970-01-01T02%3A46%3A40Z&Dimensions.member.1=InstanceId%3Di-12312313",
                "application/x-www-form-urlencoded", false);
       }
       assertResponseParserClassEquals(method, request, ParseSax.class);

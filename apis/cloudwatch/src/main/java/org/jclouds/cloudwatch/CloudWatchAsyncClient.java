@@ -28,6 +28,7 @@ import javax.ws.rs.Path;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.cloudwatch.functions.ISO8601Format;
+import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.cloudwatch.xml.GetMetricStatisticsResponseHandler;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
@@ -67,6 +68,8 @@ public interface CloudWatchAsyncClient {
          @FormParam("MetricName") String metricName,
          @FormParam("Namespace") String namespace,
          @FormParam("StartTime") @ParamParser(ISO8601Format.class) Date startTime,
-         @FormParam("EndTime") @ParamParser(ISO8601Format.class) Date endTime, @FormParam("Period") int period,
-         @FormParam("Statistics.member.1") String statistics);
+         @FormParam("EndTime") @ParamParser(ISO8601Format.class) Date endTime,
+         @FormParam("Period") int period,
+         @FormParam("Statistics.member.1") String statistics,
+         GetMetricStatisticsOptions... options);
 }
