@@ -18,15 +18,23 @@
  */
 package org.jclouds.slicehost.compute.strategy;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
+import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.slicehost.SlicehostClient;
 import org.jclouds.slicehost.domain.Slice;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 
 /**
  * 
@@ -36,18 +44,37 @@ import com.google.common.base.Function;
 public class SlicehostGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
 
    private final SlicehostClient client;
-   private final Function<Slice, NodeMetadata> sliceToNodeMetadata;
+   private final Map<String, Credentials> credentialStore;
+   private final Function<Slice, NodeMetadata> nodeMetadataAdapter;
 
    @Inject
-   protected SlicehostGetNodeMetadataStrategy(SlicehostClient client, Function<Slice, NodeMetadata> sliceToNodeMetadata) {
+   protected SlicehostGetNodeMetadataStrategy(SlicehostClient client, Map<String, Credentials> credentialStore,
+            Function<Slice, NodeMetadata> nodeMetadataAdapter) {
       this.client = client;
-      this.sliceToNodeMetadata = sliceToNodeMetadata;
+      this.credentialStore = credentialStore;
+      this.nodeMetadataAdapter = Functions.compose(addLoginCredentials, checkNotNull(nodeMetadataAdapter,
+               "nodeMetadataAdapter"));
    }
+
+   private final Function<NodeMetadata, NodeMetadata> addLoginCredentials = new Function<NodeMetadata, NodeMetadata>() {
+
+      @Override
+      public NodeMetadata apply(NodeMetadata arg0) {
+         return credentialStore.containsKey("node#" + arg0.getId()) ? NodeMetadataBuilder.fromNodeMetadata(arg0)
+                  .credentials(LoginCredentials.fromCredentials(credentialStore.get("node#" + arg0.getId()))).build()
+                  : arg0;
+      }
+
+      @Override
+      public String toString() {
+         return "addLoginCredentialsFromCredentialStore()";
+      }
+   };
 
    @Override
    public NodeMetadata getNode(String id) {
       int sliceId = Integer.parseInt(id);
       Slice slice = client.getSlice(sliceId);
-      return slice == null ? null : sliceToNodeMetadata.apply(slice);
+      return slice == null ? null : nodeMetadataAdapter.apply(slice);
    }
 }

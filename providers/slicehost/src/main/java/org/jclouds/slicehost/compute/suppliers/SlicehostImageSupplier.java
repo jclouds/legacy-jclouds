@@ -25,12 +25,14 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.config.ComputeServiceAdapterContextModule.AddDefaultCredentialsToImage;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.slicehost.SlicehostClient;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -47,22 +49,25 @@ public class SlicehostImageSupplier implements Supplier<Set<? extends Image>> {
    protected Logger logger = Logger.NULL;
 
    protected final SlicehostClient sync;
-   protected final Function<org.jclouds.slicehost.domain.Image, Image> slicehostImageToImage;
+   protected final Function<org.jclouds.slicehost.domain.Image, Image> cloudServersImageToImage;
+   protected final AddDefaultCredentialsToImage addDefaultCredentialsToImage;
 
    @Inject
    SlicehostImageSupplier(SlicehostClient sync,
-            Function<org.jclouds.slicehost.domain.Image, Image> slicehostImageToImage) {
+            Function<org.jclouds.slicehost.domain.Image, Image> cloudServersImageToImage,
+            AddDefaultCredentialsToImage addDefaultCredentialsToImage) {
       this.sync = sync;
-      this.slicehostImageToImage = slicehostImageToImage;
+      this.cloudServersImageToImage = cloudServersImageToImage;
+      this.addDefaultCredentialsToImage = addDefaultCredentialsToImage;
    }
 
    @Override
    public Set<? extends Image> get() {
       Set<Image> images;
       logger.debug(">> providing images");
-      images = Sets.newLinkedHashSet(Iterables.transform(sync.listImages(), slicehostImageToImage));
+      images = Sets.<Image> newLinkedHashSet(Iterables.transform(sync.listImages(), Functions.compose(
+               addDefaultCredentialsToImage, cloudServersImageToImage)));
       logger.debug("<< images(%d)", images.size());
       return images;
    }
-
 }

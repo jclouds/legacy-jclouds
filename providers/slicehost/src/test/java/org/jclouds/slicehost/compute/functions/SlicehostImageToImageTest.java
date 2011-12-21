@@ -31,7 +31,6 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.LoginCredentials;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.slicehost.xml.ImageHandlerTest;
@@ -54,8 +53,7 @@ public class SlicehostImageToImageTest {
                   .name("CentOS 5.2")
                   .operatingSystem(
                         new OperatingSystem.Builder().family(OsFamily.CENTOS).version("5.2").description("CentOS 5.2")
-                              .is64Bit(true).build()).description("CentOS 5.2")
-                  .defaultCredentials(LoginCredentials.builder().user("root").build()).ids("2").build());
+                              .is64Bit(true).build()).description("CentOS 5.2").ids("2").build());
    }
 
    @Test
@@ -67,8 +65,7 @@ public class SlicehostImageToImageTest {
                   .operatingSystem(
                         new OperatingSystem.Builder().family(OsFamily.UBUNTU).version("10.10")
                               .description("Ubuntu 10.10 (maverick) 32-bit").build())
-                  .description("Ubuntu 10.10 (maverick) 32-bit")
-                  .defaultCredentials(LoginCredentials.builder().user("root").build()).ids("70").build());
+                  .description("Ubuntu 10.10 (maverick) 32-bit").ids("70").build());
    }
 
    public static Image convertImage() {

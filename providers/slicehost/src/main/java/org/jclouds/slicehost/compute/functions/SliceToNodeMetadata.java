@@ -36,9 +36,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
-import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.slicehost.domain.Slice;
 
@@ -56,7 +54,6 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
    protected final Map<Slice.Status, NodeState> sliceToNodeState;
    protected final Supplier<Set<? extends Image>> images;
    protected final Supplier<Set<? extends Hardware>> hardwares;
-   protected final Map<String, Credentials> credentialStore;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -88,11 +85,10 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
    }
 
    @Inject
-   SliceToNodeMetadata(Map<Slice.Status, NodeState> sliceStateToNodeState, Map<String, Credentials> credentialStore,
+   SliceToNodeMetadata(Map<Slice.Status, NodeState> sliceStateToNodeState,
             @Memoized Supplier<Set<? extends Image>> images, Supplier<Location> location,
             @Memoized Supplier<Set<? extends Hardware>> hardwares) {
       this.sliceToNodeState = checkNotNull(sliceStateToNodeState, "sliceStateToNodeState");
-      this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.images = checkNotNull(images, "images");
       this.location = checkNotNull(location, "location");
       this.hardwares = checkNotNull(hardwares, "hardwares");
@@ -126,7 +122,6 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
          }
 
       }));
-      builder.credentials(LoginCredentials.fromCredentials(credentialStore.get("node#" + from.getId())));
       return builder.build();
    }
 

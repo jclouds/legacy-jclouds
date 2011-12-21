@@ -35,11 +35,9 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.LoginCredentials;
 import org.jclouds.slicehost.compute.config.SlicehostComputeServiceDependenciesModule;
 import org.jclouds.slicehost.domain.Slice;
 import org.jclouds.slicehost.xml.SliceHandlerTest;
@@ -58,46 +56,22 @@ public class SliceToNodeMetadataTest {
    Location provider = new LocationBuilder().scope(LocationScope.ZONE).id("dallas").description("description").build();
 
    @Test
-   public void testApplyWhereImageAndHardwareNotFoundButCredentialsFound() throws UnknownHostException {
-      LoginCredentials creds = LoginCredentials.builder().user("root").password("abdce").build();
-      Map<Slice.Status, NodeState> sliceStateToNodeState = SlicehostComputeServiceDependenciesModule.sliceStatusToNodeState;
-      Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of();
-      Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
-      Slice slice = SliceHandlerTest.parseSlice();
-
-      SliceToNodeMetadata parser = new SliceToNodeMetadata(sliceStateToNodeState, ImmutableMap
-               .<String, Credentials> of("node#1", creds), Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
-               .ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
-
-      NodeMetadata metadata = parser.apply(slice);
-
-      assertEquals(
-            metadata,
-            new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(ImmutableSet.of("174.143.212.229"))
-                  .privateAddresses(ImmutableSet.of("10.176.164.199")).group("jclouds").imageId("2").id("1")
-                  .providerId("1").name("jclouds-foo").hostname("jclouds-foo").location(provider).credentials(creds)
-                  .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
-   }
-
-   @Test
    public void testApplyWhereImageAndHardwareNotFound() throws UnknownHostException {
       Map<Slice.Status, NodeState> sliceStateToNodeState = SlicehostComputeServiceDependenciesModule.sliceStatusToNodeState;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of();
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
       Slice slice = SliceHandlerTest.parseSlice();
 
-      SliceToNodeMetadata parser = new SliceToNodeMetadata(sliceStateToNodeState, ImmutableMap
-               .<String, Credentials> of(), Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
-               .ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
+      SliceToNodeMetadata parser = new SliceToNodeMetadata(sliceStateToNodeState, Suppliers
+               .<Set<? extends Image>> ofInstance(images), Suppliers.ofInstance(provider), Suppliers
+               .<Set<? extends Hardware>> ofInstance(hardwares));
 
       NodeMetadata metadata = parser.apply(slice);
 
-      assertEquals(
-            metadata,
-            new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(ImmutableSet.of("174.143.212.229"))
-                  .privateAddresses(ImmutableSet.of("10.176.164.199")).group("jclouds").imageId("2").id("1")
-                  .providerId("1").name("jclouds-foo").hostname("jclouds-foo").location(provider)
-                  .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
+      assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
+               ImmutableSet.of("174.143.212.229")).privateAddresses(ImmutableSet.of("10.176.164.199")).group("jclouds")
+               .imageId("2").id("1").providerId("1").name("jclouds-foo").hostname("jclouds-foo").location(provider)
+               .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
    }
 
    @Test
@@ -108,24 +82,18 @@ public class SliceToNodeMetadataTest {
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
       Slice slice = SliceHandlerTest.parseSlice();
 
-      SliceToNodeMetadata parser = new SliceToNodeMetadata(sliceStateToNodeState, ImmutableMap
-               .<String, Credentials> of(), Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
-               .ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
+      SliceToNodeMetadata parser = new SliceToNodeMetadata(sliceStateToNodeState, Suppliers
+               .<Set<? extends Image>> ofInstance(images), Suppliers.ofInstance(provider), Suppliers
+               .<Set<? extends Hardware>> ofInstance(hardwares));
 
       NodeMetadata metadata = parser.apply(slice);
-      assertEquals(
-            metadata,
-            new NodeMetadataBuilder()
-                  .state(NodeState.PENDING)
-                  .publicAddresses(ImmutableSet.of("174.143.212.229"))
-                  .privateAddresses(ImmutableSet.of("10.176.164.199"))
-                  .group("jclouds")
-                  .imageId("2")
-                  .operatingSystem(
+      assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
+               ImmutableSet.of("174.143.212.229")).privateAddresses(ImmutableSet.of("10.176.164.199")).group("jclouds")
+               .imageId("2").operatingSystem(
                         new OperatingSystem.Builder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2")
-                              .is64Bit(true).build()).id("1").providerId("1").name("jclouds-foo")
-                  .hostname("jclouds-foo").location(provider)
-                  .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
+                                 .is64Bit(true).build()).id("1").providerId("1").name("jclouds-foo").hostname(
+                        "jclouds-foo").location(provider).userMetadata(
+                        ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
    }
 
    @Test
@@ -135,32 +103,21 @@ public class SliceToNodeMetadataTest {
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of(FlavorToHardwareTest.convertFlavor());
       Slice slice = SliceHandlerTest.parseSlice();
 
-      SliceToNodeMetadata parser = new SliceToNodeMetadata(sliceStateToNodeState, ImmutableMap
-               .<String, Credentials> of(), Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
-               .ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
+      SliceToNodeMetadata parser = new SliceToNodeMetadata(sliceStateToNodeState, Suppliers
+               .<Set<? extends Image>> ofInstance(images), Suppliers.ofInstance(provider), Suppliers
+               .<Set<? extends Hardware>> ofInstance(hardwares));
 
       NodeMetadata metadata = parser.apply(slice);
-      assertEquals(
-            metadata,
-            new NodeMetadataBuilder()
-                  .state(NodeState.PENDING)
-                  .publicAddresses(ImmutableSet.of("174.143.212.229"))
-                  .privateAddresses(ImmutableSet.of("10.176.164.199"))
-                  .group("jclouds")
-                  .imageId("2")
-                  .hardware(
-                        new HardwareBuilder()
-                              .ids("1")
-                              .name("256 slice")
-                              .processors(ImmutableList.of(new Processor(0.25, 1.0)))
-                              .ram(256)
-                              .volumes(
-                                    ImmutableList.of(new VolumeBuilder().type(Volume.Type.LOCAL).size(1.0f)
-                                          .durable(true).bootDevice(true).build())).build())
-                  .operatingSystem(
+      assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
+               ImmutableSet.of("174.143.212.229")).privateAddresses(ImmutableSet.of("10.176.164.199")).group("jclouds")
+               .imageId("2").hardware(
+                        new HardwareBuilder().ids("1").name("256 slice").processors(
+                                 ImmutableList.of(new Processor(0.25, 1.0))).ram(256).volumes(
+                                 ImmutableList.of(new VolumeBuilder().type(Volume.Type.LOCAL).size(1.0f).durable(true)
+                                          .bootDevice(true).build())).build()).operatingSystem(
                         new OperatingSystem.Builder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2")
-                              .is64Bit(true).build()).id("1").providerId("1").name("jclouds-foo")
-                  .hostname("jclouds-foo").location(provider)
-                  .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
+                                 .is64Bit(true).build()).id("1").providerId("1").name("jclouds-foo").hostname(
+                        "jclouds-foo").location(provider).userMetadata(
+                        ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
    }
 }
