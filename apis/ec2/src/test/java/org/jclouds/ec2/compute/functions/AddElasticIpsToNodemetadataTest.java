@@ -45,14 +45,14 @@ public class AddElasticIpsToNodemetadataTest {
             .build();
 
    @Test
-   public void testReturnsNodeWithExtraIpWhenFoundInCacheAndNodeHadAPublicIp() throws Exception {
+   public void testReturnsNodeWithElasticIpWhenFoundInCacheAndNodeHadAPublicIp() throws Exception {
       RegionAndName key = new RegionAndName("us-east-1", node.getProviderId());
       String val = "1.1.1.1";
       LoadingCache<RegionAndName, String> cache = cacheOf(key, val);
 
       AddElasticIpsToNodemetadata fn = new AddElasticIpsToNodemetadata(cache);
 
-      assertEquals(fn.apply(node).getPublicAddresses(), ImmutableSet.of("174.129.173.155", "1.1.1.1"));
+      assertEquals(fn.apply(node).getPublicAddresses(), ImmutableSet.of("1.1.1.1"));
    }
 
    @Test
