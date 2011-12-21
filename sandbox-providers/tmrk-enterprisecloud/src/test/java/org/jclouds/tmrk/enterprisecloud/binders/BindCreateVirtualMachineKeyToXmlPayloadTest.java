@@ -26,10 +26,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.tmrk.enterprisecloud.domain.NamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.internal.ResourceCapacity;
 import org.jclouds.tmrk.enterprisecloud.domain.layout.LayoutRequest;
-import org.jclouds.tmrk.enterprisecloud.domain.network.LinuxCustomization;
-import org.jclouds.tmrk.enterprisecloud.domain.network.NetworkAdapterSetting;
-import org.jclouds.tmrk.enterprisecloud.domain.network.NetworkAdapterSettings;
-import org.jclouds.tmrk.enterprisecloud.domain.network.NetworkSettings;
+import org.jclouds.tmrk.enterprisecloud.domain.network.*;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.CreateVirtualMachine;
 import org.testng.annotations.Test;
 
@@ -67,6 +64,10 @@ public class BindCreateVirtualMachineKeyToXmlPayloadTest {
                            "<IpAddress>10.146.204.68</IpAddress>" +
                      "</NetworkAdapter>" +
                   "</NetworkAdapterSettings>" +
+                  "<DnsSettings>" +
+                     "<PrimaryDns>1.2.3.4</PrimaryDns>" +
+                     "<SecondaryDns>5.6.7.8</SecondaryDns>" +
+                  "</DnsSettings>" +
                "</NetworkSettings>" +
                "<SshKey href='/cloudapi/ecloud/admin/sshkeys/77' type='application/vnd.tmrk.cloud.admin.sshKey'/>" +
             "</LinuxCustomization>" +
@@ -102,7 +103,9 @@ public class BindCreateVirtualMachineKeyToXmlPayloadTest {
 
       NetworkAdapterSettings adapterSettings = NetworkAdapterSettings.builder()
                                                                      .addNetworkAdapterSetting(adapterSetting).build();
-      NetworkSettings networkSettings = NetworkSettings.builder().networkAdapterSettings(adapterSettings).build();
+      NetworkSettings networkSettings = NetworkSettings.builder().networkAdapterSettings(adapterSettings)
+            .dnsSettings(DnsSettings.builder().primaryDns("1.2.3.4").secondaryDns("5.6.7.8").build())
+            .build();
 
       LinuxCustomization linuxCustomization = LinuxCustomization.builder()
             .sshKey(sshKey)

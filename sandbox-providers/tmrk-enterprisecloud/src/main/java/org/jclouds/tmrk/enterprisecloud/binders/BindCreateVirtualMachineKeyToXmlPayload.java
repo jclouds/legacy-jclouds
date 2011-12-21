@@ -24,9 +24,7 @@ import org.jclouds.rest.Binder;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.tmrk.enterprisecloud.domain.NamedResource;
 import org.jclouds.tmrk.enterprisecloud.domain.layout.LayoutRequest;
-import org.jclouds.tmrk.enterprisecloud.domain.network.LinuxCustomization;
-import org.jclouds.tmrk.enterprisecloud.domain.network.NetworkAdapterSetting;
-import org.jclouds.tmrk.enterprisecloud.domain.network.WindowsCustomization;
+import org.jclouds.tmrk.enterprisecloud.domain.network.*;
 import org.jclouds.tmrk.enterprisecloud.domain.vm.CreateVirtualMachine;
 
 import javax.inject.Inject;
@@ -135,14 +133,17 @@ public class BindCreateVirtualMachineKeyToXmlPayload implements Binder {
        in = in.e("LinuxCustomization")
                .e("NetworkSettings")
                  .e("NetworkAdapterSettings");
+
       for(NetworkAdapterSetting setting:linuxCustomization.getNetworkSettings().getNetworkAdapterSettings().getNetworkAdapterSettings()) {
           in = networkAdapterSetting(in,setting);
       }
 
-      //TODO DNS Settings
+      in = in.up();
+      in = dnsSettings(in, linuxCustomization.getNetworkSettings().getDnsSettings());
+      
       String href = linuxCustomization.getSshKey().getHref().toString();
       String type = linuxCustomization.getSshKey().getType();
-      return in.up().up().e("SshKey").a("href",href).a("type",type).up().up();
+      return in.up().e("SshKey").a("href",href).a("type",type).up().up();
    }
 
    private XMLBuilder networkAdapterSetting(XMLBuilder builder, NetworkAdapterSetting setting) {
@@ -153,6 +154,18 @@ public class BindCreateVirtualMachineKeyToXmlPayload implements Binder {
                 .e("Network").a("href",href).a("name",name).a("type",type).up()
                 .e("IpAddress").t(setting.getIpAddress()).up();
       return builder;
+   }
+   
+   private XMLBuilder dnsSettings(XMLBuilder in, DnsSettings dnsSettings) {
+      if(dnsSettings==null)return in;
+      final String primary   = dnsSettings.getPrimaryDns();
+      final String secondary = dnsSettings.getSecondaryDns();
+
+      in = in.e("DnsSettings").e("PrimaryDns").t(primary).up();
+      if(secondary!=null && !secondary.isEmpty()) {
+         in = in.e("SecondaryDns").t(secondary).up();
+      }
+      return in.up();
    }
    
    private XMLBuilder windowsCustomization(XMLBuilder builder, CreateVirtualMachine vmData) {

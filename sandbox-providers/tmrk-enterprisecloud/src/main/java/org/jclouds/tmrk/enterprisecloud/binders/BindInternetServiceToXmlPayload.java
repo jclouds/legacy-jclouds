@@ -23,6 +23,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.tmrk.enterprisecloud.domain.NamedResource;
+import org.jclouds.tmrk.enterprisecloud.domain.service.Protocol;
 import org.jclouds.tmrk.enterprisecloud.domain.service.internet.InternetService;
 import org.jclouds.tmrk.enterprisecloud.domain.service.internet.InternetServicePersistenceType;
 
@@ -36,17 +37,23 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * For use with {@see VirtualMachineClient#createVirtualMachineFromTemplate}
+ * For use with {@see org.jclouds.tmrk.enterprisecloud.features.InternetServiceClient#editInternetService}
  * @author Jason King
  */
 @Singleton
 public class BindInternetServiceToXmlPayload implements Binder {
 
    private final BindToStringPayload stringBinder;
-
+   private final String rootElement;
+   
    @Inject
    BindInternetServiceToXmlPayload(BindToStringPayload stringBinder) {
+      this(stringBinder,"InternetService");
+   }
+   
+   protected BindInternetServiceToXmlPayload(BindToStringPayload stringBinder, String rootElement) {
       this.stringBinder = stringBinder;
+      this.rootElement = rootElement;
    }
 
    @Override
@@ -65,6 +72,8 @@ public class BindInternetServiceToXmlPayload implements Binder {
          outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
          
          final String name = checkNotNull(data.getName(), "name");
+         final Protocol protocol = data.getProtocol();
+         final int port = data.getPort();
          final String enabled = Boolean.toString(data.isEnabled());
          final String description = data.getDescription();
          final InternetServicePersistenceType persistence = data.getPersistence();
@@ -72,18 +81,29 @@ public class BindInternetServiceToXmlPayload implements Binder {
          final NamedResource trustedNetworkGroup = data.getTrustedNetworkGroup();
          final NamedResource backupInternetService = data.getBackupInternetService();
 
+         XMLBuilder builder = XMLBuilder.create(rootElement).a("name", name);
+         
+         if(protocol!=null) {
+            builder = builder.e("Protocol").t(protocol.value()).up();
+         }
 
-         XMLBuilder builder = XMLBuilder.create("InternetService").a("name", name)
-                                           .e("Enabled").t(enabled).up();
+         if(port>0) {
+            builder = builder.e("Port").t(Integer.toString(port)).up();
+         }
+         
+         builder = builder.e("Enabled").t(enabled).up();
+
          if(description!=null) {
             builder = builder.e("Description").t(description).up();
          }
-
+         //TODO: Public IP
          builder = persistence(builder,persistence);
 
          if(redirectUrl!=null) {
             builder = builder.e("RedirectUrl").t(redirectUrl);
          }
+         
+         //TODO: Monitor
 
          if(trustedNetworkGroup!=null) {
             final String href = trustedNetworkGroup.getHref().toString();
@@ -98,6 +118,8 @@ public class BindInternetServiceToXmlPayload implements Binder {
             String type = backupInternetService.getType();
             builder = builder.e("BackupInternetService").a("href",href).a("name",groupName).a("type",type).up();
          }
+         
+         //TODO: NodeServices
          
          return builder.asString(outputProperties);
       } catch (ParserConfigurationException e) {

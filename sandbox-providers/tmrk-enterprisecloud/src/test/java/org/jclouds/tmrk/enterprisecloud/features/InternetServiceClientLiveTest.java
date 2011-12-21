@@ -18,15 +18,18 @@
  */
 package org.jclouds.tmrk.enterprisecloud.features;
 
+import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.tmrk.enterprisecloud.domain.Task;
+import org.jclouds.tmrk.enterprisecloud.domain.service.Protocol;
 import org.jclouds.tmrk.enterprisecloud.domain.service.internet.InternetService;
+import org.jclouds.tmrk.enterprisecloud.domain.service.internet.InternetServicePersistenceType;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import java.net.URI;
 
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
+import static org.jclouds.tmrk.enterprisecloud.predicates.TaskPredicates.completeOrSuccess;
+import static org.testng.Assert.*;
 
 /**
  * Tests behavior of {@code InternetServiceClient}
@@ -39,43 +42,48 @@ public class InternetServiceClientLiveTest extends BaseTerremarkEnterpriseCloudC
    public void setupClient() {
       super.setupClient();
       client = context.getApi().getInternetServiceClient();
+      taskClient = context.getApi().getTaskClient();
    }
 
    private InternetServiceClient client;
+   private TaskClient taskClient;
 
-   public void testGetInternetService() throws Exception {
-      //TODO: The URI should come from the environment
-      //TODO: Should create a new service edit it then delete it.
-      //TODO: Need a retryable predicate to wait until the task is done.
-      URI uri = URI.create("/cloudapi/ecloud/internetservices/797");
-      InternetService internetService = client.getInternetService(uri);
-      assertNotNull(internetService);
-      /*
-      final String originalName = internetService.getName();
-      final String newName = originalName+"edited";
-      boolean enable = !internetService.isEnabled();
+   public void testInternetServiceCalls() {
+      InternetService service = InternetService.builder()
+            .name("live test")
+            .href(URI.create(""))
+            .protocol(Protocol.TCP)
+            .port(2020)
+            .enabled(true)
+            .persistence(InternetServicePersistenceType.builder().persistenceType(InternetServicePersistenceType.PersistenceType.NONE).build())
+            .build();
 
-      // Change the name and enabled flag
-      testEditInternetService(internetService.getHref(),newName,enable);
-      internetService = client.getInternetService(uri);
-      assertEquals(internetService.getName(),newName);
-      assertEquals(internetService.isEnabled(),enable);
+      // TODO: Fetch a public ip from the environment
+      // This has a method not allowed error - needs debugging.
+      URI uri = URI.create("/cloudapi/ecloud/publicips/3929");
+      InternetService internetService = client.createInternetService(uri, service);
+      System.out.println("service:"+internetService);
 
-      // Change it back again
-      enable = !internetService.isEnabled();
-      testEditInternetService(internetService.getHref(),originalName,enable);
-      assertEquals(internetService.getName(),originalName);
-      assertEquals(internetService.isEnabled(),enable);
-      */
+      InternetService editServiceData = InternetService.builder().href(uri).name("testName").enabled(false).build();
+
+      Task editTask = client.editInternetService(editServiceData);
+      System.out.println("Task:"+editTask);
+      RetryablePredicate retryablePredicate = new RetryablePredicate(completeOrSuccess(taskClient), 1000*60);
+      if (!retryablePredicate.apply(editTask)) {
+         fail("Did not manage to edit service:"+editTask);
+      }
+
+      InternetService editedService = client.getInternetService(internetService.getHref());
+      assertEquals(editedService.getName(),"testName");
+      assertFalse(editedService.isEnabled());
+
+      Task removeTask = client.removeInternetService(internetService.getHref());
+      if (!retryablePredicate.apply(removeTask)) {
+         fail("Did not manage to remove service:"+removeTask);
+      }
    }
 
    public void testGetMissingInternetService() {
       assertNull(client.getInternetService(URI.create("/cloudapi/ecloud/internetservices/-1")));
-   }
-
-   private void testEditInternetService(URI uri, String name, boolean enable) {
-      InternetService service = InternetService.builder().href(uri).name(name).enabled(enable).build();
-      Task task = client.editInternetService(service);
-      //TODO: Wait for task to complete.
    }
 }
