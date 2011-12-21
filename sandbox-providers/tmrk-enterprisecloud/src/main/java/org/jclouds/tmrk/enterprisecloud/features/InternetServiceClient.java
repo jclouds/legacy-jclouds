@@ -40,7 +40,7 @@ public interface InternetServiceClient {
 
    
    /**
-    * getInternetService call returns information regarding a specified Internet service defined in an environment.
+    * The getInternetService call returns information regarding a specified Internet service defined in an environment.
     * @param uri the uri of the internet service
     *  e.g. /cloudapi/ecloud/internetservices/{internet service id}
     * @return the internet service
@@ -98,4 +98,14 @@ public interface InternetServiceClient {
     * @return
     */
    InternetService createInternetService(URI uri, InternetService data);
+
+   /**
+    * The removeInternetService call removes an Internet service from an environment.
+    * If successful, the call returns the task that removed the Internet service.
+    * Note: The Internet service must have no node services associated to remove.
+    * @param uri the uri of the call based on the internet service
+    *   e.g. /cloudapi/ecloud/internetServices/{internet service identifier}
+    * @return
+    */
+   Task removeInternetService(URI uri);
 }

@@ -113,6 +113,25 @@ public class InternetServiceAsyncClientTest extends BaseTerremarkEnterpriseCloud
 
       checkFilters(httpRequest);
    }
+
+   public void testRemoveInternetService() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = InternetServiceAsyncClient.class.getMethod("removeInternetService", URI.class);
+
+      URI uri = URI.create("/cloudapi/ecloud/internetServices/123");
+
+      HttpRequest httpRequest = processor.createRequest(method, uri);
+
+      String requestLine = "DELETE https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/internetServices/123 HTTP/1.1";
+      assertRequestLineEquals(httpRequest, requestLine);
+      assertNonPayloadHeadersEqual(httpRequest,
+            "Accept: application/vnd.tmrk.cloud.task\nx-tmrk-version: 2011-07-01\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
    
    @Override
    protected TypeLiteral<RestAnnotationProcessor<InternetServiceAsyncClient>> createTypeLiteral() {

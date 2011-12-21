@@ -73,5 +73,15 @@ public interface InternetServiceAsyncClient {
    @Consumes("application/vnd.tmrk.cloud.internetService")
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   InternetService createInternetService(@EndpointParam URI uri, @BinderParam(BindCreateInternetServiceToXmlPayload.class)InternetService data);
+   ListenableFuture<InternetService> createInternetService(@EndpointParam URI uri, @BinderParam(BindCreateInternetServiceToXmlPayload.class)InternetService data);
+
+   /**
+    * @see org.jclouds.tmrk.enterprisecloud.features.InternetServiceClient#removeInternetService
+    */
+   @DELETE
+   @Consumes("application/vnd.tmrk.cloud.task")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Task> removeInternetService(@EndpointParam URI uri);
+
 }
