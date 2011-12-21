@@ -145,6 +145,14 @@ public class DriveInfo extends Drive {
        * {@inheritDoc}
        */
       @Override
+      public Builder tags(Iterable<String> tags) {
+          return Builder.class.cast(super.tags(tags));
+      }
+      
+      /**
+       * {@inheritDoc}
+       */
+      @Override
       public Builder readers(Iterable<String> readers) {
          return Builder.class.cast(super.readers(readers));
       }
