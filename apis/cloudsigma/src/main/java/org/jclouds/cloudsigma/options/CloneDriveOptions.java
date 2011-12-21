@@ -49,6 +49,7 @@ import com.google.common.collect.Sets;
  * 
  */
 public class CloneDriveOptions {
+   private final String SSD_AFFINITY_TAG = "affinity:ssd";
    private final Map<String, String> options = Maps.newLinkedHashMap();
 
    /**
@@ -60,12 +61,26 @@ public class CloneDriveOptions {
       return this;
    }
 
+   public CloneDriveOptions tags(Iterable<String> tags) {
+      // Affinity is conveyed using regular tags; make sure to preserve any already-set affinity tag.
+      String currentTagsString = options.remove("tags");
+      Set<String> currentTags = (currentTagsString == null) ? new HashSet<String>() :
+         Sets.newHashSet(Splitter.on(' ').split(currentTagsString));
+
+      Set<String> newTags = Sets.newHashSet(tags);
+      if (currentTags.contains(SSD_AFFINITY_TAG)) {
+          newTags.add(SSD_AFFINITY_TAG);
+      }
+      
+      options.put("tags", Joiner.on(' ').join(newTags));
+      return this;
+   }
+   
    /**
-    * specifies whether the new drive has 'HDD' affinity (the default) or 'SSD' (for solid-state drives)
+    * Specifies whether the new drive has 'HDD' affinity (the default) or 'SSD' (for solid-state drives).
+    * Affinity is conveyed via a special value among the drive's tags. 
     */
    public CloneDriveOptions affinity(AffinityType affinity) {
-      final String SSD_AFFINITY_TAG = "affinity:ssd";
-      
       // Affinity is conveyed using regular tags; make sure to avoid multiple affinity tags in the options.
       String currentTagsString = options.remove("tags");
       Set<String> tags = (currentTagsString == null) ? new HashSet<String>() :
@@ -97,6 +112,14 @@ public class CloneDriveOptions {
       public static CloneDriveOptions size(long size) {
          CloneDriveOptions options = new CloneDriveOptions();
          return options.size(size);
+      }
+      
+      /**
+       * @see CloneDriveOptions#tags
+       */
+      public static CloneDriveOptions tags(Iterable<String> tags) {
+          CloneDriveOptions options = new CloneDriveOptions();
+          return options.tags(tags);
       }
 
       /**
