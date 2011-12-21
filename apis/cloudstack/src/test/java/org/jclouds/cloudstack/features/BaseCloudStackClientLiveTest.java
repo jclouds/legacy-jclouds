@@ -18,13 +18,17 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
+import static com.google.common.base.Strings.emptyToNull;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.get;
+import static org.testng.Assert.assertEquals;
+
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.CloudStackContext;
@@ -50,7 +54,7 @@ import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
@@ -61,16 +65,13 @@ import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 
-import java.util.NoSuchElementException;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
-
-import static com.google.common.base.Strings.emptyToNull;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.get;
-import static org.testng.Assert.assertEquals;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * 
@@ -181,7 +182,7 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
    
    protected void checkSSH(IPSocket socket) {
       socketTester.apply(socket);
-      SshClient client = sshFactory.create(socket, new Credentials("root", password));
+      SshClient client = sshFactory.create(socket, LoginCredentials.builder().user("root").password(password).build());
       try {
          client.connect();
          ExecResponse exec = client.exec("echo hello");

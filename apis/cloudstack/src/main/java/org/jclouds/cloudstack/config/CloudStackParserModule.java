@@ -19,20 +19,18 @@
 package org.jclouds.cloudstack.config;
 
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Singleton;
 
-import com.google.common.collect.Sets;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.Account.State;
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
 import org.jclouds.cloudstack.domain.User;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;

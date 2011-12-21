@@ -38,7 +38,7 @@ public class ClassLoadingUtils {
      * @return The class or null if no class loader could load the class.
      */
     public static Class<?> loadClass(Class<?> contextClass, String className) {
-        Class clazz = null;
+        Class<?> clazz = null;
         if (contextClass.getClassLoader() != null) {
             clazz = silentLoadClass(className, contextClass.getClassLoader());
         }
@@ -58,7 +58,7 @@ public class ClassLoadingUtils {
      * @param resourceName
      * @return
      */
-    public static URL loadResource(Class contextClass, String resourceName) {
+    public static URL loadResource(Class<?> contextClass, String resourceName) {
         URL url = null;
         if (contextClass != null) {
             url = Resources.getResource(contextClass, resourceName);
@@ -79,7 +79,7 @@ public class ClassLoadingUtils {
      * @return
      */
     private static Class<?> silentLoadClass(String className, ClassLoader classLoader) {
-        Class clazz = null;
+        Class<?> clazz = null;
         if (classLoader != null && className != null) {
             try {
                 clazz = classLoader.loadClass(className);

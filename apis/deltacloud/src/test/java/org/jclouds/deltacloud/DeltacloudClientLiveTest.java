@@ -30,7 +30,7 @@ import org.jclouds.deltacloud.domain.PasswordAuthentication;
 import org.jclouds.deltacloud.domain.Transition;
 import org.jclouds.deltacloud.domain.TransitionOnAction;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
@@ -52,7 +52,7 @@ public class DeltacloudClientLiveTest extends ReadOnlyDeltacloudClientLiveTest {
 
    protected String prefix = System.getProperty("user.name") + ".test";
    protected Instance instance;
-   protected Credentials creds;
+   protected LoginCredentials creds;
 
    public void testCreateInstance() throws Exception {
       Logger.getAnonymousLogger().info("starting instance");
@@ -133,7 +133,7 @@ public class DeltacloudClientLiveTest extends ReadOnlyDeltacloudClientLiveTest {
       assert refreshInstance() == null;
    }
 
-   protected void doConnectViaSsh(Instance instance, Credentials creds) throws IOException {
+   protected void doConnectViaSsh(Instance instance, LoginCredentials creds) throws IOException {
       SshClient ssh = Guice.createInjector(new SshjSshClientModule()).getInstance(SshClient.Factory.class).create(
                new IPSocket(Iterables.get(instance.getPublicAddresses(), 0), 22), creds);
       try {

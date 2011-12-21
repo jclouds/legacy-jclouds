@@ -19,8 +19,6 @@
 package org.jclouds.aws.ec2;
 
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUERY;
-import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY;
-import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMIs;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 import static org.testng.Assert.assertEquals;
 
@@ -33,13 +31,6 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", testName = "AWSEC2PropertiesBuilderTest")
 public class AWSEC2PropertiesBuilderTest {
-   public void testConvertCCImageSyntax() {
-      Properties input = new Properties();
-      input.setProperty(PROPERTY_EC2_CC_AMIs, "us-east-1/ami-321eed5b,us-east-1/ami-7ea24a17");
-      Properties props = new AWSEC2PropertiesBuilder(input).build();
-      assertEquals(props.getProperty(PROPERTY_EC2_CC_AMIs), null);
-      assertEquals(props.getProperty(PROPERTY_EC2_CC_AMI_QUERY), "image-id=ami-321eed5b,ami-7ea24a17");
-   }
 
    public void testConvertImageSyntax() {
       Properties input = new Properties();

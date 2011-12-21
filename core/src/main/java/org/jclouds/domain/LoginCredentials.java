@@ -18,15 +18,24 @@
  */
 package org.jclouds.domain;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.util.CredentialUtils;
+
+import com.google.common.base.Optional;
 
 /**
  * @author Adrian Cole
  */
 public class LoginCredentials extends Credentials {
+   
+   public static LoginCredentials fromCredentials(Credentials creds) {
+      if (creds == null)
+         return null;
+      if (creds instanceof LoginCredentials)
+         return LoginCredentials.class.cast(creds);
+      return builder(creds).build();
+   }
+
    public static Builder builder(Credentials creds) {
       if (creds == null)
          return builder();

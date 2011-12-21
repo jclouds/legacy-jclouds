@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.Constants;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -285,7 +285,7 @@ public class SlicehostClientLiveTest {
       IPSocket socket = new IPSocket(ip, 22);
       socketTester.apply(socket);
 
-      SshClient client = sshFactory.create(socket, new Credentials("root", pass));
+      SshClient client = sshFactory.create(socket, LoginCredentials.builder().user("root").password(pass).build());
       try {
          client.connect();
          client.put("/etc/jclouds.txt", Payloads.newStringPayload("slicehost"));

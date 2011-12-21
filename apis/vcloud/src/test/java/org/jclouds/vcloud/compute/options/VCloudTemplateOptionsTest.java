@@ -18,19 +18,16 @@
  */
 package org.jclouds.vcloud.compute.options;
 
-import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.authorizePublicKey;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.blockOnPort;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.customizationScript;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.description;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.inboundPorts;
-import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.installPrivateKey;
 import static org.jclouds.vcloud.compute.options.VCloudTemplateOptions.Builder.ipAddressAllocationMode;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.io.Payloads;
 import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
 import org.testng.annotations.Test;
 
@@ -116,17 +113,6 @@ public class VCloudTemplateOptionsTest {
    }
 
    @Test
-   public void testinstallPrivateKeyStatic() throws IOException {
-      VCloudTemplateOptions options = installPrivateKey(Payloads.newPayload("-----BEGIN RSA PRIVATE KEY-----"));
-      assertEquals(options.getPrivateKey(), "-----BEGIN RSA PRIVATE KEY-----");
-   }
-
-   @Test(expectedExceptions = NullPointerException.class)
-   public void testinstallPrivateKeyNPE() {
-      installPrivateKey(null);
-   }
-
-   @Test
    public void testauthorizePublicKey() throws IOException {
       VCloudTemplateOptions options = new VCloudTemplateOptions();
       options.authorizePublicKey("ssh-rsa");
@@ -137,17 +123,6 @@ public class VCloudTemplateOptionsTest {
    public void testNullauthorizePublicKey() {
       VCloudTemplateOptions options = new VCloudTemplateOptions();
       assertEquals(options.getPublicKey(), null);
-   }
-
-   @Test
-   public void testauthorizePublicKeyStatic() throws IOException {
-      VCloudTemplateOptions options = authorizePublicKey(Payloads.newPayload("ssh-rsa"));
-      assertEquals(options.getPublicKey(), "ssh-rsa");
-   }
-
-   @Test(expectedExceptions = NullPointerException.class)
-   public void testauthorizePublicKeyNPE() {
-      authorizePublicKey(null);
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)

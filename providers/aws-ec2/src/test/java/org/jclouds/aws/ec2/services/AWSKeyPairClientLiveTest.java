@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.collect.Sets.newTreeSet;
-import static org.jclouds.compute.options.TemplateOptions.Builder.overrideCredentialsWith;
+import static org.jclouds.compute.options.TemplateOptions.Builder.overrideLoginCredentials;
 import static org.jclouds.compute.predicates.NodePredicates.inGroup;
 import static org.jclouds.compute.predicates.NodePredicates.runningInGroup;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
@@ -144,7 +144,7 @@ public class AWSKeyPairClientLiveTest {
                .runScriptOnNodesMatching(
                      runningInGroup(group),
                      exec("echo hello"),
-                     overrideCredentialsWith(
+                     overrideLoginCredentials(
                            LoginCredentials.builder().user(first.getCredentials().identity)
                                  .privateKey(keyPair.get("private")).build()).wrapInInitScript(false).runAsRoot(false));
 

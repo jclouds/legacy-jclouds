@@ -38,7 +38,8 @@ import java.util.concurrent.TimeoutException;
 import org.easymock.IArgumentMatcher;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.domain.Credentials;
+import org.jclouds.crypto.Pems;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.Payload;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
@@ -111,7 +112,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
                @Override
                public Supplier<Map<String, String>> defaultAdminSshKeys() {
                   return Suppliers.<Map<String, String>> ofInstance(ImmutableMap.of("public", "publicKey", "private",
-                           "privateKey"));
+                        Pems.PRIVATE_PKCS1_MARKER));
                }
 
                @Override
@@ -140,20 +141,29 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             SshClient client4 = createMock(SshClient.class);
             SshClient client5 = createMock(SshClient.class);
 
-            expect(factory.create(new IPSocket("144.175.1.1", 22), new Credentials("root", "password1"))).andReturn(
-                     client1);
-            expect(factory.create(new IPSocket("144.175.1.1", 22), new Credentials("web", "privateKey"))).andReturn(
-                     client1New).times(10);
+            expect(
+                  factory.create(new IPSocket("144.175.1.1", 22),
+                        LoginCredentials.builder().user("root").password("password1").build())).andReturn(client1);
+            expect(
+                  factory.create(new IPSocket("144.175.1.1", 22),
+                        LoginCredentials.builder().user("web").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())).andReturn(client1New)
+                  .times(10);
             runScriptAndService(client1, client1New);
 
-            expect(factory.create(new IPSocket("144.175.1.2", 22), new Credentials("root", "password2"))).andReturn(
-                     client2).times(4);
-            expect(factory.create(new IPSocket("144.175.1.2", 22), new Credentials("root", "password2"))).andReturn(
-                     client2New);
-            expect(factory.create(new IPSocket("144.175.1.2", 22), new Credentials("foo", "privateKey"))).andReturn(
-                     client2Foo);
-            expect(factory.create(new IPSocket("144.175.1.2", 22), new Credentials("root", "romeo"))).andThrow(
-                     new AuthorizationException("Auth fail", null));
+            expect(
+                  factory.create(new IPSocket("144.175.1.2", 22),
+                        LoginCredentials.builder().user("root").password("password2").build())).andReturn(client2)
+                  .times(4);
+            expect(
+                  factory.create(new IPSocket("144.175.1.2", 22),
+                        LoginCredentials.builder().user("root").password("password2").build())).andReturn(client2New);
+            expect(
+                  factory.create(new IPSocket("144.175.1.2", 22),
+                        LoginCredentials.builder().user("foo").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())).andReturn(client2Foo);
+            expect(
+                  factory.create(new IPSocket("144.175.1.2", 22),
+                        LoginCredentials.builder().user("root").password("romeo").build())).andThrow(
+                  new AuthorizationException("Auth fail", null));
 
             // run script without backgrounding (via predicate)
             client2.connect();
@@ -191,32 +201,43 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             expect(client2Foo.exec("echo $USER\n")).andReturn(new ExecResponse("foo\n", "", 0));
             client2Foo.disconnect();
 
-            expect(factory.create(new IPSocket("144.175.1.3", 22), new Credentials("root", "password3"))).andReturn(
-                     client3).times(2);
-            expect(factory.create(new IPSocket("144.175.1.4", 22), new Credentials("root", "password4"))).andReturn(
-                     client4).times(2);
-            expect(factory.create(new IPSocket("144.175.1.5", 22), new Credentials("root", "password5"))).andReturn(
-                     client5).times(2);
+            expect(
+                  factory.create(new IPSocket("144.175.1.3", 22),
+                        LoginCredentials.builder().user("root").password("password3").build())).andReturn(client3)
+                  .times(2);
+            expect(
+                  factory.create(new IPSocket("144.175.1.4", 22),
+                        LoginCredentials.builder().user("root").password("password4").build())).andReturn(client4)
+                  .times(2);
+            expect(
+                  factory.create(new IPSocket("144.175.1.5", 22),
+                        LoginCredentials.builder().user("root").password("password5").build())).andReturn(client5)
+                  .times(2);
 
             runScriptAndInstallSsh(client3, "bootstrap", 3);
             runScriptAndInstallSsh(client4, "bootstrap", 4);
             runScriptAndInstallSsh(client5, "bootstrap", 5);
 
             expect(
-                     factory.create(eq(new IPSocket("144.175.1.1", 22)), eq(new Credentials("defaultAdminUsername",
-                              "privateKey")))).andReturn(client1);
+                  factory.create(eq(new IPSocket("144.175.1.1", 22)),
+                        eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
+                  .andReturn(client1);
             expect(
-                     factory.create(eq(new IPSocket("144.175.1.2", 22)), eq(new Credentials("defaultAdminUsername",
-                              "privateKey")))).andReturn(client2);
+                  factory.create(eq(new IPSocket("144.175.1.2", 22)),
+                        eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
+                  .andReturn(client2);
             expect(
-                     factory.create(eq(new IPSocket("144.175.1.3", 22)), eq(new Credentials("defaultAdminUsername",
-                              "privateKey")))).andReturn(client3);
+                  factory.create(eq(new IPSocket("144.175.1.3", 22)),
+                        eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
+                  .andReturn(client3);
             expect(
-                     factory.create(eq(new IPSocket("144.175.1.4", 22)), eq(new Credentials("defaultAdminUsername",
-                              "privateKey")))).andReturn(client4);
+                  factory.create(eq(new IPSocket("144.175.1.4", 22)),
+                        eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
+                  .andReturn(client4);
             expect(
-                     factory.create(eq(new IPSocket("144.175.1.5", 22)), eq(new Credentials("defaultAdminUsername",
-                              "privateKey")))).andReturn(client5);
+                  factory.create(eq(new IPSocket("144.175.1.5", 22)),
+                        eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
+                  .andReturn(client5);
 
             helloAndJava(client2);
             helloAndJava(client3);

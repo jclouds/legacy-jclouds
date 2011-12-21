@@ -18,7 +18,7 @@
  */
 package org.jclouds.sshj.config;
 
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
@@ -40,7 +40,8 @@ public class SshjSshClientModuleTest {
 
       Injector i = Guice.createInjector(new SshjSshClientModule(), new SLF4JLoggingModule());
       SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
-      SshClient connection = factory.create(new IPSocket("localhost", 22), new Credentials("username", "password"));
+      SshClient connection = factory.create(new IPSocket("localhost", 22), LoginCredentials.builder().user("username")
+            .password("password").build());
       assert connection instanceof SshjSshClient;
    }
 }

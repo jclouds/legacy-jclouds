@@ -38,7 +38,7 @@ import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
  * <p/>
  * ComputeService client = // get connection
  * templateBuilder.options(inboundPorts(22, 80, 8080, 443));
- * Set<? extends NodeMetadata> set = client.runNodesWithTag(tag, 2, templateBuilder.build());
+ * Set<? extends NodeMetadata> set = client.createNodesInGroup(tag, 2, templateBuilder.build());
  * <code>
  * 
  * @author Adrian Cole
@@ -149,22 +149,6 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
       }
 
       /**
-       * @see TemplateOptions#installPrivateKey
-       */
-      public static VCloudTemplateOptions installPrivateKey(Payload rsaKey) {
-         VCloudTemplateOptions options = new VCloudTemplateOptions();
-         return VCloudTemplateOptions.class.cast(options.installPrivateKey(rsaKey));
-      }
-
-      /**
-       * @see TemplateOptions#authorizePublicKey
-       */
-      public static VCloudTemplateOptions authorizePublicKey(Payload rsaKey) {
-         VCloudTemplateOptions options = new VCloudTemplateOptions();
-         return VCloudTemplateOptions.class.cast(options.authorizePublicKey(rsaKey));
-      }
-
-      /**
        * @see TemplateOptions#userMetadata(Map)
        */
       public static VCloudTemplateOptions userMetadata(Map<String, String> userMetadata) {
@@ -236,15 +220,6 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
    }
 
    /**
-    * @see TemplateOptions#authorizePublicKey(Payload)
-    */
-   @Override
-   @Deprecated
-   public VCloudTemplateOptions authorizePublicKey(Payload publicKey) {
-      return VCloudTemplateOptions.class.cast(super.authorizePublicKey(publicKey));
-   }
-
-   /**
     * @see TemplateOptions#installPrivateKey(String)
     */
    @Override
@@ -253,28 +228,11 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
    }
 
    /**
-    * @see TemplateOptions#installPrivateKey(Payload)
-    */
-   @Override
-   @Deprecated
-   public VCloudTemplateOptions installPrivateKey(Payload privateKey) {
-      return VCloudTemplateOptions.class.cast(super.installPrivateKey(privateKey));
-   }
-
-   /**
     * @see TemplateOptions#runScript(Payload)
     */
+   @Deprecated
    @Override
    public VCloudTemplateOptions runScript(Payload script) {
-      return VCloudTemplateOptions.class.cast(super.runScript(script));
-   }
-
-   /**
-    * @see TemplateOptions#runScript(byte[])
-    */
-   @Override
-   @Deprecated
-   public VCloudTemplateOptions runScript(byte[] script) {
       return VCloudTemplateOptions.class.cast(super.runScript(script));
    }
 

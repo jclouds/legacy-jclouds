@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 import org.jclouds.Constants;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.elasticstack.domain.ClaimType;
 import org.jclouds.elasticstack.domain.CreateDriveRequest;
 import org.jclouds.elasticstack.domain.DriveData;
@@ -311,7 +311,7 @@ public class ElasticStackClientLiveTest {
       assertEquals(client.getDriveInfo(drive.getUuid()), null);
    }
 
-   protected void doConnectViaSsh(Server server, Credentials creds) throws IOException {
+   protected void doConnectViaSsh(Server server, LoginCredentials creds) throws IOException {
       SshClient ssh = Guice.createInjector(new SshjSshClientModule()).getInstance(SshClient.Factory.class).create(
                new IPSocket(server.getVnc().getIp(), 22), creds);
       try {
@@ -371,8 +371,8 @@ public class ElasticStackClientLiveTest {
       }
    }
 
-   protected Credentials getSshCredentials(Server server) {
-      return new Credentials("toor", server.getVnc().getPassword());
+   protected LoginCredentials getSshCredentials(Server server) {
+      return LoginCredentials.builder().user("toor").password(server.getVnc().getPassword()).build();
    }
 
    protected void prepareDrive() {

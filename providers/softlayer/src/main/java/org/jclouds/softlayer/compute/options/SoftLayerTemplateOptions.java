@@ -33,7 +33,7 @@ import com.google.common.net.InternetDomainName;
 /**
  * Contains options supported by the
  * {@link ComputeService#createNodesInGroup(String, int, TemplateOptions)} and
- * {@link ComputeService#runNodesWithTag(String, int, TemplateOptions)}
+ * {@link ComputeService#createNodesInGroup(String, int, TemplateOptions)}
  * operations on the <em>gogrid</em> provider.
  * 
  * <h2>Usage</h2> The recommended way to instantiate a
@@ -46,7 +46,7 @@ import com.google.common.net.InternetDomainName;
  * import static org.jclouds.compute.options.SoftLayerTemplateOptions.Builder.*;
  * ComputeService client = // get connection
  * templateBuilder.options(inboundPorts(22, 80, 8080, 443));
- * Set&lt;? extends NodeMetadata&gt; set = client.runNodesWithTag(tag, 2, templateBuilder.build());
+ * Set&lt;? extends NodeMetadata&gt; set = client.createNodesInGroup(tag, 2, templateBuilder.build());
  * </pre>
  * 
  * @author Adrian Cole
@@ -129,24 +129,6 @@ public class SoftLayerTemplateOptions extends TemplateOptions implements Cloneab
       }
 
       /**
-       * @see TemplateOptions#installPrivateKey(Payload)
-       */
-      @Deprecated
-      public static SoftLayerTemplateOptions installPrivateKey(Payload rsaKey) {
-         SoftLayerTemplateOptions options = new SoftLayerTemplateOptions();
-         return SoftLayerTemplateOptions.class.cast(options.installPrivateKey(rsaKey));
-      }
-
-      /**
-       * @see TemplateOptions#authorizePublicKey(Payload)
-       */
-      @Deprecated
-      public static SoftLayerTemplateOptions authorizePublicKey(Payload rsaKey) {
-         SoftLayerTemplateOptions options = new SoftLayerTemplateOptions();
-         return SoftLayerTemplateOptions.class.cast(options.authorizePublicKey(rsaKey));
-      }
-
-      /**
        * @see TemplateOptions#userMetadata(Map)
        */
       public static SoftLayerTemplateOptions userMetadata(Map<String, String> userMetadata) {
@@ -190,15 +172,6 @@ public class SoftLayerTemplateOptions extends TemplateOptions implements Cloneab
    }
 
    /**
-    * @see TemplateOptions#authorizePublicKey(Payload)
-    */
-   @Override
-   @Deprecated
-   public SoftLayerTemplateOptions authorizePublicKey(Payload publicKey) {
-      return SoftLayerTemplateOptions.class.cast(super.authorizePublicKey(publicKey));
-   }
-
-   /**
     * @see TemplateOptions#installPrivateKey(String)
     */
    @Override
@@ -207,28 +180,11 @@ public class SoftLayerTemplateOptions extends TemplateOptions implements Cloneab
    }
 
    /**
-    * @see TemplateOptions#installPrivateKey(Payload)
-    */
-   @Override
-   @Deprecated
-   public SoftLayerTemplateOptions installPrivateKey(Payload privateKey) {
-      return SoftLayerTemplateOptions.class.cast(super.installPrivateKey(privateKey));
-   }
-
-   /**
     * @see TemplateOptions#runScript(Payload)
     */
+   @Deprecated
    @Override
    public SoftLayerTemplateOptions runScript(Payload script) {
-      return SoftLayerTemplateOptions.class.cast(super.runScript(script));
-   }
-
-   /**
-    * @see TemplateOptions#runScript(byte[])
-    */
-   @Override
-   @Deprecated
-   public SoftLayerTemplateOptions runScript(byte[] script) {
       return SoftLayerTemplateOptions.class.cast(super.runScript(script));
    }
 

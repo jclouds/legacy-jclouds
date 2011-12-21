@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.cim.OSType;
 import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
@@ -40,7 +40,6 @@ import org.jclouds.savvis.vpdc.domain.VMSpec;
 import org.jclouds.savvis.vpdc.options.GetVMOptions;
 import org.jclouds.savvis.vpdc.reference.VCloudMediaType;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.util.InetAddresses2;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -49,7 +48,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
-import com.google.common.net.HostSpecifier;
 
 @Test(groups = "live")
 public class VMClientLiveTest extends BaseVPDCClientLiveTest {
@@ -279,22 +277,10 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
        assert clonedVM.getHref() != null : clonedVM;
    }
 
-   private void conditionallyCheckSSH() {
-      String ip = Iterables.get(vm.getNetworkConnectionSections(), 0).getIpAddress();
-      assert HostSpecifier.isValid(ip);
-      if (InetAddresses2.isPrivateIPAddress(ip)) {
-         ip = Iterables.get(vm.getNetworkConfigSections(), 0).getInternalToExternalNATRules().get(ip);
-      }
-      // not sure if the network is public or not, so we have to test
-      IPSocket socket = new IPSocket(ip, 22);
-      System.err.printf("testing socket %s%n", socket);
-      System.err.printf("testing ssh %s%n", socket);
-      checkSSH(socket);
-   }
-
    protected void checkSSH(IPSocket socket) {
       socketTester.apply(socket);
-      SshClient client = context.utils().sshFactory().create(socket, new Credentials(username, password));
+      SshClient client = context.utils().sshFactory()
+            .create(socket, LoginCredentials.builder().user(username).password(password).build());
       try {
          client.connect();
          ExecResponse exec = client.exec("echo hello");

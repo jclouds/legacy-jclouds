@@ -55,6 +55,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
@@ -172,7 +173,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
       doConnectViaSsh(socket, prioritizeCredentialsFromTemplate.apply(template, vm.getCredentials()));
    }
 
-   protected void doConnectViaSsh(IPSocket socket, Credentials creds) {
+   protected void doConnectViaSsh(IPSocket socket, LoginCredentials creds) {
       SshClient ssh = computeContext.utils().sshFactory().create(socket, creds);
       try {
          connectWithRetry(ssh, 5, 2000);

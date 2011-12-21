@@ -20,12 +20,10 @@ package org.jclouds.cloudstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collections;
 import java.util.Set;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import com.google.gson.annotations.SerializedName;
 
 /**

@@ -23,6 +23,7 @@
   (:import
    org.jclouds.ssh.SshClient
    org.jclouds.domain.Credentials
+   org.jclouds.domain.LoginCredentials
    org.jclouds.io.Payload
    org.jclouds.net.IPSocket
    org.jclouds.compute.domain.ExecResponse))
@@ -77,16 +78,12 @@
     [factory-fn]
   org.jclouds.ssh.SshClient$Factory
   (^org.jclouds.ssh.SshClient
-   create
-   [_ ^IPSocket socket ^String username ^String password-or-key]
-   (factory-fn socket username password-or-key))
-  (^org.jclouds.ssh.SshClient
-   create
-   [_ ^IPSocket socket ^String username ^bytes password-or-key]
-   (factory-fn socket username password-or-key))
-  (^org.jclouds.ssh.SshClient
      create
      [_ ^IPSocket socket ^Credentials credentials]
+     (factory-fn socket (.identity credentials) (.credential credentials)))
+  (^org.jclouds.ssh.SshClient
+     create
+     [_ ^IPSocket socket ^LoginCredentials credentials]
      (factory-fn socket (.identity credentials) (.credential credentials)))
   )
 

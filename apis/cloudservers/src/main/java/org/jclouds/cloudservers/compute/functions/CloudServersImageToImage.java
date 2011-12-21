@@ -24,7 +24,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 
 import com.google.common.base.Function;
 
@@ -48,7 +48,7 @@ public class CloudServersImageToImage implements Function<org.jclouds.cloudserve
       builder.description(from.getName());
       builder.version(from.getUpdated().getTime() + "");
       builder.operatingSystem(imageToOs.apply(from));
-      builder.defaultCredentials(new Credentials("root", null));
+      builder.defaultCredentials(LoginCredentials.builder().user("root").build());
       Image image = builder.build();
       return image;
    }

@@ -37,7 +37,7 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.Constants;
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.Image;
@@ -303,7 +303,7 @@ public class EBSBootEC2ClientLiveTest {
    @Test(enabled = false, dependsOnMethods = "testCreateAndAttachVolume")
    void testBundleInstance() {
       SshClient ssh = sshFactory.create(new IPSocket(instance.getIpAddress(), 22),
-            new Credentials("ubuntu", keyPair.getKeyMaterial()));
+            LoginCredentials.builder().user("ubuntu").privateKey(keyPair.getKeyMaterial()).build());
       try {
          ssh.connect();
       } catch (SshException e) {// try twice in case there is a network timeout
@@ -539,7 +539,8 @@ public class EBSBootEC2ClientLiveTest {
    }
 
    private void doCheckKey(String address) {
-      SshClient ssh = sshFactory.create(new IPSocket(address, 22), new Credentials("ubuntu", keyPair.getKeyMaterial()));
+      SshClient ssh = sshFactory.create(new IPSocket(address, 22),
+            LoginCredentials.builder().user("ubuntu").privateKey(keyPair.getKeyMaterial()).build());
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");

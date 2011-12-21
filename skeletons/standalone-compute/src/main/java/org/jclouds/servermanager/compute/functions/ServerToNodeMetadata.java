@@ -87,7 +87,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       builder.state(serverStatusToNodeState.get(from.status));
       builder.publicAddresses(ImmutableSet.<String> of(from.publicAddress));
       builder.privateAddresses(ImmutableSet.<String> of(from.privateAddress));
-      builder.credentials(LoginCredentials.builder(credentialStore.get(from.id + "")).build());
+      builder.credentials(LoginCredentials.fromCredentials(credentialStore.get(from.id + "")));
       return builder.build();
    }
 

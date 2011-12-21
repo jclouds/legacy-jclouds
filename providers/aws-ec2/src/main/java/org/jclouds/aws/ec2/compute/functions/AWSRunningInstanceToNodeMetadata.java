@@ -60,12 +60,12 @@ public class AWSRunningInstanceToNodeMetadata extends RunningInstanceToNodeMetad
 
    @Override
    protected void addCredentialsForInstance(NodeMetadataBuilder builder, RunningInstance instance) {
-      LoginCredentials creds = LoginCredentials.builder(
-            credentialStore.get("node#" + instance.getRegion() + "/" + instance.getId())).build();
+      LoginCredentials creds = LoginCredentials.fromCredentials(credentialStore.get("node#" + instance.getRegion()
+            + "/" + instance.getId()));
       String spotRequestId = AWSRunningInstance.class.cast(instance).getSpotInstanceRequestId();
       if (creds == null && spotRequestId != null) {
-         creds = LoginCredentials.builder(credentialStore.get("node#" + instance.getRegion() + "/" + spotRequestId))
-               .build();
+         creds = LoginCredentials.fromCredentials(credentialStore.get("node#" + instance.getRegion() + "/"
+               + spotRequestId));
          if (creds != null)
             credentialStore.put("node#" + instance.getRegion() + "/" + instance.getId(), creds);
       }

@@ -23,6 +23,7 @@ import javax.annotation.PreDestroy;
 
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.Payload;
 import org.jclouds.net.IPSocket;
 
@@ -32,23 +33,16 @@ import org.jclouds.net.IPSocket;
 public interface SshClient {
 
    interface Factory {
-      /**
-       * please use {@link Factory#create(IPSocket, Credentials)}
-       * 
-       * @return
-       */
-      @Deprecated
-      SshClient create(IPSocket socket, String username, String password);
 
       /**
-       * please use {@link Factory#create(IPSocket, Credentials)}
+       * To be removed in jclouds 1.5.0
        * 
-       * @return
+       * @see #create(IPSocket, LoginCredentials)
        */
       @Deprecated
-      SshClient create(IPSocket socket, String username, byte[] privateKey);
-
       SshClient create(IPSocket socket, Credentials credentials);
+      
+      SshClient create(IPSocket socket, LoginCredentials credentials);
 
    }
 

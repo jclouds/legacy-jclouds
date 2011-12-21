@@ -84,8 +84,8 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
       Credentials fromApi = getCredentialsFrom(from);
       if (fromApi != null && !credentialStore.containsKey("node#" + from.getHref().toASCIIString()))
          credentialStore.put("node#" + from.getHref().toASCIIString(), fromApi);
-      builder.credentials(LoginCredentials.builder(credentialStore.get("node#" + from.getHref().toASCIIString()))
-            .build());
+      builder.credentials(LoginCredentials.fromCredentials(credentialStore
+            .get("node#" + from.getHref().toASCIIString())));
       return builder.build();
    }
 }

@@ -35,7 +35,6 @@ import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
-import org.jclouds.io.Payload;
 import org.jclouds.scriptbuilder.domain.Statement;
 
 import com.google.common.annotations.Beta;
@@ -151,25 +150,6 @@ public interface ComputeService {
    Set<? extends NodeMetadata> createNodesInGroup(String group, int count) throws RunNodesException;
 
    /**
-    * @see #createNodesInGroup(String , int , Template )
-    */
-   @Deprecated
-   Set<? extends NodeMetadata> runNodesWithTag(String tag, int count, Template template) throws RunNodesException;
-
-   /**
-    * @see #createNodesInGroup(String , int , TemplateOptions )
-    */
-   @Deprecated
-   Set<? extends NodeMetadata> runNodesWithTag(String tag, int count, TemplateOptions templateOptions)
-            throws RunNodesException;
-
-   /**
-    * @see #createNodesInGroup(String , int )
-    */
-   @Deprecated
-   Set<? extends NodeMetadata> runNodesWithTag(String tag, int count) throws RunNodesException;
-
-   /**
     * resume the node from {@link org.jclouds.compute.domain.NodeState#SUSPENDED suspended} state,
     * given its id.
     * 
@@ -266,22 +246,6 @@ public interface ComputeService {
    Set<? extends NodeMetadata> listNodesDetailsMatching(Predicate<ComputeMetadata> filter);
 
    /**
-    * @see org.jclouds.io.Payloads
-    * @see ComputeService#runScriptOnNodesMatching(Predicate, Statement, RunScriptOptions)
-    */
-   @Deprecated
-   Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, Payload runScript)
-            throws RunScriptOnNodesException;
-
-   /**
-    * @see org.jclouds.io.Payloads
-    * @see ComputeService#runScriptOnNodesMatching(Predicate, Statement, RunScriptOptions)
-    */
-   @Deprecated
-   Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
-            Payload runScript, RunScriptOptions options) throws RunScriptOnNodesException;
-
-   /**
     * 
     * @see ComputeService#runScriptOnNodesMatching(Predicate, Statement, RunScriptOptions)
     */
@@ -317,7 +281,7 @@ public interface ComputeService {
     * @throws RunScriptOnNodesException
     *            if anything goes wrong during script execution
     * 
-    * @see org.jclouds.compute.predicates.NodePredicates#runningWithTag(String)
+    * @see org.jclouds.compute.predicates.NodePredicates#runningInGroup(String)
     * @see org.jclouds.scriptbuilder.domain.Statements
     */
    Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
@@ -340,7 +304,7 @@ public interface ComputeService {
     * @throws ScriptStillRunningException
     *            if the script was still running after {@link Timeouts#scriptComplete}
     * 
-    * @see org.jclouds.compute.predicates.NodePredicates#runningWithTag(String)
+    * @see org.jclouds.compute.predicates.NodePredicates#runningInGroup(String)
     * @see org.jclouds.scriptbuilder.domain.Statements
     */
    ExecResponse runScriptOnNode(String id, Statement runScript, RunScriptOptions options);
@@ -360,7 +324,7 @@ public interface ComputeService {
     * @throws IllegalStateException
     *            if the node is not in running state
     * 
-    * @see org.jclouds.compute.predicates.NodePredicates#runningWithTag(String)
+    * @see org.jclouds.compute.predicates.NodePredicates#runningInGroup(String)
     * @see org.jclouds.scriptbuilder.domain.Statements
     */
    @Beta

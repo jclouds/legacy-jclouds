@@ -32,7 +32,6 @@ import static org.jclouds.compute.predicates.NodePredicates.all;
 import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -82,19 +81,16 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.domain.LoginCredentials.Builder;
-import org.jclouds.io.Payload;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.functions.InitAdminAccess;
 import org.jclouds.util.Maps2;
-import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -185,32 +181,6 @@ public class BaseComputeService implements ComputeService {
       return context;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<? extends NodeMetadata> runNodesWithTag(String group, int count, Template template)
-         throws RunNodesException {
-      return createNodesInGroup(group, count, template);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<? extends NodeMetadata> runNodesWithTag(String group, int count, TemplateOptions templateOptions)
-         throws RunNodesException {
-      return createNodesInGroup(group, count, templateBuilder().any().options(templateOptions).build());
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<? extends NodeMetadata> runNodesWithTag(String group, int count) throws RunNodesException {
-      return createNodesInGroup(group, count, templateOptions());
-   }
-
    @Override
    public Set<? extends NodeMetadata> createNodesInGroup(String group, int count, Template template)
          throws RunNodesException {
@@ -228,7 +198,7 @@ public class BaseComputeService implements ComputeService {
 
       Map<?, Future<Void>> responses = runNodesAndAddToSetStrategy.execute(group, count, template, goodNodes, badNodes,
             customizationResponses);
-      Map<?, Exception> executionExceptions = awaitCompletion(responses, executor, null, logger, "runNodesWithTag("
+      Map<?, Exception> executionExceptions = awaitCompletion(responses, executor, null, logger, "createNodesInGroup("
             + group + ")");
       Function<NodeMetadata, NodeMetadata> fn = persistNodeCredentials.always(template.getOptions().getRunScript());
       badNodes = Maps2.transformKeys(badNodes, fn);
@@ -483,30 +453,6 @@ public class BaseComputeService implements ComputeService {
 
             }, executor, null, logger, "suspendNodesMatching(" + filter + ")");
       logger.debug("<< suspended");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, Payload runScript)
-         throws RunScriptOnNodesException {
-      return runScriptOnNodesMatching(filter, runScript, RunScriptOptions.NONE);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, Payload runScript,
-         RunScriptOptions options) throws RunScriptOnNodesException {
-      try {
-         return runScriptOnNodesMatching(filter,
-               Statements.exec(Strings2.toStringAndClose(checkNotNull(runScript, "runScript").getInput())), options);
-      } catch (IOException e) {
-         Throwables.propagate(e);
-         return null;
-      }
    }
 
    /**

@@ -139,9 +139,7 @@ See http://code.google.com/p/jclouds for details."
   "list details of all the nodes in the given group."
   ([group] (nodes-in-group group *compute*))
   ([#^String group #^ComputeService compute]
-    (filter #(= (.getTag %) group) (nodes-with-details compute))))
-
-(deprecate-fwd nodes-with-tag nodes-in-group)
+    (filter #(= (.getGroup %) group) (nodes-with-details compute))))
 
 (defn images
   "Retrieve the available images for the compute context."
@@ -241,8 +239,6 @@ See http://code.google.com/p/jclouds for details."
   ([#^String group #^ComputeService compute]
     (.suspendNodesMatching compute (NodePredicates/inGroup group))))
 
-(deprecate-fwd suspend-nodes-with-tag suspend-nodes-in-group)
-
 (defn suspend-node
   "Suspend a node, given its id."
   ([id] (suspend-node id *compute*))
@@ -254,8 +250,6 @@ See http://code.google.com/p/jclouds for details."
   ([group] (resume-nodes-in-group group *compute*))
   ([#^String group #^ComputeService compute]
     (.resumeNodesMatching compute (NodePredicates/inGroup group))))
-
-(deprecate-fwd resume-nodes-with-tag resume-nodes-in-group)
 
 (defn resume-node
   "Resume a node, given its id."
@@ -269,8 +263,6 @@ See http://code.google.com/p/jclouds for details."
   ([#^String group #^ComputeService compute]
     (.rebootNodesMatching compute (NodePredicates/inGroup group))))
 
-(deprecate-fwd reboot-nodes-with-tag reboot-nodes-in-group)
-
 (defn reboot-node
   "Reboot a node, given its id."
   ([id] (reboot-node id *compute*))
@@ -282,8 +274,6 @@ See http://code.google.com/p/jclouds for details."
   ([group] (destroy-nodes-in-group group *compute*))
   ([#^String group #^ComputeService compute]
      (.destroyNodesMatching compute (NodePredicates/inGroup group))))
-
-(deprecate-fwd destroy-nodes-with-tag destroy-nodes-in-group)
 
 (defn destroy-node
   "Destroy a node, given its id."
@@ -341,8 +331,6 @@ See http://code.google.com/p/jclouds for details."
   "Returns a the node's group"
   [#^NodeMetadata node]
   (.getGroup node))
-
-(deprecate-fwd tag group)
 
 (defn hostname
   "Returns the compute node's name"

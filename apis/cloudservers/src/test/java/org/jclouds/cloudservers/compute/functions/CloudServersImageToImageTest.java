@@ -29,7 +29,7 @@ import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
@@ -50,7 +50,7 @@ public class CloudServersImageToImageTest {
                   .name("CentOS 5.2")
                   .operatingSystem(
                         new OperatingSystem.Builder().family(OsFamily.CENTOS).version("5.2").description("CentOS 5.2").is64Bit(true)
-                              .build()).description("CentOS 5.2").defaultCredentials(new Credentials("root", null))
+                              .build()).description("CentOS 5.2").defaultCredentials(LoginCredentials.builder().user("root").build())
                   .ids("2").version("1286712000000").build());
    }
 

@@ -88,7 +88,7 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements CreateNodeW
       @Override
       public NodeMetadata apply(NodeMetadata arg0) {
          return credentialStore.containsKey("node#" + arg0.getId()) ? NodeMetadataBuilder.fromNodeMetadata(arg0)
-               .credentials(LoginCredentials.builder(credentialStore.get("node#" + arg0.getId())).build()).build()
+               .credentials(LoginCredentials.fromCredentials(credentialStore.get("node#" + arg0.getId()))).build()
                : arg0;
       }
 

@@ -39,7 +39,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
 /**
- * Contains options supported in the {@code ComputeService#runNodesWithTag}
+ * Contains options supported in the {@code ComputeService#createNodesInGroup}
  * operation. <h2>
  * Usage</h2> The recommended way to instantiate a TemplateOptions object is to
  * statically import TemplateOptions.* and invoke a static creation method
@@ -50,7 +50,7 @@ import com.google.common.collect.Maps;
  * <p/>
  * ComputeService client = // get connection
  * templateBuilder.options(inboundPorts(22, 80, 8080, 443));
- * Set<? extends NodeMetadata> set = client.runNodesWithTag(tag, 2, templateBuilder.build());
+ * Set<? extends NodeMetadata> set = client.createNodesInGroup(tag, 2, templateBuilder.build());
  * <code>
  * 
  * @author Adrian Cole
@@ -163,18 +163,7 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       }
 
       @Override
-      public TemplateOptions installPrivateKey(Payload privateKey) {
-         throw new IllegalArgumentException("privateKey is immutable");
-      }
-
-      @Override
       public TemplateOptions dontAuthorizePublicKey() {
-         throw new IllegalArgumentException("public key is immutable");
-      }
-
-      @Override
-      @Deprecated
-      public TemplateOptions authorizePublicKey(Payload publicKey) {
          throw new IllegalArgumentException("public key is immutable");
       }
 
@@ -319,11 +308,6 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       }
 
       @Override
-      public TemplateOptions runScript(byte[] script) {
-         throw new IllegalArgumentException("script is immutable");
-      }
-
-      @Override
       public Set<String> getTags() {
          return delegate.getTags();
       }
@@ -396,31 +380,31 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
    }
 
    /**
-    * <p/>
-    * please use alternative that uses the
-    * {@link org.jclouds.scriptbuilder.domain.Statement} object
+    * to be removed in jclouds 1.4.0
     * 
     * @see TemplateOptions#runScript(Statement)
     * @see org.jclouds.io.Payloads
+    * 
     */
    @Deprecated
-   public TemplateOptions runScript(byte[] script) {
-      return runScript(Statements.exec(new String(checkNotNull(script, "script"))));
-   }
-
-   /**
-    * @see TemplateOptions#runScript(Statement)
-    * @see org.jclouds.io.Payloads
-    */
    public TemplateOptions runScript(Payload script) {
       try {
-         return runScript(Statements.exec(Strings2.toStringAndClose(checkNotNull(script, "script").getInput())));
+         return runScript(Strings2.toStringAndClose(checkNotNull(script, "script").getInput()));
       } catch (IOException e) {
          Throwables.propagate(e);
          return this;
       }
    }
 
+   /**
+    * This script will be executed as the root user upon system startup. This
+    * script gets a prologue, so no #!/bin/bash required, path set up, etc
+    * 
+    */
+   public TemplateOptions runScript(String script) {
+      return runScript(Statements.exec(script));
+   }
+   
    /**
     * This script will be executed as the root user upon system startup. This
     * script gets a prologue, so no #!/bin/bash required, path set up, etc
@@ -441,23 +425,6 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       return this;
    }
 
-   /**
-    * replaces the rsa ssh key used at login.
-    * <p/>
-    * please use alternative that uses {@link java.lang.String}
-    * 
-    * @see org.jclouds.io.Payloads
-    */
-   @Deprecated
-   public TemplateOptions installPrivateKey(Payload privateKey) {
-      try {
-         return installPrivateKey(Strings2.toStringAndClose(checkNotNull(privateKey, "privateKey").getInput()));
-      } catch (IOException e) {
-         Throwables.propagate(e);
-         return this;
-      }
-   }
-
    public TemplateOptions dontAuthorizePublicKey() {
       this.publicKey = null;
       return this;
@@ -470,23 +437,6 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       checkArgument(checkNotNull(publicKey, "publicKey").startsWith("ssh-rsa"), "key should start with ssh-rsa");
       this.publicKey = publicKey;
       return this;
-   }
-
-   /**
-    * authorize an rsa ssh key.
-    * <p/>
-    * please use alternative that uses {@link java.lang.String}
-    * 
-    * @see org.jclouds.io.Payloads
-    */
-   @Deprecated
-   public TemplateOptions authorizePublicKey(Payload publicKey) {
-      try {
-         return authorizePublicKey(Strings2.toStringAndClose(checkNotNull(publicKey, "publicKey").getInput()));
-      } catch (IOException e) {
-         Throwables.propagate(e);
-         return this;
-      }
    }
 
    /**
@@ -594,30 +544,28 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
          return options.blockUntilRunning(blockUntilRunning);
       }
 
-/**
-       * please use alternative that uses the {@link Statement) object
-       * 
-       * @see TemplateOptions#runScript(Statement)
-       */
-      @Deprecated
-      public static TemplateOptions runScript(byte[] script) {
-         TemplateOptions options = new TemplateOptions();
-         return options.runScript(script);
-      }
-
-      /**
-       * @see TemplateOptions#runScript(Statement)
-       * @see org.jclouds.io.Payloads
-       */
-      public static TemplateOptions runScript(Payload script) {
-         TemplateOptions options = new TemplateOptions();
-         return options.runScript(script);
-      }
-
       /**
        * @see TemplateOptions#runScript(Statement)
        */
       public static TemplateOptions runScript(Statement script) {
+         TemplateOptions options = new TemplateOptions();
+         return options.runScript(script);
+      }
+      
+      /**
+       * @see TemplateOptions#runScript(String)
+       */
+      public static TemplateOptions runScript(String script) {
+         TemplateOptions options = new TemplateOptions();
+         return options.runScript(script);
+      }
+      
+      /**
+       * @see TemplateOptions#runScript(Statement)
+       * @see org.jclouds.io.Payloads
+       */
+      @Deprecated
+      public static TemplateOptions runScript(Payload script) {
          TemplateOptions options = new TemplateOptions();
          return options.runScript(script);
       }
@@ -629,17 +577,7 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
        * @see org.jclouds.io.Payloads
        * @see #installPrivateKey(Payload)
        */
-      @Deprecated
-      public static TemplateOptions installPrivateKey(String rsaKey) {
-         TemplateOptions options = new TemplateOptions();
-         return options.installPrivateKey(rsaKey);
-      }
-
-      /**
-       * @see TemplateOptions#installPrivateKey
-       * @see org.jclouds.io.Payloads
-       */
-      public static TemplateOptions installPrivateKey(Payload rsaKey) {
+         public static TemplateOptions installPrivateKey(String rsaKey) {
          TemplateOptions options = new TemplateOptions();
          return options.installPrivateKey(rsaKey);
       }
@@ -648,20 +586,9 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
        * please use alternative that uses the {@link org.jclouds.io.Payload}
        * object
        * 
-       * @see org.jclouds.io.Payloads
-       * @see #authorizePublicKey(Payload)
+       * @see #authorizePublicKey(String)
        */
-      @Deprecated
       public static TemplateOptions authorizePublicKey(String rsaKey) {
-         TemplateOptions options = new TemplateOptions();
-         return options.authorizePublicKey(rsaKey);
-      }
-
-      /**
-       * @see TemplateOptions#authorizePublicKey(Payload)
-       * @see org.jclouds.io.Payloads
-       */
-      public static TemplateOptions authorizePublicKey(Payload rsaKey) {
          TemplateOptions options = new TemplateOptions();
          return options.authorizePublicKey(rsaKey);
       }

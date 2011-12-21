@@ -65,12 +65,6 @@ public class RetryIfSocketNotYetOpen implements Predicate<IPSocket> {
    public RetryIfSocketNotYetOpen(SocketOpen socketTester, Timeouts timeouts) {
        this(socketTester, Logger.NULL, timeouts.portOpen, TimeUnit.MILLISECONDS);
    }
-   
-   /** @deprecated in favor of specifying explicit time units */
-   @Deprecated
-   public RetryIfSocketNotYetOpen(SocketOpen socketTester, Logger logger, long seconds) {
-      this(socketTester, logger, seconds, TimeUnit.SECONDS);
-   }
 
    public RetryIfSocketNotYetOpen milliseconds(long milliseconds) {
        this.timeoutValue = milliseconds;

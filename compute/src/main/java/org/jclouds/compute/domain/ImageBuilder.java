@@ -74,10 +74,14 @@ public class ImageBuilder extends ComputeMetadataBuilder {
       }
       return this;
    }
-
+   /**
+    * <h4>will be removed in jclouds 1.4.0</h4>
+    * 
+    * @see #defaultCredentials(LoginCredentials)
+    */
    @Deprecated
    public ImageBuilder defaultCredentials(@Nullable Credentials defaultLoginCredentials) {
-      return defaultCredentials(LoginCredentials.builder(defaultLoginCredentials).build());
+      return defaultCredentials(LoginCredentials.fromCredentials(defaultLoginCredentials));
    }
    
    public ImageBuilder defaultCredentials(@Nullable LoginCredentials defaultLoginCredentials) {

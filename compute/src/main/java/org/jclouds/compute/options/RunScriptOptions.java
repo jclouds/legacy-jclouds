@@ -189,9 +189,13 @@ public class RunScriptOptions {
    protected Optional<String> loginPassword;
    protected Optional<String> loginPrivateKey;
 
+   /**
+    * to be removed in jclouds 1.4.0
+    * @see #overrideLoginCredentials
+    */
    @Deprecated
    public RunScriptOptions overrideCredentialsWith(Credentials overridingCredentials) {
-      return overrideLoginCredentials(LoginCredentials.builder(overridingCredentials).build());
+      return overrideLoginCredentials(LoginCredentials.fromCredentials(overridingCredentials));
    }
 
    public RunScriptOptions overrideLoginCredentials(LoginCredentials overridingCredentials) {
@@ -202,7 +206,11 @@ public class RunScriptOptions {
       this.authenticateSudo = overridingCredentials.shouldAuthenticateSudo() ? true : null;
       return this;
    }
-
+   
+   /**
+    * to be removed in jclouds 1.4.0
+    * @see #overrideLoginCredentials
+    */
    @Deprecated
    public RunScriptOptions overrideLoginUserWith(String loginUser) {
       return overrideLoginUser(loginUser);
@@ -213,7 +221,11 @@ public class RunScriptOptions {
       this.loginUser = loginUser;
       return this;
    }
-
+   
+   /**
+    * to be removed in jclouds 1.4.0
+    * @see #overrideLoginCredentials
+    */
    @Deprecated
    public RunScriptOptions overrideLoginCredentialWith(String loginCredential) {
       checkNotNull(loginCredential, "loginCredential");

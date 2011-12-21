@@ -174,7 +174,7 @@ public class CloudStackComputeServiceAdapter implements
          assert vm.getPassword() != null : vm;
          credentials = LoginCredentials.builder().password(vm.getPassword()).build();
       } else {
-         credentials = LoginCredentials.builder(credentialStore.get("keypair#" + templateOptions.getKeyPair())).build();
+         credentials = LoginCredentials.fromCredentials(credentialStore.get("keypair#" + templateOptions.getKeyPair()));
       }
       if (templateOptions.shouldSetupStaticNat()) {
          // TODO: possibly not all network ids, do we want to do this

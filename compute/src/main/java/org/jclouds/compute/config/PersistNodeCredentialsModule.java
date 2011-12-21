@@ -60,7 +60,7 @@ public class PersistNodeCredentialsModule extends AbstractModule {
             return input;
          Credentials credentials = CredentialsFromAdminAccess.INSTANCE.apply(statement);
          if (credentials != null) {
-            LoginCredentials creds = LoginCredentials.builder(credentials).build();
+            LoginCredentials creds = LoginCredentials.fromCredentials(credentials);
             input = NodeMetadataBuilder.fromNodeMetadata(input).credentials(creds).build();
             credentialStore.put("node#" + input.getId(), input.getCredentials());
          }

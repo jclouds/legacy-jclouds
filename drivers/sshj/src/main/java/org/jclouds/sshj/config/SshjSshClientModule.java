@@ -22,6 +22,7 @@ import javax.inject.Named;
 
 import org.jclouds.Constants;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
@@ -29,7 +30,6 @@ import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.ConfiguresSshClient;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.SshjSshClient;
-import org.jclouds.util.CredentialUtils;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
@@ -63,22 +63,18 @@ public class SshjSshClientModule extends AbstractModule {
          this.injector = injector;
       }
 
-      public SshClient create(IPSocket socket, String username, String password) {
-         SshClient client = new SshjSshClient(backoffLimitedRetryHandler, socket, timeout, username, password, null);
-         injector.injectMembers(client);// add logger
-         return client;
-      }
-
-      public SshClient create(IPSocket socket, String username, byte[] privateKey) {
-         SshClient client = new SshjSshClient(backoffLimitedRetryHandler, socket, timeout, username, null, privateKey);
+      @Override
+      public SshClient create(IPSocket socket, LoginCredentials credentials) {
+         SshClient client = new SshjSshClient(backoffLimitedRetryHandler, socket, timeout, credentials.getUser(),
+               (credentials.getPrivateKey() == null) ? credentials.getPassword() : null,
+               credentials.getPrivateKey() != null ? credentials.getPrivateKey().getBytes() : null);
          injector.injectMembers(client);// add logger
          return client;
       }
 
       @Override
       public SshClient create(IPSocket socket, Credentials credentials) {
-         return CredentialUtils.isPrivateKeyCredential(credentials) ? create(socket, credentials.identity,
-               credentials.credential.getBytes()) : create(socket, credentials.identity, credentials.credential);
+         return create(socket, LoginCredentials.fromCredentials(credentials));
       }
    }
 }

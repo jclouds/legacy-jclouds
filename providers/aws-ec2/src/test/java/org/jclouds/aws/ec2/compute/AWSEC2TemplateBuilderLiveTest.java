@@ -278,8 +278,8 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
       try {
          Properties overrides = setupProperties();
          // set owners to nothing
-         overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_CC_AMIs, "");
          overrides.setProperty(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "");
+         overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY, "");
 
          context = new ComputeServiceContextFactory().createContext(provider,
                ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);

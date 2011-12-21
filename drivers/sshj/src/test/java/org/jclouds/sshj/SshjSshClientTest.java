@@ -37,7 +37,7 @@ import net.schmizz.sshj.connection.ConnectionException;
 import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.userauth.UserAuthException;
 
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.BufferLogger;
 import org.jclouds.logging.BufferLogger.Record;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
@@ -82,8 +82,8 @@ public class SshjSshClientTest {
 
       }, new SLF4JLoggingModule());
       SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
-      SshjSshClient ssh = SshjSshClient.class.cast(factory.create(new IPSocket("localhost", 22), new Credentials(
-            "username", "password")));
+      SshjSshClient ssh = SshjSshClient.class.cast(factory.create(new IPSocket("localhost", 22), LoginCredentials
+            .builder().user("username").password("password").build()));
       return ssh;
    }
 

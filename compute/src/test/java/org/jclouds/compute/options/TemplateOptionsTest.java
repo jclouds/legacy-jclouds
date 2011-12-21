@@ -54,14 +54,12 @@ public class TemplateOptionsTest {
       assertEquals(options.getPrivateKey(), null);
    }
 
-   @SuppressWarnings("deprecation")
    @Test
    public void testinstallPrivateKeyStatic() throws IOException {
       TemplateOptions options = installPrivateKey("-----BEGIN RSA PRIVATE KEY-----");
       assertEquals(options.getPrivateKey(), "-----BEGIN RSA PRIVATE KEY-----");
    }
 
-   @SuppressWarnings("deprecation")
    @Test(expectedExceptions = NullPointerException.class)
    public void testinstallPrivateKeyNPE() {
       installPrivateKey((String) null);
@@ -86,14 +84,12 @@ public class TemplateOptionsTest {
       assertEquals(options.getPublicKey(), null);
    }
 
-   @SuppressWarnings("deprecation")
    @Test
    public void testauthorizePublicKeyStatic() throws IOException {
       TemplateOptions options = authorizePublicKey("ssh-rsa");
       assertEquals(options.getPublicKey(), "ssh-rsa");
    }
 
-   @SuppressWarnings("deprecation")
    @Test(expectedExceptions = NullPointerException.class)
    public void testauthorizePublicKeyNPE() {
       authorizePublicKey((String) null);

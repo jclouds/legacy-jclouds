@@ -27,14 +27,6 @@ import org.jclouds.ec2.reference.EC2Constants;
  * @author Adrian Cole
  */
 public interface AWSEC2Constants extends EC2Constants {
-
-   /**
-    * amis that work on the cluster instance type
-    * 
-    * @see InstanceType.CC1_4XLARGE
-    */
-   @Deprecated
-   public static final String PROPERTY_EC2_CC_AMIs = "jclouds.ec2.cc-amis";
    /**
     * expression to find amis that work on the cluster instance type <br/>
     * ex. {@code

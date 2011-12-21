@@ -37,7 +37,7 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.Constants;
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.ec2.domain.InstanceState;
@@ -328,7 +328,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       instance = getInstance(instanceId);
       blockUntilWeCanSshIntoInstance(instance);
       SshClient ssh = sshFactory.create(new IPSocket(instance.getIpAddress(), 22),
-            new Credentials("root", keyPair.getKeyMaterial()));
+            LoginCredentials.builder().user("root").privateKey(keyPair.getKeyMaterial()).build());
       try {
          ssh.connect();
          ExecResponse uptime = ssh.exec("uptime");
@@ -432,7 +432,8 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
    }
 
    private void doCheckKey(String address) {
-      SshClient ssh = sshFactory.create(new IPSocket(address, 22), new Credentials("root", keyPair.getKeyMaterial()));
+      SshClient ssh = sshFactory.create(new IPSocket(address, 22),
+            LoginCredentials.builder().user("root").privateKey(keyPair.getKeyMaterial()).build());
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");

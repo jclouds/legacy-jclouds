@@ -18,21 +18,37 @@
  */
 package org.jclouds.cloudsigma;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.gson.Gson;
-import com.google.inject.Guice;
-import com.google.inject.Module;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
+import java.io.IOException;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+
 import org.jclouds.Constants;
-import org.jclouds.cloudsigma.domain.*;
+import org.jclouds.cloudsigma.domain.ClaimType;
+import org.jclouds.cloudsigma.domain.CreateDriveRequest;
+import org.jclouds.cloudsigma.domain.DriveData;
+import org.jclouds.cloudsigma.domain.DriveInfo;
+import org.jclouds.cloudsigma.domain.DriveStatus;
+import org.jclouds.cloudsigma.domain.DriveType;
+import org.jclouds.cloudsigma.domain.IDEDevice;
+import org.jclouds.cloudsigma.domain.Model;
+import org.jclouds.cloudsigma.domain.ProfileInfo;
+import org.jclouds.cloudsigma.domain.Server;
+import org.jclouds.cloudsigma.domain.ServerInfo;
+import org.jclouds.cloudsigma.domain.ServerStatus;
+import org.jclouds.cloudsigma.domain.StaticIPInfo;
+import org.jclouds.cloudsigma.domain.VLANInfo;
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.cloudsigma.predicates.DriveClaimed;
 import org.jclouds.cloudsigma.util.Servers;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
@@ -44,15 +60,13 @@ import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.gson.Gson;
+import com.google.inject.Guice;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code CloudSigmaClient}
@@ -395,7 +409,7 @@ public class CloudSigmaClientLiveTest {
       assertEquals(client.getDriveInfo(drive.getUuid()), null);
    }
 
-   protected void doConnectViaSsh(Server server, Credentials creds) throws IOException {
+   protected void doConnectViaSsh(Server server, LoginCredentials creds) throws IOException {
       SshClient ssh = Guice.createInjector(new SshjSshClientModule()).getInstance(SshClient.Factory.class)
             .create(new IPSocket(server.getVnc().getIp(), 22), creds);
       try {
@@ -439,8 +453,8 @@ public class CloudSigmaClientLiveTest {
       assertNotNull(drives);
    }
 
-   protected Credentials getSshCredentials(Server server) {
-      return new Credentials("root", vncPassword);
+   protected LoginCredentials getSshCredentials(Server server) {
+      return LoginCredentials.builder().user("root").password(vncPassword).build();
    }
 
    protected void prepareDrive() {

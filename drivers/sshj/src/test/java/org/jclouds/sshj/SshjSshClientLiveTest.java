@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 
 import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
@@ -38,6 +38,7 @@ import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Strings;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -111,11 +112,12 @@ public class SshjSshClientLiveTest {
          Injector i = Guice.createInjector(new SshjSshClientModule(), new SLF4JLoggingModule());
          SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
          SshClient connection;
-         if (sshKeyFile != null && !sshKeyFile.trim().equals("")) {
-            connection = factory.create(new IPSocket(sshHost, port), new Credentials(sshUser, Strings2
-                     .toStringAndClose(new FileInputStream(sshKeyFile))));
+         if (Strings.emptyToNull(sshKeyFile) != null) {
+            connection = factory.create(new IPSocket(sshHost, port), LoginCredentials.builder().user(sshUser)
+                  .privateKey(Strings2.toStringAndClose(new FileInputStream(sshKeyFile))).build());
          } else {
-            connection = factory.create(new IPSocket(sshHost, port), new Credentials(sshUser, sshPass));
+            connection = factory.create(new IPSocket(sshHost, port),
+                  LoginCredentials.builder().user(sshUser).password(sshPass).build());
          }
          connection.connect();
          return connection;

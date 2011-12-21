@@ -43,6 +43,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.LoginCredentials;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Suppliers;
@@ -59,7 +60,7 @@ public class ServerToNodeMetadataTest {
 
    @Test
    public void testApplyWhereImageAndHardwareNotFoundButCredentialsFound() throws UnknownHostException {
-      Credentials creds = new Credentials("root", "abdce");
+      LoginCredentials creds = LoginCredentials.builder().user("root").password("abcde").build();
 
       Map<ServerStatus, NodeState> serverStateToNodeState = CloudServersComputeServiceDependenciesModule.serverToNodeState;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of();

@@ -21,7 +21,6 @@ package org.jclouds.aws.ec2;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUERY;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY;
-import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMIs;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_REGIONS;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
 import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_NODE_SUSPENDED;
@@ -77,7 +76,6 @@ public class AWSEC2PropertiesBuilder extends org.jclouds.ec2.EC2PropertiesBuilde
    public Properties build() {
       Properties props = super.build();
       warnAndReplaceIfUsingOldImageKey(props);
-      warnAndReplaceIfUsingOldCCImageKey(props);
       return props;
    }
 
@@ -95,17 +93,6 @@ public class AWSEC2PropertiesBuilder extends org.jclouds.ec2.EC2PropertiesBuilde
          Logger.getAnonymousLogger().warning(
                   String.format("Property %s is deprecated, please use new syntax: %s=%s", PROPERTY_EC2_AMI_OWNERS,
                            PROPERTY_EC2_AMI_QUERY, query.toString()));
-      }
-   }
-
-   protected void warnAndReplaceIfUsingOldCCImageKey(Properties props) {
-      if (props.containsKey(PROPERTY_EC2_CC_AMIs)) {
-         String amis = properties.remove(PROPERTY_EC2_CC_AMIs).toString();
-         String value = ("".equals(amis)) ? "" : "image-id=" + amis.replace("us-east-1/", "");
-         props.setProperty(PROPERTY_EC2_CC_AMI_QUERY, value);
-         Logger.getAnonymousLogger().warning(
-                  String.format("Property %s is deprecated, please use new syntax: %s=%s", PROPERTY_EC2_CC_AMIs,
-                           PROPERTY_EC2_CC_AMI_QUERY, value));
       }
    }
 

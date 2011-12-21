@@ -97,9 +97,14 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
       return this;
    }
 
+   /**
+    * <h4>will be removed in jclouds 1.4.0</h4>
+    * 
+    * @see #credentials(LoginCredentials)
+    */
    @Deprecated
    public NodeMetadataBuilder credentials(@Nullable Credentials credentials) {
-      return credentials(LoginCredentials.builder(credentials).build());
+      return credentials(LoginCredentials.fromCredentials(credentials));
    }
    
    public NodeMetadataBuilder credentials(@Nullable LoginCredentials credentials) {

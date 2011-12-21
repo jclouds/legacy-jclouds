@@ -135,14 +135,6 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions implements C
       }
 
       /**
-       * @see TemplateOptions#runScript
-       */
-      public static TerremarkVCloudTemplateOptions runScript(byte[] script) {
-         TerremarkVCloudTemplateOptions options = new TerremarkVCloudTemplateOptions();
-         return TerremarkVCloudTemplateOptions.class.cast(options.runScript(script));
-      }
-
-      /**
        * @see TemplateOptions#installPrivateKey
        */
       public static TerremarkVCloudTemplateOptions installPrivateKey(String rsaKey) {
@@ -208,15 +200,6 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions implements C
    }
 
    /**
-    * @see TemplateOptions#authorizePublicKey(Payload)
-    */
-   @Override
-   @Deprecated
-   public TerremarkVCloudTemplateOptions authorizePublicKey(Payload publicKey) {
-      return TerremarkVCloudTemplateOptions.class.cast(super.authorizePublicKey(publicKey));
-   }
-
-   /**
     * @see TemplateOptions#installPrivateKey(String)
     */
    @Override
@@ -224,29 +207,13 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions implements C
       return TerremarkVCloudTemplateOptions.class.cast(super.installPrivateKey(privateKey));
    }
 
-   /**
-    * @see TemplateOptions#installPrivateKey(Payload)
-    */
-   @Override
-   @Deprecated
-   public TerremarkVCloudTemplateOptions installPrivateKey(Payload privateKey) {
-      return TerremarkVCloudTemplateOptions.class.cast(super.installPrivateKey(privateKey));
-   }
 
    /**
     * @see TemplateOptions#runScript(Payload)
     */
+   @Deprecated
    @Override
    public TerremarkVCloudTemplateOptions runScript(Payload script) {
-      return TerremarkVCloudTemplateOptions.class.cast(super.runScript(script));
-   }
-
-   /**
-    * @see TemplateOptions#runScript(byte[])
-    */
-   @Override
-   @Deprecated
-   public TerremarkVCloudTemplateOptions runScript(byte[] script) {
       return TerremarkVCloudTemplateOptions.class.cast(super.runScript(script));
    }
 

@@ -52,7 +52,7 @@ import com.google.common.collect.Iterables;
  * <p/>
  * ComputeService client = // get connection
  * templateBuilder.options(inboundPorts(22, 80, 8080, 443));
- * Set<? extends NodeMetadata> set = client.runNodesWithTag(tag, 2, templateBuilder.build());
+ * Set<? extends NodeMetadata> set = client.createNodesInGroup(tag, 2, templateBuilder.build());
  * <code>
  * 
  * @author Adrian Cole
@@ -360,14 +360,6 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
       }
 
       /**
-       * @see TemplateOptions#runScript
-       */
-      public static AWSEC2TemplateOptions runScript(byte[] script) {
-         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
-         return options.runScript(script);
-      }
-
-      /**
        * @see TemplateOptions#installPrivateKey
        */
       public static AWSEC2TemplateOptions installPrivateKey(String rsaKey) {
@@ -554,15 +546,6 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
     * {@inheritDoc}
     */
    @Override
-   @Deprecated
-   public AWSEC2TemplateOptions authorizePublicKey(Payload publicKey) {
-      return AWSEC2TemplateOptions.class.cast(super.authorizePublicKey(publicKey));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
    public AWSEC2TemplateOptions installPrivateKey(String privateKey) {
       return AWSEC2TemplateOptions.class.cast(super.installPrivateKey(privateKey));
    }
@@ -570,26 +553,9 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
    /**
     * {@inheritDoc}
     */
-   @Override
    @Deprecated
-   public AWSEC2TemplateOptions installPrivateKey(Payload privateKey) {
-      return AWSEC2TemplateOptions.class.cast(super.installPrivateKey(privateKey));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public AWSEC2TemplateOptions runScript(Payload script) {
-      return AWSEC2TemplateOptions.class.cast(super.runScript(script));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   @Deprecated
-   public AWSEC2TemplateOptions runScript(byte[] script) {
       return AWSEC2TemplateOptions.class.cast(super.runScript(script));
    }
 

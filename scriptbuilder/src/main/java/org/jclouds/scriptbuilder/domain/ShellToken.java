@@ -23,8 +23,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 
 import com.google.common.base.CaseFormat;
-import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Maps;
 
 /**
@@ -55,23 +56,22 @@ public enum ShellToken {
     */
    FNCE, BEGIN_SCRIPT, END_SCRIPT, BEGIN_FUNCTIONS, EXIT, END_FUNCTIONS, EXPORT, LF, SH, SOURCE, REM, RETURN, ARGS, VARL, VARR, LIBRARY_PATH_VARIABLE;
 
-   private static final Map<OsFamily, Map<String, String>> familyToTokenValueMap = new MapMaker()
-            .makeComputingMap(new Function<OsFamily, Map<String, String>>() {
+   private static final LoadingCache<OsFamily, Map<String, String>> familyToTokenValueMap = CacheBuilder.newBuilder().build(
+         new CacheLoader<OsFamily, Map<String, String>>() {
 
-               @Override
-               public Map<String, String> apply(OsFamily from) {
-                  Map<String, String> map = Maps.newHashMap();
-                  for (ShellToken token : ShellToken.values()) {
-                     map.put(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, token
-                              .toString()), token.to(from));
-                  }
-                  return map;
+            @Override
+            public Map<String, String> load(OsFamily from) {
+               Map<String, String> map = Maps.newHashMap();
+               for (ShellToken token : ShellToken.values()) {
+                  map.put(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, token.toString()), token.to(from));
                }
+               return map;
+            }
 
-            });
+         });
 
    public static Map<String, String> tokenValueMap(OsFamily family) {
-      return familyToTokenValueMap.get(family);
+      return familyToTokenValueMap.getUnchecked(family);
    }
 
    public String to(OsFamily family) {

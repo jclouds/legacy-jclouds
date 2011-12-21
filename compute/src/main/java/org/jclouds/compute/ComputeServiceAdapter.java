@@ -35,7 +35,7 @@ import org.jclouds.javax.annotation.Nullable;
 public interface ComputeServiceAdapter<N, H, I, L> {
 
    /**
-    * {@link ComputeService#runNodesWithTag(String, int, Template)} generates
+    * {@link ComputeService#createNodesInGroup(String, int, Template)} generates
     * the parameters passed into this method such that each node in the set has
     * a unique name.
     * 
@@ -59,7 +59,7 @@ public interface ComputeServiceAdapter<N, H, I, L> {
     *           {@code hardwareId} used to resume the instance.
     * @return library-native representation of a node.
     * 
-    * @see ComputeService#runNodesWithTag(String, int, Template)
+    * @see ComputeService#createNodesInGroup(String, int, Template)
     */
    NodeAndInitialCredentials<N> createNodeWithGroupEncodedIntoName(String tag, String name, Template template);
 

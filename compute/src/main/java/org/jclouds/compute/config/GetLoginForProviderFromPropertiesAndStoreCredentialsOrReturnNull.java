@@ -55,7 +55,7 @@ public class GetLoginForProviderFromPropertiesAndStoreCredentialsOrReturnNull im
    @Nullable
    public LoginCredentials get() {
       if (credentialStore.containsKey("image")) {
-         return LoginCredentials.builder(credentialStore.get("image")).build();
+         return LoginCredentials.fromCredentials(credentialStore.get("image"));
       }
       Builder builder = LoginCredentials.builder();
 

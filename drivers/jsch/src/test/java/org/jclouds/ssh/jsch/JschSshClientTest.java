@@ -25,7 +25,7 @@ import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.Properties;
 
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.rest.AuthorizationException;
@@ -68,8 +68,8 @@ public class JschSshClientTest {
          }
       }, new SLF4JLoggingModule());
       SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
-      JschSshClient ssh = JschSshClient.class.cast(factory.create(new IPSocket("localhost", 22), new Credentials(
-            "username", "password")));
+      JschSshClient ssh = JschSshClient.class.cast(factory.create(new IPSocket("localhost", 22), LoginCredentials
+            .builder().user("username").password("password").build()));
       return ssh;
    }
 

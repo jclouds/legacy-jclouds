@@ -206,15 +206,6 @@ public class NodePredicates {
    }
 
    /**
-    * 
-    * @see #inGroup(String)
-    */
-   @Deprecated
-   public static Predicate<NodeMetadata> withTag(final String tag) {
-      return inGroup(tag);
-   }
-
-   /**
     * Return nodes with specified group that are in the NODE_RUNNING state.
     * 
     * @param group
@@ -234,15 +225,6 @@ public class NodePredicates {
             return "runningInGroup(" + group + ")";
          }
       };
-   }
-
-   /**
-    * 
-    * @see #inGroup(String)
-    */
-   @Deprecated
-   public static Predicate<NodeMetadata> runningWithTag(final String tag) {
-      return runningInGroup(tag);
    }
 
    /**

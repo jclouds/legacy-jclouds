@@ -108,15 +108,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       this.credentials = credentials;
       this.hostname = hostname;
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getTag() {
-      return getGroup();
-   }
-
+   
    /**
     * {@inheritDoc}
     */
@@ -208,7 +200,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
 
    @Override
    public String toString() {
-      return "[id=" + getId() + ", providerId=" + getProviderId() + ", group=" + getTag() + ", name=" + getName()
+      return "[id=" + getId() + ", providerId=" + getProviderId() + ", group=" + getGroup() + ", name=" + getName()
             + ", location=" + getLocation() + ", uri=" + getUri() + ", imageId=" + getImageId() + ", os="
             + getOperatingSystem() + ", state=" + getState() + ", loginPort=" + getLoginPort() + ", hostname="
             + getHostname() + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses

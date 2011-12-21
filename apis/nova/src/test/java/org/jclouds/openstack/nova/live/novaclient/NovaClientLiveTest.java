@@ -26,7 +26,7 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.util.Set;
 
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payload;
 import org.jclouds.net.IPSocket;
@@ -259,7 +259,8 @@ public class NovaClientLiveTest extends ClientBase {
       IPSocket socket = new IPSocket(Iterables.get(server.getAddresses().getPublicAddresses(), 0).getAddress(), 22);
       //socketTester.apply(socket);
 
-      SshClient client = sshFactory.create(socket, new Credentials("root", keyPair.get("private")));
+      SshClient client = sshFactory.create(socket,
+            LoginCredentials.builder().user("root").privateKey(keyPair.get("private")).build());
       try {
          client.connect();
          Payload etcPasswd = client.get("/etc/jclouds.txt");

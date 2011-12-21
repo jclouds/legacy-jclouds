@@ -143,8 +143,8 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    }
 
    protected void addCredentialsForInstance(NodeMetadataBuilder builder, RunningInstance instance) {
-      builder.credentials(LoginCredentials.builder(
-               credentialStore.get("node#" + instance.getRegion() + "/" + instance.getId())).build());
+      builder.credentials(LoginCredentials.fromCredentials(credentialStore.get("node#" + instance.getRegion() + "/"
+            + instance.getId())));
    }
 
    protected Hardware parseHardware(final RunningInstance instance) {

@@ -28,7 +28,6 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.google.common.base.Joiner;
 import org.jclouds.crypto.PemsTest;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;

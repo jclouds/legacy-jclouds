@@ -35,7 +35,7 @@ import com.google.common.collect.Sets;
 /**
  * Contains options supported by the
  * {@link ComputeService#createNodesInGroup(String, int, TemplateOptions)} and
- * {@link ComputeService#runNodesWithTag(String, int, TemplateOptions)}
+ * {@link ComputeService#createNodesInGroup(String, int, TemplateOptions)}
  * operations on the <em>gogrid</em> provider.
  * 
  * <h2>Usage</h2> The recommended way to instantiate a
@@ -48,7 +48,7 @@ import com.google.common.collect.Sets;
  * import static org.jclouds.compute.options.CloudStackTemplateOptions.Builder.*;
  * ComputeService client = // get connection
  * templateBuilder.options(inboundPorts(22, 80, 8080, 443));
- * Set&lt;? extends NodeMetadata&gt; set = client.runNodesWithTag(tag, 2, templateBuilder.build());
+ * Set&lt;? extends NodeMetadata&gt; set = client.createNodesInGroup(tag, 2, templateBuilder.build());
  * </pre>
  * 
  * @author Adrian Cole
@@ -263,24 +263,6 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
       }
 
       /**
-       * @see TemplateOptions#installPrivateKey(Payload)
-       */
-      @Deprecated
-      public static CloudStackTemplateOptions installPrivateKey(Payload rsaKey) {
-         CloudStackTemplateOptions options = new CloudStackTemplateOptions();
-         return CloudStackTemplateOptions.class.cast(options.installPrivateKey(rsaKey));
-      }
-
-      /**
-       * @see TemplateOptions#authorizePublicKey(Payload)
-       */
-      @Deprecated
-      public static CloudStackTemplateOptions authorizePublicKey(Payload rsaKey) {
-         CloudStackTemplateOptions options = new CloudStackTemplateOptions();
-         return CloudStackTemplateOptions.class.cast(options.authorizePublicKey(rsaKey));
-      }
-
-      /**
        * @see TemplateOptions#userMetadata(Map)
        */
       public static CloudStackTemplateOptions userMetadata(Map<String, String> userMetadata) {
@@ -324,15 +306,6 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
    }
 
    /**
-    * @see TemplateOptions#authorizePublicKey(Payload)
-    */
-   @Override
-   @Deprecated
-   public CloudStackTemplateOptions authorizePublicKey(Payload publicKey) {
-      return CloudStackTemplateOptions.class.cast(super.authorizePublicKey(publicKey));
-   }
-
-   /**
     * @see TemplateOptions#installPrivateKey(String)
     */
    @Override
@@ -341,28 +314,11 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
    }
 
    /**
-    * @see TemplateOptions#installPrivateKey(Payload)
-    */
-   @Override
-   @Deprecated
-   public CloudStackTemplateOptions installPrivateKey(Payload privateKey) {
-      return CloudStackTemplateOptions.class.cast(super.installPrivateKey(privateKey));
-   }
-
-   /**
     * @see TemplateOptions#runScript(Payload)
     */
+   @Deprecated
    @Override
    public CloudStackTemplateOptions runScript(Payload script) {
-      return CloudStackTemplateOptions.class.cast(super.runScript(script));
-   }
-
-   /**
-    * @see TemplateOptions#runScript(byte[])
-    */
-   @Override
-   @Deprecated
-   public CloudStackTemplateOptions runScript(byte[] script) {
       return CloudStackTemplateOptions.class.cast(super.runScript(script));
    }
 

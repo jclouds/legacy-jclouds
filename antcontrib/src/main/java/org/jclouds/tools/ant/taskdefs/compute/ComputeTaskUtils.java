@@ -37,15 +37,15 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
-import org.jclouds.io.Payloads;
+import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.tools.ant.logging.config.AntLoggingModule;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Splitter;
-import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.io.Files;
@@ -130,9 +130,9 @@ public class ComputeTaskUtils {
       return options;
    }
 
-   static void addRunScriptToOptionsIfPresentInNodeElement(NodeElement nodeElement, TemplateOptions options) {
+   static void addRunScriptToOptionsIfPresentInNodeElement(NodeElement nodeElement, TemplateOptions options) throws IOException {
       if (nodeElement.getRunscript() != null)
-         options.runScript(Payloads.newFilePayload(nodeElement.getRunscript()));
+         options.runScript(Statements.exec(Files.toString(nodeElement.getRunscript(), Charsets.UTF_8)));
    }
 
    static void addPrivateKeyToOptionsIfPresentInNodeElement(NodeElement nodeElement, TemplateOptions options)

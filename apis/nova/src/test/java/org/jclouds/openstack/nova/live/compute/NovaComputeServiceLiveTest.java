@@ -26,7 +26,7 @@ import static com.google.common.collect.Maps.uniqueIndex;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newTreeSet;
 import static org.jclouds.compute.ComputeTestUtils.buildScript;
-import static org.jclouds.compute.options.TemplateOptions.Builder.overrideCredentialsWith;
+import static org.jclouds.compute.options.TemplateOptions.Builder.overrideLoginCredentials;
 import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
 import static org.jclouds.compute.predicates.NodePredicates.all;
 import static org.jclouds.compute.predicates.NodePredicates.inGroup;
@@ -176,7 +176,7 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
       for (Map.Entry<? extends NodeMetadata, ExecResponse> response : computeService.runScriptOnNodesMatching(
             runningInGroup(group),
             Statements.exec("echo hello"),
-            overrideCredentialsWith(LoginCredentials.builder().user("root").privateKey(keyPair.get("private")).build())
+            overrideLoginCredentials(LoginCredentials.builder().user("root").privateKey(keyPair.get("private")).build())
                   .wrapInInitScript(false).runAsRoot(false)).entrySet())
          assert response.getValue().getOutput().trim().equals("hello") : response.getKey() + ": " + response.getValue();
 
@@ -262,7 +262,7 @@ public class NovaComputeServiceLiveTest extends ComputeBase {
    protected Map<? extends NodeMetadata, ExecResponse> runJavaInstallationScriptWithCreds(final String group,
          OperatingSystem os, LoginCredentials creds) throws RunScriptOnNodesException {
       return computeService.runScriptOnNodesMatching(runningInGroup(group), buildScript(os),
-            overrideCredentialsWith(creds).nameTask("runJavaInstallationScriptWithCreds"));
+            overrideLoginCredentials(creds).nameTask("runJavaInstallationScriptWithCreds"));
 
    }
 

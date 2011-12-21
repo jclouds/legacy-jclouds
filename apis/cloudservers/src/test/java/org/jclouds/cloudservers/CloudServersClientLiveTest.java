@@ -48,7 +48,7 @@ import org.jclouds.cloudservers.domain.SharedIpGroup;
 import org.jclouds.cloudservers.domain.WeeklyBackup;
 import org.jclouds.cloudservers.options.RebuildServerOptions;
 import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payload;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -415,7 +415,7 @@ public class CloudServersClientLiveTest {
       IPSocket socket = new IPSocket(Iterables.get(newDetails.getAddresses().getPublicAddresses(), 0), 22);
       socketTester.apply(socket);
 
-      SshClient client = sshFactory.create(socket, new Credentials("root", pass));
+      SshClient client = sshFactory.create(socket, LoginCredentials.builder().user("root").password(pass).build());
       try {
          client.connect();
          Payload etcPasswd = client.get("/etc/jclouds.txt");
@@ -430,7 +430,7 @@ public class CloudServersClientLiveTest {
    private ExecResponse exec(Server details, String pass, String command) throws IOException {
       IPSocket socket = new IPSocket(Iterables.get(details.getAddresses().getPublicAddresses(), 0), 22);
       socketTester.apply(socket);
-      SshClient client = sshFactory.create(socket, new Credentials("root", pass));
+      SshClient client = sshFactory.create(socket, LoginCredentials.builder().user("root").password(pass).build());
       try {
          client.connect();
          return client.exec(command);

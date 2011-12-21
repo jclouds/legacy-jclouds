@@ -54,7 +54,7 @@ import com.google.common.collect.Iterables;
  * <p/>
  * ComputeService client = // get connection
  * templateBuilder.options(inboundPorts(22, 80, 8080, 443));
- * Set<? extends NodeMetadata> set = client.runNodesWithTag(tag, 2, templateBuilder.build());
+ * Set<? extends NodeMetadata> set = client.createNodesInGroup(tag, 2, templateBuilder.build());
  * <code>
  * 
  * @author Adrian Cole
@@ -269,14 +269,6 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
       }
 
       /**
-       * @see TemplateOptions#runScript
-       */
-      public static EC2TemplateOptions runScript(byte[] script) {
-         EC2TemplateOptions options = new EC2TemplateOptions();
-         return EC2TemplateOptions.class.cast(options.runScript(script));
-      }
-
-      /**
        * @see TemplateOptions#installPrivateKey
        */
       public static EC2TemplateOptions installPrivateKey(String rsaKey) {
@@ -370,16 +362,7 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
    public EC2TemplateOptions authorizePublicKey(String publicKey) {
       return EC2TemplateOptions.class.cast(super.authorizePublicKey(publicKey));
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   @Deprecated
-   public EC2TemplateOptions authorizePublicKey(Payload publicKey) {
-      return EC2TemplateOptions.class.cast(super.authorizePublicKey(publicKey));
-   }
-
+   
    /**
     * {@inheritDoc}
     */
@@ -391,29 +374,12 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
    /**
     * {@inheritDoc}
     */
-   @Override
    @Deprecated
-   public EC2TemplateOptions installPrivateKey(Payload privateKey) {
-      return EC2TemplateOptions.class.cast(super.installPrivateKey(privateKey));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public EC2TemplateOptions runScript(Payload script) {
       return EC2TemplateOptions.class.cast(super.runScript(script));
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   @Deprecated
-   public EC2TemplateOptions runScript(byte[] script) {
-      return EC2TemplateOptions.class.cast(super.runScript(script));
-   }
-
+   
    /**
     * {@inheritDoc}
     */

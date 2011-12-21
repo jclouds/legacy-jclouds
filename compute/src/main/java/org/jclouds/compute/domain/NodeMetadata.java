@@ -54,12 +54,6 @@ public interface NodeMetadata extends ComputeMetadata {
    String getGroup();
 
    /**
-    * @see #getGroup
-    */
-   @Deprecated
-   String getTag();
-
-   /**
     * 
     * The hardware this node is running, if possible to determine.
     */

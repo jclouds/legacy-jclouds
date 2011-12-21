@@ -107,8 +107,8 @@ public class RunScriptOnNodeAsInitScriptUsingSsh extends SudoAwareInitManager im
       if (input.getAdminCredentials() != null && input.shouldGrantSudoToAdminUser()) {
          ssh.disconnect();
          logger.debug(">> reconnecting as %s@%s", input.getAdminCredentials().identity, ssh.getHostAddress());
-         ssh = sshFactory.apply(node = NodeMetadataBuilder.fromNodeMetadata(node).credentials(LoginCredentials.builder(
-                  input.getAdminCredentials()).build()).build());
+         ssh = sshFactory.apply(node = NodeMetadataBuilder.fromNodeMetadata(node)
+               .credentials(LoginCredentials.fromCredentials(input.getAdminCredentials())).build());
          ssh.connect();
          setupLinkToInitFile();
       }
