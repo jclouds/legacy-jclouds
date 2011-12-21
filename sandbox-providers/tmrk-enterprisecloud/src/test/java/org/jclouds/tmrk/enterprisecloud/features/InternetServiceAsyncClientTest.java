@@ -23,9 +23,13 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.tmrk.enterprisecloud.domain.service.Protocol;
 import org.jclouds.tmrk.enterprisecloud.domain.service.internet.InternetService;
+import org.jclouds.tmrk.enterprisecloud.domain.service.internet.InternetServicePersistenceType;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -39,6 +43,21 @@ import java.net.URISyntaxException;
 @Test(groups = "unit", testName = "LayoutAsyncClientTest")
 public class InternetServiceAsyncClientTest extends BaseTerremarkEnterpriseCloudAsyncClientTest<InternetServiceAsyncClient> {
 
+   private URI uri = URI.create("/cloudapi/ecloud/internetservices/797");
+   private InternetServicePersistenceType persistenceType;
+   private InternetService service;
+   
+   @BeforeMethod
+   public void setUp() {
+
+      persistenceType = InternetServicePersistenceType.builder().persistenceType(InternetServicePersistenceType.PersistenceType.NONE).build();
+      
+      service =  InternetService.builder().href(uri)
+            .name("testName")
+            .enabled(true)
+            .persistence(persistenceType).build();  
+   }
+   
    public void testGetInternetService() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
       Method method = InternetServiceAsyncClient.class.getMethod("getInternetService", URI.class);
       HttpRequest httpRequest = processor.createRequest(method, URI.create("/cloudapi/ecloud/internetservices/797"));
@@ -58,15 +77,54 @@ public class InternetServiceAsyncClientTest extends BaseTerremarkEnterpriseCloud
    public void testEditInternetService() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
       Method method = InternetServiceAsyncClient.class.getMethod("editInternetService", InternetService.class);
       
-      URI uri = URI.create("/cloudapi/ecloud/internetservices/797");
-      InternetService service = InternetService.builder().href(uri).build();
-      
       HttpRequest httpRequest = processor.createRequest(method, service);
 
       String requestLine = "PUT https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/internetservices/797 HTTP/1.1";
+      String payload = "<InternetService name='testName'><Enabled>true</Enabled><Persistence><Type>None</Type></Persistence></InternetService>".replaceAll("'","\"");
+      assertRequestLineEquals(httpRequest, requestLine);
+      assertNonPayloadHeadersEqual(httpRequest,
+            "Accept: application/vnd.tmrk.cloud.task\nx-tmrk-version: 2011-07-01\n");
+      assertPayloadEquals(httpRequest, payload, MediaType.APPLICATION_XML, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+
+   public void testCreateInternetService() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = InternetServiceAsyncClient.class.getMethod("createInternetService", URI.class, InternetService.class);
+      
+      URI uri = URI.create("/cloudapi/ecloud/internetServices/publicIps/123/action/createInternetService");
+      InternetService createData = service.toBuilder().href(URI.create("")).protocol(Protocol.HTTP).port(2020).build();
+
+      HttpRequest httpRequest = processor.createRequest(method, uri, createData);
+
+      String requestLine = "POST https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/internetServices/publicIps/123/action/createInternetService HTTP/1.1";
+      String payload = "<CreateInternetService name='testName'><Protocol>HTTP</Protocol><Port>2020</Port><Enabled>true</Enabled><Persistence><Type>None</Type></Persistence></CreateInternetService>".replaceAll("'","\"");
       assertRequestLineEquals(httpRequest, requestLine);
       assertNonPayloadHeadersEqual(httpRequest,
             "Accept: application/vnd.tmrk.cloud.internetService\nx-tmrk-version: 2011-07-01\n");
+      assertPayloadEquals(httpRequest, payload, MediaType.APPLICATION_XML, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testRemoveInternetService() throws SecurityException, NoSuchMethodException, IOException, URISyntaxException {
+      Method method = InternetServiceAsyncClient.class.getMethod("removeInternetService", URI.class);
+
+      URI uri = URI.create("/cloudapi/ecloud/internetServices/123");
+
+      HttpRequest httpRequest = processor.createRequest(method, uri);
+
+      String requestLine = "DELETE https://services-beta.enterprisecloud.terremark.com/cloudapi/ecloud/internetServices/123 HTTP/1.1";
+      assertRequestLineEquals(httpRequest, requestLine);
+      assertNonPayloadHeadersEqual(httpRequest,
+            "Accept: application/vnd.tmrk.cloud.task\nx-tmrk-version: 2011-07-01\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseXMLWithJAXB.class);
