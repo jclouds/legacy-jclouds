@@ -50,8 +50,6 @@ public class MapToDriveInfo implements Function<Map<String, String>, DriveInfo> 
    public DriveInfo apply(Map<String, String> from) {
       if (from.size() == 0)
          return null;
-      if (from.size() == 0)
-         return null;
       DriveInfo.Builder builder = new DriveInfo.Builder();
       builder.name(from.get("name"));
       if (from.containsKey("use"))
@@ -66,6 +64,8 @@ public class MapToDriveInfo implements Function<Map<String, String>, DriveInfo> 
          builder.claimType(ClaimType.fromValue(from.get("claim:type")));
       if (from.containsKey("claimed"))
          builder.claimed(Splitter.on(' ').split(from.get("claimed")));
+      if (from.containsKey("tags"))
+          builder.tags(Splitter.on(' ').split(from.get("tags")));
       if (from.containsKey("readers"))
          builder.readers(Splitter.on(' ').split(from.get("readers")));
       if (from.containsKey("size"))
