@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudwatch.domain.Datapoint;
+import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
@@ -77,6 +78,6 @@ public interface CloudWatchClient {
     *          more filtering options (e.g. instance ID)
     */
    Set<Datapoint> getMetricStatisticsInRegion(@Nullable String region, String metricName, String namespace,
-            Date startTime, Date endTime, int period, String statistics, GetMetricStatisticsOptions... options);
+            Date startTime, Date endTime, int period, Statistics statistics, GetMetricStatisticsOptions... options);
 
 }

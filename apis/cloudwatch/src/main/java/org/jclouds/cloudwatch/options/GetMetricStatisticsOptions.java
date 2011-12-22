@@ -19,6 +19,7 @@
 package org.jclouds.cloudwatch.options;
 
 import org.jclouds.aws.util.AWSUtils;
+import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -46,6 +47,15 @@ public class GetMetricStatisticsOptions extends BaseHttpRequestOptions {
       return this;
    }
 
+   /**
+    * @param unit
+    *          the unit of the metric
+    */
+   public GetMetricStatisticsOptions unit(Unit unit) {
+      this.formParameters.put("Unit", unit.toString());
+      return this;
+   }
+
    public static class Builder {
 
       /**
@@ -54,6 +64,14 @@ public class GetMetricStatisticsOptions extends BaseHttpRequestOptions {
       public static GetMetricStatisticsOptions instanceId(String instanceId) {
          GetMetricStatisticsOptions options = new GetMetricStatisticsOptions();
          return options.instanceId(instanceId);
+      }
+
+      /**
+       * @see GetMetricStatisticsOptions#unit
+       */
+      public static GetMetricStatisticsOptions unit(Unit unit) {
+         GetMetricStatisticsOptions options = new GetMetricStatisticsOptions();
+         return options.unit(unit);
       }
     }
 }
