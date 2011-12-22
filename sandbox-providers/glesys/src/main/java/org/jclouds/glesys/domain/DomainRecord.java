@@ -24,6 +24,7 @@ import com.google.common.base.Objects;
  * DNS record data.
  *
  * @author Adam Lowe
+ * @see <a href= "https://customer.glesys.com/api.php?a=doc#domain_list_records" />
  */
 public class DomainRecord implements Comparable<DomainRecord> {
    public static Builder builder() {

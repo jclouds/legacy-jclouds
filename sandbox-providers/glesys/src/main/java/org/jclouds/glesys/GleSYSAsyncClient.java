@@ -18,10 +18,7 @@
  */
 package org.jclouds.glesys;
 
-import org.jclouds.glesys.features.ArchiveAsyncClient;
-import org.jclouds.glesys.features.DomainAsyncClient;
-import org.jclouds.glesys.features.IpAsyncClient;
-import org.jclouds.glesys.features.ServerAsyncClient;
+import org.jclouds.glesys.features.*;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -58,4 +55,10 @@ public interface GleSYSAsyncClient {
    @Delegate
    DomainAsyncClient getDomainClient();
 
+   /**
+    * Provides asynchronous access to E-Mail features.
+    */
+   @Delegate
+   EmailAsyncClient getEmailClient();
+   
 }

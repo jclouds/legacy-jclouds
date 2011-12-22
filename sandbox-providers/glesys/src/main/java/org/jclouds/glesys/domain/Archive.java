@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  * Information about an archive
  *
  * @author Adam Lowe
- * @see <a href= "https://customer.glesys.com/api.php?a=doc#archive_details" />
+ * @see <a href= "https://customer.glesys.com/api.php?a=doc#archive_list" />
  */
 public class Archive implements Comparable<Archive> {
    public static Builder builder() {

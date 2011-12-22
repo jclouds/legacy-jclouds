@@ -38,11 +38,19 @@ public class ServerCreatedIp {
       protected int version;
       protected double cost;
 
-      public Builder version(int version) {
+      protected Builder version(int version) {
          this.version = version;
          return this;
       }
 
+      public Builder version4() {
+         return version(4);
+      }
+
+      public Builder version6() {
+         return version(6);
+      }
+      
       public Builder ip(String ip) {
          this.ip = ip;
          return this;
