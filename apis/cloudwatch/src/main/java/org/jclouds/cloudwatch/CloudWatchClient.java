@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudwatch.domain.Datapoint;
+import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
 
@@ -41,6 +42,7 @@ public interface CloudWatchClient {
    /**
     * This call returns data for one or more statistics of given a metric. For more information, see
     * Statistic and Metric.
+    *
     * <p/>
     * <h3>Note</h3> The maximum number of datapoints that the Amazon CloudWatch service will return
     * in a single GetMetricStatistics request is 1,440. If a request is made that would generate
@@ -71,8 +73,10 @@ public interface CloudWatchClient {
     *           The granularity (in seconds) of the returned datapoints.
     * @param statistics
     *           The statistics to be returned for the given metric. ex. Average
+    * @param options
+    *          more filtering options (e.g. instance ID)
     */
    Set<Datapoint> getMetricStatisticsInRegion(@Nullable String region, String metricName, String namespace,
-            Date startTime, Date endTime, int period, String statistics);
+            Date startTime, Date endTime, int period, String statistics, GetMetricStatisticsOptions... options);
 
 }
