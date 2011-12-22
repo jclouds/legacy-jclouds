@@ -19,19 +19,18 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
+import java.io.File;
+
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
-import org.jclouds.virtualbox.domain.DeviceDetails;
 import org.jclouds.virtualbox.domain.ErrorCode;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.DeviceType;
 import org.virtualbox_4_1.VBoxException;
-
-import java.io.File;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 /**
  * @author Mattias Holmqvist
@@ -41,7 +40,7 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
    @Test
    public void testCreateMedium() throws Exception {
       String path = System.getProperty("user.home") + "/jclouds-virtualbox-test/test-medium-1.vdi";
-      HardDisk hardDisk = new HardDisk(new DeviceDetails(0, 0, DeviceType.HardDisk), path, "vdi");
+      HardDisk hardDisk = HardDisk.builder().diskpath(path).controllerPort(0).deviceSlot(0).build();
       new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
       manager.getVBox().findMedium(path, DeviceType.HardDisk);
       assertFileCanBeDeleted(path);
@@ -50,7 +49,7 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
    @Test
    public void testCreateMediumFailWhenUsingNonFullyQualifiedPath() throws Exception {
       String path = "test-medium-2.vdi";
-      HardDisk hardDisk = new HardDisk(new DeviceDetails(0, 0, DeviceType.HardDisk), path, "vdi");
+      HardDisk hardDisk = HardDisk.builder().diskpath(path).controllerPort(0).deviceSlot(0).build();
       try {
          new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
          fail();
@@ -63,7 +62,7 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
    @Test
    public void testCreateSameMediumTwiceWhenUsingOverwrite() throws Exception {
       String path = System.getProperty("user.home") + "/jclouds-virtualbox-test/test-medium-3.vdi";
-      HardDisk hardDisk = new HardDisk(new DeviceDetails(0, 0, DeviceType.HardDisk), path, "vdi");
+      HardDisk hardDisk = HardDisk.builder().diskpath(path).controllerPort(0).deviceSlot(0).build();
       new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
       new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
       manager.getVBox().findMedium(path, DeviceType.HardDisk);

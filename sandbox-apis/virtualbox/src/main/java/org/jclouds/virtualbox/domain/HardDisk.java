@@ -19,13 +19,16 @@
 
 package org.jclouds.virtualbox.domain;
 
-import com.google.common.base.Objects;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.virtualbox_4_1.DeviceType;
+
+import com.google.common.base.Objects;
 
 /**
  * A representation of a hard disk in a VirtualBox VM.
  * <p/>
+ * name is a description to identify the hard disk.
  * diskPath is an absolute path to the file that is the location of the storage for the hard disk.
  * diskFormat is any of the formats supported by ISystemProperties.getMediumFormats() in the VirtualBox API.
  * This call is platform-dependent so the supported formats differ from host to host. The default format used is VDI.
@@ -35,17 +38,22 @@ public class HardDisk {
 
    public static final String DEFAULT_DISK_FORMAT = "vdi";
 
+   // NB the name is not independent; the IMedium name is chosen based on the last part of diskPath
+   private final String name;
    private final String diskFormat;
    private final String diskPath;
    private final DeviceDetails deviceDetails;
+   private final boolean autoDelete;
 
-   public HardDisk(DeviceDetails deviceDetails, String diskPath, String diskFormat) {
+   public HardDisk(DeviceDetails deviceDetails, String diskPath, String diskFormat, boolean autoDelete) {
       checkNotNull(deviceDetails, "deviceDetails");
       checkNotNull(diskPath, "diskPath");
       checkNotNull(diskFormat, "diskFormat");
       this.diskPath = diskPath;
       this.diskFormat = diskFormat;
       this.deviceDetails = deviceDetails;
+      this.name = diskPath.substring(diskPath.lastIndexOf("/") + 1);
+      this.autoDelete = autoDelete;
    }
 
    public String getDiskPath() {
@@ -60,6 +68,14 @@ public class HardDisk {
       return deviceDetails;
    }
 
+   public String getName() {
+		return name;
+	}
+
+	public boolean isAutoDelete() {
+      return autoDelete;
+   }
+
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;
@@ -67,14 +83,15 @@ public class HardDisk {
          HardDisk hardDisk = (HardDisk) o;
          return Objects.equal(deviceDetails, hardDisk.deviceDetails) &&
                  Objects.equal(diskFormat, hardDisk.diskFormat) &&
-                 Objects.equal(diskPath, hardDisk.diskPath);
+                 Objects.equal(diskPath, hardDisk.diskPath) &&
+                 Objects.equal(name, hardDisk.name);
       }
       return false;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(diskPath, diskFormat, deviceDetails);
+      return Objects.hashCode(diskPath, diskFormat, deviceDetails, name);
    }
 
    @Override
@@ -83,6 +100,53 @@ public class HardDisk {
               "diskFormat='" + diskFormat + '\'' +
               ", diskPath='" + diskPath + '\'' +
               ", deviceDetails=" + deviceDetails +
+              ", name=" + name +
               '}';
+   }
+   
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+
+      private String diskFormat = "vdi";
+      private String diskPath;
+      private int controllerPort;
+      private int deviceSlot;
+      private DeviceType deviceType = DeviceType.HardDisk;
+      private boolean autoDelete = false;
+
+      public Builder diskFormat(String diskFormat) {
+         this.diskFormat = diskFormat;
+         return this;
+      }
+
+      public Builder diskpath(String diskPath) {
+         this.diskPath = diskPath;
+         return this;
+      }
+
+      public Builder controllerPort(int controllerPort) {
+         this.controllerPort = controllerPort;
+         return this;
+      }
+      
+      public Builder deviceSlot(int deviceSlot) {
+         this.deviceSlot = deviceSlot;
+         return this;
+      }
+      
+      public Builder autoDelete(boolean autoDelete) {
+         this.autoDelete = autoDelete;
+         return this;
+      }      
+
+      public HardDisk build() {
+         checkNotNull(diskPath);
+         checkNotNull(controllerPort);
+         checkNotNull(deviceSlot);
+         return new HardDisk(new DeviceDetails(controllerPort, deviceSlot, deviceType), diskPath, diskFormat, autoDelete);
+      }
    }
 }

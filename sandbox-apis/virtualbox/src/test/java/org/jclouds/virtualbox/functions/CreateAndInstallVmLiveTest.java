@@ -44,6 +44,7 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
+import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.NatAdapter;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
@@ -75,14 +76,29 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
    private String ideControllerName = "IDE Controller";
    private String guestId = "guest";
    private String hostId = "host";
-
    private String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
+   private StorageController ideController;
+   private VmSpec vmSpecification;
 
    @BeforeGroups(groups = {"live"})
    public void setUp() throws Exception {
       identity = "toor";
       credential = "password";
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager, CleanupMode.Full).apply(vmName);
+      
+      String workingDir = PropertyUtils.getWorkingDirFromProperty();
+      HardDisk hardDisk = HardDisk.builder().diskpath(workingDir + "/testadmin.vdi").autoDelete(true)
+            .controllerPort(0).deviceSlot(1).build();
+      ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)
+              .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
+              .attachHardDisk(hardDisk)
+              .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso").build();
+      vmSpecification = VmSpec.builder().id(vmId).name(vmName).memoryMB(512).osTypeId(osTypeId)
+              .controller(ideController)
+              .forceOverwrite(true)
+              .cleanUpMode(CleanupMode.Full)
+              .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build()).build();
+      
+      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(vmSpecification);
    }
 
    public void testCreateImageMachineFromIso() throws Exception {
@@ -92,15 +108,6 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
               "localhost", new Credentials("toor", "password"));
       Predicate<IPSocket> socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 10, 1, TimeUnit.SECONDS);
 
-      String workingDir = PropertyUtils.getWorkingDirFromProperty();
-      StorageController ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)
-              .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
-              .attachHardDisk(0, 1, workingDir + "/testadmin.vdi")
-              .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso").build();
-      VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).memoryMB(512).osTypeId(osTypeId)
-              .controller(ideController)
-              .forceOverwrite(true)
-              .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build()).build();
       IMachine imageMachine = new CreateAndInstallVm(manager, guestId, localHostContext, hostId,
               socketTester, "127.0.0.1", 8080, HEADLESS)
               .apply(vmSpecification);
@@ -111,9 +118,7 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
       // YAML the image desc
       Set<? extends Image> images = context.getComputeService().listImages();
       Iterable<String> imageIds = transform(images, extractId());
-
       assertTrue(any(imageIds, equalTo(newImage.getId())));
-
    }
 
    private Function<Image, String> extractId() {

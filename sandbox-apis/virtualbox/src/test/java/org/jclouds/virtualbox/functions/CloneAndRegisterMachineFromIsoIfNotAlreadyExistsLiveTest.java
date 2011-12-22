@@ -19,25 +19,31 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Predicate;
+import static org.jclouds.virtualbox.domain.ExecutionType.HEADLESS;
+import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
+import static org.testng.Assert.assertEquals;
+import static org.virtualbox_4_1.NetworkAttachmentType.Bridged;
+
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
+import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.util.PropertyUtils;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.*;
+import org.virtualbox_4_1.CleanupMode;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.StorageBus;
+import org.virtualbox_4_1.VirtualBoxManager;
 
-import java.util.concurrent.TimeUnit;
-
-import static org.jclouds.virtualbox.domain.ExecutionType.HEADLESS;
-import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
-import static org.testng.Assert.assertEquals;
-import static org.virtualbox_4_1.NetworkAttachmentType.Bridged;
+import com.google.common.base.Predicate;
 
 /**
  * @author Andrea Turli
@@ -57,7 +63,6 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends Ba
 
    private String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
    private String cloneName = vmName + "_clone";
-   private String isoName = "ubuntu-11.04-server-i386.iso";
 
    @Test
    public void testCloneMachineFromAnotherMachine() throws Exception {
@@ -86,11 +91,14 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends Ba
          String workingDir = PropertyUtils.getWorkingDirFromProperty();
          StorageController ideController = StorageController.builder().name(controllerIDE).bus(StorageBus.IDE)
          .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
-         .attachHardDisk(0, 1, workingDir + "/testadmin.vdi")
+         .attachHardDisk(HardDisk.builder().diskpath(workingDir + "/testadmin.vdi")
+            .controllerPort(0).deviceSlot(1).build())
          .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso").build();
          VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).osTypeId(osTypeId)
-                 .controller(ideController)
-                 .forceOverwrite(true).build();
+         		.memoryMB(512)
+         		.cleanUpMode(CleanupMode.Full)
+               .controller(ideController)
+               .forceOverwrite(true).build();
          return new CreateAndInstallVm(manager, guestId, localHostContext, hostId, socketTester,
                  "127.0.0.1", 8080, HEADLESS).apply(vmSpecification);
       } catch (IllegalStateException e) {
