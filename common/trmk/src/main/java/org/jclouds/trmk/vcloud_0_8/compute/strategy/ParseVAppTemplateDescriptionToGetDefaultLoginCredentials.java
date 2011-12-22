@@ -21,6 +21,7 @@ package org.jclouds.trmk.vcloud_0_8.compute.strategy;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,6 +32,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.impl.ReturnCredentialsBoundToImage;
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
@@ -42,8 +44,9 @@ import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
 @Singleton
 public class ParseVAppTemplateDescriptionToGetDefaultLoginCredentials extends ReturnCredentialsBoundToImage {
    @Inject
-   public ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(@Nullable @Named("image") LoginCredentials creds) {
-      super(creds);
+   public ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(@Nullable @Named("image") LoginCredentials creds,
+            Map<String, Credentials> credentialStore) {
+      super(creds, credentialStore);
    }
 
    @Resource

@@ -20,15 +20,20 @@ package org.jclouds.ec2.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.strategy.impl.ReturnCredentialsBoundToImage;
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.domain.LoginCredentials.Builder;
 import org.jclouds.ec2.domain.Image;
 import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * @author Oleksiy Yarmula
@@ -36,12 +41,13 @@ import org.jclouds.javax.annotation.Nullable;
 @Singleton
 public class EC2PopulateDefaultLoginCredentialsForImageStrategy extends ReturnCredentialsBoundToImage {
    public EC2PopulateDefaultLoginCredentialsForImageStrategy() {
-      this(null);
+      this(null, ImmutableMap.<String, Credentials> of());
    }
 
    @Inject
-   public EC2PopulateDefaultLoginCredentialsForImageStrategy(@Nullable @Named("image") LoginCredentials creds) {
-      super(creds);
+   public EC2PopulateDefaultLoginCredentialsForImageStrategy(@Nullable @Named("image") LoginCredentials creds,
+            Map<String, Credentials> credentialStore) {
+      super(creds, credentialStore);
    }
 
    @Override
