@@ -20,6 +20,8 @@ package org.jclouds.compute.strategy.impl;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -38,10 +40,13 @@ import org.jclouds.javax.annotation.Nullable;
 public class ReturnCredentialsBoundToImage implements PopulateDefaultLoginCredentialsForImageStrategy {
 
    protected final LoginCredentials creds;
+   protected Map<String, Credentials> credentialStore;
 
    @Inject
-   public ReturnCredentialsBoundToImage(@Nullable @Named("image") LoginCredentials creds) {
+   public ReturnCredentialsBoundToImage(@Nullable @Named("image") LoginCredentials creds,
+            Map<String, Credentials> credentialStore) {
       this.creds = creds;
+      this.credentialStore = credentialStore;
    }
 
    @Override
@@ -50,6 +55,8 @@ public class ReturnCredentialsBoundToImage implements PopulateDefaultLoginCreden
       if (creds != null)
          return creds;
       Image image = Image.class.cast(resourceToAuthenticate);
+      if (credentialStore.containsKey("image#" + image.getId()))
+         return LoginCredentials.fromCredentials(credentialStore.get("image#" + image.getId()));
       if (image.getOperatingSystem() != null && OsFamily.WINDOWS.equals(image.getOperatingSystem().getFamily())) {
          return LoginCredentials.builder().user("Administrator").build();
       } else {

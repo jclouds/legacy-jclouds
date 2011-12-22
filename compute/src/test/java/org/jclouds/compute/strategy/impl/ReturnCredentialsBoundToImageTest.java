@@ -31,6 +31,8 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
+
 /**
  * 
  * @author Adrian Cole
@@ -43,7 +45,21 @@ public class ReturnCredentialsBoundToImageTest {
       replay(image);
 
       LoginCredentials creds = new LoginCredentials("ubuntu", "foo", null, false);
-      assertEquals(new ReturnCredentialsBoundToImage(creds).execute(image), creds);
+      assertEquals(new ReturnCredentialsBoundToImage(creds, ImmutableMap.<String, Credentials> of()).execute(image),
+               creds);
+
+      verify(image);
+
+   }
+
+   public void testDefaultIsToReturnConfiguredCredentialInStore() {
+      Image image = createMock(Image.class);
+      expect(image.getId()).andReturn("1").times(2);
+      replay(image);
+
+      LoginCredentials creds = new LoginCredentials("ubuntu", "foo", null, false);
+      assertEquals(new ReturnCredentialsBoundToImage(null, ImmutableMap.<String, Credentials> of("image#1",creds)).execute(image),
+               creds);
 
       verify(image);
 
@@ -51,12 +67,13 @@ public class ReturnCredentialsBoundToImageTest {
 
    public void testReturnAdministratorOnWindows() {
       Image image = createMock(Image.class);
+      expect(image.getId()).andReturn("1");
       expect(image.getOperatingSystem()).andReturn(
-            OperatingSystem.builder().family(OsFamily.WINDOWS).description("foo").build()).atLeastOnce();
+               OperatingSystem.builder().family(OsFamily.WINDOWS).description("foo").build()).atLeastOnce();
       replay(image);
 
       Credentials creds = new Credentials("Administrator", null);
-      assertEquals(new ReturnCredentialsBoundToImage(null).execute(image), creds);
+      assertEquals(new ReturnCredentialsBoundToImage(null, ImmutableMap.<String, Credentials> of()).execute(image), creds);
 
       verify(image);
 
@@ -64,12 +81,13 @@ public class ReturnCredentialsBoundToImageTest {
 
    public void testReturnRootWhenNotOnWindows() {
       Image image = createMock(Image.class);
+      expect(image.getId()).andReturn("1");
       expect(image.getOperatingSystem()).andReturn(
-            OperatingSystem.builder().family(OsFamily.LINUX).description("foo").build()).atLeastOnce();
+               OperatingSystem.builder().family(OsFamily.LINUX).description("foo").build()).atLeastOnce();
       replay(image);
 
       Credentials creds = new Credentials("root", null);
-      assertEquals(new ReturnCredentialsBoundToImage(null).execute(image), creds);
+      assertEquals(new ReturnCredentialsBoundToImage(null, ImmutableMap.<String, Credentials> of()).execute(image), creds);
 
       verify(image);
 
