@@ -18,8 +18,6 @@
  */
 package org.jclouds.trmk.ecloud;
 
-import static org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.Builder.processorCount;
-
 import java.util.Properties;
 import java.util.Map.Entry;
 
@@ -32,7 +30,6 @@ import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
 import org.jclouds.trmk.vcloud_0_8.domain.Protocol;
 import org.jclouds.trmk.vcloud_0_8.domain.PublicIpAddress;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
-import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions;
 import org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants;
 import org.testng.annotations.Test;
 
@@ -59,13 +56,9 @@ public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest {
    }
 
    @Override
-   protected InstantiateVAppTemplateOptions createInstantiateOptions() {
-      return processorCount(1).memory(512);
-   }
-
-   @Override
    protected SshClient getConnectionFor(IPSocket socket) {
-      return sshFactory.create(socket, LoginCredentials.builder().user("ecloud").password("TmrkCl0ud1s#1!").build());
+      return sshFactory.create(socket, LoginCredentials.builder().user("ecloud").password("TmrkCl0ud1s#1!").privateKey(
+               key.getPrivateKey()).authenticateSudo(true).build());
    }
 
    @Override

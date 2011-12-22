@@ -24,6 +24,7 @@ import static com.google.common.collect.Iterables.size;
 import static org.jclouds.trmk.vcloud_0_8.domain.VAppConfiguration.Builder.changeNameTo;
 import static org.jclouds.trmk.vcloud_0_8.domain.VAppConfiguration.Builder.deleteDiskWithAddressOnParent;
 import static org.jclouds.trmk.vcloud_0_8.options.CloneVAppOptions.Builder.deploy;
+import static org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -31,9 +32,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -51,8 +52,8 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.ssh.SshException;
+import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.trmk.vcloud_0_8.domain.Catalog;
 import org.jclouds.trmk.vcloud_0_8.domain.CatalogItem;
@@ -76,7 +77,6 @@ import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions;
 import org.jclouds.trmk.vcloud_0_8.predicates.TaskSuccess;
 import org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants;
 import org.testng.annotations.AfterGroups;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -105,10 +105,17 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
 
    protected VApp clone;
    protected VDC vdc;
+   protected String serverName;
+   protected KeyPair key;
+   
    public static final String PREFIX = System.getProperty("user.name") + "-terremark";
 
    public TerremarkClientLiveTest() {
       this.provider = "trmk-vcloudexpress";
+      StringBuffer name = new StringBuffer();
+      for (int i = 0; i < 15; i++)
+         name.append("d");
+      serverName = name.toString();// "adriantest";
    }
    
    @Test
@@ -176,10 +183,6 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
    public void testInstantiateAndPowerOn() throws InterruptedException, ExecutionException, TimeoutException,
          IOException {
       prepare();
-      StringBuffer name = new StringBuffer();
-      for (int i = 0; i < 15; i++)
-         name.append("c");
-      String serverName = name.toString();// "adriantest";
 
       long hardDisk = 4194304;
 
@@ -189,9 +192,9 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
 
       // lookup the datacenter you are deploying into
       vdc = connection.findVDCInOrgNamed(null, null);
-
+   
       // create an options object to collect the configuration we want.
-      InstantiateVAppTemplateOptions instantiateOptions = createInstantiateOptions();
+      InstantiateVAppTemplateOptions instantiateOptions = createInstantiateOptions().sshKeyFingerprint(key.getFingerPrint());
 
       CatalogItem item = connection.findCatalogItemInOrgCatalogNamed(null, null, itemName);
 
@@ -201,6 +204,8 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
       // our options
       CustomizationParameters customizationOptions = connection.getCustomizationOptions(item.getCustomizationOptions()
             .getHref());
+
+
       if (customizationOptions.canCustomizePassword())
          instantiateOptions.withPassword("robotsarefun");
 
@@ -252,10 +257,26 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
       assertEquals(vApp.getStatus(), Status.ON);
    }
 
-   protected abstract InstantiateVAppTemplateOptions createInstantiateOptions();
+   protected InstantiateVAppTemplateOptions createInstantiateOptions() {
+      return processorCount(1).memory(512).sshKeyFingerprint(key.getFingerPrint());
+   }
 
    protected void prepare() {
-
+      Org org = connection.findOrgNamed(null);
+      try {
+         key = connection.generateKeyPairInOrg(org.getHref(), "livetest", false);
+      } catch (IllegalStateException e) {
+         key = connection.findKeyPairInOrg(org.getHref(), "livetest");
+         connection.deleteKeyPair(key.getId());
+         key = connection.generateKeyPairInOrg(org.getHref(), "livetest", false);
+      }
+      assertNotNull(key);
+      assertEquals(key.getName(), "livetest");
+      assertNotNull(key.getPrivateKey());
+      assertNotNull(key.getFingerPrint());
+      assertEquals(key.isDefault(), false);
+      assertEquals(key.getFingerPrint(), connection.findKeyPairInOrg(org.getHref(), key.getName())
+            .getFingerPrint());
    }
 
    protected abstract Entry<InternetService, PublicIpAddress> getNewInternetServiceAndIpForSSH(VApp vApp);
@@ -435,12 +456,14 @@ public abstract class TerremarkClientLiveTest extends BaseVersionedServiceLiveTe
 
    protected abstract SshClient getConnectionFor(IPSocket socket);
 
-   @AfterTest
+   @AfterGroups(groups = { "live" })
    void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
       if (node != null)
          connection.deleteNode(node.getId());
       if (is != null)
          connection.deleteInternetService(is.getId());
+      if (key != null)
+         connection.deleteKeyPair(key.getId());
       if (vApp != null) {
          try {
             successTester.apply(connection.powerOffVApp(vApp.getHref()).getHref());

@@ -18,27 +18,17 @@
  */
 package org.jclouds.trmk.vcloudexpress;
 
-import static org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.Builder.processorCount;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.trmk.vcloud_0_8.TerremarkClientLiveTest;
 import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
-import org.jclouds.trmk.vcloud_0_8.domain.KeyPair;
 import org.jclouds.trmk.vcloud_0_8.domain.Protocol;
 import org.jclouds.trmk.vcloud_0_8.domain.PublicIpAddress;
-import org.jclouds.trmk.vcloud_0_8.domain.Org;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
-import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions;
 import org.jclouds.trmk.vcloudexpress.suppliers.TerremarkVCloudExpressInternetServiceAndPublicIpAddressSupplier;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
 /**
@@ -49,45 +39,10 @@ import org.testng.annotations.Test;
 @Test(groups = "live", singleThreaded = true, testName = "TerremarkVCloudExpressClientLiveTest")
 public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTest {
 
-   KeyPair key;
-
-   @Override
-   protected void prepare() {
-      TerremarkVCloudExpressClient vCloudExpressClient = TerremarkVCloudExpressClient.class.cast(connection);
-
-      Org org = vCloudExpressClient.findOrgNamed(null);
-      try {
-         key = vCloudExpressClient.generateKeyPairInOrg(org.getHref(), "livetest", false);
-      } catch (IllegalStateException e) {
-         key = vCloudExpressClient.findKeyPairInOrg(org.getHref(), "livetest");
-         vCloudExpressClient.deleteKeyPair(key.getId());
-         key = vCloudExpressClient.generateKeyPairInOrg(org.getHref(), "livetest", false);
-      }
-      assertNotNull(key);
-      assertEquals(key.getName(), "livetest");
-      assertNotNull(key.getPrivateKey());
-      assertNotNull(key.getFingerPrint());
-      assertEquals(key.isDefault(), false);
-      assertEquals(key.getFingerPrint(), vCloudExpressClient.findKeyPairInOrg(org.getHref(), key.getName())
-            .getFingerPrint());
-   }
-
-   @AfterTest
-   void cleanup1() throws InterruptedException, ExecutionException, TimeoutException {
-      if (key != null) {
-         TerremarkVCloudExpressClient vCloudExpressClient = TerremarkVCloudExpressClient.class.cast(connection);
-         vCloudExpressClient.deleteKeyPair(key.getId());
-      }
-   }
-
    @Override
    protected SshClient getConnectionFor(IPSocket socket) {
-      return sshFactory.create(socket, new Credentials("vcloud", key.getPrivateKey()));
-   }
-
-   @Override
-   protected InstantiateVAppTemplateOptions createInstantiateOptions() {
-      return processorCount(1).memory(512).sshKeyFingerprint(key.getFingerPrint());
+      return sshFactory.create(socket, LoginCredentials.builder().user("vcloud").password("TmrkCl0ud1s#1!").privateKey(
+               key.getPrivateKey()).authenticateSudo(true).build());
    }
 
    @Override
