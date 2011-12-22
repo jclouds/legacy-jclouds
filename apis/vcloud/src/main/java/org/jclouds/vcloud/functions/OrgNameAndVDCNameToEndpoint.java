@@ -41,12 +41,12 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class OrgNameAndVDCNameToEndpoint implements Function<Object, URI> {
-   private final Supplier<Map<String, ? extends Org>> orgNameToVDCEndpoint;
+   private final Supplier<Map<String, Org>> orgNameToVDCEndpoint;
    private final ReferenceType defaultOrg;
    private final ReferenceType defaultVDC;
 
    @Inject
-   public OrgNameAndVDCNameToEndpoint(Supplier<Map<String, ? extends Org>> orgNameToVDCEndpoint,
+   public OrgNameAndVDCNameToEndpoint(Supplier<Map<String, Org>> orgNameToVDCEndpoint,
          @org.jclouds.vcloud.endpoints.Org ReferenceType defaultOrg, @VDC ReferenceType defaultVDC) {
       this.orgNameToVDCEndpoint = orgNameToVDCEndpoint;
       this.defaultOrg = defaultOrg;

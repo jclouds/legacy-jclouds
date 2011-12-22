@@ -58,7 +58,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @org.jclouds.vcloud.endpoints.Org
    @Singleton
    protected ReferenceType provideDefaultOrg(DefaultOrgForUser defaultOrgURIForUser,
-         @Named(PROPERTY_IDENTITY) String user) {
+            @Named(PROPERTY_IDENTITY) String user) {
       return defaultOrgURIForUser.apply(user);
    }
 
@@ -73,7 +73,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @org.jclouds.vcloud.endpoints.TasksList
    @Singleton
    protected ReferenceType provideDefaultTasksList(DefaultTasksListForOrg defaultTasksListURIForOrg,
-         @org.jclouds.vcloud.endpoints.Org ReferenceType defaultOrg) {
+            @org.jclouds.vcloud.endpoints.Org ReferenceType defaultOrg) {
       return defaultTasksListURIForOrg.apply(defaultOrg);
    }
 
@@ -81,7 +81,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @org.jclouds.vcloud.endpoints.Catalog
    @Singleton
    protected ReferenceType provideDefaultCatalog(DefaultCatalogForOrg defaultCatalogURIForOrg,
-         @org.jclouds.vcloud.endpoints.Org ReferenceType defaultOrg) {
+            @org.jclouds.vcloud.endpoints.Org ReferenceType defaultOrg) {
       return defaultCatalogURIForOrg.apply(defaultOrg);
    }
 
@@ -94,24 +94,24 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.Catalog>> provideCatalogsById(
-         Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> supplier) {
+   protected Supplier<Map<URI, org.jclouds.vcloud.domain.Catalog>> provideCatalogsById(
+            Supplier<Map<String, Map<String, org.jclouds.vcloud.domain.Catalog>>> supplier) {
       return Suppliers
-            .compose(
-                  new Function<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>, Map<URI, ? extends org.jclouds.vcloud.domain.Catalog>>() {
+               .compose(
+                        new Function<Map<String, Map<String, org.jclouds.vcloud.domain.Catalog>>, Map<URI, org.jclouds.vcloud.domain.Catalog>>() {
 
-                     @Override
-                     public Map<URI, ? extends Catalog> apply(Map<String, Map<String, ? extends Catalog>> arg0) {
-                        Builder<URI, Catalog> builder = ImmutableMap.<URI, Catalog> builder();
-                        for (Map<String, ? extends Catalog> v1 : arg0.values()) {
-                           for (Catalog v2 : v1.values()) {
-                              builder.put(v2.getHref(), v2);
+                           @Override
+                           public Map<URI, Catalog> apply(Map<String, Map<String, Catalog>> arg0) {
+                              Builder<URI, Catalog> builder = ImmutableMap.<URI, Catalog> builder();
+                              for (Map<String, Catalog> v1 : arg0.values()) {
+                                 for (Catalog v2 : v1.values()) {
+                                    builder.put(v2.getHref(), v2);
+                                 }
+                              }
+                              return builder.build();
                            }
-                        }
-                        return builder.build();
-                     }
 
-                  }, supplier);
+                        }, supplier);
    }
 
    @Singleton
@@ -120,10 +120,10 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
       @Resource
       protected Logger logger = Logger.NULL;
 
-      private final Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.Catalog>> catalogsByIdSupplier;
+      private final Supplier<Map<URI, org.jclouds.vcloud.domain.Catalog>> catalogsByIdSupplier;
 
       @Inject
-      public WriteableCatalog(Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.Catalog>> catalogsByIdSupplier) {
+      public WriteableCatalog(Supplier<Map<URI, org.jclouds.vcloud.domain.Catalog>> catalogsByIdSupplier) {
          this.catalogsByIdSupplier = catalogsByIdSupplier;
       }
 
@@ -132,7 +132,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
          // TODO: this is inefficient, calculating the index each time, but
          // shouldn't be added to constructor as the supplier is an expensive
          // call
-         Map<URI, ? extends Catalog> index = catalogsByIdSupplier.get();
+         Map<URI, Catalog> index = catalogsByIdSupplier.get();
          Catalog catalog = index.get(arg0.getHref());
          if (catalog == null) {
             if (logger.isTraceEnabled())
@@ -147,7 +147,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @org.jclouds.vcloud.endpoints.VDC
    @Singleton
    protected ReferenceType provideDefaultVDC(DefaultVDCForOrg defaultVDCURIForOrg,
-         @org.jclouds.vcloud.endpoints.Org ReferenceType defaultOrg) {
+            @org.jclouds.vcloud.endpoints.Org ReferenceType defaultOrg) {
       return defaultVDCURIForOrg.apply(defaultOrg);
    }
 
@@ -162,7 +162,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @org.jclouds.vcloud.endpoints.Network
    @Singleton
    protected ReferenceType provideDefaultNetwork(DefaultNetworkForVDC defaultNetworkURIForVDC,
-         @org.jclouds.vcloud.endpoints.VDC ReferenceType defaultVDC) {
+            @org.jclouds.vcloud.endpoints.VDC ReferenceType defaultVDC) {
       return defaultNetworkURIForVDC.apply(defaultVDC);
    }
 

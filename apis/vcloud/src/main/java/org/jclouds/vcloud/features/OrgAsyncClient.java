@@ -70,7 +70,7 @@ public interface OrgAsyncClient {
    @XMLResponseParser(OrgHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(ORG_XML)
-   ListenableFuture<? extends Org> getOrg(@EndpointParam URI orgId);
+   ListenableFuture<Org> getOrg(@EndpointParam URI orgId);
 
    /**
     * @see OrgClient#getOrgNamed
@@ -79,6 +79,6 @@ public interface OrgAsyncClient {
    @XMLResponseParser(OrgHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(ORG_XML)
-   ListenableFuture<? extends Org> findOrgNamed(
+   ListenableFuture<Org> findOrgNamed(
             @Nullable @EndpointParam(parser = OrgNameToEndpoint.class) String orgName);
 }

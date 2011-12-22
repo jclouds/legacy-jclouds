@@ -41,7 +41,7 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class AllCatalogsInOrg implements Function<Org, Iterable<? extends Catalog>> {
+public class AllCatalogsInOrg implements Function<Org, Iterable<Catalog>> {
    @Resource
    public Logger logger = Logger.NULL;
 
@@ -55,10 +55,9 @@ public class AllCatalogsInOrg implements Function<Org, Iterable<? extends Catalo
    }
 
    @Override
-   public Iterable<? extends Catalog> apply(final Org org) {
+   public Iterable<Catalog> apply(final Org org) {
       Iterable<Catalog> catalogs = transformParallel(org.getCatalogs().values(),
             new Function<ReferenceType, Future<Catalog>>() {
-               @SuppressWarnings("unchecked")
                @Override
                public Future<Catalog> apply(ReferenceType from) {
                   return (Future<Catalog>) aclient.getCatalogClient().getCatalog(from.getHref());

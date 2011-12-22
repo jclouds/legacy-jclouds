@@ -35,7 +35,7 @@ public class InstantiateVAppTemplateParams {
    protected final VirtualSystemSettingData virtualSystem;
    protected final Set<ResourceAllocationSettingData> resourceAllocations = Sets.newLinkedHashSet();
 
-   public InstantiateVAppTemplateParams(String info, VirtualSystemSettingData virtualSystem, Iterable<? extends ResourceAllocationSettingData> resourceAllocations) {
+   public InstantiateVAppTemplateParams(String info, VirtualSystemSettingData virtualSystem, Iterable<ResourceAllocationSettingData> resourceAllocations) {
       this.info = info;
       this.virtualSystem = virtualSystem;
       Iterables.addAll(this.resourceAllocations, resourceAllocations);
@@ -49,7 +49,7 @@ public class InstantiateVAppTemplateParams {
       return virtualSystem;
    }
 
-   public Set<? extends ResourceAllocationSettingData> getResourceAllocationSettingDatas() {
+   public Set<ResourceAllocationSettingData> getResourceAllocationSettingDatas() {
       return resourceAllocations;
    }
 

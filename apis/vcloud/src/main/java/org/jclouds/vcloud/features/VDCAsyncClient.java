@@ -54,7 +54,7 @@ public interface VDCAsyncClient {
    @XMLResponseParser(VDCHandler.class)
    @Consumes(VDC_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends VDC> getVDC(@EndpointParam URI vdc);
+   ListenableFuture<VDC> getVDC(@EndpointParam URI vdc);
 
    /**
     * @see VDCClient#findVDCInOrgNamed(String, String)
@@ -63,7 +63,7 @@ public interface VDCAsyncClient {
    @XMLResponseParser(VDCHandler.class)
    @Consumes(VDC_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends VDC> findVDCInOrgNamed(
+   ListenableFuture<VDC> findVDCInOrgNamed(
             @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String orgName,
             @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String vdcName);
 }

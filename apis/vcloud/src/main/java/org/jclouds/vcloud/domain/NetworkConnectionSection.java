@@ -66,7 +66,7 @@ public class NetworkConnectionSection {
          return this;
       }
 
-      public Builder connections(Iterable<? extends NetworkConnection> connections) {
+      public Builder connections(Iterable<NetworkConnection> connections) {
          this.connections = ImmutableSet.copyOf(checkNotNull(connections, "connections"));
          return this;
       }
@@ -140,7 +140,7 @@ public class NetworkConnectionSection {
    /**
     * 
     */
-   public Set<? extends NetworkConnection> getConnections() {
+   public Set<NetworkConnection> getConnections() {
       return connections;
    }
 

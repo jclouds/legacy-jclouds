@@ -75,7 +75,7 @@ public interface VAppAsyncClient {
    @Consumes(TASK_XML)
    @XMLResponseParser(TaskHandler.class)
    @MapBinder(BindCloneVAppParamsToXmlPayload.class)
-   ListenableFuture<? extends Task> copyVAppToVDCAndName(@PayloadParam("Source") URI sourceVApp,
+   ListenableFuture<Task> copyVAppToVDCAndName(@PayloadParam("Source") URI sourceVApp,
             @EndpointParam URI vdc, @PayloadParam("name") @ParamValidators(DnsNameValidator.class) String newName,
             CloneVAppOptions... options);
 
@@ -89,7 +89,7 @@ public interface VAppAsyncClient {
    @XMLResponseParser(TaskHandler.class)
    @PayloadParams(keys = "IsSourceDelete", values = "true")
    @MapBinder(BindCloneVAppParamsToXmlPayload.class)
-   ListenableFuture<? extends Task> moveVAppToVDCAndRename(@PayloadParam("Source") URI sourceVApp,
+   ListenableFuture<Task> moveVAppToVDCAndRename(@PayloadParam("Source") URI sourceVApp,
             @EndpointParam URI vdc, @PayloadParam("name") @ParamValidators(DnsNameValidator.class) String newName,
             CloneVAppOptions... options);
 
@@ -100,7 +100,7 @@ public interface VAppAsyncClient {
    @Consumes(VAPP_XML)
    @XMLResponseParser(VAppHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends VApp> findVAppInOrgVDCNamed(
+   ListenableFuture<VApp> findVAppInOrgVDCNamed(
             @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String orgName,
             @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String catalogName,
             @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String vAppName);
@@ -112,7 +112,7 @@ public interface VAppAsyncClient {
    @Consumes(VAPP_XML)
    @XMLResponseParser(VAppHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends VApp> getVApp(@EndpointParam URI href);
+   ListenableFuture<VApp> getVApp(@EndpointParam URI href);
 
    /**
     * @see VAppClient#deployVApp
@@ -123,7 +123,7 @@ public interface VAppAsyncClient {
    @Path("/action/deploy")
    @MapBinder(BindDeployVAppParamsToXmlPayload.class)
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> deployVApp(@EndpointParam URI href);
+   ListenableFuture<Task> deployVApp(@EndpointParam URI href);
 
    /**
     * @see VAppClient#deployAndPowerOnVApp
@@ -135,7 +135,7 @@ public interface VAppAsyncClient {
    @MapBinder(BindDeployVAppParamsToXmlPayload.class)
    @PayloadParams(keys = "powerOn", values = "true")
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> deployAndPowerOnVApp(@EndpointParam URI href);
+   ListenableFuture<Task> deployAndPowerOnVApp(@EndpointParam URI href);
 
    /**
     * @see VAppClient#undeployVApp
@@ -146,7 +146,7 @@ public interface VAppAsyncClient {
    @Path("/action/undeploy")
    @MapBinder(BindUndeployVAppParamsToXmlPayload.class)
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> undeployVApp(@EndpointParam URI href);
+   ListenableFuture<Task> undeployVApp(@EndpointParam URI href);
 
    /**
     * @see VAppClient#undeployAndSaveStateOfVApp
@@ -158,7 +158,7 @@ public interface VAppAsyncClient {
    @MapBinder(BindUndeployVAppParamsToXmlPayload.class)
    @PayloadParams(keys = "saveState", values = "true")
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> undeployAndSaveStateOfVApp(@EndpointParam URI href);
+   ListenableFuture<Task> undeployAndSaveStateOfVApp(@EndpointParam URI href);
 
    /**
     * @see VAppClient#powerOnVApp
@@ -167,7 +167,7 @@ public interface VAppAsyncClient {
    @Consumes(TASK_XML)
    @Path("/power/action/powerOn")
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> powerOnVApp(@EndpointParam URI href);
+   ListenableFuture<Task> powerOnVApp(@EndpointParam URI href);
 
    /**
     * @see VAppClient#powerOffVApp
@@ -176,7 +176,7 @@ public interface VAppAsyncClient {
    @Consumes(TASK_XML)
    @Path("/power/action/powerOff")
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> powerOffVApp(@EndpointParam URI href);
+   ListenableFuture<Task> powerOffVApp(@EndpointParam URI href);
 
    /**
     * @see VAppClient#shutdownVApp
@@ -192,7 +192,7 @@ public interface VAppAsyncClient {
    @Consumes(TASK_XML)
    @Path("/power/action/reset")
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> resetVApp(@EndpointParam URI href);
+   ListenableFuture<Task> resetVApp(@EndpointParam URI href);
 
    /**
     * @see VAppClient#rebootVApp
@@ -208,7 +208,7 @@ public interface VAppAsyncClient {
    @Consumes(TASK_XML)
    @Path("/power/action/suspend")
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> suspendVApp(@EndpointParam URI href);
+   ListenableFuture<Task> suspendVApp(@EndpointParam URI href);
 
    /**
     * @see VAppClient#deleteVApp
@@ -217,6 +217,6 @@ public interface VAppAsyncClient {
    @Consumes(TASK_XML)
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> deleteVApp(@EndpointParam URI href);
+   ListenableFuture<Task> deleteVApp(@EndpointParam URI href);
 
 }

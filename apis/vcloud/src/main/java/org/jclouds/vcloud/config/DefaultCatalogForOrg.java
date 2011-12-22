@@ -44,20 +44,20 @@ import com.google.common.base.Supplier;
 @Singleton
 public class DefaultCatalogForOrg implements Function<ReferenceType, ReferenceType> {
    private final OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault selector;
-   private final Supplier<Map<String, ? extends Org>> nameToOrg;
+   private final Supplier<Map<String, Org>> nameToOrg;
 
    @Inject
    public DefaultCatalogForOrg(ValueOfConfigurationKeyOrNull valueOfConfigurationKeyOrNull,
-         @Catalog Predicate<ReferenceType> defaultSelector, Supplier<Map<String, ? extends Org>> nameToOrg) {
+            @Catalog Predicate<ReferenceType> defaultSelector, Supplier<Map<String, Org>> nameToOrg) {
       this.selector = new OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault(checkNotNull(
-            valueOfConfigurationKeyOrNull, "valueOfConfigurationKeyOrNull"), PROPERTY_VCLOUD_DEFAULT_CATALOG,
-            checkNotNull(defaultSelector, "defaultSelector"));
+               valueOfConfigurationKeyOrNull, "valueOfConfigurationKeyOrNull"), PROPERTY_VCLOUD_DEFAULT_CATALOG,
+               checkNotNull(defaultSelector, "defaultSelector"));
       this.nameToOrg = checkNotNull(nameToOrg, "nameToOrg");
    }
 
    @Override
    public ReferenceType apply(ReferenceType defaultOrg) {
-      org.jclouds.vcloud.domain.Org org = nameToOrg.get().get(defaultOrg.getName());
+      Org org = nameToOrg.get().get(defaultOrg.getName());
       checkState(org != null, "could not retrieve Org at %s", defaultOrg);
       return selector.apply(org.getCatalogs().values());
    }

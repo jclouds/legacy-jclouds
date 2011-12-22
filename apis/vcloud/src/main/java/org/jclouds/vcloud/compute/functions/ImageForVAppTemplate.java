@@ -21,14 +21,13 @@ package org.jclouds.vcloud.compute.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
-import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.ovf.Envelope;
 import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
 import com.google.common.base.Function;
@@ -36,24 +35,17 @@ import com.google.common.base.Function;
 /**
  * @author Adrian Cole
  */
+@Singleton
 public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
    private final VCloudClient client;
    private final FindLocationForResource findLocationForResource;
-   private final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider;
-   private ReferenceType parent;
 
    @Inject
-   protected ImageForVAppTemplate(VCloudClient client, FindLocationForResource findLocationForResource,
-         PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider) {
+   protected ImageForVAppTemplate(VCloudClient client, FindLocationForResource findLocationForResource) {
       this.client = checkNotNull(client, "client");
       this.findLocationForResource = checkNotNull(findLocationForResource, "findLocationForResource");
-      this.credentialsProvider = checkNotNull(credentialsProvider, "credentialsProvider");
    }
 
-   public ImageForVAppTemplate withParent(ReferenceType parent) {
-      this.parent = parent;
-      return this;
-   }
 
    @Override
    public Image apply(VAppTemplate from) {
@@ -61,11 +53,10 @@ public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
       builder.ids(from.getHref().toASCIIString());
       builder.uri(from.getHref());
       builder.name(from.getName());
-      builder.location(findLocationForResource.apply(checkNotNull(parent, "parent")));
+      builder.location(findLocationForResource.apply(checkNotNull(from.getVDC(), "VDC")));
       builder.description(from.getDescription() != null ? from.getDescription() : from.getName());
       Envelope ovf = client.getVAppTemplateClient().getOvfEnvelopeForVAppTemplate(from.getHref());
       builder.operatingSystem(CIMOperatingSystem.toComputeOs(ovf));
-      builder.defaultCredentials(credentialsProvider.apply(from));
       return builder.build();
    }
 

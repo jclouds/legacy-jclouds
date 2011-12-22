@@ -44,7 +44,7 @@ import com.google.common.base.Predicate;
  * @author Adrian Cole
  */
 @Singleton
-public class AllCatalogItemsInCatalog implements Function<Catalog, Iterable<? extends CatalogItem>> {
+public class AllCatalogItemsInCatalog implements Function<Catalog, Iterable<CatalogItem>> {
    @Resource
    public Logger logger = Logger.NULL;
 
@@ -52,14 +52,13 @@ public class AllCatalogItemsInCatalog implements Function<Catalog, Iterable<? ex
    private final ExecutorService executor;
 
    @Inject
-   AllCatalogItemsInCatalog(VCloudAsyncClient aclient,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   AllCatalogItemsInCatalog(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
    }
 
    @Override
-   public Iterable<? extends CatalogItem> apply(Catalog from) {
+   public Iterable<CatalogItem> apply(Catalog from) {
 
       Iterable<CatalogItem> catalogItems = transformParallel(filter(from.values(), new Predicate<ReferenceType>() {
 
@@ -70,10 +69,9 @@ public class AllCatalogItemsInCatalog implements Function<Catalog, Iterable<? ex
 
       }), new Function<ReferenceType, Future<CatalogItem>>() {
 
-         @SuppressWarnings("unchecked")
          @Override
          public Future<CatalogItem> apply(ReferenceType from) {
-            return (Future<CatalogItem>) aclient.getCatalogClient().getCatalogItem(from.getHref());
+            return aclient.getCatalogClient().getCatalogItem(from.getHref());
          }
 
       }, executor, null, logger, "catalogItems in " + from.getHref());

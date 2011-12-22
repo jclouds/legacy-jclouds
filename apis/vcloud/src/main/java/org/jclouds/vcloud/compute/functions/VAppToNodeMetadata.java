@@ -81,6 +81,9 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
       Set<String> addresses = getIpsFromVApp(from);
       builder.publicAddresses(filter(addresses, not(IsPrivateIPAddress.INSTANCE)));
       builder.privateAddresses(filter(addresses, IsPrivateIPAddress.INSTANCE));
+      
+      // normally, we don't affect the credential store when reading vApps.
+      // However, login user, etc, is actually in the metadata, so lets see
       Credentials fromApi = getCredentialsFrom(from);
       if (fromApi != null && !credentialStore.containsKey("node#" + from.getHref().toASCIIString()))
          credentialStore.put("node#" + from.getHref().toASCIIString(), fromApi);

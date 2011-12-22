@@ -43,7 +43,7 @@ public class NatService {
    private final List<NatRule> natRules = Lists.newArrayList();
 
    public NatService(boolean enabled, @Nullable NatType type, @Nullable NatPolicy policy,
-            Iterable<? extends NatRule> natRules) {
+            Iterable<NatRule> natRules) {
       this.enabled = enabled;
       this.type = type;
       this.policy = policy;
@@ -55,7 +55,7 @@ public class NatService {
     * 
     * @since vcloud api 0.8
     */
-   public List<? extends NatRule> getNatRules() {
+   public List<NatRule> getNatRules() {
       return natRules;
    }
 

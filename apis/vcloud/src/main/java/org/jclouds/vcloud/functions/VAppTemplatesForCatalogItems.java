@@ -48,8 +48,7 @@ import com.google.common.base.Predicate;
  * @author Adrian Cole
  */
 @Singleton
-public class VAppTemplatesForCatalogItems implements
-         Function<Iterable<? extends CatalogItem>, Iterable<? extends VAppTemplate>> {
+public class VAppTemplatesForCatalogItems implements Function<Iterable<CatalogItem>, Iterable<VAppTemplate>> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
@@ -78,7 +77,7 @@ public class VAppTemplatesForCatalogItems implements
    }
 
    @Override
-   public Iterable<? extends VAppTemplate> apply(Iterable<? extends CatalogItem> from) {
+   public Iterable<VAppTemplate> apply(Iterable<CatalogItem> from) {
       return transformParallel(filter(from, new Predicate<CatalogItem>() {
 
          @Override
@@ -88,12 +87,11 @@ public class VAppTemplatesForCatalogItems implements
 
       }), new Function<CatalogItem, Future<VAppTemplate>>() {
 
-         @SuppressWarnings("unchecked")
          @Override
          public Future<VAppTemplate> apply(CatalogItem from) {
-            return new ExceptionParsingListenableFuture<VAppTemplate>(Futures.makeListenable(
-                     (Future<VAppTemplate>) VCloudAsyncClient.class.cast(aclient).getVAppTemplateClient().getVAppTemplate(
-                              from.getEntity().getHref()), executor), returnNullOnAuthorizationException);
+            return new ExceptionParsingListenableFuture<VAppTemplate>(Futures.makeListenable(VCloudAsyncClient.class
+                     .cast(aclient).getVAppTemplateClient().getVAppTemplate(from.getEntity().getHref()), executor),
+                     returnNullOnAuthorizationException);
          }
 
       }, executor, null, logger, "vappTemplates in");

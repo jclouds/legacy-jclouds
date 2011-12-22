@@ -39,7 +39,7 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class OrgsForNames implements Function<Iterable<String>, Iterable<? extends Org>> {
+public class OrgsForNames implements Function<Iterable<String>, Iterable<Org>> {
    @Resource
    public Logger logger = Logger.NULL;
    private final VCloudAsyncClient aclient;
@@ -52,13 +52,12 @@ public class OrgsForNames implements Function<Iterable<String>, Iterable<? exten
    }
 
    @Override
-   public Iterable<? extends Org> apply(Iterable<String> from) {
+   public Iterable<Org> apply(Iterable<String> from) {
       return transformParallel(from, new Function<String, Future<Org>>() {
 
-         @SuppressWarnings("unchecked")
          @Override
          public Future<Org> apply(String from) {
-            return (Future<Org>) aclient.getOrgClient().findOrgNamed(from);
+            return aclient.getOrgClient().findOrgNamed(from);
          }
 
       }, executor, null, logger, "organizations for names");

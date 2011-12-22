@@ -54,7 +54,7 @@ public interface NetworkAsyncClient {
    @Consumes(NETWORK_XML)
    @XMLResponseParser(OrgNetworkHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends OrgNetwork> findNetworkInOrgVDCNamed(
+   ListenableFuture<OrgNetwork> findNetworkInOrgVDCNamed(
             @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String orgName,
             @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String catalogName,
             @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String networkName);
@@ -66,6 +66,6 @@ public interface NetworkAsyncClient {
    @Consumes(NETWORK_XML)
    @XMLResponseParser(OrgNetworkHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends OrgNetwork> getNetwork(@EndpointParam URI network);
+   ListenableFuture<OrgNetwork> getNetwork(@EndpointParam URI network);
 
 }

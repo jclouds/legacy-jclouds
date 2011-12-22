@@ -39,7 +39,7 @@ import com.google.common.base.Supplier;
 public class OrgNameVDCNameNetworkNameToEndpoint extends OrgNameVDCNameResourceNameToEndpoint {
    @Inject
    public OrgNameVDCNameNetworkNameToEndpoint(
-         Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> orgVDCMap,
+         Supplier<Map<String, Map<String, org.jclouds.vcloud.domain.VDC>>> orgVDCMap,
          @Org ReferenceType defaultOrg, @VDC ReferenceType defaultVDC) {
       super(orgVDCMap, defaultOrg, defaultVDC);
    }

@@ -48,13 +48,13 @@ import com.google.common.collect.ImmutableSet.Builder;
 public class OrgAndVDCToLocationSupplier extends JustProvider {
 
    private final Supplier<Map<String, ReferenceType>> orgNameToResource;
-   private final Supplier<Map<String, ? extends Org>> orgNameToVDCResource;
+   private final Supplier<Map<String, Org>> orgNameToVDCResource;
    private final Map<String, Set<String>> isoCodesById;
 
    @Inject
    OrgAndVDCToLocationSupplier(@Iso3166 Set<String> isoCodes, @Provider String providerName, @Provider URI endpoint,
             @org.jclouds.vcloud.endpoints.Org Supplier<Map<String, ReferenceType>> orgNameToResource,
-            Supplier<Map<String, ? extends Org>> orgNameToVDCResource, @Iso3166 Map<String, Set<String>> isoCodesById) {
+            Supplier<Map<String, Org>> orgNameToVDCResource, @Iso3166 Map<String, Set<String>> isoCodesById) {
       super(providerName, endpoint, isoCodes);
       this.orgNameToResource = checkNotNull(orgNameToResource, "orgNameToResource");
       this.orgNameToVDCResource = checkNotNull(orgNameToVDCResource, "orgNameToVDCResource");
@@ -62,7 +62,7 @@ public class OrgAndVDCToLocationSupplier extends JustProvider {
    }
 
    @Override
-   public Set<? extends Location> get() {
+   public Set<Location> get() {
       return buildJustProviderOrVDCs().build();
    }
 

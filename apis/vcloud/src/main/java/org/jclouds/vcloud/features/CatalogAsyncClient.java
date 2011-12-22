@@ -67,7 +67,7 @@ public interface CatalogAsyncClient {
    @XMLResponseParser(CatalogHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(CATALOG_XML)
-   ListenableFuture<? extends Catalog> getCatalog(@EndpointParam URI catalogId);
+   ListenableFuture<Catalog> getCatalog(@EndpointParam URI catalogId);
 
    /**
     * @see CatalogClient#findCatalogInOrgNamed
@@ -76,7 +76,7 @@ public interface CatalogAsyncClient {
    @XMLResponseParser(CatalogHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(CATALOG_XML)
-   ListenableFuture<? extends Catalog> findCatalogInOrgNamed(
+   ListenableFuture<Catalog> findCatalogInOrgNamed(
             @Nullable @EndpointParam(parser = OrgNameAndCatalogNameToEndpoint.class) String orgName,
             @Nullable @EndpointParam(parser = OrgNameAndCatalogNameToEndpoint.class) String catalogName);
 
@@ -87,7 +87,7 @@ public interface CatalogAsyncClient {
    @Consumes(CATALOGITEM_XML)
    @XMLResponseParser(CatalogItemHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends CatalogItem> getCatalogItem(@EndpointParam URI catalogItem);
+   ListenableFuture<CatalogItem> getCatalogItem(@EndpointParam URI catalogItem);
 
    /**
     * @see CatalogClient#getCatalogItemInOrg
@@ -96,7 +96,7 @@ public interface CatalogAsyncClient {
    @Consumes(CATALOGITEM_XML)
    @XMLResponseParser(CatalogItemHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends CatalogItem> findCatalogItemInOrgCatalogNamed(
+   ListenableFuture<CatalogItem> findCatalogItemInOrgCatalogNamed(
             @Nullable @EndpointParam(parser = OrgNameCatalogNameItemNameToEndpoint.class) String orgName,
             @Nullable @EndpointParam(parser = OrgNameCatalogNameItemNameToEndpoint.class) String catalogName,
             @EndpointParam(parser = OrgNameCatalogNameItemNameToEndpoint.class) String itemName);
@@ -110,7 +110,7 @@ public interface CatalogAsyncClient {
    @Produces(CATALOGITEM_XML)
    @MapBinder(BindCatalogItemToXmlPayload.class)
    @XMLResponseParser(CatalogItemHandler.class)
-   ListenableFuture<? extends CatalogItem> addVAppTemplateOrMediaImageToCatalogAndNameItem(@PayloadParam("Entity") URI entity,
+   ListenableFuture<CatalogItem> addVAppTemplateOrMediaImageToCatalogAndNameItem(@PayloadParam("Entity") URI entity,
             @EndpointParam URI catalog, @PayloadParam("name") String name, CatalogItemOptions... options);
 
 

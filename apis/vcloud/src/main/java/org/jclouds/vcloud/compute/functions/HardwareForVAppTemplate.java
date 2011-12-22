@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
@@ -30,7 +31,6 @@ import org.jclouds.logging.Logger;
 import org.jclouds.ovf.Envelope;
 import org.jclouds.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
 import com.google.common.base.Function;
@@ -39,6 +39,7 @@ import com.google.common.collect.Iterables;
 /**
  * @author Adrian Cole
  */
+@Singleton
 public class HardwareForVAppTemplate implements Function<VAppTemplate, Hardware> {
 
    @Resource
@@ -48,8 +49,6 @@ public class HardwareForVAppTemplate implements Function<VAppTemplate, Hardware>
    private final FindLocationForResource findLocationForResource;
    private final VCloudHardwareBuilderFromResourceAllocations rasdToHardwareBuilder;
 
-   private ReferenceType parent;
-
    @Inject
    protected HardwareForVAppTemplate(VCloudClient client, FindLocationForResource findLocationForResource,
             VCloudHardwareBuilderFromResourceAllocations rasdToHardwareBuilder) {
@@ -58,10 +57,6 @@ public class HardwareForVAppTemplate implements Function<VAppTemplate, Hardware>
       this.rasdToHardwareBuilder = checkNotNull(rasdToHardwareBuilder, "rasdToHardwareBuilder");
    }
 
-   public HardwareForVAppTemplate withParent(ReferenceType parent) {
-      this.parent = parent;
-      return this;
-   }
 
    @Override
    public Hardware apply(VAppTemplate from) {
@@ -86,7 +81,7 @@ public class HardwareForVAppTemplate implements Function<VAppTemplate, Hardware>
       }
       VirtualHardwareSection hardware = Iterables.get(ovf.getVirtualSystem().getVirtualHardwareSections(), 0);
       HardwareBuilder builder = rasdToHardwareBuilder.apply(hardware.getItems());
-      builder.location(findLocationForResource.apply(checkNotNull(parent, "parent")));
+      builder.location(findLocationForResource.apply(checkNotNull(from.getVDC(), "VDC")));
       builder.ids(from.getHref().toASCIIString()).name(from.getName()).supportsImage(
                ImagePredicates.idEquals(from.getHref().toASCIIString()));
       return builder.build();

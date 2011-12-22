@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.compute.suppliers;
+package org.jclouds.vcloud.suppliers;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.concat;
@@ -35,10 +35,10 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.VAppTemplate;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -47,49 +47,49 @@ import com.google.common.base.Supplier;
  * @author Adrian Cole
  */
 @Singleton
-public class VCloudHardwareSupplier implements Supplier<Set<? extends Hardware>> {
+public class VAppTemplatesSupplier implements Supplier<Set<VAppTemplate>> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
 
-   private final Supplier<Map<String, ? extends Org>> orgMap;
-   private final Function<Org, Iterable<? extends Hardware>> sizesInOrg;
+   private final Supplier<Map<String, Org>> orgMap;
+   private final Function<Org, Iterable<VAppTemplate>> imagesInOrg;
    private final ExecutorService executor;
 
    @Inject
-   VCloudHardwareSupplier(Supplier<Map<String, ? extends Org>> orgMap,
-            Function<Org, Iterable<? extends Hardware>> sizesInOrg,
+   VAppTemplatesSupplier(Supplier<Map<String, Org>> orgMap,
+            Function<Org, Iterable<VAppTemplate>> imagesInOrg,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.orgMap = checkNotNull(orgMap, "orgMap");
-      this.sizesInOrg = checkNotNull(sizesInOrg, "sizesInOrg");
+      this.imagesInOrg = checkNotNull(imagesInOrg, "imagesInOrg");
       this.executor = checkNotNull(executor, "executor");
    }
 
    @Override
-   public Set<? extends Hardware> get() {
-      Iterable<? extends Org> orgs = checkNotNull(orgMap.get().values(), "orgs");
-      Iterable<Iterable<? extends Hardware>> sizes = transformParallel(orgs,
-               new Function<Org, Future<Iterable<? extends Hardware>>>() {
+   public Set<VAppTemplate> get() {
+      Iterable<Org> orgs = checkNotNull(orgMap.get().values(), "orgs");
+      Iterable<Iterable<VAppTemplate>> images = transformParallel(orgs,
+               new Function<Org, Future<Iterable<VAppTemplate>>>() {
 
                   @Override
-                  public Future<Iterable<? extends Hardware>> apply(final Org from) {
+                  public Future<Iterable<VAppTemplate>> apply(final Org from) {
                      checkNotNull(from, "org");
-                     return executor.submit(new Callable<Iterable<? extends Hardware>>() {
+                     return executor.submit(new Callable<Iterable<VAppTemplate>>() {
 
                         @Override
-                        public Iterable<? extends Hardware> call() throws Exception {
-                           return sizesInOrg.apply(from);
+                        public Iterable<VAppTemplate> call() throws Exception {
+                           return imagesInOrg.apply(from);
                         }
 
                         @Override
                         public String toString() {
-                           return "sizesInOrg(" + from.getHref() + ")";
+                           return "imagesInOrg(" + from.getHref() + ")";
                         }
                      });
                   }
 
-               }, executor, null, logger, "sizes in " + orgs);
-      return newLinkedHashSet(concat(sizes));
+               }, executor, null, logger, "images in " + orgs);
+      return newLinkedHashSet(concat(images));
    }
 }

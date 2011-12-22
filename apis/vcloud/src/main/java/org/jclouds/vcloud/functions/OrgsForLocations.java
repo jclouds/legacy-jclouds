@@ -46,7 +46,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @Singleton
-public class OrgsForLocations implements Function<Iterable<? extends Location>, Iterable<? extends Org>> {
+public class OrgsForLocations implements Function<Iterable<Location>, Iterable< Org>> {
    @Resource
    public Logger logger = Logger.NULL;
    private final VCloudAsyncClient aclient;
@@ -63,7 +63,7 @@ public class OrgsForLocations implements Function<Iterable<? extends Location>, 
     * parent is region. then, we use a set to extract the unique set.
     */
    @Override
-   public Iterable<? extends Org> apply(Iterable<? extends Location> from) {
+   public Iterable<Org> apply(Iterable<Location> from) {
 
       return transformParallel(Sets.newLinkedHashSet(transform(filter(from, new Predicate<Location>() {
 
@@ -81,10 +81,9 @@ public class OrgsForLocations implements Function<Iterable<? extends Location>, 
 
       })), new Function<URI, Future<Org>>() {
 
-         @SuppressWarnings("unchecked")
          @Override
          public Future<Org> apply(URI from) {
-            return (Future<Org>) aclient.getOrgClient().getOrg(from);
+            return aclient.getOrgClient().getOrg(from);
          }
 
       }, executor, null, logger, "organizations for uris");

@@ -40,11 +40,11 @@ import com.google.common.base.Supplier;
  */
 @Singleton
 public class OrgNameToTasksListEndpoint implements Function<Object, URI> {
-   private final Supplier<Map<String, ? extends Org>> orgMap;
+   private final Supplier<Map<String, Org>> orgMap;
    private final ReferenceType defaultTasksList;
 
    @Inject
-   public OrgNameToTasksListEndpoint(Supplier<Map<String, ? extends Org>> orgMap,
+   public OrgNameToTasksListEndpoint(Supplier<Map<String, Org>> orgMap,
          @TasksList ReferenceType defaultTasksList) {
       this.orgMap = orgMap;
       this.defaultTasksList = defaultTasksList;

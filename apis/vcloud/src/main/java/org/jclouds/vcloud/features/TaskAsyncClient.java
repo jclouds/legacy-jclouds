@@ -59,7 +59,7 @@ public interface TaskAsyncClient {
    @Consumes(TASKSLIST_XML)
    @XMLResponseParser(TasksListHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends TasksList> getTasksList(@EndpointParam URI tasksListId);
+   ListenableFuture<TasksList> getTasksList(@EndpointParam URI tasksListId);
 
    /**
     * @see TaskClient#findTasksListInOrgNamed
@@ -68,7 +68,7 @@ public interface TaskAsyncClient {
    @Consumes(TASKSLIST_XML)
    @XMLResponseParser(TasksListHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends TasksList> findTasksListInOrgNamed(
+   ListenableFuture<TasksList> findTasksListInOrgNamed(
             @Nullable @EndpointParam(parser = OrgNameToTasksListEndpoint.class) String orgName);
 
    /**
@@ -78,7 +78,7 @@ public interface TaskAsyncClient {
    @Consumes(TASK_XML)
    @XMLResponseParser(TaskHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends Task> getTask(@EndpointParam URI taskId);
+   ListenableFuture<Task> getTask(@EndpointParam URI taskId);
 
    /**
     * @see TaskClient#cancelTask

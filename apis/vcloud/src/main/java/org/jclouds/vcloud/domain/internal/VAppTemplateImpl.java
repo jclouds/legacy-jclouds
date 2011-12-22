@@ -58,7 +58,7 @@ public class VAppTemplateImpl extends ReferenceTypeImpl implements VAppTemplate 
 
    public VAppTemplateImpl(String name, String type, URI id, Status status, ReferenceType vdc,
             @Nullable String description, Iterable<Task> tasks, boolean ovfDescriptorUploaded,
-            @Nullable String vAppScopedLocalId, Iterable<? extends Vm> children,
+            @Nullable String vAppScopedLocalId, Iterable<Vm> children,
             @Nullable VCloudNetworkSection networkSection) {
       super(name, type, id);
       this.status = checkNotNull(status, "status");
@@ -123,7 +123,7 @@ public class VAppTemplateImpl extends ReferenceTypeImpl implements VAppTemplate 
     * {@inheritDoc}
     */
    @Override
-   public Set<? extends Vm> getChildren() {
+   public Set<Vm> getChildren() {
       return children;
    }
 

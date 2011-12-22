@@ -41,13 +41,13 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class OrgNameCatalogNameItemNameToEndpoint implements Function<Object, URI> {
-   private final Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> orgCatalogMap;
+   private final Supplier<Map<String, Map<String, org.jclouds.vcloud.domain.Catalog>>> orgCatalogMap;
    private final ReferenceType defaultOrg;
    private final ReferenceType defaultCatalog;
 
    @Inject
    public OrgNameCatalogNameItemNameToEndpoint(
-         Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> orgCatalogMap,
+         Supplier<Map<String, Map<String, org.jclouds.vcloud.domain.Catalog>>> orgCatalogMap,
          @Org ReferenceType defaultOrg, @Catalog ReferenceType defaultCatalog) {
       this.orgCatalogMap = orgCatalogMap;
       this.defaultOrg = defaultOrg;
@@ -65,7 +65,7 @@ public class OrgNameCatalogNameItemNameToEndpoint implements Function<Object, UR
       if (catalog == null)
          catalog = defaultCatalog.getName();
       try {
-         Map<String, ? extends org.jclouds.vcloud.domain.Catalog> catalogs = checkNotNull(orgCatalogMap.get().get(org));
+         Map<String, org.jclouds.vcloud.domain.Catalog> catalogs = checkNotNull(orgCatalogMap.get().get(org));
          return catalogs.get(catalog).get(catalogItem).getHref();
       } catch (NullPointerException e) {
          throw new NoSuchElementException(org + "/" + catalog + "/" + catalogItem + " not found in "

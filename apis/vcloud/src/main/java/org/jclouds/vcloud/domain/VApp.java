@@ -75,6 +75,6 @@ public interface VApp extends ReferenceType {
     * 
     * @since vcloud api 1.0
     */
-   Set<? extends Vm> getChildren();
+   Set<Vm> getChildren();
 
 }

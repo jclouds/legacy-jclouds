@@ -60,12 +60,6 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
             "node userMetadata did not match %s %s", userMetadata, node);
    }
    
-   public void testAssignability() throws Exception {
-      @SuppressWarnings("unused")
-      RestContext<VCloudClient, VCloudAsyncClient> tmContext = new ComputeServiceContextFactory(setupRestProperties())
-            .createContext(provider, identity, credential).getProviderSpecificContext();
-   }
-
    @Override
    public void testListNodes() throws Exception {
       for (ComputeMetadata node : client.listNodes()) {

@@ -34,28 +34,28 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class AllCatalogItemsInOrg implements Function<Org, Iterable<? extends CatalogItem>> {
+public class AllCatalogItemsInOrg implements Function<Org, Iterable<CatalogItem>> {
 
    @Resource
    public Logger logger = Logger.NULL;
 
-   private final Function<Org, Iterable<? extends Catalog>> allCatalogsInOrg;
+   private final Function<Org, Iterable<Catalog>> allCatalogsInOrg;
 
-   private final Function<Catalog, Iterable<? extends CatalogItem>> allCatalogItemsInCatalog;
+   private final Function<Catalog, Iterable<CatalogItem>> allCatalogItemsInCatalog;
 
    @Inject
-   AllCatalogItemsInOrg(Function<Org, Iterable<? extends Catalog>> allCatalogsInOrg,
-            Function<Catalog, Iterable<? extends CatalogItem>> allCatalogItemsInCatalog) {
+   AllCatalogItemsInOrg(Function<Org, Iterable<Catalog>> allCatalogsInOrg,
+            Function<Catalog, Iterable<CatalogItem>> allCatalogItemsInCatalog) {
       this.allCatalogsInOrg = allCatalogsInOrg;
       this.allCatalogItemsInCatalog = allCatalogItemsInCatalog;
    }
 
    @Override
-   public Iterable<? extends CatalogItem> apply(Org from) {
+   public Iterable<CatalogItem> apply(Org from) {
       return Iterables.concat(Iterables.transform(allCatalogsInOrg.apply(from),
-               new Function<Catalog, Iterable<? extends CatalogItem>>() {
+               new Function<Catalog, Iterable<CatalogItem>>() {
                   @Override
-                  public Iterable<? extends CatalogItem> apply(Catalog from) {
+                  public Iterable<CatalogItem> apply(Catalog from) {
                      return allCatalogItemsInCatalog.apply(from);
                   }
 

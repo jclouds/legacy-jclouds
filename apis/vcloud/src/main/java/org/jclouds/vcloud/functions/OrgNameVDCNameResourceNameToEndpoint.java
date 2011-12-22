@@ -40,13 +40,13 @@ import com.google.common.collect.Iterables;
  */
 public abstract class OrgNameVDCNameResourceNameToEndpoint  implements Function<Object, URI>{
 
-   protected final Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> orgVDCMap;
+   protected final Supplier<Map<String, Map<String, org.jclouds.vcloud.domain.VDC>>> orgVDCMap;
    protected final ReferenceType defaultOrg;
    protected final ReferenceType defaultVDC;
 
    @Inject
    public OrgNameVDCNameResourceNameToEndpoint(
-         Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> orgVDCMap,
+         Supplier<Map<String, Map<String, org.jclouds.vcloud.domain.VDC>>> orgVDCMap,
          @Org ReferenceType defaultOrg, @org.jclouds.vcloud.endpoints.VDC ReferenceType defaultVDC) {
       this.orgVDCMap = orgVDCMap;
       this.defaultOrg = defaultOrg;
@@ -63,9 +63,9 @@ public abstract class OrgNameVDCNameResourceNameToEndpoint  implements Function<
          org = defaultOrg.getName();
       if (vDC == null)
          vDC = defaultVDC.getName();
-      Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>> orgToVDCs = orgVDCMap.get();
+      Map<String, Map<String, org.jclouds.vcloud.domain.VDC>> orgToVDCs = orgVDCMap.get();
       checkState(orgToVDCs != null, "could not get map of org name to vdcs!");
-      Map<String, ? extends org.jclouds.vcloud.domain.VDC> vDCs = orgToVDCs.get(org);
+      Map<String, org.jclouds.vcloud.domain.VDC> vDCs = orgToVDCs.get(org);
       if (vDCs == null)
          throw new NoSuchElementException("org " + org + " not found in " + orgToVDCs.keySet());
       org.jclouds.vcloud.domain.VDC vDCObject = vDCs.get(vDC);

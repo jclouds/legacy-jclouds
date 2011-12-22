@@ -41,12 +41,12 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class OrgNameAndCatalogNameToEndpoint implements Function<Object, URI> {
-   private final Supplier<Map<String, ? extends Org>> orgMap;
+   private final Supplier<Map<String, Org>> orgMap;
    private final ReferenceType defaultOrg;
    private final ReferenceType defaultCatalog;
 
    @Inject
-   public OrgNameAndCatalogNameToEndpoint(Supplier<Map<String, ? extends Org>> orgMap,
+   public OrgNameAndCatalogNameToEndpoint(Supplier<Map<String, Org>> orgMap,
          @org.jclouds.vcloud.endpoints.Org ReferenceType defaultOrg, @Catalog ReferenceType defaultCatalog) {
       this.orgMap = orgMap;
       this.defaultOrg = defaultOrg;

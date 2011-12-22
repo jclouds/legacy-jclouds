@@ -53,7 +53,7 @@ public class VAppImpl extends ReferenceTypeImpl implements VApp {
    private final Set<Vm> children = Sets.newLinkedHashSet();
 
    public VAppImpl(String name, String type, URI id, Status status, ReferenceType vdc, @Nullable String description,
-            Iterable<Task> tasks, boolean ovfDescriptorUploaded, Iterable<? extends Vm> children) {
+            Iterable<Task> tasks, boolean ovfDescriptorUploaded, Iterable<Vm> children) {
       super(name, type, id);
       this.status = checkNotNull(status, "status");
       this.vdc = vdc;// TODO: once <1.0 is killed check not null
@@ -107,7 +107,7 @@ public class VAppImpl extends ReferenceTypeImpl implements VApp {
     * {@inheritDoc}
     */
    @Override
-   public Set<? extends Vm> getChildren() {
+   public Set<Vm> getChildren() {
       return children;
    }
 

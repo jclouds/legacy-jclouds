@@ -76,7 +76,7 @@ public interface VmAsyncClient {
    @Consumes(VM_XML)
    @XMLResponseParser(VmHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends Vm> getVm(@EndpointParam URI href);
+   ListenableFuture<Vm> getVm(@EndpointParam URI href);
 
    /**
     * @see VmClient#deployVm
@@ -87,7 +87,7 @@ public interface VmAsyncClient {
    @Path("/action/deploy")
    @MapBinder(BindDeployVAppParamsToXmlPayload.class)
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> deployVm(@EndpointParam URI href);
+   ListenableFuture<Task> deployVm(@EndpointParam URI href);
 
    /**
     * @see VmClient#deployAndPowerOnVm
@@ -99,7 +99,7 @@ public interface VmAsyncClient {
    @MapBinder(BindDeployVAppParamsToXmlPayload.class)
    @PayloadParams(keys = "powerOn", values = "true")
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> deployAndPowerOnVm(@EndpointParam URI href);
+   ListenableFuture<Task> deployAndPowerOnVm(@EndpointParam URI href);
 
    /**
     * @see VmClient#undeployVm
@@ -110,7 +110,7 @@ public interface VmAsyncClient {
    @Path("/action/undeploy")
    @MapBinder(BindUndeployVAppParamsToXmlPayload.class)
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> undeployVm(@EndpointParam URI href);
+   ListenableFuture<Task> undeployVm(@EndpointParam URI href);
 
    /**
     * @see VmClient#undeployAndSaveStateOfVm
@@ -122,7 +122,7 @@ public interface VmAsyncClient {
    @MapBinder(BindUndeployVAppParamsToXmlPayload.class)
    @PayloadParams(keys = "saveState", values = "true")
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> undeployAndSaveStateOfVm(@EndpointParam URI href);
+   ListenableFuture<Task> undeployAndSaveStateOfVm(@EndpointParam URI href);
 
    /**
     * @see VmClient#powerOnVm
@@ -131,7 +131,7 @@ public interface VmAsyncClient {
    @Consumes(TASK_XML)
    @Path("/power/action/powerOn")
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> powerOnVm(@EndpointParam URI href);
+   ListenableFuture<Task> powerOnVm(@EndpointParam URI href);
 
    /**
     * @see VmClient#powerOffVm
@@ -140,7 +140,7 @@ public interface VmAsyncClient {
    @Consumes(TASK_XML)
    @Path("/power/action/powerOff")
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> powerOffVm(@EndpointParam URI href);
+   ListenableFuture<Task> powerOffVm(@EndpointParam URI href);
 
    /**
     * @see VmClient#shutdownVm
@@ -156,7 +156,7 @@ public interface VmAsyncClient {
    @Consumes(TASK_XML)
    @Path("/power/action/reset")
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> resetVm(@EndpointParam URI href);
+   ListenableFuture<Task> resetVm(@EndpointParam URI href);
 
    /**
     * @see VmClient#rebootVm
@@ -172,7 +172,7 @@ public interface VmAsyncClient {
    @Consumes(TASK_XML)
    @Path("/power/action/suspend")
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> suspendVm(@EndpointParam URI href);
+   ListenableFuture<Task> suspendVm(@EndpointParam URI href);
 
    /**
     * @see VmClient#updateCPUCountOfVm
@@ -182,7 +182,7 @@ public interface VmAsyncClient {
    @Produces(RASDITEM_XML)
    @Path("/virtualHardwareSection/cpu")
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> updateCPUCountOfVm(@BinderParam(BindCPUCountToXmlPayload.class) int cpuCount,
+   ListenableFuture<Task> updateCPUCountOfVm(@BinderParam(BindCPUCountToXmlPayload.class) int cpuCount,
             @EndpointParam URI href);
 
    /**
@@ -193,7 +193,7 @@ public interface VmAsyncClient {
    @Produces(RASDITEM_XML)
    @Path("/virtualHardwareSection/memory")
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> updateMemoryMBOfVm(@BinderParam(BindMemoryToXmlPayload.class) int memoryInMB,
+   ListenableFuture<Task> updateMemoryMBOfVm(@BinderParam(BindMemoryToXmlPayload.class) int memoryInMB,
             @EndpointParam URI href);
 
    /**
@@ -204,7 +204,7 @@ public interface VmAsyncClient {
    @Produces(GUESTCUSTOMIZATIONSECTION_XML)
    @Path("/guestCustomizationSection")
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> updateGuestCustomizationOfVm(
+   ListenableFuture<Task> updateGuestCustomizationOfVm(
             @BinderParam(BindGuestCustomizationSectionToXmlPayload.class) GuestCustomizationSection guestCustomizationSection,
             @EndpointParam URI href);
 
@@ -216,7 +216,7 @@ public interface VmAsyncClient {
    @Produces(NETWORKCONNECTIONSECTION_XML)
    @Path("/networkConnectionSection")
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> updateNetworkConnectionOfVm(
+   ListenableFuture<Task> updateNetworkConnectionOfVm(
             @BinderParam(BindNetworkConnectionSectionToXmlPayload.class) NetworkConnectionSection networkConnectionSection,
             @EndpointParam URI href);
 

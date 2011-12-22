@@ -38,10 +38,10 @@ import com.google.common.base.Supplier;
  */
 @Singleton
 public class DefaultTasksListForOrg implements Function<ReferenceType, ReferenceType> {
-   private final Supplier<Map<String, ? extends Org>> nameToOrg;
+   private final Supplier<Map<String, Org>> nameToOrg;
 
    @Inject
-   public DefaultTasksListForOrg(Supplier<Map<String, ? extends Org>> nameToOrg) {
+   public DefaultTasksListForOrg(Supplier<Map<String, Org>> nameToOrg) {
       this.nameToOrg = checkNotNull(nameToOrg, "nameToOrg");
    }
 

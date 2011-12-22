@@ -42,13 +42,13 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class OrgNameCatalogNameVAppTemplateNameToEndpoint implements Function<Object, URI> {
-   private final Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>> orgCatalogItemMap;
+   private final Supplier<Map<String, Map<String, Map<String, CatalogItem>>>> orgCatalogItemMap;
    private final ReferenceType defaultOrg;
    private final ReferenceType defaultCatalog;
 
    @Inject
    public OrgNameCatalogNameVAppTemplateNameToEndpoint(
-            Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>> orgCatalogItemMap,
+            Supplier<Map<String, Map<String, Map<String, CatalogItem>>>> orgCatalogItemMap,
             @Org ReferenceType defaultOrg, @Catalog ReferenceType defaultCatalog) {
       this.orgCatalogItemMap = orgCatalogItemMap;
       this.defaultOrg = defaultOrg;
@@ -65,15 +65,15 @@ public class OrgNameCatalogNameVAppTemplateNameToEndpoint implements Function<Ob
          org = defaultOrg.getName();
       if (catalog == null)
          catalog = defaultCatalog.getName();
-      Map<String, Map<String, Map<String, ? extends CatalogItem>>> orgCatalogItemMap = this.orgCatalogItemMap.get();
+      Map<String, Map<String, Map<String, CatalogItem>>> orgCatalogItemMap = this.orgCatalogItemMap.get();
 
       if (!orgCatalogItemMap.containsKey(org))
          throw new NoSuchElementException("org: " + org + " not found in " + orgCatalogItemMap.keySet());
-      Map<String, Map<String, ? extends CatalogItem>> catalogs = orgCatalogItemMap.get(org);
+      Map<String, Map<String,  CatalogItem>> catalogs = orgCatalogItemMap.get(org);
 
       if (!catalogs.containsKey(catalog))
          throw new NoSuchElementException("catalog: " + org + "/" + catalog + " not found in " + catalogs.keySet());
-      Map<String, ? extends CatalogItem> catalogMap = catalogs.get(catalog);
+      Map<String, CatalogItem> catalogMap = catalogs.get(catalog);
 
       if (!catalogMap.containsKey(catalogItem))
          throw new NoSuchElementException("item: " + org + "/" + catalog + "/" + catalogItem + " not found in "

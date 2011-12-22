@@ -38,7 +38,7 @@ import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
  * <p/>
  * ComputeService client = // get connection
  * templateBuilder.options(inboundPorts(22, 80, 8080, 443));
- * Set<? extends NodeMetadata> set = client.createNodesInGroup(tag, 2, templateBuilder.build());
+ * Set<NodeMetadata> set = client.createNodesInGroup(tag, 2, templateBuilder.build());
  * <code>
  * 
  * @author Adrian Cole

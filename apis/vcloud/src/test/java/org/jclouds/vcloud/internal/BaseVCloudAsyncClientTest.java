@@ -132,7 +132,7 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
       }
 
       @Override
-      protected Org provideOrg(Supplier<Map<String, ? extends Org>> orgSupplier,
+      protected Org provideOrg(Supplier<Map<String, Org>> orgSupplier,
             @org.jclouds.vcloud.endpoints.Org ReferenceType defaultOrg) {
          return ORG;
       }
@@ -184,11 +184,11 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
       }
 
       @Override
-      protected Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> provideOrgVDCSupplierCache(
+      protected Supplier<Map<String, Map<String, org.jclouds.vcloud.domain.VDC>>> provideOrgVDCSupplierCache(
             @Named(PROPERTY_SESSION_INTERVAL) long seconds, AtomicReference<AuthorizationException> authException,
             OrgVDCSupplier supplier) {
-         return Suppliers.<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> ofInstance(ImmutableMap
-               .<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>> of(ORG_REF.getName(),
+         return Suppliers.<Map<String, Map<String, org.jclouds.vcloud.domain.VDC>>> ofInstance(ImmutableMap
+               .<String, Map<String, org.jclouds.vcloud.domain.VDC>> of(ORG_REF.getName(),
                      ImmutableMap.<String, org.jclouds.vcloud.domain.VDC> of(VDC.getName(), VDC)));
       }
 
@@ -214,8 +214,8 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
          }
 
          @Override
-         public Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> get() {
-            return ImmutableMap.<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> of(
+         public Map<String, Map<String, org.jclouds.vcloud.domain.Catalog>> get() {
+            return ImmutableMap.<String, Map<String, org.jclouds.vcloud.domain.Catalog>> of(
                   ORG_REF.getName(), ImmutableMap.<String, org.jclouds.vcloud.domain.Catalog> of(
                         CATALOG_REF.getName(),
                         new CatalogImpl(CATALOG_REF.getName(), CATALOG_REF.getType(), CATALOG_REF.getHref(), null,
@@ -237,10 +237,10 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
          }
 
          @Override
-         public Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>> get() {
-            return ImmutableMap.<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>> of(
+         public Map<String, Map<String, Map<String, org.jclouds.vcloud.domain.CatalogItem>>> get() {
+            return ImmutableMap.<String, Map<String, Map<String, org.jclouds.vcloud.domain.CatalogItem>>> of(
                   ORG_REF.getName(), ImmutableMap
-                        .<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>> of(CATALOG_REF
+                        .<String, Map<String, org.jclouds.vcloud.domain.CatalogItem>> of(CATALOG_REF
                               .getName(), ImmutableMap.<String, org.jclouds.vcloud.domain.CatalogItem> of(
                               "template",
                               new CatalogItemImpl("template", URI

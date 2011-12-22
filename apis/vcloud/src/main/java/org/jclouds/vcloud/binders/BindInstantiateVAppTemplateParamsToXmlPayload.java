@@ -103,7 +103,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       boolean powerOn = true;
       Boolean customizeOnInstantiate = null;
 
-      Set<? extends NetworkConfig> networkConfig = null;
+      Set<NetworkConfig> networkConfig = null;
 
       NetworkConfigDecorator networknetworkConfigDecorator = new NetworkConfigDecorator(template,
             defaultNetwork.getHref(), defaultFenceMode, defaultNetworkNameInTemplate);
@@ -138,8 +138,8 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    }
 
    @VisibleForTesting
-   Set<? extends Vm> ifCustomizationScriptIsSetGetVmsInTemplate(String customizationScript, final URI template) {
-      Set<? extends Vm> vms = Sets.newLinkedHashSet();
+   Set<Vm> ifCustomizationScriptIsSetGetVmsInTemplate(String customizationScript, final URI template) {
+      Set<Vm> vms = Sets.newLinkedHashSet();
       if (customizationScript != null) {
          VAppTemplate vAppTemplate = client.getVAppTemplateClient().getVAppTemplate(template);
          checkArgument(vAppTemplate != null, "vAppTemplate %s not found!", template);
@@ -202,7 +202,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    }
 
    protected String generateXml(String name, @Nullable String description, boolean deploy, boolean powerOn,
-         URI template, Iterable<? extends NetworkConfig> networkConfig, @Nullable Boolean customizeOnInstantiate)
+         URI template, Iterable<NetworkConfig> networkConfig, @Nullable Boolean customizeOnInstantiate)
          throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
       XMLBuilder rootBuilder = buildRoot(name).a("deploy", deploy + "").a("powerOn", powerOn + "");
       if (description != null)
@@ -228,7 +228,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    }
 
    protected void addNetworkConfig(XMLBuilder instantiationParamsBuilder,
-         Iterable<? extends NetworkConfig> networkConfig) {
+         Iterable<NetworkConfig> networkConfig) {
       XMLBuilder networkConfigBuilder = instantiationParamsBuilder.e("NetworkConfigSection");
       networkConfigBuilder.e("ovf:Info").t("Configuration parameters for logical networks");
       for (NetworkConfig n : networkConfig) {

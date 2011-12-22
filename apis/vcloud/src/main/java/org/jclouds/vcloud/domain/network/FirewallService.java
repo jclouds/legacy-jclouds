@@ -37,7 +37,7 @@ public class FirewallService {
 
    List<FirewallRule> firewallRules = Lists.newArrayList();
 
-   public FirewallService(boolean enabled, Iterable<? extends FirewallRule> firewallRules) {
+   public FirewallService(boolean enabled, Iterable<FirewallRule> firewallRules) {
       this.enabled = enabled;
       Iterables.addAll(this.firewallRules, checkNotNull(firewallRules, "firewallRules"));
    }
@@ -47,7 +47,7 @@ public class FirewallService {
     * 
     * @since vcloud api 0.8
     */
-   public List<? extends FirewallRule> getFirewallRules() {
+   public List<FirewallRule> getFirewallRules() {
       return firewallRules;
    }
 

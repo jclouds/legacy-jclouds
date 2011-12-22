@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.compute.strategy;
 
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getCredentialsFrom;
 
 import java.net.URI;
 
@@ -27,11 +28,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
-import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
@@ -53,26 +52,22 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn implements
-         CreateNodeWithGroupEncodedIntoName {
+public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
    protected final VCloudClient client;
-   protected final GetNodeMetadataStrategy getNode;
    protected final Predicate<URI> successTester;
 
    @Inject
    protected InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn(Predicate<URI> successTester,
-            VCloudClient client, GetNodeMetadataStrategy getNode) {
+            VCloudClient client) {
       this.client = client;
       this.successTester = successTester;
-      this.getNode = getNode;
    }
 
-   @Override
-   public NodeMetadata createNodeWithGroupEncodedIntoName(String tag, String name, Template template) {
+   public NodeAndInitialCredentials<VApp> createNodeWithGroupEncodedIntoName(String tag, String name, Template template) {
       InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
 
       // TODO make disk size specifiable
@@ -122,8 +117,10 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
       waitForTask(updateMemoryMBOfVm(vm, memoryMB), vAppResponse);
       logger.trace("<< updated memoryMB vm(%s) ", vm.getName());
       logger.trace(">> deploying and powering on vApp(%s) ", vAppResponse.getName());
-      return blockOnDeployAndPowerOnIfConfigured(options, vAppResponse, client.getVAppClient().deployAndPowerOnVApp(
-               vAppResponse.getHref()));
+      vAppResponse = blockOnDeployAndPowerOnIfConfigured(options, vAppResponse, client.getVAppClient()
+               .deployAndPowerOnVApp(vAppResponse.getHref()));
+      return new NodeAndInitialCredentials<VApp>(vAppResponse, vAppResponse.getHref().toASCIIString(),
+               getCredentialsFrom(vAppResponse));
 
    }
 
@@ -167,12 +164,11 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
       return client.getVmClient().updateMemoryMBOfVm(memoryInMB, vm.getHref());
    }
 
-   private NodeMetadata blockOnDeployAndPowerOnIfConfigured(InstantiateVAppTemplateOptions options, VApp vAppResponse,
-            Task task) {
+   private VApp blockOnDeployAndPowerOnIfConfigured(InstantiateVAppTemplateOptions options, VApp vAppResponse, Task task) {
       if (options.shouldBlock()) {
          waitForTask(task, vAppResponse);
          logger.debug("<< ready vApp(%s)", vAppResponse.getName());
       }
-      return getNode.getNode(vAppResponse.getHref().toASCIIString());
+      return client.getVAppClient().getVApp(vAppResponse.getHref());
    }
 }

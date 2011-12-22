@@ -81,7 +81,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes(VAPP_XML)
    @XMLResponseParser(VAppHandler.class)
    @MapBinder(BindInstantiateVAppTemplateParamsToXmlPayload.class)
-   ListenableFuture<? extends VApp> createVAppInVDCByInstantiatingTemplate(
+   ListenableFuture<VApp> createVAppInVDCByInstantiatingTemplate(
             @PayloadParam("name") @ParamValidators(DnsNameValidator.class) String appName, @EndpointParam URI vdc,
             @PayloadParam("template") URI template, InstantiateVAppTemplateOptions... options);
 
@@ -93,7 +93,7 @@ public interface VAppTemplateAsyncClient {
    @Path("/ovf")
    @XMLResponseParser(EnvelopeHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends Envelope> getOvfEnvelopeForVAppTemplate(@EndpointParam URI href);
+   ListenableFuture<Envelope> getOvfEnvelopeForVAppTemplate(@EndpointParam URI href);
 
    /**
     * @see VAppTemplateClient#captureVAppAsTemplateInVDC
@@ -104,7 +104,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes(VAPPTEMPLATE_XML)
    @XMLResponseParser(VAppTemplateHandler.class)
    @MapBinder(BindCaptureVAppParamsToXmlPayload.class)
-   ListenableFuture<? extends VAppTemplate> captureVAppAsTemplateInVDC(@PayloadParam("vApp") URI toCapture,
+   ListenableFuture<VAppTemplate> captureVAppAsTemplateInVDC(@PayloadParam("vApp") URI toCapture,
             @PayloadParam("templateName") @ParamValidators(DnsNameValidator.class) String templateName,
             @EndpointParam URI vdc, CaptureVAppOptions... options);
 
@@ -117,7 +117,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes(TASK_XML)
    @XMLResponseParser(TaskHandler.class)
    @MapBinder(BindCloneVAppTemplateParamsToXmlPayload.class)
-   ListenableFuture<? extends Task> copyVAppTemplateToVDCAndName(@PayloadParam("Source") URI sourceVAppTemplate,
+   ListenableFuture<Task> copyVAppTemplateToVDCAndName(@PayloadParam("Source") URI sourceVAppTemplate,
             @EndpointParam URI vdc, @PayloadParam("name") @ParamValidators(DnsNameValidator.class) String newName,
             CloneVAppTemplateOptions... options);
 
@@ -131,7 +131,7 @@ public interface VAppTemplateAsyncClient {
    @XMLResponseParser(TaskHandler.class)
    @PayloadParams(keys = "IsSourceDelete", values = "true")
    @MapBinder(BindCloneVAppTemplateParamsToXmlPayload.class)
-   ListenableFuture<? extends Task> moveVAppTemplateToVDCAndRename(@PayloadParam("Source") URI toClone,
+   ListenableFuture<Task> moveVAppTemplateToVDCAndRename(@PayloadParam("Source") URI toClone,
             @EndpointParam URI vdc, @PayloadParam("name") @ParamValidators(DnsNameValidator.class) String newName,
             CloneVAppTemplateOptions... options);
 
@@ -142,7 +142,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes(VAPPTEMPLATE_XML)
    @XMLResponseParser(VAppTemplateHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends VAppTemplate> findVAppTemplateInOrgCatalogNamed(
+   ListenableFuture<VAppTemplate> findVAppTemplateInOrgCatalogNamed(
             @Nullable @EndpointParam(parser = OrgNameCatalogNameVAppTemplateNameToEndpoint.class) String orgName,
             @Nullable @EndpointParam(parser = OrgNameCatalogNameVAppTemplateNameToEndpoint.class) String catalogName,
             @EndpointParam(parser = OrgNameCatalogNameVAppTemplateNameToEndpoint.class) String itemName);
@@ -154,7 +154,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes(VAPPTEMPLATE_XML)
    @XMLResponseParser(VAppTemplateHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends VAppTemplate> getVAppTemplate(@EndpointParam URI vAppTemplate);
+   ListenableFuture<VAppTemplate> getVAppTemplate(@EndpointParam URI vAppTemplate);
 
    /**
     * @see VAppTemplateClient#deleteVAppTemplate
@@ -163,6 +163,6 @@ public interface VAppTemplateAsyncClient {
    @Consumes(TASK_XML)
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> deleteVAppTemplate(@EndpointParam URI href);
+   ListenableFuture<Task> deleteVAppTemplate(@EndpointParam URI href);
 
 }

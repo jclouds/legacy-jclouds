@@ -46,15 +46,14 @@ import com.google.common.base.Supplier;
 public class DefaultNetworkForVDC implements Function<ReferenceType, ReferenceType> {
 
    private final OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault selector;
-   private final Supplier<Map<URI, ? extends VDC>> uriToVDC;
+   private final Supplier<Map<URI, VDC>> uriToVDC;
 
    @Inject
    public DefaultNetworkForVDC(ValueOfConfigurationKeyOrNull valueOfConfigurationKeyOrNull,
-         @Network Predicate<ReferenceType> defaultSelector,
-         Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>> uriToVDC) {
+            @Network Predicate<ReferenceType> defaultSelector, Supplier<Map<URI, VDC>> uriToVDC) {
       this.selector = new OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault(checkNotNull(
-            valueOfConfigurationKeyOrNull, "valueOfConfigurationKeyOrNull"), PROPERTY_VCLOUD_DEFAULT_NETWORK,
-            checkNotNull(defaultSelector, "defaultSelector"));
+               valueOfConfigurationKeyOrNull, "valueOfConfigurationKeyOrNull"), PROPERTY_VCLOUD_DEFAULT_NETWORK,
+               checkNotNull(defaultSelector, "defaultSelector"));
       this.uriToVDC = checkNotNull(uriToVDC, "uriToVDC");
    }
 

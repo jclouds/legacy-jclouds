@@ -33,6 +33,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
+import org.jclouds.vcloud.domain.VDC;
 
 import com.google.common.base.Function;
 
@@ -40,7 +41,7 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class AllVDCsInOrg implements Function<Org, Iterable<? extends org.jclouds.vcloud.domain.VDC>> {
+public class AllVDCsInOrg implements Function<Org, Iterable<org.jclouds.vcloud.domain.VDC>> {
    @Resource
    public Logger logger = Logger.NULL;
 
@@ -54,14 +55,13 @@ public class AllVDCsInOrg implements Function<Org, Iterable<? extends org.jcloud
    }
 
    @Override
-   public Iterable<? extends org.jclouds.vcloud.domain.VDC> apply(final Org org) {
+   public Iterable<VDC> apply(final Org org) {
 
-      Iterable<org.jclouds.vcloud.domain.VDC> catalogItems = transformParallel(org.getVDCs().values(),
+      Iterable<VDC> catalogItems = transformParallel(org.getVDCs().values(),
             new Function<ReferenceType, Future<org.jclouds.vcloud.domain.VDC>>() {
-               @SuppressWarnings("unchecked")
                @Override
-               public Future<org.jclouds.vcloud.domain.VDC> apply(ReferenceType from) {
-                  return (Future<org.jclouds.vcloud.domain.VDC>) aclient.getVDCClient().getVDC(from.getHref());
+               public Future<VDC> apply(ReferenceType from) {
+                  return  aclient.getVDCClient().getVDC(from.getHref());
                }
 
             }, executor, null, logger, "vdcs in org " + org.getName());
