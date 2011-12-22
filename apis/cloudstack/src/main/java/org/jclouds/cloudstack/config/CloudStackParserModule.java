@@ -19,6 +19,8 @@
 package org.jclouds.cloudstack.config;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,6 +29,7 @@ import javax.inject.Singleton;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.Account.State;
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
+import org.jclouds.cloudstack.domain.PortForwardingRule;
 import org.jclouds.cloudstack.domain.User;
 
 import com.google.common.collect.ImmutableMap;
@@ -47,6 +50,59 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public class CloudStackParserModule extends AbstractModule {
+
+   public static class PortForwardingRuleAdaptor implements JsonSerializer<PortForwardingRule>, JsonDeserializer<PortForwardingRule> {
+
+      public JsonElement serialize(PortForwardingRule src, Type typeOfSrc, JsonSerializationContext context) {
+         return context.serialize(src);
+      }
+
+      public PortForwardingRule deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+            throws JsonParseException {
+         return apply(context.<PortForwardingRuleInternal> deserialize(json, PortForwardingRuleInternal.class));
+      }
+
+      public PortForwardingRule apply(PortForwardingRuleInternal in) {
+         Set<String> cidrSet;
+         if (in.CIDRs != null) {
+            String[] elements = in.CIDRs.split(",");
+            cidrSet = Sets.newTreeSet(Arrays.asList(elements));
+         } else {
+            cidrSet = Collections.emptySet();
+         }
+         return PortForwardingRule.builder().id(in.id).IPAddress(in.IPAddress).IPAddressId(in.IPAddressId)
+            .privatePort(in.privatePort).protocol(in.protocol).publicPort(in.publicPort).state(in.state)
+            .virtualMachineDisplayName(in.virtualMachineDisplayName).virtualMachineId(in.virtualMachineId)
+            .virtualMachineName(in.virtualMachineName).CIDRs(cidrSet).privateEndPort(in.privateEndPort)
+            .publicEndPort(in.publicEndPort).build();
+      }
+
+      static final class PortForwardingRuleInternal {
+         private long id;
+         @SerializedName("ipaddress")
+         private String IPAddress;
+         @SerializedName("ipaddressid")
+         private long IPAddressId;
+         @SerializedName("privateport")
+         private int privatePort;
+         private String protocol;
+         @SerializedName("publicport")
+         public int publicPort;
+         private String state;
+         @SerializedName("virtualmachinedisplayname")
+         private String virtualMachineDisplayName;
+         @SerializedName("virtualmachineid")
+         public long virtualMachineId;
+         @SerializedName("virtualmachinename")
+         private String virtualMachineName;
+         @SerializedName("cidrlist")
+         private String CIDRs;
+         @SerializedName("privateendport")
+         private int privateEndPort;
+         @SerializedName("publicendport")
+         private int publicEndPort;
+      }
+   }
 
    @Singleton
    public static class LoadBalancerRuleAdapter implements JsonSerializer<LoadBalancerRule>, JsonDeserializer<LoadBalancerRule> {
@@ -181,7 +237,11 @@ public class CloudStackParserModule extends AbstractModule {
    @Override
    protected void configure() {
       bind(new TypeLiteral<Map<Type, Object>>() {
-      }).toInstance(ImmutableMap.<Type, Object> of(Account.class, new BreakGenericSetAdapter(), LoadBalancerRule.class, new LoadBalancerRuleAdapter()));
+      }).toInstance(ImmutableMap.<Type, Object> of(
+         Account.class, new BreakGenericSetAdapter(),
+         LoadBalancerRule.class, new LoadBalancerRuleAdapter(),
+         PortForwardingRule.class, new PortForwardingRuleAdaptor()
+      ));
    }
 
 }

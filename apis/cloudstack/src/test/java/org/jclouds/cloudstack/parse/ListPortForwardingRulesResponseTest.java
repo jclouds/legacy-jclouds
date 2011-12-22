@@ -20,8 +20,12 @@ package org.jclouds.cloudstack.parse;
 
 import java.util.Set;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import org.jclouds.cloudstack.config.CloudStackParserModule;
 import org.jclouds.cloudstack.domain.PortForwardingRule;
 import org.jclouds.json.BaseSetParserTest;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
@@ -33,6 +37,19 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit")
 public class ListPortForwardingRulesResponseTest extends BaseSetParserTest<PortForwardingRule> {
+
+   @Override
+   protected Injector injector() {
+      return Guice.createInjector(new CloudStackParserModule(), new GsonModule() {
+
+         @Override
+         protected void configure() {
+            bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+            super.configure();
+         }
+
+      });
+   }
 
    @Override
    public String resource() {
