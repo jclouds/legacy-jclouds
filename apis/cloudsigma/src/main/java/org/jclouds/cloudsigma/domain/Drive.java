@@ -209,7 +209,7 @@ public class Drive extends Item {
    @Override
    public String toString() {
       return "[uuid=" + uuid + ", name=" + name + ", use=" + use + ", size=" + size + ", claimType=" + claimType
-            + ", readers=" + readers + "]";
+            + ", tags=" + tags + ", readers=" + readers + "]";
    }
 
 }

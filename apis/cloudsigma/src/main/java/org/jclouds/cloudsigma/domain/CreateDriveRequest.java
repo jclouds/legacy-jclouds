@@ -163,7 +163,8 @@ public class CreateDriveRequest extends Drive {
 
    @Override
    public String toString() {
-      return "[name=" + name + ", size=" + size + ", claimType=" + claimType + ", readers=" + readers + ", use=" + use
-            + ", avoid=" + avoid + ", encryptionCipher=" + encryptionCipher + "]";
+      return "[name=" + name + ", size=" + size + ", claimType=" + claimType + ", tags=" + tags
+            + ", readers=" + readers + ", use=" + use + ", avoid=" + avoid
+            + ", encryptionCipher=" + encryptionCipher + "]";
    }
 }

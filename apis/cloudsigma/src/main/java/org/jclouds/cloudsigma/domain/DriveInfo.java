@@ -463,9 +463,10 @@ public class DriveInfo extends Drive {
 
    @Override
    public String toString() {
-      return "[size=" + size + ", claimType=" + claimType + ", readers=" + readers + ", uuid=" + uuid + ", name="
-            + name + ", use=" + use + ", status=" + status + ", user=" + user + ", claimed=" + claimed
-            + ", encryptionCipher=" + encryptionCipher + ", imaging=" + imaging + ", metrics=" + metrics + "]";
+      return "[size=" + size + ", claimType=" + claimType + ", tags=" + tags + ", readers=" + readers
+            + ", uuid=" + uuid + ", name=" + name + ", use=" + use + ", status=" + status
+            + ", user=" + user + ", claimed=" + claimed + ", encryptionCipher=" + encryptionCipher
+            + ", imaging=" + imaging + ", metrics=" + metrics + "]";
    }
 
 }
