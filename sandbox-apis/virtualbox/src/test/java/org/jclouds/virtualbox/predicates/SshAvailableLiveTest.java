@@ -1,7 +1,14 @@
 package org.jclouds.virtualbox.predicates;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
+import static org.jclouds.virtualbox.domain.ExecutionType.HEADLESS;
+import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
+import static org.jclouds.virtualbox.util.MachineUtils.applyForMachine;
+import static org.jclouds.virtualbox.util.MachineUtils.lockSessionOnMachineAndApply;
+import static org.testng.Assert.assertTrue;
+import static org.virtualbox_4_1.LockType.Shared;
+
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
@@ -9,22 +16,21 @@ import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.ExecutionType;
+import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.functions.CreateAndInstallVm;
 import org.jclouds.virtualbox.functions.LaunchMachineIfNotAlreadyRunning;
 import org.jclouds.virtualbox.util.PropertyUtils;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.*;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.StorageBus;
+import org.virtualbox_4_1.VirtualBoxManager;
 
-import java.util.concurrent.TimeUnit;
-
-import static org.jclouds.virtualbox.domain.ExecutionType.HEADLESS;
-import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
-import static org.jclouds.virtualbox.util.MachineUtils.applyForMachine;
-import static org.jclouds.virtualbox.util.MachineUtils.lockSessionOnMachineAndApply;
-import static org.testng.Assert.assertTrue;
-import static org.virtualbox_4_1.LockType.Shared;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 
 @Test(groups = "live", singleThreaded = true, testName = "SshAvailableLiveTest")
 public class SshAvailableLiveTest extends BaseVirtualBoxClientLiveTest {
@@ -64,13 +70,13 @@ public class SshAvailableLiveTest extends BaseVirtualBoxClientLiveTest {
          Predicate<IPSocket> socketTester = new RetryablePredicate<IPSocket>(
                  new InetSocketAddressConnect(), 10, 1, TimeUnit.SECONDS);
          String vmId = "jclouds-image-iso-2";
-         String isoName = "ubuntu-11.04-server-i386.iso";
 
          String workingDir = PropertyUtils.getWorkingDirFromProperty();
          StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
                  .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
-                 .attachHardDisk(0, 1, workingDir + "/testadmin.vdi").build();
+                 .attachHardDisk(HardDisk.builder().diskpath(workingDir + "/testadmin.vdi").controllerPort(0).deviceSlot(1).build()).build();
          VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).osTypeId("")
+         		  .memoryMB(512)
                  .controller(ideController)
                  .forceOverwrite(true).build();
 

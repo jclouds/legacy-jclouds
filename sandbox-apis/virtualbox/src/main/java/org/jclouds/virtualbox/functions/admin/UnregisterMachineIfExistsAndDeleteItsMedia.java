@@ -1,5 +1,5 @@
 /*
- * Licensed to jclouds, Inc. (jclouds) under one or more
+U * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
@@ -19,16 +19,19 @@
 
 package org.jclouds.virtualbox.functions.admin;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.domain.ErrorCode;
-import org.virtualbox_4_1.CleanupMode;
+import org.jclouds.virtualbox.domain.StorageController;
+import org.jclouds.virtualbox.domain.VmSpec;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IMedium;
 import org.virtualbox_4_1.IProgress;
@@ -36,57 +39,78 @@ import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
-public class UnregisterMachineIfExistsAndDeleteItsMedia implements Function<String, Void> {
+public class UnregisterMachineIfExistsAndDeleteItsMedia implements
+      Function<VmSpec, Void> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
    private VirtualBoxManager manager;
-   private CleanupMode mode;
 
-   public UnregisterMachineIfExistsAndDeleteItsMedia(VirtualBoxManager manager, CleanupMode mode) {
+   public UnregisterMachineIfExistsAndDeleteItsMedia(VirtualBoxManager manager) {
       this.manager = manager;
-      this.mode = mode;
    }
 
    @Override
-   public Void apply(@Nullable String vmName) {
-      List<IMedium> mediaToBeDeleted = null;
+   public Void apply(VmSpec vmSpec) {
+      List<IMedium> mediaToBeDeleted = Collections.emptyList();
       IMachine machine = null;
       try {
-         machine = manager.getVBox().findMachine(vmName);
-         mediaToBeDeleted = machine.unregister(mode);
+         machine = manager.getVBox().findMachine(vmSpec.getVmName());
+         mediaToBeDeleted = machine.unregister(vmSpec.getCleanupMode());
       } catch (VBoxException e) {
          ErrorCode errorCode = ErrorCode.valueOf(e);
          switch (errorCode) {
          case VBOX_E_OBJECT_NOT_FOUND:
             logger.debug("Machine %s does not exists, cannot unregister",
-                  vmName);
+                  vmSpec.getVmName());
             break;
          default:
             throw e;
          }
       }
-      /**
-       * deletion of all files is currently disabled on Windows/x64 to prevent a
-       * crash
-       */
-      try {
-         IProgress deletion = machine.delete(mediaToBeDeleted);
-         deletion.waitForCompletion(-1);
-      } catch (Exception e) {
-         logger.error(e, "Problem in deleting the media attached to %s", machine.getName());
-         propagate(e);
+
+      List<IMedium> filteredMediaToBeDeleted = Lists.newArrayList(Iterables
+            .filter(mediaToBeDeleted, new AutoDeleteHardDiskPredicate(vmSpec)));
+
+      checkNotNull(filteredMediaToBeDeleted);
+      if (!filteredMediaToBeDeleted.isEmpty()) {
+         try {
+            IProgress deletion = machine.delete(filteredMediaToBeDeleted);
+            deletion.waitForCompletion(-1);
+
+         } catch (Exception e) {
+            logger.error(e, "Problem in deleting the media attached to %s",
+                  machine.getName());
+            Throwables.propagate(e);
+         }
       }
       return null;
    }
 
-   protected <T> T propagate(Exception e) {
-      Throwables.propagate(e);
-      assert false;
-      return null;
-   }
+   private class AutoDeleteHardDiskPredicate implements Predicate<IMedium> {
+
+      private VmSpec vmSpec;
+
+      public AutoDeleteHardDiskPredicate(VmSpec vmSpec) {
+         this.vmSpec = vmSpec;
+      }
+
+      @Override
+      public boolean apply(IMedium medium) {
+         for (StorageController controller : vmSpec.getControllers()) {
+            if (controller.getHardDisk(medium.getName()).isAutoDelete())
+               return true;
+         }
+         return false;
+      }
+
+   };
+
 }

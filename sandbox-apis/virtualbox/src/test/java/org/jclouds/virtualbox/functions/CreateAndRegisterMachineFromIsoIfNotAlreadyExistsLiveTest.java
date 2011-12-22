@@ -24,11 +24,16 @@ import static org.testng.Assert.fail;
 
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.ErrorCode;
+import org.jclouds.virtualbox.domain.HardDisk;
+import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
+import org.jclouds.virtualbox.util.PropertyUtils;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.StorageBus;
 import org.virtualbox_4_1.VBoxException;
 
 /**
@@ -36,24 +41,41 @@ import org.virtualbox_4_1.VBoxException;
  */
 public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClientLiveTest {
 
-   @Test
+   private String ideControllerName;
+   private CleanupMode mode;
+	private StorageController ideController;
+	
+	@BeforeMethod
+	public void setUp() {
+		ideControllerName = "IDE Controller";
+		mode = CleanupMode.Full;
+      String workingDir = PropertyUtils.getWorkingDirFromProperty();
+      ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)
+              .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
+              .attachHardDisk(HardDisk.builder().diskpath(workingDir + "/testadmin.vdi")
+                    .controllerPort(0).deviceSlot(1).build())
+              .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso").build();
+      }
+
+	@Test
    public void testCreateNewMachine() throws Exception {
       String vmName = "jclouds-test-create-1-node";
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager, CleanupMode.Full).apply(vmName);
-      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName)
-              .osTypeId("Debian").forceOverwrite(true).build();
+      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName).memoryMB(512).controller(ideController).cleanUpMode(mode)
+            .osTypeId("Debian").forceOverwrite(true).build();
+      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(launchSpecification);
       IMachine debianNode = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(launchSpecification);
       IMachine machine = manager.getVBox().findMachine(vmName);
       assertEquals(debianNode.getName(), machine.getName());
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager, CleanupMode.Full).apply(vmName);
+      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(launchSpecification);
    }
 
    @Test
    public void testCreateNewMachineWithBadOsType() throws Exception {
       String vmName = "jclouds-test-create-2-node";
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager, CleanupMode.Full).apply(vmName);
-      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName)
-              .osTypeId("SomeWeirdUnknownOs").forceOverwrite(true).build();
+      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName).memoryMB(512).controller(ideController).cleanUpMode(mode)
+            .osTypeId("SomeWeirdUnknownOs").forceOverwrite(true).build();
+      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(launchSpecification);
+
       try {
          new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(launchSpecification);
          fail();

@@ -31,6 +31,7 @@ import static org.easymock.classextension.EasyMock.verify;
 import org.easymock.EasyMock;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.testng.annotations.Test;
+import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VBoxException;
@@ -49,7 +50,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       IVirtualBox vBox = createMock(IVirtualBox.class);
       String vmName = "jclouds-image-my-ubuntu-image";
 
-      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName).osTypeId("").memoryMB(1024).build();
+      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName).osTypeId("").memoryMB(1024).cleanUpMode(CleanupMode.Full).build();
 
       IMachine createdMachine = createMock(IMachine.class);
 
@@ -90,7 +91,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       replay(manager, vBox);
 
-      VmSpec launchSpecification = VmSpec.builder().id("").name(vmName).osTypeId("").memoryMB(1024).build();
+      VmSpec launchSpecification = VmSpec.builder().id("").name(vmName).osTypeId("").memoryMB(1024).cleanUpMode(CleanupMode.Full).build();
       new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(launchSpecification);
    }
 
@@ -111,7 +112,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       replay(manager, vBox);
 
-      VmSpec launchSpecification = VmSpec.builder().id("").name(vmName).osTypeId("").memoryMB(1024).build();
+      VmSpec launchSpecification = VmSpec.builder().id("").name(vmName).osTypeId("").cleanUpMode(CleanupMode.Full).memoryMB(1024).build();
       new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(launchSpecification);
 
    }
