@@ -423,7 +423,15 @@ public class RestAnnotationProcessor<T> {
             requestBuilder = GeneratedHttpRequest.Builder.<T> from(r);
             endpoint = r.getEndpoint();
          } else {
-            requestBuilder = GeneratedHttpRequest.<T> builder();
+            /*
+             * Can't use GeneratedHttpRequest.<T>builder() because the T is too
+             * general for the compiler to be able to distinguish between
+             * GeneratedHttpRequest.builder() and HttpMessage.builder() - the
+             * latter is available because GHR inherits from HM.
+             *
+             * See http://code.google.com/p/jclouds/issues/detail?id=461
+             */
+            requestBuilder = new GeneratedHttpRequest.Builder<T>();
             requestBuilder.method(getHttpMethodOrConstantOrThrowException(method));
          }
 
