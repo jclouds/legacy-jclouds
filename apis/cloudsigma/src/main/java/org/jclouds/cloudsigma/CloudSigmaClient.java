@@ -219,6 +219,7 @@ public interface CloudSigmaClient {
     *           options to control size
     * @return new drive
     */
+   @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
    DriveInfo cloneDrive(String sourceUuid, String newName, CloneDriveOptions... options);
 
    /**
