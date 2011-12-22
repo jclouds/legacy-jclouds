@@ -20,7 +20,6 @@ package org.jclouds.slicehost.compute.functions;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,7 +37,7 @@ import org.jclouds.compute.domain.VolumeBuilder;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.slicehost.compute.config.SlicehostComputeServiceDependenciesModule;
+import org.jclouds.slicehost.compute.config.SlicehostComputeServiceContextModule;
 import org.jclouds.slicehost.domain.Slice;
 import org.jclouds.slicehost.xml.SliceHandlerTest;
 import org.testng.annotations.Test;
@@ -56,8 +55,8 @@ public class SliceToNodeMetadataTest {
    Location provider = new LocationBuilder().scope(LocationScope.ZONE).id("dallas").description("description").build();
 
    @Test
-   public void testApplyWhereImageAndHardwareNotFound() throws UnknownHostException {
-      Map<Slice.Status, NodeState> sliceStateToNodeState = SlicehostComputeServiceDependenciesModule.sliceStatusToNodeState;
+   public void testApplyWhereImageAndHardwareNotFound() {
+      Map<Slice.Status, NodeState> sliceStateToNodeState = SlicehostComputeServiceContextModule.sliceStatusToNodeState;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of();
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
       Slice slice = SliceHandlerTest.parseSlice();
@@ -75,8 +74,8 @@ public class SliceToNodeMetadataTest {
    }
 
    @Test
-   public void testApplyWhereImageFoundAndHardwareNotFound() throws UnknownHostException {
-      Map<Slice.Status, NodeState> sliceStateToNodeState = SlicehostComputeServiceDependenciesModule.sliceStatusToNodeState;
+   public void testApplyWhereImageFoundAndHardwareNotFound() {
+      Map<Slice.Status, NodeState> sliceStateToNodeState = SlicehostComputeServiceContextModule.sliceStatusToNodeState;
       org.jclouds.compute.domain.Image jcImage = SlicehostImageToImageTest.convertImage();
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(jcImage);
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
@@ -97,8 +96,8 @@ public class SliceToNodeMetadataTest {
    }
 
    @Test
-   public void testApplyWhereImageAndHardwareFound() throws UnknownHostException {
-      Map<Slice.Status, NodeState> sliceStateToNodeState = SlicehostComputeServiceDependenciesModule.sliceStatusToNodeState;
+   public void testApplyWhereImageAndHardwareFound() {
+      Map<Slice.Status, NodeState> sliceStateToNodeState = SlicehostComputeServiceContextModule.sliceStatusToNodeState;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(SlicehostImageToImageTest.convertImage());
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of(FlavorToHardwareTest.convertFlavor());
       Slice slice = SliceHandlerTest.parseSlice();
