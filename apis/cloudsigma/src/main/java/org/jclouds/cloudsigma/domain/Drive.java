@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -34,6 +35,7 @@ public class Drive extends Item {
    public static class Builder extends Item.Builder {
       protected long size;
       protected ClaimType claimType = ClaimType.EXCLUSIVE;
+      protected Set<String> tags = ImmutableSet.of();
       protected Set<String> readers = ImmutableSet.of();
 
       public Builder claimType(ClaimType claimType) {
@@ -41,6 +43,11 @@ public class Drive extends Item {
          return this;
       }
 
+      public Builder tags(Iterable<String> tags) {
+          this.tags = ImmutableSet.copyOf(checkNotNull(tags, "tags"));
+          return this;
+      }
+      
       public Builder readers(Iterable<String> readers) {
          this.readers = ImmutableSet.copyOf(checkNotNull(readers, "readers"));
          return this;
@@ -76,7 +83,7 @@ public class Drive extends Item {
       }
 
       public Drive build() {
-         return new Drive(uuid, name, size, claimType, readers, use);
+         return new Drive(uuid, name, size, claimType, tags, readers, use);
       }
 
       @Override
@@ -84,6 +91,7 @@ public class Drive extends Item {
          final int prime = 31;
          int result = super.hashCode();
          result = prime * result + ((claimType == null) ? 0 : claimType.hashCode());
+         result = prime * result + ((tags == null) ? 0 : tags.hashCode());
          result = prime * result + ((readers == null) ? 0 : readers.hashCode());
          result = prime * result + (int) (size ^ (size >>> 32));
          return result;
@@ -100,11 +108,10 @@ public class Drive extends Item {
          Builder other = (Builder) obj;
          if (claimType != other.claimType)
             return false;
-         if (readers == null) {
-            if (other.readers != null)
-               return false;
-         } else if (!readers.equals(other.readers))
-            return false;
+         if (!Objects.equal(tags, other.tags))
+             return false;
+         if (!Objects.equal(readers, other.readers))
+             return false;
          if (size != other.size)
             return false;
          return true;
@@ -113,13 +120,15 @@ public class Drive extends Item {
 
    protected final long size;
    protected final ClaimType claimType;
+   protected final Set<String> tags;
    protected final Set<String> readers;
 
-   public Drive(@Nullable String uuid, String name, long size, @Nullable ClaimType claimType, Iterable<String> readers,
-         Iterable<String> use) {
+   public Drive(@Nullable String uuid, String name, long size, @Nullable ClaimType claimType,
+         Iterable<String> tags, Iterable<String> readers, Iterable<String> use) {
       super(uuid, name, use);
       this.size = size;
       this.claimType = checkNotNull(claimType, "set claimType to exclusive, not null");
+      this.tags = ImmutableSet.copyOf(checkNotNull(tags, "tags"));
       this.readers = ImmutableSet.copyOf(checkNotNull(readers, "readers"));
    }
 
@@ -133,6 +142,13 @@ public class Drive extends Item {
       return claimType;
    }
 
+   /**
+    * @return all tags associated with this drive, both user-specified and "system" tags (e.g. "affinity:ssd")
+    */
+   public Set<String> getTags() {
+       return tags;
+   }
+   
    /**
     * 
     * @return list of users allowed to read from a drive or 'ffffffff-ffff-ffff-ffff-ffffffffffff'
@@ -155,6 +171,7 @@ public class Drive extends Item {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((claimType == null) ? 0 : claimType.hashCode());
+      result = prime * result + ((tags == null) ? 0 : tags.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((readers == null) ? 0 : readers.hashCode());
       result = prime * result + (int) (size ^ (size >>> 32));
@@ -173,16 +190,12 @@ public class Drive extends Item {
       Drive other = (Drive) obj;
       if (claimType != other.claimType)
          return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (readers == null) {
-         if (other.readers != null)
-            return false;
-      } else if (!readers.equals(other.readers))
-         return false;
+      if (!Objects.equal(tags, other.tags))
+          return false;
+      if (!Objects.equal(name, other.name))
+          return false;
+      if (!Objects.equal(readers, other.readers))
+          return false;
       if (size != other.size)
          return false;
       if (use == null) {
@@ -196,7 +209,7 @@ public class Drive extends Item {
    @Override
    public String toString() {
       return "[uuid=" + uuid + ", name=" + name + ", use=" + use + ", size=" + size + ", claimType=" + claimType
-            + ", readers=" + readers + "]";
+            + ", tags=" + tags + ", readers=" + readers + "]";
    }
 
 }

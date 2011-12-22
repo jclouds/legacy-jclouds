@@ -460,9 +460,16 @@ public class CloudSigmaClientLiveTest {
    protected void prepareDrive() {
       client.destroyDrive(drive.getUuid());
       drive = client.cloneDrive(bootDrive, drive.getName(),
-            new CloneDriveOptions().size(driveSize));
+            new CloneDriveOptions()
+            .size(driveSize)
+            .tags("cat:mouse", "monkey:banana")
+      );
+      // Block until the async clone operation has completed.
       assert driveNotClaimed.apply(drive) : client.getDriveInfo(drive.getUuid());
-      System.err.println("after prepare" + client.getDriveInfo(drive.getUuid()));
+      
+      DriveInfo clonedDrive = client.getDriveInfo(drive.getUuid());
+      System.err.println("after prepare" + clonedDrive);
+      assertEquals(clonedDrive.getTags(), ImmutableSet.of("cat:mouse", "monkey:banana"));
    }
 
 }

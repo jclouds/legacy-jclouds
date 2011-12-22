@@ -20,10 +20,18 @@ package org.jclouds.cloudsigma.options;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
+import org.jclouds.cloudsigma.domain.AffinityType;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * Contains options supported for clone drive operations. <h2>
@@ -42,6 +50,7 @@ import com.google.common.collect.Maps;
  * 
  */
 public class CloneDriveOptions {
+   private final String SSD_AFFINITY_TAG = "affinity:ssd";
    private final Map<String, String> options = Maps.newLinkedHashMap();
 
    /**
@@ -53,6 +62,51 @@ public class CloneDriveOptions {
       return this;
    }
 
+   public CloneDriveOptions tags(String... tags) {
+      // Affinity is conveyed using regular tags; make sure to preserve any already-set affinity tag.
+      String currentTagsString = options.remove("tags");
+      Set<String> currentTags = (currentTagsString == null) ? new HashSet<String>() :
+         Sets.newLinkedHashSet(Splitter.on(' ').split(currentTagsString));
+
+      Set<String> newTags = new LinkedHashSet<String>();
+      for (String tag : tags)
+          newTags.add(tag);
+      
+      if (currentTags.contains(SSD_AFFINITY_TAG))
+          newTags.add(SSD_AFFINITY_TAG);
+      
+      options.put("tags", Joiner.on(' ').join(newTags));
+      return this;
+   }
+   
+   /**
+    * Specifies whether the new drive has 'HDD' affinity (the default) or 'SSD' (for solid-state drives).
+    * Affinity is conveyed via a special value among the drive's tags. 
+    */
+   public CloneDriveOptions affinity(AffinityType affinity) {
+      // Affinity is conveyed using regular tags; make sure to avoid multiple affinity tags in the options.
+      String currentTagsString = options.remove("tags");
+      Set<String> tags = (currentTagsString == null) ? new LinkedHashSet<String>() :
+         Sets.newLinkedHashSet(Splitter.on(' ').split(currentTagsString));
+      
+      switch (affinity) {
+      // SSD affinity is conveyed as a special tag: "affinity:ssd".
+      case SSD:
+         tags.add(SSD_AFFINITY_TAG);
+         break;
+      
+      // HDD affinity (the default) is conveyed by the *absence* of the "affinity:ssd" tag.
+      case HDD:
+         tags.remove(SSD_AFFINITY_TAG);
+         break;
+      }
+      
+      if (!tags.isEmpty())
+          options.put("tags", Joiner.on(' ').join(tags));
+      
+      return this;
+   }
+   
    public static class Builder {
 
       /**
@@ -62,7 +116,23 @@ public class CloneDriveOptions {
          CloneDriveOptions options = new CloneDriveOptions();
          return options.size(size);
       }
+      
+      /**
+       * @see CloneDriveOptions#tags
+       */
+      public static CloneDriveOptions tags(String... tags) {
+          CloneDriveOptions options = new CloneDriveOptions();
+          return options.tags(tags);
+      }
 
+      /**
+       * @see CloneDriveOptions#affinity
+       */
+      public static CloneDriveOptions affinity(AffinityType affinity) {
+          CloneDriveOptions options = new CloneDriveOptions();
+          return options.affinity(affinity);
+      }
+      
    }
 
    public Map<String, String> getOptions() {

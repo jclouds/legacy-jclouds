@@ -45,6 +45,8 @@ public class BaseDriveToMap implements Function<Drive, Map<String, String>> {
       builder.put("size", from.getSize() + "");
       if (from.getClaimType() != ClaimType.EXCLUSIVE)
          builder.put("claim:type", from.getClaimType().toString());
+      if (from.getTags().size() != 0)
+          builder.put("tags", Joiner.on(' ').join(from.getTags()));
       if (from.getReaders().size() != 0)
          builder.put("readers", Joiner.on(' ').join(from.getReaders()));
       if (from.getUse().size() != 0)

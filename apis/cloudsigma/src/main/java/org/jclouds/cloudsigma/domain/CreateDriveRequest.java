@@ -68,6 +68,14 @@ public class CreateDriveRequest extends Drive {
        * {@inheritDoc}
        */
       @Override
+      public Builder tags(Iterable<String> tags) {
+          return Builder.class.cast(super.tags(tags));
+      }
+      
+      /**
+       * {@inheritDoc}
+       */
+      @Override
       public Builder readers(Iterable<String> readers) {
          return Builder.class.cast(super.readers(readers));
       }
@@ -89,7 +97,7 @@ public class CreateDriveRequest extends Drive {
       }
 
       public CreateDriveRequest build() {
-         return new CreateDriveRequest(name, size, claimType, readers, use, encryptionCipher, avoid);
+         return new CreateDriveRequest(name, size, claimType, tags, readers, use, encryptionCipher, avoid);
       }
    }
 
@@ -97,9 +105,9 @@ public class CreateDriveRequest extends Drive {
    @Nullable
    private final String encryptionCipher;
 
-   public CreateDriveRequest(String name, long size, @Nullable ClaimType claimType, Iterable<String> readers,
-         Iterable<String> use, @Nullable String encryptionCipher, Iterable<String> avoid) {
-      super(null, name, size, claimType, readers, use);
+   public CreateDriveRequest(String name, long size, @Nullable ClaimType claimType, Iterable<String> tags,
+         Iterable<String> readers, Iterable<String> use, @Nullable String encryptionCipher, Iterable<String> avoid) {
+      super(null, name, size, claimType, tags, readers, use);
       this.encryptionCipher = encryptionCipher;
       this.avoid = ImmutableSet.copyOf(checkNotNull(avoid, "avoid"));
    }
@@ -155,7 +163,8 @@ public class CreateDriveRequest extends Drive {
 
    @Override
    public String toString() {
-      return "[name=" + name + ", size=" + size + ", claimType=" + claimType + ", readers=" + readers + ", use=" + use
-            + ", avoid=" + avoid + ", encryptionCipher=" + encryptionCipher + "]";
+      return "[name=" + name + ", size=" + size + ", claimType=" + claimType + ", tags=" + tags
+            + ", readers=" + readers + ", use=" + use + ", avoid=" + avoid
+            + ", encryptionCipher=" + encryptionCipher + "]";
    }
 }
