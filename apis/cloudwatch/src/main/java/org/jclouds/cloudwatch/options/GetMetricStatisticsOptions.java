@@ -41,8 +41,8 @@ public class GetMetricStatisticsOptions extends BaseHttpRequestOptions {
     */
    public GetMetricStatisticsOptions instanceId(String instanceId) {
       String[] parts = AWSUtils.parseHandle(instanceId);
-      this.formParameters.put("Dimensions.member.1",
-         String.format("InstanceId=%s", checkNotNull(parts[1])));
+      this.formParameters.put("Dimensions.member.1.Name", "InstanceId");
+      this.formParameters.put("Dimensions.member.1.Value", checkNotNull(parts[1]));
       return this;
    }
 

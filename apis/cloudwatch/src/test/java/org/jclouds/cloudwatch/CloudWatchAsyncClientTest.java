@@ -69,18 +69,11 @@ public class CloudWatchAsyncClientTest extends RestClientTest<CloudWatchAsyncCli
 
       assertRequestLineEquals(request, "POST https://monitoring.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: monitoring.us-east-1.amazonaws.com\n");
-      try {
-         assertPayloadEquals(
+      assertPayloadEquals(
                request,
-               "Version=2010-08-01&Action=GetMetricStatistics&Statistics.member.1=Average&StartTime=1970-01-01T02%3A46%3A40Z&Namespace=AWS%2FEC2&&MetricName=CPUUtilization&EndTime=1970-01-01T02%3A46%3A40Z&Period=60&Dimensions.member.1=InstanceId%3Di-12312313",
+               "Version=2010-08-01&Action=GetMetricStatistics&Statistics.member.1=Average&Period=60&Namespace=AWS%2FEC2&MetricName=CPUUtilization&StartTime=1970-01-01T02%3A46%3A40Z&EndTime=1970-01-01T02%3A46%3A40Z&Dimensions.member.1.Name=InstanceId&Dimensions.member.1.Value=i-12312313",
                "application/x-www-form-urlencoded", false);
-      } catch (AssertionError e) {
-         // mvn 3.0 osx 10.6.5 somehow sorts differently
-         assertPayloadEquals(
-               request,
-               "Version=2010-08-01&Action=GetMetricStatistics&Statistics.member.1=Average&Period=60&Namespace=AWS%2FEC2&MetricName=CPUUtilization&StartTime=1970-01-01T02%3A46%3A40Z&EndTime=1970-01-01T02%3A46%3A40Z&Dimensions.member.1=InstanceId%3Di-12312313",
-               "application/x-www-form-urlencoded", false);
-      }
+
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, GetMetricStatisticsResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
