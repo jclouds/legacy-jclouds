@@ -61,7 +61,7 @@ public class AllCatalogsInOrg implements Function<Org, Iterable<? extends Catalo
                @SuppressWarnings("unchecked")
                @Override
                public Future<Catalog> apply(ReferenceType from) {
-                  return (Future<Catalog>) aclient.getCatalog(from.getHref());
+                  return (Future<Catalog>) aclient.getCatalogClient().getCatalog(from.getHref());
                }
 
             }, executor, null, logger, "catalogs in " + org.getName());

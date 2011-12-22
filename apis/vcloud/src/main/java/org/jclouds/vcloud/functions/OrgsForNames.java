@@ -58,7 +58,7 @@ public class OrgsForNames implements Function<Iterable<String>, Iterable<? exten
          @SuppressWarnings("unchecked")
          @Override
          public Future<Org> apply(String from) {
-            return (Future<Org>) aclient.findOrgNamed(from);
+            return (Future<Org>) aclient.getOrgClient().findOrgNamed(from);
          }
 
       }, executor, null, logger, "organizations for names");

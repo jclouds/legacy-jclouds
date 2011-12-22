@@ -61,7 +61,7 @@ public class AllVDCsInOrg implements Function<Org, Iterable<? extends org.jcloud
                @SuppressWarnings("unchecked")
                @Override
                public Future<org.jclouds.vcloud.domain.VDC> apply(ReferenceType from) {
-                  return (Future<org.jclouds.vcloud.domain.VDC>) aclient.getVDC(from.getHref());
+                  return (Future<org.jclouds.vcloud.domain.VDC>) aclient.getVDCClient().getVDC(from.getHref());
                }
 
             }, executor, null, logger, "vdcs in org " + org.getName());

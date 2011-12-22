@@ -73,7 +73,7 @@ public class AllCatalogItemsInCatalog implements Function<Catalog, Iterable<? ex
          @SuppressWarnings("unchecked")
          @Override
          public Future<CatalogItem> apply(ReferenceType from) {
-            return (Future<CatalogItem>) aclient.getCatalogItem(from.getHref());
+            return (Future<CatalogItem>) aclient.getCatalogClient().getCatalogItem(from.getHref());
          }
 
       }, executor, null, logger, "catalogItems in " + from.getHref());
