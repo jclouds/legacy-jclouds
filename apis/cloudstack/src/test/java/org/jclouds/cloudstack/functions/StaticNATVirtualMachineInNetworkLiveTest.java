@@ -37,10 +37,7 @@ import org.jclouds.cloudstack.features.NATClientLiveTest;
 import org.jclouds.cloudstack.features.VirtualMachineClientLiveTest;
 import org.jclouds.cloudstack.predicates.NetworkPredicates;
 import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
-import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.domain.LoginCredentials;
 import org.jclouds.net.IPSocket;
-import org.jclouds.ssh.SshClient;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -72,8 +69,8 @@ public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest 
          vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network,
                defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()), client, jobComplete,
                virtualMachineRunning);
-         if (vm.getPassword() != null)
-            password = vm.getPassword();
+         if (vm.getPassword() != null && !loginCredentials.hasPasswordOption())
+            loginCredentials = loginCredentials.toBuilder().password(vm.getPassword()).build();
       } catch (NoSuchElementException e) {
          networksDisabled = true;
       }
@@ -110,16 +107,7 @@ public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest 
       assertEquals(rule.getProtocol(), "tcp");
       checkRule(rule);
       IPSocket socket = new IPSocket(ip.getIPAddress(), 22);
-      socketTester.apply(socket);
-      SshClient client = sshFactory.create(socket, LoginCredentials.builder().user("root").password(password).build());
-      try {
-         client.connect();
-         ExecResponse exec = client.exec("echo hello");
-         assertEquals(exec.getOutput().trim(), "hello");
-      } finally {
-         if (client != null)
-            client.disconnect();
-      }
+      checkSSH(socket);
    }
 
    @AfterGroups(groups = "live")

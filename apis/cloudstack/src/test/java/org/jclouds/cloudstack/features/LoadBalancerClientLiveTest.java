@@ -28,7 +28,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import com.google.common.base.Predicates;
 import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.cloudstack.domain.JobResult;
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
@@ -47,6 +46,7 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 /**
  * Tests behavior of {@code LoadBalancerClientLiveTest}
@@ -70,7 +70,8 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
             TimeUnit.SECONDS);
       prefix += "rule";
       try {
-         network = find(client.getNetworkClient().listNetworks(), Predicates.and(NetworkPredicates.hasLoadBalancerService(), NetworkPredicates.isVirtualNetwork()));
+         network = find(client.getNetworkClient().listNetworks(),
+               Predicates.and(NetworkPredicates.hasLoadBalancerService(), NetworkPredicates.isVirtualNetwork()));
       } catch (NoSuchElementException e) {
          networksDisabled = true;
       }
@@ -83,8 +84,8 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
       vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network,
             defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()), client, jobComplete,
             virtualMachineRunning);
-      if (vm.getPassword() != null)
-         password = vm.getPassword();
+      if (vm.getPassword() != null && !loginCredentials.hasPasswordOption())
+         loginCredentials = loginCredentials.toBuilder().password(vm.getPassword()).build();
    }
 
    @Test(dependsOnMethods = "testCreateVm")
@@ -95,8 +96,8 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
       while (rule == null && attempts < 10) {
          ip = reuseOrAssociate.apply(network);
          try {
-            Long jobId = client.getLoadBalancerClient().createLoadBalancerRuleForPublicIP(ip.getId(), Algorithm.LEASTCONN,
-                  prefix, 22, 22);
+            Long jobId = client.getLoadBalancerClient().createLoadBalancerRuleForPublicIP(ip.getId(),
+                  Algorithm.LEASTCONN, prefix, 22, 22);
             assertTrue(jobComplete.apply(jobId));
             AsyncJob<LoadBalancerRule> asyncJob = client.getAsyncJobClient().getAsyncJob(jobId);
             LoadBalancerRule result = asyncJob.getResult();
@@ -106,7 +107,7 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
             attempts++;
          }
       }
-      assertNotNull(rule, "Failed to get a load balancer rule after "+attempts+" attempts");
+      assertNotNull(rule, "Failed to get a load balancer rule after " + attempts + " attempts");
       assert (rule.getPublicIPId() == ip.getId()) : rule;
       assertEquals(rule.getPublicPort(), 22);
       assertEquals(rule.getPrivatePort(), 22);
@@ -122,12 +123,12 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testAssignToLoadBalancerRule() throws Exception {
       if (networksDisabled)
          return;
-      long jobId = client.getLoadBalancerClient().assignVirtualMachinesToLoadBalancerRule(rule.getId(),
-         vm.getId());
+      long jobId = client.getLoadBalancerClient().assignVirtualMachinesToLoadBalancerRule(rule.getId(), vm.getId());
       assertTrue(jobComplete.apply(jobId));
       AsyncJob<JobResult> result = client.getAsyncJobClient().getAsyncJob(jobId);
       assertTrue(result.hasSucceed());
-      Set<VirtualMachine> machines = client.getLoadBalancerClient().listVirtualMachinesAssignedToLoadBalancerRule(rule.getId());
+      Set<VirtualMachine> machines = client.getLoadBalancerClient().listVirtualMachinesAssignedToLoadBalancerRule(
+            rule.getId());
       assertEquals(machines.size(), 1);
       assertTrue(loadBalancerRuleActive.apply(rule), rule.toString());
    }

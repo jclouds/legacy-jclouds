@@ -278,14 +278,15 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    private void conditionallyCheckSSH() {
-      password = vm.getPassword();
+      if (vm.getPassword() != null && !loginCredentials.hasPasswordOption())
+         loginCredentials = loginCredentials.toBuilder().password(vm.getPassword()).build();
       assert HostSpecifier.isValid(vm.getIPAddress());
       if (!InetAddresses2.isPrivateIPAddress(vm.getIPAddress())) {
          // not sure if the network is public or not, so we have to test
          IPSocket socket = new IPSocket(vm.getIPAddress(), 22);
          System.err.printf("testing socket %s%n", socket);
          System.err.printf("testing ssh %s%n", socket);
-         this.checkSSH(socket);
+         checkSSH(socket);
       } else {
          System.err.printf("skipping ssh %s, as private%n", vm.getIPAddress());
       }

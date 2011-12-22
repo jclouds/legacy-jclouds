@@ -18,14 +18,14 @@
  */
 package org.jclouds.cloudstack.features;
 
-import org.jclouds.cloudstack.domain.ISO;
-import org.jclouds.cloudstack.domain.Zone;
-import org.jclouds.cloudstack.options.ListISOsOptions;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 
 import java.util.Set;
 
-import static org.testng.Assert.*;
+import org.jclouds.cloudstack.domain.ISO;
+import org.jclouds.cloudstack.options.ListISOsOptions;
+import org.testng.annotations.Test;
 
 /**
  * Tests behavior of {@link ISOClient} and {@link ISOAsyncClient}

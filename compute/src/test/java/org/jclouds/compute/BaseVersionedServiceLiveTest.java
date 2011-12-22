@@ -24,8 +24,13 @@ import static com.google.common.base.Strings.emptyToNull;
 import java.util.Properties;
 
 import org.jclouds.Constants;
+import org.jclouds.domain.LoginCredentials;
+import org.jclouds.domain.LoginCredentials.Builder;
 import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.BeforeClass;
+
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -42,6 +47,7 @@ public abstract class BaseVersionedServiceLiveTest {
    protected String imageId;
    protected String loginUser;
    protected String authenticateSudo;
+   protected LoginCredentials loginCredentials = LoginCredentials.builder().user("root").build();
 
    protected Properties setupRestProperties() {
       return RestContextFactory.getPropertiesFromResource("/rest.properties");
@@ -85,6 +91,16 @@ public abstract class BaseVersionedServiceLiveTest {
       imageId = System.getProperty("test." + provider + ".image-id");
       loginUser = System.getProperty("test." + provider + ".image.login-user");
       authenticateSudo = System.getProperty("test." + provider + ".image.authenticate-sudo");
+      if (loginUser != null){
+         Iterable<String> userPass = Splitter.on(':').split(loginUser);
+         Builder loginCredentialsBuilder = LoginCredentials.builder();
+         loginCredentialsBuilder.user(Iterables.get(userPass, 0));
+         if (Iterables.size(userPass) == 2)
+            loginCredentialsBuilder.password(Iterables.get(userPass, 1));
+         if (authenticateSudo != null)
+            loginCredentialsBuilder.authenticateSudo(Boolean.valueOf(authenticateSudo));
+         loginCredentials = loginCredentialsBuilder.build();
+      }
    }
 
 }

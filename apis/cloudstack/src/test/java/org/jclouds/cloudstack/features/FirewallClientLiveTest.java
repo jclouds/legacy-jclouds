@@ -61,8 +61,8 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
          vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network,
                defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()), client, jobComplete,
                virtualMachineRunning);
-         if (vm.getPassword() != null)
-            password = vm.getPassword();
+         if (vm.getPassword() != null && !loginCredentials.hasPasswordOption())
+            loginCredentials = loginCredentials.toBuilder().password(vm.getPassword()).build();
       } catch (NoSuchElementException e) {
          networksDisabled = true;
       }

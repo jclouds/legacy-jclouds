@@ -54,7 +54,6 @@ import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
@@ -162,7 +161,6 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
    protected RetryablePredicate<VirtualMachine> virtualMachineDestroyed;
    protected RetryablePredicate<VirtualMachine> adminVirtualMachineDestroyed;
    protected SshClient.Factory sshFactory;
-   protected String password = "password";
 
    protected Injector injector;
 
@@ -182,7 +180,7 @@ public class BaseCloudStackClientLiveTest extends BaseVersionedServiceLiveTest {
    
    protected void checkSSH(IPSocket socket) {
       socketTester.apply(socket);
-      SshClient client = sshFactory.create(socket, LoginCredentials.builder().user("root").password(password).build());
+      SshClient client = sshFactory.create(socket, loginCredentials);
       try {
          client.connect();
          ExecResponse exec = client.exec("echo hello");

@@ -18,16 +18,26 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.cloudstack.domain.ISO;
-import org.jclouds.cloudstack.domain.TemplateFilter;
-import org.testng.annotations.Test;
+import static org.jclouds.cloudstack.options.ListISOsOptions.Builder.bootable;
+import static org.jclouds.cloudstack.options.ListISOsOptions.Builder.hypervisor;
+import static org.jclouds.cloudstack.options.ListISOsOptions.Builder.id;
+import static org.jclouds.cloudstack.options.ListISOsOptions.Builder.isNotReady;
+import static org.jclouds.cloudstack.options.ListISOsOptions.Builder.isPrivate;
+import static org.jclouds.cloudstack.options.ListISOsOptions.Builder.isPublic;
+import static org.jclouds.cloudstack.options.ListISOsOptions.Builder.isReady;
+import static org.jclouds.cloudstack.options.ListISOsOptions.Builder.isoFilter;
+import static org.jclouds.cloudstack.options.ListISOsOptions.Builder.keyword;
+import static org.jclouds.cloudstack.options.ListISOsOptions.Builder.name;
+import static org.jclouds.cloudstack.options.ListISOsOptions.Builder.notBootable;
+import static org.jclouds.cloudstack.options.ListISOsOptions.Builder.zoneId;
+import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 
-import static org.jclouds.cloudstack.options.ListISOsOptions.Builder.*;
-import static org.testng.Assert.assertEquals;
+import org.jclouds.cloudstack.domain.ISO;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@link ListISOsOptions}
