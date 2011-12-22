@@ -1,17 +1,17 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 129, Failures: 3, Errors: 0, Skipped: 8, Time elapsed: 385.655 sec <<< FAILURE!
-testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)  Time elapsed: 0.081 sec  <<< FAILURE!
+Tests run: 129, Failures: 3, Errors: 0, Skipped: 8, Time elapsed: 386.338 sec <<< FAILURE!
+testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)  Time elapsed: 6.009 sec  <<< FAILURE!
 org.jclouds.compute.RunScriptOnNodesException: error runScript on filtered nodes options([loginUser=root, loginPasswordPresent=true, loginPrivateKeyPresent=true, shouldAuthenticateSudo=null, port:seconds=-1:-1, runAsRoot=false, blockOnComplete=true, wrapInInitScript=false])
 Execution failures:
 0 error[s]
 Node failures:
-1) AuthorizationException on node feb594cd-0516-4f05-b006-492812ed5b16:
-org.jclouds.rest.AuthorizationException: (root:password@46.20.114.74:22) (root:password@46.20.114.74:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
-	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:411)
-	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:241)
-	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:252)
+1) AuthorizationException on node 4b31d15e-8c41-4d36-ab61-c3a9fcb856f7:
+org.jclouds.rest.AuthorizationException: (root:pw[cb0704ede95d3683c58d674e71230eaf]@83.222.241.51:22) (root:pw[cb0704ede95d3683c58d674e71230eaf]@83.222.241.51:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
+	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:413)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:243)
+	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:254)
 	at org.jclouds.compute.callables.RunScriptOnNodeUsingSsh.call(RunScriptOnNodeUsingSsh.java:73)
 	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:69)
 	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:44)
@@ -27,15 +27,15 @@ Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available auth
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:265)
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:235)
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:219)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:197)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:173)
-	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:222)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:199)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:175)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:224)
 	... 9 more
 Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
 	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
 	... 17 more
 1 error[s]
-	at org.jclouds.compute.internal.BaseComputeService.runScriptOnNodesMatching(BaseComputeService.java:569)
+	at org.jclouds.compute.internal.BaseComputeService.runScriptOnNodesMatching(BaseComputeService.java:515)
 	at org.jclouds.compute.BaseComputeServiceLiveTest.testAScriptExecutionAfterBootWithBasicTemplate(BaseComputeServiceLiveTest.java:236)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
@@ -64,15 +64,15 @@ Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available auth
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:265)
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:235)
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:219)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:197)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:173)
-	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:222)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:199)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:175)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:224)
 	... 9 more
 Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
 	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
 	... 17 more
 1 error[s]
-	at org.jclouds.compute.internal.BaseComputeService.runScriptOnNodesMatching(BaseComputeService.java:569)
+	at org.jclouds.compute.internal.BaseComputeService.runScriptOnNodesMatching(BaseComputeService.java:515)
 	at org.jclouds.compute.BaseComputeServiceLiveTest.testAScriptExecutionAfterBootWithBasicTemplate(BaseComputeServiceLiveTest.java:236)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
@@ -94,13 +94,13 @@ Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive aut
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-testCreateAndRunAService(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)  Time elapsed: 5.395 sec  <<< FAILURE!
-org.jclouds.rest.AuthorizationException: (root:password@83.222.249.148:22) (root:password@83.222.249.148:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
-	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:411)
-	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:241)
-	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:252)
+testCreateAndRunAService(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)  Time elapsed: 0.616 sec  <<< FAILURE!
+org.jclouds.rest.AuthorizationException: (root:pw[cb0704ede95d3683c58d674e71230eaf]@83.222.249.148:22) (root:pw[cb0704ede95d3683c58d674e71230eaf]@83.222.249.148:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
+	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:413)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:243)
+	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:254)
 	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSsh.call(RunScriptOnNodeAsInitScriptUsingSsh.java:90)
-	at org.jclouds.compute.internal.BaseComputeService.runScriptOnNode(BaseComputeService.java:611)
+	at org.jclouds.compute.internal.BaseComputeService.runScriptOnNode(BaseComputeService.java:557)
 	at org.jclouds.compute.BaseComputeServiceLiveTest.testCreateAndRunAService(BaseComputeServiceLiveTest.java:667)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
@@ -129,9 +129,9 @@ Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available auth
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:265)
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:235)
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:219)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:197)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:173)
-	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:222)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:199)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:175)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:224)
 	... 24 more
 Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
 	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
@@ -143,23 +143,23 @@ Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available auth
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:265)
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:235)
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:219)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:197)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:173)
-	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:222)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:199)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:175)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:224)
 	... 24 more
 Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
 	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
 	... 32 more
-testCreateTwoNodesWithRunScript(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)  Time elapsed: 142.008 sec  <<< FAILURE!
+testCreateTwoNodesWithRunScript(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)  Time elapsed: 126.053 sec  <<< FAILURE!
 org.jclouds.compute.RunNodesException: error running 2 nodes tag(elastichosts-) location(elastichosts-lon-p) image(24ea9dad-f014-4836-bcb0-f03184c74e7a) size(cpu=1000.000000,ram=512,disk=1.000000) options([inboundPorts=[22], privateKey=false, publicKey=false, runScript=true, blockUntilRunning=true, blockOnComplete=true, port:seconds=-1:-1, userMetadata: {}])
 Execution failures:
 0 error[s]
 Node failures:
-1) AuthorizationException on node e4d27c99-a57d-4c9e-92e0-7581f3d3e7f1:
-org.jclouds.rest.AuthorizationException: (root:password@83.222.249.148:22) (root:password@83.222.249.148:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
-	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:411)
-	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:241)
-	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:252)
+1) AuthorizationException on node b327c693-3a17-458e-8f28-e347796e8f38:
+org.jclouds.rest.AuthorizationException: (root:pw[cb0704ede95d3683c58d674e71230eaf]@83.222.249.148:22) (root:pw[cb0704ede95d3683c58d674e71230eaf]@83.222.249.148:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
+	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:413)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:243)
+	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:254)
 	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSsh.call(RunScriptOnNodeAsInitScriptUsingSsh.java:90)
 	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:150)
 	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.apply(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:170)
@@ -178,18 +178,18 @@ Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available auth
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:265)
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:235)
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:219)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:197)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:173)
-	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:222)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:199)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:175)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:224)
 	... 12 more
 Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
 	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
 	... 20 more
-2) AuthorizationException on node 5794955b-f242-4efa-bf00-ae2f7908123b:
-org.jclouds.rest.AuthorizationException: (root:password@46.20.114.74:22) (root:password@46.20.114.74:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
-	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:411)
-	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:241)
-	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:252)
+2) AuthorizationException on node e76d7967-adad-401f-bae7-389afbbf8d9b:
+org.jclouds.rest.AuthorizationException: (root:pw[cb0704ede95d3683c58d674e71230eaf]@83.222.241.51:22) (root:pw[cb0704ede95d3683c58d674e71230eaf]@83.222.241.51:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
+	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:413)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:243)
+	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:254)
 	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSsh.call(RunScriptOnNodeAsInitScriptUsingSsh.java:90)
 	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:150)
 	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.apply(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:170)
@@ -208,15 +208,15 @@ Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available auth
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:265)
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:235)
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:219)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:197)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:173)
-	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:222)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:199)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:175)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:224)
 	... 12 more
 Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
 	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
 	... 20 more
 2 error[s]
-	at org.jclouds.compute.internal.BaseComputeService.createNodesInGroup(BaseComputeService.java:237)
+	at org.jclouds.compute.internal.BaseComputeService.createNodesInGroup(BaseComputeService.java:207)
 	at org.jclouds.compute.BaseComputeServiceLiveTest.testCreateTwoNodesWithRunScript(BaseComputeServiceLiveTest.java:350)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
@@ -245,18 +245,18 @@ Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available auth
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:265)
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:235)
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:219)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:197)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:173)
-	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:222)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:199)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:175)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:224)
 	... 12 more
 Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
 	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
 	... 20 more
-2) AuthorizationException on node 5794955b-f242-4efa-bf00-ae2f7908123b:
-org.jclouds.rest.AuthorizationException: (root:password@46.20.114.74:22) (root:password@46.20.114.74:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
-	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:411)
-	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:241)
-	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:252)
+2) AuthorizationException on node e76d7967-adad-401f-bae7-389afbbf8d9b:
+org.jclouds.rest.AuthorizationException: (root:pw[cb0704ede95d3683c58d674e71230eaf]@83.222.241.51:22) (root:pw[cb0704ede95d3683c58d674e71230eaf]@83.222.241.51:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
+	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:413)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:243)
+	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:254)
 	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSsh.call(RunScriptOnNodeAsInitScriptUsingSsh.java:90)
 	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:150)
 	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.apply(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:170)
@@ -275,15 +275,15 @@ Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available auth
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:265)
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:235)
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:219)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:197)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:173)
-	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:222)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:199)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:175)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:224)
 	... 12 more
 Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
 	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
 	... 20 more
 2 error[s]
-	at org.jclouds.compute.internal.BaseComputeService.createNodesInGroup(BaseComputeService.java:237)
+	at org.jclouds.compute.internal.BaseComputeService.createNodesInGroup(BaseComputeService.java:207)
 	at org.jclouds.compute.BaseComputeServiceLiveTest.testCreateTwoNodesWithRunScript(BaseComputeServiceLiveTest.java:350)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)

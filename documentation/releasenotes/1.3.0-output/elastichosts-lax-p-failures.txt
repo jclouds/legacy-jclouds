@@ -1,14 +1,14 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 129, Failures: 3, Errors: 0, Skipped: 8, Time elapsed: 255.714 sec <<< FAILURE!
-testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.elastichosts.compute.ElasticHostsPeer1TorontoComputeServiceLiveTest)  Time elapsed: 0.074 sec  <<< FAILURE!
+Tests run: 129, Failures: 3, Errors: 0, Skipped: 8, Time elapsed: 253.79 sec <<< FAILURE!
+testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.elastichosts.compute.ElasticHostsPeer1LosAngelesComputeServiceLiveTest)  Time elapsed: 7.5 sec  <<< FAILURE!
 org.jclouds.compute.RunScriptOnNodesException: error runScript on filtered nodes options([loginUser=root, loginPasswordPresent=true, loginPrivateKeyPresent=true, shouldAuthenticateSudo=null, port:seconds=-1:-1, runAsRoot=false, blockOnComplete=true, wrapInInitScript=false])
 Execution failures:
 0 error[s]
 Node failures:
-1) AuthorizationException on node 2417e883-620d-42dc-a2f4-bc6ad0cd3a1d:
-org.jclouds.rest.AuthorizationException: (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.4.196:22) (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.4.196:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
+1) AuthorizationException on node 373bb424-03b3-423d-8368-a7a9c8c30066:
+org.jclouds.rest.AuthorizationException: (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.13.69:22) (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.13.69:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
 	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:413)
 	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:243)
 	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:254)
@@ -94,8 +94,8 @@ Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive aut
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-testCreateAndRunAService(org.jclouds.elastichosts.compute.ElasticHostsPeer1TorontoComputeServiceLiveTest)  Time elapsed: 28.048 sec  <<< FAILURE!
-org.jclouds.rest.AuthorizationException: (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.4.196:22) (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.4.196:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
+testCreateAndRunAService(org.jclouds.elastichosts.compute.ElasticHostsPeer1LosAngelesComputeServiceLiveTest)  Time elapsed: 49.917 sec  <<< FAILURE!
+org.jclouds.rest.AuthorizationException: (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.13.126:22) (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.13.126:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
 	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:413)
 	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:243)
 	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:254)
@@ -150,13 +150,13 @@ Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available auth
 Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
 	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
 	... 32 more
-testCreateTwoNodesWithRunScript(org.jclouds.elastichosts.compute.ElasticHostsPeer1TorontoComputeServiceLiveTest)  Time elapsed: 94.854 sec  <<< FAILURE!
-org.jclouds.compute.RunNodesException: error running 2 nodes tag(elastichosts-) location(elastichosts-tor-p) image(8d8aee18-8744-452c-94b2-69a2a34b8460) size(cpu=1000.000000,ram=512,disk=1.000000) options([inboundPorts=[22], privateKey=false, publicKey=false, runScript=true, blockUntilRunning=true, blockOnComplete=true, port:seconds=-1:-1, userMetadata: {}])
+testCreateTwoNodesWithRunScript(org.jclouds.elastichosts.compute.ElasticHostsPeer1LosAngelesComputeServiceLiveTest)  Time elapsed: 88.639 sec  <<< FAILURE!
+org.jclouds.compute.RunNodesException: error running 2 nodes tag(elastichosts-) location(elastichosts-lax-p) image(8d8aee18-8744-452c-94b2-69a2a34b8460) size(cpu=1000.000000,ram=512,disk=1.000000) options([inboundPorts=[22], privateKey=false, publicKey=false, runScript=true, blockUntilRunning=true, blockOnComplete=true, port:seconds=-1:-1, userMetadata: {}])
 Execution failures:
 0 error[s]
 Node failures:
-1) AuthorizationException on node c90b6aef-b52e-4ab5-8827-3c81ec8a49c9:
-org.jclouds.rest.AuthorizationException: (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.4.148:22) (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.4.148:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
+1) AuthorizationException on node 92689123-994a-42b2-9888-6025e2e105c6:
+org.jclouds.rest.AuthorizationException: (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.13.69:22) (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.13.69:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
 	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:413)
 	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:243)
 	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:254)
@@ -185,8 +185,8 @@ Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available auth
 Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
 	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
 	... 20 more
-2) AuthorizationException on node a61f89f6-0469-429b-ab3b-829406963c13:
-org.jclouds.rest.AuthorizationException: (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.4.196:22) (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.4.196:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
+2) AuthorizationException on node f513a2a0-abe7-488d-b94c-1504900ecaaa:
+org.jclouds.rest.AuthorizationException: (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.13.126:22) (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.13.126:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
 	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:413)
 	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:243)
 	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:254)
@@ -252,8 +252,8 @@ Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available auth
 Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
 	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
 	... 20 more
-2) AuthorizationException on node a61f89f6-0469-429b-ab3b-829406963c13:
-org.jclouds.rest.AuthorizationException: (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.4.196:22) (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.4.196:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
+2) AuthorizationException on node f513a2a0-abe7-488d-b94c-1504900ecaaa:
+org.jclouds.rest.AuthorizationException: (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.13.126:22) (root:pw[cb0704ede95d3683c58d674e71230eaf]@107.6.13.126:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
 	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:413)
 	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:243)
 	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:254)
