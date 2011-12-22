@@ -40,7 +40,7 @@ import org.jclouds.compute.domain.VolumeBuilder;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.openstack.nova.compute.config.NovaComputeServiceDependenciesModule;
+import org.jclouds.openstack.nova.compute.config.NovaComputeServiceContextModule;
 import org.jclouds.openstack.nova.domain.Server;
 import org.jclouds.openstack.nova.domain.ServerStatus;
 import org.jclouds.openstack.nova.functions.ParseServerFromJsonResponseTest;
@@ -61,7 +61,7 @@ public class ServerToNodeMetadataTest {
    @Test
    public void testApplyWhereImageAndHardwareNotFound() throws UnknownHostException, NoSuchMethodException,
          ClassNotFoundException, URISyntaxException {
-      Map<ServerStatus, NodeState> serverStateToNodeState = NovaComputeServiceDependenciesModule.serverToNodeState;
+      Map<ServerStatus, NodeState> serverStateToNodeState = NovaComputeServiceContextModule.serverToNodeState;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of();
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
       Server server = ParseServerFromJsonResponseTest.parseServer();
@@ -96,7 +96,7 @@ public class ServerToNodeMetadataTest {
    @Test
    public void testApplyWhereImageFoundAndHardwareNotFound() throws UnknownHostException, NoSuchMethodException,
          ClassNotFoundException, URISyntaxException {
-      Map<ServerStatus, NodeState> serverStateToNodeState = NovaComputeServiceDependenciesModule.serverToNodeState;
+      Map<ServerStatus, NodeState> serverStateToNodeState = NovaComputeServiceContextModule.serverToNodeState;
       org.jclouds.compute.domain.Image jcImage = NovaImageToImageTest.convertImage();
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(jcImage);
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
@@ -121,7 +121,7 @@ public class ServerToNodeMetadataTest {
    @Test
    public void testApplyWhereImageAndHardwareFound() throws UnknownHostException, NoSuchMethodException,
          ClassNotFoundException, URISyntaxException {
-      Map<ServerStatus, NodeState> serverStateToNodeState = NovaComputeServiceDependenciesModule.serverToNodeState;
+      Map<ServerStatus, NodeState> serverStateToNodeState = NovaComputeServiceContextModule.serverToNodeState;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(NovaImageToImageTest.convertImage());
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of(FlavorToHardwareTest.convertFlavor());
       Server server = ParseServerFromJsonResponseTest.parseServer();

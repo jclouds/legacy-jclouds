@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Map;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -90,12 +91,14 @@ public interface OpenStackAuthAsyncClient {
    }
 
    @GET
+   @Consumes
    @ResponseParser(ParseAuthenticationResponseFromHeaders.class)
    ListenableFuture<AuthenticationResponse> authenticate(@HeaderParam(AuthHeaders.AUTH_USER) String user,
             @HeaderParam(AuthHeaders.AUTH_KEY) String key);
    
 
    @GET
+   @Consumes
    @ResponseParser(ParseAuthenticationResponseFromHeaders.class)
    ListenableFuture<AuthenticationResponse> authenticateStorage(@HeaderParam(AuthHeaders.STORAGE_USER) String user,
             @HeaderParam(AuthHeaders.STORAGE_PASS) String key);

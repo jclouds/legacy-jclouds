@@ -236,6 +236,7 @@ public interface NovaClient {
     * @see Image
     */
    boolean deleteImage(int id);
+   boolean deleteImage(String id);
 
    /**
     * 

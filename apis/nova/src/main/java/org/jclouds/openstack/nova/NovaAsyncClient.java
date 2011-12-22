@@ -265,6 +265,15 @@ public interface NovaAsyncClient {
    ListenableFuture<Boolean> deleteImage(@PathParam("id") int id);
 
    /**
+    * @see NovaClient#deleteImage
+    */
+   @DELETE
+   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Consumes
+   @Path("/images/{id}")
+   ListenableFuture<Boolean> deleteImage(@PathParam("id") String id);
+   
+   /**
     * @see NovaClient#createImageFromServer
     */
    @POST

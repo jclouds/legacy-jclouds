@@ -85,20 +85,8 @@
     </dependency>
     <dependency>
       <groupId>org.jclouds.driver</groupId>
-      <artifactId>jclouds-slf4j</artifactId>
+      <artifactId>jclouds-log4j</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <artifactId>slf4j-api</artifactId>
-      <groupId>org.slf4j</groupId>
-      <version>1.6.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>0.9.29</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

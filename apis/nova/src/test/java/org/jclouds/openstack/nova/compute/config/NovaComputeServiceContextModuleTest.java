@@ -24,13 +24,13 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName ="NovaComputeServiceContextModuleTest")
 public class NovaComputeServiceContextModuleTest {
 
    public void testAllStatusCovered() {
 
       for (ServerStatus state : ServerStatus.values()) {
-         assert NovaComputeServiceDependenciesModule.serverToNodeState.containsKey(state) : state;
+         assert NovaComputeServiceContextModule.serverToNodeState.containsKey(state) : state;
       }
 
    }
