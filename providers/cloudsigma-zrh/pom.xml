@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.3.0-rc-1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.provider</groupId>
@@ -38,9 +38,9 @@
     <test.cloudsigma-zrh.apiversion>1.0</test.cloudsigma-zrh.apiversion>
     <test.cloudsigma-zrh.identity>FIXME</test.cloudsigma-zrh.identity>
     <test.cloudsigma-zrh.credential>FIXME</test.cloudsigma-zrh.credential>
-    <test.cloudsigma-zrh.image-id></test.cloudsigma-zrh.image-id>
-    <test.cloudsigma-zrh.image.login-user></test.cloudsigma-zrh.image.login-user>
-    <test.cloudsigma-zrh.image.authenticate-sudo></test.cloudsigma-zrh.image.authenticate-sudo>
+    <test.cloudsigma-zrh.image-id />
+    <test.cloudsigma-zrh.image.login-user />
+    <test.cloudsigma-zrh.image.authenticate-sudo />
   </properties>
 
   <dependencies>

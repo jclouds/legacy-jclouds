@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.3.0-SNAPSHOT</version>
+        <version>1.3.0-rc-1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -38,7 +38,7 @@
         <test.greenhousedata-element-vcloud.apiversion>1.0</test.greenhousedata-element-vcloud.apiversion>
         <test.greenhousedata-element-vcloud.identity>FIXME_IDENTITY</test.greenhousedata-element-vcloud.identity>
         <test.greenhousedata-element-vcloud.credential>FIXME_CREDENTIAL</test.greenhousedata-element-vcloud.credential>
-        <test.greenhousedata-element-vcloud.image-id></test.greenhousedata-element-vcloud.image-id>
+        <test.greenhousedata-element-vcloud.image-id />
     </properties>
 
     <dependencies>

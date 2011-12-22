@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.3.0-rc-1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.api</groupId>
@@ -38,11 +38,11 @@
     <test.nova.apiversion>1.1</test.nova.apiversion>
     <test.nova.identity>FIXME_IDENTITY</test.nova.identity>
     <test.nova.credential>FIXME_CREDENTIALS</test.nova.credential>
-    <test.nova.image-id></test.nova.image-id>
-    <test.nova.image.login-user></test.nova.image.login-user>
-    <test.nova.image.authenticate-sudo></test.nova.image.authenticate-sudo>
-    <test.ssh.keyfile.public></test.ssh.keyfile.public>
-    <test.ssh.keyfile.private></test.ssh.keyfile.private>
+    <test.nova.image-id />
+    <test.nova.image.login-user />
+    <test.nova.image.authenticate-sudo />
+    <test.ssh.keyfile.public />
+    <test.ssh.keyfile.private />
   </properties>
 
   <dependencies>

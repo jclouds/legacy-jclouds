@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.3.0-rc-1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.provider</groupId>
@@ -38,9 +38,9 @@
     <test.aws-ec2.apiversion>2011-05-15</test.aws-ec2.apiversion>
     <test.aws-ec2.identity>${test.aws.identity}</test.aws-ec2.identity>
     <test.aws-ec2.credential>${test.aws.credential}</test.aws-ec2.credential>
-    <test.aws-ec2.image-id></test.aws-ec2.image-id>
-    <test.aws-ec2.image.login-user></test.aws-ec2.image.login-user>
-    <test.aws-ec2.image.authenticate-sudo></test.aws-ec2.image.authenticate-sudo>
+    <test.aws-ec2.image-id />
+    <test.aws-ec2.image.login-user />
+    <test.aws-ec2.image.authenticate-sudo />
   </properties>
 
   <dependencies>

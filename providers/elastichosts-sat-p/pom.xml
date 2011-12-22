@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.3.0-SNAPSHOT</version>
+        <version>1.3.0-rc-1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -38,7 +38,7 @@
         <test.elastichosts-sat-p.apiversion>2.0</test.elastichosts-sat-p.apiversion>
         <test.elastichosts-sat-p.identity>FIXME_IDENTITY</test.elastichosts-sat-p.identity>
         <test.elastichosts-sat-p.credential>FIXME_CREDENTIAL</test.elastichosts-sat-p.credential>
-        <test.elastichosts-sat-p.image-id></test.elastichosts-sat-p.image-id>
+        <test.elastichosts-sat-p.image-id />
     </properties>
 
     <dependencies>
