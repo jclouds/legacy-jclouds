@@ -74,7 +74,7 @@ public interface LoadBalancerClient {
     *           balanced from
     * @return newly created rule
     */
-   LoadBalancerRule createLoadBalancerRuleForPublicIP(long publicIPId, Algorithm algorithm, String name,
+   Long createLoadBalancerRuleForPublicIP(long publicIPId, Algorithm algorithm, String name,
          int privatePort, int publicPort);
 
    /**

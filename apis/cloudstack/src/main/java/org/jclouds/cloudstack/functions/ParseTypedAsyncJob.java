@@ -34,6 +34,7 @@ import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.cloudstack.domain.AsyncJob.Builder;
 import org.jclouds.cloudstack.domain.AsyncJobError;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
+import org.jclouds.cloudstack.domain.LoadBalancerRule;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PortForwardingRule;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
@@ -71,7 +72,8 @@ public class ParseTypedAsyncJob implements Function<AsyncJob<Map<String, JsonBal
       .put("ipforwardingrule", IPForwardingRule.class)
       .put("network", Network.class)
       .put("ipaddress", PublicIPAddress.class)
-      .put("virtualmachine", VirtualMachine.class).build();
+      .put("virtualmachine", VirtualMachine.class)
+      .put("loadbalancer", LoadBalancerRule.class).build();
    private final Json json;
 
    @Inject

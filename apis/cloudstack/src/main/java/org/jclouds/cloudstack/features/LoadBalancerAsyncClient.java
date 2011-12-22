@@ -80,9 +80,9 @@ public interface LoadBalancerAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "createLoadBalancerRule")
-   @SelectJson("loadbalancerrule")
+   @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<LoadBalancerRule> createLoadBalancerRuleForPublicIP(@QueryParam("publicipid") long publicIPId,
+   ListenableFuture<Long> createLoadBalancerRuleForPublicIP(@QueryParam("publicipid") long publicIPId,
          @QueryParam("algorithm") Algorithm algorithm, @QueryParam("name") String name,
          @QueryParam("privateport") int privatePort, @QueryParam("publicport") int publicPort);
 
@@ -145,7 +145,7 @@ public interface LoadBalancerAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "listLoadBalancerRuleInstances")
-   @SelectJson("loadbalancerrule")
+   @SelectJson("loadbalancerruleinstance")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<VirtualMachine>> listVirtualMachinesAssignedToLoadBalancerRule(@QueryParam("id") long id);
