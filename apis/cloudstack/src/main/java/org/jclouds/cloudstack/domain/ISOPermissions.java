@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import java.util.Set;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -71,7 +73,8 @@ public class ISOPermissions implements Comparable<ISOPermissions> {
    }
 
    private long id;
-   private String account;
+   @SerializedName("account")
+   private Set<String> accounts;
    @SerializedName("domainid")
    private long domainId;
    @SerializedName("ispublic")
@@ -93,8 +96,8 @@ public class ISOPermissions implements Comparable<ISOPermissions> {
    /**
     * @return the list of accounts the template is available for
     */
-   public String getAccount() {
-      return account;
+   public Set<String> getAccounts() {
+      return accounts;
    }
 
    /**
@@ -112,26 +115,36 @@ public class ISOPermissions implements Comparable<ISOPermissions> {
    }
 
    @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      ISOPermissions that = (ISOPermissions) o;
-
-      if (domainId != that.domainId) return false;
-      if (id != that.id) return false;
-      if (isPublic != that.isPublic) return false;
-      if (account != null ? !account.equals(that.account) : that.account != null) return false;
-
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      ISOPermissions other = (ISOPermissions) obj;
+      if (accounts == null) {
+         if (other.accounts != null)
+            return false;
+      } else if (!accounts.equals(other.accounts))
+         return false;
+      if (domainId != other.domainId)
+         return false;
+      if (id != other.id)
+         return false;
+      if (isPublic != other.isPublic)
+         return false;
       return true;
    }
 
    @Override
    public int hashCode() {
-      int result = (int) (id ^ (id >>> 32));
-      result = 31 * result + (account != null ? account.hashCode() : 0);
-      result = 31 * result + (int) (domainId ^ (domainId >>> 32));
-      result = 31 * result + (isPublic ? 1 : 0);
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((accounts == null) ? 0 : accounts.hashCode());
+      result = prime * result + (int) (domainId ^ (domainId >>> 32));
+      result = prime * result + (int) (id ^ (id >>> 32));
+      result = prime * result + (isPublic ? 1231 : 1237);
       return result;
    }
 
@@ -139,7 +152,7 @@ public class ISOPermissions implements Comparable<ISOPermissions> {
    public String toString() {
       return "ISOPermissions{" +
             "id=" + id +
-            ", account='" + account + '\'' +
+            ", accounts='" + accounts + '\'' +
             ", domainId=" + domainId +
             ", isPublic=" + isPublic +
             '}';

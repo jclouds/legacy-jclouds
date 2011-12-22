@@ -137,7 +137,7 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
    @SerializedName("virtualmachinename")
    private String virtualMachineName;
    @SerializedName("cidrlist")
-   private String CIDRs = "";
+   private String CIDRs;
    @SerializedName("privateendport")
    private int privateEndPort;
    @SerializedName("publicendport")
@@ -240,7 +240,7 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
     * @return the cidr list to forward traffic from
     */
    public Set<String> getCIDRs() {
-      return ImmutableSet.copyOf(Splitter.on(' ').split(CIDRs));
+      return CIDRs != null ? ImmutableSet.copyOf(Splitter.on(' ').split(CIDRs)) : ImmutableSet.<String> of();
    }
 
    /**
@@ -334,7 +334,7 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
             ", virtualMachineDisplayName='" + virtualMachineDisplayName + '\'' +
             ", virtualMachineId=" + virtualMachineId +
             ", virtualMachineName='" + virtualMachineName + '\'' +
-            ", CIDRs=" + CIDRs +
+            ", CIDRs=" + getCIDRs() +
             ", privateEndPort=" + privateEndPort +
             ", publicEndPort=" + publicEndPort +
             '}';

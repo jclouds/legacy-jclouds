@@ -18,6 +18,9 @@
  */
 package org.jclouds.cloudstack.features;
 
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.ExtractMode;
 import org.jclouds.cloudstack.domain.ISO;
@@ -30,9 +33,6 @@ import org.jclouds.cloudstack.options.RegisterISOOptions;
 import org.jclouds.cloudstack.options.UpdateISOOptions;
 import org.jclouds.cloudstack.options.UpdateISOPermissionsOptions;
 import org.jclouds.concurrent.Timeout;
-
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 
@@ -134,7 +134,7 @@ public interface ISOClient {
     * @param options optional arguments
     * @return A set of the permissions on this ISO
     */
-   Set<ISOPermissions> listISOPermissions(long id, AccountInDomainOptions... options);
+   ISOPermissions listISOPermissions(long id, AccountInDomainOptions... options);
 
    /**
     * Extracts an ISO

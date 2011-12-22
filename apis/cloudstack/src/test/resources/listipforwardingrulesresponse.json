@@ -11,8 +11,7 @@
             "ipaddress": "10.27.27.64",
             "startport": 22,
             "endport": 22,
-            "state": "Active",
-            "cidrlist":""
+            "state": "Active"
         }]
     }
 }

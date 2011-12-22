@@ -18,8 +18,8 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.TypeLiteral;
+import java.lang.reflect.Method;
+
 import org.jclouds.cloudstack.domain.ExtractMode;
 import org.jclouds.cloudstack.domain.ISO;
 import org.jclouds.cloudstack.domain.PermissionOperation;
@@ -31,13 +31,15 @@ import org.jclouds.cloudstack.options.RegisterISOOptions;
 import org.jclouds.cloudstack.options.UpdateISOOptions;
 import org.jclouds.cloudstack.options.UpdateISOPermissionsOptions;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
-import java.lang.reflect.Method;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.TypeLiteral;
 /**
  * Tests the behaviour of ISOAsyncClient.
  * 
@@ -54,7 +56,7 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, 3, 5);
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=attachISO&id=3&virtualmachineid=5 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=attachIso&id=3&virtualmachineid=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -70,7 +72,7 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, 3);
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=detachISO&virtualmachineid=3 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=detachIso&virtualmachineid=3 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -86,11 +88,10 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, 3);
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=listISOs&id=3 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=listIsos&id=3 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
@@ -102,11 +103,11 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=listISOs HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=listIsos HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
@@ -118,11 +119,11 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, ListISOsOptions.Builder.accountInDomain("fred", 5).bootable().hypervisor("xen").id(3).isoFilter(ISO.ISOFilter.featured).isPublic().isReady().keyword("bob").name("bob's iso").zoneId(7));
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=listISOs&account=fred&domainid=5&bootable=true&hypervisor=xen&id=3&isofilter=featured&ispublic=true&isready=true&keyword=bob&name=bob%27s%20iso&zoneid=7 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=listIsos&account=fred&domainid=5&bootable=true&hypervisor=xen&id=3&isofilter=featured&ispublic=true&isready=true&keyword=bob&name=bob%27s%20iso&zoneid=7 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
@@ -134,7 +135,7 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, "bob's iso", "bob's copy of linux", "http://example.com/", 9);
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=registerISO&name=bob%27s%20iso&url=http%3A//example.com/&displaytext=bob%27s%20copy%20of%20linux&zoneid=9 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=registerIso&name=bob%27s%20iso&url=http%3A//example.com/&displaytext=bob%27s%20copy%20of%20linux&zoneid=9 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -150,7 +151,7 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, "bob's iso", "bob's copy of linux", "http://example.com/", 9, RegisterISOOptions.Builder.accountInDomain("fred", 5).bootable(true).isExtractable(true).isFeatured(true).isPublic(true).osTypeId(7));
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=registerISO&name=bob%27s%20iso&url=http%3A//example.com/&displaytext=bob%27s%20copy%20of%20linux&zoneid=9&account=fred&domainid=5&bootable=true&isextractable=true&isfeatured=true&ispublic=true&ostypeid=7 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=registerIso&name=bob%27s%20iso&url=http%3A//example.com/&displaytext=bob%27s%20copy%20of%20linux&zoneid=9&account=fred&domainid=5&bootable=true&isextractable=true&isfeatured=true&ispublic=true&ostypeid=7 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -166,7 +167,7 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, 3);
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=updateISO&id=3 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=updateIso&id=3 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -182,7 +183,7 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, 3, UpdateISOOptions.Builder.bootable(true).displayText("robert").format("format").name("bob").osTypeId(9).passwordEnabled(true));
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=updateISO&id=3&bootable=true&displaytext=robert&format=format&name=bob&ostypeid=9&passwordenabled=true HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=updateIso&id=3&bootable=true&displaytext=robert&format=format&name=bob&ostypeid=9&passwordenabled=true HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -198,7 +199,7 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, 3);
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=deleteISO&id=3 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=deleteIso&id=3 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -214,7 +215,7 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, 3, DeleteISOOptions.Builder.zoneId(5));
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=deleteISO&id=3&zoneid=5 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=deleteIso&id=3&zoneid=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -230,7 +231,7 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, 3, 5, 7);
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=copyISO&id=3&destzoneid=7&sourcezoneid=5 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=copyIso&id=3&destzoneid=7&sourcezoneid=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -246,7 +247,7 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, 3);
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=updateISOPermissions&id=3 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=updateIsoPermissions&id=3 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -262,7 +263,7 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, 3, UpdateISOPermissionsOptions.Builder.accounts(ImmutableSet.<String>of("fred", "bob")).isExtractable(true).isFeatured(true).isPublic(true).operation(PermissionOperation.add));
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=updateISOPermissions&id=3&accounts=fred,bob&isextractable=true&isfeatured=true&ispublic=true&op=add HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=updateIsoPermissions&id=3&accounts=fred,bob&isextractable=true&isfeatured=true&ispublic=true&op=add HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -278,11 +279,11 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, 3);
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=listISOPermissions&id=3 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=listIsoPermissions&id=3 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
@@ -294,11 +295,11 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, 3, AccountInDomainOptions.Builder.accountInDomain("fred", 5));
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=listISOPermissions&id=3&account=fred&domainid=5 HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=listIsoPermissions&id=3&account=fred&domainid=5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
@@ -310,7 +311,7 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, 3, ExtractMode.HTTP_DOWNLOAD, 5);
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=extractISO&id=3&zoneid=5&mode=HTTP_DOWNLOAD HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=extractIso&id=3&zoneid=5&mode=HTTP_DOWNLOAD HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -326,7 +327,7 @@ public class ISOAsyncClientTest extends BaseCloudStackAsyncClientTest<ISOAsyncCl
       HttpRequest httpRequest = processor.createRequest(method, 3, ExtractMode.HTTP_DOWNLOAD, 5, ExtractISOOptions.Builder.url("http://example.com/"));
 
       assertRequestLineEquals(httpRequest,
-         "GET http://localhost:8080/client/api?response=json&command=extractISO&id=3&zoneid=5&mode=HTTP_DOWNLOAD&url=http%3A//example.com/ HTTP/1.1");
+         "GET http://localhost:8080/client/api?response=json&command=extractIso&id=3&zoneid=5&mode=HTTP_DOWNLOAD&url=http%3A//example.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
