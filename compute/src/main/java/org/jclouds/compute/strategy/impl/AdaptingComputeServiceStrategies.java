@@ -159,8 +159,9 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements CreateNodeW
    public NodeMetadata createNodeWithGroupEncodedIntoName(String group, String name, Template template) {
       checkState(group != null, "group (that which groups identical nodes together) must be specified");
       checkState(name != null && name.indexOf(group) != -1, "name should have %s encoded into it", group);
-      checkState(template != null, "template must be specified");
-
+      checkState(template != null, "template was null");
+      checkState(template.getOptions() != null, "template options was null");
+      
       NodeAndInitialCredentials<N> from = client.createNodeWithGroupEncodedIntoName(group, name, template);
       LoginCredentials fromNode = from.getCredentials();
       LoginCredentials creds = prioritizeCredentialsFromTemplate.apply(template, fromNode);
