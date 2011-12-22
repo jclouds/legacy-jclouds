@@ -40,7 +40,6 @@ import org.jclouds.functions.IdentityFunction;
 import org.jclouds.vcloud.compute.functions.HardwareForVApp;
 import org.jclouds.vcloud.compute.functions.HardwareForVAppTemplate;
 import org.jclouds.vcloud.compute.functions.ImageForVAppTemplate;
-import org.jclouds.vcloud.compute.functions.VAppTemplatesInOrg;
 import org.jclouds.vcloud.compute.functions.VAppToNodeMetadata;
 import org.jclouds.vcloud.compute.internal.VCloudTemplateBuilderImpl;
 import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
@@ -49,6 +48,7 @@ import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.functions.VAppTemplatesInOrg;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;

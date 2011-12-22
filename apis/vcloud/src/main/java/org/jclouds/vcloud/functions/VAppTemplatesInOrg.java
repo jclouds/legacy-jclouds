@@ -16,9 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.compute.functions;
-
-import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getCredentialsFrom;
+package org.jclouds.vcloud.functions;
 
 import java.util.Map;
 
@@ -26,7 +24,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.domain.Credentials;
-import org.jclouds.domain.LoginCredentials;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.VAppTemplate;
@@ -44,7 +41,6 @@ public class VAppTemplatesInOrg implements Function<Org, Iterable<VAppTemplate>>
 
    private final AllCatalogItemsInOrg allCatalogItemsInOrg;
    private final Function<Iterable<CatalogItem>, Iterable<VAppTemplate>> vAppTemplatesForCatalogItems;
-   private final Map<String, Credentials> credentialStore;
 
    @Inject
    VAppTemplatesInOrg(AllCatalogItemsInOrg allCatalogItemsInOrg,
@@ -52,27 +48,13 @@ public class VAppTemplatesInOrg implements Function<Org, Iterable<VAppTemplate>>
             Map<String, Credentials> credentialStore) {
       this.allCatalogItemsInOrg = allCatalogItemsInOrg;
       this.vAppTemplatesForCatalogItems = vAppTemplatesForCatalogItems;
-      this.credentialStore = credentialStore;
    }
 
    @Override
    public Iterable<VAppTemplate> apply(Org from) {
       Iterable<CatalogItem> catalogs = allCatalogItemsInOrg.apply(from);
       Iterable<VAppTemplate> vAppTemplates = vAppTemplatesForCatalogItems.apply(catalogs);
-      return Iterables.transform(Iterables.filter(vAppTemplates, Predicates.notNull()),
-               new Function<VAppTemplate, VAppTemplate>() {
-
-                  @Override
-                  public VAppTemplate apply(VAppTemplate arg0) {
-                     LoginCredentials creds = getCredentialsFrom(arg0);
-                     if (creds == null)
-                        credentialStore.remove("image#" + arg0.getHref().toASCIIString());
-                     else
-                        credentialStore.put("image#" + arg0.getHref().toASCIIString(), creds);
-                     return arg0;
-                  }
-
-               });
+      return Iterables.filter(vAppTemplates, Predicates.notNull());
    }
 
 }
