@@ -20,11 +20,10 @@ package org.jclouds.cloudservers.compute.functions;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.cloudservers.compute.config.CloudServersComputeServiceDependenciesModule;
+import org.jclouds.cloudservers.compute.config.CloudServersComputeServiceContextModule;
 import org.jclouds.cloudservers.domain.Server;
 import org.jclouds.cloudservers.domain.ServerStatus;
 import org.jclouds.cloudservers.functions.ParseServerFromJsonResponseTest;
@@ -57,8 +56,8 @@ public class ServerToNodeMetadataTest {
    Location provider = new LocationBuilder().scope(LocationScope.ZONE).id("dallas").description("description").build();
 
    @Test
-   public void testApplyWhereImageAndHardwareNotFound() throws UnknownHostException {
-      Map<ServerStatus, NodeState> serverStateToNodeState = CloudServersComputeServiceDependenciesModule.serverToNodeState;
+   public void testApplyWhereImageAndHardwareNotFound() {
+      Map<ServerStatus, NodeState> serverStateToNodeState = CloudServersComputeServiceContextModule.serverToNodeState;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of();
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
       Server server = ParseServerFromJsonResponseTest.parseServer();
@@ -87,8 +86,8 @@ public class ServerToNodeMetadataTest {
    }
 
    @Test
-   public void testApplyWhereImageFoundAndHardwareNotFound() throws UnknownHostException {
-      Map<ServerStatus, NodeState> serverStateToNodeState = CloudServersComputeServiceDependenciesModule.serverToNodeState;
+   public void testApplyWhereImageFoundAndHardwareNotFound()  {
+      Map<ServerStatus, NodeState> serverStateToNodeState = CloudServersComputeServiceContextModule.serverToNodeState;
       org.jclouds.compute.domain.Image jcImage = CloudServersImageToImageTest.convertImage();
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(jcImage);
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
@@ -121,8 +120,8 @@ public class ServerToNodeMetadataTest {
    }
 
    @Test
-   public void testApplyWhereImageAndHardwareFound() throws UnknownHostException {
-      Map<ServerStatus, NodeState> serverStateToNodeState = CloudServersComputeServiceDependenciesModule.serverToNodeState;
+   public void testApplyWhereImageAndHardwareFound()  {
+      Map<ServerStatus, NodeState> serverStateToNodeState = CloudServersComputeServiceContextModule.serverToNodeState;
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(CloudServersImageToImageTest.convertImage());
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of(FlavorToHardwareTest.convertFlavor());
       Server server = ParseServerFromJsonResponseTest.parseServer();

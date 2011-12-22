@@ -24,13 +24,13 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "CloudServersComputeServiceContextModuleTest")
 public class CloudServersComputeServiceContextModuleTest {
 
    public void testAllStatusCovered() {
 
       for (ServerStatus state : ServerStatus.values()) {
-         assert CloudServersComputeServiceDependenciesModule.serverToNodeState.containsKey(state) : state;
+         assert CloudServersComputeServiceContextModule.serverToNodeState.containsKey(state) : state;
       }
 
    }
