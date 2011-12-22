@@ -46,6 +46,8 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public VCloudComputeServiceLiveTest() {
       provider = "vcloud";
+      // vcloud requires instantiate before deploy, which takes longer than 30 seconds
+      nonBlockDurationSeconds = 300;
    }
 
    @Override
