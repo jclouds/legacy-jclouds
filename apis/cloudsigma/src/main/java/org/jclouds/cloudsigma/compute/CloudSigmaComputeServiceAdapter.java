@@ -58,6 +58,7 @@ import org.jclouds.logging.Logger;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -169,7 +170,7 @@ public class CloudSigmaComputeServiceAdapter implements
                public Future<DriveInfo> apply(String input) {
                   try {
                      return Futures.immediateFuture(cache.getUnchecked(input));
-                  } catch (NullPointerException e) {
+                  } catch (CacheLoader.InvalidCacheLoadException e) {
                      logger.debug("drive %s not found", input);
                   } catch (UncheckedExecutionException e) {
                      logger.warn(e, "error finding drive %s: %s", input, e.getMessage());
