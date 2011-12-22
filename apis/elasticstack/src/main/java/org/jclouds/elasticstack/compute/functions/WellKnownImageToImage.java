@@ -26,6 +26,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.elasticstack.domain.DriveInfo;
@@ -42,22 +43,27 @@ import com.google.common.collect.ImmutableMap;
 public class WellKnownImageToImage implements Function<DriveInfo, Image> {
    private final Supplier<Location> locationSupplier;
    private final Map<String, WellKnownImage> preinstalledImages;
+   private final Map<String, Credentials> credentialStore;
 
    @Inject
-   public WellKnownImageToImage(Supplier<Location> locationSupplier, Map<String, WellKnownImage> preinstalledImages) {
+   public WellKnownImageToImage(Supplier<Location> locationSupplier, Map<String, WellKnownImage> preinstalledImages, Map<String, Credentials> credentialStore) {
       this.locationSupplier = locationSupplier;
       this.preinstalledImages = preinstalledImages;
+      this.credentialStore = credentialStore;
    }
 
    @Override
    public Image apply(DriveInfo drive) {
       WellKnownImage input = preinstalledImages.get(drive.getUuid());
+      // set credentials in the store here, as opposed to directly modifying the image. we need to
+      // set credentials on the image outside of this function so that they can be for example
+      // overridden by properties
+      credentialStore.put("image#" + drive.getUuid(), LoginCredentials.builder().user(input.getLoginUser()).build());
       return new ImageBuilder()
             .ids(drive.getUuid())
             .userMetadata(
                   ImmutableMap.<String, String> builder().putAll(drive.getUserMetadata())
                         .put("size", input.getSize() + "").build())
-            .defaultCredentials(LoginCredentials.builder().user(input.getLoginUser()).build())
             .location(locationSupplier.get())
             .name(input.getDescription())
             .description(drive.getName())
