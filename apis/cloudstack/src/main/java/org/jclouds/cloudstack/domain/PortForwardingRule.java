@@ -18,10 +18,10 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.SerializedName;
 
@@ -137,17 +137,11 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
    @SerializedName("virtualmachinename")
    private String virtualMachineName;
    @SerializedName("cidrlist")
-   private Set<String> CIDRs = ImmutableSet.of();
+   private String CIDRs = "";
    @SerializedName("privateendport")
    private int privateEndPort;
    @SerializedName("publicendport")
    private int publicEndPort;
-
-
-   // for deserializer
-   PortForwardingRule() {
-
-   }
 
    public PortForwardingRule(long id, String iPAddress, long iPAddressId, int privatePort, String protocol,
                              int publicPort, String state, String virtualMachineDisplayName, long virtualMachineId,
@@ -162,7 +156,7 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
       this.virtualMachineDisplayName = virtualMachineDisplayName;
       this.virtualMachineId = virtualMachineId;
       this.virtualMachineName = virtualMachineName;
-      this.CIDRs = new HashSet<String>(CIDRs);
+      this.CIDRs = Joiner.on(' ').join(CIDRs);
       this.privateEndPort = privateEndPort;
       this.publicEndPort = publicEndPort;
    }
@@ -246,7 +240,7 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
     * @return the cidr list to forward traffic from
     */
    public Set<String> getCIDRs() {
-      return Collections.unmodifiableSet(CIDRs);
+      return ImmutableSet.copyOf(Splitter.on(' ').split(CIDRs));
    }
 
    /**
