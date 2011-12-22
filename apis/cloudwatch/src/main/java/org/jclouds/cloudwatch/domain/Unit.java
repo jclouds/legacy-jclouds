@@ -58,7 +58,7 @@ public enum Unit {
    UNRECOGNIZED;
 
    public String value() {
-      return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()).replace("Per", "/"));
+      return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()).replace("PerSecond", "/Second"));
    }
 
    @Override

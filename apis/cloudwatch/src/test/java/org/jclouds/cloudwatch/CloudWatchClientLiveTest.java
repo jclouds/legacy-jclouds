@@ -28,6 +28,8 @@ import java.util.Set;
 import org.jclouds.Constants;
 import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.cloudwatch.domain.Statistics;
+import org.jclouds.cloudwatch.domain.Unit;
+import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
@@ -94,7 +96,8 @@ public class CloudWatchClientLiveTest {
       cal.add(Calendar.MINUTE, -60 * 24 * 3); // 3 days
 
       Set<Datapoint> datapoints = client.getMetricStatisticsInRegion(
-         region, "CPUUtilization", "AWS/EC2", cal.getTime(), new Date(), 180, Statistics.AVERAGE);
+         region, "CPUUtilization", "AWS/EC2", cal.getTime(), new Date(), 180, Statistics.AVERAGE,
+         GetMetricStatisticsOptions.Builder.unit(Unit.PERCENT));
 
       return checkNotNull(datapoints, "Got null response for EC2 datapoints in region ");
    }
