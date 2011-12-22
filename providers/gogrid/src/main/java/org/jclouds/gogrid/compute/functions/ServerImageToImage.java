@@ -16,10 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.gogrid.compute.suppliers;
+package org.jclouds.gogrid.compute.functions;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,19 +34,17 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.compute.util.ComputeServiceUtils;
-import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.domain.ServerImage;
 import org.jclouds.logging.Logger;
 
-import com.google.common.base.Supplier;
-import com.google.common.collect.Sets;
+import com.google.common.base.Function;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class GoGridImageSupplier implements Supplier<Set<? extends Image>> {
+public class ServerImageToImage implements Function<ServerImage, Image> {
    public static final Pattern GOGRID_OS_PATTERN = Pattern.compile("([a-zA-Z]*).*");
    public static final Pattern GOGRID_VERSION_PATTERN = Pattern.compile(".* ([0-9.]+) .*");
 
@@ -55,34 +52,12 @@ public class GoGridImageSupplier implements Supplier<Set<? extends Image>> {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final GoGridClient sync;
-   private final PopulateDefaultLoginCredentialsForImageStrategy authenticator;
    private final Map<OsFamily, Map<String, String>> osVersionMap;
 
    @Inject
-   GoGridImageSupplier(GoGridClient sync, PopulateDefaultLoginCredentialsForImageStrategy authenticator,
-         Map<OsFamily, Map<String, String>> osVersionMap) {
+   ServerImageToImage(PopulateDefaultLoginCredentialsForImageStrategy authenticator,
+            Map<OsFamily, Map<String, String>> osVersionMap) {
       this.osVersionMap = osVersionMap;
-      this.sync = sync;
-      this.authenticator = authenticator;
-   }
-
-   @Override
-   public Set<? extends Image> get() {
-      final Set<Image> images = Sets.newHashSet();
-      logger.debug(">> providing images");
-      Set<ServerImage> allImages = sync.getImageServices().getImageList();
-      for (ServerImage from : allImages) {
-         ImageBuilder builder = new ImageBuilder();
-         builder.ids(from.getId() + "");
-         builder.name(from.getFriendlyName());
-         builder.description(from.getDescription());
-         builder.defaultCredentials(authenticator.apply(from));
-         builder.operatingSystem(parseOs(from));
-         images.add(builder.build());
-      }
-      logger.debug("<< images(%d)", images.size());
-      return images;
    }
 
    protected OperatingSystem parseOs(ServerImage from) {
@@ -111,6 +86,16 @@ public class GoGridImageSupplier implements Supplier<Set<? extends Image>> {
       }
       // TODO determine DC images are in
       return new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
+   }
+
+   @Override
+   public Image apply(ServerImage from) {
+      ImageBuilder builder = new ImageBuilder();
+      builder.ids(from.getId() + "");
+      builder.name(from.getFriendlyName());
+      builder.description(from.getDescription());
+      builder.operatingSystem(parseOs(from));
+      return builder.build();
    }
 
 }
