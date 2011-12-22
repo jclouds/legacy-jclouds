@@ -49,6 +49,7 @@ public class GleSYSRestClientModule extends RestClientModule<GleSYSClient, GleSY
          .put(ServerClient.class, ServerAsyncClient.class)//
          .put(IpClient.class, IpAsyncClient.class)//
          .put(ArchiveClient.class, ArchiveAsyncClient.class)//
+         .put(DomainClient.class, DomainAsyncClient.class)//
          .build();
 
    public GleSYSRestClientModule() {

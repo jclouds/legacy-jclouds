@@ -30,7 +30,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public enum ServerState {
 
-   RUNNING, UNRECOGNIZED;
+   RUNNING, STOPPED, UNRECOGNIZED;
 
    public String value() {
       return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));

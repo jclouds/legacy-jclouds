@@ -82,8 +82,7 @@ public class ServerConsole {
       if (object instanceof ServerConsole) {
          final ServerConsole other = (ServerConsole) object;
          return Objects.equal(host, other.host)
-               && Objects.equal(port, other.port)
-               && Objects.equal(password, other.password);
+               && Objects.equal(port, other.port);
       } else {
          return false;
       }
@@ -91,7 +90,7 @@ public class ServerConsole {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(host, port, password);
+      return Objects.hashCode(host, port);
    }
 
    @Override

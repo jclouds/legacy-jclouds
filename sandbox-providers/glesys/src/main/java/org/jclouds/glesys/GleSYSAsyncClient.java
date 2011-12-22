@@ -19,6 +19,7 @@
 package org.jclouds.glesys;
 
 import org.jclouds.glesys.features.ArchiveAsyncClient;
+import org.jclouds.glesys.features.DomainAsyncClient;
 import org.jclouds.glesys.features.IpAsyncClient;
 import org.jclouds.glesys.features.ServerAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
@@ -50,4 +51,11 @@ public interface GleSYSAsyncClient {
     */
    @Delegate
    ArchiveAsyncClient getArchiveClient();
+
+   /**
+    * Provides asynchronous access to DNS features.
+    */
+   @Delegate
+   DomainAsyncClient getDomainClient();
+
 }
