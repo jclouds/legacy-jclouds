@@ -110,7 +110,7 @@ public class GoGridComputeServiceAdapter implements ComputeServiceAdapter<Server
       }
       LoginCredentials credentials = LoginCredentials.fromCredentials(client.getServerServices()
                .getServerCredentialsList().get(addedServer.getName()));
-      return new NodeAndInitialCredentials<Server>(addedServer, addedServer.getName() + "", credentials);
+      return new NodeAndInitialCredentials<Server>(addedServer, addedServer.getId() + "", credentials);
    }
 
    private Server addServer(String name, Template template, Ip availableIp) {

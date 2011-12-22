@@ -32,7 +32,6 @@ import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.gogrid.domain.ServerImage;
 import org.jclouds.logging.Logger;
@@ -55,8 +54,7 @@ public class ServerImageToImage implements Function<ServerImage, Image> {
    private final Map<OsFamily, Map<String, String>> osVersionMap;
 
    @Inject
-   ServerImageToImage(PopulateDefaultLoginCredentialsForImageStrategy authenticator,
-            Map<OsFamily, Map<String, String>> osVersionMap) {
+   ServerImageToImage(Map<OsFamily, Map<String, String>> osVersionMap) {
       this.osVersionMap = osVersionMap;
    }
 
