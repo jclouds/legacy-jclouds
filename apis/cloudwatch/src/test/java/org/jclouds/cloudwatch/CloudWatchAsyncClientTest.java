@@ -33,6 +33,7 @@ import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.cloudwatch.config.CloudWatchRestClientModule;
+import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.cloudwatch.xml.GetMetricStatisticsResponseHandler;
 import org.jclouds.date.DateService;
@@ -63,9 +64,9 @@ public class CloudWatchAsyncClientTest extends RestClientTest<CloudWatchAsyncCli
    public void testRegisterInstancesWithMeasure() throws SecurityException, NoSuchMethodException, IOException {
       Date date = new Date(10000000l);
       Method method = CloudWatchAsyncClient.class.getMethod("getMetricStatisticsInRegion", String.class, String.class,
-            String.class, Date.class, Date.class, int.class, String.class, GetMetricStatisticsOptions[].class);
-      HttpRequest request = processor.createRequest(method, (String) null, "CPUUtilization", "AWS/EC2", date, date, 60, "Average",
-         GetMetricStatisticsOptions.Builder.instanceId("i-12312313"));
+            String.class, Date.class, Date.class, int.class, Statistics.class, GetMetricStatisticsOptions[].class);
+      HttpRequest request = processor.createRequest(method, (String) null, "CPUUtilization", "AWS/EC2", date, date, 60,
+         Statistics.AVERAGE, GetMetricStatisticsOptions.Builder.instanceId("i-12312313"));
 
       assertRequestLineEquals(request, "POST https://monitoring.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: monitoring.us-east-1.amazonaws.com\n");

@@ -23,7 +23,7 @@ import java.util.Date;
 import javax.inject.Inject;
 
 import org.jclouds.cloudwatch.domain.Datapoint;
-import org.jclouds.cloudwatch.domain.StandardUnit;
+import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 
@@ -41,7 +41,7 @@ public class DatapointHandler extends ParseSax.HandlerForGeneratedRequestWithRes
    private Date timestamp;
    private Double samples;
    private Double sum;
-   private StandardUnit unit;
+   private Unit unit;
    private String customUnit;
 
    @Inject
@@ -76,7 +76,7 @@ public class DatapointHandler extends ParseSax.HandlerForGeneratedRequestWithRes
       } else if (qName.equals("Sum")) {
          sum = doubleOrNull();
       } else if (qName.equals("Unit")) {
-         unit = StandardUnit.fromValue(currentText.toString().trim());
+         unit = Unit.fromValue(currentText.toString().trim());
       } else if (qName.equals("CustomUnit")) {
          customUnit = currentText.toString().trim();
       }
