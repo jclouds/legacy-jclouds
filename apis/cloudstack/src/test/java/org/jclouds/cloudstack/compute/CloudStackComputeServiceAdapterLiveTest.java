@@ -50,18 +50,14 @@ import org.jclouds.cloudstack.suppliers.NetworksForCurrentUser;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.ComputeTestUtils;
-import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.domain.Credentials;
-import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.annotations.Identity;
-import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.SshException;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -146,8 +142,8 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
 
    @Test
    public void testCreateNodeWithGroupEncodedIntoName() throws InterruptedException {
-      String group = prefix + "#foo";
-      String name = group + "#node#" + new Random().nextInt();
+      String group = prefix + "-foo";
+      String name = group + "-node-" + new Random().nextInt();
       Template template = computeContext.getComputeService().templateBuilder().build();
 
       if (!client
@@ -167,39 +163,12 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
          client.getNATClient().getIPForwardingRulesForVirtualMachine(vm.getNode().getId()), null);
 
       String address = rule != null ? rule.getIPAddress() : vm.getNode().getIPAddress();
-
+      
+      loginCredentials = prioritizeCredentialsFromTemplate.apply(template, vm.getCredentials());
+      
       assert InetAddresses.isInetAddress(address) : vm;
       IPSocket socket = new IPSocket(address, 22);
-      doConnectViaSsh(socket, prioritizeCredentialsFromTemplate.apply(template, vm.getCredentials()));
-   }
-
-   protected void doConnectViaSsh(IPSocket socket, LoginCredentials creds) {
-      SshClient ssh = computeContext.utils().sshFactory().create(socket, creds);
-      try {
-         connectWithRetry(ssh, 5, 2000);
-         ExecResponse hello = ssh.exec("echo hello");
-         assertEquals(hello.getOutput().trim(), "hello");
-         System.err.println(ssh.exec("df -k").getOutput());
-         System.err.println(ssh.exec("mount").getOutput());
-         System.err.println(ssh.exec("uname -a").getOutput());
-      } finally {
-         if (ssh != null)
-            ssh.disconnect();
-      }
-   }
-
-   private void connectWithRetry(SshClient ssh, int times, int delayInMilli) {
-      for (int i = 0; i < times; i++) {
-         try {
-            ssh.connect();
-            break;
-         } catch (SshException e) {
-            try {
-               Thread.sleep(delayInMilli);
-            } catch (InterruptedException e1) {
-            }
-         }
-      }
+      checkSSH(socket);
    }
 
    @Test
