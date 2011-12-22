@@ -54,7 +54,8 @@ public class BindMapToStringPayloadTest {
    @Test
    public void testCorrect() throws SecurityException, NoSuchMethodException {
       Method testPayload = TestPayload.class.getMethod("testPayload", String.class);
-      GeneratedHttpRequest<TestPayload> request = GeneratedHttpRequest.<TestPayload> builder()
+      // can't use GHR.builder() - see http://code.google.com/p/jclouds/issues/detail?id=461
+      GeneratedHttpRequest<TestPayload> request = new GeneratedHttpRequest.Builder<TestPayload>()
             .declaring(TestPayload.class).javaMethod(testPayload).args(ImmutableList.<Object> of("robot"))
             .method(HttpMethod.POST).endpoint(URI.create("http://localhost")).build();
 
@@ -68,7 +69,8 @@ public class BindMapToStringPayloadTest {
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustHavePayloadAnnotation() throws SecurityException, NoSuchMethodException {
       Method noPayload = TestPayload.class.getMethod("noPayload", String.class);
-      GeneratedHttpRequest<TestPayload> request = GeneratedHttpRequest.<TestPayload> builder()
+      // can't use GHR.builder() - see http://code.google.com/p/jclouds/issues/detail?id=461
+      GeneratedHttpRequest<TestPayload> request = new GeneratedHttpRequest.Builder<TestPayload>()
             .declaring(TestPayload.class).javaMethod(noPayload).args(ImmutableList.<Object> of("robot"))
             .method(HttpMethod.POST).endpoint(URI.create("http://localhost")).build();
       binder().bindToRequest(request, ImmutableMap.of("fooble", "robot"));
