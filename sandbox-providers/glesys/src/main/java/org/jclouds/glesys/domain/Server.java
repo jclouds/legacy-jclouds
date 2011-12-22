@@ -29,7 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Adrian Cole
  * @see <a href= "https://customer.glesys.com/api.php?a=doc#server_list" />
  */
-public class Server {
+public class Server implements Comparable<Server> {
    public static Builder builder() {
       return new Builder();
    }
@@ -109,6 +109,11 @@ public class Server {
    public String getDatacenter() {
       return datacenter;
    }
+   
+   @Override
+   public int compareTo(Server other) {
+      return id.compareTo(other.getId());
+   }
 
    @Override
    public boolean equals(Object object) {
@@ -116,11 +121,7 @@ public class Server {
          return true;
       }
       if (object instanceof Server) {
-         final Server other = (Server) object;
-         return Objects.equal(datacenter, other.datacenter)
-               && Objects.equal(hostname, other.hostname)
-               && Objects.equal(id, other.id)
-               && Objects.equal(platform, other.platform);
+         return Objects.equal(id, ((Server) object).id);
       } else {
          return false;
       }
@@ -128,7 +129,7 @@ public class Server {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(datacenter, hostname, id, platform);
+      return Objects.hashCode(id);
    }
 
    @Override

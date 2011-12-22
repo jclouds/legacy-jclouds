@@ -115,9 +115,6 @@ public class ServerTemplate {
       if (object instanceof ServerTemplate) {
          final ServerTemplate other = (ServerTemplate) object;
          return Objects.equal(name, other.name)
-               && Objects.equal(minDiskSize, other.minDiskSize)
-               && Objects.equal(minMemSize, other.minMemSize)
-               && Objects.equal(os, other.os)
                && Objects.equal(platform, other.platform);
       } else {
          return false;
@@ -126,7 +123,7 @@ public class ServerTemplate {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(name, minDiskSize, minMemSize, os, platform);
+      return Objects.hashCode(name, platform);
    }
 
    @Override

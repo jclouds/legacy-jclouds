@@ -61,12 +61,8 @@ public class ArchiveAllowedArguments {
       if (this == object) {
          return true;
       }
-      if (object instanceof ArchiveAllowedArguments) {
-         ArchiveAllowedArguments other = (ArchiveAllowedArguments) object;
-         return Objects.equal(archiveSizes, other.archiveSizes);
-      } else {
-         return false;
-      }
+      return object instanceof ArchiveAllowedArguments
+         && Objects.equal(archiveSizes, ((ArchiveAllowedArguments) object).archiveSizes);
    }
 
    @Override

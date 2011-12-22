@@ -24,6 +24,7 @@ import com.google.inject.Provides;
 import org.jclouds.glesys.domain.ServerState;
 import org.jclouds.glesys.domain.ServerUptime;
 import org.jclouds.glesys.functions.internal.CustomDeserializers;
+import org.jclouds.glesys.functions.internal.GlesysDateAdapter;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 
@@ -47,7 +48,7 @@ public class GleSYSParserModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(DateAdapter.class).to(GsonModule.Iso8601DateAdapter.class);
+      bind(DateAdapter.class).to(GlesysDateAdapter.class);
    }
 
 }

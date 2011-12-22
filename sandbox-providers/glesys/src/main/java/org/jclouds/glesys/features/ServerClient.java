@@ -20,6 +20,7 @@ package org.jclouds.glesys.features;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.glesys.domain.*;
+import org.jclouds.glesys.options.*;
 import org.jclouds.javax.annotation.Nullable;
 
 import javax.ws.rs.FormParam;
@@ -60,10 +61,11 @@ public interface ServerClient {
     * Get detailed information about a server status including up-time and hardware usage
     * (cpu, disk, memory and bandwidth)
     *
-    * @param id id of the server
+    * @param id      id of the server
+    * @param options optional parameters
     * @return the status of the server or null if not found
     */
-   ServerStatus getServerStatus(String id);
+   ServerStatus getServerStatus(String id, ServerStatusOptions... options);
 
    /**
     * Get detailed information about a server's limits (for OpenVZ only).
@@ -123,28 +125,45 @@ public interface ServerClient {
    /**
     * Stop a server
     *
-    * @param id id of the server
+    * @param id      id of the server
+    * @param options optional parameters
     */
-   void stopServer(String id);
+   void stopServer(String id, ServerStopOptions... options);
 
    /**
     * Create a new server
     *
-    * @param datacenter  the data center to create the new server in
-    * @param platform    the platform to use (i.e. "Xen" or "OpenVZ")
-    * @param hostname    the host name of the new server
-    * @param template    the template to use to create the new server
-    * @param disksize    the amount of disk space, in GB, to allocate
-    * @param memorysize  the memory, in MB, to allocate
-    * @param cpucores    the number of CPU cores to allocate
-    * @param rootpw      the root password to use
-    * @param transfer    the transfer size
-    * @param description a description of the server
-    * @param ip          ip address to assign to the new server, required by Xen platform
+    * @param datacenter the data center to create the new server in
+    * @param platform   the platform to use (i.e. "Xen" or "OpenVZ")
+    * @param hostname   the host name of the new server
+    * @param template   the template to use to create the new server
+    * @param disksize   the amount of disk space, in GB, to allocate
+    * @param memorysize the memory, in MB, to allocate
+    * @param cpucores   the number of CPU cores to allocate
+    * @param rootpw     the root password to use
+    * @param transfer   the transfer size
+    * @param options    optional settings ex. description
     */
    ServerCreated createServer(String datacenter, String platform,
                               String hostname, String template, int disksize, int memorysize,
-                              int cpucores, String rootpw, int transfer, @Nullable String description, @Nullable String ip);
+                              int cpucores, String rootpw, int transfer, ServerCreateOptions... options);
+
+   /**
+    * Edit the configuration of a server
+    *
+    * @param serverid the serverId of the server to edit
+    * @param options  the settings to change
+    */
+   void editServer(String serverid, ServerEditOptions... options);
+
+   /**
+    * Clone a server
+    *
+    * @param serverid the serverId of the server to clone
+    * @param hostname the new host name of the cloned server
+    * @param options  the settings to change
+    */
+   ServerCreated cloneServer(String serverid, String hostname, ServerCloneOptions... options);
 
    /**
     * Destroy a server

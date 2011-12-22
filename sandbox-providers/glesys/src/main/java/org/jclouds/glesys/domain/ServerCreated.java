@@ -3,9 +3,11 @@ package org.jclouds.glesys.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 import com.google.gson.annotations.SerializedName;
 import org.jclouds.javax.annotation.Nullable;
 
@@ -74,7 +76,7 @@ public class ServerCreated {
    }
 
    public List<ServerCreatedIp> getIps() {
-      return ips;
+      return ips == null ? ImmutableList.<ServerCreatedIp>of() : ips;
    }
 
    @Override
@@ -82,18 +84,13 @@ public class ServerCreated {
       if (this == object) {
          return true;
       }
-      if (object instanceof ServerCreated) {
-         final ServerCreated other = (ServerCreated) object;
-         return Objects.equal(id, other.id)
-               && Objects.equal(ips, other.ips);
-      } else {
-         return false;
-      }
+      return object instanceof ServerCreated
+            && Objects.equal(id, ((ServerCreated) object).id);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(id, ips);
+      return Objects.hashCode(id);
    }
    
    @Override

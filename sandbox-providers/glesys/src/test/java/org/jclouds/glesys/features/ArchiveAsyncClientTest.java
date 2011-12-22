@@ -19,8 +19,14 @@
 package org.jclouds.glesys.features;
 
 import com.google.inject.TypeLiteral;
+import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
+
+import javax.ws.rs.FormParam;
+import java.util.Map;
 
 /**
  * Tests annotation parsing of {@code ArchiveAsyncClient}
@@ -29,6 +35,43 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", testName = "ArchiveAsyncClientTest")
 public class ArchiveAsyncClientTest extends BaseGleSYSAsyncClientTest<ArchiveAsyncClient> {
+   public ArchiveAsyncClientTest() {
+      asyncClientClass = ArchiveAsyncClient.class;
+      remoteServicePrefix = "archive";
+   }
+   
+   private Map.Entry<String, String> userName = newEntry("username", "x");
+   
+   public void testListArchives() throws Exception {
+      testMethod("listArchives", "list", "POST", true, ReturnEmptySetOnNotFoundOr404.class);
+   }
+   
+   public void testArchiveDetails() throws Exception {
+      testMethod("archiveDetails", "details", "POST", true, ReturnNullOnNotFoundOr404.class, userName);
+   }
+   
+   public void testCreateArchive() throws Exception {
+      testMethod("createArchive", "create", "POST", false, MapHttp4xxCodesToExceptions.class, userName,
+            newEntry("password", "somepass"), newEntry("size", 5));
+   }
+   
+   public void testDeleteArchive() throws Exception {
+      testMethod("deleteArchive", "delete", "POST", false, MapHttp4xxCodesToExceptions.class, userName);
+   }
+
+   public void testResizeArchive() throws Exception {
+      testMethod("resizeArchive", "resize", "POST", false, MapHttp4xxCodesToExceptions.class, userName,
+            newEntry("size", 5));
+   }
+   
+   public void testChangeArchivePassword() throws Exception {
+      testMethod("changeArchivePassword", "changepassword", "POST", false, MapHttp4xxCodesToExceptions.class, userName,
+            newEntry("password", "newpass"));
+   }
+
+   public void testGetArchiveAllowedArguments() throws Exception {
+      testMethod("getArchiveAllowedArguments", "allowedarguments", "GET", true, ReturnEmptySetOnNotFoundOr404.class);
+   }
 
    @Override
    protected TypeLiteral<RestAnnotationProcessor<ArchiveAsyncClient>> createTypeLiteral() {

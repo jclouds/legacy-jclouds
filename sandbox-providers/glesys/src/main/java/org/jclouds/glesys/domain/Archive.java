@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
  * @author Adam Lowe
  * @see <a href= "https://customer.glesys.com/api.php?a=doc#archive_details" />
  */
-public class Archive {
+public class Archive implements Comparable<Archive> {
    public static Builder builder() {
       return new Builder();
    }
@@ -82,23 +82,21 @@ public class Archive {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(username, totalSize, freeSize, locked);
+      return Objects.hashCode(username);
    }
 
+   @Override
+   public int compareTo(Archive other) {
+      return username.compareTo(other.getUsername());
+   }
+   
    @Override
    public boolean equals(Object obj) {
       if (this == obj) {
          return true;
       }
-      if (obj instanceof Archive) {
-         Archive other = (Archive) obj;
-         return Objects.equal(username, other.username)
-               && Objects.equal(totalSize, other.totalSize)
-               && Objects.equal(freeSize, other.freeSize)
-               && Objects.equal(locked, other.locked);
-      } else {
-         return false;
-      }
+      return obj instanceof Archive
+            && Objects.equal(username, ((Archive) obj).username);
    }
 
    @Override

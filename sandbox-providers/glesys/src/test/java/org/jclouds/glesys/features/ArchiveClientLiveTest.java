@@ -56,11 +56,13 @@ public class ArchiveClientLiveTest extends BaseGleSYSClientLiveTest {
             }, 30, 1, TimeUnit.SECONDS);
    }
    
-   @AfterGroups(alwaysRun = true, groups={"live"})
-   public void teardownClient() {
+   @AfterGroups(groups={"live"})
+   public void tearDown() {
       int before = client.listArchives().size();
       client.deleteArchive(archiveUser);
       assertTrue(archiveCounter.apply(before - 1));
+
+      super.tearDown();
    }
 
    private ArchiveClient client;

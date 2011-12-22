@@ -46,12 +46,14 @@ public class GleSYSAsyncClientTest extends BaseGleSYSAsyncClientTest<GleSYSAsync
       assert syncClient.getServerClient() != null;
       assert syncClient.getIpClient() != null;
       assert syncClient.getArchiveClient() != null;
+      assert syncClient.getDomainClient() != null;
    }
 
    public void testAsync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
       assert asyncClient.getServerClient() != null;
       assert asyncClient.getIpClient() != null;
       assert asyncClient.getArchiveClient() != null;
+      assert asyncClient.getDomainClient() != null;
    }
 
    @Override
