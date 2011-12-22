@@ -36,11 +36,11 @@ public class Datapoint {
    private final Date timestamp;
    private final Double samples;
    private final Double sum;
-   private final StandardUnit unit;
+   private final Unit unit;
    private final String customUnit;
 
    public Datapoint(@Nullable Double average, @Nullable Double maximum, @Nullable Double minimum,
-            @Nullable Date timestamp, @Nullable Double samples, @Nullable Double sum, @Nullable StandardUnit unit,
+            @Nullable Date timestamp, @Nullable Double samples, @Nullable Double sum, @Nullable Unit unit,
             @Nullable String customUnit) {
       this.average = average;
       this.maximum = maximum;
@@ -104,7 +104,7 @@ public class Datapoint {
     * return Standard unit used for the datapoint.
     */
    @Nullable
-   public StandardUnit getUnit() {
+   public Unit getUnit() {
       return unit;
    }
 

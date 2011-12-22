@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.util.Set;
 
 import org.jclouds.cloudwatch.domain.Datapoint;
-import org.jclouds.cloudwatch.domain.StandardUnit;
+import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
@@ -44,9 +44,9 @@ public class GetMetricStatisticsResponseHandlerTest extends BaseHandlerTest {
       InputStream is = getClass().getResourceAsStream("/get_metric_statistics.xml");
 
       Set<Datapoint> expected = ImmutableSet.of(new Datapoint(0.17777777777777778, null, null, dateService
-               .iso8601SecondsDateParse("2009-01-16T00:00:00Z"), 9.0, null, StandardUnit.PERCENT, null), new Datapoint(
+               .iso8601SecondsDateParse("2009-01-16T00:00:00Z"), 9.0, null, Unit.PERCENT, null), new Datapoint(
                0.1, null, null, dateService.iso8601SecondsDateParse("2009-01-16T00:01:00Z"), 8.0, null,
-               StandardUnit.PERCENT, null));
+               Unit.PERCENT, null));
 
       GetMetricStatisticsResponseHandler handler = injector.getInstance(GetMetricStatisticsResponseHandler.class);
       Set<Datapoint> result = factory.create(handler).parse(is);
