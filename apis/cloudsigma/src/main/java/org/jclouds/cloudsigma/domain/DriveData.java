@@ -47,6 +47,14 @@ public class DriveData extends Drive {
        * {@inheritDoc}
        */
       @Override
+      public Builder tags(Iterable<String> tags) {
+          return Builder.class.cast(super.tags(tags));
+      }
+      
+      /**
+       * {@inheritDoc}
+       */
+      @Override
       public Builder readers(Iterable<String> readers) {
          return Builder.class.cast(super.readers(readers));
       }
@@ -68,12 +76,12 @@ public class DriveData extends Drive {
       }
 
       public DriveData build() {
-         return new DriveData(uuid, name, size, claimType, readers, use);
+         return new DriveData(uuid, name, size, claimType, tags, readers, use);
       }
    }
 
    public DriveData(@Nullable String uuid, String name, long size, @Nullable ClaimType claimType,
-         Iterable<String> readers, Iterable<String> use) {
-      super(uuid, name, size, claimType, readers, use);
+           Iterable<String> tags, Iterable<String> readers, Iterable<String> use) {
+      super(uuid, name, size, claimType, tags, readers, use);
    }
 }

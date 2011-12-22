@@ -49,14 +49,19 @@ public class DriveDataToMapTest {
       //
             .size(8589934592l)//
             .claimType(ClaimType.SHARED)//
+            .tags(ImmutableSet.of("foo", "bar", "baz"))//
             .readers(ImmutableSet.of("ffffffff-ffff-ffff-ffff-ffffffffffff"))//
             .use(ImmutableSet.of("tag1", "tag2"))//
             .build();
       assertEquals(
             BASEDRIVE_TO_MAP.apply(one),
-            ImmutableMap.builder().put("name", "Ubuntu 10.10 Server Edition Linux 64bit Preinstalled System")
-                  .put("size", "8589934592").put("claim:type", "shared")
-                  .put("readers", "ffffffff-ffff-ffff-ffff-ffffffffffff").put("use", "tag1 tag2").build()
+            ImmutableMap.builder()
+                  .put("name", "Ubuntu 10.10 Server Edition Linux 64bit Preinstalled System")
+                  .put("size", "8589934592")
+                  .put("claim:type", "shared")
+                  .put("tags", "foo bar baz")
+                  .put("readers", "ffffffff-ffff-ffff-ffff-ffffffffffff")
+                  .put("use", "tag1 tag2").build()
 
       );
 

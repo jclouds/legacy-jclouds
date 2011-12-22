@@ -54,6 +54,7 @@ public class MapToDriveInfoTest {
          .encryptionCipher("aes-xts-plain")
          .encryptionKey("ba6c2a4897072e9f25920ed73bd522e9c10d89f30a215158cccf8d0f654ac643")
          .description("The Ubuntu Linux distribution brings the spirit of Ubuntu to the software world.")
+         .tags(ImmutableSet.of("foo", "bar", "baz"))
          .uuid("b8171d28-755a-4271-b891-7998871a160e")
          .installNotes("first line\n\n")
          .os("linux")
