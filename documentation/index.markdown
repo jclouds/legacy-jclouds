@@ -52,8 +52,7 @@ We support many cloud providers including _Amazon_, _GoGrid_, _Azure_, _vCloud_,
 
 ### Release Notes
 
-* [Beta 8](/documentation/releasenotes/beta8)
-* [Beta 7](/documentation/releasenotes/beta7)
+_see sidebar for links to Release Notes, Maven Sites and Javadocs_
 
 ### User Guides
 
