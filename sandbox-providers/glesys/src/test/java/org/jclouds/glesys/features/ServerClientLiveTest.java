@@ -21,10 +21,12 @@ package org.jclouds.glesys.features;
 import com.google.common.base.Predicate;
 import org.jclouds.glesys.domain.*;
 import org.jclouds.glesys.options.ServerCloneOptions;
+import org.jclouds.glesys.options.ServerDestroyOptions;
 import org.jclouds.glesys.options.ServerStatusOptions;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.Map;
@@ -48,24 +50,29 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
    public void setupClient() {
       super.setupClient();
       client = context.getApi().getServerClient();
-      runningServerCounter = createServer(testHostName1);
-      testServerId = runningServerCounter.getServerId();
+      serverStatusChecker = createServer(testHostName1);
+      testServerId = serverStatusChecker.getServerId();
    }
 
    @AfterGroups(groups = {"live"})
    public void tearDown() {
-      client.destroyServer(testServerId, 0);
+      client.destroyServer(testServerId, ServerDestroyOptions.Builder.discardIp());
       if (testServerId2 != null) {
-         client.destroyServer(testServerId2, 0);
+         client.destroyServer(testServerId2, ServerDestroyOptions.Builder.discardIp());
       }
       super.tearDown();
    }
 
    private ServerClient client;
-   private ServerStatusChecker runningServerCounter;
+   private ServerStatusChecker serverStatusChecker;
    private String testServerId;
    private String testServerId2;
 
+   @BeforeMethod
+   public void makeSureServerIsRunning() throws Exception {
+      serverStatusChecker.apply(ServerState.RUNNING);
+   }
+   
    @Test
    public void testAllowedArguments() throws Exception {
       Map<String,ServerAllowedArguments> templates = client.getServerAllowedArguments();
@@ -137,7 +144,7 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       checkStatus(newStatus);
    }
 
-   @Test(enabled=false) // TODO tricksy
+   @Test(enabled=false) // TODO work a better plan
    public void testRebootServer() throws Exception {
       long uptime = 0;
       
@@ -148,23 +155,25 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       assertTrue(uptime > 19);
       
       client.rebootServer(testServerId);
+      
+      Thread.sleep(1000);
 
       uptime = client.getServerStatus(testServerId).getUptime();
       
       assertTrue(uptime < 20);
-      
-      assertTrue(runningServerCounter.apply(ServerState.RUNNING));
+
+      assertTrue(serverStatusChecker.apply(ServerState.RUNNING));
    }
 
-   @Test
+   @Test(enabled=false) // TODO
    public void testStopAndStartServer() throws Exception {
       client.stopServer(testServerId);
 
-      assertTrue(runningServerCounter.apply(ServerState.STOPPED));
+      assertTrue(serverStatusChecker.apply(ServerState.STOPPED));
 
       client.startServer(testServerId);
 
-      assertTrue(runningServerCounter.apply(ServerState.RUNNING));
+      assertTrue(serverStatusChecker.apply(ServerState.RUNNING));
    }
 
 
@@ -184,8 +193,7 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       }
    }
 
-   // TODO in progress
-   @Test(enabled=false)
+   @Test
    public void testServerConsole() throws Exception {
       ServerConsole console = client.getServerConsole(testServerId);
       assertNotNull(console);
@@ -194,7 +202,7 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       assertNotNull(console.getPassword());
    }
 
-   // takes a few minutes
+   // takes a few minutes and requires an extra server (using 2 already)
    @Test(enabled=false)
    public void testCloneServer() throws Exception {
       ServerCreated testServer2 = client.cloneServer(testServerId, testHostName2, ServerCloneOptions.Builder.cpucores(1));
@@ -206,7 +214,6 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       testServerId2 = testServer2.getId();
 
       RetryablePredicate<ServerState> cloneChecker = new ServerStatusChecker(client, testServerId2, 300, 10, TimeUnit.SECONDS);
-
       assertTrue(cloneChecker.apply(ServerState.STOPPED));
 
       client.startServer(testServer2.getId());

@@ -35,7 +35,7 @@ import static org.testng.Assert.assertTrue;
  *
  * @author Adam Lowe
  */
-@Test(groups = "live", testName = "DomainClientLiveTest")
+@Test(groups = "live", testName = "DomainClientLiveTest", singleThreaded = true)
 public class DomainClientLiveTest extends BaseGleSYSClientLiveTest {
    public final String testDomain = "glesystest.jclouds.org";
 

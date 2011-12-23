@@ -44,7 +44,7 @@ public class EmailAsyncClientTest extends BaseGleSYSAsyncClientTest<EmailAsyncCl
    }
 
    public void testOverview() throws Exception {
-      testMethod("emailOverview", "overview", "POST", true, ReturnEmptySetOnNotFoundOr404.class);
+      testMethod("getEmailOverview", "overview", "POST", true, ReturnEmptySetOnNotFoundOr404.class);
    }
 
    public void testCreateAccount() throws Exception {

@@ -47,7 +47,7 @@ public class ArchiveAsyncClientTest extends BaseGleSYSAsyncClientTest<ArchiveAsy
    }
    
    public void testArchiveDetails() throws Exception {
-      testMethod("archiveDetails", "details", "POST", true, ReturnNullOnNotFoundOr404.class, userName);
+      testMethod("getArchiveDetails", "details", "POST", true, ReturnNullOnNotFoundOr404.class, userName);
    }
    
    public void testCreateArchive() throws Exception {
@@ -61,7 +61,7 @@ public class ArchiveAsyncClientTest extends BaseGleSYSAsyncClientTest<ArchiveAsy
 
    public void testResizeArchive() throws Exception {
       testMethod("resizeArchive", "resize", "POST", false, MapHttp4xxCodesToExceptions.class, userName,
-            newEntry("size", 5));
+            newEntry("size", "5 GB"));
    }
    
    public void testChangeArchivePassword() throws Exception {

@@ -52,7 +52,7 @@ public interface EmailAsyncClient {
    @SelectJson("response")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<EmailOverview> emailOverview();
+   ListenableFuture<EmailOverview> getEmailOverview();
 
    /**
     * @see org.jclouds.glesys.features.EmailClient#listAccounts

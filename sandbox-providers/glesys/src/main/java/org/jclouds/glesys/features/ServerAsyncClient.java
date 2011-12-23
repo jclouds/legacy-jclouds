@@ -90,7 +90,7 @@ public interface ServerAsyncClient {
     */
    @POST
    @Path("/server/console/format/json")
-   @SelectJson("server")
+   @SelectJson("remote")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<ServerConsole> getServerConsole(@FormParam("serverid") String id);
@@ -183,7 +183,7 @@ public interface ServerAsyncClient {
     */
    @POST
    @Path("/server/destroy/format/json")
-   ListenableFuture<Void> destroyServer(@FormParam("serverid") String id, @FormParam("keepip") int keepIp);
+   ListenableFuture<Void> destroyServer(@FormParam("serverid") String id, ServerDestroyOptions keepIp);
 
    /**
     * @see ServerClient#resetPassword

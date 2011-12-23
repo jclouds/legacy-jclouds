@@ -94,7 +94,7 @@ public class BaseGleSYSClientLiveTest {
       assertEquals(testServer.getHostname(), hostName);
       assertFalse(testServer.getIps().isEmpty());
 
-      ServerStatusChecker runningServerCounter = new ServerStatusChecker(client, testServer.getId(), 300, 10, TimeUnit.SECONDS);
+      ServerStatusChecker runningServerCounter = new ServerStatusChecker(client, testServer.getId(), 180, 10, TimeUnit.SECONDS);
 
       assertTrue(runningServerCounter.apply(ServerState.RUNNING));
       return runningServerCounter;

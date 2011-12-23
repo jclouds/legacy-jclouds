@@ -20,13 +20,14 @@ package org.jclouds.glesys.features;
 
 import com.google.common.base.Predicate;
 import org.jclouds.glesys.domain.*;
+import org.jclouds.glesys.options.EmailCreateOptions;
 import org.jclouds.glesys.options.EmailEditOptions;
+import org.jclouds.glesys.options.ServerDestroyOptions;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -37,7 +38,7 @@ import static org.testng.Assert.*;
 *
 * @author Adam Lowe
 */
-@Test(groups = "live", testName = "EmailClientLiveTest")
+@Test(groups = "live", testName = "EmailClientLiveTest", singleThreaded = true)
 public class EmailClientLiveTest extends BaseGleSYSClientLiveTest {
 
    @BeforeGroups(groups = {"live"})
@@ -47,15 +48,16 @@ public class EmailClientLiveTest extends BaseGleSYSClientLiveTest {
 
       try {
          client.delete("test@" + testDomain);
+         client.delete("test2@" + testDomain);
          context.getApi().getDomainClient().deleteDomain(testDomain);
-
       } catch(Exception e) {
       }
 
       serverId = createServer("test-email-jclouds").getServerId();
+      
       createDomain(testDomain);
 
-      domainCounter = new RetryablePredicate<Integer>(
+      emailAccountCounter = new RetryablePredicate<Integer>(
             new Predicate<Integer>() {
                public boolean apply(Integer value) {
                   return client.listAccounts(testDomain).size() == value;
@@ -68,26 +70,36 @@ public class EmailClientLiveTest extends BaseGleSYSClientLiveTest {
    @AfterGroups(groups = {"live"})
    public void tearDown() {
       client.delete("test@" + testDomain);
+      assertTrue(emailAccountCounter.apply(0));
       context.getApi().getDomainClient().deleteDomain(testDomain);
-      context.getApi().getServerClient().destroyServer(serverId, 0);
+      context.getApi().getServerClient().destroyServer(serverId, ServerDestroyOptions.Builder.discardIp());
       super.tearDown();
    }
    
    private EmailClient client;
    private String serverId;
    private final String testDomain = "email-test.jclouds.org";
-   private RetryablePredicate<Integer> domainCounter;
+   private RetryablePredicate<Integer> emailAccountCounter;
    
    @Test
    public void createEmail() {
-      int before = client.listAccounts(testDomain).size();
-      client.createAccount("test@" + testDomain, "password");
-      assertTrue(domainCounter.apply(before + 1));
+      client.createAccount("test@" + testDomain, "password", EmailCreateOptions.Builder.antiVirus(true));
+      assertTrue(emailAccountCounter.apply(1));
    }
 
    @Test(dependsOnMethods = "createEmail")
+   public void createAlias() {
+      client.createAlias("test2@" + testDomain, "test@" + testDomain);
+      EmailOverview overview = client.getEmailOverview();
+      assertTrue(overview.getSummary().getAliases() == 1);
+      client.delete("test2@" + testDomain);
+      overview = client.getEmailOverview();
+      assertTrue(overview.getSummary().getAliases() == 0);
+   }
+   
+   @Test(dependsOnMethods = "createEmail")
    public void testOverview() throws Exception {
-      EmailOverview overview = client.emailOverview();
+      EmailOverview overview = client.getEmailOverview();
       assertNotNull(overview.getSummary());
       assertTrue(overview.getSummary().getAccounts() >= 1);
       assertTrue(overview.getSummary().getAliases() == 0);
@@ -108,8 +120,16 @@ public class EmailClientLiveTest extends BaseGleSYSClientLiveTest {
 
    @Test(dependsOnMethods = "createEmail")
    public void testEditAccount() throws Exception {
-      client.editAccount("test@" + testDomain, EmailEditOptions.Builder.antiVirus(false));
       Set<Email> accounts = client.listAccounts(testDomain);
+      for(Email account : accounts) {
+         if (account.getAccount().equals("test@" + testDomain)) {
+            assertTrue(account.getAntiVirus());
+         }
+      }
+      
+      client.editAccount("test@" + testDomain, EmailEditOptions.Builder.antiVirus(false));
+      
+      accounts = client.listAccounts(testDomain);
       for(Email account : accounts) {
          if (account.getAccount().equals("test@" + testDomain)) {
             assertFalse(account.getAntiVirus());

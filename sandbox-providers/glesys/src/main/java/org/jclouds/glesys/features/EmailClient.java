@@ -44,7 +44,7 @@ public interface EmailClient {
     *
     * @return the relevant summary data
     */
-   EmailOverview emailOverview();
+   EmailOverview getEmailOverview();
 
    /**
     * 
