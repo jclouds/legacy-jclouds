@@ -36,31 +36,30 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 public class HttpMessage extends PayloadEnclosingImpl {
-   public static Builder<? extends HttpMessage> builder() {
-      return new Builder<HttpMessage>();
+   public static Builder builder() {
+      return new Builder();
    }
 
-   public static class Builder<T extends HttpMessage> {
+   public static class Builder {
       protected Payload payload;
       protected Multimap<String, String> headers = ImmutableMultimap.of();
 
-      public Builder<T> payload(Payload payload) {
+      public Builder payload(Payload payload) {
          this.payload = payload;
          return this;
       }
 
-      public Builder<T> headers(Multimap<String, String> headers) {
+      public Builder headers(Multimap<String, String> headers) {
          this.headers = ImmutableMultimap.copyOf(checkNotNull(headers, "headers"));
          return this;
       }
 
-      @SuppressWarnings("unchecked")
-      public T build() {
-         return (T) new HttpMessage(payload, headers);
+      public HttpMessage build() {
+         return new HttpMessage(payload, headers);
       }
 
-      public static <X extends HttpMessage> Builder<X> from(X input) {
-         return new Builder<X>().payload(input.getPayload()).headers(input.getHeaders());
+      public static Builder from(HttpMessage input) {
+         return new Builder().payload(input.getPayload()).headers(input.getHeaders());
       }
    }
 
@@ -85,7 +84,7 @@ public class HttpMessage extends PayloadEnclosingImpl {
       return (values.size() >= 1) ? values.iterator().next() : null;
    }
 
-   public Builder<? extends HttpMessage> toBuilder() {
+   public Builder toBuilder() {
       return Builder.from(this);
    }
 
