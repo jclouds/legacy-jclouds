@@ -22,6 +22,8 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+import static org.jclouds.utils.TestUtils.NO_INVOCATIONS;
+import static org.jclouds.utils.TestUtils.SINGLE_NO_ARG_INVOCATION;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -31,6 +33,8 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.utils.TestUtils;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
@@ -53,7 +57,17 @@ public class ParseSaxTest extends BaseHandlerTest {
    ParseSax<String> createParser() {
       return factory.create(injector.getInstance(TestHandler.class));
    }
+   
+   @DataProvider
+   public Object[][] runUnderJava7() {
+       return (TestUtils.isJava7() ? SINGLE_NO_ARG_INVOCATION : NO_INVOCATIONS);
+   }
 
+   @DataProvider
+   public Object[][] ignoreUnderJava7() {
+       return (TestUtils.isJava7() ? NO_INVOCATIONS : SINGLE_NO_ARG_INVOCATION);
+   }
+   
    @Test
    public void testAddDetailsAndPropagateOkWhenRequestWithNoDataAndRuntimeExceptionThrowsOriginalException()
          throws ExecutionException, InterruptedException, TimeoutException, IOException {
@@ -99,7 +113,7 @@ public class ParseSaxTest extends BaseHandlerTest {
          assertEquals(e.getCause(), input);
       }
    }
-
+   
    @Test
    public void testAddDetailsAndPropagateOkWithValidRequestResponse() throws ExecutionException, InterruptedException,
          TimeoutException, IOException {
@@ -118,7 +132,7 @@ public class ParseSaxTest extends BaseHandlerTest {
       }
    }
 
-   @Test
+   @Test(dataProvider = "ignoreUnderJava7", description = "see http://code.google.com/p/jclouds/issues/detail?id=795")
    public void testAddDetailsAndPropagateOkWithValidRequestResponseWithSAXParseException() throws ExecutionException,
          InterruptedException, TimeoutException, IOException {
 
@@ -144,4 +158,29 @@ public class ParseSaxTest extends BaseHandlerTest {
       }
    }
 
+   @Test(dataProvider = "runUnderJava7", description = "see http://code.google.com/p/jclouds/issues/detail?id=795")
+   public void testAddDetailsAndPropagateOkWithValidRequestResponseWithSAXParseException_java7() throws ExecutionException,
+         InterruptedException, TimeoutException, IOException {
+
+      ParseSax<String> parser = createParser();
+      HttpRequest request = new HttpRequest("GET", URI.create("http://foohost"));
+      HttpResponse response = new HttpResponse(304, "Not Modified", null);
+      Locator locator = createMock(Locator.class);
+      expect(locator.getColumnNumber()).andReturn(1);
+      expect(locator.getLineNumber()).andReturn(1);
+      expect(locator.getPublicId()).andReturn("publicId");
+      expect(locator.getSystemId()).andReturn("systemId");
+      replay(locator);
+      Exception input = new SAXParseException("foo", locator);
+      verify(locator);
+
+      try {
+         parser.setContext(request);
+         parser.addDetailsAndPropagate(response, input);
+      } catch (RuntimeException e) {
+         assertEquals(e.getMessage(),
+               "request: GET http://foohost HTTP/1.1; response: HTTP/1.1 304 Not Modified; error at 1:1 in document systemId; cause: org.xml.sax.SAXParseExceptionpublicId: publicId; systemId: systemId; lineNumber: 1; columnNumber: 1; foo");
+         assertEquals(e.getCause(), input);
+      }
+   }
 }
