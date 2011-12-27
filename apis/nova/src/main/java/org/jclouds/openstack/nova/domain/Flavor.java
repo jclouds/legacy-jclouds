@@ -32,7 +32,7 @@ public class Flavor extends Resource {
 
    @Override
    public String toString() {
-      return "Flavor [disk=" + disk + ", id=" + id + ", name=" + name + ", ram=" + ram + "]";
+      return "Flavor [disk=" + disk + ", id=" + id + ", name=" + name + ", ram=" + ram + ", vcpus=" + vcpus +"]";
    }
 
    public Flavor(int id, String name) {
@@ -44,6 +44,7 @@ public class Flavor extends Resource {
    private String name;
    private Integer disk;
    private Integer ram;
+   private Integer vcpus;
 
    public Integer getDisk() {
       return disk;
@@ -77,6 +78,14 @@ public class Flavor extends Resource {
       this.ram = value;
    }
 
+   public Integer getVcpus() {
+      return vcpus;
+   }
+
+   public void setVcpus(Integer value) {
+      this.vcpus = value;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -85,6 +94,7 @@ public class Flavor extends Resource {
       result = prime * result + id;
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((ram == null) ? 0 : ram.hashCode());
+      result = prime * result + ((vcpus == null) ? 0 : vcpus.hashCode());
       return result;
    }
 
@@ -113,6 +123,11 @@ public class Flavor extends Resource {
          if (other.ram != null)
             return false;
       } else if (!ram.equals(other.ram))
+         return false;
+      if (vcpus == null) {
+         if (other.vcpus != null)
+            return false;
+      } else if (!vcpus.equals(other.vcpus))
          return false;
       return true;
    }
