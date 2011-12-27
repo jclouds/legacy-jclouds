@@ -19,30 +19,28 @@
 
 package org.jclouds.virtualbox.functions.admin;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
-import static org.testng.Assert.assertEquals;
-
-import java.net.URI;
-
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.ConfiguresSshClient;
 import org.jclouds.ssh.SshClient;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
+import java.net.URI;
+
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.*;
+import static org.testng.Assert.assertEquals;
 
 @Test(groups = "unit", singleThreaded = true, testName = "StartVBoxIfNotAlreadyRunningTest")
 public class StartVBoxIfNotAlreadyRunningTest {
@@ -112,11 +110,11 @@ public class StartVBoxIfNotAlreadyRunningTest {
          // these values. Right now, it is node 2 since the above test made node
          // 1.
          IPSocket expectedSshSockectFor2ndCreatedNode = new IPSocket("144.175.1.2", 22);
-         Credentials expectedCredentialsFor2ndCreatedNode = new Credentials("root", "password2");
-         expect(factory.create(expectedSshSockectFor2ndCreatedNode, expectedCredentialsFor2ndCreatedNode)).andReturn(
+         LoginCredentials loginCredentials = new LoginCredentials("root", "password2", null, false);
+         expect(factory.create(expectedSshSockectFor2ndCreatedNode, loginCredentials)).andReturn(
                client).times(2);
 
-         expect(client.getUsername()).andReturn(expectedCredentialsFor2ndCreatedNode.identity).times(2);
+         expect(client.getUsername()).andReturn(loginCredentials.identity).times(2);
          expect(client.getHostAddress()).andReturn(expectedSshSockectFor2ndCreatedNode.getAddress()).times(2);
 
          client.disconnect();
