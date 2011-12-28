@@ -40,11 +40,21 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 public class GeneratedHttpRequest<T> extends HttpRequest {
-   public static <T> Builder<T> builder() {
-      return new Builder<T>();
+   public static Builder<?> builder() {
+      // empty builder, so can be safely cast to Builder<T> by the caller
+      return new Builder<Object>();
    }
 
-   public static class Builder<T> extends HttpRequest.Builder<GeneratedHttpRequest<T>> {
+   /*
+    * Convenience method - cannot have the same signature as builder() - see
+    * http://code.google.com/p/jclouds/issues/detail?id=795
+    */
+   @SuppressWarnings("unchecked")
+   public static <T> Builder<T> requestBuilder() {
+       return (Builder<T>) builder();
+   }
+
+   public static class Builder<T> extends HttpRequest.Builder {
       protected Class<T> declaring;
       protected Method javaMethod;
       protected List<Object> args;
@@ -69,31 +79,37 @@ public class GeneratedHttpRequest<T> extends HttpRequest {
          return this;
       }
 
+      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> filters(List<HttpRequestFilter> requestFilters) {
          return (Builder<T>) super.filters(requestFilters);
       }
 
+      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> method(String method) {
          return (Builder<T>) super.method(method);
       }
 
+      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> endpoint(URI endpoint) {
          return (Builder<T>) super.endpoint(endpoint);
       }
 
+      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> skips(char[] skips) {
          return (Builder<T>) super.skips(skips);
       }
 
+      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> payload(Payload payload) {
          return (Builder<T>) super.payload(payload);
       }
 
+      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> headers(Multimap<String, String> headers) {
          return (Builder<T>) super.headers(headers);
@@ -105,9 +121,22 @@ public class GeneratedHttpRequest<T> extends HttpRequest {
                javaMethod, args);
       }
 
-      public static <Y> Builder<Y> from(HttpRequest input) {
-         return new Builder<Y>().method(input.getMethod()).endpoint(input.getEndpoint()).skips(input.getSkips())
+      public static Builder<?> from(HttpRequest input) {
+         /*
+          * State added to builder will not conflict with return type so caller can
+          * safely cast result to Builder<T>
+          */
+         return new Builder<Object>().method(input.getMethod()).endpoint(input.getEndpoint()).skips(input.getSkips())
                .filters(input.getFilters()).payload(input.getPayload()).headers(input.getHeaders());
+      }
+
+      /*
+       * Convenience method - cannot have the same signature as from(HttpRequest) - see
+       * http://code.google.com/p/jclouds/issues/detail?id=795
+       */
+      @SuppressWarnings("unchecked")
+      public static <Y> Builder<Y> fromRequest(HttpRequest input) {
+          return (Builder<Y>) from(input);
       }
 
       public static <Y> Builder<Y> from(GeneratedHttpRequest<Y> input) {
