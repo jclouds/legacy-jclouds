@@ -55,6 +55,7 @@ public class ParseFlavorFromJsonResponseTest {
       assertEquals(response.getName(), "256 MB Server");
       assertEquals(response.getDisk().intValue(), 10);
       assertEquals(response.getRam().intValue(), 256);
+      assertEquals(response.getVcpus().intValue(), 2);
    }
 
    public static Flavor parseFlavor() {
