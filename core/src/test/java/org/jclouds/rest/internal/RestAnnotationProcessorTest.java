@@ -1816,8 +1816,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void oneTransformerWithContext() throws SecurityException, NoSuchMethodException {
       RestAnnotationProcessor<TestTransformers> processor = factory(TestTransformers.class);
       Method method = TestTransformers.class.getMethod("oneTransformerWithContext");
-      // can't use GHR.builder() - see http://code.google.com/p/jclouds/issues/detail?id=461
-      GeneratedHttpRequest<TestTransformers> request = new GeneratedHttpRequest.Builder<TestTransformers>().method("GET")
+      GeneratedHttpRequest<TestTransformers> request = GeneratedHttpRequest.<TestTransformers>requestBuilder().method("GET")
             .endpoint(URI.create("http://localhost")).declaring(TestTransformers.class).javaMethod(method)
             .args(new Object[] {}).build();
       Function<HttpResponse, ?> transformer = processor.createResponseParser(method, request);
@@ -2349,8 +2348,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void testCreateJAXBResponseParserWithAnnotation() throws SecurityException, NoSuchMethodException {
       RestAnnotationProcessor<TestJAXBResponseParser> processor = factory(TestJAXBResponseParser.class);
       Method method = TestJAXBResponseParser.class.getMethod("jaxbGetWithAnnotation");
-      // can't use GHR.builder() - see http://code.google.com/p/jclouds/issues/detail?id=461
-      GeneratedHttpRequest<TestJAXBResponseParser> request = new GeneratedHttpRequest.Builder<TestJAXBResponseParser>()
+      GeneratedHttpRequest<TestJAXBResponseParser> request = GeneratedHttpRequest.<TestJAXBResponseParser>requestBuilder()
             .method("GET").endpoint(URI.create("http://localhost")).declaring(TestJAXBResponseParser.class)
             .javaMethod(method).args(new Object[] {}).build();
       Function<HttpResponse, ?> transformer = processor.createResponseParser(method, request);
@@ -2361,8 +2359,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void testCreateJAXBResponseParserWithAcceptHeader() throws SecurityException, NoSuchMethodException {
       RestAnnotationProcessor<TestJAXBResponseParser> processor = factory(TestJAXBResponseParser.class);
       Method method = TestJAXBResponseParser.class.getMethod("jaxbGetWithAcceptHeader");
-      // can't use GHR.builder() - see http://code.google.com/p/jclouds/issues/detail?id=461
-      GeneratedHttpRequest<TestJAXBResponseParser> request = new GeneratedHttpRequest.Builder<TestJAXBResponseParser>()
+      GeneratedHttpRequest<TestJAXBResponseParser> request = GeneratedHttpRequest.<TestJAXBResponseParser>requestBuilder()
             .method("GET").endpoint(URI.create("http://localhost")).declaring(TestJAXBResponseParser.class)
             .javaMethod(method).args(new Object[] {}).build();
       Function<HttpResponse, ?> transformer = processor.createResponseParser(method, request);

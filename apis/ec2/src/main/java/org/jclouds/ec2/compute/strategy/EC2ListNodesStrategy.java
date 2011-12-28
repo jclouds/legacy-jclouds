@@ -96,12 +96,17 @@ public class EC2ListNodesStrategy implements ListNodesStrategy {
                   @SuppressWarnings("unchecked")
                   @Override
                   public Future<Set<? extends Reservation<? extends RunningInstance>>> apply(String from) {
-                     return (Future<Set<? extends Reservation<? extends RunningInstance>>>) client
-                              .getInstanceServices().describeInstancesInRegion(from);
+                     return castToSpecificTypedFuture(client.getInstanceServices().describeInstancesInRegion(from));
                   }
 
                }, executor, null, logger, "reservations");
 
       return concat(concat(reservations));
+   }
+
+   // "hide" this cast (i.e. do not perform inline) from the Java 7 compiler - see http://stackoverflow.com/questions/8637937/why-does-a-generic-cast-of-a-list-extends-set-to-listset-succeed-on-sun
+   @SuppressWarnings("unchecked")
+   private static <T> Future<T> castToSpecificTypedFuture(Future<? extends T> input) {
+       return (Future<T>) input;
    }
 }

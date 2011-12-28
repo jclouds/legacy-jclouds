@@ -35,7 +35,7 @@ public class HttpResponse extends HttpMessage {
       return new Builder();
    }
 
-   public static class Builder extends HttpMessage.Builder<HttpResponse> {
+   public static class Builder extends HttpMessage.Builder {
       private int statusCode;
       private String message;
 
