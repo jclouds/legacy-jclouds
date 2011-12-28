@@ -44,7 +44,7 @@ public class FlavorToHardwareTest {
    public void test() throws UnknownHostException, URISyntaxException {
       Hardware flavor = convertFlavor();
       Hardware tempFlavor = new HardwareBuilder().ids("1").name("256 MB Server")
-            .processors(ImmutableList.of(new Processor(1.0, 1.0)))
+            .processors(ImmutableList.of(new Processor(2.0, 2.0)))
             .ram(256)
             .volumes(ImmutableList.of(
                   new VolumeBuilder().type(Volume.Type.LOCAL).size(10.0f).durable(true).bootDevice(true).build()))

@@ -4,6 +4,7 @@
         "name" : "256 MB Server",
         "ram" : 256,
         "disk" : 10,
+        "vcpus" : 2,
         "links": [
             {
                 "rel" : "self",
