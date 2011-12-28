@@ -27,63 +27,47 @@ package org.jclouds.openstack.nova.domain;
  */
 public class Flavor extends Resource {
 
-   public Flavor() {
+   private final int id;
+   private final String name;
+   private final Integer disk;
+   private final Integer ram;
+   private final Integer vcpus;
+
+   //Required because of how Gson is being used to do wire marshalling with the Server class
+   private Flavor(){
+      id=0;
+      name=null;
+      disk=null;
+      ram=null;
+      vcpus=null;
    }
 
-   @Override
-   public String toString() {
-      return "Flavor [disk=" + disk + ", id=" + id + ", name=" + name + ", ram=" + ram + ", vcpus=" + vcpus +"]";
-   }
-
-   public Flavor(int id, String name) {
+   public Flavor(int id, String name, Integer disk, Integer ram, Integer vcpus) {
       this.id = id;
       this.name = name;
+      this.disk = disk;
+      this.ram = ram;
+      this.vcpus = vcpus;
    }
-
-   private int id;
-   private String name;
-   private Integer disk;
-   private Integer ram;
-   private Integer vcpus;
 
    public Integer getDisk() {
       return disk;
-   }
-
-   public void setDisk(Integer value) {
-      this.disk = value;
    }
 
    public int getId() {
       return id;
    }
 
-   public void setId(int value) {
-      this.id = value;
-   }
-
    public String getName() {
       return name;
-   }
-
-   public void setName(String value) {
-      this.name = value;
    }
 
    public Integer getRam() {
       return ram;
    }
 
-   public void setRam(Integer value) {
-      this.ram = value;
-   }
-
    public Integer getVcpus() {
       return vcpus;
-   }
-
-   public void setVcpus(Integer value) {
-      this.vcpus = value;
    }
 
    @Override
@@ -132,4 +116,8 @@ public class Flavor extends Resource {
       return true;
    }
 
+   @Override
+   public String toString() {
+      return "Flavor [disk=" + disk + ", id=" + id + ", name=" + name + ", ram=" + ram + ", vcpus=" + vcpus +"]";
+   }
 }
