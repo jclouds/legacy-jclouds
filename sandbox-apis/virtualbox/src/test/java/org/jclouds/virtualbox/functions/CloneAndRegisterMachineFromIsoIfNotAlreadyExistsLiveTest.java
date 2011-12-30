@@ -19,7 +19,7 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static org.jclouds.virtualbox.domain.ExecutionType.HEADLESS;
+import static org.jclouds.virtualbox.domain.ExecutionType.GUI;
 import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
 import static org.testng.Assert.assertEquals;
 import static org.virtualbox_4_1.NetworkAttachmentType.Bridged;
@@ -100,7 +100,7 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends Ba
                .controller(ideController)
                .forceOverwrite(true).build();
          return new CreateAndInstallVm(manager, guestId, localHostContext, hostId, socketTester,
-                 "127.0.0.1", 8080, HEADLESS).apply(vmSpecification);
+                 "127.0.0.1", 8080, GUI).apply(vmSpecification);
       } catch (IllegalStateException e) {
          // already created
          return manager.getVBox().findMachine(vmName);

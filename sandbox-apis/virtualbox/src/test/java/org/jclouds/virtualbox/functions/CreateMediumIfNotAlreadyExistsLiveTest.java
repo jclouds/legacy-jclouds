@@ -35,6 +35,7 @@ import org.virtualbox_4_1.VBoxException;
 /**
  * @author Mattias Holmqvist
  */
+@Test(groups = "live", singleThreaded = true, testName = "CreateMediumIfNotAlreadyExistsLiveTest")
 public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClientLiveTest {
 
    @Test
