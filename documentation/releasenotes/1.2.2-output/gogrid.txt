@@ -674,3 +674,8 @@ INFO: << warm start of jboss on node(274169) [backgroundProcessSeconds=2, socket
 [pool-2-thread-1] Test testCreateAndRunAService(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) succeeded: 468178ms
 Test suite progress: tests succeeded: 93, failed: 0, skipped: 0.
 Starting test testCreateTwoNodesWithRunScript(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)
+[pool-2-thread-1] Test testCreateTwoNodesWithRunScript(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest) succeeded: 369047ms
+Test suite progress: tests succeeded: 94, failed: 0, skipped: 0.
+Starting test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)
+Dec 30, 2011 10:54:46 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired
+INFO: creating another node based on existing nodes' location: [id=1, scope=ZONE, description=US West 1 Datacenter, parent=gogrid, iso3166Codes=[US-CA], metadata={}]
