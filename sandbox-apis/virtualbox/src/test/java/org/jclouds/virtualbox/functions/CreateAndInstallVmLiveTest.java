@@ -48,6 +48,7 @@ import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.NatAdapter;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.functions.admin.FindClonesOfMachine;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
 import org.jclouds.virtualbox.util.PropertyUtils;
 import org.testng.annotations.BeforeGroups;
@@ -97,7 +98,7 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
               .forceOverwrite(true)
               .cleanUpMode(CleanupMode.Full)
               .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build()).build();
-      
+      new FindClonesOfMachine(manager).apply(vmSpecification);
       new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(vmSpecification);
    }
 
