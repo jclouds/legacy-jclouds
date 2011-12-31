@@ -32,6 +32,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.domain.ErrorCode;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
+import org.virtualbox_4_1.DeviceType;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IMedium;
 import org.virtualbox_4_1.IProgress;
@@ -81,10 +82,19 @@ public class UnregisterMachineIfExistsAndDeleteItsMedia implements
 
       checkNotNull(filteredMediaToBeDeleted);
       if (!filteredMediaToBeDeleted.isEmpty()) {
+         for (IMedium iMedium : filteredMediaToBeDeleted) {
+            for (IMedium m : iMedium.getChildren()) {
+               try {
+               m.deleteStorage();
+               } catch (Exception e) {
+                  logger.debug("Cannot delete the media %s child of %s",
+                        m.getName(), m.getParent().getName(), e);
+               }
+            }
+         }
          try {
             IProgress deletion = machine.delete(filteredMediaToBeDeleted);
             deletion.waitForCompletion(-1);
-
          } catch (Exception e) {
             logger.error(e, "Problem in deleting the media attached to %s",
                   machine.getName());
@@ -104,9 +114,11 @@ public class UnregisterMachineIfExistsAndDeleteItsMedia implements
 
       @Override
       public boolean apply(IMedium medium) {
-         for (StorageController controller : vmSpec.getControllers()) {
-            if (controller.getHardDisk(medium.getName()).isAutoDelete())
-               return true;
+         if (medium.getDeviceType().equals(DeviceType.HardDisk)) {
+            for (StorageController controller : vmSpec.getControllers()) {
+               if (controller.getHardDisk(medium.getName()).isAutoDelete())
+                  return true;
+            }
          }
          return false;
       }
