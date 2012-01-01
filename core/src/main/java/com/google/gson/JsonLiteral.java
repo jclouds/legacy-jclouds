@@ -20,8 +20,6 @@ package com.google.gson;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.IOException;
-
 /**
  * The gson project use package to control access to their objects. However, this prevents us from
  * doing valid work, like controling the json emitted on a per-object basis. This is here to afford
@@ -38,8 +36,8 @@ public final class JsonLiteral extends JsonElement {
    }
 
    @Override
-   protected void toString(Appendable sb, Escaper escaper) throws IOException {
-      sb.append(literal);
+   public String toString() {
+      return literal.toString();
    }
 
 }
