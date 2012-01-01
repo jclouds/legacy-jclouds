@@ -29,7 +29,6 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.google.gson.JsonParseException;
 import com.google.inject.Guice;
 import com.google.inject.TypeLiteral;
 
@@ -107,12 +106,12 @@ public class JsonTest {
    public void testMapStringObjectWithAllValidValuesOneDeep() {
       Map<String, Object> map = Maps.newHashMap();
       map.put("string", "string");
-      map.put("number", 1);
+      map.put("number", 1.0);
       map.put("boolean", true);
       map.put("map", ImmutableMap.of("key", "value"));
       map.put("list", ImmutableList.of("key", "value"));
       assertEquals(json.toJson(map),
-               "{\"string\":\"string\",\"map\":{\"key\":\"value\"},\"list\":[\"key\",\"value\"],\"boolean\":true,\"number\":1}");
+               "{\"string\":\"string\",\"map\":{\"key\":\"value\"},\"list\":[\"key\",\"value\"],\"boolean\":true,\"number\":1.0}");
       Map<String, Object> map2 = json.fromJson(json.toJson(map), new TypeLiteral<Map<String, Object>>() {
       }.getType());
       assertEquals(map2, map);
@@ -143,7 +142,7 @@ public class JsonTest {
       assertEquals(json.fromJson("{enumValue : \"FOO\"}", EnumInside.class).enumValue, EnumInside.Test.FOO);
    }
 
-   @Test(expectedExceptions = JsonParseException.class)
+   @Test(expectedExceptions = IllegalArgumentException.class)
    public void testDeserializeEnumWhenBadValue() {
       assertEquals(json.fromJson("{enumValue : \"s\"}", EnumInside.class).enumValue, EnumInside.Test.FOO);
    }
