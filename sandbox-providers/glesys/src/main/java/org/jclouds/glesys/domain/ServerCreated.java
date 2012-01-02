@@ -15,7 +15,7 @@ import org.jclouds.javax.annotation.Nullable;
  * Connection information to connect to a server with VNC.
  * 
  * @author Adam Lowe
- * @see <a href="https://customer.glesys.com/api.php?a=doc#server_console" />
+ * @see <a href="https://customer.glesys.com/api.php?a=doc#server_create" />
  */
 public class ServerCreated {
    public static Builder builder() {

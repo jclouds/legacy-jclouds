@@ -35,8 +35,9 @@ import static org.testng.Assert.assertTrue;
  *
  * @author Adam Lowe
  */
-@Test(groups = "live", testName = "DomainClientLiveTest")
+@Test(groups = "live", testName = "DomainClientLiveTest", singleThreaded = true)
 public class DomainClientLiveTest extends BaseGleSYSClientLiveTest {
+   public final String testDomain = "glesystest.jclouds.org";
 
    @BeforeGroups(groups = {"live"})
    public void setupClient() {
@@ -55,6 +56,13 @@ public class DomainClientLiveTest extends BaseGleSYSClientLiveTest {
                   return client.listRecords(testDomain).size() == value;
                }
             }, 30, 1, TimeUnit.SECONDS);
+
+      try {
+         client.deleteDomain(testDomain);
+      } catch (Exception ex) {
+      }
+      
+      createDomain(testDomain);
    }
 
    @AfterGroups(groups = {"live"})
@@ -67,24 +75,11 @@ public class DomainClientLiveTest extends BaseGleSYSClientLiveTest {
    }
 
    private DomainClient client;
-   private String testDomain = "glesystest.jclouds.org";
    private String testRecordId;
    private RetryablePredicate<Integer> domainCounter;
    private RetryablePredicate<Integer> recordCounter;
 
    @Test
-   public void testCreateDomain() throws Exception {
-      try {
-         client.deleteDomain(testDomain);
-      } catch (Exception ex) {
-      }
-
-      int before = client.listDomains().size();
-      client.addDomain(testDomain);
-      assertTrue(domainCounter.apply(before + 1));
-   }
-
-   @Test(dependsOnMethods = "testCreateDomain")
    public void testCreateRecord() throws Exception {
       int before = client.listRecords(testDomain).size();
 
@@ -93,7 +88,7 @@ public class DomainClientLiveTest extends BaseGleSYSClientLiveTest {
       assertTrue(recordCounter.apply(before + 1));
    }
 
-   @Test(dependsOnMethods = "testCreateRecord")
+   @Test
    public void testDeleteRecord() throws Exception {
       Set<DomainRecord> domainRecords = client.listRecords(testDomain);
 

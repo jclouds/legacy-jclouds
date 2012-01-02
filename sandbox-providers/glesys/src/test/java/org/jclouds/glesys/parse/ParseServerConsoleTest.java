@@ -22,6 +22,7 @@ package org.jclouds.glesys.parse;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.jclouds.glesys.config.GleSYSParserModule;
+import org.jclouds.glesys.domain.ServerConsole;
 import org.jclouds.glesys.domain.ServerCreated;
 import org.jclouds.glesys.domain.ServerCreatedIp;
 import org.jclouds.json.BaseItemParserTest;
@@ -36,20 +37,19 @@ import javax.ws.rs.core.MediaType;
  * @author Adam Lowe
  */
 @Test(groups = "unit", testName = "ParseServerCreatedTest")
-public class ParseServerCreatedTest extends BaseItemParserTest<ServerCreated> {
+public class ParseServerConsoleTest extends BaseItemParserTest<ServerConsole> {
 
    @Override
    public String resource() {
-      return "/server_created.json";
+      return "/server_console.json";
    }
 
    @Override
-   @SelectJson("server")
+   @SelectJson("remote")
    @Consumes(MediaType.APPLICATION_JSON)
-   public ServerCreated expected() {
-      return ServerCreated.builder().id("xm3630641").hostname("jclouds-test-host").ips(ServerCreatedIp.builder().ip("109.74.10.27").version4().cost(2.00).build()).build();
+   public ServerConsole expected() {
+      return ServerConsole.builder().host("79.99.2.147").port(59478).password("1476897311").build();
    }
-    
 
    protected Injector injector() {
       return Guice.createInjector(new GleSYSParserModule(), new GsonModule());

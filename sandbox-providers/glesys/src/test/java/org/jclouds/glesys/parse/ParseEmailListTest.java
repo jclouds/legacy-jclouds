@@ -18,40 +18,52 @@
  */
 package org.jclouds.glesys.parse;
 
-
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.jclouds.glesys.config.GleSYSParserModule;
-import org.jclouds.glesys.domain.ServerCreated;
-import org.jclouds.glesys.domain.ServerCreatedIp;
-import org.jclouds.json.BaseItemParserTest;
+import org.jclouds.glesys.domain.Email;
+import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Set;
 
 /**
  * @author Adam Lowe
  */
-@Test(groups = "unit", testName = "ParseServerCreatedTest")
-public class ParseServerCreatedTest extends BaseItemParserTest<ServerCreated> {
+@Test(groups = "unit", testName = "ParseEmailListTest")
+public class ParseEmailListTest extends BaseSetParserTest<Email> {
 
    @Override
    public String resource() {
-      return "/server_created.json";
+      return "/email_list.json";
    }
 
    @Override
-   @SelectJson("server")
+   @SelectJson("emailaccounts")
    @Consumes(MediaType.APPLICATION_JSON)
-   public ServerCreated expected() {
-      return ServerCreated.builder().id("xm3630641").hostname("jclouds-test-host").ips(ServerCreatedIp.builder().ip("109.74.10.27").version4().cost(2.00).build()).build();
+   public Set<Email> expected() {
+      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+      Email.Builder builder = Email.builder().quota("200 MB").usedQuota("0 MB").antispamLevel(3).antiVirus(true).autoRespond(false).autoRespondSaveEmail(true).autoRespondMessage("false");
+      try {
+         return ImmutableSet.of(
+               builder.account("test@adamlowe.net").created(dateFormat.parse("2011-12-22T12:13:14")).modified(dateFormat.parse("2011-12-22T12:13:35")).build(),
+               builder.account("test2@adamlowe.net").created(dateFormat.parse("2011-12-22T12:14:29")).modified(dateFormat.parse("2011-12-22T12:14:31")).build()
+         );
+      } catch(ParseException ex) {
+         throw new RuntimeException(ex);
+      }
    }
-    
 
    protected Injector injector() {
       return Guice.createInjector(new GleSYSParserModule(), new GsonModule());
    }
+
 }

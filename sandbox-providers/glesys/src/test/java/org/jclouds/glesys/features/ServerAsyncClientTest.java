@@ -120,6 +120,11 @@ public class ServerAsyncClientTest extends BaseGleSYSAsyncClientTest<ServerAsync
       testMethod("rebootServer", "reboot", "POST", false, MapHttp4xxCodesToExceptions.class, serverIdOnly);
    }
 
+   public void testDestroyServer() throws Exception {
+      testMethod("destroyServer", "destroy", "POST", false, MapHttp4xxCodesToExceptions.class, serverIdOnly, ServerDestroyOptions.Builder.keepIp());
+      testMethod("destroyServer", "destroy", "POST", false, MapHttp4xxCodesToExceptions.class, serverIdOnly, ServerDestroyOptions.Builder.discardIp());
+   }
+
    @Override
    protected TypeLiteral<RestAnnotationProcessor<ServerAsyncClient>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<ServerAsyncClient>>() {

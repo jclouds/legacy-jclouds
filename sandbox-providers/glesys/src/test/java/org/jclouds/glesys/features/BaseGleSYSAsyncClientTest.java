@@ -30,6 +30,7 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
+import org.jclouds.util.Strings2;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -66,8 +67,6 @@ public abstract class BaseGleSYSAsyncClientTest<T> extends RestClientTest<T> {
    /**
     * Test that a method call is annotated correctly.
     * <p/>
-    * TODO de-code ampersands and spaces in args properly
-    *
     * @param localMethod     the method to call in asyncClientClass
     * @param remoteCall      the name of the expected call on the remote server
     * @param httpMethod      "GET" or "POST"
@@ -87,7 +86,7 @@ public abstract class BaseGleSYSAsyncClientTest<T> extends RestClientTest<T> {
             argValues.add(arg);
          } else {
             Map.Entry<String, String> entry = (Map.Entry<String, String>) arg;
-            argStrings.add(entry.getKey() + "=" + entry.getValue());
+            argStrings.add(entry.getKey() + "=" + Strings2.urlEncode(entry.getValue()));
             argValues.add(entry.getValue());
          }
       }

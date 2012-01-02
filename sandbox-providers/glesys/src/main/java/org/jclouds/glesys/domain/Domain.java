@@ -27,6 +27,7 @@ import java.util.Date;
  * Domain data for a Glesys account.
  *
  * @author Adam Lowe
+ * @see <a href= "https://customer.glesys.com/api.php?a=doc#domain_list" />
  */
 public class Domain implements Comparable<Domain> {
    public static Builder builder() {
