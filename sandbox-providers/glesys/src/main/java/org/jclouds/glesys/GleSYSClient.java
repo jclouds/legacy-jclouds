@@ -19,10 +19,7 @@
 package org.jclouds.glesys;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.glesys.features.ArchiveClient;
-import org.jclouds.glesys.features.DomainClient;
-import org.jclouds.glesys.features.IpClient;
-import org.jclouds.glesys.features.ServerClient;
+import org.jclouds.glesys.features.*;
 import org.jclouds.rest.annotations.Delegate;
 
 import java.util.concurrent.TimeUnit;
@@ -60,5 +57,12 @@ public interface GleSYSClient {
     * Provides synchronous access to DNS features.
     */
    @Delegate
-   DomainClient getDomainClient();   
+   DomainClient getDomainClient();
+
+   /**
+    * Provides synchronous access to E-Mail features.
+    */
+   @Delegate
+   EmailClient getEmailClient();
+
 }

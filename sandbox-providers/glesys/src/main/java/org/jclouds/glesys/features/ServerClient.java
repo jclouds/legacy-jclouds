@@ -169,9 +169,9 @@ public interface ServerClient {
     * Destroy a server
     *
     * @param id     the id of the server
-    * @param keepIp if 1 the servers ip will be retained for use in your Glesys account
+    * @param keepIp if ServerDestroyOptions.keepIp(true) the servers ip will be retained for use in your GleSYS account
     */
-   void destroyServer(String id, int keepIp);
+   void destroyServer(String id, ServerDestroyOptions keepIp);
 
    /**
     * Reset the root password of a server

@@ -55,14 +55,14 @@ public interface ArchiveAsyncClient {
    ListenableFuture<Set<Archive>> listArchives();
 
    /**
-    * @see ArchiveClient#archiveDetails
+    * @see ArchiveClient#getArchiveDetails
     */
    @POST
    @Path("/archive/details/format/json")
    @SelectJson("details")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ArchiveDetails> archiveDetails(@FormParam("username") String username);
+   ListenableFuture<ArchiveDetails> getArchiveDetails(@FormParam("username") String username);
 
    /**
     * @see ArchiveClient#createArchive
@@ -84,7 +84,7 @@ public interface ArchiveAsyncClient {
     */
    @POST
    @Path("/archive/resize/format/json")
-   ListenableFuture<Void> resizeArchive(@FormParam("username") String username, @FormParam("size")int size);
+   ListenableFuture<Void> resizeArchive(@FormParam("username") String username, @FormParam("size") int size);
    /**
     * @see ArchiveClient#changeArchivePassword
     */
