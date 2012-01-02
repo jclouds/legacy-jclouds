@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.json;
+package org.jclouds.json.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
@@ -24,7 +24,7 @@ import static org.testng.Assert.assertEquals;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-import org.jclouds.json.internal.JsonLiteral;
+import org.jclouds.json.internal.NullHackJsonLiteralAdapter;
 import org.jclouds.util.Patterns;
 import org.testng.annotations.Test;
 
@@ -32,26 +32,16 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import com.google.gson.internal.Streams;
 import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonWriter;
 
 /**
- * Shows how we currently allow users to specify json literal types. Note this requires patches to
- * {@link Streams} and {@link JsonWriter} in order to register and render JsonLiteral elements.
+ * Shows how we currently allow users to specify json literal types.
  * 
  * @author Adrian Cole
  * @see <a href="http://code.google.com/p/google-gson/issues/detail?id=326"/>
- * @see JsonLiteral
  */
-@Test(testName = "GsonLiteralTest")
-public class GsonLiteralTest {
+@Test(testName = "NullHackJsonLiteralAdapterTest")
+public class NullHackJsonLiteralAdapterTest {
 
    /**
     * User supplied type that holds json literally. Ex. number as {@code 8}, boolean as {@code true}
@@ -62,14 +52,6 @@ public class GsonLiteralTest {
       private final String value;
 
       public RawJson(double value) {
-         this.value = value + "";
-      }
-
-      public RawJson(int value) {
-         this.value = value + "";
-      }
-
-      public RawJson(long value) {
          this.value = value + "";
       }
 
@@ -124,25 +106,19 @@ public class GsonLiteralTest {
    }
 
    /**
-    * writes or reads the literal directly and without formatting it in any way. Note this only
-    * works as {@link Streams} and {@link JsonWriter} are patched to register and render JsonLiteral
-    * elements.
+    * writes or reads the literal directly
     */
-   public static class RawJsonAdapter implements JsonSerializer<RawJson>, JsonDeserializer<RawJson> {
+   public static class RawJsonAdapter extends NullHackJsonLiteralAdapter<RawJson> {
 
-      public JsonElement serialize(RawJson src, Type typeOfSrc, JsonSerializationContext context) {
-         return new JsonLiteral(src);
+      @Override
+      protected RawJson createJsonLiteralFromRawJson(String json) {
+         return new RawJson(json);
       }
-
-      public RawJson deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-               throws JsonParseException {
-         return new RawJson(json.toString());
-      }
-
-   }
+  }
 
    // register the type adapter so that gson can serialize/deserialize to it
-   private Gson gson = new GsonBuilder().registerTypeAdapter(RawJson.class, new RawJsonAdapter()).create();
+   private Gson gsonAdapter = new GsonBuilder().registerTypeAdapter(RawJson.class, new RawJsonAdapter()).create();
+
    Type type = new TypeToken<Map<String, RawJson>>() {
    }.getType();
 
@@ -151,8 +127,8 @@ public class GsonLiteralTest {
 
       Map<String, RawJson> map = ImmutableMap.<String, RawJson> of("tomcat6", new RawJson("{\"ssl_port\":8433}"));
 
-      assertEquals(gson.fromJson(json, type), map);
-      assertEquals(gson.toJson(map), json);
+      assertEquals(gsonAdapter.toJson(map), json);
+      assertEquals(gsonAdapter.fromJson(json, type), map);
    }
 
    public void testList() {
@@ -160,8 +136,8 @@ public class GsonLiteralTest {
 
       Map<String, RawJson> map = ImmutableMap.<String, RawJson> of("list", new RawJson("[8431,8433]"));
 
-      assertEquals(gson.fromJson(json, type), map);
-      assertEquals(gson.toJson(map), json);
+      assertEquals(gsonAdapter.toJson(map), json);
+      assertEquals(gsonAdapter.fromJson(json, type), map);
    }
 
    public void testString() {
@@ -169,8 +145,8 @@ public class GsonLiteralTest {
 
       Map<String, RawJson> map = ImmutableMap.<String, RawJson> of("name", new RawJson("fooy"));
 
-      assertEquals(gson.fromJson(json, type), map);
-      assertEquals(gson.toJson(map), json);
+      assertEquals(gsonAdapter.toJson(map), json);
+      assertEquals(gsonAdapter.fromJson(json, type), map);
    }
 
    public void testNumber() {
@@ -178,8 +154,8 @@ public class GsonLiteralTest {
 
       Map<String, RawJson> map = ImmutableMap.<String, RawJson> of("number", new RawJson(1.0));
 
-      assertEquals(gson.fromJson(json, type), map);
-      assertEquals(gson.toJson(map), json);
+      assertEquals(gsonAdapter.toJson(map), json);
+      assertEquals(gsonAdapter.fromJson(json, type), map);
    }
 
    public void testBoolean() {
@@ -187,7 +163,7 @@ public class GsonLiteralTest {
 
       Map<String, RawJson> map = ImmutableMap.<String, RawJson> of("boolean", new RawJson(false));
 
-      assertEquals(gson.fromJson(json, type), map);
-      assertEquals(gson.toJson(map), json);
+      assertEquals(gsonAdapter.toJson(map), json);
+      assertEquals(gsonAdapter.fromJson(json, type), map);
    }
 }
