@@ -18,7 +18,6 @@ package com.google.gson.internal;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
-import com.google.gson.JsonLiteral;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
@@ -29,6 +28,8 @@ import com.google.gson.stream.MalformedJsonException;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.Writer;
+
+import org.jclouds.json.internal.JsonLiteral;
 
 /**
  * Reads and writes GSON parse trees over streams.

@@ -22,7 +22,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.JsonLiteral;
+import org.jclouds.json.internal.JsonLiteral;
+
 
 /**
  * Writes a JSON (<a href="http://www.ietf.org/rfc/rfc4627.txt">RFC 4627</a>)

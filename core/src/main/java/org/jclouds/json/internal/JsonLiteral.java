@@ -16,13 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.google.gson;
+package org.jclouds.json.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.gson.JsonElement;
+
 /**
  * The gson project use package to control access to their objects. However, this prevents us from
- * doing valid work, like controling the json emitted on a per-object basis. This is here to afford
+ * doing valid work, like controlling the json emitted on a per-object basis. This is here to afford
  * us to do this.
  * 
  * @author Adrian Cole
