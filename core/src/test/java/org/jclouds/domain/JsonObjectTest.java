@@ -58,20 +58,22 @@ public class JsonObjectTest {
    public void testHash() {
       String json = "{\"tomcat6\":{\"ssl_port\":8433}}";
 
-      Map<String, Object> map = ImmutableMap.<String, Object> of("tomcat6", ImmutableMap.of("ssl_port", 8433));
+      // gson deserialized numbers to double, so integers end up changed to fractions
+      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newStringPayload(json))),
+            ImmutableMap.<String, Object> of("tomcat6", ImmutableMap.of("ssl_port", 8433d)));
 
-      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newStringPayload(json))), map);
-      assertEquals(mapper.toJson(map), json);
+      assertEquals(mapper.toJson(ImmutableMap.<String, Object> of("tomcat6", ImmutableMap.of("ssl_port", 8433))), json);
 
    }
 
    public void testList() {
       String json = "{\"list\":[8431,8433]}";
 
-      Map<String, Object> map = ImmutableMap.<String, Object> of("list", ImmutableList.of(8431, 8433));
-
-      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newStringPayload(json))), map);
-      assertEquals(mapper.toJson(map), json);
+      // gson deserialized numbers to double, so integers end up changed to fractions
+      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newStringPayload(json))),
+            ImmutableMap.<String, Object> of("list", ImmutableList.of(8431d, 8433d)));
+      
+      assertEquals(mapper.toJson(ImmutableMap.<String, Object> of("list", ImmutableList.of(8431, 8433))), json);
 
    }
 
@@ -86,9 +88,9 @@ public class JsonObjectTest {
    }
 
    public void testNumber() {
-      String json = "{\"number\":1}";
+      String json = "{\"number\":1.0}";
 
-      Map<String, Object> map = ImmutableMap.<String, Object> of("number", 1);
+      Map<String, Object> map = ImmutableMap.<String, Object> of("number", 1d);
 
       assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newStringPayload(json))), map);
       assertEquals(mapper.toJson(map), json);

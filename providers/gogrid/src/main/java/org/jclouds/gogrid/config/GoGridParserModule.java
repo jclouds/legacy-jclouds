@@ -35,6 +35,7 @@ import org.jclouds.gogrid.domain.ServerImageType;
 import org.jclouds.gogrid.domain.ServerState;
 import org.jclouds.gogrid.functions.internal.CustomDeserializers;
 import org.jclouds.json.config.GsonModule.DateAdapter;
+import org.jclouds.json.config.GsonModule.LongDateAdapter;
 
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
@@ -68,7 +69,7 @@ public class GoGridParserModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(DateAdapter.class).to(DateSecondsAdapter.class);
+      bind(DateAdapter.class).to(LongDateAdapter.class);
    }
 
 }

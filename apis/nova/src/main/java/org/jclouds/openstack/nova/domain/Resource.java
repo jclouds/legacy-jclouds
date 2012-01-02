@@ -67,7 +67,11 @@ public class Resource {
        };
    }
 
-   private final ConcurrentSkipListMap<LinkType,URI> orderedSelfReferences = new ConcurrentSkipListMap<LinkType,URI>();
+   private final ConcurrentSkipListMap<LinkType,URI> orderedSelfReferences;
+
+   public Resource(){
+      orderedSelfReferences = new ConcurrentSkipListMap<LinkType,URI>();
+   }
 
    private void populateOrderedSelfReferences() {
       for (Map<String, String> linkProperties : links) {

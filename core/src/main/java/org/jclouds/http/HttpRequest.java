@@ -39,32 +39,32 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 public class HttpRequest extends HttpMessage {
-   public static Builder<? extends HttpRequest> builder() {
-      return new Builder<HttpRequest>();
+   public static Builder builder() {
+      return new Builder();
    }
 
-   public static class Builder<T extends HttpRequest> extends HttpMessage.Builder<T> {
+   public static class Builder extends HttpMessage.Builder {
       protected String method;
       protected URI endpoint;
       protected char[] skips = new char[] {};
       protected List<HttpRequestFilter> requestFilters = ImmutableList.of();
 
-      public Builder<T> filters(List<HttpRequestFilter> requestFilters) {
+      public Builder filters(List<HttpRequestFilter> requestFilters) {
          this.requestFilters = ImmutableList.copyOf(checkNotNull(requestFilters, "requestFilters"));
          return this;
       }
 
-      public Builder<T> method(String method) {
+      public Builder method(String method) {
          this.method = checkNotNull(method, "method");
          return this;
       }
 
-      public Builder<T> endpoint(URI endpoint) {
+      public Builder endpoint(URI endpoint) {
          this.endpoint = checkNotNull(endpoint, "endpoint");
          return this;
       }
 
-      public Builder<T> skips(char[] skips) {
+      public Builder skips(char[] skips) {
          char[] retval = new char[checkNotNull(skips, "skips").length];
          System.arraycopy(skips, 0, retval, 0, skips.length);
          this.skips = retval;
@@ -72,23 +72,22 @@ public class HttpRequest extends HttpMessage {
       }
 
       @Override
-      public Builder<T> payload(Payload payload) {
-         return (Builder<T>) super.payload(payload);
+      public Builder payload(Payload payload) {
+         return (Builder) super.payload(payload);
       }
 
       @Override
-      public Builder<T> headers(Multimap<String, String> headers) {
-         return (Builder<T>) super.headers(headers);
+      public Builder headers(Multimap<String, String> headers) {
+         return (Builder) super.headers(headers);
       }
 
       @Override
-      @SuppressWarnings("unchecked")
-      public T build() {
-         return (T) new HttpRequest(method, endpoint, skips, requestFilters, payload, headers);
+      public HttpRequest build() {
+         return new HttpRequest(method, endpoint, skips, requestFilters, payload, headers);
       }
 
-      public static <X extends HttpRequest> Builder<X> from(X input) {
-         return new Builder<X>().method(input.getMethod()).endpoint(input.getEndpoint()).skips(input.getSkips())
+      public static Builder from(HttpRequest input) {
+         return new Builder().method(input.getMethod()).endpoint(input.getEndpoint()).skips(input.getSkips())
                   .filters(input.getFilters()).payload(input.getPayload()).headers(input.getHeaders());
       }
 
@@ -189,7 +188,7 @@ public class HttpRequest extends HttpMessage {
    }
 
    @Override
-   public Builder<? extends HttpRequest> toBuilder() {
+   public Builder toBuilder() {
       return Builder.from(this);
    }
 

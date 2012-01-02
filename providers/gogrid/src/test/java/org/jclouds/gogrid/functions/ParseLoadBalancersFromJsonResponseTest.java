@@ -28,7 +28,6 @@ import java.util.SortedSet;
 
 import javax.inject.Singleton;
 
-import org.jclouds.gogrid.config.DateSecondsAdapter;
 import org.jclouds.gogrid.domain.Ip;
 import org.jclouds.gogrid.domain.IpPortPair;
 import org.jclouds.gogrid.domain.IpState;
@@ -79,7 +78,7 @@ public class ParseLoadBalancersFromJsonResponseTest {
    Injector i = Guice.createInjector(new GsonModule() {
       @Override
       protected void configure() {
-         bind(DateAdapter.class).to(DateSecondsAdapter.class);
+         bind(DateAdapter.class).to(LongDateAdapter.class);
          super.configure();
       }
 

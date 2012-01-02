@@ -1,21 +1,19 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Copyright (C) 2010 Google Inc.
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package com.google.gson.stream;
 
 import java.io.Closeable;
@@ -24,7 +22,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.JsonLiteral;
+import org.jclouds.json.internal.JsonLiteral;
+
 
 /**
  * Writes a JSON (<a href="http://www.ietf.org/rfc/rfc4627.txt">RFC 4627</a>)
@@ -124,7 +123,7 @@ import com.google.gson.JsonLiteral;
  * @author Jesse Wilson
  * @since 1.6
  */
-public final class JsonWriter implements Closeable {
+public class JsonWriter implements Closeable {
 
   /** The output data, containing at most one top-level array or object. */
   private final Writer out;
@@ -149,6 +148,10 @@ public final class JsonWriter implements Closeable {
 
   private boolean htmlSafe;
 
+  private String deferredName;
+
+  private boolean serializeNulls = true;
+
   /**
    * Creates a new instance that writes a JSON-encoded stream to {@code out}.
    * For best performance, ensure {@link Writer} is buffered; wrapping in
@@ -169,7 +172,7 @@ public final class JsonWriter implements Closeable {
    *
    * @param indent a string containing only whitespace.
    */
-  public void setIndent(String indent) {
+  public final void setIndent(String indent) {
     if (indent.length() == 0) {
       this.indent = null;
       this.separator = ":";
@@ -191,7 +194,7 @@ public final class JsonWriter implements Closeable {
    *       Double#isInfinite() infinities}.
    * </ul>
    */
-  public void setLenient(boolean lenient) {
+  public final void setLenient(boolean lenient) {
     this.lenient = lenient;
   }
 
@@ -209,7 +212,7 @@ public final class JsonWriter implements Closeable {
    * setting, your XML/HTML encoder should replace these characters with the
    * corresponding escape sequences.
    */
-  public void setHtmlSafe(boolean htmlSafe) {
+  public final void setHtmlSafe(boolean htmlSafe) {
     this.htmlSafe = htmlSafe;
   }
 
@@ -217,8 +220,24 @@ public final class JsonWriter implements Closeable {
    * Returns true if this writer writes JSON that's safe for inclusion in HTML
    * and XML documents.
    */
-  public boolean isHtmlSafe() {
+  public final boolean isHtmlSafe() {
     return htmlSafe;
+  }
+
+  /**
+   * Sets whether object members are serialized when their value is null.
+   * This has no impact on array elements. The default is true.
+   */
+  public final void setSerializeNulls(boolean serializeNulls) {
+    this.serializeNulls = serializeNulls;
+  }
+
+  /**
+   * Returns true if object members are serialized when their value is null.
+   * This has no impact on array elements. The default is true.
+   */
+  public final boolean getSerializeNulls() {
+    return serializeNulls;
   }
 
   /**
@@ -228,6 +247,7 @@ public final class JsonWriter implements Closeable {
    * @return this writer.
    */
   public JsonWriter beginArray() throws IOException {
+    writeDeferredName();
     return open(JsonScope.EMPTY_ARRAY, "[");
   }
 
@@ -247,6 +267,7 @@ public final class JsonWriter implements Closeable {
    * @return this writer.
    */
   public JsonWriter beginObject() throws IOException {
+    writeDeferredName();
     return open(JsonScope.EMPTY_OBJECT, "{");
   }
 
@@ -279,6 +300,9 @@ public final class JsonWriter implements Closeable {
     JsonScope context = peek();
     if (context != nonempty && context != empty) {
       throw new IllegalStateException("Nesting problem: " + stack);
+    }
+    if (deferredName != null) {
+      throw new IllegalStateException("Dangling name: " + deferredName);
     }
 
     stack.remove(stack.size() - 1);
@@ -313,9 +337,19 @@ public final class JsonWriter implements Closeable {
     if (name == null) {
       throw new NullPointerException("name == null");
     }
-    beforeName();
-    string(name);
+    if (deferredName != null) {
+      throw new IllegalStateException();
+    }
+    deferredName = name;
     return this;
+  }
+
+  private void writeDeferredName() throws IOException {
+    if (deferredName != null) {
+      beforeName();
+      string(deferredName);
+      deferredName = null;
+    }
   }
 
   /**
@@ -328,6 +362,7 @@ public final class JsonWriter implements Closeable {
     if (value == null) {
       return nullValue();
     }
+    writeDeferredName();
     beforeValue(false);
     string(value);
     return this;
@@ -339,29 +374,42 @@ public final class JsonWriter implements Closeable {
    * @return this writer.
    */
   public JsonWriter nullValue() throws IOException {
+    if (deferredName != null) {
+      if (serializeNulls) {
+        writeDeferredName();
+      } else {
+        deferredName = null;
+        return this; // skip the name and the value
+      }
+    }
     beforeValue(false);
     out.write("null");
     return this;
   }
 //BEGIN JCLOUDS PATCH
-// * @see <a href="http://code.google.com/p/google-gson/issues/detail?id=326"/>
+//* @see <a href="http://code.google.com/p/google-gson/issues/detail?id=326"/>
   /**
    * Writes {@code value} literally
-   *
+   * 
    * @return this writer.
    */
   public JsonWriter value(JsonLiteral value) throws IOException {
-    beforeValue(false);
-    out.write(value.toString());
-    return this;
+     if (value == null) {
+        return nullValue();
+     }
+     writeDeferredName();
+     beforeValue(false);
+     out.write(value.toString());
+     return this;
   }
-  //END JCLOUDS PATCH
+//END JCLOUDS PATCH
   /**
    * Encodes {@code value}.
    *
    * @return this writer.
    */
   public JsonWriter value(boolean value) throws IOException {
+    writeDeferredName();
     beforeValue(false);
     out.write(value ? "true" : "false");
     return this;
@@ -378,6 +426,7 @@ public final class JsonWriter implements Closeable {
     if (Double.isNaN(value) || Double.isInfinite(value)) {
       throw new IllegalArgumentException("Numeric values must be finite, but was " + value);
     }
+    writeDeferredName();
     beforeValue(false);
     out.append(Double.toString(value));
     return this;
@@ -389,6 +438,7 @@ public final class JsonWriter implements Closeable {
    * @return this writer.
    */
   public JsonWriter value(long value) throws IOException {
+    writeDeferredName();
     beforeValue(false);
     out.write(Long.toString(value));
     return this;
@@ -406,6 +456,7 @@ public final class JsonWriter implements Closeable {
       return nullValue();
     }
 
+    writeDeferredName();
     String string = value.toString();
     if (!lenient
         && (string.equals("-Infinity") || string.equals("Infinity") || string.equals("NaN"))) {
@@ -447,6 +498,10 @@ public final class JsonWriter implements Closeable {
        * quotation marks except for the characters that must be escaped:
        * quotation mark, reverse solidus, and the control characters
        * (U+0000 through U+001F)."
+       *
+       * We also escape '\u2028' and '\u2029', which JavaScript interprets as
+       * newline characters. This prevents eval() from failing with a syntax
+       * error. http://code.google.com/p/google-gson/issues/detail?id=341
        */
       switch (c) {
       case '"':
@@ -485,6 +540,11 @@ public final class JsonWriter implements Closeable {
         } else {
           out.write(c);
         }
+        break;
+
+      case '\u2028':
+      case '\u2029':
+        out.write(String.format("\\u%04x", (int) c));
         break;
 
       default:

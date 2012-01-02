@@ -18,14 +18,13 @@
  */
 package org.jclouds.json.config;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -36,6 +35,7 @@ import org.jclouds.domain.JsonBall;
 import org.jclouds.json.Json;
 import org.jclouds.json.internal.EnumTypeAdapterThatReturnsFromValue;
 import org.jclouds.json.internal.GsonWrapper;
+import org.jclouds.json.internal.JsonLiteral;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -46,13 +46,14 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonLiteral;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.google.gson.ObjectMapTypeAdapter;
+import com.google.gson.TypeAdapter;
+import com.google.gson.internal.JsonReaderInternalAccess;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import com.google.inject.AbstractModule;
 import com.google.inject.ImplementedBy;
 import com.google.inject.Provides;
@@ -69,21 +70,25 @@ public class GsonModule extends AbstractModule {
    @Provides
    @Singleton
    Gson provideGson(JsonBallAdapter jsonAdapter, DateAdapter adapter, ByteListAdapter byteListAdapter,
-            ByteArrayAdapter byteArrayAdapter, SerializePropertiesDefaults propertiesAdapter,
-            JsonAdapterBindings bindings) throws ClassNotFoundException, Exception {
+         ByteArrayAdapter byteArrayAdapter, PropertiesAdapter propertiesAdapter, JsonAdapterBindings bindings)
+         throws ClassNotFoundException, Exception {
       GsonBuilder builder = new GsonBuilder();
-      Logger.getLogger("com.google.gson.ParameterizedTypeHandlerMap").setLevel(Level.OFF);
-      builder.registerTypeHierarchyAdapter(Enum.class, new EnumTypeAdapterThatReturnsFromValue());
-      builder.registerTypeHierarchyAdapter(Map.class, new ObjectMapTypeAdapter());
-      builder.registerTypeAdapter(JsonBall.class, jsonAdapter);
-      builder.registerTypeAdapter(Date.class, adapter);
-      builder.registerTypeAdapter(Properties.class, propertiesAdapter);
+
+      // simple (type adapters)
+      builder.registerTypeAdapter(Properties.class, propertiesAdapter.nullSafe());
+      builder.registerTypeAdapter(Date.class, adapter.nullSafe());
       builder.registerTypeAdapter(new TypeToken<List<Byte>>() {
-      }.getType(), byteListAdapter);
-      builder.registerTypeAdapter(byte[].class, byteArrayAdapter);
+      }.getType(), byteListAdapter.nullSafe());
+      builder.registerTypeAdapter(byte[].class, byteArrayAdapter.nullSafe());
+
+      // complicated (serializers/deserializers as they need context to operate)
+      builder.registerTypeHierarchyAdapter(Enum.class, new EnumTypeAdapterThatReturnsFromValue());
+      builder.registerTypeAdapter(JsonBall.class, jsonAdapter);
+
       for (Map.Entry<Type, Object> binding : bindings.getBindings().entrySet()) {
          builder.registerTypeAdapter(binding.getKey(), binding.getValue());
       }
+      
       return builder.create();
    }
 
@@ -101,74 +106,74 @@ public class GsonModule extends AbstractModule {
       }
 
       public JsonBall deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-               throws JsonParseException {
+            throws JsonParseException {
          return new JsonBall(json.toString());
       }
 
    }
 
    @ImplementedBy(CDateAdapter.class)
-   public static interface DateAdapter extends JsonSerializer<Date>, JsonDeserializer<Date> {
+   public static abstract class DateAdapter extends TypeAdapter<Date> {
 
    }
 
    @ImplementedBy(HexByteListAdapter.class)
-   public static interface ByteListAdapter extends JsonSerializer<List<Byte>>, JsonDeserializer<List<Byte>> {
+   public static abstract class ByteListAdapter extends TypeAdapter<List<Byte>> {
 
    }
 
    @ImplementedBy(HexByteArrayAdapter.class)
-   public static interface ByteArrayAdapter extends JsonSerializer<byte[]>, JsonDeserializer<byte[]> {
+   public static abstract class ByteArrayAdapter extends TypeAdapter<byte[]> {
 
    }
 
    @Singleton
-   public static class HexByteListAdapter implements ByteListAdapter {
+   public static class HexByteListAdapter extends ByteListAdapter {
 
       @Override
-      public List<Byte> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-               throws JsonParseException {
-         return Bytes.asList(CryptoStreams.hex(json.getAsString()));
+      public void write(JsonWriter writer, List<Byte> value) throws IOException {
+         writer.value(CryptoStreams.hex(Bytes.toArray(value)));
       }
 
       @Override
-      public JsonElement serialize(List<Byte> src, Type typeOfSrc, JsonSerializationContext context) {
-         return new JsonPrimitive(CryptoStreams.hex(Bytes.toArray(src)));
+      public List<Byte> read(JsonReader reader) throws IOException {
+         return Bytes.asList(CryptoStreams.hex(reader.nextString()));
       }
 
    }
 
    @Singleton
-   public static class HexByteArrayAdapter implements ByteArrayAdapter {
+   public static class HexByteArrayAdapter extends ByteArrayAdapter {
 
       @Override
-      public byte[] deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-               throws JsonParseException {
-         return CryptoStreams.hex(json.getAsString());
+      public void write(JsonWriter writer, byte[] value) throws IOException {
+         writer.value(CryptoStreams.hex(value));
       }
 
       @Override
-      public JsonElement serialize(byte[] src, Type typeOfSrc, JsonSerializationContext context) {
-         return new JsonPrimitive(CryptoStreams.hex(src));
+      public byte[] read(JsonReader reader) throws IOException {
+         return CryptoStreams.hex(reader.nextString());
       }
    }
 
    @Singleton
-   public static class Iso8601DateAdapter implements DateAdapter {
+   public static class Iso8601DateAdapter extends DateAdapter {
       private final DateService dateService;
 
       @Inject
-      private Iso8601DateAdapter(DateService dateService) {
+      public Iso8601DateAdapter(DateService dateService) {
          this.dateService = dateService;
       }
 
-      public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
-         return new JsonPrimitive(dateService.iso8601DateFormat(src));
+      public void write(JsonWriter writer, Date value) throws IOException {
+         writer.value(dateService.iso8601DateFormat(value));
       }
 
-      public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-               throws JsonParseException {
-         String toParse = json.getAsJsonPrimitive().getAsString();
+      public Date read(JsonReader reader) throws IOException {
+         return parseDate(reader.nextString());
+      }
+
+      protected Date parseDate(String toParse) {
          try {
             return dateService.iso8601DateParse(toParse);
          } catch (RuntimeException e) {
@@ -179,63 +184,71 @@ public class GsonModule extends AbstractModule {
    }
 
    @Singleton
-   public static class SerializePropertiesDefaults implements JsonSerializer<Properties> {
+   public static class PropertiesAdapter extends TypeAdapter<Properties> {
       private final Json json;
       private final Type mapType = new TypeLiteral<Map<String, String>>() {
       }.getRawType();
 
       @Inject
-      public SerializePropertiesDefaults(Json json) {
+      public PropertiesAdapter(Json json) {
          this.json = json;
       }
-
-      public JsonElement serialize(Properties src, Type typeOfSrc, JsonSerializationContext context) {
+      
+      @Override
+      public void write(JsonWriter out, Properties value) throws IOException {
          Builder<String, String> srcMap = ImmutableMap.<String, String> builder();
-         for (Enumeration<?> propNames = src.propertyNames(); propNames.hasMoreElements();) {
+         for (Enumeration<?> propNames = value.propertyNames(); propNames.hasMoreElements();) {
             String propName = (String) propNames.nextElement();
-            srcMap.put(propName, src.getProperty(propName));
+            srcMap.put(propName, value.getProperty(propName));
          }
-         return new JsonLiteral(json.toJson(srcMap.build(), mapType));
+         out.value(new JsonLiteral(json.toJson(srcMap.build(), mapType)));
+      }
+
+      @Override
+      public Properties read(JsonReader in) throws IOException {
+         Properties props = new Properties();
+         in.beginObject();
+         while (in.hasNext()) {
+           JsonReaderInternalAccess.INSTANCE.promoteNameToValue(in);
+           props.setProperty(in.nextString(), in.nextString());
+         }
+         in.endObject();
+         return props;
       }
 
    }
 
    @Singleton
-   public static class CDateAdapter implements DateAdapter {
+   public static class CDateAdapter extends DateAdapter {
       private final DateService dateService;
 
       @Inject
-      private CDateAdapter(DateService dateService) {
+      public CDateAdapter(DateService dateService) {
          this.dateService = dateService;
       }
 
-      public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
-         return new JsonPrimitive(dateService.cDateFormat(src));
+      public void write(JsonWriter writer, Date value) throws IOException {
+         writer.value(dateService.cDateFormat(value));
       }
 
-      public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-               throws JsonParseException {
-         String toParse = json.getAsJsonPrimitive().getAsString();
-         Date toReturn = dateService.cDateParse(toParse);
-         return toReturn;
+      public Date read(JsonReader reader) throws IOException {
+         return dateService.cDateParse(reader.nextString());
       }
 
    }
 
    @Singleton
-   public static class LongDateAdapter implements DateAdapter {
+   public static class LongDateAdapter extends DateAdapter {
 
-      public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
-         return new JsonPrimitive(src.getTime());
+      public void write(JsonWriter writer, Date value) throws IOException {
+         writer.value(value.getTime());
       }
 
-      public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-               throws JsonParseException {
-         long toParse = json.getAsJsonPrimitive().getAsLong();
+      public Date read(JsonReader reader) throws IOException {
+         long toParse = reader.nextLong();
          if (toParse == -1)
             return null;
-         Date toReturn = new Date(toParse);
-         return toReturn;
+         return new Date(toParse);
       }
    }
 
