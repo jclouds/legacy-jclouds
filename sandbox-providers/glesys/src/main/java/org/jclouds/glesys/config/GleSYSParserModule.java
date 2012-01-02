@@ -18,19 +18,20 @@
  */
 package org.jclouds.glesys.config;
 
+import java.lang.reflect.Type;
+import java.util.Map;
+
+import javax.inject.Singleton;
+
+import org.jclouds.glesys.domain.ServerState;
+import org.jclouds.glesys.domain.ServerUptime;
+import org.jclouds.glesys.functions.internal.GleSYSTypeAdapters;
+import org.jclouds.glesys.functions.internal.GlesysDateAdapter;
+import org.jclouds.json.config.GsonModule.DateAdapter;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import org.jclouds.glesys.domain.ServerState;
-import org.jclouds.glesys.domain.ServerUptime;
-import org.jclouds.glesys.functions.internal.CustomDeserializers;
-import org.jclouds.glesys.functions.internal.GlesysDateAdapter;
-import org.jclouds.json.config.GsonModule;
-import org.jclouds.json.config.GsonModule.DateAdapter;
-
-import javax.inject.Singleton;
-import java.lang.reflect.Type;
-import java.util.Map;
 
 /**
  * @author Adrian Cole
@@ -40,10 +41,8 @@ public class GleSYSParserModule extends AbstractModule {
    @Provides
    @Singleton
    public Map<Type, Object> provideCustomAdapterBindings() {
-      return ImmutableMap.<Type, Object>of(
-            ServerState.class, new CustomDeserializers.ServerStateAdapter(),
-            ServerUptime.class, new CustomDeserializers.ServerUptimeAdaptor()
-      );
+      return ImmutableMap.<Type, Object> of(ServerState.class, new GleSYSTypeAdapters.ServerStateAdapter(),
+               ServerUptime.class, new GleSYSTypeAdapters.ServerUptimeAdapter());
    }
 
    @Override
