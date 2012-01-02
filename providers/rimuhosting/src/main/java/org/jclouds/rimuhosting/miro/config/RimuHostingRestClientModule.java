@@ -18,7 +18,7 @@
  */
 package org.jclouds.rimuhosting.miro.config;
 
-import java.lang.reflect.Type;
+import java.io.IOException;
 import java.util.Date;
 
 import javax.inject.Inject;
@@ -26,17 +26,16 @@ import javax.inject.Singleton;
 
 import org.jclouds.date.DateService;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.json.Json;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.json.config.GsonModule.DateAdapter;
+import org.jclouds.json.config.GsonModule.PropertiesAdapter;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rimuhosting.miro.RimuHostingAsyncClient;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 
 /**
  * 
@@ -57,29 +56,25 @@ public class RimuHostingRestClientModule extends RestClientModule<RimuHostingCli
    }
 
    @Singleton
-   public static class RimuIso8601DateAdapter implements DateAdapter {
+   public static class RimuIso8601DateAdapter extends GsonModule.DateAdapter {
       private final DateService dateService;
-      private final Json json;
-
-      private static class DateHolder {
-         String iso_format;
-      }
+      private final PropertiesAdapter propertiesAdapter;
 
       @Inject
-      private RimuIso8601DateAdapter(DateService dateService, Json json) {
+      private RimuIso8601DateAdapter(DateService dateService, PropertiesAdapter propertiesAdapter) {
          this.dateService = dateService;
-         this.json = json;
+         this.propertiesAdapter = propertiesAdapter;
       }
 
-      public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
+      public void write(JsonWriter writer, Date value) throws IOException {
          throw new UnsupportedOperationException();
       }
 
-      public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-               throws JsonParseException {
-         String toParse = json.toString();
-         DateHolder dateHolder = this.json.fromJson(toParse, DateHolder.class);
-         return (dateHolder.iso_format != null) ? dateService.iso8601SecondsDateParse(dateHolder.iso_format) : null;
+      public Date read(JsonReader in) throws IOException {
+         String isoFormat = propertiesAdapter.read(in).getProperty("iso_format");
+         if (isoFormat != null)
+            return dateService.iso8601SecondsDateParse(isoFormat);
+         return null;
       }
 
    }

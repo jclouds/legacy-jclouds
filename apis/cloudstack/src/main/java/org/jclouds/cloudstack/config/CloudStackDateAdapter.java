@@ -18,17 +18,15 @@
  */
 package org.jclouds.cloudstack.config;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import org.jclouds.date.DateService;
-import org.jclouds.json.config.GsonModule;
+import java.io.IOException;
+import java.util.Date;
 
 import javax.inject.Inject;
-import java.lang.reflect.Type;
-import java.util.Date;
+
+import org.jclouds.date.DateService;
+import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
+
+import com.google.gson.stream.JsonReader;
 
 /**
  * Data adapter for the date formats used by CloudStack.
@@ -39,27 +37,15 @@ import java.util.Date;
  *
  * @author Richard Downer
  */
-public class CloudStackDateAdapter implements GsonModule.DateAdapter {
-   private final DateService dateService;
+public class CloudStackDateAdapter extends Iso8601DateAdapter {
 
    @Inject
    private CloudStackDateAdapter(DateService dateService) {
-      this.dateService = dateService;
+      super(dateService);
    }
 
-   public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
-      return new JsonPrimitive(dateService.iso8601DateFormat(src));
-   }
-
-   public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
-      String toParse = json.getAsJsonPrimitive().getAsString();
-      toParse = toParse.replaceAll("'T'", "T");
-      try {
-         return dateService.iso8601DateParse(toParse);
-      } catch (RuntimeException e) {
-         return dateService.iso8601SecondsDateParse(toParse);
-      }
+   public Date read(JsonReader reader) throws IOException {
+      return parseDate(reader.nextString().replaceAll("'T'", "T"));
    }
 
 }

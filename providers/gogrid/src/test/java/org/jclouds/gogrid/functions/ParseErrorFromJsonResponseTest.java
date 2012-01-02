@@ -21,7 +21,6 @@ package org.jclouds.gogrid.functions;
 import java.io.InputStream;
 import java.net.UnknownHostException;
 
-import org.jclouds.gogrid.config.DateSecondsAdapter;
 import org.jclouds.gogrid.domain.internal.ErrorResponse;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
@@ -42,7 +41,7 @@ public class ParseErrorFromJsonResponseTest {
    Injector i = Guice.createInjector(new GsonModule() {
       @Override
       protected void configure() {
-         bind(DateAdapter.class).to(DateSecondsAdapter.class);
+         bind(DateAdapter.class).to(LongDateAdapter.class);
          super.configure();
       }
    });

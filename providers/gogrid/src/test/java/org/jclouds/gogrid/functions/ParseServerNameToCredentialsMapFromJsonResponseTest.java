@@ -28,7 +28,6 @@ import java.util.Map;
 import javax.inject.Singleton;
 
 import org.jclouds.domain.Credentials;
-import org.jclouds.gogrid.config.DateSecondsAdapter;
 import org.jclouds.gogrid.domain.IpState;
 import org.jclouds.gogrid.domain.ServerImageState;
 import org.jclouds.gogrid.domain.ServerImageType;
@@ -65,7 +64,7 @@ public class ParseServerNameToCredentialsMapFromJsonResponseTest {
    Injector i = Guice.createInjector(new GsonModule() {
       @Override
       protected void configure() {
-         bind(DateAdapter.class).to(DateSecondsAdapter.class);
+         bind(DateAdapter.class).to(LongDateAdapter.class);
          super.configure();
       }
 
