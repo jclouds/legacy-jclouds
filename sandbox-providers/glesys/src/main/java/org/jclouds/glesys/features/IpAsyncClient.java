@@ -18,20 +18,23 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import org.jclouds.glesys.domain.IpDetails;
-import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SelectJson;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
-import java.util.Set;
+
+import org.jclouds.glesys.domain.IpDetails;
+import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides asynchronous access to IP Addresses via their REST API.
@@ -64,7 +67,7 @@ public interface IpAsyncClient {
    @Path("/ip/details/ipaddress/{ipaddress}/format/json")
    @Consumes(MediaType.APPLICATION_JSON)
    @SelectJson("details")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<IpDetails> getIpDetails(@PathParam("ipaddress") String ipAddress);
 
 }
