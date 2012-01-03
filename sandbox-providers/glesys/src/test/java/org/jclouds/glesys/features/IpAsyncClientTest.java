@@ -18,6 +18,12 @@
  */
 package org.jclouds.glesys.features;
 
+import java.io.IOException;
+import java.lang.reflect.Method;
+
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.functions.ParseFirstJsonValueNamed;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -30,6 +36,22 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit", testName = "IpAsyncClientTest")
 public class IpAsyncClientTest extends BaseGleSYSAsyncClientTest<IpAsyncClient> {
+
+   public void testGetIpDetails() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = IpAsyncClient.class.getMethod("getIpDetails", String.class);
+      HttpRequest request = processor.createRequest(method, "31.192.227.37");
+
+      assertRequestLineEquals(request,
+               "GET https://api.glesys.com/ip/details/ipaddress/31.192.227.37/format/json HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
+      assertPayloadEquals(request, null, "application/xml", false);
+
+      assertResponseParserClassEquals(method, request, ParseFirstJsonValueNamed.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
 
    @Override
    protected TypeLiteral<RestAnnotationProcessor<IpAsyncClient>> createTypeLiteral() {
