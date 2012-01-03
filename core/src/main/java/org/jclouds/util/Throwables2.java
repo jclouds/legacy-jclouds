@@ -80,12 +80,15 @@ public class Throwables2 {
             return (Exception) throwable;
          }
       }
-      for (Class<Exception> propagatableExceptionType : new Class[] { IllegalStateException.class,
+      for (Class<Exception> propagatableExceptionType : new Class[] { IllegalStateException.class, AssertionError.class,
                UnsupportedOperationException.class, IllegalArgumentException.class, AuthorizationException.class,
                ResourceNotFoundException.class, InsufficientResourcesException.class, HttpResponseException.class }) {
          Throwable throwable = getFirstThrowableOfType(exception, propagatableExceptionType);
          if (throwable != null) {
-            throw (Exception) throwable;
+            if (throwable instanceof AssertionError)
+               throw (AssertionError) throwable;
+            else
+               throw (Exception) throwable;
          }
       }
       Throwables.propagateIfPossible(exception.getCause(), Exception.class);

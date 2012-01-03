@@ -71,20 +71,13 @@ public class RestContextSpec<S, A> {
                (Class) RestContextBuilder.class, EMPTY_LIST);
    }
 
-   /**
-    * this uses the inefficient {@link Objects} implementation as the object count will be
-    * relatively small and therefore efficiency is not a concern.
-    */
+
    @Override
    public int hashCode() {
       return Objects.hashCode(provider, endpoint, apiVersion, iso3166Codes, identity, credential, sync, async,
                propertiesBuilderClass, contextBuilderClass, modules);
    }
 
-   /**
-    * this uses the inefficient {@link Objects} implementation as the object count will be
-    * relatively small and therefore efficiency is not a concern.
-    */
    @Override
    public boolean equals(Object that) {
       if (that == null)
@@ -92,10 +85,6 @@ public class RestContextSpec<S, A> {
       return Objects.equal(this.toString(), that.toString());
    }
 
-   /**
-    * this uses the inefficient {@link Objects} implementation as the object count will be
-    * relatively small and therefore efficiency is not a concern.
-    */
    @Override
    public String toString() {
       return Objects.toStringHelper(this).add("provider", provider).add("endpoint", endpoint).add("apiVersion",

@@ -35,8 +35,8 @@ import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.CryptoStreams;
+import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.io.MutableContentMetadata;
@@ -65,13 +65,13 @@ public abstract class BaseRestClientTest {
    @ConfiguresHttpCommandExecutorService
    @ConfiguresExecutorService
    public static class MockModule extends AbstractModule {
-      private final TransformingHttpCommandExecutorService mock;
+      private final HttpCommandExecutorService mock;
 
       public MockModule() {
-         this(createMock(TransformingHttpCommandExecutorService.class));
+         this(createMock(HttpCommandExecutorService.class));
       }
 
-      public MockModule(TransformingHttpCommandExecutorService mock) {
+      public MockModule(HttpCommandExecutorService mock) {
          this.mock = mock;
       }
 
@@ -81,7 +81,7 @@ public abstract class BaseRestClientTest {
                MoreExecutors.sameThreadExecutor());
          bind(ExecutorService.class).annotatedWith(Names.named(Constants.PROPERTY_IO_WORKER_THREADS)).toInstance(
                MoreExecutors.sameThreadExecutor());
-         bind(TransformingHttpCommandExecutorService.class).toInstance(mock);
+         bind(HttpCommandExecutorService.class).toInstance(mock);
       }
    }
 

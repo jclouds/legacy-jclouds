@@ -116,6 +116,12 @@ public class Throwables2Test {
       returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
    }
 
+   @Test(expectedExceptions = AssertionError.class)
+   public void testPropagateStandardExceptionAssertionError() throws Exception {
+      AssertionError e = new AssertionError();
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
+   }
+
    @Test(expectedExceptions = AuthorizationException.class)
    public void testPropagateStandardExceptionAuthorizationException() throws Exception {
       Exception e = new AuthorizationException();

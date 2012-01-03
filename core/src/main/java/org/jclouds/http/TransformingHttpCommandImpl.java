@@ -29,6 +29,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -142,6 +143,20 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
    @Override
    public void setCurrentRequest(HttpRequest request) {
       this.request = request;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(request);
+   }
+
+   @Override
+   public boolean equals(Object that) {
+      if (that == null)
+         return false;
+      if (!(that instanceof HttpCommand))
+         return false;
+      return Objects.equal(this.request, HttpCommand.class.cast(that).getCurrentRequest());
    }
 
    @Override
