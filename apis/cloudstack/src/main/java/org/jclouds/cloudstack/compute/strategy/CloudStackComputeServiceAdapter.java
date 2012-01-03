@@ -24,6 +24,7 @@ import static com.google.common.base.Predicates.and;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.jclouds.cloudstack.options.DeployVirtualMachineOptions.Builder.displayName;
+import static org.jclouds.cloudstack.predicates.NetworkPredicates.defaultNetworkInZone;
 import static org.jclouds.cloudstack.predicates.NetworkPredicates.supportsStaticNAT;
 import static org.jclouds.cloudstack.predicates.TemplatePredicates.isReady;
 
@@ -36,11 +37,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.common.collect.Iterables;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
+import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.ServiceOffering;
 import org.jclouds.cloudstack.domain.Template;
@@ -118,29 +121,40 @@ public class CloudStackComputeServiceAdapter implements
       Map<Long, Network> networks = networkSupplier.get();
 
       final long zoneId = Long.parseLong(template.getLocation().getId());
+      Zone zone = client.getZoneClient().getZone(zoneId);
 
       CloudStackTemplateOptions templateOptions = template.getOptions().as(CloudStackTemplateOptions.class);
 
       DeployVirtualMachineOptions options = displayName(name).name(name);
-      if (templateOptions.getSecurityGroupIds().size() > 0) {
-         options.securityGroupIds(templateOptions.getSecurityGroupIds());
-      } else if (templateOptions.getNetworkIds().size() > 0) {
-         options.networkIds(templateOptions.getNetworkIds());
-      } else if (networks.size() > 0) {
-         try {
-            options.networkId(getOnlyElement(filter(networks.values(), and(new Predicate<Network>() {
-
-               @Override
-               public boolean apply(Network arg0) {
-                  return arg0.getZoneId() == zoneId && arg0.isDefault();
-               }
-
-            }, supportsStaticNAT()))).getId());
-         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("please choose a specific network in zone " + zoneId + ": " + networks);
+      if (zone.getNetworkType() == NetworkType.ADVANCED) {
+         // security groups not allowed.
+         // at least one network must be given to CloudStack,
+         // but jclouds will try to autodetect an appropriate network if none given.
+         if (templateOptions.getSecurityGroupIds().size() > 0) {
+            throw new IllegalArgumentException("security groups cannot be specified for locations (zones) that use advanced networking");
          }
-      } else {
-         throw new IllegalArgumentException("please setup a network or security group for zone: " + zoneId);
+         if (templateOptions.getNetworkIds().size() > 0) {
+            options.networkIds(templateOptions.getNetworkIds());
+         } else {
+            if (networks.size() == 0) {
+               throw new IllegalArgumentException("please setup a network for zone: " + zoneId);
+            }
+            Network defaultNetworkInZone = Iterables.getFirst(filter(networks.values(), and(defaultNetworkInZone(zoneId), supportsStaticNAT())), null);
+            if(defaultNetworkInZone == null) {
+               throw new IllegalArgumentException("please choose a specific network in zone " + zoneId + ": " + networks);
+            } else {
+               options.networkId(defaultNetworkInZone.getId());
+            }
+         }
+      } else if(zone.getNetworkType() == NetworkType.BASIC) {
+         // both security groups and networks are optional, and CloudStack will
+         // use the zone/user's default network/security group if none given
+         if (templateOptions.getSecurityGroupIds().size() > 0) {
+            options.securityGroupIds(templateOptions.getSecurityGroupIds());
+         }
+         if (templateOptions.getNetworkIds().size() > 0) {
+            options.networkIds(templateOptions.getNetworkIds());
+         }
       }
 
       if (templateOptions.getIpOnDefaultNetwork() != null) {
