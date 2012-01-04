@@ -18,17 +18,18 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.common.base.Predicate;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.glesys.domain.DomainRecord;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import static org.testng.Assert.assertTrue;
+import com.google.common.base.Predicate;
 
 /**
  * Tests behavior of {@code DomainClient}
@@ -75,7 +76,6 @@ public class DomainClientLiveTest extends BaseGleSYSClientLiveTest {
    }
 
    private DomainClient client;
-   private String testRecordId;
    private RetryablePredicate<Integer> domainCounter;
    private RetryablePredicate<Integer> recordCounter;
 

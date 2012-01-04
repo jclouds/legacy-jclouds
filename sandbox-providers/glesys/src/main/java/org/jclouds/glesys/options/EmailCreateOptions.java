@@ -1,11 +1,6 @@
 package org.jclouds.glesys.options;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Objects;
-import com.google.gson.annotations.SerializedName;
 import org.jclouds.http.options.BaseHttpRequestOptions;
-
-import java.util.Date;
 
 /**
  * @author Adam Lowe

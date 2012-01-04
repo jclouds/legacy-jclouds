@@ -18,21 +18,20 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import org.jclouds.glesys.domain.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.glesys.domain.ArchiveAllowedArguments;
+import org.jclouds.glesys.domain.ArchiveDetails;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import static com.google.common.base.Predicates.equalTo;
-import static org.testng.Assert.*;
+import com.google.common.base.Predicate;
 
 /**
  * Tests behavior of {@code ArchiveClient}

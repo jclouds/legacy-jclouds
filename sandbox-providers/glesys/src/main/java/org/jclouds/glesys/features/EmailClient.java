@@ -18,15 +18,14 @@
  */
 package org.jclouds.glesys.features;
 
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.glesys.domain.Email;
 import org.jclouds.glesys.domain.EmailOverview;
 import org.jclouds.glesys.options.EmailCreateOptions;
 import org.jclouds.glesys.options.EmailEditOptions;
-
-import javax.ws.rs.FormParam;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to E-Mail requests.

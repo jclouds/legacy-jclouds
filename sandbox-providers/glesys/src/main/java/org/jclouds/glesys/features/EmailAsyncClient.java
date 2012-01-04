@@ -18,8 +18,16 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import org.jclouds.glesys.domain.*;
+import java.util.Set;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.glesys.domain.Email;
+import org.jclouds.glesys.domain.EmailOverview;
 import org.jclouds.glesys.options.EmailCreateOptions;
 import org.jclouds.glesys.options.EmailEditOptions;
 import org.jclouds.http.filters.BasicAuthentication;
@@ -27,11 +35,8 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import java.util.Set;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides asynchronous access to E-Mail data via the Glesys REST API.

@@ -1,6 +1,5 @@
 package org.jclouds.glesys.options;
 
-import com.google.common.collect.Iterables;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
 /**

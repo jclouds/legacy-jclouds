@@ -18,15 +18,15 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.inject.TypeLiteral;
+import java.util.Map;
+
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.FormParam;
-import java.util.Map;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests annotation parsing of {@code ArchiveAsyncClient}

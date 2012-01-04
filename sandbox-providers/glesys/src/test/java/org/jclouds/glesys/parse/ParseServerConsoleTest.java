@@ -19,19 +19,18 @@
 package org.jclouds.glesys.parse;
 
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.glesys.config.GleSYSParserModule;
 import org.jclouds.glesys.domain.ServerConsole;
-import org.jclouds.glesys.domain.ServerCreated;
-import org.jclouds.glesys.domain.ServerCreatedIp;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.core.MediaType;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * @author Adam Lowe

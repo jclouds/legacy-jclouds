@@ -1,6 +1,5 @@
 package org.jclouds.glesys.domain;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
@@ -101,7 +100,6 @@ public class EmailOverviewSummary {
 
    @Override
    public String toString() {
-      Joiner commaJoiner = Joiner.on(", ");
       return String.format("accounts=%d, maxAccounts=%d, aliases=%d, maxAliases=%d", accounts, maxAccounts, aliases, maxAliases);
    }
 

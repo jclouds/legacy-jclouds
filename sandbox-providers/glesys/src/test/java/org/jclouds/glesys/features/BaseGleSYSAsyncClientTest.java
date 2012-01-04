@@ -83,6 +83,7 @@ public abstract class BaseGleSYSAsyncClientTest<T> extends RestClientTest<T> {
                args);
    }
    
+   @SuppressWarnings("unchecked")
    protected void testMethod(String localMethod, String remoteCall, String httpMethod, boolean expectResponse, Class<?> responseParser, Class<?> exceptionParser, Object... args) throws Exception {
       List<String> argStrings = new ArrayList<String>();
       List<Object> argValues = new ArrayList<Object>();

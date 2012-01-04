@@ -18,15 +18,27 @@
  */
 package org.jclouds.glesys.features;
 
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.glesys.domain.*;
-import org.jclouds.glesys.options.*;
-import org.jclouds.javax.annotation.Nullable;
-
-import javax.ws.rs.FormParam;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import javax.ws.rs.FormParam;
+
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.glesys.domain.Server;
+import org.jclouds.glesys.domain.ServerAllowedArguments;
+import org.jclouds.glesys.domain.ServerConsole;
+import org.jclouds.glesys.domain.ServerCreated;
+import org.jclouds.glesys.domain.ServerDetails;
+import org.jclouds.glesys.domain.ServerLimit;
+import org.jclouds.glesys.domain.ServerStatus;
+import org.jclouds.glesys.domain.ServerTemplate;
+import org.jclouds.glesys.options.ServerCloneOptions;
+import org.jclouds.glesys.options.ServerCreateOptions;
+import org.jclouds.glesys.options.ServerDestroyOptions;
+import org.jclouds.glesys.options.ServerEditOptions;
+import org.jclouds.glesys.options.ServerStatusOptions;
+import org.jclouds.glesys.options.ServerStopOptions;
 
 /**
  * Provides synchronous access to Server.

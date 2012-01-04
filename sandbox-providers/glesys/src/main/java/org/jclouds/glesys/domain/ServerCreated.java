@@ -3,13 +3,13 @@ package org.jclouds.glesys.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.annotations.SerializedName;
-import org.jclouds.javax.annotation.Nullable;
 
 /**
  * Connection information to connect to a server with VNC.
