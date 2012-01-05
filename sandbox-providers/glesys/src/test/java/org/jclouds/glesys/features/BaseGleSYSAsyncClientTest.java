@@ -62,7 +62,8 @@ public abstract class BaseGleSYSAsyncClientTest<T> extends RestClientTest<T> {
       Properties props = new Properties();
       return new RestContextFactory().createContextSpec("glesys", "username", "apiKey", props);
    }
-
+   
+   @Deprecated
    protected Map.Entry<String, String> newEntry(String key, Object value) {
       return Maps.immutableEntry(key, value.toString());
    }
@@ -77,12 +78,15 @@ public abstract class BaseGleSYSAsyncClientTest<T> extends RestClientTest<T> {
     * @param exceptionParser the class of exception handler expected
     * @param args            either Map.Entry or BaseHttpRequestOptions that make up the arguments to the method
     */
+   //TODO: kill this and related logic and transition to BaseRestClientExpectTest<GleSYSClient>
+   @Deprecated
    protected void testMethod(String localMethod, String remoteCall, String httpMethod, boolean expectResponse,
             Class<?> exceptionParser, Object... args) throws Exception {
       testMethod(localMethod, remoteCall, httpMethod, expectResponse, ParseFirstJsonValueNamed.class, exceptionParser,
                args);
    }
    
+   @Deprecated
    @SuppressWarnings("unchecked")
    protected void testMethod(String localMethod, String remoteCall, String httpMethod, boolean expectResponse, Class<?> responseParser, Class<?> exceptionParser, Object... args) throws Exception {
       List<String> argStrings = new ArrayList<String>();
