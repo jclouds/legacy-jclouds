@@ -19,28 +19,31 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Function;
-import com.google.inject.Inject;
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.logging.Logger;
-import org.virtualbox_4_1.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.List;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.virtualbox.util.MachineUtils.lockMachineAndApply;
-import static org.virtualbox_4_1.LockType.Write;
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.logging.Logger;
+import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.util.PropertyUtils;
+import org.virtualbox_4_1.CloneMode;
+import org.virtualbox_4_1.CloneOptions;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISnapshot;
+import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_1.VirtualBoxManager;
+
+import com.google.common.base.Function;
+import com.google.inject.Inject;
 
 /**
  * CloneAndRegisterMachineFromIMachineIfNotAlreadyExists will take care of the
  * followings: - cloning the master - register the clone machine -
- * ensureBridgedNetworkingIsAppliedToMachine(cloneName, macAddress,
- * hostInterface)
  *
  * @author Andrea Turli
  */
@@ -51,45 +54,25 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
    protected Logger logger = Logger.NULL;
 
    private VirtualBoxManager manager;
-   private ComputeServiceContext context;
-   private String settingsFile;
-   private String osTypeId;
-   private String vmId;
-   private boolean forceOverwrite;
-   private String cloneName;
-   private String hostId;
-   private String snapshotName;
-   private String snapshotDesc;
-   private String controllerIDE;
-
+   private VmSpec vmSpec;
+   boolean isLinkedClone;
+   
    @Inject
    public CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
-           VirtualBoxManager manager, ComputeServiceContext context,
-           String settingsFile, String osTypeId, String vmId,
-           boolean forceOverwrite, String cloneName, String hostId,
-           String snapshotName, String snapshotDesc, String controllerIDE) {
+           VirtualBoxManager manager, VmSpec vmSpec, boolean isLinkedClone) {
       this.manager = manager;
-      this.context = context;
-      this.settingsFile = settingsFile;
-      this.osTypeId = osTypeId;
-      this.vmId = vmId;
-      this.forceOverwrite = forceOverwrite;
-      this.cloneName = cloneName;
-      this.hostId = hostId;
-      this.snapshotName = snapshotName;
-      this.snapshotDesc = snapshotDesc;
-      this.controllerIDE = controllerIDE;
+      this.vmSpec = vmSpec;
+      this.isLinkedClone = isLinkedClone;
    }
 
    @Override
    public IMachine apply(@Nullable IMachine master) {
-      final IVirtualBox vBox = manager.getVBox();
       try {
-         vBox.findMachine(cloneName);
-         throw new IllegalStateException("Machine " + cloneName + " is already registered.");
+         manager.getVBox().findMachine(vmSpec.getVmName());
+         throw new IllegalStateException("Machine " + vmSpec.getVmName() + " is already registered.");
       } catch (VBoxException e) {
          if (machineNotFoundException(e))
-            return cloneMachine(cloneName, master);
+            return cloneMachine(vmSpec, master);
          else
             throw e;
       }
@@ -99,13 +82,16 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
       return e.getMessage().contains("VirtualBox error: Could not find a registered machine named ");
    }
 
-   private IMachine cloneMachine(String cloneName, IMachine master) {
-      IMachine clonedMachine = manager.getVBox().createMachine(settingsFile, cloneName, osTypeId, vmId, forceOverwrite);
+   private IMachine cloneMachine(VmSpec vmSpec, IMachine master) {
+      String workingDir = PropertyUtils.getWorkingDirFromProperty();
+      String settingsFile = manager.getVBox().composeMachineFilename(vmSpec.getVmName(), workingDir);
+      IMachine clonedMachine = manager.getVBox().createMachine(settingsFile, vmSpec.getVmName(), vmSpec.getOsTypeId(), vmSpec.getVmId(), vmSpec.isForceOverwrite());
       List<CloneOptions> options = new ArrayList<CloneOptions>();
-      options.add(CloneOptions.Link);
+      if(isLinkedClone)
+         options.add(CloneOptions.Link);
 
-      // takeSnapshotIfNotAlreadyExists
-      ISnapshot currentSnapshot = new TakeSnapshotIfNotAlreadyAttached(manager, snapshotName, snapshotDesc).apply(master);
+      // TODO snapshot name
+      ISnapshot currentSnapshot = new TakeSnapshotIfNotAlreadyAttached(manager, "snapshotName", "snapshotDesc").apply(master);
 
       // clone
       IProgress progress = currentSnapshot.getMachine().cloneTo(clonedMachine, CloneMode.MachineState, options);
@@ -115,32 +101,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
 
       // registering
       manager.getVBox().registerMachine(clonedMachine);
-
-      // Bridged Network
-      List<String> activeBridgedInterfaces = new RetrieveActiveBridgedInterfaces(context).apply(hostId);
-      checkNotNull(activeBridgedInterfaces);
-      String macAddress = manager.getVBox().getHost().generateMACAddress();
-
-      // TODO this behavior can be improved
-      String bridgedInterface = activeBridgedInterfaces.get(0);
-      long adapterSlot = 0l;
-      ensureBridgedNetworkingIsAppliedToMachine(adapterSlot, cloneName, macAddress, bridgedInterface);
-
-      // detach iso
-      // TODO: also hard-coded values here
-      int controllerPort = 0;
-      int device = 0;
-      ensureMachineHasDistroMediumDetached(cloneName, controllerIDE, controllerPort, device);
-
       return clonedMachine;
    }
-
-   private void ensureBridgedNetworkingIsAppliedToMachine(long adapterSlot, String vmName, String macAddress, String hostInterface) {
-      lockMachineAndApply(manager, Write, vmName, new AttachBridgedAdapterToMachine(adapterSlot, macAddress, hostInterface));
-   }
-
-   private void ensureMachineHasDistroMediumDetached(String vmName, String controllerIDE, int controllerPort, int device) {
-      lockMachineAndApply(manager, Write, vmName, new DetachDistroMediumFromMachine(checkNotNull(controllerIDE, "controllerIDE"), controllerPort, device));
-   }
-
+   
 }
