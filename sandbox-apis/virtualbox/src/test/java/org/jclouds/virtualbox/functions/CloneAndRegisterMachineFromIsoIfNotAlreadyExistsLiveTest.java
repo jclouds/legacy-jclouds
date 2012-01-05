@@ -22,13 +22,8 @@ package org.jclouds.virtualbox.functions;
 import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
 import static org.testng.Assert.assertEquals;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.domain.Credentials;
-import org.jclouds.net.IPSocket;
-import org.jclouds.predicates.InetSocketAddressConnect;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.StorageController;
@@ -42,8 +37,6 @@ import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.StorageBus;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import com.google.common.base.Predicate;
-
 /**
  * @author Andrea Turli
  */
@@ -51,14 +44,11 @@ import com.google.common.base.Predicate;
 public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
       BaseVirtualBoxClientLiveTest {
 
-   private String settingsFile = null;
-   private boolean forceOverwrite = true;
+   private static final boolean IS_LINKED_CLONE = true;
    private String vmId = "jclouds-image-iso-1";
-   private String osTypeId = "";
+   private String osTypeId = "DEBIAN";
    private String guestId = "guest";
    private String hostId = "host";
-   private String snapshotName = "snap";
-   private String snapshotDesc = "snapDesc";
 
    private String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
    private String cloneName = vmName + "_clone";
@@ -66,8 +56,6 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
 
    private String ideControllerName = "IDE Controller";
    private CleanupMode mode = CleanupMode.Full;
-   private StorageController ideController;
-
 
    @Test
    public void testCloneMachineFromAnotherMachine() throws Exception {
@@ -90,7 +78,7 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
             .cleanUpMode(mode)
             .forceOverwrite(true).build();
       IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
-            manager, clonedVmSpec).apply(master);
+            manager, clonedVmSpec, IS_LINKED_CLONE).apply(master);
       assertEquals(clone.getName(), clonedVmSpec.getVmName());
       new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(clonedVmSpec);
       new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(new IMachineToVmSpec().apply(master));
@@ -99,8 +87,6 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
    private IMachine getMasterNode(VirtualBoxManager manager,
          ComputeServiceContext localHostContext) {
       try {
-         Predicate<IPSocket> socketTester = new RetryablePredicate<IPSocket>(
-               new InetSocketAddressConnect(), 10, 1, TimeUnit.SECONDS);
          String workingDir = PropertyUtils.getWorkingDirFromProperty();
          StorageController ideController = StorageController
                .builder()

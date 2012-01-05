@@ -34,7 +34,6 @@ import org.jclouds.virtualbox.util.PropertyUtils;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
-import org.virtualbox_4_1.CloneOptions;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.StorageBus;
 import org.virtualbox_4_1.VirtualBoxManager;
@@ -46,8 +45,9 @@ import org.virtualbox_4_1.VirtualBoxManager;
 @Test(groups = "live", singleThreaded = true, testName = "IsLinkedClonesLiveTest")
 public class IsLinkedClonesLiveTest extends BaseVirtualBoxClientLiveTest {
 
-   private String vmId = "jclouds-image-iso-1";
-   private String osTypeId = "";
+   private static final boolean IS_LINKED_CLONE = true;
+	private String vmId = "jclouds-image-iso-1";
+   private String osTypeId = "DEBIAN";
    private String ideControllerName = "IDE Controller";
    private String cloneId = "jclouds-is-linked-clone-clone";
    private String cloneName = "jclouds-is-linked-clone-clone";
@@ -90,7 +90,7 @@ public class IsLinkedClonesLiveTest extends BaseVirtualBoxClientLiveTest {
       IMachine master = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(
             manager).apply(masterSpec);
       IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
-            manager, cloneSpec, CloneOptions.Link).apply(master);
+            manager, cloneSpec, IS_LINKED_CLONE).apply(master);
 
       assertTrue(new IsLinkedClone(manager).apply(clone));
       new UnregisterMachineIfExistsAndDeleteItsMedia(manager)
@@ -107,7 +107,7 @@ public class IsLinkedClonesLiveTest extends BaseVirtualBoxClientLiveTest {
       IMachine master = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(
             manager).apply(masterSpec);
       IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
-            manager, cloneSpec).apply(master);
+            manager, cloneSpec, !IS_LINKED_CLONE).apply(master);
 
       assertFalse(new IsLinkedClone(manager).apply(clone));
       new UnregisterMachineIfExistsAndDeleteItsMedia(manager)

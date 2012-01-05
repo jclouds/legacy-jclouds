@@ -55,20 +55,14 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
 
    private VirtualBoxManager manager;
    private VmSpec vmSpec;
-   private CloneOptions cloneOptions; 
-
-   @Inject
-   public CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
-           VirtualBoxManager manager, VmSpec vmSpec) {
-      this(manager, vmSpec, null);
-   }
+   boolean isLinkedClone;
    
    @Inject
    public CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
-           VirtualBoxManager manager, VmSpec vmSpec, CloneOptions cloneOptions) {
+           VirtualBoxManager manager, VmSpec vmSpec, boolean isLinkedClone) {
       this.manager = manager;
       this.vmSpec = vmSpec;
-      this.cloneOptions = cloneOptions;
+      this.isLinkedClone = isLinkedClone;
    }
 
    @Override
@@ -93,8 +87,8 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
       String settingsFile = manager.getVBox().composeMachineFilename(vmSpec.getVmName(), workingDir);
       IMachine clonedMachine = manager.getVBox().createMachine(settingsFile, vmSpec.getVmName(), vmSpec.getOsTypeId(), vmSpec.getVmId(), vmSpec.isForceOverwrite());
       List<CloneOptions> options = new ArrayList<CloneOptions>();
-      if(cloneOptions != null)
-         options.add(cloneOptions);
+      if(isLinkedClone)
+         options.add(CloneOptions.Link);
 
       // TODO snapshot name
       ISnapshot currentSnapshot = new TakeSnapshotIfNotAlreadyAttached(manager, "snapshotName", "snapshotDesc").apply(master);
