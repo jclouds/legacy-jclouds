@@ -64,9 +64,11 @@ public class IsLinkedClone implements Predicate<IMachine> {
                   // more than one machine is attached to this hd
                   for (IMedium child : iMedium.getParent().getChildren()) {
                      for (String machineId : child.getMachineIds()) {
-                        IMachine iMachine = manager.getVBox().findMachine(machineId);
+                        IMachine iMachine = manager.getVBox().findMachine(
+                              machineId);
                         if (!iMachine.getName().equals(machine.getName())) {
-                           logger.debug("Machine %s is a linked clone", machine.getName());
+                           logger.debug("Machine %s is a linked clone",
+                                 machine.getName());
                            return true;
                         }
                      }

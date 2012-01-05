@@ -19,10 +19,6 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.virtualbox.util.MachineUtils.lockMachineAndApply;
-import static org.virtualbox_4_1.LockType.Write;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,8 +56,6 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
    private VirtualBoxManager manager;
    private VmSpec vmSpec;
    private CloneOptions cloneOptions; 
-//   private String snapshotName;
-//   private String snapshotDesc;
 
    @Inject
    public CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
@@ -75,8 +69,6 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
       this.manager = manager;
       this.vmSpec = vmSpec;
       this.cloneOptions = cloneOptions;
-//      this.snapshotName = snapshotName;
-//      this.snapshotDesc = snapshotDesc;
    }
 
    @Override
@@ -115,32 +107,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
 
       // registering
       manager.getVBox().registerMachine(clonedMachine);
-/*
-      // Bridged Network
-      List<String> activeBridgedInterfaces = new RetrieveActiveBridgedInterfaces(context).apply(hostId);
-      checkNotNull(activeBridgedInterfaces);
-      String macAddress = manager.getVBox().getHost().generateMACAddress();
-
-      // TODO this behavior can be improved
-      String bridgedInterface = activeBridgedInterfaces.get(0);
-      long adapterSlot = 0l;
-      ensureBridgedNetworkingIsAppliedToMachine(adapterSlot, cloneName, macAddress, bridgedInterface);
-
-      // detach iso
-      // TODO: also hard-coded values here
-      int controllerPort = 0;
-      int device = 0;
-      ensureMachineHasDistroMediumDetached(cloneName, controllerIDE, controllerPort, device);
-*/
       return clonedMachine;
    }
-
-   private void ensureBridgedNetworkingIsAppliedToMachine(long adapterSlot, String vmName, String macAddress, String hostInterface) {
-      lockMachineAndApply(manager, Write, vmName, new AttachBridgedAdapterToMachine(adapterSlot, macAddress, hostInterface));
-   }
-
-   private void ensureMachineHasDistroMediumDetached(String vmName, String controllerIDE, int controllerPort, int device) {
-      lockMachineAndApply(manager, Write, vmName, new DetachDistroMediumFromMachine(checkNotNull(controllerIDE, "controllerIDE"), controllerPort, device));
-   }
-
+   
 }
