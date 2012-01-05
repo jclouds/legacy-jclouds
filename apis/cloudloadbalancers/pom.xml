@@ -35,7 +35,7 @@
   
    <properties>
     <test.cloudloadbalancers.endpoint>https://auth.api.rackspacecloud.com</test.cloudloadbalancers.endpoint>
-    <test.cloudloadbalancers.apiversion>1.0</test.cloudloadbalancers.apiversion>
+    <test.cloudloadbalancers.api-version>1.0</test.cloudloadbalancers.api-version>
     <test.cloudloadbalancers.identity>${test.rackspace.identity}</test.cloudloadbalancers.identity>
     <test.cloudloadbalancers.credential>${test.rackspace.credential}</test.cloudloadbalancers.credential>
   </properties>
@@ -96,7 +96,7 @@
                 <configuration>
                   <systemPropertyVariables>
                     <test.cloudloadbalancers.endpoint>${test.cloudloadbalancers.endpoint}</test.cloudloadbalancers.endpoint>
-                    <test.cloudloadbalancers.apiversion>${test.cloudloadbalancers.apiversion}</test.cloudloadbalancers.apiversion>
+                    <test.cloudloadbalancers.api-version>${test.cloudloadbalancers.api-version}</test.cloudloadbalancers.api-version>
                     <test.cloudloadbalancers.identity>${test.cloudloadbalancers.identity}</test.cloudloadbalancers.identity>
                     <test.cloudloadbalancers.credential>${test.cloudloadbalancers.credential}</test.cloudloadbalancers.credential>
                   </systemPropertyVariables>

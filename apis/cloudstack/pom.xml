@@ -49,7 +49,7 @@
   
   <properties>
     <test.cloudstack.endpoint>http://localhost:8080/client/api</test.cloudstack.endpoint>
-    <test.cloudstack.apiversion>2.2.12</test.cloudstack.apiversion>
+    <test.cloudstack.api-version>2.2.12</test.cloudstack.api-version>
     <test.cloudstack.identity>FIXME_apiKey</test.cloudstack.identity>
     <test.cloudstack.credential>FIXME_secretKey</test.cloudstack.credential>
     <test.cloudstack.domainAdminIdentity></test.cloudstack.domainAdminIdentity>
@@ -116,7 +116,7 @@
                   <threadCount>2</threadCount>
                   <systemPropertyVariables>
                     <test.cloudstack.endpoint>${test.cloudstack.endpoint}</test.cloudstack.endpoint>
-                    <test.cloudstack.apiversion>${test.cloudstack.apiversion}</test.cloudstack.apiversion>
+                    <test.cloudstack.api-version>${test.cloudstack.api-version}</test.cloudstack.api-version>
                     <test.cloudstack.identity>${test.cloudstack.identity}</test.cloudstack.identity>
                     <test.cloudstack.credential>${test.cloudstack.credential}</test.cloudstack.credential>
                     <test.cloudstack.image-id>${test.cloudstack.image-id}</test.cloudstack.image-id>

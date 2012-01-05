@@ -32,7 +32,7 @@ import com.google.inject.Module;
 public class TransientBlobStoreTestInitializer extends BaseTestInitializer {
 
    @Override
-   protected BlobStoreContext createLiveContext(Module configurationModule, String url, String apiversion, String app,
+   protected BlobStoreContext createLiveContext(Module configurationModule, String url, String apiVersion, String app,
             String identity, String key) throws IOException {
       return createStubContext();
    }

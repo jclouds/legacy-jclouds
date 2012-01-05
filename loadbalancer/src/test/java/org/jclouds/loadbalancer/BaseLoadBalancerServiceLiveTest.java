@@ -85,7 +85,7 @@ public abstract class BaseLoadBalancerServiceLiveTest extends BaseVersionedServi
             + ".compute.identity");
       computeCredential = System.getProperty("test." + provider + ".compute.credential");
       computeEndpoint = System.getProperty("test." + provider + ".compute.endpoint");
-      computeApiversion = System.getProperty("test." + provider + ".compute.apiversion");
+      computeApiversion = System.getProperty("test." + provider + ".compute.api-version");
    }
 
    protected Properties setupComputeProperties() {
@@ -98,7 +98,7 @@ public abstract class BaseLoadBalancerServiceLiveTest extends BaseVersionedServi
       if (computeEndpoint != null)
          overrides.setProperty(computeProvider + ".endpoint", computeEndpoint);
       if (computeApiversion != null)
-         overrides.setProperty(computeProvider + ".apiversion", computeApiversion);
+         overrides.setProperty(computeProvider + ".api-version", computeApiversion);
       return overrides;
    }
 

@@ -37,7 +37,7 @@ public class NovaPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_ENDPOINT, "http://localhost:8774/{apiversion}/{identity}");
+      properties.setProperty(PROPERTY_ENDPOINT, "http://localhost:8774/{api-version}/{identity}");
       properties.setProperty(PROPERTY_API_VERSION, "v1.1");
       return properties;
    }
@@ -47,7 +47,7 @@ public class NovaPropertiesBuilder extends PropertiesBuilder {
    }
 
    public static final Pattern IDENTITY_PATTERN = Pattern.compile("\\{identity\\}");
-   public static final Pattern API_VERSION_PATTERN = Pattern.compile("\\{apiversion\\}");
+   public static final Pattern API_VERSION_PATTERN = Pattern.compile("\\{api-version\\}");
 
    @Override
    public Properties build() {

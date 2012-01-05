@@ -55,7 +55,7 @@ public class ${providerName}ClientLiveTest {
       identity = checkNotNull(System.getProperty("test.${lcaseProviderName}.identity"), "test.${lcaseProviderName}.identity");
       credential = checkNotNull(System.getProperty("test.${lcaseProviderName}.credential"), "test.${lcaseProviderName}.credential");
       endpoint = checkNotNull(System.getProperty("test.${lcaseProviderName}.endpoint"), "test.${lcaseProviderName}.endpoint");
-      apiVersion = checkNotNull(System.getProperty("test.${lcaseProviderName}.apiversion"), "test.${lcaseProviderName}.apiversion");
+      apiVersion = checkNotNull(System.getProperty("test.${lcaseProviderName}.api-version"), "test.${lcaseProviderName}.api-version");
    }
    
    @BeforeGroups(groups = { "live" })

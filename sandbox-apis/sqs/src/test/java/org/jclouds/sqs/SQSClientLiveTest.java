@@ -60,14 +60,14 @@ public class SQSClientLiveTest {
    protected String identity;
    protected String credential;
    protected String endpoint;
-   protected String apiversion;
+   protected String apiVersion;
 
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
             + ".credential");
       endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
+     apiVersion = System.getProperty("test." + provider + ".api-version");
    }
 
    protected Properties setupProperties() {
@@ -79,8 +79,8 @@ public class SQSClientLiveTest {
          overrides.setProperty(provider + ".credential", credential);
       if (endpoint != null)
          overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
+      if (apiVersion != null)
+         overrides.setProperty(provider + ".api-version", apiVersion);
       return overrides;
    }
 

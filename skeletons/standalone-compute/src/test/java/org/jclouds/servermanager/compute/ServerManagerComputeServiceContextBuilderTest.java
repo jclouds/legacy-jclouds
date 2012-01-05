@@ -67,7 +67,7 @@ public class ServerManagerComputeServiceContextBuilderTest {
       restProperties.setProperty("servermanager.contextbuilder", ServerManagerComputeServiceContextBuilder.class
                .getName());
       restProperties.setProperty("servermanager.endpoint", "http://host");
-      restProperties.setProperty("servermanager.apiversion", "1");
+      restProperties.setProperty("servermanager.api-version", "1");
 
       ComputeServiceContext context = new ComputeServiceContextFactory(restProperties).createContext("servermanager",
                "identity", "credential");

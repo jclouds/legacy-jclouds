@@ -49,7 +49,7 @@
 
   <properties>
     <test.softlayer.endpoint>https://api.softlayer.com/rest</test.softlayer.endpoint>
-    <test.softlayer.apiversion>3</test.softlayer.apiversion>
+    <test.softlayer.api-version>3</test.softlayer.api-version>
     <test.softlayer.identity>FIXME</test.softlayer.identity>
     <test.softlayer.credential>FIXME</test.softlayer.credential>
     <test.softlayer.image-id></test.softlayer.image-id>
@@ -107,7 +107,7 @@
                 <configuration>
                   <systemPropertyVariables>
                     <test.softlayer.endpoint>${test.softlayer.endpoint}</test.softlayer.endpoint>
-                    <test.softlayer.apiversion>${test.softlayer.apiversion}</test.softlayer.apiversion>
+                    <test.softlayer.api-version>${test.softlayer.api-version}</test.softlayer.api-version>
                     <test.softlayer.identity>${test.softlayer.identity}</test.softlayer.identity>
                     <test.softlayer.credential>${test.softlayer.credential}</test.softlayer.credential>
                     <test.softlayer.image-id>${test.softlayer.image-id}</test.softlayer.image-id>

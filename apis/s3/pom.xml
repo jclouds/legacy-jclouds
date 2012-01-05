@@ -36,7 +36,7 @@
   <properties>
     <test.initializer>org.jclouds.s3.blobstore.integration.S3TestInitializer</test.initializer>
     <test.s3.endpoint>https://s3.amazonaws.com</test.s3.endpoint>
-    <test.s3.apiversion>2006-03-01</test.s3.apiversion>
+    <test.s3.api-version>2006-03-01</test.s3.api-version>
     <test.s3.identity>${test.aws.identity}</test.s3.identity>
     <test.s3.credential>${test.aws.credential}</test.s3.credential>
   </properties>
@@ -108,7 +108,7 @@
                     <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
                     <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
                     <test.s3.endpoint>${test.s3.endpoint}</test.s3.endpoint>
-                    <test.s3.apiversion>${test.s3.apiversion}</test.s3.apiversion>
+                    <test.s3.api-version>${test.s3.api-version}</test.s3.api-version>
                     <test.s3.identity>${test.s3.identity}</test.s3.identity>
                     <test.s3.credential>${test.s3.credential}</test.s3.credential>
                   </systemPropertyVariables>

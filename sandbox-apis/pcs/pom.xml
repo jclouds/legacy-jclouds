@@ -46,7 +46,7 @@
 
     <properties>
         <test.pcs.endpoint>FIXME</test.pcs.endpoint>
-        <test.pcs.apiversion>2</test.pcs.apiversion>
+        <test.pcs.api-version>2</test.pcs.api-version>
         <test.pcs.identity>FIXME</test.pcs.identity>
         <test.pcs.credential>FIXME</test.pcs.credential>
     </properties>
@@ -106,7 +106,7 @@
                                 <configuration>
                                     <systemPropertyVariables>
                                         <test.pcs.endpoint>${test.pcs.endpoint}</test.pcs.endpoint>
-                                        <test.pcs.apiversion>${test.pcs.apiversion}</test.pcs.apiversion>
+                                        <test.pcs.api-version>${test.pcs.api-version}</test.pcs.api-version>
                                         <test.pcs.identity>${test.pcs.identity}</test.pcs.identity>
                                         <test.pcs.credential>${test.pcs.credential}</test.pcs.credential>
                                     </systemPropertyVariables>

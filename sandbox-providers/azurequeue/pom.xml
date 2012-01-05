@@ -35,7 +35,7 @@
 
     <properties>
         <test.azurequeue.endpoint>https://{identity}.queue.core.windows.net</test.azurequeue.endpoint>
-        <test.azurequeue.apiversion>2009-09-19</test.azurequeue.apiversion>
+        <test.azurequeue.api-version>2009-09-19</test.azurequeue.api-version>
         <test.azurequeue.identity>${test.azure.identity}</test.azurequeue.identity>
         <test.azurequeue.credential>${test.azure.credential}</test.azurequeue.credential>
     </properties>
@@ -86,7 +86,7 @@
                                 <configuration>
                                     <systemPropertyVariables>
                                         <test.azurequeue.endpoint>${test.azurequeue.endpoint}</test.azurequeue.endpoint>
-                                        <test.azurequeue.apiversion>${test.azurequeue.apiversion}</test.azurequeue.apiversion>
+                                        <test.azurequeue.api-version>${test.azurequeue.api-version}</test.azurequeue.api-version>
                                         <test.azurequeue.identity>${test.azurequeue.identity}</test.azurequeue.identity>
                                         <test.azurequeue.credential>${test.azurequeue.credential}</test.azurequeue.credential>
                                     </systemPropertyVariables>

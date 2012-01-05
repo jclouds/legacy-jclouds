@@ -43,7 +43,7 @@ public abstract class BaseVersionedServiceLiveTest {
    protected String identity;
    protected String credential;
    protected String endpoint;
-   protected String apiversion;
+   protected String apiVersion;
    protected String imageId;
    protected String loginUser;
    protected String authenticateSudo;
@@ -70,8 +70,8 @@ public abstract class BaseVersionedServiceLiveTest {
          overrides.setProperty(provider + ".credential", credential);
       if (endpoint != null)
          overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
+      if (apiVersion != null)
+         overrides.setProperty(provider + ".api-version", apiVersion);
       if (imageId != null)
          overrides.setProperty(provider + ".image-id", imageId);
       if (loginUser != null)
@@ -87,7 +87,7 @@ public abstract class BaseVersionedServiceLiveTest {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       credential = System.getProperty("test." + provider + ".credential");
       endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
+      apiVersion = System.getProperty("test." + provider + ".api-version");
       imageId = System.getProperty("test." + provider + ".image-id");
       loginUser = System.getProperty("test." + provider + ".image.login-user");
       authenticateSudo = System.getProperty("test." + provider + ".image.authenticate-sudo");

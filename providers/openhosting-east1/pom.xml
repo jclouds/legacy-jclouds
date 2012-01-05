@@ -35,7 +35,7 @@
 
     <properties>
         <test.openhosting-east1.endpoint>https://api.east1.openhosting.com</test.openhosting-east1.endpoint>
-        <test.openhosting-east1.apiversion>2.0</test.openhosting-east1.apiversion>
+        <test.openhosting-east1.api-version>2.0</test.openhosting-east1.api-version>
         <test.openhosting-east1.identity>FIXME_IDENTITY</test.openhosting-east1.identity>
         <test.openhosting-east1.credential>FIXME_CREDENTIAL</test.openhosting-east1.credential>
         <test.openhosting-east1.image-id></test.openhosting-east1.image-id>
@@ -100,7 +100,7 @@
                                 <configuration>
                                     <systemPropertyVariables>
                                         <test.openhosting-east1.endpoint>${test.openhosting-east1.endpoint}</test.openhosting-east1.endpoint>
-                                        <test.openhosting-east1.apiversion>${test.openhosting-east1.apiversion}</test.openhosting-east1.apiversion>
+                                        <test.openhosting-east1.api-version>${test.openhosting-east1.api-version}</test.openhosting-east1.api-version>
                                         <test.openhosting-east1.identity>${test.openhosting-east1.identity}</test.openhosting-east1.identity>
                                         <test.openhosting-east1.credential>${test.openhosting-east1.credential}</test.openhosting-east1.credential>
                                         <test.openhosting-east1.image-id>${test.openhosting-east1.image-id}</test.openhosting-east1.image-id>

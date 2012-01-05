@@ -57,14 +57,14 @@ public class BaseVirtualBoxClientLiveTest {
    protected String identity;
    protected String credential;
    protected String endpoint;
-   protected String apiversion;
+   protected String apiVersion;
 
    @BeforeClass
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       credential = System.getProperty("test." + provider + ".credential");
       endpoint = System.getProperty("test." + provider + ".endpoint", "http://localhost:18083/");
-      apiversion = System.getProperty("test." + provider + ".apiversion", "4.1.2r73507");
+     apiVersion = System.getProperty("test." + provider + ".api-version", "4.1.2r73507");
    }
 
    protected ComputeServiceContext context;
@@ -75,7 +75,7 @@ public class BaseVirtualBoxClientLiveTest {
    public void setupClient() {
       Properties properties = new Properties();
       properties.setProperty(provider + ".endpoint", endpoint);
-      properties.setProperty(provider + ".apiversion", apiversion);
+      properties.setProperty(provider + ".api-version", apiVersion);
       context = new ComputeServiceContextFactory().createContext(provider, identity, credential,
             ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()));
       jetty = new StartJettyIfNotAlreadyRunning(port).apply(basebaseResource);

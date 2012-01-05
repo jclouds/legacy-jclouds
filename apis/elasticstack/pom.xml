@@ -49,7 +49,7 @@
   
   <properties>
     <test.elasticstack.endpoint>https://api.lon-p.elastichosts.com</test.elasticstack.endpoint>
-    <test.elasticstack.apiversion>1.0</test.elasticstack.apiversion>
+    <test.elasticstack.api-version>1.0</test.elasticstack.api-version>
     <test.elasticstack.identity>FIXME</test.elasticstack.identity>
     <test.elasticstack.credential>FIXME</test.elasticstack.credential>
     <test.elasticstack.image-id></test.elasticstack.image-id>
@@ -107,7 +107,7 @@
                 <configuration>
                   <systemPropertyVariables>
                     <test.elasticstack.endpoint>${test.elasticstack.endpoint}</test.elasticstack.endpoint>
-                    <test.elasticstack.apiversion>${test.elasticstack.apiversion}</test.elasticstack.apiversion>
+                    <test.elasticstack.api-version>${test.elasticstack.api-version}</test.elasticstack.api-version>
                     <test.elasticstack.identity>${test.elasticstack.identity}</test.elasticstack.identity>
                     <test.elasticstack.credential>${test.elasticstack.credential}</test.elasticstack.credential>
                     <test.elasticstack.image-id>${test.elasticstack.image-id}</test.elasticstack.image-id>

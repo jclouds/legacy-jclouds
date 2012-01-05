@@ -71,13 +71,13 @@ public class SlicehostClientLiveTest {
    protected String identity;
    protected String credential;
    protected String endpoint;
-   protected String apiversion;
+   protected String apiVersion;
 
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
-      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
-            + ".apiversion");
+     apiVersion = checkNotNull(System.getProperty("test." + provider + ".api-version"), "test." + provider
+            + ".api-version");
    }
 
    protected Properties setupProperties() {
@@ -86,7 +86,7 @@ public class SlicehostClientLiveTest {
       overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       overrides.setProperty(provider + ".identity", identity);
       overrides.setProperty(provider + ".endpoint", endpoint);
-      overrides.setProperty(provider + ".apiversion", apiversion);
+      overrides.setProperty(provider + ".api-version", apiVersion);
       return overrides;
    }
 

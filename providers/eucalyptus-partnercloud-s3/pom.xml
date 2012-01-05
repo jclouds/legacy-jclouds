@@ -36,7 +36,7 @@
     <properties>
         <test.initializer>org.jclouds.epc.blobstore.EucalyptusPartnerCloudWalrusTestInitializer</test.initializer>
         <test.eucalyptus-partnercloud-s3.endpoint>http://partnercloud.eucalyptus.com:8773/services/Walrus</test.eucalyptus-partnercloud-s3.endpoint>
-        <test.eucalyptus-partnercloud-s3.apiversion>2006-03-01</test.eucalyptus-partnercloud-s3.apiversion>
+        <test.eucalyptus-partnercloud-s3.api-version>2006-03-01</test.eucalyptus-partnercloud-s3.api-version>
         <test.eucalyptus-partnercloud-s3.identity>FIXME_IDENTITY</test.eucalyptus-partnercloud-s3.identity>
         <test.eucalyptus-partnercloud-s3.credential>FIXME_CREDENTIAL</test.eucalyptus-partnercloud-s3.credential>
         <test.blobstore.container-count>15</test.blobstore.container-count>
@@ -110,7 +110,7 @@
                                     <threadCount>1</threadCount>
                                     <systemPropertyVariables>
                                         <test.eucalyptus-partnercloud-s3.endpoint>${test.eucalyptus-partnercloud-s3.endpoint}</test.eucalyptus-partnercloud-s3.endpoint>
-                                        <test.eucalyptus-partnercloud-s3.apiversion>${test.eucalyptus-partnercloud-s3.apiversion}</test.eucalyptus-partnercloud-s3.apiversion>
+                                        <test.eucalyptus-partnercloud-s3.api-version>${test.eucalyptus-partnercloud-s3.api-version}</test.eucalyptus-partnercloud-s3.api-version>
                                         <test.eucalyptus-partnercloud-s3.identity>${test.eucalyptus-partnercloud-s3.identity}</test.eucalyptus-partnercloud-s3.identity>
                                         <test.eucalyptus-partnercloud-s3.credential>${test.eucalyptus-partnercloud-s3.credential}</test.eucalyptus-partnercloud-s3.credential>
                                         <test.initializer>${test.initializer}</test.initializer>
