@@ -126,35 +126,40 @@ public class CloudStackComputeServiceAdapter implements
       CloudStackTemplateOptions templateOptions = template.getOptions().as(CloudStackTemplateOptions.class);
 
       DeployVirtualMachineOptions options = displayName(name).name(name);
-      if (zone.getNetworkType() == NetworkType.ADVANCED) {
-         // security groups not allowed.
-         // at least one network must be given to CloudStack,
-         // but jclouds will try to autodetect an appropriate network if none given.
-         if (templateOptions.getSecurityGroupIds().size() > 0) {
-            throw new IllegalArgumentException("security groups cannot be specified for locations (zones) that use advanced networking");
-         }
-         if (templateOptions.getNetworkIds().size() > 0) {
-            options.networkIds(templateOptions.getNetworkIds());
-         } else {
-            if (networks.size() == 0) {
-               throw new IllegalArgumentException("please setup a network for zone: " + zoneId);
+      switch(zone.getNetworkType()) {
+
+         case BASIC:
+            // both security groups and networks are optional, and CloudStack will
+            // use the zone/user's default network/security group if none given
+            if (templateOptions.getSecurityGroupIds().size() > 0) {
+               options.securityGroupIds(templateOptions.getSecurityGroupIds());
             }
-            Network defaultNetworkInZone = Iterables.getFirst(filter(networks.values(), and(defaultNetworkInZone(zoneId), supportsStaticNAT())), null);
-            if(defaultNetworkInZone == null) {
-               throw new IllegalArgumentException("please choose a specific network in zone " + zoneId + ": " + networks);
+            if (templateOptions.getNetworkIds().size() > 0) {
+               options.networkIds(templateOptions.getNetworkIds());
+            }
+            break;
+
+         case ADVANCED:
+            // security groups not allowed.
+            // at least one network must be given to CloudStack,
+            // but jclouds will try to autodetect an appropriate network if none given.
+            checkArgument(templateOptions.getSecurityGroupIds().isEmpty(), "security groups cannot be specified for locations (zones) that use advanced networking");
+            if (templateOptions.getNetworkIds().size() > 0) {
+               options.networkIds(templateOptions.getNetworkIds());
             } else {
-               options.networkId(defaultNetworkInZone.getId());
+               checkArgument(!networks.isEmpty(), "please setup a network for zone: " + zoneId);
+               Network defaultNetworkInZone = Iterables.getFirst(filter(networks.values(), and(defaultNetworkInZone(zoneId), supportsStaticNAT())), null);
+               if(defaultNetworkInZone == null) {
+                  throw new IllegalArgumentException("please choose a specific network in zone " + zoneId + ": " + networks);
+               } else {
+                  options.networkId(defaultNetworkInZone.getId());
+               }
             }
-         }
-      } else if(zone.getNetworkType() == NetworkType.BASIC) {
-         // both security groups and networks are optional, and CloudStack will
-         // use the zone/user's default network/security group if none given
-         if (templateOptions.getSecurityGroupIds().size() > 0) {
-            options.securityGroupIds(templateOptions.getSecurityGroupIds());
-         }
-         if (templateOptions.getNetworkIds().size() > 0) {
-            options.networkIds(templateOptions.getNetworkIds());
-         }
+            break;
+
+         default:
+            throw new IllegalStateException("Zone networking type is unrecognized");
+
       }
 
       if (templateOptions.getIpOnDefaultNetwork() != null) {
