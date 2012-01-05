@@ -20,6 +20,8 @@ U * Licensed to jclouds, Inc. (jclouds) under one or more
 package org.jclouds.virtualbox.functions.admin;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.transform;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +34,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.domain.ErrorCode;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
+import org.virtualbox_4_1.DeviceType;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IMedium;
 import org.virtualbox_4_1.IProgress;
@@ -41,7 +44,6 @@ import org.virtualbox_4_1.VirtualBoxManager;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public class UnregisterMachineIfExistsAndDeleteItsMedia implements
@@ -76,15 +78,15 @@ public class UnregisterMachineIfExistsAndDeleteItsMedia implements
          }
       }
 
-      List<IMedium> filteredMediaToBeDeleted = Lists.newArrayList(Iterables
-            .filter(mediaToBeDeleted, new AutoDeleteHardDiskPredicate(vmSpec)));
+      List<IMedium> filteredMediaToBeDeleted = Lists.newArrayList(transform(
+            filter(mediaToBeDeleted, new AutoDeleteHardDiskPredicate(vmSpec)),
+            new DeleteChildrenOfMedium()));
 
       checkNotNull(filteredMediaToBeDeleted);
       if (!filteredMediaToBeDeleted.isEmpty()) {
          try {
             IProgress deletion = machine.delete(filteredMediaToBeDeleted);
             deletion.waitForCompletion(-1);
-
          } catch (Exception e) {
             logger.error(e, "Problem in deleting the media attached to %s",
                   machine.getName());
@@ -109,6 +111,22 @@ public class UnregisterMachineIfExistsAndDeleteItsMedia implements
                return true;
          }
          return false;
+      }
+
+   };
+
+   private class DeleteChildrenOfMedium implements Function<IMedium, IMedium> {
+      @Override
+      public IMedium apply(IMedium medium) {
+         checkNotNull(medium.getChildren());
+         if (medium.getDeviceType().equals(DeviceType.HardDisk)) {
+            for (IMedium child : medium.getChildren()) {
+               IProgress deletion = child.deleteStorage();
+               deletion.waitForCompletion(-1);
+            }
+         }
+
+         return medium;
       }
 
    };

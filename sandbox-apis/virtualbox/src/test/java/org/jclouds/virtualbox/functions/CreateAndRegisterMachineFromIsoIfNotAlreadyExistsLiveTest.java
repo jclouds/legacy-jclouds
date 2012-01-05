@@ -39,45 +39,59 @@ import org.virtualbox_4_1.VBoxException;
 /**
  * @author Mattias Holmqvist
  */
-public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClientLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest")
+public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
+      BaseVirtualBoxClientLiveTest {
 
    private String ideControllerName;
    private CleanupMode mode;
-	private StorageController ideController;
-	
-	@BeforeMethod
-	public void setUp() {
-		ideControllerName = "IDE Controller";
-		mode = CleanupMode.Full;
-      String workingDir = PropertyUtils.getWorkingDirFromProperty();
-      ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)
-              .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
-              .attachHardDisk(HardDisk.builder().diskpath(workingDir + "/testadmin.vdi")
-                    .controllerPort(0).deviceSlot(1).build())
-              .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso").build();
-      }
+   private StorageController ideController;
 
-	@Test
+   @BeforeMethod
+   public void setUp() {
+      ideControllerName = "IDE Controller";
+      mode = CleanupMode.Full;
+      String workingDir = PropertyUtils.getWorkingDirFromProperty();
+      ideController = StorageController
+            .builder()
+            .name(ideControllerName)
+            .bus(StorageBus.IDE)
+            .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
+            .attachHardDisk(
+                  HardDisk.builder().diskpath(workingDir + "/testadmin.vdi")
+                        .controllerPort(0).deviceSlot(1).build())
+            .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso")
+            .build();
+   }
+
+   @Test
    public void testCreateNewMachine() throws Exception {
       String vmName = "jclouds-test-create-1-node";
-      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName).memoryMB(512).controller(ideController).cleanUpMode(mode)
+      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName)
+            .memoryMB(512).controller(ideController).cleanUpMode(mode)
             .osTypeId("Debian").forceOverwrite(true).build();
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(launchSpecification);
-      IMachine debianNode = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(launchSpecification);
+      new UnregisterMachineIfExistsAndDeleteItsMedia(manager)
+            .apply(launchSpecification);
+      IMachine debianNode = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(
+            manager).apply(launchSpecification);
       IMachine machine = manager.getVBox().findMachine(vmName);
       assertEquals(debianNode.getName(), machine.getName());
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(launchSpecification);
+      new UnregisterMachineIfExistsAndDeleteItsMedia(manager)
+            .apply(launchSpecification);
    }
 
    @Test
    public void testCreateNewMachineWithBadOsType() throws Exception {
       String vmName = "jclouds-test-create-2-node";
-      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName).memoryMB(512).controller(ideController).cleanUpMode(mode)
+      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName)
+            .memoryMB(512).controller(ideController).cleanUpMode(mode)
             .osTypeId("SomeWeirdUnknownOs").forceOverwrite(true).build();
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(launchSpecification);
+      new UnregisterMachineIfExistsAndDeleteItsMedia(manager)
+            .apply(launchSpecification);
 
       try {
-         new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(launchSpecification);
+         new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager)
+               .apply(launchSpecification);
          fail();
       } catch (VBoxException e) {
          ErrorCode errorCode = ErrorCode.valueOf(e);
