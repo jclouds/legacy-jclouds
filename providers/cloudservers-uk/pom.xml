@@ -35,7 +35,7 @@
 
     <properties>
         <test.cloudservers-uk.endpoint>https://lon.auth.api.rackspacecloud.com</test.cloudservers-uk.endpoint>
-        <test.cloudservers-uk.apiversion>1.0</test.cloudservers-uk.apiversion>
+        <test.cloudservers-uk.api-version>1.0</test.cloudservers-uk.api-version>
         <test.cloudservers-uk.identity>${test.rackspace-uk.identity}</test.cloudservers-uk.identity>
         <test.cloudservers-uk.credential>${test.rackspace-uk.credential}</test.cloudservers-uk.credential>
     </properties>
@@ -108,8 +108,8 @@
                                             <value>${test.cloudservers-uk.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudservers-uk.apiversion</name>
-                                            <value>${test.cloudservers-uk.apiversion}</value>
+                                            <name>test.cloudservers-uk.api-version</name>
+                                            <value>${test.cloudservers-uk.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.cloudservers-uk.identity</name>

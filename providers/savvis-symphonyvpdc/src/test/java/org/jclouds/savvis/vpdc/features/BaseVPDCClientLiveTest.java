@@ -54,7 +54,7 @@ public class BaseVPDCClientLiveTest {
    protected String identity;
    protected String credential;
    protected String endpoint;
-   protected String apiversion;
+   protected String apiVersion;
    protected ComputeServiceContext context;
    protected String email;
    protected RetryablePredicate<String> taskTester;
@@ -67,7 +67,7 @@ public class BaseVPDCClientLiveTest {
       email = checkNotNull(System.getProperty("test." + VPDCConstants.PROPERTY_VPDC_VDC_EMAIL), "test."
                + VPDCConstants.PROPERTY_VPDC_VDC_EMAIL);
       endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
+     apiVersion = System.getProperty("test." + provider + ".api-version");
    }
 
    protected Properties setupProperties() {
@@ -77,8 +77,8 @@ public class BaseVPDCClientLiveTest {
       overrides.setProperty(VPDCConstants.PROPERTY_VPDC_VDC_EMAIL, email);
       if (endpoint != null)
          overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
+      if (apiVersion != null)
+         overrides.setProperty(provider + ".api-version", apiVersion);
       // TODO savvis uses untrusted certificates, remove these once savvis fixes the issue
 	   overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
 	   overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");

@@ -60,7 +60,7 @@ public class PropertyHelper {
       properties.setProperty(provider + ".identity", properties.getProperty("test." + provider + ".identity"));
       properties.setProperty(provider + ".credential", properties.getProperty("test." + provider + ".credential"));
       properties.setProperty(provider + ".endpoint", properties.getProperty("test." + provider + ".endpoint"));
-      properties.setProperty(provider + ".apiversion", properties.getProperty("test." + provider + ".apiversion"));
+      properties.setProperty(provider + ".api-version", properties.getProperty("test." + provider + ".api-version"));
       properties.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       properties.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       return properties;

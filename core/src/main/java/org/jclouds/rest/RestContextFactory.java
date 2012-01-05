@@ -240,7 +240,7 @@ public class RestContextFactory {
       Properties props = new Properties();
 
       props.setProperty(contextSpec.provider + ".endpoint", contextSpec.endpoint);
-      props.setProperty(contextSpec.provider + ".apiversion", contextSpec.apiVersion);
+      props.setProperty(contextSpec.provider + ".api-version", contextSpec.apiVersion);
       props.setProperty(contextSpec.provider + "." + LocationConstants.ISO3166_CODES, contextSpec.iso3166Codes);
       props.setProperty(contextSpec.provider + ".identity", contextSpec.identity);
       if (contextSpec.credential != null)
@@ -288,7 +288,7 @@ public class RestContextFactory {
 
       String endpoint = props.getProperty(providerName + "." + LocationConstants.ENDPOINT, null);
       String iso3166Codes = props.getProperty(providerName + "." + LocationConstants.ISO3166_CODES, null);
-      String apiVersion = props.getProperty(providerName + ".apiversion", null);
+      String apiVersion = props.getProperty(providerName + ".api-version", null);
       identity = props.getProperty(providerName + ".identity", props.getProperty("jclouds.identity", identity));
       credential = loadCredentialOrDefault(props, providerName + ".credential",
             loadCredentialOrDefault(props, "jclouds.credential", credential));

@@ -56,12 +56,12 @@ public class RimuHostingClientLiveTest {
    protected String provider = "rimuhosting";
    protected String identity;
    protected String endpoint;
-   protected String apiversion;
+   protected String apiVersion;
 
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
+     apiVersion = System.getProperty("test." + provider + ".api-version");
    }
 
    protected Properties setupProperties() {
@@ -71,8 +71,8 @@ public class RimuHostingClientLiveTest {
       overrides.setProperty(provider + ".identity", identity);
       if (endpoint != null)
          overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
+      if (apiVersion != null)
+         overrides.setProperty(provider + ".api-version", apiVersion);
       return overrides;
    }
 

@@ -71,7 +71,7 @@ public abstract class BaseLoadBalancerServiceLiveTest {
    protected String identity;
    protected String credential;
    protected String endpoint;
-   protected String apiversion;
+   protected String apiVersion;
    protected LoadBalancerServiceContext context;
 
    protected String computeProvider;
@@ -85,13 +85,13 @@ public abstract class BaseLoadBalancerServiceLiveTest {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       credential = System.getProperty("test." + provider + ".credential");
       endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
+     apiVersion = System.getProperty("test." + provider + ".api-version");
       computeProvider = checkNotNull(System.getProperty("test." + provider + ".compute.provider"), "test." + provider
             + ".compute.provider");
       computeIdentity = checkNotNull(System.getProperty("test." + provider + ".compute.identity"), "test." + provider + ".compute.identity");
       computeCredential = System.getProperty("test." + provider + ".compute.credential");
       computeEndpoint = System.getProperty("test." + provider + ".compute.endpoint");
-      computeApiversion = System.getProperty("test." + provider + ".compute.apiversion");
+      computeApiversion = System.getProperty("test." + provider + ".compute.api-version");
    }
 
    protected Properties setupProperties() {
@@ -103,8 +103,8 @@ public abstract class BaseLoadBalancerServiceLiveTest {
          overrides.setProperty(provider + ".credential", credential);
       if (endpoint != null)
          overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
+      if (apiVersion != null)
+         overrides.setProperty(provider + ".api-version", apiVersion);
       return overrides;
    }
 
@@ -118,7 +118,7 @@ public abstract class BaseLoadBalancerServiceLiveTest {
       if (computeEndpoint != null)
          overrides.setProperty(computeProvider + ".endpoint", computeEndpoint);
       if (computeApiversion != null)
-         overrides.setProperty(computeProvider + ".apiversion", computeApiversion);
+         overrides.setProperty(computeProvider + ".api-version", computeApiversion);
       return overrides;
    }
 

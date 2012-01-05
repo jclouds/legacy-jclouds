@@ -50,7 +50,7 @@
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
         <test.twitter.endpoint>http://api.twitter.com</test.twitter.endpoint>
-        <test.twitter.apiversion>1.0</test.twitter.apiversion>
+        <test.twitter.api-version>1.0</test.twitter.api-version>
         <test.twitter.identity>FIXME</test.twitter.identity>
         <test.twitter.credential>FIXME</test.twitter.credential>
     </properties>
@@ -102,8 +102,8 @@
                                             <value>${test.twitter.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.twitter.apiversion</name>
-                                            <value>${test.twitter.apiversion}</value>
+                                            <name>test.twitter.api-version</name>
+                                            <value>${test.twitter.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.twitter.identity</name>

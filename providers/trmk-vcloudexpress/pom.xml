@@ -35,7 +35,7 @@
 
     <properties>
         <test.trmk-vcloudexpress.endpoint>https://services.vcloudexpress.terremark.com/api</test.trmk-vcloudexpress.endpoint>
-        <test.trmk-vcloudexpress.apiversion>0.8a-ext1.6</test.trmk-vcloudexpress.apiversion>
+        <test.trmk-vcloudexpress.api-version>0.8a-ext1.6</test.trmk-vcloudexpress.api-version>
         <test.trmk-vcloudexpress.identity>FIXME</test.trmk-vcloudexpress.identity>
         <test.trmk-vcloudexpress.credential>FIXME</test.trmk-vcloudexpress.credential>
     </properties>
@@ -104,8 +104,8 @@
                                             <value>${test.trmk-vcloudexpress.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.trmk-vcloudexpress.apiversion</name>
-                                            <value>${test.trmk-vcloudexpress.apiversion}</value>
+                                            <name>test.trmk-vcloudexpress.api-version</name>
+                                            <value>${test.trmk-vcloudexpress.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.trmk-vcloudexpress.identity</name>

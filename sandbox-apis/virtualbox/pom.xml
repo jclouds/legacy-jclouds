@@ -35,7 +35,7 @@
 
     <properties>
         <test.virtualbox.endpoint>http://localhost:18083/</test.virtualbox.endpoint>
-        <test.virtualbox.apiversion>4.1.2r73507</test.virtualbox.apiversion>
+        <test.virtualbox.api-version>4.1.2r73507</test.virtualbox.api-version>
         <test.virtualbox.identity>administrator</test.virtualbox.identity>
         <test.virtualbox.credential>12345</test.virtualbox.credential>
     </properties>
@@ -72,7 +72,7 @@
         <dependency>
             <groupId>org.virtualbox</groupId>
             <artifactId>vboxjws</artifactId>
-            <version>${test.virtualbox.apiversion}</version>
+            <version>${test.virtualbox.api-version}</version>
         </dependency>
         <dependency>
             <groupId>org.jclouds.api</groupId>
@@ -166,8 +166,8 @@
                                             <value>${test.virtualbox.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.virtualbox.apiversion</name>
-                                            <value>${test.virtualbox.apiversion}</value>
+                                            <name>test.virtualbox.api-version</name>
+                                            <value>${test.virtualbox.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.virtualbox.identity</name>

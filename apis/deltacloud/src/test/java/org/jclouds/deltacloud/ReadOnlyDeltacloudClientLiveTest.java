@@ -69,7 +69,7 @@ public class ReadOnlyDeltacloudClientLiveTest {
    protected String identity;
    protected String credential;
    protected String endpoint;
-   protected String apiversion;
+   protected String apiVersion;
    protected Predicate<IPSocket> socketTester;
    protected ImmutableMap<State, Predicate<Instance>> stateChanges;
 
@@ -77,7 +77,7 @@ public class ReadOnlyDeltacloudClientLiveTest {
       identity = System.getProperty("test." + provider + ".identity", "mockuser");
       credential = System.getProperty("test." + provider + ".credential", "mockpassword");
       endpoint = System.getProperty("test." + provider + ".endpoint", "http://localhost:3001/api");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
+     apiVersion = System.getProperty("test." + provider + ".api-version");
    }
 
    protected Properties setupProperties() {
@@ -89,8 +89,8 @@ public class ReadOnlyDeltacloudClientLiveTest {
          overrides.setProperty(provider + ".credential", credential);
       if (endpoint != null)
          overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
+      if (apiVersion != null)
+         overrides.setProperty(provider + ".api-version", apiVersion);
       return overrides;
    }
 

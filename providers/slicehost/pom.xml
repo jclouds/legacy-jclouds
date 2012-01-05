@@ -37,7 +37,7 @@
         <!-- when instances are hung, open a ticket and add here -->
         <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
         <test.slicehost.endpoint>https://api.slicehost.com</test.slicehost.endpoint>
-        <test.slicehost.apiversion>1.4.1.1</test.slicehost.apiversion>
+        <test.slicehost.api-version>1.4.1.1</test.slicehost.api-version>
         <test.slicehost.identity>FIXME</test.slicehost.identity>
     </properties>
     <dependencies>
@@ -98,8 +98,8 @@
                                             <value>${test.slicehost.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.slicehost.apiversion</name>
-                                            <value>${test.slicehost.apiversion}</value>
+                                            <name>test.slicehost.api-version</name>
+                                            <value>${test.slicehost.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.slicehost.identity</name>

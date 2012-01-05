@@ -35,7 +35,7 @@
 
     <properties>
         <test.cloudsigma-zrh.endpoint>https://api.cloudsigma.com</test.cloudsigma-zrh.endpoint>
-        <test.cloudsigma-zrh.apiversion>1.0</test.cloudsigma-zrh.apiversion>
+        <test.cloudsigma-zrh.api-version>1.0</test.cloudsigma-zrh.api-version>
         <test.cloudsigma-zrh.identity>FIXME</test.cloudsigma-zrh.identity>
         <test.cloudsigma-zrh.credential>FIXME</test.cloudsigma-zrh.credential>
     </properties>
@@ -103,8 +103,8 @@
                                             <value>${test.cloudsigma-zrh.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudsigma-zrh.apiversion</name>
-                                            <value>${test.cloudsigma-zrh.apiversion}</value>
+                                            <name>test.cloudsigma-zrh.api-version</name>
+                                            <value>${test.cloudsigma-zrh.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.cloudsigma-zrh.identity</name>

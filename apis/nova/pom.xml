@@ -125,8 +125,8 @@
                                             <value>${test.nova.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.nova.apiversion</name>
-                                            <value>${test.nova.apiversion}</value>
+                                            <name>test.nova.api-version</name>
+                                            <value>${test.nova.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.nova.identity</name>

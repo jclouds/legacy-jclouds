@@ -42,10 +42,10 @@ public class AWSS3TestInitializer extends TransientBlobStoreTestInitializer {
    }
 
    @Override
-   protected BlobStoreContext createLiveContext(Module configurationModule, String endpoint, String apiversion,
+   protected BlobStoreContext createLiveContext(Module configurationModule, String endpoint, String apiVersion,
             String app, String identity, String credential) throws IOException {
       return new BlobStoreContextFactory().createContext(provider, ImmutableSet.of(configurationModule,
-               new Log4JLoggingModule(), new EnterpriseConfigurationModule()), setupProperties(endpoint, apiversion,
+               new Log4JLoggingModule(), new EnterpriseConfigurationModule()), setupProperties(endpoint, apiVersion,
                identity, credential));
    }
 

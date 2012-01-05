@@ -58,7 +58,7 @@ $symbol_dollar = '$' )
     <properties>
         <test.${lcaseProviderName}.identity>${providerIdentity}</test.${lcaseProviderName}.identity>
         <test.${lcaseProviderName}.credential>${providerCredential}</test.${lcaseProviderName}.credential>
-        <test.${lcaseProviderName}.apiversion>${providerApiVersion}</test.${lcaseProviderName}.apiversion>
+        <test.${lcaseProviderName}.api-version>${providerApiVersion}</test.${lcaseProviderName}.api-version>
         <test.${lcaseProviderName}.endpoint>${providerEndpoint}</test.${lcaseProviderName}.endpoint>
     </properties>
     <dependencies>
@@ -117,8 +117,8 @@ $symbol_dollar = '$' )
                                             <value>\$\{test.${lcaseProviderName}.endpoint\}</value>
                                         </property>
                                         <property>
-                                            <name>test.${lcaseProviderName}.apiversion</name>
-                                            <value>\$\{test.${lcaseProviderName}.apiversion\}</value>
+                                            <name>test.${lcaseProviderName}.api-version</name>
+                                            <value>\$\{test.${lcaseProviderName}.api-version\}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

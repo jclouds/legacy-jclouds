@@ -36,7 +36,7 @@
     <properties>
         <test.initializer>org.jclouds.cloudfiles.blobstore.integration.CloudFilesTestInitializer</test.initializer>
         <test.cloudfiles.endpoint>https://auth.api.rackspacecloud.com</test.cloudfiles.endpoint>
-        <test.cloudfiles.apiversion>1.0</test.cloudfiles.apiversion>
+        <test.cloudfiles.api-version>1.0</test.cloudfiles.api-version>
         <test.cloudfiles.identity>${test.rackspace.identity}</test.cloudfiles.identity>
         <test.cloudfiles.credential>${test.rackspace.credential}</test.cloudfiles.credential>
     </properties>
@@ -111,8 +111,8 @@
                                             <value>${test.cloudfiles.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudfiles.apiversion</name>
-                                            <value>${test.cloudfiles.apiversion}</value>
+                                            <name>test.cloudfiles.api-version</name>
+                                            <value>${test.cloudfiles.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.cloudfiles.identity</name>

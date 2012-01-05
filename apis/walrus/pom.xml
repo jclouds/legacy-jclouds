@@ -36,7 +36,7 @@
     <properties>
         <test.initializer>org.jclouds.walrus.blobstore.WalrusTestInitializer</test.initializer>
         <test.walrus.endpoint>http://ecc.eucalyptus.com:8773/services/Walrus</test.walrus.endpoint>
-        <test.walrus.apiversion>2006-03-01</test.walrus.apiversion>
+        <test.walrus.api-version>2006-03-01</test.walrus.api-version>
         <test.walrus.identity>${test.eucalyptus.identity}</test.walrus.identity>
         <test.walrus.credential>${test.eucalyptus.credential}</test.walrus.credential>
     </properties>
@@ -105,8 +105,8 @@
                                             <value>${test.walrus.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.walrus.apiversion</name>
-                                            <value>${test.walrus.apiversion}</value>
+                                            <name>test.walrus.api-version</name>
+                                            <value>${test.walrus.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.walrus.identity</name>

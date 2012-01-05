@@ -36,7 +36,7 @@
     <properties>
         <test.initializer>org.jclouds.scality.rs2.blobstore.ScalityRS2TestInitializer</test.initializer>
         <test.scality-rs2.endpoint>FIXME_ENDPOINT</test.scality-rs2.endpoint>
-        <test.scality-rs2.apiversion>2006-03-01</test.scality-rs2.apiversion>
+        <test.scality-rs2.api-version>2006-03-01</test.scality-rs2.api-version>
         <test.scality-rs2.identity>FIXME_IDENTITY</test.scality-rs2.identity>
         <test.scality-rs2.credential>FIXME_CREDENTIAL</test.scality-rs2.credential>
     </properties>
@@ -105,8 +105,8 @@
                                             <value>${test.scality-rs2.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.scality-rs2.apiversion</name>
-                                            <value>${test.scality-rs2.apiversion}</value>
+                                            <name>test.scality-rs2.api-version</name>
+                                            <value>${test.scality-rs2.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.scality-rs2.identity</name>

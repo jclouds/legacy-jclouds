@@ -37,7 +37,7 @@
         <!-- when instances are hung, open a ticket and add here -->
         <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
         <test.gogrid.endpoint>https://api.gogrid.com/api</test.gogrid.endpoint>
-        <test.gogrid.apiversion>1.5</test.gogrid.apiversion>
+        <test.gogrid.api-version>1.5</test.gogrid.api-version>
         <test.gogrid.identity>FIXME</test.gogrid.identity>
         <test.gogrid.credential>FIXME</test.gogrid.credential>
     </properties>
@@ -98,8 +98,8 @@
                                             <value>${test.gogrid.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.gogrid.apiversion</name>
-                                            <value>${test.gogrid.apiversion}</value>
+                                            <name>test.gogrid.api-version</name>
+                                            <value>${test.gogrid.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.gogrid.identity</name>

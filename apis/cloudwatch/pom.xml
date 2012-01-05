@@ -35,7 +35,7 @@
 
     <properties>
         <test.cloudwatch.endpoint>https://monitoring.us-east-1.amazonaws.com</test.cloudwatch.endpoint>
-        <test.cloudwatch.apiversion>2009-05-15</test.cloudwatch.apiversion>
+        <test.cloudwatch.api-version>2009-05-15</test.cloudwatch.api-version>
         <test.cloudwatch.identity>${test.aws.identity}</test.cloudwatch.identity>
         <test.cloudwatch.credential>${test.aws.credential}</test.cloudwatch.credential>
     </properties>
@@ -90,8 +90,8 @@
                                             <value>${test.cloudwatch.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudwatch.apiversion</name>
-                                            <value>${test.cloudwatch.apiversion}</value>
+                                            <name>test.cloudwatch.api-version</name>
+                                            <value>${test.cloudwatch.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.cloudwatch.identity</name>

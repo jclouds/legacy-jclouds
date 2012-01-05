@@ -77,7 +77,7 @@ public class SetupVirtualBoxForLiveTest {
 
    public void setupCredentials() {
       endpoint = URI.create(System.getProperty("test." + provider + ".endpoint", "http://localhost:18083/"));
-      apiVersion = System.getProperty("test." + provider + ".apiversion", "4.1.2r73507");
+      apiVersion = System.getProperty("test." + provider + ".api-version", "4.1.2r73507");
       majorVersion = Iterables.get(Splitter.on('r').split(apiVersion), 0);
    }
 

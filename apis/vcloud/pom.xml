@@ -37,7 +37,7 @@
         <!-- when instances are hung, open a ticket and add here -->
         <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
         <test.vcloud.endpoint>FIXME</test.vcloud.endpoint>
-        <test.vcloud.apiversion>1.0</test.vcloud.apiversion>
+        <test.vcloud.api-version>1.0</test.vcloud.api-version>
         <test.vcloud.identity>FIXME</test.vcloud.identity>
         <test.vcloud.credential>FIXME</test.vcloud.credential>
     </properties>
@@ -118,8 +118,8 @@
                                             <value>${test.vcloud.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.vcloud.apiversion</name>
-                                            <value>${test.vcloud.apiversion}</value>
+                                            <name>test.vcloud.api-version</name>
+                                            <value>${test.vcloud.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.vcloud.identity</name>

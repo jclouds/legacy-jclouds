@@ -78,7 +78,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
             createServerOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method, "ralphie", 2, 1);
 
-      assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST http://endpoint/vapi-version/servers?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, "{\"server\":{\"name\":\"ralphie\",\"imageRef\":\"2\",\"flavorRef\":\"1\"}}",
             "application/json", false);
@@ -98,7 +98,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       HttpRequest request = processor
             .createRequest(method, "ralphie", 2, 1, withFile("/etc/jclouds", "foo".getBytes()));
 
-      assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST http://endpoint/vapi-version/servers?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(
             request,
@@ -120,7 +120,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       HttpRequest request = processor.createRequest(method, "ralphie", 2, 1,
             withMetadata(ImmutableMap.of("foo", "bar")));
 
-      assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST http://endpoint/vapi-version/servers?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request,
             "{\"server\":{\"name\":\"ralphie\",\"imageRef\":\"2\",\"flavorRef\":\"1\",\"metadata\":{\"foo\":\"bar\"}}}",
@@ -138,7 +138,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("deleteImage", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "DELETE http://endpoint/vapiversion/images/2 HTTP/1.1");
+      assertRequestLineEquals(request, "DELETE http://endpoint/vapi-version/images/2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -153,7 +153,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("listServers", listOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(request, "GET http://endpoint/vapiversion/servers?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET http://endpoint/vapi-version/servers?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -171,7 +171,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       HttpRequest request = processor.createRequest(method, changesSince(now).maxResults(1).startAt(2));
 
       assertRequestLineEquals(request,
-            "GET http://endpoint/vapiversion/servers?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
+            "GET http://endpoint/vapi-version/servers?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -186,7 +186,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("listServers", listOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method, withDetails());
 
-      assertRequestLineEquals(request, "GET http://endpoint/vapiversion/servers/detail?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET http://endpoint/vapi-version/servers/detail?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -201,7 +201,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("getServer", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "GET http://endpoint/vapiversion/servers/2?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET http://endpoint/vapi-version/servers/2?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -216,7 +216,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("listFlavors", listOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(request, "GET http://endpoint/vapiversion/flavors?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET http://endpoint/vapi-version/flavors?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -232,7 +232,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       HttpRequest request = processor.createRequest(method, changesSince(now).maxResults(1).startAt(2));
 
       assertRequestLineEquals(request,
-            "GET http://endpoint/vapiversion/flavors?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
+            "GET http://endpoint/vapi-version/flavors?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -247,7 +247,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("listFlavors", listOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method, withDetails());
 
-      assertRequestLineEquals(request, "GET http://endpoint/vapiversion/flavors/detail?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET http://endpoint/vapi-version/flavors/detail?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -263,7 +263,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       HttpRequest request = processor.createRequest(method, withDetails().changesSince(now).maxResults(1).startAt(2));
 
       assertRequestLineEquals(request,
-            "GET http://endpoint/vapiversion/flavors/detail?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
+            "GET http://endpoint/vapi-version/flavors/detail?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -278,7 +278,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("getFlavor", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "GET http://endpoint/vapiversion/flavors/2?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET http://endpoint/vapi-version/flavors/2?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -293,7 +293,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("listImages", listOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(request, "GET http://endpoint/vapiversion/images?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET http://endpoint/vapi-version/images?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -308,7 +308,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("listImages", listOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method, withDetails());
 
-      assertRequestLineEquals(request, "GET http://endpoint/vapiversion/images/detail?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET http://endpoint/vapi-version/images/detail?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -324,7 +324,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       HttpRequest request = processor.createRequest(method, changesSince(now).maxResults(1).startAt(2));
 
       assertRequestLineEquals(request,
-            "GET http://endpoint/vapiversion/images?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
+            "GET http://endpoint/vapi-version/images?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -340,7 +340,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       HttpRequest request = processor.createRequest(method, withDetails().changesSince(now).maxResults(1).startAt(2));
 
       assertRequestLineEquals(request,
-            "GET http://endpoint/vapiversion/images/detail?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
+            "GET http://endpoint/vapi-version/images/detail?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -355,7 +355,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("getImage", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "GET http://endpoint/vapiversion/images/2?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET http://endpoint/vapi-version/images/2?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -370,7 +370,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("deleteServer", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "DELETE http://endpoint/vapiversion/servers/2 HTTP/1.1");
+      assertRequestLineEquals(request, "DELETE http://endpoint/vapi-version/servers/2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -385,7 +385,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("changeAdminPass", int.class, String.class);
       HttpRequest request = processor.createRequest(method, 2, "foo");
 
-      assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers/2/action HTTP/1.1");
+      assertRequestLineEquals(request, "POST http://endpoint/vapi-version/servers/2/action HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"changePassword\":{\"adminPass\":\"foo\"}}", MediaType.APPLICATION_JSON, false);
 
@@ -401,7 +401,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("renameServer", int.class, String.class);
       HttpRequest request = processor.createRequest(method, 2, "foo");
 
-      assertRequestLineEquals(request, "PUT http://endpoint/vapiversion/servers/2 HTTP/1.1");
+      assertRequestLineEquals(request, "PUT http://endpoint/vapi-version/servers/2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"server\":{\"name\":\"foo\"}}", MediaType.APPLICATION_JSON, false);
 
@@ -417,7 +417,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("getAddresses", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "GET http://endpoint/vapiversion/servers/2/ips?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET http://endpoint/vapi-version/servers/2/ips?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -432,7 +432,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("listPublicAddresses", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "GET http://endpoint/vapiversion/servers/2/ips/public?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET http://endpoint/vapi-version/servers/2/ips/public?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -448,7 +448,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("listPrivateAddresses", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "GET http://endpoint/vapiversion/servers/2/ips/private?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET http://endpoint/vapi-version/servers/2/ips/private?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -464,7 +464,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("createImageFromServer", String.class, int.class);
       HttpRequest request = processor.createRequest(method, "ralphie", 2);
 
-      assertRequestLineEquals(request, "POST http://endpoint/vapiversion/images?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST http://endpoint/vapi-version/images?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, "{\"image\":{\"serverId\":2,\"name\":\"ralphie\"}}", MediaType.APPLICATION_JSON,
             false);
@@ -486,7 +486,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
             rebuildServerOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method, 3);
 
-      assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers/3/action?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST http://endpoint/vapi-version/servers/3/action?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"rebuild\":{}}", MediaType.APPLICATION_JSON, false);
 
@@ -503,7 +503,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
             rebuildServerOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method, 3, withImage("2"));
 
-      assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers/3/action?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST http://endpoint/vapi-version/servers/3/action?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"rebuild\":{\"imageRef\":\"2\"}}", MediaType.APPLICATION_JSON, false);
 
@@ -519,7 +519,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("rebootServer", int.class, RebootType.class);
       HttpRequest request = processor.createRequest(method, 2, RebootType.HARD);
 
-      assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers/2/action?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST http://endpoint/vapi-version/servers/2/action?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"reboot\":{\"type\":\"HARD\"}}", MediaType.APPLICATION_JSON, false);
 
@@ -535,7 +535,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("resizeServer", int.class, int.class);
       HttpRequest request = processor.createRequest(method, 2, 3);
 
-      assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers/2/action?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST http://endpoint/vapi-version/servers/2/action?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"resize\":{\"flavorId\":3}}", MediaType.APPLICATION_JSON, false);
 
@@ -551,7 +551,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("confirmResizeServer", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers/2/action?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST http://endpoint/vapi-version/servers/2/action?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"confirmResize\":null}", MediaType.APPLICATION_JSON, false);
 
@@ -566,7 +566,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
       Method method = NovaAsyncClient.class.getMethod("revertResizeServer", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "POST http://endpoint/vapiversion/servers/2/action?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST http://endpoint/vapi-version/servers/2/action?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"revertResize\":null}", MediaType.APPLICATION_JSON, false);
 
@@ -605,7 +605,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
 
       @Override
       protected URI provideServerUrl(AuthenticationResponse response) {
-         return URI.create("http://endpoint/vapiversion");
+         return URI.create("http://endpoint/vapi-version");
       }
 
    }
@@ -620,7 +620,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
    @Override
    protected Properties getProperties() {
       Properties overrides = new Properties();
-      overrides.setProperty(PROPERTY_API_VERSION, "apiversion");
+      overrides.setProperty(PROPERTY_API_VERSION, "api-version");
       overrides.setProperty(provider + ".endpoint", "http://endpoint");
       overrides.setProperty(provider + ".contextbuilder", NovaContextBuilder.class.getName());
       return overrides;

@@ -51,7 +51,7 @@
         <!-- when instances are hung, open a ticket and add here -->
         <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
         <test.elasticstack.endpoint>https://api.lon-p.elastichosts.com</test.elasticstack.endpoint>
-        <test.elasticstack.apiversion>1.0</test.elasticstack.apiversion>
+        <test.elasticstack.api-version>1.0</test.elasticstack.api-version>
         <test.elasticstack.identity>FIXME</test.elasticstack.identity>
         <test.elasticstack.credential>FIXME</test.elasticstack.credential>
     </properties>
@@ -110,8 +110,8 @@
                                             <value>${test.elasticstack.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.elasticstack.apiversion</name>
-                                            <value>${test.elasticstack.apiversion}</value>
+                                            <name>test.elasticstack.api-version</name>
+                                            <value>${test.elasticstack.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.elasticstack.identity</name>

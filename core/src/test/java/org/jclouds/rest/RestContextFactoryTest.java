@@ -66,7 +66,7 @@ public class RestContextFactoryTest {
 
       Properties props = RestContextFactory.toProperties(contextSpec);
       assertEquals(props.getProperty("test.endpoint"), "http://localhost");
-      assertEquals(props.getProperty("test.apiversion"), "1");
+      assertEquals(props.getProperty("test.api-version"), "1");
       assertEquals(props.getProperty("test.identity"), "dummy");
       assertEquals(props.getProperty("test.iso3166-codes"), "US-CA");
       assertEquals(props.getProperty("test.credential"), null);
@@ -86,7 +86,7 @@ public class RestContextFactoryTest {
 
       Properties props = RestContextFactory.toProperties(contextSpec);
       assertEquals(props.getProperty("test.endpoint"), "http://localhost");
-      assertEquals(props.getProperty("test.apiversion"), "1");
+      assertEquals(props.getProperty("test.api-version"), "1");
       assertEquals(props.getProperty("test.identity"), "dummy");
       assertEquals(props.getProperty("test.credential"), "credential");
       assertEquals(props.getProperty("test.sync"), IntegrationTestClient.class.getName());
@@ -107,7 +107,7 @@ public class RestContextFactoryTest {
 
       Properties props = RestContextFactory.toProperties(contextSpec);
       assertEquals(props.getProperty("test.endpoint"), "http://localhost");
-      assertEquals(props.getProperty("test.apiversion"), "1");
+      assertEquals(props.getProperty("test.api-version"), "1");
       assertEquals(props.getProperty("test.identity"), "dummy");
       assertEquals(props.getProperty("test.credential"), null);
       assertEquals(props.getProperty("test.sync"), null);
@@ -128,7 +128,7 @@ public class RestContextFactoryTest {
 
       Properties props = RestContextFactory.toProperties(contextSpec);
       assertEquals(props.getProperty("test.endpoint"), "http://localhost");
-      assertEquals(props.getProperty("test.apiversion"), "1");
+      assertEquals(props.getProperty("test.api-version"), "1");
       assertEquals(props.getProperty("test.identity"), "dummy");
       assertEquals(props.getProperty("test.credential"), null);
       assertEquals(props.getProperty("test.sync"), null);
@@ -149,7 +149,7 @@ public class RestContextFactoryTest {
 
       Properties props = RestContextFactory.toProperties(contextSpec);
       assertEquals(props.getProperty("test.endpoint"), "http://localhost");
-      assertEquals(props.getProperty("test.apiversion"), "1");
+      assertEquals(props.getProperty("test.api-version"), "1");
       assertEquals(props.getProperty("test.identity"), "dummy");
       assertEquals(props.getProperty("test.credential"), null);
       assertEquals(props.getProperty("test.sync"), null);
@@ -165,7 +165,7 @@ public class RestContextFactoryTest {
    public void testBuilderPropertiesJCloudsScope() {
       Properties props = new Properties();
       props.setProperty("test.endpoint", "http://localhost");
-      props.setProperty("test.apiversion", "1");
+      props.setProperty("test.api-version", "1");
       props.setProperty("test.iso3166-codes", "US");
       props.setProperty("jclouds.identity", "foo");
       props.setProperty("jclouds.credential", "bar");
@@ -200,7 +200,7 @@ public class RestContextFactoryTest {
       Files.write("bar", file, Charsets.UTF_8);
       Properties props = new Properties();
       props.setProperty("test.endpoint", "http://localhost");
-      props.setProperty("test.apiversion", "1");
+      props.setProperty("test.api-version", "1");
       props.setProperty("test.iso3166-codes", "US");
       props.setProperty("test.identity", "foo");
       props.setProperty("test.credential.file", file.getAbsolutePath());

@@ -285,7 +285,7 @@ public class DeprecatedVCloudClientLiveTest  {
    protected String identity;
    protected String credential;
    protected String endpoint;
-   protected String apiversion;
+   protected String apiVersion;
    protected Iterable<Org> orgs;
 
    protected void setupCredentials() {
@@ -293,7 +293,7 @@ public class DeprecatedVCloudClientLiveTest  {
       credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
             + ".identity");
       endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
+     apiVersion = System.getProperty("test." + provider + ".api-version");
    }
 
    protected Properties setupProperties() {
@@ -304,8 +304,8 @@ public class DeprecatedVCloudClientLiveTest  {
       overrides.setProperty(provider + ".credential", credential);
       if (endpoint != null)
          overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
+      if (apiVersion != null)
+         overrides.setProperty(provider + ".api-version", apiVersion);
       return overrides;
    }
 

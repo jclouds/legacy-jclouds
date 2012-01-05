@@ -36,7 +36,7 @@
     <properties>
         <test.initializer>org.jclouds.googlestorage.blobstore.GoogleStorageTestInitializer</test.initializer>
         <test.googlestorage.endpoint>https://commondatastorage.googleapis.com</test.googlestorage.endpoint>
-        <test.googlestorage.apiversion>2006-03-01</test.googlestorage.apiversion>
+        <test.googlestorage.api-version>2006-03-01</test.googlestorage.api-version>
         <test.googlestorage.identity>FIX_ME</test.googlestorage.identity>
         <test.googlestorage.credential>FIX_ME</test.googlestorage.credential>
     </properties>
@@ -105,8 +105,8 @@
                                             <value>${test.googlestorage.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.googlestorage.apiversion</name>
-                                            <value>${test.googlestorage.apiversion}</value>
+                                            <name>test.googlestorage.api-version</name>
+                                            <value>${test.googlestorage.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.googlestorage.identity</name>

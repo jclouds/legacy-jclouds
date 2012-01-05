@@ -34,7 +34,7 @@
 
     <properties>
         <test.dunkel-vcd.endpoint>https://vcd.dunkel.de/api</test.dunkel-vcd.endpoint>
-        <test.dunkel-vcd.apiversion>1.0</test.dunkel-vcd.apiversion>
+        <test.dunkel-vcd.api-version>1.0</test.dunkel-vcd.api-version>
         <test.dunkel-vcd.identity>FIXME_IDENTITY</test.dunkel-vcd.identity>
         <test.dunkel-vcd.credential>FIXME_CREDENTIAL</test.dunkel-vcd.credential>
     </properties>
@@ -102,8 +102,8 @@
                                             <value>${test.dunkel-vcd.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.dunkel-vcd.apiversion</name>
-                                            <value>${test.dunkel-vcd.apiversion}</value>
+                                            <name>test.dunkel-vcd.api-version</name>
+                                            <value>${test.dunkel-vcd.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.dunkel-vcd.identity</name>

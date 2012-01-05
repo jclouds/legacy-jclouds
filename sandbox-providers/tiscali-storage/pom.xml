@@ -36,7 +36,7 @@
     <properties>
         <test.initializer>org.jclouds.tiscali.storage.blobstore.TiscaliStorageTestInitializer</test.initializer>
         <test.tiscali-storage.endpoint>https://storage.tiscali.it</test.tiscali-storage.endpoint>
-        <test.tiscali-storage.apiversion>2006-03-01</test.tiscali-storage.apiversion>
+        <test.tiscali-storage.api-version>2006-03-01</test.tiscali-storage.api-version>
         <test.tiscali-storage.identity>FIX_ME</test.tiscali-storage.identity>
         <test.tiscali-storage.credential>FIX_ME</test.tiscali-storage.credential>
     </properties>
@@ -113,8 +113,8 @@
                                             <value>${test.tiscali-storage.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.tiscali-storage.apiversion</name>
-                                            <value>${test.tiscali-storage.apiversion}</value>
+                                            <name>test.tiscali-storage.api-version</name>
+                                            <value>${test.tiscali-storage.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.tiscali-storage.identity</name>

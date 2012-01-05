@@ -68,7 +68,7 @@ public class BaseCloudStackClientLiveTest {
    protected String identity;
    protected String credential;
    protected String endpoint;
-   protected String apiversion;
+   protected String apiVersion;
    protected Predicate<IPSocket> socketTester;
    protected RetryablePredicate<Long> jobComplete;
    protected RetryablePredicate<VirtualMachine> virtualMachineRunning;
@@ -87,7 +87,7 @@ public class BaseCloudStackClientLiveTest {
                + ".credential must be set.  ex. secretKey");
       endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider
                + ".endpoint must be set.  ex. http://localhost:8080/client/api");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
+     apiVersion = System.getProperty("test." + provider + ".api-version");
    }
 
    protected void checkSSH(IPSocket socket) {
@@ -111,8 +111,8 @@ public class BaseCloudStackClientLiveTest {
       overrides.setProperty(provider + ".identity", identity);
       overrides.setProperty(provider + ".credential", credential);
       overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
+      if (apiVersion != null)
+         overrides.setProperty(provider + ".api-version", apiVersion);
       return overrides;
    }
 

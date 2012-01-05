@@ -36,7 +36,7 @@
     <properties>
         <test.initializer>org.jclouds.openstack.swift.blobstore.integration.SwiftTestInitializer</test.initializer>
         <test.swift.endpoint>http://localhost:11000</test.swift.endpoint>
-        <test.swift.apiversion>1.0</test.swift.apiversion>
+        <test.swift.api-version>1.0</test.swift.api-version>
         <test.swift.identity>test:tester</test.swift.identity>
         <test.swift.credential>testing</test.swift.credential>
     </properties>
@@ -109,8 +109,8 @@
                                             <value>${test.swift.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.swift.apiversion</name>
-                                            <value>${test.swift.apiversion}</value>
+                                            <name>test.swift.api-version</name>
+                                            <value>${test.swift.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.swift.identity</name>

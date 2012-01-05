@@ -51,7 +51,7 @@
         <!-- when instances are hung, open a ticket and add here -->
         <jclouds.compute.blacklist-nodes>node-924</jclouds.compute.blacklist-nodes>
         <test.savvis-symphonyvpdc.endpoint>https://api.symphonyvpdc.savvis.net/vpdc</test.savvis-symphonyvpdc.endpoint>
-        <test.savvis-symphonyvpdc.apiversion>1.0</test.savvis-symphonyvpdc.apiversion>
+        <test.savvis-symphonyvpdc.api-version>1.0</test.savvis-symphonyvpdc.api-version>
         <test.savvis-symphonyvpdc.identity>FIXME</test.savvis-symphonyvpdc.identity>
         <test.savvis-symphonyvpdc.credential>FIXME</test.savvis-symphonyvpdc.credential>
         <test.savvis-symphonyvpdc.vdc-email>FIXME</test.savvis-symphonyvpdc.vdc-email>
@@ -119,8 +119,8 @@
                                             <value>${test.savvis-symphonyvpdc.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.savvis-symphonyvpdc.apiversion</name>
-                                            <value>${test.savvis-symphonyvpdc.apiversion}</value>
+                                            <name>test.savvis-symphonyvpdc.api-version</name>
+                                            <value>${test.savvis-symphonyvpdc.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.savvis-symphonyvpdc.identity</name>

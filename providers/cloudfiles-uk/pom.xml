@@ -36,7 +36,7 @@
     <properties>
         <test.initializer>org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKTestInitializer</test.initializer>
         <test.cloudfiles-uk.endpoint>https://lon.auth.api.rackspacecloud.com</test.cloudfiles-uk.endpoint>
-        <test.cloudfiles-uk.apiversion>1.0</test.cloudfiles-uk.apiversion>
+        <test.cloudfiles-uk.api-version>1.0</test.cloudfiles-uk.api-version>
         <test.cloudfiles-uk.identity>${test.rackspace-uk.identity}</test.cloudfiles-uk.identity>
         <test.cloudfiles-uk.credential>${test.rackspace-uk.credential}</test.cloudfiles-uk.credential>
     </properties>
@@ -113,8 +113,8 @@
                                             <value>${test.cloudfiles-uk.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudfiles-uk.apiversion</name>
-                                            <value>${test.cloudfiles-uk.apiversion}</value>
+                                            <name>test.cloudfiles-uk.api-version</name>
+                                            <value>${test.cloudfiles-uk.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.cloudfiles-uk.identity</name>

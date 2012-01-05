@@ -49,7 +49,7 @@
     
     <properties>
         <test.cloudstack.endpoint>http://localhost:8080/client/api</test.cloudstack.endpoint>
-        <test.cloudstack.apiversion>2.2.0</test.cloudstack.apiversion>
+        <test.cloudstack.api-version>2.2.0</test.cloudstack.api-version>
         <test.cloudstack.identity>FIXME_apiKey</test.cloudstack.identity>
         <test.cloudstack.credential>FIXME_secretKey</test.cloudstack.credential>
     </properties>
@@ -115,8 +115,8 @@
                                             <value>${test.cloudstack.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudstack.apiversion</name>
-                                            <value>${test.cloudstack.apiversion}</value>
+                                            <name>test.cloudstack.api-version</name>
+                                            <value>${test.cloudstack.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.cloudstack.identity</name>

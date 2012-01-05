@@ -35,7 +35,7 @@
 
     <properties>
         <test.cloudservers-us.endpoint>https://auth.api.rackspacecloud.com</test.cloudservers-us.endpoint>
-        <test.cloudservers-us.apiversion>1.0</test.cloudservers-us.apiversion>
+        <test.cloudservers-us.api-version>1.0</test.cloudservers-us.api-version>
         <test.cloudservers-us.identity>${test.rackspace-us.identity}</test.cloudservers-us.identity>
         <test.cloudservers-us.credential>${test.rackspace-us.credential}</test.cloudservers-us.credential>
     </properties>
@@ -109,8 +109,8 @@
                                             <value>${test.cloudservers-us.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudservers-us.apiversion</name>
-                                            <value>${test.cloudservers-us.apiversion}</value>
+                                            <name>test.cloudservers-us.api-version</name>
+                                            <value>${test.cloudservers-us.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.cloudservers-us.identity</name>

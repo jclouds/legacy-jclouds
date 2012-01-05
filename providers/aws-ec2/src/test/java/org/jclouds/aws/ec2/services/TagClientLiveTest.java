@@ -64,7 +64,7 @@ public class TagClientLiveTest {
    protected String identity;
    protected String credential;
    protected String endpoint;
-   protected String apiversion;
+   protected String apiVersion;
    protected String testGroup;
    private ComputeServiceContext computeContext;
 
@@ -72,7 +72,7 @@ public class TagClientLiveTest {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider + ".credential");
       endpoint = System.getProperty("test." + provider + ".endpoint", null);
-      apiversion = System.getProperty("test." + provider + ".apiversion", null);
+     apiVersion = System.getProperty("test." + provider + ".api-version", null);
    }
 
    protected Properties setupProperties() {
@@ -83,8 +83,8 @@ public class TagClientLiveTest {
       overrides.setProperty(provider + ".credential", credential);
       if (endpoint != null)
          overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
+      if (apiVersion != null)
+         overrides.setProperty(provider + ".api-version", apiVersion);
       return overrides;
    }
 

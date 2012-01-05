@@ -36,12 +36,12 @@
     <properties>
         <test.elb.zone>us-east-1a</test.elb.zone>
         <test.elb.endpoint>https://elasticloadbalancing.us-east-1.amazonaws.com</test.elb.endpoint>
-        <test.elb.apiversion>2010-07-01</test.elb.apiversion>
+        <test.elb.api-version>2010-07-01</test.elb.api-version>
         <test.elb.identity>${test.aws.identity}</test.elb.identity>
         <test.elb.credential>${test.aws.credential}</test.elb.credential>
         <test.elb.compute.provider>ec2</test.elb.compute.provider>
         <test.elb.compute.endpoint>https://ec2.us-east-1.amazonaws.com</test.elb.compute.endpoint>
-        <test.elb.compute.apiversion>2010-06-15</test.elb.compute.apiversion>
+        <test.elb.compute.api-version>2010-06-15</test.elb.compute.api-version>
         <test.elb.compute.identity>${test.aws.identity}</test.elb.compute.identity>
         <test.elb.compute.credential>${test.aws.credential}</test.elb.compute.credential>
     </properties>
@@ -123,8 +123,8 @@
                                             <value>${test.elb.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.elb.apiversion</name>
-                                            <value>${test.elb.apiversion}</value>
+                                            <name>test.elb.api-version</name>
+                                            <value>${test.elb.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.elb.identity</name>
@@ -143,8 +143,8 @@
                                             <value>${test.elb.compute.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.elb.compute.apiversion</name>
-                                            <value>${test.elb.compute.apiversion}</value>
+                                            <name>test.elb.compute.api-version</name>
+                                            <value>${test.elb.compute.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.elb.compute.identity</name>

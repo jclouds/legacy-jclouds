@@ -35,7 +35,7 @@
 
     <properties>
         <test.eucalyptus-partnercloud-ec2.endpoint>http://partnercloud.eucalyptus.com:8773/services/Eucalyptus</test.eucalyptus-partnercloud-ec2.endpoint>
-        <test.eucalyptus-partnercloud-ec2.apiversion>2010-06-15</test.eucalyptus-partnercloud-ec2.apiversion>
+        <test.eucalyptus-partnercloud-ec2.api-version>2010-06-15</test.eucalyptus-partnercloud-ec2.api-version>
         <test.eucalyptus-partnercloud-ec2.identity>FIXME_IDENTITY</test.eucalyptus-partnercloud-ec2.identity>
         <test.eucalyptus-partnercloud-ec2.credential>FIXME_CREDENTIAL</test.eucalyptus-partnercloud-ec2.credential>
         <!--  corresponds to image manifest and also virt + "-cluster" zone -->
@@ -118,8 +118,8 @@
                                             <value>${test.eucalyptus-partnercloud-ec2.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.eucalyptus-partnercloud-ec2.apiversion</name>
-                                            <value>${test.eucalyptus-partnercloud-ec2.apiversion}</value>
+                                            <name>test.eucalyptus-partnercloud-ec2.api-version</name>
+                                            <value>${test.eucalyptus-partnercloud-ec2.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.eucalyptus-partnercloud-ec2.identity</name>

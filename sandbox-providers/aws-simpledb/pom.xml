@@ -35,7 +35,7 @@
 
     <properties>
         <test.aws-simpledb.endpoint>https://sdb.amazonaws.com</test.aws-simpledb.endpoint>
-        <test.aws-simpledb.apiversion>2009-04-15</test.aws-simpledb.apiversion>
+        <test.aws-simpledb.api-version>2009-04-15</test.aws-simpledb.api-version>
         <test.aws-simpledb.identity>${test.aws.identity}</test.aws-simpledb.identity>
         <test.aws-simpledb.credential>${test.aws.credential}</test.aws-simpledb.credential>
     </properties>
@@ -97,8 +97,8 @@
                                             <value>${test.aws-simpledb.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.aws-simpledb.apiversion</name>
-                                            <value>${test.aws-simpledb.apiversion}</value>
+                                            <name>test.aws-simpledb.api-version</name>
+                                            <value>${test.aws-simpledb.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.aws-simpledb.identity</name>

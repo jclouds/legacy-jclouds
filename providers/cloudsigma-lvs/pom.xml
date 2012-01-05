@@ -35,7 +35,7 @@
 
     <properties>
         <test.cloudsigma-lvs.endpoint>https://api.lvs.cloudsigma.com</test.cloudsigma-lvs.endpoint>
-        <test.cloudsigma-lvs.apiversion>1.0</test.cloudsigma-lvs.apiversion>
+        <test.cloudsigma-lvs.api-version>1.0</test.cloudsigma-lvs.api-version>
         <test.cloudsigma-lvs.identity>FIXME</test.cloudsigma-lvs.identity>
         <test.cloudsigma-lvs.credential>FIXME</test.cloudsigma-lvs.credential>
     </properties>
@@ -103,8 +103,8 @@
                                             <value>${test.cloudsigma-lvs.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudsigma-lvs.apiversion</name>
-                                            <value>${test.cloudsigma-lvs.apiversion}</value>
+                                            <name>test.cloudsigma-lvs.api-version</name>
+                                            <value>${test.cloudsigma-lvs.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.cloudsigma-lvs.identity</name>

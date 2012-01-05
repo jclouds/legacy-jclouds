@@ -113,7 +113,7 @@ public class VirtualboxAdministrationKickstartLiveTest extends BaseVirtualBoxCli
          ;
       distroIsoName = System.getProperty("test." + provider + ".distroIsoName", "ubuntu-11.04-server-i386.iso");
       adminDisk = workingDir + File.separator + System.getProperty("test." + provider + ".adminDisk", "admin.vdi");
-      String majorVersion = Iterables.get(Splitter.on('r').split(apiversion), 0);
+      String majorVersion = Iterables.get(Splitter.on('r').split(apiVersion), 0);
       guestAdditionsDvd = workingDir
                + File.separator
                + System.getProperty("test." + provider + ".guestAdditionsDvd", "VBoxGuestAdditions_" + majorVersion

@@ -49,7 +49,7 @@
     
     <properties>
         <test.deltacloud.endpoint>http://localhost:3001/api</test.deltacloud.endpoint>
-        <test.deltacloud.apiversion>0.3.0</test.deltacloud.apiversion>
+        <test.deltacloud.api-version>0.3.0</test.deltacloud.api-version>
         <test.deltacloud.identity>mockuser</test.deltacloud.identity>
         <test.deltacloud.credential>mockpassword</test.deltacloud.credential>
     </properties>
@@ -108,8 +108,8 @@
                                             <value>${test.deltacloud.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.deltacloud.apiversion</name>
-                                            <value>${test.deltacloud.apiversion}</value>
+                                            <name>test.deltacloud.api-version</name>
+                                            <value>${test.deltacloud.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.deltacloud.identity</name>

@@ -36,7 +36,7 @@
     <properties>
         <test.initializer>org.jclouds.aws.s3.blobstore.integration.AWSS3TestInitializer</test.initializer>
         <test.aws-s3.endpoint>https://s3.amazonaws.com</test.aws-s3.endpoint>
-        <test.aws-s3.apiversion>2006-03-01</test.aws-s3.apiversion>
+        <test.aws-s3.api-version>2006-03-01</test.aws-s3.api-version>
         <test.aws-s3.identity>${test.aws.identity}</test.aws-s3.identity>
         <test.aws-s3.credential>${test.aws.credential}</test.aws-s3.credential>
         <test.blobstore.container-count>25</test.blobstore.container-count>
@@ -127,8 +127,8 @@
                                             <value>${test.aws-s3.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.aws-s3.apiversion</name>
-                                            <value>${test.aws-s3.apiversion}</value>
+                                            <name>test.aws-s3.api-version</name>
+                                            <value>${test.aws-s3.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.aws-s3.identity</name>

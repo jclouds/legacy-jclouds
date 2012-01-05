@@ -93,15 +93,15 @@ public class InternetServiceLiveTest {
    protected String identity;
    protected String credential;
    protected String endpoint;
-   protected String apiversion;
+   protected String apiVersion;
 
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
                + ".credential");
       endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
-      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
-               + ".apiversion");
+     apiVersion = checkNotNull(System.getProperty("test." + provider + ".api-version"), "test." + provider
+               + ".api-version");
    }
 
    protected Properties setupProperties() {
@@ -111,7 +111,7 @@ public class InternetServiceLiveTest {
       overrides.setProperty(provider + ".identity", identity);
       overrides.setProperty(provider + ".credential", credential);
       overrides.setProperty(provider + ".endpoint", endpoint);
-      overrides.setProperty(provider + ".apiversion", apiversion);
+      overrides.setProperty(provider + ".api-version", apiVersion);
       return overrides;
    }
 

@@ -36,7 +36,7 @@
     <properties>
         <test.initializer>org.jclouds.scaleup.storage.blobstore.ScaleUpStorageTestInitializer</test.initializer>
         <test.scaleup-storage.endpoint>https://scs.scaleupstorage.com</test.scaleup-storage.endpoint>
-        <test.scaleup-storage.apiversion>2006-03-01</test.scaleup-storage.apiversion>
+        <test.scaleup-storage.api-version>2006-03-01</test.scaleup-storage.api-version>
         <test.scaleup-storage.identity>FIX_ME</test.scaleup-storage.identity>
         <test.scaleup-storage.credential>FIX_ME</test.scaleup-storage.credential>
     </properties>
@@ -112,8 +112,8 @@
                                             <value>${test.scaleup-storage.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.scaleup-storage.apiversion</name>
-                                            <value>${test.scaleup-storage.apiversion}</value>
+                                            <name>test.scaleup-storage.api-version</name>
+                                            <value>${test.scaleup-storage.api-version}</value>
                                         </property>
                                         <property>
                                             <name>test.scaleup-storage.identity</name>
