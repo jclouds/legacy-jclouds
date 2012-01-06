@@ -18,14 +18,13 @@
  */
 package org.jclouds.softlayer.compute;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -35,30 +34,18 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "SoftLayerExperimentLiveTest")
-public class SoftLayerExperimentLiveTest {
-   protected String provider = "softlayer";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiVersion;
-
-   @BeforeClass
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = System.getProperty("test." + provider + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-     apiVersion = System.getProperty("test." + provider + ".api-version");
+@Test(groups = "live", singleThreaded = true, testName = "SoftLayerExperimentLiveTest")
+public class SoftLayerExperimentLiveTest extends BaseVersionedServiceLiveTest {
+   public SoftLayerExperimentLiveTest() {
+      provider = "softlayer";
    }
 
    @Test
    public void testAndExperiment() {
       ComputeServiceContext context = null;
       try {
-         String identity = checkNotNull(System.getProperty("test.softlayer.identity"), "test.softlayer.identity");
-         String credential = checkNotNull(System.getProperty("test.softlayer.credential"), "test.softlayer.credential");
 
-         context = new ComputeServiceContextFactory().createContext("softlayer", identity, credential, ImmutableSet
+         context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet
                   .<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()));
 
          assertEquals(context.getComputeService().listAssignableLocations().size(), 7);

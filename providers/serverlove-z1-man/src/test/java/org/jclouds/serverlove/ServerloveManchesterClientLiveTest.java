@@ -27,11 +27,10 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true)
+@Test(groups = "live", singleThreaded = true, testName = "ServerloveManchesterClientLiveTest")
 public class ServerloveManchesterClientLiveTest extends ElasticStackClientLiveTest {
    public ServerloveManchesterClientLiveTest() {
       provider = "serverlove-z1-man";
-      bootDrive = "574a3921-2926-4a61-bdd9-8d9282b32810";
    }
 
    @Override

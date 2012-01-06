@@ -18,7 +18,6 @@
  */
 package org.jclouds.ec2;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.ec2.options.RunInstancesOptions.Builder.asType;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.testng.Assert.assertEquals;
@@ -34,12 +33,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.Constants;
 import org.jclouds.aws.AWSResponseException;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.domain.BlockDevice;
-import org.jclouds.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.IpProtocol;
@@ -47,6 +45,7 @@ import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.PublicIpInstanceIdPair;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.ec2.predicates.InstanceHasIpAddress;
 import org.jclouds.ec2.predicates.InstanceStateRunning;
@@ -80,8 +79,11 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = false, sequential = true)
-public class CloudApplicationArchitecturesEC2ClientLiveTest {
+@Test(groups = "live", enabled = false, singleThreaded = true, testName = "CloudApplicationArchitecturesEC2ClientLiveTest")
+public class CloudApplicationArchitecturesEC2ClientLiveTest extends BaseVersionedServiceLiveTest {
+   public CloudApplicationArchitecturesEC2ClientLiveTest() {
+      provider = "ec2";
+   }
 
    private EC2Client client;
    protected SshClient.Factory sshFactory;
@@ -94,32 +96,6 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
    private RetryablePredicate<IPSocket> socketTester;
    private RetryablePredicate<RunningInstance> hasIpTester;
    private RetryablePredicate<RunningInstance> runningTester;
-
-   protected String provider = "ec2";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiVersion;
-
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-            + ".credential");
-      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
-     apiVersion = checkNotNull(System.getProperty("test." + provider + ".api-version"), "test." + provider
-            + ".api-version");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      overrides.setProperty(provider + ".credential", credential);
-      overrides.setProperty(provider + ".endpoint", endpoint);
-      overrides.setProperty(provider + ".api-version", apiVersion);
-      return overrides;
-   }
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {

@@ -18,12 +18,9 @@
  */
 package org.jclouds.cloudloadbalancers.features;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.Constants;
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersAsyncClient;
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersClient;
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer;
@@ -33,6 +30,7 @@ import org.jclouds.loadbalancer.LoadBalancerServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.rest.BaseRestClientLiveTest;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
@@ -47,44 +45,20 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class BaseCloudLoadBalancersClientLiveTest {
-   protected String prefix = System.getProperty("user.name");
+public class BaseCloudLoadBalancersClientLiveTest extends BaseRestClientLiveTest {
+   public BaseCloudLoadBalancersClientLiveTest() {
+      provider = "cloudloadbalancers";
+   }
 
    protected CloudLoadBalancersClient client;
    protected RestContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient> context;
-   protected String provider = "cloudloadbalancers";
    protected String[] regions = {};
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiVersion;
    protected Predicate<IPSocket> socketTester;
    protected RetryablePredicate<LoadBalancer> loadBalancerActive;
    protected RetryablePredicate<LoadBalancer> loadBalancerDeleted;
 
    protected Injector injector;
 
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider
-               + ".identity must be set.  ex. apiKey");
-      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential must be set.  ex. secretKey");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-     apiVersion = System.getProperty("test." + provider + ".api-version");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiVersion != null)
-         overrides.setProperty(provider + ".api-version", apiVersion);
-      return overrides;
-   }
 
    @BeforeGroups(groups = "live")
    public void setupClient() {

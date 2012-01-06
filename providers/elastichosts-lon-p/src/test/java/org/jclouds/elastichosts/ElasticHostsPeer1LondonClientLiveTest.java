@@ -25,10 +25,9 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
+@Test(groups = "live", singleThreaded = true, testName = "ElasticHostsPeer1LondonClientLiveTest")
 public class ElasticHostsPeer1LondonClientLiveTest extends ElasticStackClientLiveTest {
    public ElasticHostsPeer1LondonClientLiveTest() {
       provider = "elastichosts-lon-p";
-      bootDrive = "aee5589a-88c3-43ef-bb0a-9cab6e64192d";
    }
 }

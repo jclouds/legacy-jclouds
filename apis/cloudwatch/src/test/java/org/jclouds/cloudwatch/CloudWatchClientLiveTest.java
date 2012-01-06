@@ -25,12 +25,12 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.Constants;
 import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.BaseRestClientLiveTest;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.AfterTest;
@@ -45,37 +45,15 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
-public class CloudWatchClientLiveTest {
+@Test(groups = "live", singleThreaded = true)
+public class CloudWatchClientLiveTest extends BaseRestClientLiveTest {
+   public CloudWatchClientLiveTest() {
+      provider = "cloudwatch";
+   }
 
    private CloudWatchClient client;
    private RestContext<CloudWatchClient, CloudWatchAsyncClient> context;
-   protected String provider = "cloudwatch";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiVersion;
 
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint", null);
-     apiVersion = System.getProperty("test." + provider + ".api-version", null);
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiVersion != null)
-         overrides.setProperty(provider + ".api-version", apiVersion);
-      return overrides;
-   }
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {

@@ -26,7 +26,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.Constants;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.deltacloud.domain.DeltacloudCollection;
 import org.jclouds.deltacloud.domain.HardwareProfile;
@@ -59,40 +59,19 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "ReadOnlyDeltacloudClientLiveTest")
-public class ReadOnlyDeltacloudClientLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "ReadOnlyDeltacloudClientLiveTest")
+public class ReadOnlyDeltacloudClientLiveTest extends BaseVersionedServiceLiveTest {
+   public ReadOnlyDeltacloudClientLiveTest() {
+      provider = "deltacloud";
+   }
 
    protected DeltacloudClient client;
    protected RestContext<DeltacloudClient, DeltacloudAsyncClient> context;
 
-   protected String provider = "deltacloud";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiVersion;
+
    protected Predicate<IPSocket> socketTester;
    protected ImmutableMap<State, Predicate<Instance>> stateChanges;
 
-   protected void setupCredentials() {
-      identity = System.getProperty("test." + provider + ".identity", "mockuser");
-      credential = System.getProperty("test." + provider + ".credential", "mockpassword");
-      endpoint = System.getProperty("test." + provider + ".endpoint", "http://localhost:3001/api");
-     apiVersion = System.getProperty("test." + provider + ".api-version");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      if (credential != null)
-         overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiVersion != null)
-         overrides.setProperty(provider + ".api-version", apiVersion);
-      return overrides;
-   }
 
    @BeforeGroups(groups = "live")
    public void setupClient() {

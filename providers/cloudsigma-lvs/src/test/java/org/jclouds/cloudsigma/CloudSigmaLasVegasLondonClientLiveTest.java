@@ -29,6 +29,5 @@ import org.testng.annotations.Test;
 public class CloudSigmaLasVegasLondonClientLiveTest extends CloudSigmaClientLiveTest {
    public CloudSigmaLasVegasLondonClientLiveTest() {
       provider = "cloudsigma-lvs";
-      bootDrive = "af8bfee4-d249-4d91-b157-b01ee1ce1943";
    }
 }

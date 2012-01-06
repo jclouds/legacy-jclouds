@@ -19,13 +19,12 @@
 
 package org.jclouds.virtualbox;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
 
 import java.net.URI;
-import java.util.Properties;
 
 import org.eclipse.jetty.server.Server;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.domain.Credentials;
@@ -36,7 +35,6 @@ import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
 import org.jclouds.virtualbox.functions.admin.StartVBoxIfNotAlreadyRunning;
 import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.SessionState;
@@ -50,34 +48,20 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
-public class BaseVirtualBoxClientLiveTest {
-
-   protected String provider = "virtualbox";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiVersion;
-
-   @BeforeClass
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = System.getProperty("test." + provider + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint", "http://localhost:18083/");
-     apiVersion = System.getProperty("test." + provider + ".api-version", "4.1.2r73507");
+@Test(groups = "live", singleThreaded = true, testName = "BaseVirtualBoxClientLiveTest")
+public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
+   public BaseVirtualBoxClientLiveTest() {
+      provider = "virtualbox";
    }
-
+   
    protected ComputeServiceContext context;
    protected VirtualBoxManager manager;
    protected Server jetty;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      Properties properties = new Properties();
-      properties.setProperty(provider + ".endpoint", endpoint);
-      properties.setProperty(provider + ".api-version", apiVersion);
       context = new ComputeServiceContextFactory().createContext(provider, identity, credential,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()));
+            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), setupProperties());
       jetty = new StartJettyIfNotAlreadyRunning(port).apply(basebaseResource);
       startVboxIfNotAlreadyRunning();
    }

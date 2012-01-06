@@ -18,15 +18,13 @@
  */
 package org.jclouds.trmk.vcloudexpress;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.net.URI;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.Constants;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
@@ -47,8 +45,12 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
-public class InternetServiceLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "InternetServiceLiveTest")
+public class InternetServiceLiveTest extends BaseVersionedServiceLiveTest {
+   public InternetServiceLiveTest() {
+      provider = "trmk-vcloudexpress";
+   }
+
    TerremarkVCloudExpressClient tmClient;
 
    private Set<InternetService> services = Sets.newLinkedHashSet();
@@ -89,31 +91,6 @@ public class InternetServiceLiveTest {
       delete(services);
    }
 
-   protected String provider = "trmk-vcloudexpress";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiVersion;
-
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
-      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
-     apiVersion = checkNotNull(System.getProperty("test." + provider + ".api-version"), "test." + provider
-               + ".api-version");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      overrides.setProperty(provider + ".credential", credential);
-      overrides.setProperty(provider + ".endpoint", endpoint);
-      overrides.setProperty(provider + ".api-version", apiVersion);
-      return overrides;
-   }
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {

@@ -18,7 +18,6 @@
  */
 package org.jclouds.ec2;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.ec2.options.CreateSnapshotOptions.Builder.withDescription;
 import static org.jclouds.ec2.options.DescribeImagesOptions.Builder.imageIds;
 import static org.jclouds.ec2.options.RegisterImageBackedByEbsOptions.Builder.withKernelId;
@@ -34,15 +33,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.Constants;
 import org.jclouds.aws.AWSResponseException;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.Image;
-import org.jclouds.ec2.domain.Image.Architecture;
-import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.IpProtocol;
@@ -52,6 +49,8 @@ import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.domain.Snapshot;
 import org.jclouds.ec2.domain.Volume;
+import org.jclouds.ec2.domain.Image.Architecture;
+import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.ec2.predicates.InstanceStateRunning;
 import org.jclouds.ec2.predicates.InstanceStateStopped;
@@ -95,13 +94,19 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = false, sequential = true)
-public class EBSBootEC2ClientLiveTest {
+@Test(groups = "live", enabled = false, singleThreaded = true, testName = "EBSBootEC2ClientLiveTest")
+public class EBSBootEC2ClientLiveTest extends BaseVersionedServiceLiveTest {
+   public EBSBootEC2ClientLiveTest() {
+      provider = "ec2";
+   }
+
+   // TODO: parameterize
+   private static final String IMAGE_ID = "ami-7e28ca17";
+
    // don't need a lot of space. 2GB should be more than enough for testing
    private static final int VOLUME_SIZE = 2;
    private static final String SCRIPT_END = "----COMPLETE----";
    private static final String INSTANCE_PREFIX = System.getProperty("user.name") + ".ec2ebs";
-   private static final String IMAGE_ID = "ami-7e28ca17";
 
    private EC2Client client;
    private SshClient.Factory sshFactory;
@@ -123,32 +128,6 @@ public class EBSBootEC2ClientLiveTest {
    private RunningInstance ebsInstance;
    private Attachment attachment;
    private String mkEbsBoot;
-
-   protected String provider = "ec2";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiVersion;
-
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-            + ".credential");
-      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
-     apiVersion = checkNotNull(System.getProperty("test." + provider + ".api-version"), "test." + provider
-            + ".api-version");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      overrides.setProperty(provider + ".credential", credential);
-      overrides.setProperty(provider + ".endpoint", endpoint);
-      overrides.setProperty(provider + ".api-version", apiVersion);
-      return overrides;
-   }
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {

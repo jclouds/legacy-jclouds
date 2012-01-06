@@ -55,7 +55,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
+@Test(groups = "live", singleThreaded = true)
 public abstract class BaseLoadBalancerServiceLiveTest extends BaseVersionedServiceLiveTest {
 
    protected SshClient.Factory sshFactory;
@@ -74,6 +74,7 @@ public abstract class BaseLoadBalancerServiceLiveTest extends BaseVersionedServi
    protected String computeCredential;
    protected String computeEndpoint;
    protected String computeApiversion;
+   protected String computeBuildversion;
    protected ComputeServiceContext computeContext;
 
    @Override
@@ -86,6 +87,7 @@ public abstract class BaseLoadBalancerServiceLiveTest extends BaseVersionedServi
       computeCredential = System.getProperty("test." + provider + ".compute.credential");
       computeEndpoint = System.getProperty("test." + provider + ".compute.endpoint");
       computeApiversion = System.getProperty("test." + provider + ".compute.api-version");
+      computeBuildversion = System.getProperty("test." + provider + ".compute.build-version");
    }
 
    protected Properties setupComputeProperties() {
@@ -99,6 +101,8 @@ public abstract class BaseLoadBalancerServiceLiveTest extends BaseVersionedServi
          overrides.setProperty(computeProvider + ".endpoint", computeEndpoint);
       if (computeApiversion != null)
          overrides.setProperty(computeProvider + ".api-version", computeApiversion);
+      if (computeBuildversion != null)
+         overrides.setProperty(computeProvider + ".build-version", computeBuildversion);
       return overrides;
    }
 

@@ -18,7 +18,6 @@
  */
 package org.jclouds.aws.ec2.services;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.in;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.jclouds.aws.ec2.options.DescribeSpotPriceHistoryOptions.Builder.from;
@@ -34,7 +33,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
@@ -42,6 +40,7 @@ import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.aws.ec2.domain.Spot;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.aws.ec2.predicates.SpotInstanceRequestActive;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.ec2.domain.InstanceType;
@@ -49,7 +48,6 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -63,42 +61,18 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true)
-public class SpotInstanceClientLiveTest {
+public class SpotInstanceClientLiveTest  extends BaseVersionedServiceLiveTest {
+   public SpotInstanceClientLiveTest() {
+      provider = "aws-ec2";
+   }
 
    private static final int SPOT_DELAY_SECONDS = 600;
    private AWSEC2Client client;
    private ComputeServiceContext context;
    private RetryablePredicate<SpotInstanceRequest> activeTester;
    private Set<SpotInstanceRequest> requests;
-   protected String provider = "aws-ec2";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiVersion;
    private AWSRunningInstance instance;
    private long start;
-
-   @BeforeClass
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = System.getProperty("test." + provider + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-     apiVersion = System.getProperty("test." + provider + ".api-version");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      if (credential != null)
-         overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiVersion != null)
-         overrides.setProperty(provider + ".api-version", apiVersion);
-      return overrides;
-   }
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws FileNotFoundException, IOException {

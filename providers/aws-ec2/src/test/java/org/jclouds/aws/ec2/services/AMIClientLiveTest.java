@@ -18,7 +18,6 @@
  */
 package org.jclouds.aws.ec2.services;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.ec2.options.AWSDescribeImagesOptions.Builder.filters;
 import static org.jclouds.aws.ec2.options.AWSDescribeImagesOptions.Builder.imageIds;
 import static org.jclouds.ec2.options.RegisterImageBackedByEbsOptions.Builder.addNewBlockDevice;
@@ -30,8 +29,8 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
@@ -42,7 +41,6 @@ import org.jclouds.ec2.services.AMIClient;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -59,43 +57,19 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true)
-public class AMIClientLiveTest {
-
+public class AMIClientLiveTest extends BaseVersionedServiceLiveTest {
+   public AMIClientLiveTest() {
+      provider = "aws-ec2";
+      // TODO: parameterize this.
+      imageId = "ami-cdf819a4";
+   }
+   
    private AMIClient client;
-   private String imageId = "ami-cdf819a4";
    private static final String DEFAULT_MANIFEST = "adrianimages/image.manifest.xml";
    private static final String DEFAULT_SNAPSHOT = "TODO";
    private RestContext<EC2Client, EC2AsyncClient> context;
 
    private Set<String> imagesToDeregister = Sets.newHashSet();
-
-   protected String provider = "aws-ec2";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiVersion;
-
-   @BeforeClass
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = System.getProperty("test." + provider + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-     apiVersion = System.getProperty("test." + provider + ".api-version");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      if (credential != null)
-         overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiVersion != null)
-         overrides.setProperty(provider + ".api-version", apiVersion);
-      return overrides;
-   }
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {

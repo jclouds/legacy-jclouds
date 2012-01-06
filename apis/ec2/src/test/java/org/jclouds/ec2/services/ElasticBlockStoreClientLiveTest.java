@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
@@ -57,39 +58,16 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
-public class ElasticBlockStoreClientLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "ElasticBlockStoreClientLiveTest")
+public class ElasticBlockStoreClientLiveTest extends BaseVersionedServiceLiveTest {
+   public ElasticBlockStoreClientLiveTest() {
+      provider = "ec2";
+   }
+   
    private ElasticBlockStoreClient client;
    private RestContext<EC2Client, EC2AsyncClient> context;
    private String volumeId;
    private Snapshot snapshot;
-   protected String provider = "ec2";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiVersion;
-
-   @BeforeClass
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = System.getProperty("test." + provider + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-     apiVersion = System.getProperty("test." + provider + ".api-version");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      if (credential != null)
-         overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiVersion != null)
-         overrides.setProperty(provider + ".api-version", apiVersion);
-      return overrides;
-   }
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {

@@ -18,10 +18,9 @@
  */
 package org.jclouds.azureblob;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.azure.storage.options.ListOptions.Builder.includeMetadata;
 import static org.jclouds.azureblob.options.CreateContainerOptions.Builder.withMetadata;
 import static org.jclouds.azureblob.options.CreateContainerOptions.Builder.withPublicAccess;
-import static org.jclouds.azure.storage.options.ListOptions.Builder.includeMetadata;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -32,16 +31,15 @@ import java.security.SecureRandom;
 import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.Constants;
 import org.jclouds.azure.storage.AzureStorageResponseException;
+import org.jclouds.azure.storage.domain.BoundedSet;
+import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azureblob.domain.AzureBlob;
 import org.jclouds.azureblob.domain.BlobProperties;
 import org.jclouds.azureblob.domain.ContainerProperties;
 import org.jclouds.azureblob.domain.ListBlobsResponse;
 import org.jclouds.azureblob.domain.PublicAccess;
 import org.jclouds.azureblob.options.ListBlobsOptions;
-import org.jclouds.azure.storage.domain.BoundedSet;
-import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.ContainerNotFoundException;
@@ -50,6 +48,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.BaseRestClientLiveTest;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -65,40 +64,14 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
-public class AzureBlobClientLiveTest {
-
+@Test(groups = "live", singleThreaded = true)
+public class AzureBlobClientLiveTest extends BaseRestClientLiveTest {
+   public AzureBlobClientLiveTest() {
+      provider = "azureblob";
+   }
    protected AzureBlobClient client;
 
-   private String containerPrefix = System.getProperty("user.name") + "-azureblob";
-
    private BlobStoreContext context;
-   protected String provider = "azureblob";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiVersion;
-
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = System.getProperty("test." + provider + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-     apiVersion = System.getProperty("test." + provider + ".api-version");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      if (credential != null)
-         overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiVersion != null)
-         overrides.setProperty(provider + ".api-version", apiVersion);
-      return overrides;
-   }
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
@@ -125,7 +98,7 @@ public class AzureBlobClientLiveTest {
    public void testCreateContainer() throws Exception {
       boolean created = false;
       while (!created) {
-         privateContainer = containerPrefix + new SecureRandom().nextInt();
+         privateContainer = prefix + new SecureRandom().nextInt();
          try {
             created = client.createContainer(privateContainer, withMetadata(ImmutableMultimap.of("foo", "bar")));
          } catch (UndeclaredThrowableException e) {
@@ -149,7 +122,7 @@ public class AzureBlobClientLiveTest {
    public void testCreatePublicContainer() throws Exception {
       boolean created = false;
       while (!created) {
-         publicContainer = containerPrefix + new SecureRandom().nextInt();
+         publicContainer = prefix + new SecureRandom().nextInt();
          try {
             created = client.createContainer(publicContainer, withPublicAccess(PublicAccess.BLOB));
          } catch (UndeclaredThrowableException e) {

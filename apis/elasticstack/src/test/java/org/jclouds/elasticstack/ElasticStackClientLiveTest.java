@@ -18,7 +18,6 @@
  */
 package org.jclouds.elasticstack;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -28,7 +27,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import org.jclouds.Constants;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.LoginCredentials;
@@ -60,6 +60,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
@@ -71,57 +72,39 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
-public class ElasticStackClientLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "ElasticStackClientLiveTest")
+public class ElasticStackClientLiveTest extends BaseVersionedServiceLiveTest {
+   public ElasticStackClientLiveTest() {
+      provider = "elasticstack";
+   }
 
    protected long driveSize = 1 * 1024 * 1024 * 1024l;
    protected int maxDriveImageTime = 360;
    protected String vncPassword = "Il0veVNC";
    protected ElasticStackClient client;
+   protected ComputeServiceContext computeContext;
    protected RestContext<ElasticStackClient, ElasticStackAsyncClient> context;
    protected Predicate<IPSocket> socketTester;
-   protected String bootDrive = "38df0986-4d85-4b76-b502-3878ffc80161";
-
-   protected String provider = "elasticstack";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiVersion;
    protected Predicate<DriveInfo> driveNotClaimed;
 
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = System.getProperty("test." + provider + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-     apiVersion = System.getProperty("test." + provider + ".api-version");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      if (credential != null)
-         overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiVersion != null)
-         overrides.setProperty(provider + ".api-version", apiVersion);
-      return overrides;
-   }
 
    @BeforeGroups(groups = "live")
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
-
+      computeContext = new ComputeServiceContextFactory().createContext(provider,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+      context = computeContext.getProviderSpecificContext();
+         
       client = context.getApi();
       driveNotClaimed = new RetryablePredicate<DriveInfo>(Predicates.not(new DriveClaimed(client)), maxDriveImageTime,
                1, TimeUnit.SECONDS);
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), maxDriveImageTime, 1,
                TimeUnit.SECONDS);
+      
+      if (Strings.emptyToNull(imageId) == null) {
+         imageId = computeContext.getComputeService().templateBuilder().build().getImage().getId();
+      }
    }
 
    @Test
@@ -377,7 +360,7 @@ public class ElasticStackClientLiveTest {
 
    protected void prepareDrive() {
       System.err.println("before prepare" + client.getDriveInfo(drive.getUuid()));
-      client.imageDrive(bootDrive, drive.getUuid(), ImageConversionType.GUNZIP);
+      client.imageDrive(imageId, drive.getUuid(), ImageConversionType.GUNZIP);
       assert driveNotClaimed.apply(drive) : client.getDriveInfo(drive.getUuid());
       System.err.println("after prepare" + client.getDriveInfo(drive.getUuid()));
    }
