@@ -25,6 +25,7 @@ import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_1.jaxws.SessionState;
 
 import com.google.common.base.Function;
 
@@ -124,6 +125,54 @@ public class MachineUtils {
                                                     Function<IMachine, T> function) {
       try {
          return lockMachineAndApply(manager, type, machineId, function);
+      } catch (RuntimeException e) {
+         VBoxException vbex = Throwables2.getFirstThrowableOfType(e, VBoxException.class);
+         if (vbex != null && vbex.getMessage().indexOf("not find a registered") == -1)
+            throw e;
+         return null;
+      }
+   }
+   
+   /**
+    * Unlocks the machine and executes the given function using the machine matching the given id.
+    * Since the machine is unlocked it is possible to delete the IMachine.
+    * <p/>
+    *
+    * @param manager   the VirtualBoxManager
+    * @param machineId the id of the machine
+    * @param function  the function to execute
+    * @return the result from applying the function to the machine.
+    */
+   public static <T> T unlockMachineAndApply(VirtualBoxManager manager, final String machineId,
+                                           final Function<IMachine, T> function) {
+      try {
+         ISession session = manager.getSessionObject();
+         IMachine immutableMachine = manager.getVBox().findMachine(machineId);
+         if(immutableMachine.getSessionState().equals(SessionState.LOCKED))
+            session.unlockMachine();
+         
+         return function.apply(immutableMachine);
+         
+      } catch (VBoxException e) {
+         throw new RuntimeException(String.format("error applying %s to %s: %s", function, machineId,
+                 e.getMessage()), e);
+      }
+   }
+   
+   /**
+    * Unlocks the machine and executes the given function, if the machine is registered.
+    * Since the machine is unlocked it is possible to delete the machine.
+    * <p/>
+    *
+    * @param manager   the VirtualBoxManager
+    * @param machineId the id of the machine
+    * @param function  the function to execute
+    * @return the result from applying the function to the session.
+    */
+   public static <T> T unlockMachineAndApplyOrReturnNullIfNotRegistered(VirtualBoxManager manager, String machineId,
+                                                    Function<IMachine, T> function) {
+      try {
+         return unlockMachineAndApply(manager, machineId, function);
       } catch (RuntimeException e) {
          VBoxException vbex = Throwables2.getFirstThrowableOfType(e, VBoxException.class);
          if (vbex != null && vbex.getMessage().indexOf("not find a registered") == -1)
