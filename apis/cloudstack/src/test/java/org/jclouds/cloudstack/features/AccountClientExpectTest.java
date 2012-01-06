@@ -18,11 +18,11 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.testng.Assert.assertEquals;
+
 import java.net.URI;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
@@ -31,8 +31,7 @@ import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
-
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Test the CloudStack AccountClient
@@ -40,7 +39,8 @@ import static org.testng.Assert.assertEquals;
  * @author Andrei Savu
  */
 @Test(groups = "unit", testName = "AccountClientExpectTest")
-public class AccountClientExpectTest extends BaseCloudStackRestClientExpectTest<CloudStackClient> {
+public class AccountClientExpectTest extends BaseCloudStackRestClientExpectTest {
+
 
    public void testListAccountsWhenResponseIs2xx() {
 
@@ -48,11 +48,10 @@ public class AccountClientExpectTest extends BaseCloudStackRestClientExpectTest<
          HttpRequest.builder()
             .method("GET")
             .endpoint(
-               URI.create("http://localhost:8080/client/api?response=json&command=listAccounts"))
+               URI.create("http://localhost:8080/client/api?response=json&command=listAccounts&apiKey=identity&signature=maSZcp9ivkL7osVh87qxlrYbZC8%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
-                  .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
                   .build())
             .build(),
          HttpResponse.builder()

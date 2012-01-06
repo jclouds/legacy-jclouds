@@ -18,36 +18,18 @@
  */
 package org.jclouds.cloudstack.features;
 
-import org.jclouds.cloudstack.CloudStackContextBuilder;
-import org.jclouds.cloudstack.CloudStackPropertiesBuilder;
+import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.rest.BaseRestClientExpectTest;
-
-import java.util.Properties;
 
 /**
  * Base class for writing CloudStack Rest Client Expect tests
  *
  * @author Andrei Savu
  */
-public class BaseCloudStackRestClientExpectTest<S> extends BaseRestClientExpectTest<S> {
+public class BaseCloudStackRestClientExpectTest extends BaseRestClientExpectTest<CloudStackClient> {
 
    public BaseCloudStackRestClientExpectTest() {
       provider = "cloudstack";
-   }
-
-   @Override
-   public Properties setupRestProperties() {
-      Properties overrides = new Properties();
-      overrides.put("cloudstack.contextbuilder", CloudStackContextBuilder.class.getName());
-      overrides.put("cloudstack.propertiesbuilder", CloudStackPropertiesBuilder.class.getName());
-      return overrides;
-   }
-
-   @Override
-   public Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.put("jclouds.endpoint", "http://localhost:8080/client/api");
-      return overrides;
    }
 
 }
