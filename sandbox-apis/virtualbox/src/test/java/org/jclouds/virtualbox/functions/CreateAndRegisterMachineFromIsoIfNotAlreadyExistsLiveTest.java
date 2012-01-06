@@ -19,8 +19,10 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static org.jclouds.virtualbox.util.MachineUtils.lockMachineAndApplyOrReturnNullIfNotRegistered;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
+import static org.virtualbox_4_1.LockType.Write;
 
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.ErrorCode;
@@ -68,14 +70,14 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
       VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName)
             .memoryMB(512).controller(ideController).cleanUpMode(mode)
             .osTypeId("Debian").forceOverwrite(true).build();
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager)
-            .apply(launchSpecification);
+      lockMachineAndApplyOrReturnNullIfNotRegistered(manager, Write, launchSpecification.getVmName(), new UnregisterMachineIfExistsAndDeleteItsMedia(launchSpecification));
+
       IMachine debianNode = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(
             manager, workingDir).apply(launchSpecification);
       IMachine machine = manager.getVBox().findMachine(vmName);
       assertEquals(debianNode.getName(), machine.getName());
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager)
-            .apply(launchSpecification);
+      lockMachineAndApplyOrReturnNullIfNotRegistered(manager, Write, launchSpecification.getVmName(), new UnregisterMachineIfExistsAndDeleteItsMedia(launchSpecification));
+
    }
 
    @Test
@@ -84,8 +86,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
       VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName)
             .memoryMB(512).controller(ideController).cleanUpMode(mode)
             .osTypeId("SomeWeirdUnknownOs").forceOverwrite(true).build();
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager)
-            .apply(launchSpecification);
+      lockMachineAndApplyOrReturnNullIfNotRegistered(manager, Write, launchSpecification.getVmName(), new UnregisterMachineIfExistsAndDeleteItsMedia(launchSpecification));
 
       try {
          new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager, workingDir)

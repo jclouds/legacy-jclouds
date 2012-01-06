@@ -207,7 +207,7 @@ public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
    }
 
    private void ensureNATNetworkingIsAppliedToMachine(String vmName, long slotId, NatAdapter natAdapter) {
-      lockMachineAndApply(manager, Write, vmName, new AttachNATAdapterToMachine(slotId, natAdapter));
+      lockMachineAndApply(manager, Write, vmName, new AttachNATAdapterToMachineIfNotAlreadyExists(slotId, natAdapter));
    }
 
    public void ensureMachineHasIDEControllerNamed(String vmName, StorageController storageController) {

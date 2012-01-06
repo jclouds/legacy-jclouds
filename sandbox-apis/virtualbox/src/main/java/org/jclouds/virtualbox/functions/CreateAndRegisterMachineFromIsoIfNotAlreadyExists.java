@@ -161,7 +161,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
    }
 
    private void ensureNATNetworkingIsAppliedToMachine(String vmName, long slotId, NatAdapter natAdapter) {
-      lockMachineAndApply(manager, Write, vmName, new AttachNATAdapterToMachine(slotId, natAdapter));
+      lockMachineAndApply(manager, Write, vmName, new AttachNATAdapterToMachineIfNotAlreadyExists(slotId, natAdapter));
    }
 
    public void ensureMachineHasStorageControllerNamed(String vmName, StorageController storageController) {

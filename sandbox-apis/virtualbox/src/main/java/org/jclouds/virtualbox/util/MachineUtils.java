@@ -19,8 +19,14 @@
 
 package org.jclouds.virtualbox.util;
 
+import org.jclouds.util.Throwables2;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.LockType;
+import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_1.VirtualBoxManager;
+
 import com.google.common.base.Function;
-import org.virtualbox_4_1.*;
 
 /**
  * Utilities for executing functions on a VirtualBox machine.
@@ -72,7 +78,7 @@ public class MachineUtils {
 
       });
    }
-
+   
    /**
     * Locks the machine and executes the given function using the current session.
     * Since the machine is locked it is possible to perform some modifications to the IMachine.
@@ -99,6 +105,30 @@ public class MachineUtils {
       } catch (VBoxException e) {
          throw new RuntimeException(String.format("error applying %s to %s with %s lock: %s", function, machineId,
                  type, e.getMessage()), e);
+      }
+   }
+   
+   /**
+    * Locks the machine and executes the given function using the current session, if the machine is registered.
+    * Since the machine is locked it is possible to perform some modifications to the IMachine.
+    * <p/>
+    * Unlocks the machine before returning.
+    *
+    * @param manager   the VirtualBoxManager
+    * @param type      the kind of lock to use when initially locking the machine.
+    * @param machineId the id of the machine
+    * @param function  the function to execute
+    * @return the result from applying the function to the session.
+    */
+   public static <T> T lockMachineAndApplyOrReturnNullIfNotRegistered(VirtualBoxManager manager, LockType type, String machineId,
+                                                    Function<IMachine, T> function) {
+      try {
+         return lockMachineAndApply(manager, type, machineId, function);
+      } catch (RuntimeException e) {
+         VBoxException vbex = Throwables2.getFirstThrowableOfType(e, VBoxException.class);
+         if (vbex != null && vbex.getMessage().indexOf("not find a registered") == -1)
+            throw e;
+         return null;
       }
    }
 }

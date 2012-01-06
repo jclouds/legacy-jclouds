@@ -39,7 +39,6 @@ import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IMedium;
 import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -47,24 +46,22 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 public class UnregisterMachineIfExistsAndDeleteItsMedia implements
-      Function<VmSpec, Void> {
+      Function<IMachine, Void> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private VirtualBoxManager manager;
+   private final VmSpec vmSpec;
 
-   public UnregisterMachineIfExistsAndDeleteItsMedia(VirtualBoxManager manager) {
-      this.manager = manager;
+   public UnregisterMachineIfExistsAndDeleteItsMedia(VmSpec vmSpec) {
+      this.vmSpec = vmSpec;
    }
 
    @Override
-   public Void apply(VmSpec vmSpec) {
+   public Void apply(IMachine machine) {
       List<IMedium> mediaToBeDeleted = Collections.emptyList();
-      IMachine machine = null;
       try {
-         machine = manager.getVBox().findMachine(vmSpec.getVmName());
          mediaToBeDeleted = machine.unregister(vmSpec.getCleanupMode());
       } catch (VBoxException e) {
          ErrorCode errorCode = ErrorCode.valueOf(e);

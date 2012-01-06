@@ -27,18 +27,19 @@ import org.jclouds.virtualbox.domain.NatAdapter;
 import org.jclouds.virtualbox.domain.RedirectRule;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
+import org.virtualbox_4_1.VBoxException;
 
 import com.google.common.base.Function;
 
 /**
  * @author Mattias Holmqvist
  */
-public class AttachNATAdapterToMachine implements Function<IMachine, Void> {
+public class AttachNATAdapterToMachineIfNotAlreadyExists implements Function<IMachine, Void> {
 
    private long adapterSlot;
    private NatAdapter natAdapter;
 
-   public AttachNATAdapterToMachine(long adapterSlot, NatAdapter natAdapter) {
+   public AttachNATAdapterToMachineIfNotAlreadyExists(long adapterSlot, NatAdapter natAdapter) {
       this.adapterSlot = adapterSlot;
       this.natAdapter = natAdapter;
    }
@@ -48,12 +49,15 @@ public class AttachNATAdapterToMachine implements Function<IMachine, Void> {
       INetworkAdapter networkAdapter = machine.getNetworkAdapter(adapterSlot);
       networkAdapter.setAttachmentType(NAT);
       for (RedirectRule rule : natAdapter.getRedirectRules()) {
-         networkAdapter.getNatDriver().addRedirect("guestssh",
-                 rule.getProtocol(),
-                 rule.getHost(),
-                 rule.getHostPort(),
-                 rule.getGuest(),
-                 rule.getGuestPort());
+         try {
+            String ruleName = String.format("%s@%s:%s->%s:%s",rule.getProtocol(), rule.getHost(), rule.getHostPort(), 
+                     rule.getGuest(), rule.getGuestPort());
+            networkAdapter.getNatDriver().addRedirect(ruleName, rule.getProtocol(), rule.getHost(), rule.getHostPort(),
+                     rule.getGuest(), rule.getGuestPort());
+         } catch (VBoxException e) {
+            if (e.getMessage().indexOf("already exists") == -1)
+               throw e;
+         }
       }
       networkAdapter.setEnabled(true);
       machine.saveSettings();

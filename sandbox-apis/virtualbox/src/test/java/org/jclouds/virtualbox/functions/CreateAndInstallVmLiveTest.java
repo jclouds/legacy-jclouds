@@ -24,7 +24,9 @@ import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.virtualbox.domain.ExecutionType.HEADLESS;
 import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
+import static org.jclouds.virtualbox.util.MachineUtils.lockMachineAndApplyOrReturnNullIfNotRegistered;
 import static org.testng.Assert.assertTrue;
+import static org.virtualbox_4_1.LockType.Write;
 
 import java.util.Map;
 import java.util.Set;
@@ -94,8 +96,7 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
               .forceOverwrite(true)
               .cleanUpMode(CleanupMode.Full)
               .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build()).build();
-      
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(vmSpecification);
+      lockMachineAndApplyOrReturnNullIfNotRegistered(manager, Write, vmName, new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
    }
 
    public void testCreateImageMachineFromIso() throws Exception {

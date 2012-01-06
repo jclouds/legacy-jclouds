@@ -19,6 +19,14 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static org.easymock.EasyMock.*;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.createNiceMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.verify;
+import static org.virtualbox_4_1.NATProtocol.TCP;
+import static org.virtualbox_4_1.NetworkAttachmentType.NAT;
+
 import org.jclouds.virtualbox.domain.NatAdapter;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
@@ -26,16 +34,11 @@ import org.virtualbox_4_1.INATEngine;
 import org.virtualbox_4_1.INetworkAdapter;
 import org.virtualbox_4_1.VBoxException;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.*;
-import static org.virtualbox_4_1.NATProtocol.TCP;
-import static org.virtualbox_4_1.NetworkAttachmentType.NAT;
-
 /**
  * @author Mattias Holmqvist
  */
-@Test(groups = "unit", testName = "AttachNATAdapterToMachineTest")
-public class AttachNATAdapterToMachineTest {
+@Test(groups = "unit", testName = "AttachNATAdapterToMachineIfNotAlreadyExistsTest")
+public class AttachNATAdapterToMachineIfNotAlreadyExistsTest {
 
    @Test
    public void testApplyNetworkingToNonExistingAdapter() throws Exception {
@@ -47,17 +50,43 @@ public class AttachNATAdapterToMachineTest {
       expect(machine.getNetworkAdapter(slotId)).andReturn(networkAdapter);
       networkAdapter.setAttachmentType(NAT);
       expect(networkAdapter.getNatDriver()).andReturn(natEngine);
-      natEngine.addRedirect("guestssh", TCP, "127.0.0.1", 2222, "", 22);
+      
+      natEngine.addRedirect("TCP@127.0.0.1:2222->guest:22", TCP, "127.0.0.1", 2222, "guest", 22);
       networkAdapter.setEnabled(true);
       machine.saveSettings();
 
       replay(machine, networkAdapter, natEngine);
-      NatAdapter natAdapter = NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
-      new AttachNATAdapterToMachine(slotId, natAdapter).apply(machine);
+      NatAdapter natAdapter = NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "guest", 22).build();
+      new AttachNATAdapterToMachineIfNotAlreadyExists(slotId, natAdapter).apply(machine);
 
       verify(machine, networkAdapter, natEngine);
    }
 
+   @Test
+   public void testApplySkipsWhenAlreadyExists() throws Exception {
+      Long slotId = 0l;
+      IMachine machine = createMock(IMachine.class);
+      INetworkAdapter networkAdapter = createMock(INetworkAdapter.class);
+      INATEngine natEngine = createMock(INATEngine.class);
+
+      expect(machine.getNetworkAdapter(slotId)).andReturn(networkAdapter);
+      networkAdapter.setAttachmentType(NAT);
+      expect(networkAdapter.getNatDriver()).andReturn(natEngine);
+      
+      natEngine.addRedirect("TCP@127.0.0.1:2222->guest:22", TCP, "127.0.0.1", 2222, "guest", 22);
+      expectLastCall().andThrow(
+               new VBoxException(null, "VirtualBox error: A NAT rule of this name already exists (0x80070057)"));      
+      
+      networkAdapter.setEnabled(true);
+      machine.saveSettings();
+
+      replay(machine, networkAdapter, natEngine);
+      NatAdapter natAdapter = NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "guest", 22).build();
+      new AttachNATAdapterToMachineIfNotAlreadyExists(slotId, natAdapter).apply(machine);
+
+      verify(machine, networkAdapter, natEngine);
+   }
+   
    @Test(expectedExceptions = VBoxException.class)
    public void testRethrowInvalidAdapterSlotException() throws Exception {
       Long slotId = 30l;
@@ -73,8 +102,8 @@ public class AttachNATAdapterToMachineTest {
 
       replay(machine, networkAdapter, natEngine);
 
-      NatAdapter natAdapter = NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
-      new AttachNATAdapterToMachine(slotId, natAdapter).apply(machine);
+      NatAdapter natAdapter = NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "guest", 22).build();
+      new AttachNATAdapterToMachineIfNotAlreadyExists(slotId, natAdapter).apply(machine);
 
       verify(machine, networkAdapter, natEngine);
    }

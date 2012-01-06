@@ -20,7 +20,9 @@
 package org.jclouds.virtualbox.functions;
 
 import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
+import static org.jclouds.virtualbox.util.MachineUtils.lockMachineAndApplyOrReturnNullIfNotRegistered;
 import static org.testng.Assert.assertEquals;
+import static org.virtualbox_4_1.LockType.Write;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.domain.Credentials;
@@ -35,6 +37,8 @@ import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.StorageBus;
 import org.virtualbox_4_1.VirtualBoxManager;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Andrea Turli
@@ -79,8 +83,8 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
       IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
             manager, workingDir, clonedVmSpec, IS_LINKED_CLONE).apply(master);
       assertEquals(clone.getName(), clonedVmSpec.getVmName());
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(clonedVmSpec);
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(new IMachineToVmSpec().apply(master));
+      for (VmSpec spec : ImmutableSet.of(clonedVmSpec, new IMachineToVmSpec().apply(master)))
+         lockMachineAndApplyOrReturnNullIfNotRegistered(manager, Write, spec.getVmName(), new UnregisterMachineIfExistsAndDeleteItsMedia(spec));
    }
 
    private IMachine getMasterNode(VirtualBoxManager manager,

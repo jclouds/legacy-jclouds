@@ -19,8 +19,10 @@
 
 package org.jclouds.virtualbox.predicates;
 
+import static org.jclouds.virtualbox.util.MachineUtils.lockMachineAndApplyOrReturnNullIfNotRegistered;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
+import static org.virtualbox_4_1.LockType.Write;
 
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.HardDisk;
@@ -36,6 +38,8 @@ import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.StorageBus;
 import org.virtualbox_4_1.VirtualBoxManager;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -75,28 +79,28 @@ public class IsLinkedClonesLiveTest extends BaseVirtualBoxClientLiveTest {
    public void testLinkedClone() {
 
       VirtualBoxManager manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(masterSpec);
+      lockMachineAndApplyOrReturnNullIfNotRegistered(manager, Write, masterSpec.getVmName(), new UnregisterMachineIfExistsAndDeleteItsMedia(masterSpec));
 
       IMachine master = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager, workingDir).apply(masterSpec);
       IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, cloneSpec,
                IS_LINKED_CLONE).apply(master);
 
       assertTrue(new IsLinkedClone(manager).apply(clone));
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(new IMachineToVmSpec().apply(clone));
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(masterSpec);
+      for (VmSpec spec : ImmutableSet.of(new IMachineToVmSpec().apply(clone), masterSpec))
+         lockMachineAndApplyOrReturnNullIfNotRegistered(manager, Write, spec.getVmName(), new UnregisterMachineIfExistsAndDeleteItsMedia(spec));
    }
 
    public void testFullClone() {
 
       VirtualBoxManager manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(masterSpec);
+      lockMachineAndApplyOrReturnNullIfNotRegistered(manager, Write, masterSpec.getVmName(), new UnregisterMachineIfExistsAndDeleteItsMedia(masterSpec));
 
       IMachine master = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager, workingDir).apply(masterSpec);
       IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, cloneSpec,
                !IS_LINKED_CLONE).apply(master);
 
       assertFalse(new IsLinkedClone(manager).apply(clone));
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(new IMachineToVmSpec().apply(clone));
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(masterSpec);
+      for (VmSpec spec : ImmutableSet.of(new IMachineToVmSpec().apply(clone), masterSpec))
+         lockMachineAndApplyOrReturnNullIfNotRegistered(manager, Write, spec.getVmName(), new UnregisterMachineIfExistsAndDeleteItsMedia(spec));
    }
 }
