@@ -20,9 +20,8 @@
 package org.jclouds.virtualbox.functions;
 
 import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
-import static org.jclouds.virtualbox.util.MachineUtils.lockMachineAndApplyOrReturnNullIfNotRegistered;
+import static org.jclouds.virtualbox.util.MachineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered;
 import static org.testng.Assert.assertEquals;
-import static org.virtualbox_4_1.LockType.Write;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.domain.Credentials;
@@ -49,11 +48,11 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
 
    private static final boolean IS_LINKED_CLONE = true;
    private String vmId = "jclouds-image-iso-1";
-   private String osTypeId = "DEBIAN";
+   private String osTypeId = "";
    private String guestId = "guest";
    private String hostId = "host";
 
-   private String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
+   private String vmName = "jclouds-virtualbox-clone-test";
    private String cloneName = vmName + "_clone";
    private VmSpec clonedVmSpec;
 
@@ -84,7 +83,8 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
             manager, workingDir, clonedVmSpec, IS_LINKED_CLONE).apply(master);
       assertEquals(clone.getName(), clonedVmSpec.getVmName());
       for (VmSpec spec : ImmutableSet.of(clonedVmSpec, new IMachineToVmSpec().apply(master)))
-         lockMachineAndApplyOrReturnNullIfNotRegistered(manager, Write, spec.getVmName(), new UnregisterMachineIfExistsAndDeleteItsMedia(spec));
+            unlockMachineAndApplyOrReturnNullIfNotRegistered(manager, spec.getVmName(), new UnregisterMachineIfExistsAndDeleteItsMedia(spec));
+
    }
 
    private IMachine getMasterNode(VirtualBoxManager manager,
