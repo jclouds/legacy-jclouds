@@ -29,6 +29,7 @@ import java.io.File;
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 
 /**
@@ -55,6 +56,7 @@ public class VirtualBoxPropertiesBuilder extends PropertiesBuilder {
       properties.put(PROPERTY_BUILD_VERSION, "4.1.8r75467");
       properties.put(PROPERTY_IDENTITY, "administrator");
       properties.put(PROPERTY_CREDENTIAL, "12345");
+      properties.put(ComputeServiceConstants.PROPERTY_IMAGE_ID, "ubuntu-11.04-server-i386");
       properties.put(VirtualBoxConstants.VIRTUALBOX_PRESEED_URL, "http://dl.dropbox.com/u/693111/preseed.cfg");
       properties.put(VirtualBoxConstants.VIRTUALBOX_SNAPSHOT_DESCRIPTION, "jclouds-virtualbox-snaphot");
       properties.put(VirtualBoxConstants.VIRTUALBOX_HOSTNAME, "jclouds-virtualbox-kickstart-admin");

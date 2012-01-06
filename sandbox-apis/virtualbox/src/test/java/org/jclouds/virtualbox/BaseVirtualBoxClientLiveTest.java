@@ -21,7 +21,6 @@ package org.jclouds.virtualbox;
 
 import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.eclipse.jetty.server.Server;
@@ -29,6 +28,7 @@ import org.jclouds.Constants;
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.InetSocketAddressConnect;
@@ -46,7 +46,9 @@ import org.virtualbox_4_1.VirtualBoxManager;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code VirtualBoxClient}
@@ -70,16 +72,15 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    @Override
    protected void setupCredentials() {
       // default behavior is to bomb when no user is configured, but we know the default user of vbox
+      ensureIdentityPropertyIsSpecifiedOrTakeFromDefaults();
+      super.setupCredentials();
+   }
+
+   protected void ensureIdentityPropertyIsSpecifiedOrTakeFromDefaults() {
       Properties defaultVBoxProperties = new VirtualBoxPropertiesBuilder().build();
       if (!System.getProperties().containsKey("test." + provider + ".identity"))
          System.setProperty("test." + provider + ".identity", defaultVBoxProperties
                   .getProperty(Constants.PROPERTY_IDENTITY));
-      super.setupCredentials();
-      // add in other properties we may need that are in defaults.
-      if (endpoint == null)
-         endpoint = defaultVBoxProperties.getProperty(Constants.PROPERTY_ENDPOINT);
-      if (buildVersion == null)
-         buildVersion = defaultVBoxProperties.getProperty(Constants.PROPERTY_BUILD_VERSION);
    }
 
    @BeforeClass(groups = "live")
@@ -88,13 +89,20 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
       Properties overrides = setupProperties();
       context = new ComputeServiceContextFactory().createContext(provider, identity, credential,
             ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
+      intializeImageIdFromContext();
+      
       jetty = new StartJettyIfNotAlreadyRunning(port).apply(basebaseResource);
       startVboxIfNotAlreadyRunning();
-      hostVersion = Iterables.get(Splitter.on('r').split(buildVersion), 0);
+      hostVersion = Iterables.get(Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
       String workingDir = PropertyUtils.getWorkingDirFromProperty();
       adminDisk = workingDir + "/testadmin.vdi";
       operatingSystemIso = String.format("%s/%s.iso", workingDir, imageId);
       guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", workingDir, hostVersion);
+   }
+
+   protected void intializeImageIdFromContext() {
+      imageId = context.utils().injector().getInstance(
+               Key.get(String.class, Names.named(ComputeServiceConstants.PROPERTY_IMAGE_ID)));
    }
 
    @AfterClass(groups = "live")
@@ -118,7 +126,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
 
       manager = new StartVBoxIfNotAlreadyRunning(localHostContext.getComputeService(),
             VirtualBoxManager.createInstance("hostId"), new InetSocketAddressConnect(), "hostId", localhostCredentials)
-            .apply(URI.create(endpoint));
+            .apply(context.getProviderSpecificContext().getEndpoint());
 
       assert manager.getSessionObject().getState() == SessionState.Unlocked : "manager needs to be in unlocked state or all tests will fail!!: "
             + manager;
