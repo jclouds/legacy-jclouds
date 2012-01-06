@@ -34,10 +34,15 @@ import org.testng.annotations.Test;
 import org.virtualbox_4_1.DeviceType;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IMedium;
+import org.virtualbox_4_1.IMediumAttachment;
 import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.IVirtualBox;
+import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * @author Mattias Holmqvist
@@ -111,6 +116,73 @@ public class CreateMediumIfNotAlreadyExistsTest {
       IMedium newDisk = new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
 
       verify(machine, vBox, medium);
+      assertNotSame(newDisk, medium);
+   }
+
+   @Test
+   public void testDeleteAndCreateNewStorageWhenMediumExistsAndUsingOverwriteAndStillAttachedDetachesOldThing() throws Exception {
+      HardDisk hardDisk = createTestHardDisk();
+
+      VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
+      IMachine machine = createMock(IMachine.class);
+      IVirtualBox vBox = createMock(IVirtualBox.class);
+      IMedium medium = createMock(IMedium.class);
+
+      IMedium newHardDisk = createMock(IMedium.class);
+      IProgress progress = createNiceMock(IProgress.class);
+
+      expect(manager.getVBox()).andReturn(vBox).anyTimes();
+      expect(vBox.findMedium(adminDiskPath, DeviceType.HardDisk)).andReturn(medium);
+      
+
+      String oldMachineId = "a1e03931-29f3-4370-ada3-9547b1009212";
+      String oldMachineName = "oldMachine";
+      IMachine oldMachine = createMock(IMachine.class);
+      IMediumAttachment oldAttachment = createMock(IMediumAttachment.class);
+      String oldAttachmentController = "oldAttachmentController";
+      int oldAttachmentDevice = 1;
+      int oldAttachmentPort = 2;
+      IMedium oldMedium = createMock(IMedium.class);
+      String oldMediumId = "oldMediumId";
+      ISession detachSession = createNiceMock(ISession.class);
+
+      StringBuilder errorBuilder = new StringBuilder();
+      errorBuilder.append("org.virtualbox_4_1.VBoxException: VirtualBox error: ");
+      errorBuilder.append("Cannot delete storage: medium '/Users/adriancole/jclouds-virtualbox-test/testadmin.vdi ");
+      errorBuilder.append("is still attached to the following 1 virtual machine(s): ");
+      errorBuilder.append(oldMachineId + " (0x80BB000C)");
+      String errorMessage = errorBuilder.toString();
+
+      VBoxException stillAttached = new VBoxException(createNiceMock(Throwable.class), errorMessage);
+      expect(medium.deleteStorage()).andThrow(stillAttached);
+
+      expect(vBox.findMachine(oldMachineId)).andReturn(oldMachine);
+      expect(oldMachine.getMediumAttachments()).andReturn(ImmutableList.of(oldAttachment));
+      expect(oldAttachment.getMedium()).andReturn(oldMedium);
+      expect(oldMedium.getId()).andReturn(oldMediumId);
+      // in this case, they are the same medium, so safe to detach
+      expect(medium.getId()).andReturn(oldMediumId);
+      expect(oldMachine.getName()).andReturn(oldMachineName);
+      expect(oldAttachment.getController()).andReturn(oldAttachmentController);
+      expect(oldAttachment.getDevice()).andReturn(oldAttachmentDevice);
+      expect(oldAttachment.getPort()).andReturn(oldAttachmentPort);
+      // TODO: is this ok that we searched by ID last time?
+      expect(vBox.findMachine(oldMachineName)).andReturn(oldMachine);
+      expect(manager.getSessionObject()).andReturn(detachSession);
+      oldMachine.lockMachine(detachSession, LockType.Write);
+      expect(detachSession.getMachine()).andReturn(oldMachine);
+      oldMachine.detachDevice(oldAttachmentController, oldAttachmentPort, oldAttachmentDevice);
+      oldMachine.saveSettings();
+
+      expect(medium.deleteStorage()).andReturn(progress);
+      expect(vBox.createHardDisk(diskFormat, adminDiskPath)).andReturn(newHardDisk);
+      expect(newHardDisk.createBaseStorage(anyLong(), anyLong())).andReturn(progress);
+
+      replay(manager,oldMachine, oldAttachment,oldMedium, detachSession, machine, vBox, medium, newHardDisk, progress);
+
+      IMedium newDisk = new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
+
+      verify(machine,oldMachine,oldAttachment, detachSession, oldMedium, vBox, medium);
       assertNotSame(newDisk, medium);
    }
 
