@@ -36,6 +36,7 @@
     <properties>
         <test.sqs.endpoint>https://sqs.us-east-1.amazonaws.com</test.sqs.endpoint>
         <test.sqs.api-version>2009-02-01</test.sqs.api-version>
+        <test.sqs.build-version></test.sqs.build-version>
         <test.sqs.identity>${test.aws.identity}</test.sqs.identity>
         <test.sqs.credential>${test.aws.credential}</test.sqs.credential>
     </properties>
@@ -80,6 +81,7 @@
                                     <systemPropertyVariables>
                                         <test.sqs.endpoint>${test.sqs.endpoint}</test.sqs.endpoint>
                                         <test.sqs.api-version>${test.sqs.api-version}</test.sqs.api-version>
+                                        <test.sqs.build-version>${test.sqs.build-version}</test.sqs.build-version>
                                         <test.sqs.identity>${test.sqs.identity}</test.sqs.identity>
                                         <test.sqs.credential>${test.sqs.credential}</test.sqs.credential>
                                     </systemPropertyVariables>

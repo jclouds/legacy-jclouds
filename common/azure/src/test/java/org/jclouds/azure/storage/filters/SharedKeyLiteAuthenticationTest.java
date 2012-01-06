@@ -138,7 +138,7 @@ public class SharedKeyLiteAuthenticationTest {
 
    @SuppressWarnings("unchecked")
    public static final RestContextSpec<Map, List> DUMMY_SPEC = new RestContextSpec<Map, List>("provider", "endpoint",
-            "apiVersion", "", "identity", "credential", Map.class, List.class, PropertiesBuilder.class,
+            "apiVersion", "buildVersion", "", "identity", "credential", Map.class, List.class, PropertiesBuilder.class,
             (Class) RestContextBuilder.class, ImmutableList.<Module> of(new MockModule(), new NullLoggingModule(),
                      new AzureStorageRestClientModule<Exception, RuntimeException>(Exception.class,
                               RuntimeException.class)));

@@ -213,7 +213,7 @@ public abstract class BaseRestClientExpectTest<S> {
    @SuppressWarnings("unchecked")
    private RestContextSpec<S, ?> makeContextSpec() {
       if (getClass().isAnnotationPresent(RegisterContext.class))
-         return (RestContextSpec<S, ?>) contextSpec(provider, "http://mock", "1", "", "userfoo", null, getClass()
+         return (RestContextSpec<S, ?>) contextSpec(provider, "http://mock", "1", "", "", "userfoo", null, getClass()
                   .getAnnotation(RegisterContext.class).sync(),
                   getClass().getAnnotation(RegisterContext.class).async(), ImmutableSet.<Module> of());
       else

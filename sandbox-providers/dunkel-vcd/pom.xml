@@ -35,6 +35,7 @@
     <properties>
         <test.dunkel-vcd.endpoint>https://vcd.dunkel.de/api</test.dunkel-vcd.endpoint>
         <test.dunkel-vcd.api-version>1.0</test.dunkel-vcd.api-version>
+        <test.dunkel-vcd.build-version></test.dunkel-vcd.build-version>
         <test.dunkel-vcd.identity>FIXME_IDENTITY</test.dunkel-vcd.identity>
         <test.dunkel-vcd.credential>FIXME_CREDENTIAL</test.dunkel-vcd.credential>
         <test.dunkel-vcd.image-id></test.dunkel-vcd.image-id>
@@ -100,6 +101,7 @@
                                     <systemPropertyVariables>
                                         <test.dunkel-vcd.endpoint>${test.dunkel-vcd.endpoint}</test.dunkel-vcd.endpoint>
                                         <test.dunkel-vcd.api-version>${test.dunkel-vcd.api-version}</test.dunkel-vcd.api-version>
+                                        <test.dunkel-vcd.build-version>${test.dunkel-vcd.build-version}</test.dunkel-vcd.build-version>
                                         <test.dunkel-vcd.identity>${test.dunkel-vcd.identity}</test.dunkel-vcd.identity>
                                         <test.dunkel-vcd.credential>${test.dunkel-vcd.credential}</test.dunkel-vcd.credential>
                                         <test.dunkel-vcd.image-id>${test.dunkel-vcd.image-id}</test.dunkel-vcd.image-id>

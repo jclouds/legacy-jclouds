@@ -82,7 +82,7 @@ public class TerremarkVCloudVersionsAsyncClientTest extends RestClientTest<Terre
 
    @Override
    public RestContextSpec<VCloudVersionsClient, TerremarkVCloudVersionsAsyncClient> createContextSpec() {
-      return contextSpec("test", "http://localhost:8080", "1", "", "identity", "credential",
+      return contextSpec("test", "http://localhost:8080", "1", "", "", "identity", "credential",
                VCloudVersionsClient.class, TerremarkVCloudVersionsAsyncClient.class);
    }
 

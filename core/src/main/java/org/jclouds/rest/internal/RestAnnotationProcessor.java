@@ -47,13 +47,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -78,7 +77,6 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
@@ -86,6 +84,7 @@ import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
+import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.internal.ClassMethodArgs;
@@ -102,7 +101,9 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.Binder;
 import org.jclouds.rest.InputParamValidator;
 import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.BuildVersion;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -145,12 +146,12 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -245,6 +246,7 @@ public class RestAnnotationProcessor<T> {
    private final Provider<UriBuilder> uriBuilderProvider;
    private final LoadingCache<Class<?>, Boolean> seedAnnotationCache;
    private final String apiVersion;
+   private final String buildVersion;
    private char[] skips;
 
    @Inject
@@ -306,8 +308,8 @@ public class RestAnnotationProcessor<T> {
    @SuppressWarnings("unchecked")
    @Inject
    public RestAnnotationProcessor(Injector injector, LoadingCache<Class<?>, Boolean> seedAnnotationCache,
-         @Named(Constants.PROPERTY_API_VERSION) String apiVersion, ParseSax.Factory parserFactory, HttpUtils utils,
-         TypeLiteral<T> typeLiteral) throws ExecutionException {
+            @ApiVersion String apiVersion, @BuildVersion String buildVersion, ParseSax.Factory parserFactory,
+            HttpUtils utils, TypeLiteral<T> typeLiteral) throws ExecutionException {
       this.declaring = (Class<T>) typeLiteral.getRawType();
       this.injector = injector;
       this.parserFactory = parserFactory;
@@ -321,6 +323,7 @@ public class RestAnnotationProcessor<T> {
          skips = new char[] {};
       }
       this.apiVersion = apiVersion;
+      this.buildVersion = buildVersion;
    }
 
    public Method getDelegateOrNull(Method in) {
@@ -435,6 +438,7 @@ public class RestAnnotationProcessor<T> {
          Multimap<String, String> tokenValues = LinkedHashMultimap.create();
 
          tokenValues.put(Constants.PROPERTY_API_VERSION, apiVersion);
+         tokenValues.put(Constants.PROPERTY_BUILD_VERSION, buildVersion);
 
          tokenValues.putAll(addPathAndGetTokens(declaring, method, args, builder));
 

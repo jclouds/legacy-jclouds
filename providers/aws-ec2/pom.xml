@@ -36,6 +36,7 @@
   <properties>
     <test.aws-ec2.endpoint>https://ec2.us-east-1.amazonaws.com</test.aws-ec2.endpoint>
     <test.aws-ec2.api-version>2011-05-15</test.aws-ec2.api-version>
+    <test.aws-ec2.build-version></test.aws-ec2.build-version>
     <test.aws-ec2.identity>${test.aws.identity}</test.aws-ec2.identity>
     <test.aws-ec2.credential>${test.aws.credential}</test.aws-ec2.credential>
     <test.aws-ec2.image-id></test.aws-ec2.image-id>
@@ -114,6 +115,7 @@
                   <systemPropertyVariables>
                     <test.aws-ec2.endpoint>${test.aws-ec2.endpoint}</test.aws-ec2.endpoint>
                     <test.aws-ec2.api-version>${test.aws-ec2.api-version}</test.aws-ec2.api-version>
+                    <test.aws-ec2.build-version>${test.aws-ec2.build-version}</test.aws-ec2.build-version>
                     <test.aws-ec2.identity>${test.aws-ec2.identity}</test.aws-ec2.identity>
                     <test.aws-ec2.credential>${test.aws-ec2.credential}</test.aws-ec2.credential>
                     <test.aws-ec2.image-id>${test.aws-ec2.image-id}</test.aws-ec2.image-id>

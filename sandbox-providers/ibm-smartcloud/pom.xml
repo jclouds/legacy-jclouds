@@ -50,6 +50,7 @@
     <properties>
         <test.ibm-smartcloud.endpoint>https://www-147.ibm.com/computecloud/enterprise/api/rest</test.ibm-smartcloud.endpoint>
         <test.ibm-smartcloud.api-version>20100331</test.ibm-smartcloud.api-version>
+        <test.ibm-smartcloud.build-version></test.ibm-smartcloud.build-version>
         <test.ibm-smartcloud.identity>FIXME</test.ibm-smartcloud.identity>
         <test.ibm-smartcloud.credential>FIXME</test.ibm-smartcloud.credential>
         <test.ibm-smartcloud.image-id></test.ibm-smartcloud.image-id>
@@ -111,6 +112,7 @@
                                     <systemPropertyVariables>
                                         <test.ibm-smartcloud.endpoint>${test.ibm-smartcloud.endpoint}</test.ibm-smartcloud.endpoint>
                                         <test.ibm-smartcloud.api-version>${test.ibm-smartcloud.api-version}</test.ibm-smartcloud.api-version>
+                                        <test.ibm-smartcloud.build-version>${test.ibm-smartcloud.build-version}</test.ibm-smartcloud.build-version>
                                         <test.ibm-smartcloud.identity>${test.ibm-smartcloud.identity}</test.ibm-smartcloud.identity>
                                         <test.ibm-smartcloud.credential>${test.ibm-smartcloud.credential}</test.ibm-smartcloud.credential>
                                         <test.ibm-smartcloud.image-id>${test.ibm-smartcloud.image-id}</test.ibm-smartcloud.image-id>

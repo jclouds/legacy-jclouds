@@ -35,6 +35,7 @@ public class RestContextSpec<S, A> {
    protected final String provider;
    protected final String endpoint;
    protected final String apiVersion;
+   protected final String buildVersion;
    protected final String iso3166Codes;
    protected final String identity;
    protected final String credential;
@@ -44,12 +45,13 @@ public class RestContextSpec<S, A> {
    protected final Class<RestContextBuilder<S, A>> contextBuilderClass;
    protected final Iterable<Module> modules;
 
-   public RestContextSpec(String provider, String endpoint, String apiVersion, String iso3166Codes, String identity,
+   public RestContextSpec(String provider, String endpoint, String apiVersion, String buildVersion, String iso3166Codes, String identity,
             String credential, Class<S> sync, Class<A> async, Class<PropertiesBuilder> propertiesBuilderClass,
             Class<RestContextBuilder<S, A>> contextBuilderClass, Iterable<Module> modules) {
       this.provider = checkNotNull(provider, "provider");
       this.endpoint = endpoint;
       this.apiVersion = apiVersion;
+      this.buildVersion = buildVersion;
       this.identity = identity;
       this.credential = credential;
       this.iso3166Codes = iso3166Codes;
@@ -65,16 +67,16 @@ public class RestContextSpec<S, A> {
    }
 
    @SuppressWarnings( { "unchecked", "rawtypes" })
-   public RestContextSpec(String provider, String endpoint, String apiVersion, String iso3166Codes, String identity,
+   public RestContextSpec(String provider, String endpoint, String apiVersion, String buildVersion, String iso3166Codes, String identity,
             String credential, Class<S> sync, Class<A> async) {
-      this(provider, endpoint, apiVersion, iso3166Codes, identity, credential, sync, async, PropertiesBuilder.class,
+      this(provider, endpoint, apiVersion, buildVersion, iso3166Codes, identity, credential, sync, async, PropertiesBuilder.class,
                (Class) RestContextBuilder.class, EMPTY_LIST);
    }
 
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(provider, endpoint, apiVersion, iso3166Codes, identity, credential, sync, async,
+      return Objects.hashCode(provider, endpoint, apiVersion, buildVersion, iso3166Codes, identity, credential, sync, async,
                propertiesBuilderClass, contextBuilderClass, modules);
    }
 
@@ -88,9 +90,10 @@ public class RestContextSpec<S, A> {
    @Override
    public String toString() {
       return Objects.toStringHelper(this).add("provider", provider).add("endpoint", endpoint).add("apiVersion",
-               apiVersion).add("iso3166Codes", iso3166Codes).add("identity", identity).add("sync", sync).add("async",
-               async).add("propertiesBuilderClass", propertiesBuilderClass).add("contextBuilderClass",
-               contextBuilderClass).add("modules", modules).toString();
+               apiVersion).add("buildVersion", buildVersion).add("iso3166Codes", iso3166Codes)
+               .add("identity", identity).add("sync", sync).add("async", async).add("propertiesBuilderClass",
+                        propertiesBuilderClass).add("contextBuilderClass", contextBuilderClass).add("modules", modules)
+               .toString();
    }
 
 }

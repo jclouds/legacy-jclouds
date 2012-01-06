@@ -19,6 +19,7 @@
 package org.jclouds;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
 import static org.jclouds.Constants.PROPERTY_CONNECTION_TIMEOUT;
 import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
@@ -218,6 +219,7 @@ public class PropertiesBuilder {
       props.setProperty(PROPERTY_CONNECTION_TIMEOUT, 60000 + "");
       props.setProperty(PROPERTY_IO_WORKER_THREADS, 20 + "");
       props.setProperty(PROPERTY_USER_THREADS, 0 + "");
+      props.setProperty(PROPERTY_BUILD_VERSION, "");
       props.setProperty(PROPERTY_MAX_CONNECTION_REUSE, 75 + "");
       props.setProperty(PROPERTY_MAX_SESSION_FAILURES, 2 + "");
       props.setProperty(PROPERTY_SESSION_INTERVAL, 60 + "");
@@ -246,6 +248,11 @@ public class PropertiesBuilder {
 
    public PropertiesBuilder apiVersion(String apiVersion) {
       properties.setProperty(PROPERTY_API_VERSION, apiVersion);
+      return this;
+   }
+
+   public PropertiesBuilder buildVersion(String buildVersion) {
+      properties.setProperty(PROPERTY_BUILD_VERSION, buildVersion);
       return this;
    }
 

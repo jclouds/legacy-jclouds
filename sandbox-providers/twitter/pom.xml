@@ -51,6 +51,7 @@
         <!-- when instances are hung, open a ticket and add here -->
         <test.twitter.endpoint>http://api.twitter.com</test.twitter.endpoint>
         <test.twitter.api-version>1.0</test.twitter.api-version>
+        <test.twitter.build-version></test.twitter.build-version>
         <test.twitter.identity>FIXME</test.twitter.identity>
         <test.twitter.credential>FIXME</test.twitter.credential>
     </properties>
@@ -99,6 +100,7 @@
                                     <systemPropertyVariables>
                                         <test.twitter.endpoint>${test.twitter.endpoint}</test.twitter.endpoint>
                                         <test.twitter.api-version>${test.twitter.api-version}</test.twitter.api-version>
+                                        <test.twitter.build-version>${test.twitter.build-version}</test.twitter.build-version>
                                         <test.twitter.identity>${test.twitter.identity}</test.twitter.identity>
                                         <test.twitter.credential>${test.twitter.credential}</test.twitter.credential>
                                     </systemPropertyVariables>

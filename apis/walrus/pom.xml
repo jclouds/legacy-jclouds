@@ -37,6 +37,7 @@
     <test.initializer>org.jclouds.walrus.blobstore.WalrusTestInitializer</test.initializer>
     <test.walrus.endpoint>http://ecc.eucalyptus.com:8773/services/Walrus</test.walrus.endpoint>
     <test.walrus.api-version>2006-03-01</test.walrus.api-version>
+    <test.walrus.build-version></test.walrus.build-version>
     <test.walrus.identity>${test.eucalyptus.identity}</test.walrus.identity>
     <test.walrus.credential>${test.eucalyptus.credential}</test.walrus.credential>
   </properties>
@@ -105,6 +106,7 @@
                     <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
                     <test.walrus.endpoint>${test.walrus.endpoint}</test.walrus.endpoint>
                     <test.walrus.api-version>${test.walrus.api-version}</test.walrus.api-version>
+                    <test.walrus.build-version>${test.walrus.build-version}</test.walrus.build-version>
                     <test.walrus.identity>${test.walrus.identity}</test.walrus.identity>
                     <test.walrus.credential>${test.walrus.credential}</test.walrus.credential>
                   </systemPropertyVariables>

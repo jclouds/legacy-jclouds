@@ -36,6 +36,7 @@
     <properties>
         <test.aws-cloudwatch.endpoint>https://monitoring.us-east-1.amazonaws.com</test.aws-cloudwatch.endpoint>
         <test.aws-cloudwatch.api-version>2009-05-15</test.aws-cloudwatch.api-version>
+        <test.aws-cloudwatch.build-version></test.aws-cloudwatch.build-version>
         <test.aws-cloudwatch.identity>${test.aws.identity}</test.aws-cloudwatch.identity>
         <test.aws-cloudwatch.credential>${test.aws.credential}</test.aws-cloudwatch.credential>
     </properties>
@@ -88,6 +89,7 @@
                                     <systemPropertyVariables>
                                         <test.aws-cloudwatch.endpoint>${test.aws-cloudwatch.endpoint}</test.aws-cloudwatch.endpoint>
                                         <test.aws-cloudwatch.api-version>${test.aws-cloudwatch.api-version}</test.aws-cloudwatch.api-version>
+                                        <test.aws-cloudwatch.build-version>${test.aws-cloudwatch.build-version}</test.aws-cloudwatch.build-version>
                                         <test.aws-cloudwatch.identity>${test.aws-cloudwatch.identity}</test.aws-cloudwatch.identity>
                                         <test.aws-cloudwatch.credential>${test.aws-cloudwatch.credential}</test.aws-cloudwatch.credential>
                                         <test.aws-cloudwatch.compute.provider>${test.aws-cloudwatch.compute.provider}</test.aws-cloudwatch.compute.provider>

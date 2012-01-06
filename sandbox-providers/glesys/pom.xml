@@ -50,6 +50,7 @@
   <properties>
     <test.glesys.endpoint>https://api.glesys.com</test.glesys.endpoint>
     <test.glesys.api-version>1</test.glesys.api-version>
+    <test.glesys.build-version></test.glesys.build-version>
     <test.glesys.identity>FIXME</test.glesys.identity>
     <test.glesys.credential>FIXME</test.glesys.credential>
     <test.glesys.image-id></test.glesys.image-id>
@@ -108,6 +109,7 @@
                   <systemPropertyVariables>
                     <test.glesys.endpoint>${test.glesys.endpoint}</test.glesys.endpoint>
                     <test.glesys.api-version>${test.glesys.api-version}</test.glesys.api-version>
+                    <test.glesys.build-version>${test.glesys.build-version}</test.glesys.build-version>
                     <test.glesys.identity>${test.glesys.identity}</test.glesys.identity>
                     <test.glesys.credential>${test.glesys.credential}</test.glesys.credential>
                     <test.glesys.image-id>${test.glesys.image-id}</test.glesys.image-id>

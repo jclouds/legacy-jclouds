@@ -38,6 +38,7 @@ public abstract class BaseTestInitializer {
       String identity = System.getProperty("test." + provider + ".identity");
       String credential = System.getProperty("test." + provider + ".credential");
       String apiVersion = System.getProperty("test." + provider + ".api-version");
+      String buildVersion = System.getProperty("test." + provider + ".build-version");
       if (endpoint != null)
          testContext.setAttribute("test." + provider + ".endpoint", endpoint);
       if (app != null)
@@ -46,16 +47,27 @@ public abstract class BaseTestInitializer {
          testContext.setAttribute("test." + provider + ".identity", identity);
       if (credential != null)
          testContext.setAttribute("test." + provider + ".credential", credential);
-      if (credential != null)
+      if (apiVersion != null)
          testContext.setAttribute("test." + provider + ".api-version", apiVersion);
+      if (buildVersion != null)
+         testContext.setAttribute("test." + provider + ".build-version", buildVersion);
       if (identity != null) {
          return createLiveContext(configurationModule, endpoint, apiVersion, app, identity, credential);
       } else {
          return createStubContext();
       }
    }
+   
 
+   /**
+    * To be removed in jclouds 1.4
+    */
+   @Deprecated
    protected Properties setupProperties(String endpoint, String apiVersion, String identity, String credential) {
+      return setupProperties(endpoint, apiVersion, "", identity, credential);
+   }
+
+   protected Properties setupProperties(String endpoint, String apiVersion, String buildVersion, String identity, String credential) {
       Properties overrides = new Properties();
       overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
@@ -65,6 +77,8 @@ public abstract class BaseTestInitializer {
          overrides.setProperty(provider + ".credential", credential);
       if (endpoint != null)
          overrides.setProperty(provider + ".endpoint", endpoint);
+      if (buildVersion != null)
+         overrides.setProperty(provider + ".build-version", buildVersion);
       if (apiVersion != null)
          overrides.setProperty(provider + ".api-version", apiVersion);
       return overrides;

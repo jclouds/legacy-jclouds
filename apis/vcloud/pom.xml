@@ -36,6 +36,7 @@
   <properties>
     <test.vcloud.endpoint>FIXME</test.vcloud.endpoint>
     <test.vcloud.api-version>1.0</test.vcloud.api-version>
+    <test.vcloud.build-version></test.vcloud.build-version>
     <test.vcloud.identity>FIXME</test.vcloud.identity>
     <test.vcloud.credential>FIXME</test.vcloud.credential>
     <test.vcloud.image-id></test.vcloud.image-id>
@@ -106,6 +107,7 @@
                   <systemPropertyVariables>
                     <test.vcloud.endpoint>${test.vcloud.endpoint}</test.vcloud.endpoint>
                     <test.vcloud.api-version>${test.vcloud.api-version}</test.vcloud.api-version>
+                    <test.vcloud.build-version>${test.vcloud.build-version}</test.vcloud.build-version>
                     <test.vcloud.identity>${test.vcloud.identity}</test.vcloud.identity>
                     <test.vcloud.credential>${test.vcloud.credential}</test.vcloud.credential>
                     <test.vcloud.image-id>${test.vcloud.image-id}</test.vcloud.image-id>

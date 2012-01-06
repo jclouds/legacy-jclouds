@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.Future;
 
+import org.jclouds.Constants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.rest.internal.RestContextImpl;
@@ -58,8 +59,18 @@ public interface RestContext<S, A> extends Location {
    S getApi();
 
    URI getEndpoint();
-
+   
+   /**
+    * @return version of the api presented by this service
+    * @see Constants#PROPERTY_API_VERSION
+    */
    String getApiVersion();
+
+   /**
+    * @return version of software this service is running
+    * @see Constants#PROPERTY_BUILD_VERSION
+    */
+   String getBuildVersion();
 
    String getIdentity();
 

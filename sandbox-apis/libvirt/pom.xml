@@ -37,6 +37,7 @@
         <jclouds.compute.blacklist.nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist.nodes>
         <test.libvirt.endpoint>test:///default</test.libvirt.endpoint>
         <test.libvirt.api-version>1.0</test.libvirt.api-version>
+        <test.libvirt.build-version></test.libvirt.build-version>
         <test.libvirt.identity>FIXME</test.libvirt.identity>
         <test.libvirt.credential>FIXME</test.libvirt.credential>
         <test.libvirt.image-id></test.libvirt.image-id>
@@ -127,6 +128,7 @@
                                     <systemPropertyVariables>
                                         <test.libvirt.endpoint>${test.libvirt.endpoint}</test.libvirt.endpoint>
                                         <test.libvirt.api-version>${test.libvirt.api-version}</test.libvirt.api-version>
+                                        <test.libvirt.build-version>${test.libvirt.build-version}</test.libvirt.build-version>
                                         <test.libvirt.identity>${test.libvirt.identity}</test.libvirt.identity>
                                         <test.libvirt.credential>${test.libvirt.credential}</test.libvirt.credential>
                                         <test.libvirt.image-id>${test.libvirt.image-id}</test.libvirt.image-id>

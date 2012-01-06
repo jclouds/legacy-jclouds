@@ -37,6 +37,7 @@
         <test.initializer>org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageTestInitializer</test.initializer>
         <test.synaptic-storage.endpoint>https://storage.synaptic.att.com</test.synaptic-storage.endpoint>
         <test.synaptic-storage.api-version>1.3.0</test.synaptic-storage.api-version>
+        <test.synaptic-storage.build-version></test.synaptic-storage.build-version>
         <test.synaptic-storage.identity>FIXME_IDENTITY</test.synaptic-storage.identity>
         <test.synaptic-storage.credential>FIXME_CREDENTIAL</test.synaptic-storage.credential>
     </properties>
@@ -102,6 +103,7 @@
                                     <systemPropertyVariables>
                                         <test.synaptic-storage.endpoint>${test.synaptic-storage.endpoint}</test.synaptic-storage.endpoint>
                                         <test.synaptic-storage.api-version>${test.synaptic-storage.api-version}</test.synaptic-storage.api-version>
+                                        <test.synaptic-storage.build-version>${test.synaptic-storage.build-version}</test.synaptic-storage.build-version>
                                         <test.synaptic-storage.identity>${test.synaptic-storage.identity}</test.synaptic-storage.identity>
                                         <test.synaptic-storage.credential>${test.synaptic-storage.credential}</test.synaptic-storage.credential>
                                         <test.initializer>${test.initializer}</test.initializer>

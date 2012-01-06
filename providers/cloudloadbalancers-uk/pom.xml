@@ -36,6 +36,7 @@
     <properties>
         <test.cloudloadbalancers-uk.endpoint>https://lon.auth.api.rackspacecloud.com</test.cloudloadbalancers-uk.endpoint>
         <test.cloudloadbalancers-uk.api-version>1.0</test.cloudloadbalancers-uk.api-version>
+        <test.cloudloadbalancers-uk.build-version></test.cloudloadbalancers-uk.build-version>
         <test.cloudloadbalancers-uk.identity>${test.rackspace-uk.identity}</test.cloudloadbalancers-uk.identity>
         <test.cloudloadbalancers-uk.credential>${test.rackspace-uk.credential}</test.cloudloadbalancers-uk.credential>
     </properties>
@@ -110,6 +111,7 @@
                                     <systemPropertyVariables>
                                         <test.cloudloadbalancers-uk.endpoint>${test.cloudloadbalancers-uk.endpoint}</test.cloudloadbalancers-uk.endpoint>
                                         <test.cloudloadbalancers-uk.api-version>${test.cloudloadbalancers-uk.api-version}</test.cloudloadbalancers-uk.api-version>
+                                        <test.cloudloadbalancers-uk.build-version>${test.cloudloadbalancers-uk.build-version}</test.cloudloadbalancers-uk.build-version>
                                         <test.cloudloadbalancers-uk.identity>${test.cloudloadbalancers-uk.identity}</test.cloudloadbalancers-uk.identity>
                                         <test.cloudloadbalancers-uk.credential>${test.cloudloadbalancers-uk.credential}</test.cloudloadbalancers-uk.credential>
                                     </systemPropertyVariables>

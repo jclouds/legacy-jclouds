@@ -55,7 +55,7 @@ public class ServerManagerComputeServiceContextBuilderTest {
    public void testCanBuildWithContextSpec() {
       ComputeServiceContext context = new ComputeServiceContextFactory()
                .createContext(new StandaloneComputeServiceContextSpec<ServerManager, Server, Hardware, Image, Datacenter>(
-                        "servermanager", "http://host", "1", "", "identity", "credential", ServerManager.class,
+                        "servermanager", "http://host", "1", "", "", "identity", "credential", ServerManager.class,
                         ServerManagerComputeServiceContextBuilder.class, ImmutableSet.<Module> of()));
 
       context.close();

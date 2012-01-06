@@ -36,6 +36,7 @@
     <properties>
         <test.elastichosts-tor-p.endpoint>https://api.tor-p.elastichosts.com</test.elastichosts-tor-p.endpoint>
         <test.elastichosts-tor-p.api-version>2.0</test.elastichosts-tor-p.api-version>
+        <test.elastichosts-tor-p.build-version></test.elastichosts-tor-p.build-version>
         <test.elastichosts-tor-p.identity>FIXME_IDENTITY</test.elastichosts-tor-p.identity>
         <test.elastichosts-tor-p.credential>FIXME_CREDENTIAL</test.elastichosts-tor-p.credential>
         <test.elastichosts-tor-p.image-id></test.elastichosts-tor-p.image-id>
@@ -101,6 +102,7 @@
                                     <systemPropertyVariables>
                                         <test.elastichosts-tor-p.endpoint>${test.elastichosts-tor-p.endpoint}</test.elastichosts-tor-p.endpoint>
                                         <test.elastichosts-tor-p.api-version>${test.elastichosts-tor-p.api-version}</test.elastichosts-tor-p.api-version>
+                                        <test.elastichosts-tor-p.build-version>${test.elastichosts-tor-p.build-version}</test.elastichosts-tor-p.build-version>
                                         <test.elastichosts-tor-p.identity>${test.elastichosts-tor-p.identity}</test.elastichosts-tor-p.identity>
                                         <test.elastichosts-tor-p.credential>${test.elastichosts-tor-p.credential}</test.elastichosts-tor-p.credential>
                                         <test.elastichosts-tor-p.image-id>${test.elastichosts-tor-p.image-id}</test.elastichosts-tor-p.image-id>

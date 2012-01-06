@@ -53,7 +53,7 @@ public class RestContextFactoryTest {
 
    public void testBuilder() {
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
-               "http://localhost", "1", "", "dummy", null, IntegrationTestClient.class,
+               "http://localhost", "1", "", "", "dummy", null, IntegrationTestClient.class,
                IntegrationTestAsyncClient.class);
 
       createContextBuilder(contextSpec);
@@ -61,12 +61,13 @@ public class RestContextFactoryTest {
 
    public void testBuilderPropertiesWithIso3166() {
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
-               "http://localhost", "1", "US-CA", "dummy", null, IntegrationTestClient.class,
+               "http://localhost", "1", "build-foo", "US-CA", "dummy", null, IntegrationTestClient.class,
                IntegrationTestAsyncClient.class);
 
       Properties props = RestContextFactory.toProperties(contextSpec);
       assertEquals(props.getProperty("test.endpoint"), "http://localhost");
       assertEquals(props.getProperty("test.api-version"), "1");
+      assertEquals(props.getProperty("test.build-version"), "build-foo");
       assertEquals(props.getProperty("test.identity"), "dummy");
       assertEquals(props.getProperty("test.iso3166-codes"), "US-CA");
       assertEquals(props.getProperty("test.credential"), null);
@@ -81,12 +82,13 @@ public class RestContextFactoryTest {
 
    public void testBuilderPropertiesWithCredential() {
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
-               "http://localhost", "1", "", "dummy", "credential", IntegrationTestClient.class,
+               "http://localhost", "1", "build-foo", "", "dummy", "credential", IntegrationTestClient.class,
                IntegrationTestAsyncClient.class);
 
       Properties props = RestContextFactory.toProperties(contextSpec);
       assertEquals(props.getProperty("test.endpoint"), "http://localhost");
       assertEquals(props.getProperty("test.api-version"), "1");
+      assertEquals(props.getProperty("test.build-version"), "build-foo");
       assertEquals(props.getProperty("test.identity"), "dummy");
       assertEquals(props.getProperty("test.credential"), "credential");
       assertEquals(props.getProperty("test.sync"), IntegrationTestClient.class.getName());
@@ -102,12 +104,13 @@ public class RestContextFactoryTest {
    public void testBuilderPropertiesWithContextBuilder() {
       @SuppressWarnings("rawtypes")
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
-               "http://localhost", "1", "", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
+               "http://localhost", "1", "build-foo", "", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
                (Class) IntegrationTestContextBuilder.class, Collections.EMPTY_LIST);
 
       Properties props = RestContextFactory.toProperties(contextSpec);
       assertEquals(props.getProperty("test.endpoint"), "http://localhost");
       assertEquals(props.getProperty("test.api-version"), "1");
+      assertEquals(props.getProperty("test.build-version"), "build-foo");
       assertEquals(props.getProperty("test.identity"), "dummy");
       assertEquals(props.getProperty("test.credential"), null);
       assertEquals(props.getProperty("test.sync"), null);
@@ -123,12 +126,13 @@ public class RestContextFactoryTest {
    public void testBuilderPropertiesWithModule() {
       @SuppressWarnings("rawtypes")
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
-               "http://localhost", "1", "", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
+               "http://localhost", "1", "build-foo", "", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
                (Class) IntegrationTestContextBuilder.class, Collections.<Module> singleton(new A()));
 
       Properties props = RestContextFactory.toProperties(contextSpec);
       assertEquals(props.getProperty("test.endpoint"), "http://localhost");
       assertEquals(props.getProperty("test.api-version"), "1");
+      assertEquals(props.getProperty("test.build-version"), "build-foo");
       assertEquals(props.getProperty("test.identity"), "dummy");
       assertEquals(props.getProperty("test.credential"), null);
       assertEquals(props.getProperty("test.sync"), null);
@@ -144,12 +148,13 @@ public class RestContextFactoryTest {
    public void testBuilderPropertiesWithModules() {
       @SuppressWarnings("rawtypes")
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
-               "http://localhost", "1", "", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
+               "http://localhost", "1", "build-foo", "", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
                (Class) IntegrationTestContextBuilder.class, Arrays.<Module> asList(new A(), new B()));
 
       Properties props = RestContextFactory.toProperties(contextSpec);
       assertEquals(props.getProperty("test.endpoint"), "http://localhost");
       assertEquals(props.getProperty("test.api-version"), "1");
+      assertEquals(props.getProperty("test.build-version"), "build-foo");
       assertEquals(props.getProperty("test.identity"), "dummy");
       assertEquals(props.getProperty("test.credential"), null);
       assertEquals(props.getProperty("test.sync"), null);
@@ -166,6 +171,7 @@ public class RestContextFactoryTest {
       Properties props = new Properties();
       props.setProperty("test.endpoint", "http://localhost");
       props.setProperty("test.api-version", "1");
+      props.setProperty("test.build-version", "build-foo");
       props.setProperty("test.iso3166-codes", "US");
       props.setProperty("jclouds.identity", "foo");
       props.setProperty("jclouds.credential", "bar");
@@ -186,6 +192,8 @@ public class RestContextFactoryTest {
             assertEquals(spec.iso3166Codes, "US");
             assertEquals(spec.identity, "foo");
             assertEquals(spec.credential, "bar");
+            assertEquals(spec.apiVersion, "1");
+            assertEquals(spec.buildVersion, "build-foo");
             assertEquals(Iterables.size(spec.modules), 2);
             return spec;
          }
@@ -201,6 +209,7 @@ public class RestContextFactoryTest {
       Properties props = new Properties();
       props.setProperty("test.endpoint", "http://localhost");
       props.setProperty("test.api-version", "1");
+      props.setProperty("test.build-version", "build-foo");
       props.setProperty("test.iso3166-codes", "US");
       props.setProperty("test.identity", "foo");
       props.setProperty("test.credential.file", file.getAbsolutePath());
@@ -221,6 +230,8 @@ public class RestContextFactoryTest {
             assertEquals(spec.iso3166Codes, "US");
             assertEquals(spec.identity, "foo");
             assertEquals(spec.credential, "bar");
+            assertEquals(spec.apiVersion, "1");
+            assertEquals(spec.buildVersion, "build-foo");
             assertEquals(Iterables.size(spec.modules), 2);
             return spec;
          }
@@ -251,7 +262,7 @@ public class RestContextFactoryTest {
    public void testBuilderPropertiesWithWrongConfig() {
       @SuppressWarnings( { "unused", "rawtypes" })
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
-               "http://localhost", "1", "", "dummy", null, (Class) null, (Class) null,
+               "http://localhost", "1", "build-foo", "", "dummy", null, (Class) null, (Class) null,
                (Class) IntegrationTestContextBuilder.class, (Class) PropertiesBuilder.class, Collections.EMPTY_LIST);
    }
 

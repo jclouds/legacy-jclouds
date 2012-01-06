@@ -49,7 +49,7 @@ import com.google.inject.Module;
 public class QuerySignerTest {
    @SuppressWarnings({ "unchecked", "rawtypes" })
    public static final RestContextSpec<Map, List> DUMMY_SPEC = new RestContextSpec<Map, List>("cloudstack",
-         "http://localhost:8080/client/api", "2.2", "", "apiKey", "secretKey", Map.class, List.class,
+         "http://localhost:8080/client/api", "2.2", "", "", "apiKey", "secretKey", Map.class, List.class,
          PropertiesBuilder.class, (Class) RestContextBuilder.class, ImmutableList.<Module> of(new MockModule(),
                new NullLoggingModule(), new AbstractModule() {
                   @Override

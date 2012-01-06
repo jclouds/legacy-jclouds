@@ -36,6 +36,7 @@
     <properties>
         <test.skalicloud-sdg-my.endpoint>https://api.sdg-my.skalicloud.com</test.skalicloud-sdg-my.endpoint>
         <test.skalicloud-sdg-my.api-version>1.0</test.skalicloud-sdg-my.api-version>
+        <test.skalicloud-sdg-my.build-version></test.skalicloud-sdg-my.build-version>
         <test.skalicloud-sdg-my.identity>FIXME_IDENTITY</test.skalicloud-sdg-my.identity>
         <test.skalicloud-sdg-my.credential>FIXME_CREDENTIAL</test.skalicloud-sdg-my.credential>
         <test.skalicloud-sdg-my.image-id></test.skalicloud-sdg-my.image-id>
@@ -101,6 +102,7 @@
                                     <systemPropertyVariables>
                                         <test.skalicloud-sdg-my.endpoint>${test.skalicloud-sdg-my.endpoint}</test.skalicloud-sdg-my.endpoint>
                                         <test.skalicloud-sdg-my.api-version>${test.skalicloud-sdg-my.api-version}</test.skalicloud-sdg-my.api-version>
+                                        <test.skalicloud-sdg-my.build-version>${test.skalicloud-sdg-my.build-version}</test.skalicloud-sdg-my.build-version>
                                         <test.skalicloud-sdg-my.identity>${test.skalicloud-sdg-my.identity}</test.skalicloud-sdg-my.identity>
                                         <test.skalicloud-sdg-my.credential>${test.skalicloud-sdg-my.credential}</test.skalicloud-sdg-my.credential>
                                         <test.skalicloud-sdg-my.image-id>${test.skalicloud-sdg-my.image-id}</test.skalicloud-sdg-my.image-id>

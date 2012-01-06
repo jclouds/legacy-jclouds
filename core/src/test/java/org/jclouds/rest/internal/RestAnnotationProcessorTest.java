@@ -315,9 +315,9 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    
    private Injector injectorForCaller(HttpCommandExecutorService service) {
 
-      RestContextSpec<Caller, AsyncCaller> contextSpec = contextSpec("test", "http://localhost:9999", "1", "",
-            "userfoo", null, Caller.class, AsyncCaller.class,
-            ImmutableSet.<Module> of(new MockModule(service), new NullLoggingModule(), new CallerModule()));
+      RestContextSpec<Caller, AsyncCaller> contextSpec = contextSpec("test", "http://localhost:9999", "1", "", "",
+               "userfoo", null, Caller.class, AsyncCaller.class, ImmutableSet.<Module> of(new MockModule(service),
+                        new NullLoggingModule(), new CallerModule()));
 
       return createContextBuilder(contextSpec).buildInjector();
 
@@ -2426,7 +2426,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    @BeforeClass
    void setupFactory() {
-      RestContextSpec<String, Integer> contextSpec = contextSpec("test", "http://localhost:9999", "1", "", "userfoo",
+      RestContextSpec<String, Integer> contextSpec = contextSpec("test", "http://localhost:9999", "1", "", "", "userfoo",
             null, String.class, Integer.class,
             ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule(), new AbstractModule() {
 

@@ -37,6 +37,7 @@
   <properties>
     <test.cloudservers.endpoint>https://auth.api.rackspacecloud.com</test.cloudservers.endpoint>
     <test.cloudservers.api-version>1.0</test.cloudservers.api-version>
+    <test.cloudservers.build-version></test.cloudservers.build-version>
     <test.cloudservers.identity>${test.rackspace.identity}</test.cloudservers.identity>
     <test.cloudservers.credential>${test.rackspace.credential}</test.cloudservers.credential>
     <test.cloudservers.image-id></test.cloudservers.image-id>
@@ -109,6 +110,7 @@
                   <systemPropertyVariables>
                     <test.cloudstack.endpoint>${test.cloudstack.endpoint}</test.cloudstack.endpoint>
                     <test.cloudstack.api-version>${test.cloudstack.api-version}</test.cloudstack.api-version>
+                    <test.cloudstack.build-version>${test.cloudstack.build-version}</test.cloudstack.build-version>
                     <test.cloudstack.identity>${test.cloudstack.identity}</test.cloudstack.identity>
                     <test.cloudstack.credential>${test.cloudstack.credential}</test.cloudstack.credential>
                     <test.cloudstack.image-id>${test.cloudstack.image-id}</test.cloudstack.image-id>

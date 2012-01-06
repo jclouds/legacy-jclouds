@@ -36,6 +36,7 @@
   <properties>
     <test.virtualbox.endpoint>http://localhost:18083/</test.virtualbox.endpoint>
     <test.virtualbox.api-version>4.1.4</test.virtualbox.api-version>
+    <test.virtualbox.build-version>4.1.8r75467</test.virtualbox.build-version>
     <test.virtualbox.identity>administrator</test.virtualbox.identity>
     <test.virtualbox.credential>12345</test.virtualbox.credential>
     <test.virtualbox.image-id></test.virtualbox.image-id>
@@ -130,6 +131,7 @@
                   <systemPropertyVariables>
                     <test.virtualbox.endpoint>${test.virtualbox.endpoint}</test.virtualbox.endpoint>
                     <test.virtualbox.api-version>${test.virtualbox.api-version}</test.virtualbox.api-version>
+                    <test.virtualbox.build-version>${test.virtualbox.build-version}</test.virtualbox.build-version>
                     <test.virtualbox.identity>${test.virtualbox.identity}</test.virtualbox.identity>
                     <test.virtualbox.credential>${test.virtualbox.credential}</test.virtualbox.credential>
                     <test.virtualbox.image-id>${test.virtualbox.image-id}</test.virtualbox.image-id>

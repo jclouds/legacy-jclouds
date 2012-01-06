@@ -37,6 +37,7 @@
     <test.initializer>org.jclouds.cloudfiles.blobstore.integration.CloudFilesTestInitializer</test.initializer>
     <test.cloudfiles.endpoint>https://auth.api.rackspacecloud.com</test.cloudfiles.endpoint>
     <test.cloudfiles.api-version>1.0</test.cloudfiles.api-version>
+    <test.cloudfiles.build-version></test.cloudfiles.build-version>
     <test.cloudfiles.identity>${test.rackspace.identity}</test.cloudfiles.identity>
     <test.cloudfiles.credential>${test.rackspace.credential}</test.cloudfiles.credential>
   </properties>
@@ -111,6 +112,7 @@
                     <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
                     <test.cloudfiles.endpoint>${test.cloudfiles.endpoint}</test.cloudfiles.endpoint>
                     <test.cloudfiles.api-version>${test.cloudfiles.api-version}</test.cloudfiles.api-version>
+                    <test.cloudfiles.build-version>${test.cloudfiles.build-version}</test.cloudfiles.build-version>
                     <test.cloudfiles.identity>${test.cloudfiles.identity}</test.cloudfiles.identity>
                     <test.cloudfiles.credential>${test.cloudfiles.credential}</test.cloudfiles.credential>
                   </systemPropertyVariables>

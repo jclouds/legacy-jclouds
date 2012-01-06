@@ -141,7 +141,7 @@ public class InputParamValidatorTest {
    void setupFactory() {
 
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
-               "http://localhost:9999", "1", "", "userFoo", null, IntegrationTestClient.class,
+               "http://localhost:9999", "1", "", "", "userFoo", null, IntegrationTestClient.class,
                IntegrationTestAsyncClient.class);
 
       injector = createContextBuilder(contextSpec).buildInjector();

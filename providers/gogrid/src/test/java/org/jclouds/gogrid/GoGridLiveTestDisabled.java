@@ -35,9 +35,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.javax.annotation.Nullable;
-
-import org.jclouds.Constants;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.domain.Credentials;
 import org.jclouds.gogrid.domain.Ip;
@@ -56,6 +54,7 @@ import org.jclouds.gogrid.options.GetImageListOptions;
 import org.jclouds.gogrid.predicates.LoadBalancerLatestJobCompleted;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
@@ -81,9 +80,11 @@ import com.google.inject.Module;
  * 
  * @author Oleksiy Yarmula
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(enabled = false, groups = "live", testName = "GoGridLiveTestDisabled")
-public class GoGridLiveTestDisabled {
+@Test(enabled = false, groups = "live", singleThreaded = true, testName = "GoGridLiveTestDisabled")
+public class GoGridLiveTestDisabled extends BaseVersionedServiceLiveTest {
+   public GoGridLiveTestDisabled() {
+      provider = "gogrid";
+   }
 
    private GoGridClient client;
 
@@ -96,32 +97,6 @@ public class GoGridLiveTestDisabled {
    private List<String> loadBalancersToDeleteAfterTest = new ArrayList<String>();
 
    private RestContext<GoGridClient, GoGridAsyncClient> context;
-   protected String provider = "gogrid";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiVersion;
-
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-     apiVersion = System.getProperty("test." + provider + ".api-version");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiVersion != null)
-         overrides.setProperty(provider + ".api-version", apiVersion);
-      return overrides;
-   }
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {

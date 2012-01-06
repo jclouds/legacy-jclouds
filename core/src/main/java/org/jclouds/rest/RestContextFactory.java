@@ -30,10 +30,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.jclouds.PropertiesBuilder;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.reference.LocationConstants;
 import org.jclouds.util.ClassLoadingUtils;
 import org.jclouds.util.Modules2;
@@ -72,24 +72,24 @@ import com.google.inject.Module;
 public class RestContextFactory {
 
    public static <S, A> RestContextSpec<S, A> contextSpec(String provider, String endpoint, String apiVersion,
-         String iso3166Codes, String identity, String credential, Class<S> sync, Class<A> async,
+         String buildVersion, String iso3166Codes, String identity, String credential, Class<S> sync, Class<A> async,
          Class<PropertiesBuilder> propertiesBuilderClass, Class<RestContextBuilder<S, A>> contextBuilderClass,
          Iterable<Module> modules) {
-      return new RestContextSpec<S, A>(provider, endpoint, apiVersion, iso3166Codes, identity, credential, sync, async,
-            propertiesBuilderClass, contextBuilderClass, modules);
+      return new RestContextSpec<S, A>(provider, endpoint, apiVersion, buildVersion, iso3166Codes, identity,
+               credential, sync, async, propertiesBuilderClass, contextBuilderClass, modules);
    }
 
-   public static <S, A> RestContextSpec<S, A> contextSpec(String provider, String endpoint, String apiVersion,
+   public static <S, A> RestContextSpec<S, A> contextSpec(String provider, String endpoint, String apiVersion,String buildVersion, 
          String iso3166Codes, String identity, String credential, Class<S> sync, Class<A> async) {
-      return new RestContextSpec<S, A>(provider, endpoint, apiVersion, iso3166Codes, identity, credential, sync, async);
+      return new RestContextSpec<S, A>(provider, endpoint, apiVersion, buildVersion, iso3166Codes, identity, credential, sync, async);
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings( { "unchecked", "rawtypes" })
    public static <S, A> RestContextSpec<S, A> contextSpec(String provider, String endpoint, String apiVersion,
-         String iso3166Codes, String identity, String credential, Class<S> sync, Class<A> async,
-         Iterable<Module> modules) {
-      return new RestContextSpec<S, A>(provider, endpoint, apiVersion, iso3166Codes, identity, credential, sync, async,
-            PropertiesBuilder.class, (Class) RestContextBuilder.class, modules);
+            String buildVersion, String iso3166Codes, String identity, String credential, Class<S> sync,
+            Class<A> async, Iterable<Module> modules) {
+      return new RestContextSpec<S, A>(provider, endpoint, apiVersion, buildVersion, iso3166Codes, identity,
+               credential, sync, async, PropertiesBuilder.class, (Class) RestContextBuilder.class, modules);
    }
 
    private final static Properties NO_PROPERTIES = new Properties();
@@ -242,6 +242,7 @@ public class RestContextFactory {
 
       props.setProperty(contextSpec.provider + ".endpoint", contextSpec.endpoint);
       props.setProperty(contextSpec.provider + ".api-version", contextSpec.apiVersion);
+      props.setProperty(contextSpec.provider + ".build-version", contextSpec.buildVersion);
       props.setProperty(contextSpec.provider + "." + LocationConstants.ISO3166_CODES, contextSpec.iso3166Codes);
       props.setProperty(contextSpec.provider + ".identity", contextSpec.identity);
       if (contextSpec.credential != null)
@@ -290,6 +291,7 @@ public class RestContextFactory {
       String endpoint = props.getProperty(providerName + "." + LocationConstants.ENDPOINT, null);
       String iso3166Codes = props.getProperty(providerName + "." + LocationConstants.ISO3166_CODES, null);
       String apiVersion = props.getProperty(providerName + ".api-version", null);
+      String buildVersion = props.getProperty(providerName + ".build-version", null);
       identity = props.getProperty(providerName + ".identity", props.getProperty("jclouds.identity", identity));
       credential = loadCredentialOrDefault(props, providerName + ".credential",
             loadCredentialOrDefault(props, "jclouds.credential", credential));
@@ -316,7 +318,7 @@ public class RestContextFactory {
          assert false : "exception should have propogated " + e;
          return null;
       }
-      RestContextSpec<S, A> contextSpec = new RestContextSpec<S, A>(providerName, endpoint, apiVersion, iso3166Codes,
+      RestContextSpec<S, A> contextSpec = new RestContextSpec<S, A>(providerName, endpoint, apiVersion, buildVersion, iso3166Codes,
             identity, credential, sync, async, propertiesBuilderClass, contextBuilderClass, modules);
       return contextSpec;
    }
@@ -365,6 +367,8 @@ public class RestContextFactory {
          builder.provider(contextSpec.provider);
          if (contextSpec.apiVersion != null)
             builder.apiVersion(contextSpec.apiVersion);
+         if (contextSpec.buildVersion != null)
+            builder.buildVersion(contextSpec.buildVersion);
          if (contextSpec.iso3166Codes != null)
             builder.iso3166Codes(Splitter.on('.').split(contextSpec.iso3166Codes));
          if (contextSpec.identity != null)

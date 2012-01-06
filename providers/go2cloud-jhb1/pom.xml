@@ -36,6 +36,7 @@
     <properties>
         <test.go2cloud-jhb1.endpoint>http://api.jhb1.go2cloud.co.za</test.go2cloud-jhb1.endpoint>
         <test.go2cloud-jhb1.api-version>2.0</test.go2cloud-jhb1.api-version>
+        <test.go2cloud-jhb1.build-version></test.go2cloud-jhb1.build-version>
         <test.go2cloud-jhb1.identity>FIXME_IDENTITY</test.go2cloud-jhb1.identity>
         <test.go2cloud-jhb1.credential>FIXME_CREDENTIAL</test.go2cloud-jhb1.credential>
         <test.go2cloud-jhb1.image-id></test.go2cloud-jhb1.image-id>
@@ -101,6 +102,7 @@
                                     <systemPropertyVariables>
                                         <test.go2cloud-jhb1.endpoint>${test.go2cloud-jhb1.endpoint}</test.go2cloud-jhb1.endpoint>
                                         <test.go2cloud-jhb1.api-version>${test.go2cloud-jhb1.api-version}</test.go2cloud-jhb1.api-version>
+                                        <test.go2cloud-jhb1.build-version>${test.go2cloud-jhb1.build-version}</test.go2cloud-jhb1.build-version>
                                         <test.go2cloud-jhb1.identity>${test.go2cloud-jhb1.identity}</test.go2cloud-jhb1.identity>
                                         <test.go2cloud-jhb1.credential>${test.go2cloud-jhb1.credential}</test.go2cloud-jhb1.credential>
                                         <test.go2cloud-jhb1.image-id>${test.go2cloud-jhb1.image-id}</test.go2cloud-jhb1.image-id>

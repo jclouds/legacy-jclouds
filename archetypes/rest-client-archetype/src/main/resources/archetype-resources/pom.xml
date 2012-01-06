@@ -59,6 +59,7 @@ $symbol_dollar = '$' )
         <test.${lcaseProviderName}.identity>${providerIdentity}</test.${lcaseProviderName}.identity>
         <test.${lcaseProviderName}.credential>${providerCredential}</test.${lcaseProviderName}.credential>
         <test.${lcaseProviderName}.api-version>${providerApiVersion}</test.${lcaseProviderName}.api-version>
+        <test.${lcaseProviderName}.build-version></test.${lcaseProviderName}.build-version>
         <test.${lcaseProviderName}.endpoint>${providerEndpoint}</test.${lcaseProviderName}.endpoint>
     </properties>
     <dependencies>
@@ -108,6 +109,7 @@ $symbol_dollar = '$' )
                                         <test.${lcaseProviderName}.credential>\$\{test.${lcaseProviderName}.credential\}</test.${lcaseProviderName}.credential>
                                         <test.${lcaseProviderName}.endpoint>\$\{test.${lcaseProviderName}.endpoint\}</test.${lcaseProviderName}.endpoint>
                                         <test.${lcaseProviderName}.api-version>\$\{test.${lcaseProviderName}.api-version\}</test.${lcaseProviderName}.api-version>
+                                        <test.${lcaseProviderName}.build-version>\$\{test.${lcaseProviderName}.build-version\}</test.${lcaseProviderName}.build-version>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>

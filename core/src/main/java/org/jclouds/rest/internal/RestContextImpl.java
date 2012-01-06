@@ -36,8 +36,10 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.Utils;
 import org.jclouds.rest.annotations.ApiVersion;
+import org.jclouds.rest.annotations.BuildVersion;
 import org.jclouds.rest.annotations.Identity;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -59,6 +61,7 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
    private final String identity;
    private final String provider;
    private final String apiVersion;
+   private final String buildVersion;
    private final Utils utils;
    private final Map<String, Credentials> credentialStore;
    private final Set<String> iso3166Codes;
@@ -66,7 +69,8 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
    @Inject
    protected RestContextImpl(Closer closer, Map<String, Credentials> credentialStore, Utils utils, Injector injector,
             TypeLiteral<S> syncApi, TypeLiteral<A> asyncApi, @Provider URI endpoint, @Provider String provider,
-            @Identity String identity, @ApiVersion String apiVersion, @Iso3166 Set<String> iso3166Codes) {
+            @Identity String identity, @ApiVersion String apiVersion, @BuildVersion String buildVersion,
+            @Iso3166 Set<String> iso3166Codes) {
       this.credentialStore = credentialStore;
       this.utils = utils;
       this.asyncApi = injector.getInstance(Key.get(asyncApi));
@@ -76,6 +80,7 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
       this.identity = identity;
       this.provider = provider;
       this.apiVersion = apiVersion;
+      this.buildVersion = buildVersion;
       this.iso3166Codes = iso3166Codes;
    }
 
@@ -127,16 +132,16 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
    public String getApiVersion() {
       return apiVersion;
    }
+   
+   @Override
+   public String getBuildVersion() {
+      return buildVersion;
+   }
+
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((apiVersion == null) ? 0 : apiVersion.hashCode());
-      result = prime * result + ((endpoint == null) ? 0 : endpoint.hashCode());
-      result = prime * result + ((identity == null) ? 0 : identity.hashCode());
-      result = prime * result + ((provider == null) ? 0 : provider.hashCode());
-      return result;
+      return Objects.hashCode(provider, endpoint, apiVersion, buildVersion, identity);
    }
 
    @Override
@@ -147,34 +152,17 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      RestContextImpl<?, ?> other = (RestContextImpl<?, ?>) obj;
-      if (apiVersion == null) {
-         if (other.apiVersion != null)
-            return false;
-      } else if (!apiVersion.equals(other.apiVersion))
-         return false;
-      if (endpoint == null) {
-         if (other.endpoint != null)
-            return false;
-      } else if (!endpoint.equals(other.endpoint))
-         return false;
-      if (identity == null) {
-         if (other.identity != null)
-            return false;
-      } else if (!identity.equals(other.identity))
-         return false;
-      if (provider == null) {
-         if (other.provider != null)
-            return false;
-      } else if (!provider.equals(other.provider))
-         return false;
-      return true;
+      RestContextImpl<?, ?> that = (RestContextImpl<?, ?>) obj;
+      return Objects.equal(this.provider, that.provider) && Objects.equal(this.endpoint, that.endpoint)
+               && Objects.equal(this.apiVersion, that.apiVersion)
+               && Objects.equal(this.buildVersion, that.buildVersion) && Objects.equal(this.identity, that.identity);
    }
 
    @Override
    public String toString() {
-      return " [id=" + provider + ", endpoint=" + endpoint + ", apiVersion=" + apiVersion + ", identity=" + identity
-               + ", iso3166Codes=" + iso3166Codes + "]";
+      return Objects.toStringHelper("").add("provider", provider).add("endpoint", endpoint).add("apiVersion",
+               apiVersion).add("buildVersion", buildVersion).add("identity", identity)
+               .add("iso3166Codes", iso3166Codes).toString();
    }
 
    @Override
@@ -204,7 +192,8 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
 
    @Override
    public Map<String, Object> getMetadata() {
-      return ImmutableMap.<String, Object> of("endpoint", endpoint, "apiVersion", apiVersion, "identity", identity);
+      return ImmutableMap.<String, Object> of("endpoint", endpoint, "apiVersion", apiVersion, "buildVersion",
+               buildVersion, "identity", identity);
    }
 
    @Override
