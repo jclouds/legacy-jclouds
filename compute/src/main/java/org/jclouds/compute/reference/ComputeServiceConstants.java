@@ -39,6 +39,10 @@ public interface ComputeServiceConstants {
    
    public static final String PROPERTY_INIT_STATUS_INITIAL_PERIOD = "jclouds.compute.init-status.initial-period";
    public static final String PROPERTY_INIT_STATUS_MAX_PERIOD = "jclouds.compute.init-status.max-period";
+   /**
+    * overrides the image specified in the subclass of {@link BaseComputeServiceContextModule#provideTemplate}
+    */
+   public static final String PROPERTY_IMAGE_ID = "jclouds.image-id";
 
    /**
     * comma-separated nodes that we shouldn't attempt to list as they are dead

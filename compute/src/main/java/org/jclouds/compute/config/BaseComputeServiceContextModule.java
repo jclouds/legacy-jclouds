@@ -176,7 +176,7 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       template = provideTemplate(injector, template);
       String imageId = config.apply(provider + ".image-id");
       if (imageId == null)
-         imageId = config.apply("jclouds.image-id");
+         imageId = config.apply(ComputeServiceConstants.PROPERTY_IMAGE_ID);
       if (imageId != null)
          template.imageId(imageId);
       return template;
