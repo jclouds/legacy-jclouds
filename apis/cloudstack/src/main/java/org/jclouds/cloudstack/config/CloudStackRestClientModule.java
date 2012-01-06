@@ -186,6 +186,9 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
    @Override
    protected void configure() {
       bind(DateAdapter.class).to(CloudStackDateAdapter.class);
+      bind(new TypeLiteral<RestContext<CloudStackClient, CloudStackAsyncClient>>() {
+      }).to(new TypeLiteral<RestContextImpl<CloudStackClient, CloudStackAsyncClient>>() {
+      });
       bind(new TypeLiteral<RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient>>() {
       }).to(new TypeLiteral<RestContextImpl<CloudStackDomainClient, CloudStackDomainAsyncClient>>() {
       });
