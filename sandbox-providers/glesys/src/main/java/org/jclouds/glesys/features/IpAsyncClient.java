@@ -18,14 +18,7 @@
  */
 package org.jclouds.glesys.features;
 
-import java.util.Set;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.MediaType;
-
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.glesys.domain.IpDetails;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -34,18 +27,56 @@ import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.util.Set;
 
 /**
  * Provides asynchronous access to IP Addresses via their REST API.
  * <p/>
  *
- * @author Adrian Cole
+ * @author Adrian Cole, Mattias Holmqvist
+ *
  * @see ServerClient
  * @see <a href="https://customer.glesys.com/api.php" />
  */
 @RequestFilters(BasicAuthentication.class)
 public interface IpAsyncClient {
+
+
+   /**
+    * @see IpClient#take
+    */
+   @POST
+   @Path("/ip/take/format/json")
+   ListenableFuture<Void> take(@FormParam("ipaddress") String ipAddress);
+
+
+   /**
+    * @see IpClient#release
+    */
+   @POST
+   @Path("/ip/release/format/json")
+   ListenableFuture<Void> release(@FormParam("ipaddress") String ipAddress);
+
+   /**
+    * @see IpClient#add
+    */
+   @POST
+   @Path("/ip/add/format/json")
+   ListenableFuture<Void> add(@FormParam("serverid") String serverId,
+                              @FormParam("ipaddress") String ipAddress);
+
+
+   /**
+    * @see IpClient#remove
+    *
+    * TODO: add optional release_ip parameter
+    */
+   @POST
+   @Path("/ip/remove/format/json")
+   ListenableFuture<Void> remove(@FormParam("ipaddress") String ipAddress,
+                                 @FormParam("serverid") String serverId);
 
 
    /**
