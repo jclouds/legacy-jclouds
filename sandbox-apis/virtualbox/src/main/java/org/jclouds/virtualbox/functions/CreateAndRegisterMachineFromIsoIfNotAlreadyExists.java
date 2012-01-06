@@ -33,13 +33,13 @@ import javax.inject.Named;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
+import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.domain.DeviceDetails;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.IsoImage;
 import org.jclouds.virtualbox.domain.NatAdapter;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
-import org.jclouds.virtualbox.util.PropertyUtils;
 import org.virtualbox_4_1.AccessMode;
 import org.virtualbox_4_1.DeviceType;
 import org.virtualbox_4_1.IMachine;
@@ -54,14 +54,18 @@ import com.google.common.base.Function;
  * @author Mattias Holmqvist
  */
 public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Function<VmSpec, IMachine> {
-   
+
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   private VirtualBoxManager manager;
 
-   public CreateAndRegisterMachineFromIsoIfNotAlreadyExists(VirtualBoxManager manager) {
+   private final VirtualBoxManager manager;
+   private final String workingDir;
+
+   public CreateAndRegisterMachineFromIsoIfNotAlreadyExists(VirtualBoxManager manager,
+            @Named(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR) String workingDir) {
       this.manager = manager;
+      this.workingDir = workingDir;
    }
 
    @Override
@@ -84,15 +88,14 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
    }
 
    private IMachine createMachine(IVirtualBox vBox, VmSpec vmSpec) {
-      String workingDir = PropertyUtils.getWorkingDirFromProperty();
-      String settingsFile = vBox.composeMachineFilename(vmSpec.getVmName() , workingDir);
+      String settingsFile = vBox.composeMachineFilename(vmSpec.getVmName(), workingDir);
 
-      IMachine newMachine = vBox.createMachine(settingsFile, vmSpec.getVmName(),
-            vmSpec.getOsTypeId(), vmSpec.getVmId(),  vmSpec.isForceOverwrite());
+      IMachine newMachine = vBox.createMachine(settingsFile, vmSpec.getVmName(), vmSpec.getOsTypeId(),
+               vmSpec.getVmId(), vmSpec.isForceOverwrite());
       manager.getVBox().registerMachine(newMachine);
-      
+
       String vmName = vmSpec.getVmName();
-      
+
       // Change RAM
       ensureMachineHasMemory(vmName, vmSpec.getMemory());
 
@@ -114,25 +117,30 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
       }
       return newMachine;
    }
-   
+
    private void setupDvdsForController(VmSpec vmSpecification, String vmName, StorageController controller) {
       Set<IsoImage> dvds = controller.getIsoImages();
       for (IsoImage dvd : dvds) {
          String dvdSource = dvd.getSourcePath();
-         final IMedium dvdMedium = manager.getVBox().openMedium(dvdSource, DeviceType.DVD,
-                 AccessMode.ReadOnly, vmSpecification.isForceOverwrite());
+         final IMedium dvdMedium = manager.getVBox().openMedium(dvdSource, DeviceType.DVD, AccessMode.ReadOnly,
+                  vmSpecification.isForceOverwrite());
          ensureMachineDevicesAttached(vmName, dvdMedium, dvd.getDeviceDetails(), controller.getName());
       }
    }
-   
-   private void ensureMachineDevicesAttached(String vmName, IMedium medium, DeviceDetails deviceDetails, String controllerName) {
-      lockMachineAndApply(manager, Write, vmName, new AttachMediumToMachineIfNotAlreadyAttached(deviceDetails, medium, controllerName));
+
+   private void ensureMachineDevicesAttached(String vmName, IMedium medium, DeviceDetails deviceDetails,
+            String controllerName) {
+      lockMachineAndApply(manager, Write, vmName, new AttachMediumToMachineIfNotAlreadyAttached(deviceDetails, medium,
+               controllerName));
    }
-   
+
    private String missingIDEControllersMessage(VmSpec vmSpecification) {
-      return String.format("First controller is not an IDE controller. Please verify that the VM spec is a correct master node: %s", vmSpecification);
+      return String
+               .format(
+                        "First controller is not an IDE controller. Please verify that the VM spec is a correct master node: %s",
+                        vmSpecification);
    }
-   
+
    private void setupHardDisksForController(String vmName, StorageController controller) {
       Set<HardDisk> hardDisks = controller.getHardDisks();
       for (HardDisk hardDisk : hardDisks) {
@@ -157,7 +165,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
    }
 
    public void ensureMachineHasStorageControllerNamed(String vmName, StorageController storageController) {
-      lockMachineAndApply(manager, Write, checkNotNull(vmName, "vmName"),
-              new AddIDEControllerIfNotExists(checkNotNull(storageController, "storageController")));
+      lockMachineAndApply(manager, Write, checkNotNull(vmName, "vmName"), new AddIDEControllerIfNotExists(checkNotNull(
+               storageController, "storageController")));
    }
 }

@@ -105,9 +105,9 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
               "localhost", new Credentials("toor", "password"));
       Predicate<IPSocket> socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 10, 1, TimeUnit.SECONDS);
 
-      IMachine imageMachine = new CreateAndInstallVm(manager, guestId, localHostContext, hostId,
-              socketTester, "127.0.0.1", 8080, HEADLESS)
-              .apply(vmSpecification);
+      IMachine imageMachine = new CreateAndInstallVm(manager, new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(
+               manager, workingDir), workingDir, guestId, localHostContext, hostId, socketTester, "127.0.0.1", 8080,
+               HEADLESS).apply(vmSpecification);
 
       IMachineToImage iMachineToImage = new IMachineToImage(manager, map);
       Image newImage = iMachineToImage.apply(imageMachine);

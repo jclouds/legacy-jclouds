@@ -71,7 +71,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
       new UnregisterMachineIfExistsAndDeleteItsMedia(manager)
             .apply(launchSpecification);
       IMachine debianNode = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(
-            manager).apply(launchSpecification);
+            manager, workingDir).apply(launchSpecification);
       IMachine machine = manager.getVBox().findMachine(vmName);
       assertEquals(debianNode.getName(), machine.getName());
       new UnregisterMachineIfExistsAndDeleteItsMedia(manager)
@@ -88,7 +88,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
             .apply(launchSpecification);
 
       try {
-         new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager)
+         new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager, workingDir)
                .apply(launchSpecification);
          fail();
       } catch (VBoxException e) {

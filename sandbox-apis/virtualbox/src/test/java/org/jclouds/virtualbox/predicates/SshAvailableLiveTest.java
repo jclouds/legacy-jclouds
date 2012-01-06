@@ -20,6 +20,7 @@ import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.functions.CreateAndInstallVm;
+import org.jclouds.virtualbox.functions.CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
 import org.jclouds.virtualbox.functions.LaunchMachineIfNotAlreadyRunning;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
@@ -42,14 +43,13 @@ public class SshAvailableLiveTest extends BaseVirtualBoxClientLiveTest {
    @Test
    public void testSshDaemonIsRunning() {
       VirtualBoxManager manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
-      ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest(
-              hostId, "localhost", guestId, "localhost", new Credentials("toor", "password"));
+      ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId,
+               "localhost", new Credentials("toor", "password"));
 
       getNodeWithSshDaemonRunning(manager, localHostContext);
       ensureMachineIsLaunched(vmName);
-      RetryablePredicate<String> predicate = new RetryablePredicate<String>(
-              new SshAvailable(localHostContext), 5, 1,
-              TimeUnit.SECONDS);
+      RetryablePredicate<String> predicate = new RetryablePredicate<String>(new SshAvailable(localHostContext), 5, 1,
+               TimeUnit.SECONDS);
       assertTrue(predicate.apply(guestId));
 
       lockSessionOnMachineAndApply(manager, Shared, vmName, new Function<ISession, Void>() {
@@ -66,20 +66,19 @@ public class SshAvailableLiveTest extends BaseVirtualBoxClientLiveTest {
 
    private IMachine getNodeWithSshDaemonRunning(VirtualBoxManager manager, ComputeServiceContext localHostContext) {
       try {
-         Predicate<IPSocket> socketTester = new RetryablePredicate<IPSocket>(
-                 new InetSocketAddressConnect(), 10, 1, TimeUnit.SECONDS);
+         Predicate<IPSocket> socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 10, 1,
+                  TimeUnit.SECONDS);
          String vmId = "jclouds-image-iso-2";
 
          StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
-                 .attachISO(0, 0, operatingSystemIso)
-                 .attachHardDisk(HardDisk.builder().diskpath(adminDisk).controllerPort(0).deviceSlot(1).build()).build();
-         VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).osTypeId("")
-         		  .memoryMB(512)
-                 .controller(ideController)
-                 .forceOverwrite(true).build();
+                  .attachISO(0, 0, operatingSystemIso).attachHardDisk(
+                           HardDisk.builder().diskpath(adminDisk).controllerPort(0).deviceSlot(1).build()).build();
+         VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).osTypeId("").memoryMB(512).controller(
+                  ideController).forceOverwrite(true).build();
 
-         return new CreateAndInstallVm(manager, guestId, localHostContext,
-                 hostId, socketTester, "127.0.0.1", 8080, HEADLESS).apply(vmSpecification);
+         return new CreateAndInstallVm(manager, new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager,
+                  workingDir), guestId, vmId, localHostContext, hostId, socketTester, "127.0.0.1", 8080, HEADLESS)
+                  .apply(vmSpecification);
       } catch (IllegalStateException e) {
          // already created
          return manager.getVBox().findMachine(vmName);
@@ -87,8 +86,7 @@ public class SshAvailableLiveTest extends BaseVirtualBoxClientLiveTest {
    }
 
    private void ensureMachineIsLaunched(String vmName) {
-      applyForMachine(manager, vmName, new LaunchMachineIfNotAlreadyRunning(
-              manager, ExecutionType.GUI, ""));
+      applyForMachine(manager, vmName, new LaunchMachineIfNotAlreadyRunning(manager, ExecutionType.GUI, ""));
    }
 
 }

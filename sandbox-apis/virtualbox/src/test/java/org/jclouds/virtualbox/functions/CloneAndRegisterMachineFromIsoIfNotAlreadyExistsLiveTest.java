@@ -77,7 +77,7 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
             .cleanUpMode(mode)
             .forceOverwrite(true).build();
       IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
-            manager, clonedVmSpec, IS_LINKED_CLONE).apply(master);
+            manager, workingDir, clonedVmSpec, IS_LINKED_CLONE).apply(master);
       assertEquals(clone.getName(), clonedVmSpec.getVmName());
       new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(clonedVmSpec);
       new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(new IMachineToVmSpec().apply(master));
@@ -99,7 +99,7 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
          VmSpec vmSpec = VmSpec.builder().id(vmId).name(vmName)
                .osTypeId(osTypeId).memoryMB(512).cleanUpMode(CleanupMode.Full)
                .controller(ideController).forceOverwrite(true).build();
-         return new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(vmSpec);
+         return new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager, workingDir).apply(vmSpec);
 
       } catch (IllegalStateException e) {
          // already created

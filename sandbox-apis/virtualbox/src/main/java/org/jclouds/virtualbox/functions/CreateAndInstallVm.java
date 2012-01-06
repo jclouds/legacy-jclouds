@@ -19,9 +19,23 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.inject.Inject;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
+import static org.jclouds.virtualbox.util.MachineUtils.applyForMachine;
+import static org.jclouds.virtualbox.util.MachineUtils.lockMachineAndApply;
+import static org.jclouds.virtualbox.util.MachineUtils.lockSessionOnMachineAndApply;
+import static org.virtualbox_4_1.LockType.Shared;
+import static org.virtualbox_4_1.LockType.Write;
+
+import java.io.File;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
+
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.options.RunScriptOptions;
@@ -29,23 +43,26 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshException;
-import org.jclouds.virtualbox.domain.*;
+import org.jclouds.virtualbox.config.VirtualBoxConstants;
+import org.jclouds.virtualbox.domain.DeviceDetails;
+import org.jclouds.virtualbox.domain.ExecutionType;
+import org.jclouds.virtualbox.domain.HardDisk;
+import org.jclouds.virtualbox.domain.IsoImage;
+import org.jclouds.virtualbox.domain.NatAdapter;
+import org.jclouds.virtualbox.domain.StorageController;
+import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.settings.KeyboardScancodes;
-import org.virtualbox_4_1.*;
+import org.virtualbox_4_1.AccessMode;
+import org.virtualbox_4_1.DeviceType;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IMedium;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.VirtualBoxManager;
 
-import javax.annotation.Resource;
-import javax.inject.Named;
-import java.io.File;
-import java.util.Map;
-import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
-import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
-import static org.jclouds.virtualbox.util.MachineUtils.*;
-import static org.virtualbox_4_1.LockType.Shared;
-import static org.virtualbox_4_1.LockType.Write;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.inject.Inject;
 
 public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
 
@@ -54,6 +71,7 @@ public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
    protected Logger logger = Logger.NULL;
 
    private final VirtualBoxManager manager;
+   private final CreateAndRegisterMachineFromIsoIfNotAlreadyExists createAndRegisterMachineFromIsoIfNotAlreadyExists;
    private String guestId;
    private final ComputeServiceContext context;
    private final String hostId;
@@ -63,10 +81,13 @@ public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
    private final ExecutionType executionType;
 
    @Inject
-   public CreateAndInstallVm(VirtualBoxManager manager, String guestId, ComputeServiceContext context,
-                             String hostId, Predicate<IPSocket> socketTester,
-                             String webServerHost, int webServerPort, ExecutionType executionType) {
+   public CreateAndInstallVm(VirtualBoxManager manager,
+            CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
+            @Named(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR) String workingDir, String guestId,
+            ComputeServiceContext context, String hostId, Predicate<IPSocket> socketTester, String webServerHost,
+            int webServerPort, ExecutionType executionType) {
       this.manager = manager;
+      this.createAndRegisterMachineFromIsoIfNotAlreadyExists = CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
       this.guestId = guestId;
       this.context = context;
       this.hostId = hostId;
@@ -81,7 +102,7 @@ public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
 
       ensureWebServerIsRunning();
 
-      final IMachine vm = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager).apply(vmSpec);
+      final IMachine vm =createAndRegisterMachineFromIsoIfNotAlreadyExists.apply(vmSpec);
 
       String vmName = vmSpec.getVmName();
 

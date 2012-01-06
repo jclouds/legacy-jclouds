@@ -29,6 +29,7 @@ import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.InetSocketAddressConnect;
@@ -36,19 +37,17 @@ import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
 import org.jclouds.virtualbox.functions.admin.StartVBoxIfNotAlreadyRunning;
-import org.jclouds.virtualbox.util.PropertyUtils;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.SessionState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
+import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code VirtualBoxClient}
@@ -68,6 +67,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    protected String operatingSystemIso;
    protected String guestAdditionsIso;
    protected String adminDisk;
+   protected String workingDir;
    
    @Override
    protected void setupCredentials() {
@@ -89,20 +89,16 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
       Properties overrides = setupProperties();
       context = new ComputeServiceContextFactory().createContext(provider, identity, credential,
             ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
-      intializeImageIdFromContext();
+      Function<String, String> configProperties = context.utils().injector().getInstance(ValueOfConfigurationKeyOrNull.class);
+      imageId = configProperties.apply(ComputeServiceConstants.PROPERTY_IMAGE_ID);
+      workingDir = configProperties.apply(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR);
       
       jetty = new StartJettyIfNotAlreadyRunning(port).apply(basebaseResource);
       startVboxIfNotAlreadyRunning();
       hostVersion = Iterables.get(Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
-      String workingDir = PropertyUtils.getWorkingDirFromProperty();
       adminDisk = workingDir + "/testadmin.vdi";
       operatingSystemIso = String.format("%s/%s.iso", workingDir, imageId);
       guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", workingDir, hostVersion);
-   }
-
-   protected void intializeImageIdFromContext() {
-      imageId = context.utils().injector().getInstance(
-               Key.get(String.class, Names.named(ComputeServiceConstants.PROPERTY_IMAGE_ID)));
    }
 
    @AfterClass(groups = "live")

@@ -45,7 +45,7 @@ import org.virtualbox_4_1.VirtualBoxManager;
 public class IsLinkedClonesLiveTest extends BaseVirtualBoxClientLiveTest {
 
    private static final boolean IS_LINKED_CLONE = true;
-	private String vmId = "jclouds-image-iso-1";
+   private String vmId = "jclouds-image-iso-1";
    private String osTypeId = "DEBIAN";
    private String ideControllerName = "IDE Controller";
    private String cloneId = "jclouds-is-linked-clone-clone";
@@ -54,62 +54,49 @@ public class IsLinkedClonesLiveTest extends BaseVirtualBoxClientLiveTest {
    private StorageController masterStorageController;
    private VmSpec masterSpec;
    private VmSpec cloneSpec;
-   
+
    @Override
    @BeforeClass(groups = "live")
    public void setupClient() {
       super.setupClient();
 
-      HardDisk hardDisk = HardDisk.builder()
-            .diskpath(adminDisk).autoDelete(true)
-            .controllerPort(0).deviceSlot(1).build();
-      masterStorageController = StorageController.builder()
-            .name(ideControllerName).bus(StorageBus.IDE)
-            .attachISO(0, 0, operatingSystemIso)
-            .attachHardDisk(hardDisk)
-            .attachISO(1, 1, guestAdditionsIso)
-            .build();
-      masterSpec = VmSpec.builder().id(vmId).name(vmName).memoryMB(512)
-            .osTypeId(osTypeId).controller(masterStorageController)
-            .forceOverwrite(true).cleanUpMode(CleanupMode.Full).build();
+      HardDisk hardDisk = HardDisk.builder().diskpath(adminDisk).autoDelete(true).controllerPort(0).deviceSlot(1)
+               .build();
+      masterStorageController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE).attachISO(0, 0,
+               operatingSystemIso).attachHardDisk(hardDisk).attachISO(1, 1, guestAdditionsIso).build();
+      masterSpec = VmSpec.builder().id(vmId).name(vmName).memoryMB(512).osTypeId(osTypeId).controller(
+               masterStorageController).forceOverwrite(true).cleanUpMode(CleanupMode.Full).build();
 
-      cloneSpec = VmSpec.builder().id(cloneId).name(cloneName).memoryMB(512)
-            .osTypeId(osTypeId).forceOverwrite(true)
-            .cleanUpMode(CleanupMode.Full).build();
+      cloneSpec = VmSpec.builder().id(cloneId).name(cloneName).memoryMB(512).osTypeId(osTypeId).forceOverwrite(true)
+               .cleanUpMode(CleanupMode.Full).build();
    }
 
    @Test
    public void testLinkedClone() {
 
-      VirtualBoxManager manager = (VirtualBoxManager) context
-            .getProviderSpecificContext().getApi();
+      VirtualBoxManager manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
       new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(masterSpec);
 
-      IMachine master = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(
-            manager).apply(masterSpec);
-      IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
-            manager, cloneSpec, IS_LINKED_CLONE).apply(master);
+      IMachine master = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager, workingDir).apply(masterSpec);
+      IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, cloneSpec,
+               IS_LINKED_CLONE).apply(master);
 
       assertTrue(new IsLinkedClone(manager).apply(clone));
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager)
-            .apply(new IMachineToVmSpec().apply(clone));
+      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(new IMachineToVmSpec().apply(clone));
       new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(masterSpec);
    }
 
    public void testFullClone() {
 
-      VirtualBoxManager manager = (VirtualBoxManager) context
-            .getProviderSpecificContext().getApi();
+      VirtualBoxManager manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
       new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(masterSpec);
 
-      IMachine master = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(
-            manager).apply(masterSpec);
-      IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
-            manager, cloneSpec, !IS_LINKED_CLONE).apply(master);
+      IMachine master = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager, workingDir).apply(masterSpec);
+      IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, cloneSpec,
+               !IS_LINKED_CLONE).apply(master);
 
       assertFalse(new IsLinkedClone(manager).apply(clone));
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager)
-            .apply(new IMachineToVmSpec().apply(clone));
+      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(new IMachineToVmSpec().apply(clone));
       new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(masterSpec);
    }
 }

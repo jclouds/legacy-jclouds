@@ -28,8 +28,8 @@ import javax.inject.Named;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
+import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.domain.VmSpec;
-import org.jclouds.virtualbox.util.PropertyUtils;
 import org.virtualbox_4_1.CloneMode;
 import org.virtualbox_4_1.CloneOptions;
 import org.virtualbox_4_1.IMachine;
@@ -42,9 +42,9 @@ import com.google.common.base.Function;
 import com.google.inject.Inject;
 
 /**
- * CloneAndRegisterMachineFromIMachineIfNotAlreadyExists will take care of the
- * followings: - cloning the master - register the clone machine -
- *
+ * CloneAndRegisterMachineFromIMachineIfNotAlreadyExists will take care of the followings: - cloning
+ * the master - register the clone machine -
+ * 
  * @author Andrea Turli
  */
 public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Function<IMachine, IMachine> {
@@ -53,14 +53,16 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private VirtualBoxManager manager;
-   private VmSpec vmSpec;
-   boolean isLinkedClone;
-   
+   private final VirtualBoxManager manager;
+   private final String workingDir;
+   private final VmSpec vmSpec;
+   private final boolean isLinkedClone;
+
    @Inject
-   public CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
-           VirtualBoxManager manager, VmSpec vmSpec, boolean isLinkedClone) {
+   public CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(VirtualBoxManager manager,
+            @Named(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR) String workingDir, VmSpec vmSpec, boolean isLinkedClone) {
       this.manager = manager;
+      this.workingDir = workingDir;
       this.vmSpec = vmSpec;
       this.isLinkedClone = isLinkedClone;
    }
@@ -83,15 +85,16 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
    }
 
    private IMachine cloneMachine(VmSpec vmSpec, IMachine master) {
-      String workingDir = PropertyUtils.getWorkingDirFromProperty();
       String settingsFile = manager.getVBox().composeMachineFilename(vmSpec.getVmName(), workingDir);
-      IMachine clonedMachine = manager.getVBox().createMachine(settingsFile, vmSpec.getVmName(), vmSpec.getOsTypeId(), vmSpec.getVmId(), vmSpec.isForceOverwrite());
+      IMachine clonedMachine = manager.getVBox().createMachine(settingsFile, vmSpec.getVmName(), vmSpec.getOsTypeId(),
+               vmSpec.getVmId(), vmSpec.isForceOverwrite());
       List<CloneOptions> options = new ArrayList<CloneOptions>();
-      if(isLinkedClone)
+      if (isLinkedClone)
          options.add(CloneOptions.Link);
 
       // TODO snapshot name
-      ISnapshot currentSnapshot = new TakeSnapshotIfNotAlreadyAttached(manager, "snapshotName", "snapshotDesc").apply(master);
+      ISnapshot currentSnapshot = new TakeSnapshotIfNotAlreadyAttached(manager, "snapshotName", "snapshotDesc")
+               .apply(master);
 
       // clone
       IProgress progress = currentSnapshot.getMachine().cloneTo(clonedMachine, CloneMode.MachineState, options);
@@ -103,5 +106,5 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
       manager.getVBox().registerMachine(clonedMachine);
       return clonedMachine;
    }
-   
+
 }
