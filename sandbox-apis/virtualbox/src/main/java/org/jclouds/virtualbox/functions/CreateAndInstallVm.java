@@ -135,7 +135,7 @@ public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
       boolean sshDeamonIsRunning = false;
       while (!sshDeamonIsRunning) {
          try {
-            if (runScriptOnNode(guestId, "id", wrapInInitScript(false)).getExitCode() == 0) {
+            if (runScriptOnNode(guestId, "id", wrapInInitScript(false).runAsRoot(false)).getExitCode() == 0) {
                logger.debug("Got response from ssh daemon.");
                sshDeamonIsRunning = true;
             }
