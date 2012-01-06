@@ -19,6 +19,8 @@
 
 package org.jclouds.virtualbox;
 
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
 import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_IDENTITY;
@@ -47,9 +49,12 @@ public class VirtualBoxPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+      properties.put(PROPERTY_ENDPOINT, "http://localhost:18083/");
+      // later version not in maven, yet
+      properties.put(PROPERTY_API_VERSION, "4.1.4");
+      properties.put(PROPERTY_BUILD_VERSION, "4.1.8r75467");
       properties.put(PROPERTY_IDENTITY, "administrator");
       properties.put(PROPERTY_CREDENTIAL, "12345");
-      properties.put(PROPERTY_ENDPOINT, "http://localhost:18083/");
       properties.put(VirtualBoxConstants.VIRTUALBOX_PRESEED_URL, "http://dl.dropbox.com/u/693111/preseed.cfg");
       properties.put(VirtualBoxConstants.VIRTUALBOX_SNAPSHOT_DESCRIPTION, "jclouds-virtualbox-snaphot");
       properties.put(VirtualBoxConstants.VIRTUALBOX_HOSTNAME, "jclouds-virtualbox-kickstart-admin");
@@ -67,9 +72,6 @@ public class VirtualBoxPropertiesBuilder extends PropertiesBuilder {
 
       properties.put(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR, System.getProperty("user.home") + File.separator
             + System.getProperty("test.virtualbox.workingDir", "jclouds-virtualbox-test"));
-
-      // TODO: Add more properties and use the wired properties from test code.
-      properties.put(VirtualBoxConstants.VIRTUALBOX_DISTRO_ISO_NAME, "ubuntu-11.04-server-i386.iso");
 
       properties.put(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT, "8080");
 

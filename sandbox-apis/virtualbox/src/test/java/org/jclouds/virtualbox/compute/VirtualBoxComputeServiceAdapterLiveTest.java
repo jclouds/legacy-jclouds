@@ -42,8 +42,6 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.functions.IMachineToImage;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VirtualBoxManager;
@@ -62,7 +60,7 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
    }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
          .getInstance(Json.class));
 
-   @BeforeGroups(groups = { "live" })
+   @Override
    public void setupClient() {
       super.setupClient();
       final VirtualBoxManager manager = getManager();
@@ -132,8 +130,8 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
       }
       // check state;
    }
-
-   @AfterGroups(groups = "live")
+  
+   @Override
    protected void tearDown() throws Exception {
       if (machine != null)
          adapter.destroyNode(machine.getNodeId() + "");

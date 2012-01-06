@@ -29,7 +29,6 @@ import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
-import org.jclouds.virtualbox.util.PropertyUtils;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
@@ -87,16 +86,15 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
    private IMachine getMasterNode(VirtualBoxManager manager,
          ComputeServiceContext localHostContext) {
       try {
-         String workingDir = PropertyUtils.getWorkingDirFromProperty();
          StorageController ideController = StorageController
                .builder()
                .name(ideControllerName)
                .bus(StorageBus.IDE)
-               .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
+               .attachISO(0, 0, operatingSystemIso)
                .attachHardDisk(
-                     HardDisk.builder().diskpath(workingDir + "/testadmin.vdi")
+                     HardDisk.builder().diskpath(adminDisk)
                            .controllerPort(0).deviceSlot(1).build())
-               .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso")
+               .attachISO(1, 1, guestAdditionsIso)
                .build();
          VmSpec vmSpec = VmSpec.builder().id(vmId).name(vmName)
                .osTypeId(osTypeId).memoryMB(512).cleanUpMode(CleanupMode.Full)

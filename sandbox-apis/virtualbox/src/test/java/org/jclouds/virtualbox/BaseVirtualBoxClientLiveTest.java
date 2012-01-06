@@ -22,8 +22,10 @@ package org.jclouds.virtualbox;
 import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.eclipse.jetty.server.Server;
+import org.jclouds.Constants;
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -34,13 +36,16 @@ import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
 import org.jclouds.virtualbox.functions.admin.StartVBoxIfNotAlreadyRunning;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.jclouds.virtualbox.util.PropertyUtils;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.SessionState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.inject.Module;
 
 /**
@@ -57,16 +62,42 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    protected ComputeServiceContext context;
    protected VirtualBoxManager manager;
    protected Server jetty;
-
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      context = new ComputeServiceContextFactory().createContext(provider, identity, credential,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), setupProperties());
-      jetty = new StartJettyIfNotAlreadyRunning(port).apply(basebaseResource);
-      startVboxIfNotAlreadyRunning();
+   protected String hostVersion;
+   protected String operatingSystemIso;
+   protected String guestAdditionsIso;
+   protected String adminDisk;
+   
+   @Override
+   protected void setupCredentials() {
+      // default behavior is to bomb when no user is configured, but we know the default user of vbox
+      Properties defaultVBoxProperties = new VirtualBoxPropertiesBuilder().build();
+      if (!System.getProperties().containsKey("test." + provider + ".identity"))
+         System.setProperty("test." + provider + ".identity", defaultVBoxProperties
+                  .getProperty(Constants.PROPERTY_IDENTITY));
+      super.setupCredentials();
+      // add in other properties we may need that are in defaults.
+      if (endpoint == null)
+         endpoint = defaultVBoxProperties.getProperty(Constants.PROPERTY_ENDPOINT);
+      if (buildVersion == null)
+         buildVersion = defaultVBoxProperties.getProperty(Constants.PROPERTY_BUILD_VERSION);
    }
 
-   @AfterGroups(groups = "live")
+   @BeforeClass(groups = "live")
+   public void setupClient() {
+      setupCredentials();
+      Properties overrides = setupProperties();
+      context = new ComputeServiceContextFactory().createContext(provider, identity, credential,
+            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
+      jetty = new StartJettyIfNotAlreadyRunning(port).apply(basebaseResource);
+      startVboxIfNotAlreadyRunning();
+      hostVersion = Iterables.get(Splitter.on('r').split(buildVersion), 0);
+      String workingDir = PropertyUtils.getWorkingDirFromProperty();
+      adminDisk = workingDir + "/testadmin.vdi";
+      operatingSystemIso = String.format("%s/%s.iso", workingDir, imageId);
+      guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", workingDir, hostVersion);
+   }
+
+   @AfterClass(groups = "live")
    protected void tearDown() throws Exception {
       if (context != null)
          context.close();

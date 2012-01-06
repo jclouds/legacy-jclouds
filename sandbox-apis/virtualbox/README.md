@@ -14,7 +14,7 @@ The "VirtualboxAdministrationTest" helper will run these preliminary steps:
 (this value can be overwritten directly on the commandline using -Dtest.virtualbox.workingDir)
 2.  Install Virtualbox from the internet (mac os x lion and ubuntu host are supported at the moment) 
 3.  Download by default an ubuntu 11.04 server i386 ISO into "jclouds-virtualbox-test" from http://releases.ubuntu.com/11.04/ubuntu-11.04-server-i386.iso.  
-4.  Download VirtualBox Guest Additions ISO (tested with VBoxGuestAdditions_4.0.2-update-69551.iso) into "jclouds-virtualbox-test"
+4.  Download VirtualBox Guest Additions ISO into "jclouds-virtualbox-test" from http://download.virtualbox.org/virtualbox/4.1.8/VBoxGuestAdditions_4.1.8.iso
 5.  Disable login credential: $ VBoxManage setproperty websrvauthlibrary null
 6.  Start an embedded jetty server that serves a preseed file specifically written for ubuntu 11.04
 7.  Start webservice with increasead timeout: $ /usr/bin/vboxwebsrv --timeout 10000 and then will:

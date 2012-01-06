@@ -30,8 +30,7 @@ import org.jclouds.virtualbox.functions.CloneAndRegisterMachineFromIMachineIfNot
 import org.jclouds.virtualbox.functions.CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
 import org.jclouds.virtualbox.functions.IMachineToVmSpec;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
-import org.jclouds.virtualbox.util.PropertyUtils;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
@@ -55,21 +54,20 @@ public class IsLinkedClonesLiveTest extends BaseVirtualBoxClientLiveTest {
    private StorageController masterStorageController;
    private VmSpec masterSpec;
    private VmSpec cloneSpec;
+   
+   @Override
+   @BeforeClass(groups = "live")
+   public void setupClient() {
+      super.setupClient();
 
-   @BeforeGroups(groups = { "live" })
-   public void setUp() throws Exception {
-      identity = "toor";
-      credential = "password";
-
-      String workingDir = PropertyUtils.getWorkingDirFromProperty();
       HardDisk hardDisk = HardDisk.builder()
-            .diskpath(workingDir + "/testadmin.vdi").autoDelete(true)
+            .diskpath(adminDisk).autoDelete(true)
             .controllerPort(0).deviceSlot(1).build();
       masterStorageController = StorageController.builder()
             .name(ideControllerName).bus(StorageBus.IDE)
-            .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
+            .attachISO(0, 0, operatingSystemIso)
             .attachHardDisk(hardDisk)
-            .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso")
+            .attachISO(1, 1, guestAdditionsIso)
             .build();
       masterSpec = VmSpec.builder().id(vmId).name(vmName).memoryMB(512)
             .osTypeId(osTypeId).controller(masterStorageController)

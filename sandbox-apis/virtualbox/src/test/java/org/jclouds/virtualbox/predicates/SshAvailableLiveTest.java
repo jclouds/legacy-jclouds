@@ -21,7 +21,6 @@ import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.functions.CreateAndInstallVm;
 import org.jclouds.virtualbox.functions.LaunchMachineIfNotAlreadyRunning;
-import org.jclouds.virtualbox.util.PropertyUtils;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
@@ -71,10 +70,9 @@ public class SshAvailableLiveTest extends BaseVirtualBoxClientLiveTest {
                  new InetSocketAddressConnect(), 10, 1, TimeUnit.SECONDS);
          String vmId = "jclouds-image-iso-2";
 
-         String workingDir = PropertyUtils.getWorkingDirFromProperty();
          StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
-                 .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
-                 .attachHardDisk(HardDisk.builder().diskpath(workingDir + "/testadmin.vdi").controllerPort(0).deviceSlot(1).build()).build();
+                 .attachISO(0, 0, operatingSystemIso)
+                 .attachHardDisk(HardDisk.builder().diskpath(adminDisk).controllerPort(0).deviceSlot(1).build()).build();
          VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).osTypeId("")
          		  .memoryMB(512)
                  .controller(ideController)
