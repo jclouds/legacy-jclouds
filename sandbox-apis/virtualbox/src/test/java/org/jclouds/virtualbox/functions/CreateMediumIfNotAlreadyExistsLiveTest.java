@@ -30,6 +30,8 @@ import org.jclouds.virtualbox.domain.ErrorCode;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.DeviceType;
+import org.virtualbox_4_1.IMedium;
+import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.VBoxException;
 
 /**
@@ -41,9 +43,10 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
    public void testCreateMedium() throws Exception {
       String path = System.getProperty("user.home") + "/jclouds-virtualbox-test/test-medium-1.vdi";
       HardDisk hardDisk = HardDisk.builder().diskpath(path).controllerPort(0).deviceSlot(0).build();
-      new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
+      IMedium iMedium = new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
       manager.getVBox().findMedium(path, DeviceType.HardDisk);
       assertFileCanBeDeleted(path);
+      deleteMediumAndBlockUntilComplete(iMedium);
    }
 
    @Test
@@ -63,10 +66,12 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
    public void testCreateSameMediumTwiceWhenUsingOverwrite() throws Exception {
       String path = System.getProperty("user.home") + "/jclouds-virtualbox-test/test-medium-3.vdi";
       HardDisk hardDisk = HardDisk.builder().diskpath(path).controllerPort(0).deviceSlot(0).build();
-      new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
-      new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
+      IMedium iMedium = new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
+      iMedium = new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
       manager.getVBox().findMedium(path, DeviceType.HardDisk);
       assertFileCanBeDeleted(path);
+      deleteMediumAndBlockUntilComplete(iMedium);
+
    }
 
    private void assertFileCanBeDeleted(String path) {
@@ -74,4 +79,10 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
       boolean mediumDeleted = file.delete();
       assertTrue(mediumDeleted);
    }
+   
+   void deleteMediumAndBlockUntilComplete(IMedium medium){
+      final IProgress progress = medium.deleteStorage();
+      progress.waitForCompletion(-1);
+   }
+   
 }
