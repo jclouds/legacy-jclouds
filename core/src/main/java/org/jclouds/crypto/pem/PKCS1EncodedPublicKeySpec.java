@@ -41,15 +41,15 @@
  *
  ****************************************************************************/
 
-package net.oauth.signature.pem;
+package org.jclouds.crypto.pem;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.security.spec.RSAPublicKeySpec;
 
+import net.oauth.signature.pem.PKCS1EncodedKeySpec;
+
 /**
- * PKCS#1 encoded public key spec. In oauth package as they made all classes
- * package visible.
+ * PKCS#1 encoded public key spec.
  * 
  * 
  * @author Adrian Cole
@@ -79,41 +79,12 @@ public class PKCS1EncodedPublicKeySpec {
    }
 
    /**
-    * Decode PKCS#1 encoded private key into RSAPublicKeySpec.
-    * 
-    * <p/>
-    * The ASN.1 syntax for the private key with CRT is
-    * 
-    * <pre>
-    * -- 
-    * -- Representation of RSA private key with information for the CRT algorithm.
-    * --
-    * RSAPrivateKey ::= SEQUENCE {
-    *   version           Version, 
-    *   modulus           INTEGER,  -- n
-    *   publicExponent    INTEGER,  -- e
-    * }
-    * </pre>
-    * 
-    * @param keyBytes
-    *           PKCS#1 encoded key
-    * @throws IOException
+    * get the modulus and public exponent by reusing {@link PKCS1EncodedKeySpec}
     */
-
    private void decode(byte[] keyBytes) throws IOException {
+      PKCS1EncodedKeySpec privateSpec = new PKCS1EncodedKeySpec(keyBytes);
 
-      DerParser parser = new DerParser(keyBytes);
-
-      Asn1Object sequence = parser.read();
-      if (sequence.getType() != DerParser.SEQUENCE)
-         throw new IOException("Invalid DER: not a sequence"); //$NON-NLS-1$
-
-      // Parse inside the sequence
-      parser = sequence.getParser();
-
-      BigInteger modulus = parser.read().getInteger();
-      BigInteger publicExp = parser.read().getInteger();
-
-      keySpec = new RSAPublicKeySpec(modulus, publicExp);
+      keySpec = new RSAPublicKeySpec(privateSpec.getKeySpec().getModulus(), privateSpec.getKeySpec()
+               .getPublicExponent());
    }
 }
