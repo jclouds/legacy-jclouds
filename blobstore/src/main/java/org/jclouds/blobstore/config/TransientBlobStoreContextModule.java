@@ -21,8 +21,6 @@ package org.jclouds.blobstore.config;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import javax.inject.Singleton;
-
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
@@ -36,7 +34,6 @@ import org.jclouds.domain.Location;
 import org.jclouds.location.config.JustProviderLocationModule;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
@@ -63,13 +60,9 @@ public class TransientBlobStoreContextModule extends AbstractModule {
       install(new BlobStoreObjectModule());
       install(new BlobStoreMapModule());
       install(new JustProviderLocationModule());
+      bind(BlobStore.class).to(TransientBlobStore.class);
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
       bind(BlobRequestSigner.class).to(TransientBlobRequestSigner.class);
    }
 
-   @Provides
-   @Singleton
-   BlobStore provide(TransientBlobStore in) {
-      return in;
-   }
 }

@@ -81,7 +81,7 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      install(new LocationModule(authException));
+      configureLocationModule();
       install(new ComputeServiceTimeoutsModule());
       bind(new TypeLiteral<Function<NodeMetadata, SshClient>>() {
       }).to(CreateSshClientOncePortIsListeningOnNode.class);
@@ -113,6 +113,10 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       }, InitializeRunScriptOnNodeOrPlaceInBadMap.class).build(InitializeRunScriptOnNodeOrPlaceInBadMap.Factory.class));
 
       install(new FactoryModuleBuilder().build(BlockUntilInitScriptStatusIsZeroThenReturnOutput.Factory.class));
+   }
+
+   protected void configureLocationModule() {
+      install(new LocationModule(authException));
    }
 
    @Singleton

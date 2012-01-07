@@ -20,7 +20,6 @@ package org.jclouds.loadbalancer.config;
 
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -32,10 +31,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -50,27 +46,6 @@ public abstract class BaseLoadBalancerServiceContextModule extends AbstractModul
    @Override
    protected void configure() {
 
-   }
-
-   @Provides
-   @Singleton
-   protected Supplier<Map<String, ? extends Location>> provideLocationMap(
-         @Memoized Supplier<Set<? extends Location>> locations) {
-      return Suppliers.compose(new Function<Set<? extends Location>, Map<String, ? extends Location>>() {
-
-         @Override
-         public Map<String, ? extends Location> apply(Set<? extends Location> from) {
-            return Maps.uniqueIndex(from, new Function<Location, String>() {
-
-               @Override
-               public String apply(Location from) {
-                  return from.getId();
-               }
-
-            });
-         }
-
-      }, locations);
    }
 
    @Provides

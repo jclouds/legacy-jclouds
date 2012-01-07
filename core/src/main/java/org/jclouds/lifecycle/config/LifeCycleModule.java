@@ -38,9 +38,9 @@ import org.jclouds.Constants;
 import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.lifecycle.Closer;
 
+import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.ExecutionList;
 import com.google.inject.AbstractModule;
-import com.google.inject.ProvisionException;
 import com.google.inject.Stage;
 import com.google.inject.TypeLiteral;
 import com.google.inject.spi.InjectionListener;
@@ -143,9 +143,9 @@ public class LifeCycleModule extends AbstractModule {
                               method.invoke(injectee);
                            } catch (InvocationTargetException ie) {
                               Throwable e = ie.getTargetException();
-                              throw new ProvisionException(e.getMessage(), e);
+                              throw Throwables.propagate(e);
                            } catch (IllegalAccessException e) {
-                              throw new ProvisionException(e.getMessage(), e);
+                              throw Throwables.propagate(e);
                            }
                         }
                      }, MoreExecutors.sameThreadExecutor());

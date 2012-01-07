@@ -18,9 +18,6 @@
  */
 package org.jclouds.ssh;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
@@ -56,10 +53,8 @@ public interface SshClient {
 
    ExecResponse exec(String command);
 
-   @PostConstruct
    void connect();
 
-   @PreDestroy
    void disconnect();
 
    void put(String path, String contents);

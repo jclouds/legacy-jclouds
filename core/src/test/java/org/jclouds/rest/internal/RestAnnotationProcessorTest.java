@@ -2426,8 +2426,8 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    @BeforeClass
    void setupFactory() {
-      RestContextSpec<String, Integer> contextSpec = contextSpec("test", "http://localhost:9999", "1", "", "", "userfoo",
-            null, String.class, Integer.class,
+      RestContextSpec<Callee, AsyncCallee> contextSpec = contextSpec("test", "http://localhost:9999", "1", "", "", "userfoo",
+            null, Callee.class, AsyncCallee.class,
             ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule(), new AbstractModule() {
 
                @Override

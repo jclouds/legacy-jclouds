@@ -104,7 +104,7 @@ public class OpenStackAuthenticationModule extends AbstractModule {
 
    @Provides
    @Singleton
-   Supplier<AuthenticationResponse> provideAuthenticationResponseCache(
+   protected Supplier<AuthenticationResponse> provideAuthenticationResponseCache(
             final GetAuthenticationResponse getAuthenticationResponse) {
       return Suppliers.memoizeWithExpiration(new RetryOnTimeOutExceptionSupplier<AuthenticationResponse>(
                getAuthenticationResponse), 23, TimeUnit.HOURS);

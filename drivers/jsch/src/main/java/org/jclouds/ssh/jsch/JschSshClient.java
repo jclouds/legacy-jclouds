@@ -35,7 +35,6 @@ import java.io.InputStream;
 import java.net.ConnectException;
 import java.util.Arrays;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -224,7 +223,6 @@ public class JschSshClient implements SshClient {
       return null;
    }
 
-   @PostConstruct
    public void connect() {
       acquire(sessionConnection);
    }

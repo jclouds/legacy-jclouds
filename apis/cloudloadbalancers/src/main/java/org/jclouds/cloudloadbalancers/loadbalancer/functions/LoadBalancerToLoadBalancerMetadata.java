@@ -18,17 +18,19 @@
  */
 package org.jclouds.cloudloadbalancers.loadbalancer.functions;
 
-import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.cloudloadbalancers.domain.VirtualIP;
+import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
 import org.jclouds.loadbalancer.domain.LoadBalancerType;
 import org.jclouds.loadbalancer.domain.internal.LoadBalancerMetadataImpl;
+import org.jclouds.location.predicates.LocationPredicates;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -41,20 +43,20 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class LoadBalancerToLoadBalancerMetadata implements Function<LoadBalancer, LoadBalancerMetadata> {
-   protected final Supplier<Map<String, ? extends Location>> locationMap;
+   protected final Supplier<Set<? extends Location>> locations;
    protected final Supplier<Location> defaultLocationSupplier;
 
    @Inject
    public LoadBalancerToLoadBalancerMetadata(Supplier<Location> defaultLocationSupplier,
-            Supplier<Map<String, ? extends Location>> locationMap) {
-      this.locationMap = locationMap;
+            @Memoized Supplier<Set<? extends Location>> locations) {
+      this.locations = locations;
       this.defaultLocationSupplier = defaultLocationSupplier;
    }
 
    @Override
    public LoadBalancerMetadata apply(LoadBalancer input) {
 
-      Location location = locationMap.get().get(input.getRegion());
+      Location location = Iterables.find(locations.get(), LocationPredicates.idEquals(input.getRegion()));
 
       String id = input.getRegion() + "/" + input.getId();
       // TODO Builder

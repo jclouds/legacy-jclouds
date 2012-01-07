@@ -23,9 +23,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
@@ -40,13 +40,13 @@ import com.google.inject.Inject;
 @Singleton
 public class NodeTerminated implements Predicate<NodeMetadata> {
 
-   private final ComputeService client;
+   private final GetNodeMetadataStrategy client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public NodeTerminated(ComputeService client) {
+   public NodeTerminated(GetNodeMetadataStrategy client) {
       this.client = client;
    }
 
@@ -61,6 +61,6 @@ public class NodeTerminated implements Predicate<NodeMetadata> {
    }
 
    private NodeMetadata refresh(NodeMetadata node) {
-      return client.getNodeMetadata(node.getId());
+      return client.getNode(node.getId());
    }
 }
