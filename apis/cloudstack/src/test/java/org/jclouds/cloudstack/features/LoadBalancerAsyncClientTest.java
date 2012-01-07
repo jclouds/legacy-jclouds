@@ -22,7 +22,9 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 import org.jclouds.cloudstack.domain.LoadBalancerRule.Algorithm;
+import org.jclouds.cloudstack.options.CreateLoadBalancerRuleOptions;
 import org.jclouds.cloudstack.options.ListLoadBalancerRulesOptions;
+import org.jclouds.cloudstack.options.UpdateLoadBalancerRuleOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
@@ -80,7 +82,7 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
 
    public void testCreateLoadBalancerRuleForPublicIP() throws SecurityException, NoSuchMethodException, IOException {
       Method method = LoadBalancerAsyncClient.class.getMethod("createLoadBalancerRuleForPublicIP", long.class,
-            Algorithm.class, String.class, int.class, int.class);
+            Algorithm.class, String.class, int.class, int.class, CreateLoadBalancerRuleOptions[].class);
       HttpRequest httpRequest = processor.createRequest(method, 6, Algorithm.LEASTCONN, "tcp", 22, 22);
 
       assertRequestLineEquals(
@@ -92,6 +94,22 @@ public class LoadBalancerAsyncClientTest extends BaseCloudStackAsyncClientTest<L
       assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testUpdateLoadBalancerRule() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = LoadBalancerAsyncClient.class.getMethod("updateLoadBalancerRule", long.class, UpdateLoadBalancerRuleOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method, 5);
+
+      assertRequestLineEquals(httpRequest,
+            "GET http://localhost:8080/client/api?response=json&command=updateLoadBalancerRule&id=5 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
