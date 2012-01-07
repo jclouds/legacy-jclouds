@@ -29,8 +29,8 @@ import java.io.File;
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
-import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.virtualbox.config.VirtualBoxConstants;
+import static org.jclouds.compute.reference.ComputeServiceConstants.*;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.*;
 
 /**
  * Builds properties for VirtualBox integration.
@@ -56,27 +56,28 @@ public class VirtualBoxPropertiesBuilder extends PropertiesBuilder {
       properties.put(PROPERTY_BUILD_VERSION, "4.1.8r75467");
       properties.put(PROPERTY_IDENTITY, "administrator");
       properties.put(PROPERTY_CREDENTIAL, "12345");
-      properties.put(ComputeServiceConstants.PROPERTY_IMAGE_ID, "ubuntu-11.04-server-i386");
-      properties.put(VirtualBoxConstants.VIRTUALBOX_PRESEED_URL, "http://dl.dropbox.com/u/693111/preseed.cfg");
-      properties.put(VirtualBoxConstants.VIRTUALBOX_SNAPSHOT_DESCRIPTION, "jclouds-virtualbox-snaphot");
-      properties.put(VirtualBoxConstants.VIRTUALBOX_HOSTNAME, "jclouds-virtualbox-kickstart-admin");
-      properties
-            .put(VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE,
-                  "<Esc><Esc><Enter> "
-                        + "/install/vmlinuz noapic preseed/url=http://10.0.2.2:8080/src/test/resources/preseed.cfg "
-                        + "debian-installer=en_US auto locale=en_US kbd-chooser/method=us "
-                        + "hostname="
-                        + properties.get(VirtualBoxConstants.VIRTUALBOX_HOSTNAME)
-                        + " "
-                        + "fb=false debconf/frontend=noninteractive "
-                        + "keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false "
-                        + "initrd=/install/initrd.gz -- <Enter>");
 
-      properties.put(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR, System.getProperty("user.home") + File.separator
-            + System.getProperty("test.virtualbox.workingDir", "jclouds-virtualbox-test"));
+      properties.put(PROPERTY_IMAGE_ID, "ubuntu-11.04-server-i386");
+      properties.put(PROPERTY_IMAGE_LOGIN_USER, "toor:password");
+      properties.put(PROPERTY_IMAGE_AUTHENTICATE_SUDO, "true");
 
-      properties.put(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT, "8080");
+      properties.put(VIRTUALBOX_ISO_URL, "http://releases.ubuntu.com/11.04/ubuntu-11.04-server-i386.iso");
+      properties.put(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE, "<Esc><Esc><Enter> "
+               + "/install/vmlinuz noapic preseed/url=PRECONFIGURATION_URL "
+               + "debian-installer=en_US auto locale=en_US kbd-chooser/method=us " + "hostname=" + "HOSTNAME "
+               + "fb=false debconf/frontend=noninteractive "
+               + "keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false "
+               + "initrd=/install/initrd.gz -- <Enter>");
+      
+      properties.put(VIRTUALBOX_WORKINGDIR, System.getProperty("user.home") + File.separator
+               + System.getProperty("test.virtualbox.workingDir", "jclouds-virtualbox-test"));
+
+      properties.put(VIRTUALBOX_PRECONFIGURATION_URL, "http://10.0.2.2:8080/src/test/resources/preseed.cfg");
+      
+      
+
 
       return properties;
    }
+
 }

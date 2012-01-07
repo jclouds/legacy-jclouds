@@ -35,11 +35,10 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
-import org.jclouds.virtualbox.config.VirtualBoxConstants;
+import org.jclouds.rest.HttpClient;
 
 import com.google.common.base.Function;
 
@@ -52,26 +51,22 @@ public class FileDownloadFromURI implements Function<URI, File> {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final ComputeServiceContext context;
+   private final HttpClient client;
    private final String workingDir;
-   private final String isoFile;
 
    @Inject
-   public FileDownloadFromURI(final ComputeServiceContext context,
-         @Named(VIRTUALBOX_WORKINGDIR) final String workingDir,
-         @Named(VirtualBoxConstants.VIRTUALBOX_ISOFILE) final String isoFile) {
-      this.context = context;
+   public FileDownloadFromURI(HttpClient client, @Named(VIRTUALBOX_WORKINGDIR) String workingDir) {
+      this.client = client;
       this.workingDir = workingDir;
-      this.isoFile = isoFile;
    }
 
    @Override
    public File apply(@Nullable URI input) {
 
-      final File file = new File(workingDir, isoFile);
+      final File file = new File(workingDir, new File(input.getPath()).getName());
 
       if (!file.exists()) {
-         final InputStream inputStream = context.utils().http().get(input);
+         final InputStream inputStream = client.get(input);
          checkNotNull(inputStream, "%s not found", input);
          try {
             copy(inputStream, new FileOutputStream(file));

@@ -30,13 +30,14 @@ import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 public class IMachineToHardware implements Function<IMachine, Hardware> {
 
-   private VirtualBoxManager virtualBoxManager;
+   private Supplier<VirtualBoxManager> virtualBoxManager;
 
    @Inject
-   public IMachineToHardware(VirtualBoxManager virtualBoxManager) {
+   public IMachineToHardware(Supplier<VirtualBoxManager> virtualBoxManager) {
       this.virtualBoxManager = virtualBoxManager;
    }
 
@@ -44,7 +45,7 @@ public class IMachineToHardware implements Function<IMachine, Hardware> {
    public Hardware apply(@Nullable IMachine vm) {
       String osTypeId = vm.getOSTypeId();
 
-      IGuestOSType guestOSType = virtualBoxManager.getVBox().getGuestOSType(osTypeId);
+      IGuestOSType guestOSType = virtualBoxManager.get().getVBox().getGuestOSType(osTypeId);
       Boolean is64Bit = guestOSType.getIs64Bit();
       HardwareBuilder hardwareBuilder = new HardwareBuilder();
       hardwareBuilder.ids(vm.getId());

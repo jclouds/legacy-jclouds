@@ -39,6 +39,7 @@ import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.inject.Inject;
 
 /**
@@ -53,13 +54,13 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final VirtualBoxManager manager;
+   private final Supplier<VirtualBoxManager> manager;
    private final String workingDir;
    private final VmSpec vmSpec;
    private final boolean isLinkedClone;
 
    @Inject
-   public CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(VirtualBoxManager manager,
+   public CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(Supplier<VirtualBoxManager> manager,
             @Named(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR) String workingDir, VmSpec vmSpec, boolean isLinkedClone) {
       this.manager = manager;
       this.workingDir = workingDir;
@@ -70,7 +71,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
    @Override
    public IMachine apply(@Nullable IMachine master) {
       try {
-         manager.getVBox().findMachine(vmSpec.getVmName());
+         manager.get().getVBox().findMachine(vmSpec.getVmName());
          throw new IllegalStateException("Machine " + vmSpec.getVmName() + " is already registered.");
       } catch (VBoxException e) {
          if (machineNotFoundException(e))
@@ -85,8 +86,8 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
    }
 
    private IMachine cloneMachine(VmSpec vmSpec, IMachine master) {
-      String settingsFile = manager.getVBox().composeMachineFilename(vmSpec.getVmName(), workingDir);
-      IMachine clonedMachine = manager.getVBox().createMachine(settingsFile, vmSpec.getVmName(), vmSpec.getOsTypeId(),
+      String settingsFile = manager.get().getVBox().composeMachineFilename(vmSpec.getVmName(), workingDir);
+      IMachine clonedMachine = manager.get().getVBox().createMachine(settingsFile, vmSpec.getVmName(), vmSpec.getOsTypeId(),
                vmSpec.getVmId(), vmSpec.isForceOverwrite());
       List<CloneOptions> options = new ArrayList<CloneOptions>();
       if (isLinkedClone)
@@ -103,7 +104,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
          logger.debug("clone done");
 
       // registering
-      manager.getVBox().registerMachine(clonedMachine);
+      manager.get().getVBox().registerMachine(clonedMachine);
       return clonedMachine;
    }
 

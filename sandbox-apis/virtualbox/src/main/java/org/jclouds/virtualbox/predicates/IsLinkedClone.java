@@ -21,7 +21,9 @@ package org.jclouds.virtualbox.predicates;
 
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
@@ -33,20 +35,23 @@ import org.virtualbox_4_1.IStorageController;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 
 /**
  * 
  * @author Andrea Turli
  */
+@Singleton
 public class IsLinkedClone implements Predicate<IMachine> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private VirtualBoxManager manager;
+   private final Supplier<VirtualBoxManager> manager;
 
-   public IsLinkedClone(VirtualBoxManager manager) {
+   @Inject
+   public IsLinkedClone(Supplier<VirtualBoxManager> manager) {
       this.manager = manager;
    }
 
@@ -64,7 +69,7 @@ public class IsLinkedClone implements Predicate<IMachine> {
                   // more than one machine is attached to this hd
                   for (IMedium child : iMedium.getParent().getChildren()) {
                      for (String machineId : child.getMachineIds()) {
-                        IMachine iMachine = manager.getVBox().findMachine(
+                        IMachine iMachine = manager.get().getVBox().findMachine(
                               machineId);
                         if (!iMachine.getName().equals(machine.getName())) {
                            logger.debug("Machine %s is a linked clone",

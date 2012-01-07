@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.virtualbox.domain.StorageController;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.StorageBus;
 import org.virtualbox_4_1.VBoxException;
 
 import com.google.common.base.Function;

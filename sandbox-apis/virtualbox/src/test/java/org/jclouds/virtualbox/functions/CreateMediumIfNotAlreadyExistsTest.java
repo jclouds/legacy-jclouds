@@ -42,6 +42,7 @@ import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -51,14 +52,11 @@ public class CreateMediumIfNotAlreadyExistsTest {
 
    private String adminDiskPath;
    private String diskFormat;
-   private String diskName;
-
 
    @BeforeMethod
    public void setUp() throws Exception {
       adminDiskPath = "/Users/johndoe/jclouds-virtualbox-images/admin.vdi";
       diskFormat = "vdi";
-      diskName = "diskName";
    }
 
    @Test
@@ -87,7 +85,7 @@ public class CreateMediumIfNotAlreadyExistsTest {
 
       replay(manager, machine, vBox, medium);
 
-      new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
+      new CreateMediumIfNotAlreadyExists(Suppliers.ofInstance(manager), true).apply(hardDisk);
 
       verify(machine, vBox);
 
@@ -113,14 +111,15 @@ public class CreateMediumIfNotAlreadyExistsTest {
 
       replay(manager, machine, vBox, medium, newHardDisk, progress);
 
-      IMedium newDisk = new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
+      IMedium newDisk =  new CreateMediumIfNotAlreadyExists(Suppliers.ofInstance(manager), true).apply(hardDisk);
 
       verify(machine, vBox, medium);
       assertNotSame(newDisk, medium);
    }
 
    @Test
-   public void testDeleteAndCreateNewStorageWhenMediumExistsAndUsingOverwriteAndStillAttachedDetachesOldThing() throws Exception {
+   public void testDeleteAndCreateNewStorageWhenMediumExistsAndUsingOverwriteAndStillAttachedDetachesOldThing()
+            throws Exception {
       HardDisk hardDisk = createTestHardDisk();
 
       VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
@@ -133,7 +132,6 @@ public class CreateMediumIfNotAlreadyExistsTest {
 
       expect(manager.getVBox()).andReturn(vBox).anyTimes();
       expect(vBox.findMedium(adminDiskPath, DeviceType.HardDisk)).andReturn(medium);
-      
 
       String oldMachineId = "a1e03931-29f3-4370-ada3-9547b1009212";
       String oldMachineName = "oldMachine";
@@ -178,11 +176,11 @@ public class CreateMediumIfNotAlreadyExistsTest {
       expect(vBox.createHardDisk(diskFormat, adminDiskPath)).andReturn(newHardDisk);
       expect(newHardDisk.createBaseStorage(anyLong(), anyLong())).andReturn(progress);
 
-      replay(manager,oldMachine, oldAttachment,oldMedium, detachSession, machine, vBox, medium, newHardDisk, progress);
+      replay(manager, oldMachine, oldAttachment, oldMedium, detachSession, machine, vBox, medium, newHardDisk, progress);
 
-      IMedium newDisk = new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
+      IMedium newDisk = new CreateMediumIfNotAlreadyExists(Suppliers.ofInstance(manager), true).apply(hardDisk);
 
-      verify(machine,oldMachine,oldAttachment, detachSession, oldMedium, vBox, medium);
+      verify(machine, oldMachine, oldAttachment, detachSession, oldMedium, vBox, medium);
       assertNotSame(newDisk, medium);
    }
 
@@ -202,7 +200,7 @@ public class CreateMediumIfNotAlreadyExistsTest {
 
       replay(manager, machine, vBox, medium, newHardDisk, progress);
 
-      new CreateMediumIfNotAlreadyExists(manager, false).apply(hardDisk);
+      new CreateMediumIfNotAlreadyExists(Suppliers.ofInstance(manager), false).apply(hardDisk);
    }
 
    @Test(expectedExceptions = VBoxException.class)
@@ -227,7 +225,7 @@ public class CreateMediumIfNotAlreadyExistsTest {
 
       replay(manager, machine, vBox, medium);
 
-      new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
+      new CreateMediumIfNotAlreadyExists(Suppliers.ofInstance(manager), true).apply(hardDisk);
    }
 
    private HardDisk createTestHardDisk() {

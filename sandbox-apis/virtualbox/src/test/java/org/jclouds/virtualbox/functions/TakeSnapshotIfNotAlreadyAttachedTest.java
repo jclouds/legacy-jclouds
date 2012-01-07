@@ -33,6 +33,8 @@ import org.virtualbox_4_1.ISnapshot;
 import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VirtualBoxManager;
 
+import com.google.common.base.Suppliers;
+
 /**
  * @author Andrea Turli
  */
@@ -64,7 +66,7 @@ public class TakeSnapshotIfNotAlreadyAttachedTest {
       session.unlockMachine();
       replay(manager, machine, vBox, session, console, progress);
 
-      new TakeSnapshotIfNotAlreadyAttached(manager, snapshotName, snapshotDesc)
+      new TakeSnapshotIfNotAlreadyAttached(Suppliers.ofInstance(manager), snapshotName, snapshotDesc)
             .apply(machine);
 
       verify(machine);
@@ -94,7 +96,7 @@ public class TakeSnapshotIfNotAlreadyAttachedTest {
       session.unlockMachine();
       replay(manager, machine, vBox, session, console, progress);
 
-      new TakeSnapshotIfNotAlreadyAttached(manager, snapshotName, snapshotDesc)
+      new TakeSnapshotIfNotAlreadyAttached(Suppliers.ofInstance(manager), snapshotName, snapshotDesc)
             .apply(machine);
 
       verify(machine);

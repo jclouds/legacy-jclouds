@@ -19,35 +19,40 @@
 
 package org.jclouds.virtualbox;
 
-import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
+import static org.jclouds.virtualbox.util.MachineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered;
 
+import java.net.URI;
 import java.util.Properties;
 
-import org.eclipse.jetty.server.Server;
 import org.jclouds.Constants;
+import org.jclouds.byon.Node;
+import org.jclouds.byon.config.CacheNodeStoreModule;
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
-import org.jclouds.domain.Credentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
-import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
-import org.jclouds.virtualbox.functions.admin.StartVBoxIfNotAlreadyRunning;
+import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.SessionState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code VirtualBoxClient}
@@ -59,19 +64,21 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    public BaseVirtualBoxClientLiveTest() {
       provider = "virtualbox";
    }
-   
+
    protected ComputeServiceContext context;
-   protected VirtualBoxManager manager;
-   protected Server jetty;
+   protected Supplier<VirtualBoxManager> manager;
+   protected Supplier<URI> preconfigurationUri;
    protected String hostVersion;
    protected String operatingSystemIso;
    protected String guestAdditionsIso;
    protected String adminDisk;
    protected String workingDir;
-   
+   protected Supplier<NodeMetadata> host;
+
    @Override
    protected void setupCredentials() {
-      // default behavior is to bomb when no user is configured, but we know the default user of vbox
+      // default behavior is to bomb when no user is configured, but we know the default user of
+      // vbox
       ensureIdentityPropertyIsSpecifiedOrTakeFromDefaults();
       super.setupCredentials();
    }
@@ -87,44 +94,48 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider, identity, credential,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
-      Function<String, String> configProperties = context.utils().injector().getInstance(ValueOfConfigurationKeyOrNull.class);
+
+      CacheNodeStoreModule hostModule = new CacheNodeStoreModule(ImmutableMap.of("host", Node.builder().id("host")
+               .name("host installing virtualbox").hostname("localhost").osFamily(OsFamily.LINUX.toString())
+               .osDescription(System.getProperty("os.name")).osVersion(System.getProperty("os.version")).group("ssh")
+               .username(System.getProperty("user.name")).credentialUrl(
+                        URI.create("file://" + System.getProperty("user.home") + "/.ssh/id_rsa")).build()));
+
+      context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet
+               .<Module> of(new Log4JLoggingModule(), new SshjSshClientModule(), hostModule), overrides);
+      Function<String, String> configProperties = context.utils().injector().getInstance(
+               ValueOfConfigurationKeyOrNull.class);
       imageId = configProperties.apply(ComputeServiceConstants.PROPERTY_IMAGE_ID);
       workingDir = configProperties.apply(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR);
+      host = context.utils().injector().getInstance(Key.get(new TypeLiteral<Supplier<NodeMetadata>>(){}));
+
+      // this will eagerly startup Jetty, note the impl will shut itself down
+      preconfigurationUri = context.utils().injector().getInstance(Key.get(new TypeLiteral<Supplier<URI>>() {
+      }, Preconfiguration.class));
+      // this will eagerly startup Jetty, note the impl will shut itself down
+      preconfigurationUri.get();
       
-      jetty = new StartJettyIfNotAlreadyRunning(port).apply(basebaseResource);
-      startVboxIfNotAlreadyRunning();
+      manager = context.utils().injector().getInstance(Key.get(new TypeLiteral<Supplier<VirtualBoxManager>>() {
+      }));
+      // this will eagerly startup vbox
+      manager.get();
+
       hostVersion = Iterables.get(Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
       adminDisk = workingDir + "/testadmin.vdi";
       operatingSystemIso = String.format("%s/%s.iso", workingDir, imageId);
       guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", workingDir, hostVersion);
+
+   }
+
+   protected void undoVm(VmSpec vmSpecification) {
+      unlockMachineAndApplyOrReturnNullIfNotRegistered(manager.get(), vmSpecification.getVmName(),
+               new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
    }
 
    @AfterClass(groups = "live")
    protected void tearDown() throws Exception {
       if (context != null)
          context.close();
-      if (jetty != null)
-         jetty.stop();
-      // TODO: should we stop the vbox manager?
    }
 
-   private String basebaseResource = ".";
-   // TODO: I'd not use 8080, maybe something like 28080
-   // also update pom.xml so that this passes through
-   private int port = Integer.parseInt(System.getProperty(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT, "8080"));
-
-   protected void startVboxIfNotAlreadyRunning() {
-      Credentials localhostCredentials = new Credentials("toor", "password");
-      ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest("hostId", "localhost", "guestId",
-            "localhost", localhostCredentials);
-
-      manager = new StartVBoxIfNotAlreadyRunning(localHostContext.getComputeService(),
-            VirtualBoxManager.createInstance("hostId"), new InetSocketAddressConnect(), "hostId", localhostCredentials)
-            .apply(context.getProviderSpecificContext().getEndpoint());
-
-      assert manager.getSessionObject().getState() == SessionState.Unlocked : "manager needs to be in unlocked state or all tests will fail!!: "
-            + manager;
-   }
 }

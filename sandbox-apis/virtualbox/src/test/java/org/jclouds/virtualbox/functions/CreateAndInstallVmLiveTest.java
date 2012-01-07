@@ -22,44 +22,32 @@ package org.jclouds.virtualbox.functions;
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.virtualbox.domain.ExecutionType.HEADLESS;
-import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
-import static org.jclouds.virtualbox.util.MachineUtils.lockMachineAndApplyOrReturnNullIfNotRegistered;
 import static org.testng.Assert.assertTrue;
-import static org.virtualbox_4_1.LockType.Write;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.Credentials;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.net.IPSocket;
-import org.jclouds.predicates.InetSocketAddressConnect;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.NatAdapter;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
-import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.StorageBus;
-import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.inject.Guice;
 
 /**
@@ -72,43 +60,31 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
    }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
            .getInstance(Json.class));
 
-   private String vmId = "jclouds-image-iso-1";
-   private String osTypeId = "";
-   private String ideControllerName = "IDE Controller";
-   private String guestId = "guest";
-   private String hostId = "host";
-   private String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
-   private StorageController ideController;
    private VmSpec vmSpecification;
 
    @Override
    @BeforeClass(groups = "live")
    public void setupClient() {
       super.setupClient();
+      String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
+
       HardDisk hardDisk = HardDisk.builder().diskpath(adminDisk).autoDelete(true)
             .controllerPort(0).deviceSlot(1).build();
-      ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)
+      StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
               .attachISO(0, 0, operatingSystemIso)
               .attachHardDisk(hardDisk)
               .attachISO(1, 1, guestAdditionsIso).build();
-      vmSpecification = VmSpec.builder().id(vmId).name(vmName).memoryMB(512).osTypeId(osTypeId)
+      vmSpecification = VmSpec.builder().id("jclouds-image-iso-1").name(vmName).memoryMB(512).osTypeId("")
               .controller(ideController)
               .forceOverwrite(true)
               .cleanUpMode(CleanupMode.Full)
               .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build()).build();
-      lockMachineAndApplyOrReturnNullIfNotRegistered(manager, Write, vmName, new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
+      undoVm(vmSpecification);
    }
 
    public void testCreateImageMachineFromIso() throws Exception {
 
-      VirtualBoxManager manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
-      ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest(hostId, "localhost", guestId,
-              "localhost", new Credentials("toor", "password"));
-      Predicate<IPSocket> socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 10, 1, TimeUnit.SECONDS);
-
-      IMachine imageMachine = new CreateAndInstallVm(manager, new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(
-               manager, workingDir), workingDir, guestId, localHostContext, hostId, socketTester, "127.0.0.1", 8080,
-               HEADLESS).apply(vmSpecification);
+      IMachine imageMachine = context.utils().injector().getInstance(CreateAndInstallVm.class).apply(vmSpecification);
 
       IMachineToImage iMachineToImage = new IMachineToImage(manager, map);
       Image newImage = iMachineToImage.apply(imageMachine);
@@ -128,5 +104,10 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
          }
       };
    }
-
+   @Override
+   @AfterClass(groups = "live")
+   protected void tearDown() throws Exception {
+      undoVm(vmSpecification);
+      super.tearDown();
+   }
 }

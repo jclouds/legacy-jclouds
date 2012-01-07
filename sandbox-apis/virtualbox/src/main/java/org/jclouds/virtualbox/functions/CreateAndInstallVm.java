@@ -19,133 +19,102 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
-import static org.jclouds.compute.options.RunScriptOptions.Builder.wrapInInitScript;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.jclouds.virtualbox.util.MachineUtils.applyForMachine;
-import static org.jclouds.virtualbox.util.MachineUtils.lockMachineAndApply;
 import static org.jclouds.virtualbox.util.MachineUtils.lockSessionOnMachineAndApply;
 import static org.virtualbox_4_1.LockType.Shared;
-import static org.virtualbox_4_1.LockType.Write;
 
-import java.io.File;
-import java.util.Map;
-import java.util.Set;
+import java.net.URI;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.compute.options.RunScriptOptions;
+import org.jclouds.compute.callables.RunScriptOnNode;
+import org.jclouds.compute.callables.RunScriptOnNode.Factory;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.logging.Logger;
-import org.jclouds.net.IPSocket;
-import org.jclouds.ssh.SshException;
-import org.jclouds.virtualbox.config.VirtualBoxConstants;
-import org.jclouds.virtualbox.domain.DeviceDetails;
+import org.jclouds.scriptbuilder.domain.Statements;
+import org.jclouds.ssh.SshClient;
+import org.jclouds.virtualbox.Preconfiguration;
 import org.jclouds.virtualbox.domain.ExecutionType;
-import org.jclouds.virtualbox.domain.HardDisk;
-import org.jclouds.virtualbox.domain.IsoImage;
-import org.jclouds.virtualbox.domain.NatAdapter;
-import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.settings.KeyboardScancodes;
-import org.virtualbox_4_1.AccessMode;
-import org.virtualbox_4_1.DeviceType;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMedium;
 import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.inject.Inject;
 
+@Singleton
 public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final VirtualBoxManager manager;
+   private final Supplier<VirtualBoxManager> manager;
    private final CreateAndRegisterMachineFromIsoIfNotAlreadyExists createAndRegisterMachineFromIsoIfNotAlreadyExists;
-   private String guestId;
-   private final ComputeServiceContext context;
-   private final String hostId;
-   private final Predicate<IPSocket> socketTester;
-   private final String webServerHost;
-   private final int webServerPort;
+   private final ValueOfConfigurationKeyOrNull valueOfConfigurationKeyOrNull;
+
+   private final Supplier<URI> preconfiguration;
+   private final Predicate<SshClient> sshResponds;
    private final ExecutionType executionType;
 
+   private final Factory scriptRunner;
+   private final Supplier<NodeMetadata> host;
+
+   private final Function<IMachine, SshClient> sshClientForIMachine;
+
    @Inject
-   public CreateAndInstallVm(VirtualBoxManager manager,
+   public CreateAndInstallVm(Supplier<VirtualBoxManager> manager,
             CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
-            @Named(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR) String workingDir, String guestId,
-            ComputeServiceContext context, String hostId, Predicate<IPSocket> socketTester, String webServerHost,
-            int webServerPort, ExecutionType executionType) {
+            ValueOfConfigurationKeyOrNull valueOfConfigurationKeyOrNull, Predicate<SshClient> sshResponds,
+            Function<IMachine, SshClient> sshClientForIMachine, Supplier<NodeMetadata> host,
+            RunScriptOnNode.Factory scriptRunner, @Preconfiguration Supplier<URI> preconfiguration,
+            ExecutionType executionType) {
       this.manager = manager;
       this.createAndRegisterMachineFromIsoIfNotAlreadyExists = CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
-      this.guestId = guestId;
-      this.context = context;
-      this.hostId = hostId;
-      this.socketTester = socketTester;
-      this.webServerHost = webServerHost;
-      this.webServerPort = webServerPort;
+      this.valueOfConfigurationKeyOrNull = valueOfConfigurationKeyOrNull;
+      this.sshResponds = sshResponds;
+      this.sshClientForIMachine = sshClientForIMachine;
+      this.scriptRunner = scriptRunner;
+      this.host = host;
+      this.preconfiguration = preconfiguration;
       this.executionType = executionType;
    }
 
    @Override
    public IMachine apply(VmSpec vmSpec) {
-
-      ensureWebServerIsRunning();
-
-      final IMachine vm =createAndRegisterMachineFromIsoIfNotAlreadyExists.apply(vmSpec);
-
       String vmName = vmSpec.getVmName();
 
-      // Change RAM
-      ensureMachineHasMemory(vmName, vmSpec.getMemory());
+      // note this may not be reachable, as this likely uses the 10.2.2 address
+      URI preconfigurationUri = preconfiguration.get();
+      String keySequence = valueOfConfigurationKeyOrNull.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace(
+               "PRECONFIGURATION_URL", preconfigurationUri.toASCIIString()).replace("HOSTNAME", vmName);
 
-      Set<StorageController> controllers = vmSpec.getControllers();
-      if (controllers.isEmpty()) {
-         throw new IllegalStateException(missingIDEControllersMessage(vmSpec));
-      }
-      StorageController controller = controllers.iterator().next();
-      ensureMachineHasIDEControllerNamed(vmName, controller);
-      setupHardDisksForController(vmName, controller);
-      setupDvdsForController(vmSpec, vmName, controller);
-
-      // NAT
-      Map<Long, NatAdapter> natNetworkAdapters = vmSpec.getNatNetworkAdapters();
-      for (Map.Entry<Long, NatAdapter> natAdapterAndSlot : natNetworkAdapters.entrySet()) {
-         long slotId = natAdapterAndSlot.getKey();
-         NatAdapter natAdapter = natAdapterAndSlot.getValue();
-         ensureNATNetworkingIsAppliedToMachine(vmName, slotId, natAdapter);
-      }
+      final IMachine vm = createAndRegisterMachineFromIsoIfNotAlreadyExists.apply(vmSpec);
 
       // Launch machine and wait for it to come online
       ensureMachineIsLaunched(vmName);
 
-      final String installKeySequence = System.getProperty(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE, defaultInstallSequence(vmName));
-      sendKeyboardSequence(installKeySequence, vmName);
+      sendKeyboardSequence(keySequence, vmName);
 
-      boolean sshDeamonIsRunning = false;
-      while (!sshDeamonIsRunning) {
-         try {
-            if (runScriptOnNode(guestId, "id", wrapInInitScript(false).runAsRoot(false)).getExitCode() == 0) {
-               logger.debug("Got response from ssh daemon.");
-               sshDeamonIsRunning = true;
-            }
-         } catch (SshException e) {
-            logger.debug("No response from ssh daemon...");
-         }
-      }
+      SshClient client = sshClientForIMachine.apply(vm);
 
-      logger.debug("Installation of image complete. Powering down...");
-      lockSessionOnMachineAndApply(manager, Shared, vmName, new Function<ISession, Void>() {
+      logger.debug(">> awaiting installation to finish node(%s)", vmName);
+      checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh", vmName);
+
+      logger.debug("<< installation of image complete. Powering down node(%s)", vmName);
+      lockSessionOnMachineAndApply(manager.get(), Shared, vmName, new Function<ISession, Void>() {
 
          @Override
          public Void apply(ISession session) {
@@ -158,70 +127,8 @@ public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
       return vm;
    }
 
-   private void setupDvdsForController(VmSpec vmSpecification, String vmName, StorageController controller) {
-      Set<IsoImage> dvds = controller.getIsoImages();
-      for (IsoImage dvd : dvds) {
-         String dvdSource = dvd.getSourcePath();
-         final IMedium dvdMedium = manager.getVBox().openMedium(dvdSource, DeviceType.DVD,
-                 AccessMode.ReadOnly, vmSpecification.isForceOverwrite());
-         ensureMachineDevicesAttached(vmName, dvdMedium, dvd.getDeviceDetails(), controller.getName());
-      }
-   }
-
-   private void setupHardDisksForController(String vmName, StorageController controller) {
-      Set<HardDisk> hardDisks = controller.getHardDisks();
-      for (HardDisk hardDisk : hardDisks) {
-         String sourcePath = hardDisk.getDiskPath();
-         if (new File(sourcePath).exists()) {
-            boolean deleted = new File(sourcePath).delete();
-            if (!deleted) {
-               logger.error(String.format("File %s could not be deleted.", sourcePath));
-            }
-         }
-         IMedium medium = new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
-         ensureMachineDevicesAttached(vmName, medium, hardDisk.getDeviceDetails(), controller.getName());
-      }
-   }
-
-   private String missingIDEControllersMessage(VmSpec vmSpecification) {
-      return String.format("First controller is not an IDE controller. Please verify that the VM spec is a correct master node: %s", vmSpecification);
-   }
-
-   private void ensureWebServerIsRunning() {
-      final IPSocket webServerSocket = new IPSocket(webServerHost, webServerPort);
-      if (!socketTester.apply(webServerSocket)) {
-         throw new IllegalStateException(String.format("Web server is not running on host %s:%s which is needed to serve preseed.cfg.", webServerHost, webServerPort));
-      }
-   }
-
-   private void ensureMachineIsLaunched(String vmName) {
-      applyForMachine(manager, vmName, new LaunchMachineIfNotAlreadyRunning(manager, executionType, ""));
-   }
-
-   private void ensureMachineDevicesAttached(String vmName, IMedium medium, DeviceDetails deviceDetails, String controllerName) {
-      lockMachineAndApply(manager, Write, vmName, new AttachMediumToMachineIfNotAlreadyAttached(deviceDetails, medium, controllerName));
-   }
-
-   private void ensureMachineHasMemory(String vmName, final long memorySize) {
-      lockMachineAndApply(manager, Write, vmName, new ApplyMemoryToMachine(memorySize));
-   }
-
-   private void ensureNATNetworkingIsAppliedToMachine(String vmName, long slotId, NatAdapter natAdapter) {
-      lockMachineAndApply(manager, Write, vmName, new AttachNATAdapterToMachineIfNotAlreadyExists(slotId, natAdapter));
-   }
-
-   public void ensureMachineHasIDEControllerNamed(String vmName, StorageController storageController) {
-      lockMachineAndApply(manager, Write, checkNotNull(vmName, "vmName"),
-              new AddIDEControllerIfNotExists(checkNotNull(storageController, "storageController")));
-   }
-
-   private String defaultInstallSequence(String vmName) {
-      return "<Esc><Esc><Enter> "
-              + "/install/vmlinuz noapic preseed/url=http://10.0.2.2:" + webServerPort + "/src/test/resources/preseed.cfg "
-              + "debian-installer=en_US auto locale=en_US kbd-chooser/method=us " + "hostname=" + vmName + " "
-              + "fb=false debconf/frontend=noninteractive "
-              + "keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false "
-              + "initrd=/install/initrd.gz -- <Enter>";
+    private void ensureMachineIsLaunched(String vmName) {
+      applyForMachine(manager.get(), vmName, new LaunchMachineIfNotAlreadyRunning(manager.get(), executionType, ""));
    }
 
    private void sendKeyboardSequence(String keyboardSequence, String vmName) {
@@ -239,7 +146,7 @@ public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
 
    private void runScriptIfWordEndsWith(StringBuilder sb, String word, String key) {
       if (word.endsWith(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get(key))) {
-         runScriptOnNode(hostId, sb.toString(), runAsRoot(false).wrapInInitScript(false));
+         scriptRunner.create(host.get(), Statements.exec(sb.toString()), runAsRoot(false).wrapInInitScript(false)).init().call();
          sb.delete(0, sb.length() - 1);
       }
    }
@@ -267,9 +174,4 @@ public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
 
       return keycodes.toString();
    }
-
-   protected ExecResponse runScriptOnNode(String nodeId, String command, RunScriptOptions options) {
-      return context.getComputeService().runScriptOnNode(nodeId, command, options);
-   }
-
 }

@@ -26,6 +26,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.virtualbox_4_1.DeviceType;
@@ -39,32 +41,36 @@ import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 
 /**
  * @author Mattias Holmqvist
  */
+@Singleton
 public class CreateMediumIfNotAlreadyExists implements Function<HardDisk, IMedium> {
 
-   private final VirtualBoxManager manager;
-   private boolean overwriteIfExists;
+   private final Supplier<VirtualBoxManager> manager;
+   private final boolean overwriteIfExists;
 
-   public CreateMediumIfNotAlreadyExists(VirtualBoxManager manager, boolean overwriteIfExists) {
+   @Inject
+   public CreateMediumIfNotAlreadyExists(Supplier<VirtualBoxManager> manager, boolean overwriteIfExists) {
       this.manager = manager;
       this.overwriteIfExists = overwriteIfExists;
    }
+
    public static final Pattern ATTACHED_PATTERN = Pattern.compile(".*is still attached.*: ([-0-9a-f]+) .*");
 
    @Override
    public IMedium apply(@Nullable HardDisk hardDisk) {
-      IVirtualBox vBox = manager.getVBox();
+      IVirtualBox vBox = manager.get().getVBox();
       try {
          String diskPath = hardDisk.getDiskPath();
          final IMedium medium = vBox.findMedium(diskPath, DeviceType.HardDisk);
          if (overwriteIfExists) {
             try {
                deleteMediumAndBlockUntilComplete(medium);
-            } catch (VBoxException e){
+            } catch (VBoxException e) {
                onAlreadyAttachedExceptionDetachOrPropagate(vBox, medium, e);
             }
             return createNewMedium(vBox, hardDisk);
@@ -83,12 +89,13 @@ public class CreateMediumIfNotAlreadyExists implements Function<HardDisk, IMediu
       if (matcher.find()) {
          String machineId = matcher.group(1);
          IMachine immutableMachine = vBox.findMachine(machineId);
-         IMediumAttachment mediumAttachment = Iterables.find(immutableMachine.getMediumAttachments(), new Predicate<IMediumAttachment>(){
-            public boolean apply(IMediumAttachment in){
-               return in.getMedium().getId().equals(medium.getId());
-            }
-         });
-         lockMachineAndApply(manager, Write, immutableMachine.getName(), new DetachDistroMediumFromMachine(
+         IMediumAttachment mediumAttachment = Iterables.find(immutableMachine.getMediumAttachments(),
+                  new Predicate<IMediumAttachment>() {
+                     public boolean apply(IMediumAttachment in) {
+                        return in.getMedium().getId().equals(medium.getId());
+                     }
+                  });
+         lockMachineAndApply(manager.get(), Write, immutableMachine.getName(), new DetachDistroMediumFromMachine(
                   mediumAttachment.getController(), mediumAttachment.getPort(), mediumAttachment.getDevice()));
          deleteMediumAndBlockUntilComplete(medium);
       } else {
@@ -96,11 +103,11 @@ public class CreateMediumIfNotAlreadyExists implements Function<HardDisk, IMediu
       }
    }
 
-   void deleteMediumAndBlockUntilComplete(IMedium medium){
+   void deleteMediumAndBlockUntilComplete(IMedium medium) {
       final IProgress progress = medium.deleteStorage();
       progress.waitForCompletion(-1);
    }
-   
+
    private IMedium createNewMedium(IVirtualBox vBox, HardDisk hardDisk) {
       IMedium medium = vBox.createHardDisk(hardDisk.getDiskFormat(), hardDisk.getDiskPath());
       createBaseStorage(medium);
@@ -115,7 +122,7 @@ public class CreateMediumIfNotAlreadyExists implements Function<HardDisk, IMediu
       try {
          long size = 4L * 1024L * 1024L * 1024L - 4L;
          IProgress storageCreation = hardDisk.createBaseStorage(size,
-                 (long) org.virtualbox_4_1.jaxws.MediumVariant.STANDARD.ordinal());
+                  (long) org.virtualbox_4_1.jaxws.MediumVariant.STANDARD.ordinal());
          storageCreation.waitForCompletion(-1);
       } catch (VBoxException e) {
          if (fileNotFoundException(e)) {
@@ -137,7 +144,7 @@ public class CreateMediumIfNotAlreadyExists implements Function<HardDisk, IMediu
 
    private boolean storageAlreadyExists(VBoxException e) {
       return e.getMessage().contains("VirtualBox error: Storage for the medium ")
-              && e.getMessage().contains("is already created");
+               && e.getMessage().contains("is already created");
    }
 
 }

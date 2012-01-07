@@ -16,33 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.virtualbox;
 
-import java.util.List;
-import java.util.Properties;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
-import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
-
-import com.google.common.base.Supplier;
-import com.google.inject.Module;
+import javax.inject.Qualifier;
 
 /**
- * Creates compute service context for VirtualBox
+ * Relating to a preseed or KickStart source
  * 
- * @author Mattias Holmqvist, Andrea Turli
+ * @author Adrian Cole
+ * 
  */
-@SuppressWarnings("unchecked")
-public class VirtualBoxContextBuilder extends StandaloneComputeServiceContextBuilder<Supplier> {
-
-   public VirtualBoxContextBuilder(Properties properties) {
-      super(Supplier.class, properties);
-   }
-
-   @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new VirtualBoxComputeServiceContextModule());
-   }
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface Preconfiguration {
 
 }

@@ -51,12 +51,12 @@ public class AttachNATAdapterToMachineIfNotAlreadyExistsTest {
       networkAdapter.setAttachmentType(NAT);
       expect(networkAdapter.getNatDriver()).andReturn(natEngine);
       
-      natEngine.addRedirect("TCP@127.0.0.1:2222->guest:22", TCP, "127.0.0.1", 2222, "guest", 22);
+      natEngine.addRedirect("TCP@127.0.0.1:2222->:22", TCP, "127.0.0.1", 2222, "", 22);
       networkAdapter.setEnabled(true);
       machine.saveSettings();
 
       replay(machine, networkAdapter, natEngine);
-      NatAdapter natAdapter = NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "guest", 22).build();
+      NatAdapter natAdapter = NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
       new AttachNATAdapterToMachineIfNotAlreadyExists(slotId, natAdapter).apply(machine);
 
       verify(machine, networkAdapter, natEngine);
@@ -73,7 +73,7 @@ public class AttachNATAdapterToMachineIfNotAlreadyExistsTest {
       networkAdapter.setAttachmentType(NAT);
       expect(networkAdapter.getNatDriver()).andReturn(natEngine);
       
-      natEngine.addRedirect("TCP@127.0.0.1:2222->guest:22", TCP, "127.0.0.1", 2222, "guest", 22);
+      natEngine.addRedirect("TCP@127.0.0.1:2222->:22", TCP, "127.0.0.1", 2222, "", 22);
       expectLastCall().andThrow(
                new VBoxException(null, "VirtualBox error: A NAT rule of this name already exists (0x80070057)"));      
       
@@ -81,7 +81,7 @@ public class AttachNATAdapterToMachineIfNotAlreadyExistsTest {
       machine.saveSettings();
 
       replay(machine, networkAdapter, natEngine);
-      NatAdapter natAdapter = NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "guest", 22).build();
+      NatAdapter natAdapter = NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
       new AttachNATAdapterToMachineIfNotAlreadyExists(slotId, natAdapter).apply(machine);
 
       verify(machine, networkAdapter, natEngine);
@@ -102,7 +102,7 @@ public class AttachNATAdapterToMachineIfNotAlreadyExistsTest {
 
       replay(machine, networkAdapter, natEngine);
 
-      NatAdapter natAdapter = NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "guest", 22).build();
+      NatAdapter natAdapter = NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
       new AttachNATAdapterToMachineIfNotAlreadyExists(slotId, natAdapter).apply(machine);
 
       verify(machine, networkAdapter, natEngine);

@@ -19,10 +19,8 @@
 
 package org.jclouds.virtualbox.predicates;
 
-import static org.jclouds.virtualbox.util.MachineUtils.lockMachineAndApplyOrReturnNullIfNotRegistered;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
-import static org.virtualbox_4_1.LockType.Write;
 
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.HardDisk;
@@ -30,14 +28,13 @@ import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.functions.CloneAndRegisterMachineFromIMachineIfNotAlreadyExists;
 import org.jclouds.virtualbox.functions.CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
-import org.jclouds.virtualbox.functions.IMachineToVmSpec;
-import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.StorageBus;
-import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -78,29 +75,28 @@ public class IsLinkedClonesLiveTest extends BaseVirtualBoxClientLiveTest {
    @Test
    public void testLinkedClone() {
 
-      VirtualBoxManager manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
-      lockMachineAndApplyOrReturnNullIfNotRegistered(manager, Write, masterSpec.getVmName(), new UnregisterMachineIfExistsAndDeleteItsMedia(masterSpec));
-
-      IMachine master = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager, workingDir).apply(masterSpec);
+      IMachine master = context.utils().injector().getInstance(CreateAndRegisterMachineFromIsoIfNotAlreadyExists.class)
+               .apply(masterSpec);
       IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, cloneSpec,
                IS_LINKED_CLONE).apply(master);
 
       assertTrue(new IsLinkedClone(manager).apply(clone));
-      for (VmSpec spec : ImmutableSet.of(new IMachineToVmSpec().apply(clone), masterSpec))
-         lockMachineAndApplyOrReturnNullIfNotRegistered(manager, Write, spec.getVmName(), new UnregisterMachineIfExistsAndDeleteItsMedia(spec));
    }
 
    public void testFullClone() {
-
-      VirtualBoxManager manager = (VirtualBoxManager) context.getProviderSpecificContext().getApi();
-      lockMachineAndApplyOrReturnNullIfNotRegistered(manager, Write, masterSpec.getVmName(), new UnregisterMachineIfExistsAndDeleteItsMedia(masterSpec));
-
-      IMachine master = new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager, workingDir).apply(masterSpec);
+      IMachine master = context.utils().injector().getInstance(CreateAndRegisterMachineFromIsoIfNotAlreadyExists.class)
+               .apply(masterSpec);
       IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, cloneSpec,
                !IS_LINKED_CLONE).apply(master);
 
       assertFalse(new IsLinkedClone(manager).apply(clone));
-      for (VmSpec spec : ImmutableSet.of(new IMachineToVmSpec().apply(clone), masterSpec))
-         lockMachineAndApplyOrReturnNullIfNotRegistered(manager, Write, spec.getVmName(), new UnregisterMachineIfExistsAndDeleteItsMedia(spec));
+
+   }
+
+   @BeforeMethod
+   @AfterMethod
+   void cleanUpVms() {
+      for (VmSpec spec : ImmutableSet.of(cloneSpec, masterSpec))
+         this.undoVm(spec);
    }
 }

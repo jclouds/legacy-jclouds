@@ -32,6 +32,7 @@ import org.virtualbox_4_1.ISnapshot;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 
 /**
@@ -44,12 +45,12 @@ public class TakeSnapshotIfNotAlreadyAttached implements Function<IMachine, ISna
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    
-   private VirtualBoxManager manager;
+   private Supplier<VirtualBoxManager> manager;
    private String snapshotName;
    private String snapshotDesc;
 
 
-   public TakeSnapshotIfNotAlreadyAttached(VirtualBoxManager manager, String snapshotName, String snapshotDesc) {
+   public TakeSnapshotIfNotAlreadyAttached(Supplier<VirtualBoxManager> manager, String snapshotName, String snapshotDesc) {
       this.manager = manager;
       this.snapshotName = snapshotName;
       this.snapshotDesc = snapshotDesc;
@@ -61,7 +62,7 @@ public class TakeSnapshotIfNotAlreadyAttached implements Function<IMachine, ISna
       ISession session = null;
       if(machine.getCurrentSnapshot() == null ) {
          try {
-            session = manager.openMachineSession(machine);
+            session = manager.get().openMachineSession(machine);
             IProgress progress = session.getConsole().takeSnapshot(snapshotName, snapshotDesc);
             if (progress.getCompleted())
                logger.debug("Snapshot %s (description: %s) taken from %s", snapshotName, snapshotDesc, machine.getName());

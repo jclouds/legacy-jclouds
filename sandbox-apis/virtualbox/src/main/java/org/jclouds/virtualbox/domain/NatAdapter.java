@@ -50,11 +50,25 @@ public class NatAdapter {
 
       private Set<RedirectRule> redirectRules = Sets.newLinkedHashSet();
 
+      /**
+       * @param host incoming address
+       * @param hostPort
+       * @param guest guest address or empty string for all addresses
+       * @param guestPort
+       * @return
+       */
       public Builder tcpRedirectRule(String host, int hostPort, String guest, int guestPort) {
          redirectRules.add(new RedirectRule(NATProtocol.TCP, host, hostPort, guest, guestPort));
          return this;
       }
-
+      
+      /**
+       * @param host incoming address
+       * @param hostPort
+       * @param guest guest address or empty string for all addresses
+       * @param guestPort
+       * @return
+       */
       public Builder udpRedirectRule(String host, int hostPort, String guest, int guestPort) {
          redirectRules.add(new RedirectRule(NATProtocol.UDP, host, hostPort, guest, guestPort));
          return this;

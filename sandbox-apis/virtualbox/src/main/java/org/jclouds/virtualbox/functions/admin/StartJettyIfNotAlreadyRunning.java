@@ -21,6 +21,10 @@ package org.jclouds.virtualbox.functions.admin;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,51 +35,51 @@ import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
-import org.jclouds.net.IPSocket;
-import org.jclouds.predicates.InetSocketAddressConnect;
+import org.jclouds.virtualbox.Preconfiguration;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 
-import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.inject.Singleton;
 
 /**
  * @author Andrea Turli
  */
-public class StartJettyIfNotAlreadyRunning implements Function<String, Server> {
+@Preconfiguration
+@Singleton
+public class StartJettyIfNotAlreadyRunning implements Supplier<URI> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
+   private final URI preconfigurationUrl;
    private final Server jetty;
-   private final int port;
 
-   public StartJettyIfNotAlreadyRunning(Server jetty, @Named(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT) int port) {
-      this.jetty = checkNotNull(jetty, "jetty");
-      this.port = port;
-   }
-
-   // TODO: getting an instance of the Server object should really be done in
-   // Guice, so inside a *Module class, perhaps as a @Provides method
    @Inject
-   public StartJettyIfNotAlreadyRunning(@Named(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT) int port) {
-      this(ServerJetty.getInstance().getServer(), port);
+   public StartJettyIfNotAlreadyRunning(
+            @Named(VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL) String preconfigurationUrl) {
+      this(new Server(URI.create(preconfigurationUrl).getPort()), preconfigurationUrl);
    }
 
-   @Override
-   public Server apply(@Nullable String baseResource) {
-      if (!jetty.getState().equals(Server.STARTED)
-            // TODO code smell = hard coding addresses or ports!!
-            && !new InetSocketAddressConnect().apply(new IPSocket("localhost", port))) {
+   public StartJettyIfNotAlreadyRunning(Server jetty,
+            @Named(VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL) String preconfigurationUrl) {
+      this.preconfigurationUrl = URI.create(checkNotNull(preconfigurationUrl, "preconfigurationUrl"));
+      this.jetty = jetty;
+   }
+
+   @PostConstruct
+   public void start() {
+
+      if (jetty.getState().equals(Server.STARTED)) {
+         logger.debug("not starting jetty, as existing host is serving %s", preconfigurationUrl);
+      } else {
+         logger.debug(">> starting jetty to serve %s", preconfigurationUrl);
          ResourceHandler resource_handler = new ResourceHandler();
          resource_handler.setDirectoriesListed(true);
          resource_handler.setWelcomeFiles(new String[] { "index.html" });
 
-         resource_handler.setResourceBase(baseResource);
-         logger.info("serving " + resource_handler.getBaseResource());
-
+         resource_handler.setResourceBase("");
          HandlerList handlers = new HandlerList();
          handlers.setHandlers(new Handler[] { resource_handler, new DefaultHandler() });
          jetty.setHandler(handlers);
@@ -83,34 +87,23 @@ public class StartJettyIfNotAlreadyRunning implements Function<String, Server> {
          try {
             jetty.start();
          } catch (Exception e) {
-            logger.error(e, "Server jetty could not be started at this %s", baseResource);
+            logger.error(e, "Server jetty could not be started for %s", preconfigurationUrl);
          }
-         return jetty;
-      } else {
-         logger.debug("Server jetty serving %s already running. Skipping start", baseResource);
-         return jetty;
+         logger.debug("<< serving %s", resource_handler.getBaseResource());
       }
 
    }
 
-   @Singleton
-   private static class ServerJetty {
-      private static ServerJetty instance;
-      private Server server;
-      private String port = System.getProperty(VirtualBoxConstants.VIRTUALBOX_JETTY_PORT, "8080");
-
-      private ServerJetty() {
-         this.server = new Server(Integer.parseInt(port));
+   @PreDestroy()
+   public void stop() {
+      try {
+         jetty.stop();
+      } catch (Exception e) {
       }
+   }
 
-      public static ServerJetty getInstance() {
-         if (instance == null)
-            instance = new ServerJetty();
-         return instance;
-      }
-
-      public Server getServer() {
-         return server;
-      }
+   @Override
+   public URI get() {
+      return preconfigurationUrl;
    }
 }

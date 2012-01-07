@@ -39,6 +39,8 @@ import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
+import com.google.common.base.Suppliers;
+
 /**
  * @author Mattias Holmqvist
  */
@@ -86,7 +88,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       
       replay(manager, createdMachine, vBox, session);
 
-      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager, "/tmp/workingDir").apply(launchSpecification);
+      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Suppliers.ofInstance(manager), "/tmp/workingDir").apply(launchSpecification);
 
       verify(manager, createdMachine, vBox, session);
    }
@@ -107,7 +109,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       VmSpec launchSpecification = VmSpec.builder().id("").name(vmName).osTypeId("").memoryMB(1024).cleanUpMode(
                CleanupMode.Full).build();
-      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager, "/tmp/workingDir").apply(launchSpecification);
+      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Suppliers.ofInstance(manager), "/tmp/workingDir").apply(launchSpecification);
    }
 
    @Test(expectedExceptions = VBoxException.class)
@@ -129,7 +131,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       VmSpec launchSpecification = VmSpec.builder().id("").name(vmName).osTypeId("").cleanUpMode(CleanupMode.Full)
                .memoryMB(1024).build();
-      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager, "/tmp/workingDir").apply(launchSpecification);
+      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Suppliers.ofInstance(manager), "/tmp/workingDir").apply(launchSpecification);
 
    }
 

@@ -34,7 +34,15 @@ public class RedirectRule {
    private final int hostPort;
    private final String guest;
    private final int guestPort;
-
+   
+   /**
+    * @param protocol
+    * @param host incoming address
+    * @param hostPort
+    * @param guest guest address or empty string for all addresses
+    * @param guestPort
+    * @return
+    */
    public RedirectRule(NATProtocol protocol, String host, int hostPort, String guest, int guestPort) {
       checkNotNull(protocol);
       checkNotNull(host);

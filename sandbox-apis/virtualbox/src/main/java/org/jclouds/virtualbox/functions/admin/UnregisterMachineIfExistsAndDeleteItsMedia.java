@@ -28,6 +28,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
@@ -45,8 +46,8 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
-public class UnregisterMachineIfExistsAndDeleteItsMedia implements
-      Function<IMachine, Void> {
+@Singleton
+public class UnregisterMachineIfExistsAndDeleteItsMedia implements Function<IMachine, Void> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -66,18 +67,16 @@ public class UnregisterMachineIfExistsAndDeleteItsMedia implements
       } catch (VBoxException e) {
          ErrorCode errorCode = ErrorCode.valueOf(e);
          switch (errorCode) {
-         case VBOX_E_OBJECT_NOT_FOUND:
-            logger.debug("Machine %s does not exists, cannot unregister",
-                  vmSpec.getVmName());
-            break;
-         default:
-            throw e;
+            case VBOX_E_OBJECT_NOT_FOUND:
+               logger.debug("Machine %s does not exists, cannot unregister", vmSpec.getVmName());
+               break;
+            default:
+               throw e;
          }
       }
 
-      List<IMedium> filteredMediaToBeDeleted = Lists.newArrayList(transform(
-            filter(mediaToBeDeleted, new AutoDeleteHardDiskPredicate(vmSpec)),
-            new DeleteChildrenOfMedium()));
+      List<IMedium> filteredMediaToBeDeleted = Lists.newArrayList(transform(filter(mediaToBeDeleted,
+               new AutoDeleteHardDiskPredicate(vmSpec)), new DeleteChildrenOfMedium()));
 
       checkNotNull(filteredMediaToBeDeleted);
       if (!filteredMediaToBeDeleted.isEmpty()) {
@@ -85,8 +84,7 @@ public class UnregisterMachineIfExistsAndDeleteItsMedia implements
             IProgress deletion = machine.delete(filteredMediaToBeDeleted);
             deletion.waitForCompletion(-1);
          } catch (Exception e) {
-            logger.error(e, "Problem in deleting the media attached to %s",
-                  machine.getName());
+            logger.error(e, "Problem in deleting the media attached to %s", machine.getName());
             Throwables.propagate(e);
          }
       }

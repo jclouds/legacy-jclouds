@@ -19,13 +19,19 @@
 
 package org.jclouds.virtualbox.util;
 
+import static org.jclouds.scriptbuilder.domain.Statements.call;
+import static org.jclouds.scriptbuilder.domain.Statements.findPid;
+import static org.jclouds.scriptbuilder.domain.Statements.kill;
+import static org.jclouds.scriptbuilder.domain.Statements.newStatementList;
+
+import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Throwables2;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.LockType;
+import org.virtualbox_4_1.SessionState;
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
-import org.virtualbox_4_1.jaxws.SessionState;
 
 import com.google.common.base.Function;
 
@@ -132,33 +138,42 @@ public class MachineUtils {
          return null;
       }
    }
-   
+
    /**
     * Unlocks the machine and executes the given function using the machine matching the given id.
     * Since the machine is unlocked it is possible to delete the IMachine.
     * <p/>
-    *
-    * @param manager   the VirtualBoxManager
-    * @param machineId the id of the machine
-    * @param function  the function to execute
+    * 
+    *<h3>Note!</h3> Currently, this can only unlock the machine, if the lock was created in the
+    * current session.
+    * 
+    * @param manager
+    *           the VirtualBoxManager
+    * @param machineId
+    *           the id of the machine
+    * @param function
+    *           the function to execute
     * @return the result from applying the function to the machine.
     */
    public static <T> T unlockMachineAndApply(VirtualBoxManager manager, final String machineId,
-                                           final Function<IMachine, T> function) {
+            final Function<IMachine, T> function) {
       try {
          ISession session = manager.getSessionObject();
          IMachine immutableMachine = manager.getVBox().findMachine(machineId);
-         if(immutableMachine.getSessionState().equals(SessionState.LOCKED))
+         SessionState state = immutableMachine.getSessionState();
+         if (state.equals(SessionState.Locked))
             session.unlockMachine();
-         
+         //TODO: wire this in
+         Statement kill = newStatementList(call("default"), findPid(machineId), kill());
+
          return function.apply(immutableMachine);
-         
+
       } catch (VBoxException e) {
-         throw new RuntimeException(String.format("error applying %s to %s: %s", function, machineId,
-                 e.getMessage()), e);
+         throw new RuntimeException(String.format("error applying %s to %s: %s", function, machineId, e.getMessage()),
+                  e);
       }
    }
-   
+
    /**
     * Unlocks the machine and executes the given function, if the machine is registered.
     * Since the machine is unlocked it is possible to delete the machine.

@@ -44,9 +44,12 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
       String path = System.getProperty("user.home") + "/jclouds-virtualbox-test/test-medium-1.vdi";
       HardDisk hardDisk = HardDisk.builder().diskpath(path).controllerPort(0).deviceSlot(0).build();
       IMedium iMedium = new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
-      manager.getVBox().findMedium(path, DeviceType.HardDisk);
-      assertFileCanBeDeleted(path);
-      deleteMediumAndBlockUntilComplete(iMedium);
+      manager.get().getVBox().findMedium(path, DeviceType.HardDisk);
+      try {
+         assertFileCanBeDeleted(path);
+      } finally {
+         deleteMediumAndBlockUntilComplete(iMedium);
+      }
    }
 
    @Test
@@ -68,9 +71,12 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
       HardDisk hardDisk = HardDisk.builder().diskpath(path).controllerPort(0).deviceSlot(0).build();
       IMedium iMedium = new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
       iMedium = new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
-      manager.getVBox().findMedium(path, DeviceType.HardDisk);
-      assertFileCanBeDeleted(path);
-      deleteMediumAndBlockUntilComplete(iMedium);
+      manager.get().getVBox().findMedium(path, DeviceType.HardDisk);
+      try {
+         assertFileCanBeDeleted(path);
+      } finally {
+         deleteMediumAndBlockUntilComplete(iMedium);
+      }
 
    }
 
@@ -79,10 +85,10 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
       boolean mediumDeleted = file.delete();
       assertTrue(mediumDeleted);
    }
-   
-   void deleteMediumAndBlockUntilComplete(IMedium medium){
+
+   void deleteMediumAndBlockUntilComplete(IMedium medium) {
       final IProgress progress = medium.deleteStorage();
       progress.waitForCompletion(-1);
    }
-   
+
 }

@@ -31,9 +31,12 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
-import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.callables.RunScriptOnNode.Factory;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
+import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.scriptbuilder.domain.Statements;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -47,27 +50,25 @@ import com.google.inject.name.Named;
 /**
  * @author Andrea Turli
  */
-public class RetrieveActiveBridgedInterfaces implements Function<String, List<String>> {
+public class RetrieveActiveBridgedInterfaces implements Function<NodeMetadata, List<String>> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private ComputeServiceContext context;
+   private final Factory runScriptOnNodeFactory;
 
    @Inject
-   public RetrieveActiveBridgedInterfaces(ComputeServiceContext context) {
-      this.context = context;
+   public RetrieveActiveBridgedInterfaces(Factory runScriptOnNodeFactory) {
+      this.runScriptOnNodeFactory = checkNotNull(runScriptOnNodeFactory, "runScriptOnNodeFactory");
    }
 
    @Override
-   public List<String> apply(String hostId) {
+   public List<String> apply(NodeMetadata host) {
       // Bridged Network
-      String command = "vboxmanage list bridgedifs";
-      String bridgedIfBlocks = context
-              .getComputeService()
-              .runScriptOnNode(hostId, command,
-                      runAsRoot(false).wrapInInitScript(false)).getOutput();
+      Statement command = Statements.exec("vboxmanage list bridgedifs");
+      String bridgedIfBlocks = runScriptOnNodeFactory.create(host, command, runAsRoot(false).wrapInInitScript(false))
+               .init().call().getOutput();
 
       List<String> bridgedInterfaces = retrieveBridgedInterfaceNames(bridgedIfBlocks);
       checkNotNull(bridgedInterfaces);
@@ -125,9 +126,8 @@ public class RetrieveActiveBridgedInterfaces implements Function<String, List<St
       @Override
       public boolean apply(String bridgedInterfaceName) {
          try {
-            return (bridgedInterfaceName.startsWith(networkInterface
-                    .getDisplayName()) && networkInterface.isUp() && !networkInterface
-                    .isLoopback());
+            return (bridgedInterfaceName.startsWith(networkInterface.getDisplayName()) && networkInterface.isUp() && !networkInterface
+                     .isLoopback());
          } catch (SocketException e) {
             logger.error(e, "Problem in listing network interfaces.");
             propagate(e);

@@ -38,15 +38,16 @@ import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 @Singleton
 public class IMachineToImage implements Function<IMachine, Image> {
 
-   private final VirtualBoxManager virtualboxManager;
+   private final Supplier<VirtualBoxManager> virtualboxManager;
    private final Map<OsFamily, Map<String, String>> osVersionMap;
 
    @Inject
-   public IMachineToImage(VirtualBoxManager virtualboxManager, Map<OsFamily, Map<String, String>> osVersionMap) {
+   public IMachineToImage(Supplier<VirtualBoxManager> virtualboxManager, Map<OsFamily, Map<String, String>> osVersionMap) {
       this.virtualboxManager = checkNotNull(virtualboxManager, "virtualboxManager");
       this.osVersionMap = checkNotNull(osVersionMap, "osVersionMap");
    }
@@ -56,7 +57,7 @@ public class IMachineToImage implements Function<IMachine, Image> {
       if (from == null)
          return null;
 
-      IGuestOSType guestOSType = virtualboxManager.getVBox().getGuestOSType(from.getOSTypeId());
+      IGuestOSType guestOSType = virtualboxManager.get().getVBox().getGuestOSType(from.getOSTypeId());
       OsFamily family = parseOsFamilyOrUnrecognized(guestOSType.getDescription());
       String version = parseVersionOrReturnEmptyString(family, guestOSType.getDescription(), osVersionMap);
       OperatingSystem os = OperatingSystem.builder().description(guestOSType.getDescription()).family(family)

@@ -16,33 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.jclouds.virtualbox.predicates;
 
-package org.jclouds.virtualbox;
+import javax.annotation.Resource;
 
-import java.util.List;
-import java.util.Properties;
+import org.jclouds.logging.Logger;
+import org.jclouds.ssh.SshClient;
+import org.jclouds.ssh.SshException;
 
-import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
-import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
-
-import com.google.common.base.Supplier;
-import com.google.inject.Module;
+import com.google.common.base.Predicate;
 
 /**
- * Creates compute service context for VirtualBox
  * 
- * @author Mattias Holmqvist, Andrea Turli
+ * @author Adrian Cole
  */
-@SuppressWarnings("unchecked")
-public class VirtualBoxContextBuilder extends StandaloneComputeServiceContextBuilder<Supplier> {
-
-   public VirtualBoxContextBuilder(Properties properties) {
-      super(Supplier.class, properties);
-   }
+public class SshResponds implements Predicate<SshClient> {
+   @Resource
+   protected Logger logger = Logger.NULL;
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new VirtualBoxComputeServiceContextModule());
-   }
+   public boolean apply(SshClient client) {
 
+      try {
+         client.connect();
+         if (client.exec("id").getExitCode() == 0) {
+            return true;
+         }
+      } catch (SshException e) {
+         logger.trace("No response from ssh daemon connecting to %s: %s", client, e.getMessage());
+      } finally {
+         client.disconnect();
+      }
+      return false;
+   }
 }

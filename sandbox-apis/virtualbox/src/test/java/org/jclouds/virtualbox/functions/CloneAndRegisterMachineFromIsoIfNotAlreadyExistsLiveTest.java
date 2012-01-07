@@ -19,95 +19,83 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static org.jclouds.virtualbox.experiment.TestUtils.computeServiceForLocalhostAndGuest;
-import static org.jclouds.virtualbox.util.MachineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.domain.Credentials;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
-import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.StorageBus;
-import org.virtualbox_4_1.VirtualBoxManager;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Andrea Turli
  */
 @Test(groups = "live", singleThreaded = true, testName = "CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest")
-public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
-      BaseVirtualBoxClientLiveTest {
+public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClientLiveTest {
 
    private static final boolean IS_LINKED_CLONE = true;
-   private String vmId = "jclouds-image-iso-1";
-   private String osTypeId = "";
-   private String guestId = "guest";
-   private String hostId = "host";
 
-   private String vmName = "jclouds-virtualbox-clone-test";
-   private String cloneName = vmName + "_clone";
    private VmSpec clonedVmSpec;
+   private VmSpec sourceVmSpec;
 
-   private String ideControllerName = "IDE Controller";
    private CleanupMode mode = CleanupMode.Full;
+
+   @Override
+   @BeforeClass(groups = "live")
+   public void setupClient() {
+      setupCredentials();
+      String sourceName = "jclouds#image#"
+               + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
+      String cloneName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
+
+      StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
+               .attachISO(0, 0, operatingSystemIso).attachHardDisk(
+                        HardDisk.builder().diskpath(adminDisk).controllerPort(0).deviceSlot(1).build()).attachISO(1, 1,
+                        guestAdditionsIso).build();
+
+      sourceVmSpec = VmSpec.builder().id(sourceName).name(sourceName).osTypeId("").memoryMB(512).cleanUpMode(
+               CleanupMode.Full).controller(ideController).forceOverwrite(true).build();
+
+      clonedVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(512).cleanUpMode(mode)
+               .forceOverwrite(true).build();
+   }
 
    @Test
    public void testCloneMachineFromAnotherMachine() throws Exception {
-      VirtualBoxManager manager = (VirtualBoxManager) context
-            .getProviderSpecificContext().getApi();
-      ComputeServiceContext localHostContext = computeServiceForLocalhostAndGuest(
-            hostId, "localhost", guestId, "localhost", new Credentials("toor",
-                  "password"));
+      try {
+         IMachine source = getSourceNode();
 
-      IMachine master = getMasterNode(manager, localHostContext);
+         if (source.getCurrentSnapshot() != null) {
+            ISession session = manager.get().openMachineSession(source);
+            session.getConsole().deleteSnapshot(source.getCurrentSnapshot().getId());
+            session.unlockMachine();
+         }
 
-      if (master.getCurrentSnapshot() != null) {
-         ISession session = manager.openMachineSession(master);
-         session.getConsole().deleteSnapshot(
-               master.getCurrentSnapshot().getId());
-         session.unlockMachine();
+         IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, clonedVmSpec,
+                  IS_LINKED_CLONE).apply(source);
+         assertEquals(clone.getName(), clonedVmSpec.getVmName());
+      } finally {
+         for (VmSpec spec : ImmutableSet.of(clonedVmSpec, sourceVmSpec))
+            undoVm(spec);
       }
-
-      clonedVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(512)
-            .cleanUpMode(mode)
-            .forceOverwrite(true).build();
-      IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
-            manager, workingDir, clonedVmSpec, IS_LINKED_CLONE).apply(master);
-      assertEquals(clone.getName(), clonedVmSpec.getVmName());
-      for (VmSpec spec : ImmutableSet.of(clonedVmSpec, new IMachineToVmSpec().apply(master)))
-            unlockMachineAndApplyOrReturnNullIfNotRegistered(manager, spec.getVmName(), new UnregisterMachineIfExistsAndDeleteItsMedia(spec));
 
    }
 
-   private IMachine getMasterNode(VirtualBoxManager manager,
-         ComputeServiceContext localHostContext) {
+   private IMachine getSourceNode() {
       try {
-         StorageController ideController = StorageController
-               .builder()
-               .name(ideControllerName)
-               .bus(StorageBus.IDE)
-               .attachISO(0, 0, operatingSystemIso)
-               .attachHardDisk(
-                     HardDisk.builder().diskpath(adminDisk)
-                           .controllerPort(0).deviceSlot(1).build())
-               .attachISO(1, 1, guestAdditionsIso)
-               .build();
-         VmSpec vmSpec = VmSpec.builder().id(vmId).name(vmName)
-               .osTypeId(osTypeId).memoryMB(512).cleanUpMode(CleanupMode.Full)
-               .controller(ideController).forceOverwrite(true).build();
-         return new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(manager, workingDir).apply(vmSpec);
-
+         return context.utils().injector().getInstance(CreateAndRegisterMachineFromIsoIfNotAlreadyExists.class).apply(
+                  sourceVmSpec);
       } catch (IllegalStateException e) {
          // already created
-         return manager.getVBox().findMachine(vmName);
+         return manager.get().getVBox().findMachine(sourceVmSpec.getVmId());
       }
    }
 }
