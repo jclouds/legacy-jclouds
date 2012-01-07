@@ -116,6 +116,9 @@
     <build>
         <resources>
             <resource>
+                <directory>${project.basedir}/src/main/clojure</directory>
+            </resource>
+            <resource>
                 <directory>${project.basedir}/src/main/resources</directory>
                 <excludes>
                     <exclude>META-INF/jclouds-version.properties</exclude>
