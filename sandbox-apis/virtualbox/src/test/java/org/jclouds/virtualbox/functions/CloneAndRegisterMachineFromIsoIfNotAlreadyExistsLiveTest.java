@@ -19,6 +19,7 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
@@ -51,14 +52,16 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends Ba
    @Override
    @BeforeClass(groups = "live")
    public void setupClient() {
-      setupCredentials();
-      String sourceName = "jclouds#image#"
+      super.setupClient();
+      String sourceName = VIRTUALBOX_IMAGE_PREFIX 
                + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
-      String cloneName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
+      String cloneName = VIRTUALBOX_IMAGE_PREFIX 
+            + "Clone#" + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName()
+            );
 
       StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
                .attachISO(0, 0, operatingSystemIso).attachHardDisk(
-                        HardDisk.builder().diskpath(adminDisk).controllerPort(0).deviceSlot(1).build()).attachISO(1, 1,
+                        HardDisk.builder().diskpath(adminDisk).controllerPort(0).deviceSlot(1).autoDelete(true).build()).attachISO(1, 1,
                         guestAdditionsIso).build();
 
       sourceVmSpec = VmSpec.builder().id(sourceName).name(sourceName).osTypeId("").memoryMB(512).cleanUpMode(

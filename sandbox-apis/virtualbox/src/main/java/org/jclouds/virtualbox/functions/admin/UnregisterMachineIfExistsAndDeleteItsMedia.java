@@ -78,7 +78,6 @@ public class UnregisterMachineIfExistsAndDeleteItsMedia implements Function<IMac
       List<IMedium> filteredMediaToBeDeleted = Lists.newArrayList(transform(filter(mediaToBeDeleted,
                new AutoDeleteHardDiskPredicate(vmSpec)), new DeleteChildrenOfMedium()));
 
-      checkNotNull(filteredMediaToBeDeleted);
       if (!filteredMediaToBeDeleted.isEmpty()) {
          try {
             IProgress deletion = machine.delete(filteredMediaToBeDeleted);
@@ -88,6 +87,7 @@ public class UnregisterMachineIfExistsAndDeleteItsMedia implements Function<IMac
             Throwables.propagate(e);
          }
       }
+      
       return null;
    }
 
@@ -120,7 +120,6 @@ public class UnregisterMachineIfExistsAndDeleteItsMedia implements Function<IMac
                deletion.waitForCompletion(-1);
             }
          }
-
          return medium;
       }
 

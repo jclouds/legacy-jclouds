@@ -23,6 +23,7 @@ import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.transform;
 import static org.testng.Assert.assertTrue;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +48,7 @@ import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.StorageBus;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.inject.Guice;
 
@@ -66,7 +68,8 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
    @BeforeClass(groups = "live")
    public void setupClient() {
       super.setupClient();
-      String vmName = "jclouds-image-virtualbox-iso-to-machine-test";
+      String vmName = VIRTUALBOX_IMAGE_PREFIX 
+            + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
 
       HardDisk hardDisk = HardDisk.builder().diskpath(adminDisk).autoDelete(true)
             .controllerPort(0).deviceSlot(1).build();
