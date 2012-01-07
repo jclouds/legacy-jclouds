@@ -29,7 +29,9 @@ import org.jclouds.cloudstack.domain.LoadBalancerRule;
 import org.jclouds.cloudstack.domain.LoadBalancerRule.Algorithm;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.options.CreateLoadBalancerRuleOptions;
 import org.jclouds.cloudstack.options.ListLoadBalancerRulesOptions;
+import org.jclouds.cloudstack.options.UpdateLoadBalancerRuleOptions;
 import org.jclouds.functions.JoinOnComma;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.OnlyElement;
@@ -76,7 +78,7 @@ public interface LoadBalancerAsyncClient {
    ListenableFuture<LoadBalancerRule> getLoadBalancerRule(@QueryParam("id") long id);
 
    /**
-    * @see LoadBalancerClient#createLoadBalancerRuleForPublicIp
+    * @see LoadBalancerClient#createLoadBalancerRuleForPublicIP
     */
    @GET
    @QueryParams(keys = "command", values = "createLoadBalancerRule")
@@ -84,7 +86,19 @@ public interface LoadBalancerAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> createLoadBalancerRuleForPublicIP(@QueryParam("publicipid") long publicIPId,
          @QueryParam("algorithm") Algorithm algorithm, @QueryParam("name") String name,
-         @QueryParam("privateport") int privatePort, @QueryParam("publicport") int publicPort);
+         @QueryParam("privateport") int privatePort, @QueryParam("publicport") int publicPort,
+         CreateLoadBalancerRuleOptions... options);
+
+   /**
+    * @see LoadBalancerClient#updateLoadBalancerRule
+    */
+   @GET
+   @QueryParams(keys = "command", values ="updateLoadBalancerRule")
+   @SelectJson("loadbalancerrule")
+   @OnlyElement
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<LoadBalancerRule> updateLoadBalancerRule(@QueryParam("id") long id, UpdateLoadBalancerRuleOptions... options);
 
    /**
     * @see LoadBalancerClient#deleteLoadBalancerRule
