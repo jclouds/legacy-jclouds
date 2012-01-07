@@ -64,8 +64,8 @@ public interface IpAsyncClient {
     */
    @POST
    @Path("/ip/add/format/json")
-   ListenableFuture<Void> add(@FormParam("serverid") String serverId,
-                              @FormParam("ipaddress") String ipAddress);
+   ListenableFuture<Void> addIpToServer(@FormParam("ipaddress") String ipAddress,
+                                        @FormParam("serverid") String serverId);
 
 
    /**
@@ -75,7 +75,7 @@ public interface IpAsyncClient {
     */
    @POST
    @Path("/ip/remove/format/json")
-   ListenableFuture<Void> remove(@FormParam("ipaddress") String ipAddress,
+   ListenableFuture<Void> removeIpFromServer(@FormParam("ipaddress") String ipAddress,
                                  @FormParam("serverid") String serverId);
 
 

@@ -180,12 +180,12 @@ public class IpClientExpectTest extends BaseRestClientExpectTest<GleSYSClient> {
                               "Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                       .payload(newUrlEncodedFormPayload(
                               ImmutableMultimap.<String, String>builder()
-                                      .put("serverid", "vz1946889")
-                                      .put("ipaddress", "31.192.227.37").build())).build(),
+                                      .put("ipaddress", "31.192.227.37")
+                                      .put("serverid", "vz1946889").build())).build(),
               HttpResponse.builder().statusCode(200).build())
               .getIpClient();
 
-      client.add("vz1946889", "31.192.227.37");
+      client.addIpToServer("31.192.227.37", "vz1946889");
    }
 
    public void testAddWhenResponseIs4xxThrowsHttpException() {
@@ -196,13 +196,14 @@ public class IpClientExpectTest extends BaseRestClientExpectTest<GleSYSClient> {
                               "Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                       .payload(newUrlEncodedFormPayload(
                               ImmutableMultimap.<String, String>builder()
+                                      .put("ipaddress", "31.192.227.37")
                                       .put("serverid", "vz1946889")
-                                      .put("ipaddress", "31.192.227.37").build())).build(),
+                                      .build())).build(),
               HttpResponse.builder().statusCode(400).build())
               .getIpClient();
 
       try {
-         client.add("vz1946889", "31.192.227.37");
+         client.addIpToServer("31.192.227.37", "vz1946889");
          fail();
       } catch (HttpResponseException e) {
          // Expected
@@ -222,7 +223,7 @@ public class IpClientExpectTest extends BaseRestClientExpectTest<GleSYSClient> {
               HttpResponse.builder().statusCode(200).build())
               .getIpClient();
 
-      client.remove("31.192.227.37", "vz1946889");
+      client.removeIpFromServer("31.192.227.37", "vz1946889");
    }
 
    public void testRemoveWhenResponseIs4xxThrowsHttpException() {
@@ -239,7 +240,7 @@ public class IpClientExpectTest extends BaseRestClientExpectTest<GleSYSClient> {
               .getIpClient();
 
       try {
-         client.remove("31.192.227.37", "vz1946889");
+         client.removeIpFromServer("31.192.227.37", "vz1946889");
          fail();
       } catch (HttpResponseException e) {
          // Expected
