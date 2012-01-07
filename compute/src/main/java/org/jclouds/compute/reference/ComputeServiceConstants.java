@@ -39,10 +39,24 @@ public interface ComputeServiceConstants {
    
    public static final String PROPERTY_INIT_STATUS_INITIAL_PERIOD = "jclouds.compute.init-status.initial-period";
    public static final String PROPERTY_INIT_STATUS_MAX_PERIOD = "jclouds.compute.init-status.max-period";
+   
    /**
     * overrides the image specified in the subclass of {@link BaseComputeServiceContextModule#provideTemplate}
     */
    public static final String PROPERTY_IMAGE_ID = "jclouds.image-id";
+
+   /**
+    * username and, if colon delimited, password of the default user on the image that is or can become root
+    * <p/>
+    * ex. {@code ubuntu}
+    * ex. {@code toor:password}
+    */
+   public static final String PROPERTY_IMAGE_LOGIN_USER = "jclouds.image.login-user";
+
+   /**
+    * true if gaining a sudo shell requires a password
+    */
+   public static final String PROPERTY_IMAGE_AUTHENTICATE_SUDO = "jclouds.image.authenticate-sudo";
 
    /**
     * comma-separated nodes that we shouldn't attempt to list as they are dead
