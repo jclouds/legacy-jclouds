@@ -22,8 +22,11 @@ import static org.jclouds.cloudstack.options.ListLoadBalancerRulesOptions.Builde
 import static org.jclouds.cloudstack.options.ListLoadBalancerRulesOptions.Builder.domainId;
 import static org.jclouds.cloudstack.options.ListLoadBalancerRulesOptions.Builder.id;
 import static org.jclouds.cloudstack.options.ListLoadBalancerRulesOptions.Builder.name;
+import static org.jclouds.cloudstack.options.ListLoadBalancerRulesOptions.Builder.page;
+import static org.jclouds.cloudstack.options.ListLoadBalancerRulesOptions.Builder.pageSize;
 import static org.jclouds.cloudstack.options.ListLoadBalancerRulesOptions.Builder.publicIPId;
 import static org.jclouds.cloudstack.options.ListLoadBalancerRulesOptions.Builder.virtualMachineId;
+import static org.jclouds.cloudstack.options.ListLoadBalancerRulesOptions.Builder.zoneId;
 import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
@@ -32,7 +35,7 @@ import com.google.common.collect.ImmutableList;
 
 /**
  * Tests behavior of {@code ListLoadBalancerRulesOptions}
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "unit")
@@ -98,5 +101,35 @@ public class ListLoadBalancerRulesOptionsTest {
    public void testVirtualMachineIdStatic() {
       ListLoadBalancerRulesOptions options = virtualMachineId(6);
       assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("virtualmachineid"));
+   }
+
+   public void testZoneId() {
+      ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions().zoneId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
+   }
+
+   public void testZoneIdStatic() {
+      ListLoadBalancerRulesOptions options = zoneId(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("zoneid"));
+   }
+
+   public void testPage() {
+      ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions().page(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("page"));
+   }
+
+   public void testPageStatic() {
+      ListLoadBalancerRulesOptions options = page(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("page"));
+   }
+
+   public void testPageSize() {
+      ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions().pageSize(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("pagesize"));
+   }
+
+   public void testPageSizeStatic() {
+      ListLoadBalancerRulesOptions options = pageSize(6);
+      assertEquals(ImmutableList.of("6"), options.buildQueryParameters().get("pagesize"));
    }
 }

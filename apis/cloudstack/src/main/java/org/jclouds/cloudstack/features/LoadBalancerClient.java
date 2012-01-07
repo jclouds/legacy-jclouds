@@ -24,7 +24,9 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
 import org.jclouds.cloudstack.domain.LoadBalancerRule.Algorithm;
 import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.cloudstack.options.CreateLoadBalancerRuleOptions;
 import org.jclouds.cloudstack.options.ListLoadBalancerRulesOptions;
+import org.jclouds.cloudstack.options.UpdateLoadBalancerRuleOptions;
 import org.jclouds.concurrent.Timeout;
 
 /**
@@ -72,10 +74,22 @@ public interface LoadBalancerClient {
     * @param publicPort
     *           public ip address id from where the network traffic will be load
     *           balanced from
+    * @param options optional call arguments
     * @return newly created rule
     */
    Long createLoadBalancerRuleForPublicIP(long publicIPId, Algorithm algorithm, String name,
-         int privatePort, int publicPort);
+         int privatePort, int publicPort, CreateLoadBalancerRuleOptions... options);
+
+   /**
+    * Update a load balancer rule.
+    *
+    * @param id
+    *       rule id
+    * @param options
+    *       optional arguments
+    * @return updated rule
+    */
+   LoadBalancerRule updateLoadBalancerRule(long id, UpdateLoadBalancerRuleOptions... options);
 
    /**
     * 

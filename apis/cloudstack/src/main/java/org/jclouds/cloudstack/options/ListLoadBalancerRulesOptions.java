@@ -66,7 +66,30 @@ public class ListLoadBalancerRulesOptions extends AccountInDomainOptions {
    public ListLoadBalancerRulesOptions virtualMachineId(long virtualMachineId) {
       this.queryParameters.replaceValues("virtualmachineid", ImmutableSet.of(virtualMachineId + ""));
       return this;
+   }
 
+   /**
+    * @param zoneId the availability zone ID
+    */
+   public ListLoadBalancerRulesOptions zoneId(long zoneId) {
+      this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
+      return this;
+   }
+
+   /**
+    * @param page the number of the page
+    */
+   public ListLoadBalancerRulesOptions page(long page) {
+      this.queryParameters.replaceValues("page", ImmutableSet.of(page + ""));
+      return this;
+   }
+
+   /**
+    * @param pageSize
+    */
+   public ListLoadBalancerRulesOptions pageSize(long pageSize) {
+      this.queryParameters.replaceValues("pagesize", ImmutableSet.of(pageSize + ""));
+      return this;
    }
 
    public static class Builder {
@@ -117,6 +140,30 @@ public class ListLoadBalancerRulesOptions extends AccountInDomainOptions {
       public static ListLoadBalancerRulesOptions virtualMachineId(long virtualMachineId) {
          ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions();
          return options.virtualMachineId(virtualMachineId);
+      }
+
+      /**
+       * @see ListLoadBalancerRulesOptions#zoneId
+       */
+      public static ListLoadBalancerRulesOptions zoneId(long zoneId) {
+         ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions();
+         return options.zoneId(zoneId);
+      }
+
+      /**
+       * @see ListLoadBalancerRulesOptions#page
+       */
+      public static ListLoadBalancerRulesOptions page(long page) {
+         ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions();
+         return options.page(page);
+      }
+
+      /**
+       * @see ListLoadBalancerRulesOptions#pageSize
+       */
+      public static ListLoadBalancerRulesOptions pageSize(long pageSize) {
+         ListLoadBalancerRulesOptions options = new ListLoadBalancerRulesOptions();
+         return options.pageSize(pageSize);
       }
    }
 
