@@ -58,6 +58,7 @@ import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.lifecycle.config.LifeCycleModule;
 import org.jclouds.location.Iso3166;
 import org.jclouds.location.Provider;
 import org.jclouds.location.config.ProvideIso3166CodesByLocationIdViaProperties;
@@ -80,12 +81,14 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.ExecutionList;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Provides;
+import com.google.inject.Stage;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -194,8 +197,11 @@ public class RestContextBuilder<S, A> {
       ifHttpConfigureRestOtherwiseGuiceClientFactory(modules);
       addExecutorServiceIfNotPresent(modules);
       addCredentialStoreIfNotPresent(modules);
+      modules.add(new LifeCycleModule());
       modules.add(new BindPropertiesAndPrincipalContext(properties));
-      return Guice.createInjector(modules);
+      Injector returnVal = Guice.createInjector(Stage.PRODUCTION, modules);
+      returnVal.getInstance(ExecutionList.class).execute();
+      return returnVal;
    }
 
    @VisibleForTesting
