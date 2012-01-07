@@ -57,7 +57,7 @@ public class VirtualBoxPropertiesBuilder extends PropertiesBuilder {
       properties.put(PROPERTY_IDENTITY, "administrator");
       properties.put(PROPERTY_CREDENTIAL, "12345");
 
-      properties.put(PROPERTY_IMAGE_ID, "ubuntu-11.04-server-i386");
+      properties.put(PROPERTY_IMAGE_ID, "ubuntu-10.04.3-server-i386");
       properties.put(PROPERTY_IMAGE_LOGIN_USER, "toor:password");
       properties.put(PROPERTY_IMAGE_AUTHENTICATE_SUDO, "true");
 

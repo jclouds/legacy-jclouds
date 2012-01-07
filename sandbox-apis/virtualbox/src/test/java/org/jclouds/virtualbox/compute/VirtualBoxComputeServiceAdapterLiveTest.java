@@ -21,6 +21,7 @@ package org.jclouds.virtualbox.compute;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.domain.ExecResponse;
@@ -94,7 +95,7 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
    @Test
    public void testListHardwareProfiles() {
       Iterable<IMachine> profiles = adapter.listHardwareProfiles();
-      assertFalse(Iterables.isEmpty(profiles));
+      assertTrue(Iterables.isEmpty(profiles));
       // check state;
    }
 
