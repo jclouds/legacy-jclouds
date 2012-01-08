@@ -36,29 +36,29 @@
         <level value="warn" />
     </root>
 
-    <category name="org.jclouds">
-        <priority value="DEBUG" />
+    <logger name="org.jclouds">
+        <level value="DEBUG" />
         <appender-ref ref="FILE" />
-    </category>
+    </logger>
 
-    <category name="jclouds.wire">
-        <priority value="DEBUG" />
+    <logger name="jclouds.wire">
+        <level value="DEBUG" />
         <appender-ref ref="WIREFILE" />
-    </category>
+    </logger>
 
-    <category name="jclouds.headers">
-        <priority value="DEBUG" />
+    <logger name="jclouds.headers">
+        <level value="DEBUG" />
         <appender-ref ref="WIREFILE" />
-    </category>
+    </logger>
 
-    <category name="jclouds.compute">
-        <priority value="DEBUG" />
+    <logger name="jclouds.compute">
+        <level value="DEBUG" />
         <appender-ref ref="COMPUTEFILE" />
-    </category>
+    </logger>
     
-    <category name="jclouds.ssh">
-        <priority value="DEBUG" />
+    <logger name="jclouds.ssh">
+        <level value="DEBUG" />
         <appender-ref ref="SSHFILE" />
-    </category>
+    </logger>
 
 </configuration>
