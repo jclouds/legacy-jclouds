@@ -52,7 +52,7 @@ public abstract class BaseTestInitializer {
       if (buildVersion != null)
          testContext.setAttribute("test." + provider + ".build-version", buildVersion);
       if (identity != null) {
-         return createLiveContext(configurationModule, endpoint, apiVersion, app, identity, credential);
+         return createLiveContext(configurationModule, endpoint, apiVersion, buildVersion, app, identity, credential);
       } else {
          return createStubContext();
       }
@@ -89,5 +89,5 @@ public abstract class BaseTestInitializer {
    }
 
    protected abstract BlobStoreContext createLiveContext(Module configurationModule, String url, String apiVersion,
-            String app, String identity, String key) throws IOException;
+            String buildVersion, String app, String identity, String key) throws IOException;
 }
