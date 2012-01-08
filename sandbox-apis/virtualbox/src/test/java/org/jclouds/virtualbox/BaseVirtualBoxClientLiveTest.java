@@ -34,7 +34,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.domain.VmSpec;
@@ -102,7 +102,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
                         URI.create("file://" + System.getProperty("user.home") + "/.ssh/id_rsa")).build()));
 
       context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet
-               .<Module> of(new Log4JLoggingModule(), new SshjSshClientModule(), hostModule), overrides);
+               .<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule(), hostModule), overrides);
       Function<String, String> configProperties = context.utils().injector().getInstance(
                ValueOfConfigurationKeyOrNull.class);
       imageId = configProperties.apply(ComputeServiceConstants.PROPERTY_IMAGE_ID);
