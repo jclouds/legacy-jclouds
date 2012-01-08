@@ -55,6 +55,12 @@ public class JcloudsVersionTest {
     }
 
     @Test
+    public void testExtractsVersionFromResourceFile() {
+        JcloudsVersion version = new JcloudsVersion();
+        assertEquals("0.0.0-SNAPSHOT", version.toString());
+    }
+
+    @Test
     public void testExtractsMajorMinorPatchVersions() {
         JcloudsVersion version = new JcloudsVersion("1.2.3");
         assertEquals(1, version.majorVersion);
