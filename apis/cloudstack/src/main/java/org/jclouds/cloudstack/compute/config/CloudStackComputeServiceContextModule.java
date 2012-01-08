@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
@@ -39,8 +40,10 @@ import org.jclouds.cloudstack.compute.functions.VirtualMachineToNodeMetadata;
 import org.jclouds.cloudstack.compute.functions.ZoneToLocation;
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.compute.strategy.CloudStackComputeServiceAdapter;
+import org.jclouds.cloudstack.compute.strategy.OptionsConverter;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
+import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.OSType;
 import org.jclouds.cloudstack.domain.ServiceOffering;
 import org.jclouds.cloudstack.domain.Template;
@@ -198,4 +201,11 @@ public class CloudStackComputeServiceContextModule
       }
    }
 
+   @Provides
+   @Singleton
+   Map<NetworkType, ? extends OptionsConverter> optionsConverters(){
+      return ImmutableMap.of(
+         NetworkType.ADVANCED, new OptionsConverter.AdvancedNetworkOptionsConverter(),
+         NetworkType.BASIC, new OptionsConverter.BasicNetworkOptionsConverter());
+   }
 }

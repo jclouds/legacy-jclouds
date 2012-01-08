@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.getOnlyElement;
@@ -91,6 +92,7 @@ public class CloudStackComputeServiceAdapter implements
    private final CreatePortForwardingRulesForIP setupPortForwardingRulesForIP;
    private final LoadingCache<Long, Set<IPForwardingRule>> vmToRules;
    private final Map<String, Credentials> credentialStore;
+   private final Map<NetworkType, ? extends OptionsConverter> optionsConverters;
 
    @Inject
    public CloudStackComputeServiceAdapter(CloudStackClient client, Predicate<Long> jobComplete,
@@ -98,7 +100,7 @@ public class CloudStackComputeServiceAdapter implements
          BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult,
          StaticNATVirtualMachineInNetwork.Factory staticNATVMInNetwork,
          CreatePortForwardingRulesForIP setupPortForwardingRulesForIP, LoadingCache<Long, Set<IPForwardingRule>> vmToRules,
-         Map<String, Credentials> credentialStore) {
+         Map<String, Credentials> credentialStore, Map<NetworkType, ? extends OptionsConverter> optionsConverters) {
       this.client = checkNotNull(client, "client");
       this.jobComplete = checkNotNull(jobComplete, "jobComplete");
       this.networkSupplier = checkNotNull(networkSupplier, "networkSupplier");
@@ -108,6 +110,7 @@ public class CloudStackComputeServiceAdapter implements
       this.setupPortForwardingRulesForIP = checkNotNull(setupPortForwardingRulesForIP, "setupPortForwardingRulesForIP");
       this.vmToRules = checkNotNull(vmToRules, "vmToRules");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
+      this.optionsConverters = optionsConverters;
    }
 
    @Override
@@ -125,42 +128,10 @@ public class CloudStackComputeServiceAdapter implements
 
       CloudStackTemplateOptions templateOptions = template.getOptions().as(CloudStackTemplateOptions.class);
 
-      DeployVirtualMachineOptions options = displayName(name).name(name);
-      switch(zone.getNetworkType()) {
-
-         case BASIC:
-            // both security groups and networks are optional, and CloudStack will
-            // use the zone/user's default network/security group if none given
-            if (templateOptions.getSecurityGroupIds().size() > 0) {
-               options.securityGroupIds(templateOptions.getSecurityGroupIds());
-            }
-            if (templateOptions.getNetworkIds().size() > 0) {
-               options.networkIds(templateOptions.getNetworkIds());
-            }
-            break;
-
-         case ADVANCED:
-            // security groups not allowed.
-            // at least one network must be given to CloudStack,
-            // but jclouds will try to autodetect an appropriate network if none given.
-            checkArgument(templateOptions.getSecurityGroupIds().isEmpty(), "security groups cannot be specified for locations (zones) that use advanced networking");
-            if (templateOptions.getNetworkIds().size() > 0) {
-               options.networkIds(templateOptions.getNetworkIds());
-            } else {
-               checkArgument(!networks.isEmpty(), "please setup a network for zone: " + zoneId);
-               Network defaultNetworkInZone = Iterables.getFirst(filter(networks.values(), and(defaultNetworkInZone(zoneId), supportsStaticNAT())), null);
-               if(defaultNetworkInZone == null) {
-                  throw new IllegalArgumentException("please choose a specific network in zone " + zoneId + ": " + networks);
-               } else {
-                  options.networkId(defaultNetworkInZone.getId());
-               }
-            }
-            break;
-
-         default:
-            throw new IllegalStateException("Zone networking type is unrecognized");
-
-      }
+      checkState(optionsConverters.containsKey(zone.getNetworkType()), "no options converter configured for network type %s",zone.getNetworkType());
+      DeployVirtualMachineOptions options = DeployVirtualMachineOptions.Builder.displayName(name).name(name);
+      OptionsConverter optionsConverter = optionsConverters.get(zone.getNetworkType());
+      options = optionsConverter.apply(templateOptions, networks, zoneId, options);
 
       if (templateOptions.getIpOnDefaultNetwork() != null) {
          options.ipOnDefaultNetwork(templateOptions.getIpOnDefaultNetwork());
