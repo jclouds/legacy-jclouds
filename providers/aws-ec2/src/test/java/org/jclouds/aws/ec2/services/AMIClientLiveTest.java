@@ -39,6 +39,7 @@ import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.domain.BlockDevice;
@@ -188,12 +189,7 @@ public class AMIClientLiveTest extends BaseVersionedServiceLiveTest {
 
       // Detailed check: filter for the AMI ID
       Iterable<? extends org.jclouds.compute.domain.Image> filtered = Iterables.filter(after,
-         new Predicate<org.jclouds.compute.domain.Image>() {
-            @Override
-            public boolean apply(@Nullable org.jclouds.compute.domain.Image i) {
-               return i != null && i.getId().equals(imageRegistered.getRegion() + "/" + imageRegisteredId);
-            }
-         });
+         ImagePredicates.idEquals(imageRegistered.getRegion() + "/" + imageRegisteredId));
       assertEquals(Iterables.size(filtered), 1);
    }
 
