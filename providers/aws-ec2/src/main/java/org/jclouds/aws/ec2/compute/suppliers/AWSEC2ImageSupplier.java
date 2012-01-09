@@ -34,6 +34,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.common.collect.ForwardingSet;
 import org.jclouds.Constants;
 import org.jclouds.aws.ec2.compute.config.ClusterCompute;
 import org.jclouds.compute.domain.Image;
@@ -127,7 +128,11 @@ public class AWSEC2ImageSupplier implements Supplier<Set<? extends Image>> {
       logger.debug("<< images(%d)", imageMap.size());
       
       // TODO Used to be mutable; was this assumed anywhere?
-      return ImmutableSet.copyOf(imageMap.values());
+      return new ForwardingSet<Image>() {
+         protected Set<Image> delegate() {
+            return ImmutableSet.copyOf(cache.get().asMap().values());
+         }
+      };
    }
    
    private Future<Iterable<Image>> images(Iterable<String> regions, String query, String tag) {
