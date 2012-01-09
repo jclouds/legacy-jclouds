@@ -64,7 +64,7 @@ public class FirewallAsyncClientTest extends BaseCloudStackAsyncClientTest<Firew
    public void testListPortForwardingRulesOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = FirewallAsyncClient.class.getMethod("listPortForwardingRules",
             ListPortForwardingRulesOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, ListPortForwardingRulesOptions.Builder.IPAddressId(3));
+      HttpRequest httpRequest = processor.createRequest(method, ListPortForwardingRulesOptions.Builder.ipAddressId(3));
 
       assertRequestLineEquals(httpRequest,
             "GET http://localhost:8080/client/api?response=json&command=listPortForwardingRules&ipaddressid=3 HTTP/1.1");

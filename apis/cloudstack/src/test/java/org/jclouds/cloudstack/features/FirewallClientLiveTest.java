@@ -19,18 +19,20 @@
 package org.jclouds.cloudstack.features;
 
 import static com.google.common.collect.Iterables.find;
+import static org.jclouds.cloudstack.predicates.NetworkPredicates.supportsPortForwarding;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import com.google.common.base.Predicates;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.cloudstack.domain.FirewallRule;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PortForwardingRule;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
-import org.jclouds.cloudstack.predicates.NetworkPredicates;
 import org.jclouds.net.IPSocket;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
@@ -38,16 +40,21 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 
+import javax.annotation.Nullable;
+
 /**
  * Tests behavior of {@code FirewallClientLiveTest}
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "FirewallClientLiveTest")
 public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
    private PublicIPAddress ip = null;
    private VirtualMachine vm;
-   private PortForwardingRule rule;
+
+   private FirewallRule firewallRule;
+   private PortForwardingRule portForwardingRule;
+
    private Network network;
    private boolean networksDisabled;
 
@@ -56,13 +63,25 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
       super.setupClient();
       prefix += "rule";
       try {
-         network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.supportsPortForwarding());
+         network = find(client.getNetworkClient().listNetworks(), Predicates.and(supportsPortForwarding(),
+            new Predicate<Network>() {
+               @Override
+               public boolean apply(@Nullable Network network) {
+                  return network.isDefault()
+                     && !network.isSecurityGroupEnabled()
+                     && network.getAccount().equals(user.getAccount());
+               }
+            }));
+
          Long defaultTemplate = (imageId != null && !"".equals(imageId)) ? new Long(imageId) : null;
+
          vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network,
-               defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()), client, jobComplete,
-               virtualMachineRunning);
+            defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()),
+            client, jobComplete, virtualMachineRunning);
+
          if (vm.getPassword() != null && !loginCredentials.hasPasswordOption())
             loginCredentials = loginCredentials.toBuilder().password(vm.getPassword()).build();
+
       } catch (NoSuchElementException e) {
          networksDisabled = true;
       }
@@ -71,30 +90,57 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
    public void testCreatePortForwardingRule() throws Exception {
       if (networksDisabled)
          return;
-      while (rule == null) {
+      while (portForwardingRule == null) {
          ip = reuseOrAssociate.apply(network);
          try {
             AsyncCreateResponse job = client.getFirewallClient().createPortForwardingRuleForVirtualMachine(vm.getId(),
-                  ip.getId(), "tcp", 22, 22);
+               ip.getId(), "tcp", 22, 22);
             assertTrue(jobComplete.apply(job.getJobId()));
-            rule = findRuleWithId(job.getId());
+            portForwardingRule = client.getFirewallClient().getPortForwardingRule(job.getId());
+
          } catch (IllegalStateException e) {
             // very likely an ip conflict, so retry;
          }
       }
 
-      assertEquals(rule.getIPAddressId(), ip.getId());
-      assertEquals(rule.getVirtualMachineId(), vm.getId());
-      assertEquals(rule.getPublicPort(), 22);
-      assertEquals(rule.getProtocol(), "tcp");
-      checkRule(rule);
+      assertEquals(portForwardingRule.getIPAddressId(), ip.getId());
+      assertEquals(portForwardingRule.getVirtualMachineId(), vm.getId());
+      assertEquals(portForwardingRule.getPublicPort(), 22);
+      assertEquals(portForwardingRule.getProtocol(), "tcp");
+
+      checkPortForwardingRule(portForwardingRule);
       checkSSH(new IPSocket(ip.getIPAddress(), 22));
+   }
+
+   @Test(dependsOnMethods = "testCreatePortForwardingRule")
+   public void testListPortForwardingRules() throws Exception {
+      Set<PortForwardingRule> response = client.getFirewallClient().listPortForwardingRules();
+      assert null != response;
+      assertTrue(response.size() >= 0);
+      for (final PortForwardingRule rule : response) {
+         PortForwardingRule newDetails = client.getFirewallClient().getPortForwardingRule(rule.getId());
+         assertEquals(rule.getId(), newDetails.getId());
+         checkPortForwardingRule(rule);
+      }
+   }
+
+   @Test(dependsOnMethods = "testCreatePortForwardingRule")
+   public void testCreateFirewallRule() {
+
+   }
+
+   @Test(dependsOnMethods = "testCreateFirewallRule")
+   public void testListFirewallRules() {
+      Set<FirewallRule> rules = client.getFirewallClient().listFirewallRules();
+      assert rules != null;
+      assertTrue(rules.size() >= 0);
+      // TODO: check each rule
    }
 
    @AfterGroups(groups = "live")
    protected void tearDown() {
-      if (rule != null) {
-         client.getFirewallClient().deletePortForwardingRule(rule.getId());
+      if (portForwardingRule != null) {
+         client.getFirewallClient().deletePortForwardingRule(portForwardingRule.getId());
       }
       if (vm != null) {
          jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(vm.getId()));
@@ -105,30 +151,8 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
       super.tearDown();
    }
 
-   public void testListPortForwardingRules() throws Exception {
-      Set<PortForwardingRule> response = client.getFirewallClient().listPortForwardingRules();
-      assert null != response;
-      assertTrue(response.size() >= 0);
-      for (final PortForwardingRule rule : response) {
-         PortForwardingRule newDetails = findRuleWithId(rule.getId());
-         assertEquals(rule.getId(), newDetails.getId());
-         checkRule(rule);
-      }
-   }
-
-   private PortForwardingRule findRuleWithId(final long id) {
-      return find(client.getFirewallClient().listPortForwardingRules(), new Predicate<PortForwardingRule>() {
-
-         @Override
-         public boolean apply(PortForwardingRule arg0) {
-            return arg0.getId() == id;
-         }
-
-      });
-   }
-
-   protected void checkRule(PortForwardingRule rule) {
-      assertEquals(rule.getId(), findRuleWithId(rule.getId()).getId());
+   protected void checkPortForwardingRule(PortForwardingRule rule) {
+      assertEquals(rule.getId(), client.getFirewallClient().getPortForwardingRule(rule.getId()).getId());
       assert rule.getId() > 0 : rule;
       assert rule.getIPAddress() != null : rule;
       assert rule.getIPAddressId() > 0 : rule;

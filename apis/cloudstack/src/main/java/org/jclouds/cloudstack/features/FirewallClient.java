@@ -22,7 +22,10 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.cloudstack.domain.FirewallRule;
 import org.jclouds.cloudstack.domain.PortForwardingRule;
+import org.jclouds.cloudstack.options.CreateFirewallRuleOptions;
+import org.jclouds.cloudstack.options.ListFirewallRulesOptions;
 import org.jclouds.cloudstack.options.ListPortForwardingRulesOptions;
 import org.jclouds.concurrent.Timeout;
 
@@ -36,6 +39,50 @@ import org.jclouds.concurrent.Timeout;
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface FirewallClient {
+
+   /**
+    * List the firewall rules
+    *
+    * @param options
+    *          if present, how to constrain the list.
+    * @return
+    *          set of firewall rules or empty set if no rules are found
+    */
+   Set<FirewallRule> listFirewallRules(ListFirewallRulesOptions... options);
+
+   /**
+    * Get a firewall rule by ID
+    *
+    * @param id
+    *          the ID of the firewall rule
+    * @return
+    *          firewall rule instance or null
+    */
+   FirewallRule getFirewallRule(long id);
+
+   /**
+    * Create new firewall rule for a specific IP address
+    *
+    * @param ipAddressId
+    *          the IP address id of the port forwarding rule
+    * @param protocol
+    *          the protocol for the firewall rule. Valid values are TCP/UDP/ICMP
+    * @param options
+    *          optional arguments for firewall rule creation
+    * @return
+    */
+   AsyncCreateResponse createFirewallRule(long ipAddressId, FirewallRule.Protocol protocol,
+         CreateFirewallRuleOptions... options);
+
+
+   /**
+    * Deletes a firewall rule
+    *
+    * @param id
+    *       the ID of the firewall rule
+    */
+   Void deleteFirewallRule(long id);
+
    /**
     * List the port forwarding rules
     * 
@@ -45,6 +92,16 @@ public interface FirewallClient {
     *         PortForwardingRulees are found
     */
    Set<PortForwardingRule> listPortForwardingRules(ListPortForwardingRulesOptions... options);
+
+   /**
+    * Get a port forwarding rule by ID
+    *
+    * @param id
+    *       port forwarding rule ID
+    * @return
+    *       rule instance or null
+    */
+   PortForwardingRule getPortForwardingRule(long id);
 
    /**
     * Creates an port forwarding rule
@@ -71,5 +128,5 @@ public interface FirewallClient {
     * @param id
     *           the id of the forwarding rule
     */
-   void deletePortForwardingRule(long id);
+   Void deletePortForwardingRule(long id);
 }
