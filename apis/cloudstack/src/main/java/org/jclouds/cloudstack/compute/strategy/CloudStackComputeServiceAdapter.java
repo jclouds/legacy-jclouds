@@ -32,12 +32,14 @@ import static org.jclouds.cloudstack.predicates.TemplatePredicates.isReady;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
@@ -93,6 +95,7 @@ public class CloudStackComputeServiceAdapter implements
    private final LoadingCache<Long, Set<IPForwardingRule>> vmToRules;
    private final Map<String, Credentials> credentialStore;
    private final Map<NetworkType, ? extends OptionsConverter> optionsConverters;
+   private final Supplier<LoadingCache<Long, Zone>> zoneIdToZone;
 
    @Inject
    public CloudStackComputeServiceAdapter(CloudStackClient client, Predicate<Long> jobComplete,
@@ -100,7 +103,8 @@ public class CloudStackComputeServiceAdapter implements
          BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult,
          StaticNATVirtualMachineInNetwork.Factory staticNATVMInNetwork,
          CreatePortForwardingRulesForIP setupPortForwardingRulesForIP, LoadingCache<Long, Set<IPForwardingRule>> vmToRules,
-         Map<String, Credentials> credentialStore, Map<NetworkType, ? extends OptionsConverter> optionsConverters) {
+         Map<String, Credentials> credentialStore, Map<NetworkType, ? extends OptionsConverter> optionsConverters,
+         Supplier<LoadingCache<Long, Zone>> zoneIdToZone) {
       this.client = checkNotNull(client, "client");
       this.jobComplete = checkNotNull(jobComplete, "jobComplete");
       this.networkSupplier = checkNotNull(networkSupplier, "networkSupplier");
@@ -111,6 +115,7 @@ public class CloudStackComputeServiceAdapter implements
       this.vmToRules = checkNotNull(vmToRules, "vmToRules");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.optionsConverters = optionsConverters;
+      this.zoneIdToZone = zoneIdToZone;
    }
 
    @Override
@@ -124,7 +129,12 @@ public class CloudStackComputeServiceAdapter implements
       Map<Long, Network> networks = networkSupplier.get();
 
       final long zoneId = Long.parseLong(template.getLocation().getId());
-      Zone zone = client.getZoneClient().getZone(zoneId);
+      Zone zone = null;
+      try {
+         zone = zoneIdToZone.get().get(zoneId);
+      } catch (ExecutionException e) {
+         Throwables.propagate(e);
+      }
 
       CloudStackTemplateOptions templateOptions = template.getOptions().as(CloudStackTemplateOptions.class);
 

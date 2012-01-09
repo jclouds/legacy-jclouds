@@ -52,9 +52,11 @@ import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.features.GuestOSClient;
 import org.jclouds.cloudstack.functions.StaticNATVirtualMachineInNetwork;
+import org.jclouds.cloudstack.functions.ZoneIdToZone;
 import org.jclouds.cloudstack.predicates.JobComplete;
 import org.jclouds.cloudstack.suppliers.GetCurrentUser;
 import org.jclouds.cloudstack.suppliers.NetworksForCurrentUser;
+import org.jclouds.cloudstack.suppliers.ZoneIdToZoneSupplier;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
@@ -111,6 +113,10 @@ public class CloudStackComputeServiceContextModule
       install(new FactoryModuleBuilder().build(StaticNATVirtualMachineInNetwork.Factory.class));
       bind(new TypeLiteral<CacheLoader<Long, Set<IPForwardingRule>>>() {
       }).to(GetIPForwardingRulesByVirtualMachine.class);
+      bind(new TypeLiteral<CacheLoader<Long, Zone>>() {
+      }).to(ZoneIdToZone.class);
+      bind(new TypeLiteral<Supplier<LoadingCache<Long, Zone>>>() {
+      }).to(ZoneIdToZoneSupplier.class);
    }
 
    @Provides
