@@ -21,15 +21,16 @@ package org.jclouds.glesys.features;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.glesys.domain.Domain;
 import org.jclouds.glesys.domain.DomainRecord;
+import org.jclouds.glesys.options.DomainAddOptions;
 import org.jclouds.glesys.options.DomainOptions;
 import org.jclouds.glesys.options.DomainRecordAddOptions;
-import org.jclouds.glesys.options.DomainRecordModifyOptions;
+import org.jclouds.glesys.options.DomainRecordEditOptions;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Provides synchronous access to Invoice requests.
+ * Provides synchronous access to Domain requests.
  * <p/>
  *
  * @author Adam Lowe
@@ -52,7 +53,7 @@ public interface DomainClient {
     * @param domain  the name of the domain to add.
     * @param options optional parameters
     */
-   void addDomain(String domain, DomainOptions... options);
+   void addDomain(String domain, DomainAddOptions... options);
 
    /**
     * Add a domain to the Glesys dns-system
@@ -94,7 +95,7 @@ public interface DomainClient {
     * @param options  the settings to change
     * @see #listRecords to retrieve the necessary ids
     */
-   void editRecord(String recordId, DomainRecordModifyOptions... options);
+   void editRecord(String recordId, DomainRecordEditOptions... options);
 
    /**
     * Delete a DNS record

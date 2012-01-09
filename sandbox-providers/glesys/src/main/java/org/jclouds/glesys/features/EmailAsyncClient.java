@@ -50,7 +50,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface EmailAsyncClient {
 
    /**
-    * @see org.jclouds.glesys.features.EmailClient#emailOverview
+    * @see org.jclouds.glesys.features.EmailClient#getEmailOverview
     */
    @POST
    @Path("/email/overview/format/json")

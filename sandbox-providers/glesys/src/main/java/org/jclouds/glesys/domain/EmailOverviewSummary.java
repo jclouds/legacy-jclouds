@@ -4,6 +4,8 @@ import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**
+ * Summary information of e-mail settings and limits for a GleSYS account
+ * 
  * @author Adam Lowe
  * @see <a href="https://customer.glesys.com/api.php?a=doc#email_overview" />
  */
@@ -61,18 +63,22 @@ public class EmailOverviewSummary {
       this.maxAliases = maxAliases;
    }
 
+   /** @return the number of e-mail accounts */
    public int getAccounts() {
       return accounts;
    }
 
+   /** @return the maximum number of e-mail accounts */
    public int getMaxAccounts() {
       return maxAccounts;
    }
 
+   /** @return the number of e-mail aliases */
    public int getAliases() {
       return aliases;
    }
 
+   /** @return the maximum number of e-mail aliases */
    public int getMaxAliases() {
       return maxAliases;
    }

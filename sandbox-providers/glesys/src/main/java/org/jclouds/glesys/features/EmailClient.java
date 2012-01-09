@@ -46,19 +46,52 @@ public interface EmailClient {
    EmailOverview getEmailOverview();
 
    /**
-    * 
-    * @return
+    * Get the set of detailed information about e-mail accounts
+    *
+    * @return the relevant set of details
     */
    Set<Email> listAccounts(String domain);
 
+   /**
+    * Create a new e-mail account
+    *
+    * @param accountAddress the e-mail address to use (the domain should already exist)
+    * @param password       the password to use for the mailbox
+    * @param options        optional parameters
+    * @see DomainClient#addDomain
+    */
    void createAccount(String accountAddress, String password, EmailCreateOptions... options);
 
+   /**
+    * Create an e-mail alias for an e-mail account
+    *
+    * @param aliasAddress   the address to use for the alias  (the domain should already exist)
+    * @param toEmailAddress the existing e-mail account address the alias should forward to
+    * @see DomainClient#addDomain
+    */
    void createAlias(String aliasAddress, String toEmailAddress);
 
+   /**
+    * Adjust an e-mail account's settings
+    *
+    * @param accountAddress the existing e-mail account address
+    * @param options        optional parameters
+    */
    void editAccount(String accountAddress, EmailEditOptions... options);
-   
+
+   /**
+    * Adjust (re-target) an e-mail alias
+    *
+    * @param aliasAddress   the existing alias e-mail address
+    * @param toEmailAddress the existing e-mail account address the alias should forward to
+    */
    void editAlias(String aliasAddress, String toEmailAddress);
 
+   /**
+    * Delete an e-mail account or alias
+    *
+    * @param accountAddress the existing alias e-mail account or alias address
+    */
    void delete(String accountAddress);
 
 }

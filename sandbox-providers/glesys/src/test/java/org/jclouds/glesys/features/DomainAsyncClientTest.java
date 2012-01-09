@@ -48,8 +48,8 @@ public class DomainAsyncClientTest extends BaseGleSYSAsyncClientTest<DomainAsync
    
    public void testAddDomain() throws Exception {
       testMethod("addDomain", "add", "POST", false, MapHttp4xxCodesToExceptions.class, newEntry("name", "cl66666_x"),
-            DomainOptions.Builder.primaryNameServer("ns1.somewhere.x").expire("1").minimum("1").refresh("1").
-                  responsiblePerson("Tester").retry("1").ttl(1));
+            DomainOptions.Builder.primaryNameServer("ns1.somewhere.x").expire(1).minimum(1).refresh(1).
+                  responsiblePerson("Tester").retry(1).ttl(1));
       testMethod("addDomain", "add", "POST", false, MapHttp4xxCodesToExceptions.class, newEntry("name", "cl66666_x"));
    }
 

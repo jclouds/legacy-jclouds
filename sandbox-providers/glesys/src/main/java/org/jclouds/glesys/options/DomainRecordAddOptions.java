@@ -19,24 +19,21 @@ public class DomainRecordAddOptions extends BaseHttpRequestOptions {
       /**
        * @see DomainRecordAddOptions#mxPriority
        */
-      public static DomainRecordAddOptions mxPriority(String mxPriority) {
+      public static DomainRecordAddOptions mxPriority(int mxPriority) {
          DomainRecordAddOptions options = new DomainRecordAddOptions();
          return options.mxPriority(mxPriority);
       }
    }
 
-   public DomainRecordAddOptions host(String host) {
-      formParameters.put("host", host);
-      return this;
-   }
-
+   /** Configure TTL/Time-to-live for record */
    public DomainRecordAddOptions ttl(int ttl) {
       formParameters.put("ttl", Integer.toString(ttl));
       return this;
    }
 
-   public DomainRecordAddOptions mxPriority(String mxPriority) {
-      formParameters.put("mx_priority", mxPriority);
+   /** Configure the priority of an MX record */
+   public DomainRecordAddOptions mxPriority(int mxPriority) {
+      formParameters.put("mx_priority", Integer.toString(mxPriority));
       return this;
    }
 

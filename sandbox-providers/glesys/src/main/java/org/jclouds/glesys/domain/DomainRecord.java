@@ -95,26 +95,45 @@ public class DomainRecord implements Comparable<DomainRecord> {
       this.ttl = ttl;
    }
 
+   /**
+    * @return the id of the record used to modify it via the API
+    * @see org.jclouds.glesys.features.DomainClient
+    */
    public String getId() {
       return id;
    }
 
+   /**
+    * @return the zone content of the record
+    */
    public String getZone() {
       return zone;
    }
 
+   /**
+    * @return the host content of the record
+    */
    public String getHost() {
       return host;
    }
 
+   /**
+    * @return the type of the record, ex. "A"
+    */
    public String getType() {
       return type;
    }
 
+   /**
+    * @return the data content of the record
+    */
    public String getData() {
       return data;
    }
 
+   /**
+    * @return the TTL/Time-to-live for the record
+    */
    public int getTtl() {
       return ttl;
    }

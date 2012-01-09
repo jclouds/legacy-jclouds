@@ -39,33 +39,38 @@ public class EmailCreateOptions extends BaseHttpRequestOptions {
       /**
        * @see EmailCreateOptions#autorespondMessage
        */
-      public static EmailCreateOptions autorespondMessage(boolean autorespondMessage) {
+      public static EmailCreateOptions autorespondMessage(String autorespondMessage) {
          return new EmailCreateOptions().autorespondMessage(autorespondMessage);
       }
    }
 
+   /** Configure the antispam level of the account */
    public EmailCreateOptions antispamLevel(int antispamLevel) {
       formParameters.put("antispamlevel", Integer.toString(antispamLevel));
       return this;
    }
 
+   /** Enable or disable virus checking */
    public EmailCreateOptions antiVirus(boolean antiVirus) {
       formParameters.put("antivirus", Integer.toString(antiVirus ? 1 : 0));
       return this;
    }
 
+   /** Enable or disable auto-respond */
    public EmailCreateOptions autorespond(boolean autorespond) {
       formParameters.put("autorespond", Integer.toString(autorespond ? 1 : 0));
       return this;
    }
 
+   /** Enable or disable saving of auto-respond e-mails */
    public EmailCreateOptions autorespondSaveEmail(boolean autorespondSaveEmail) {
       formParameters.put("autorespondsaveemail", Integer.toString(autorespondSaveEmail ? 1 : 0));
       return this;
    }
 
-   public EmailCreateOptions autorespondMessage(boolean autorespondMessage) {
-      formParameters.put("autorespondmessage", Integer.toString(autorespondMessage ? 1 : 0));
+   /** Configure the auto-respond message */
+   public EmailCreateOptions autorespondMessage(String autorespondMessage) {
+      formParameters.put("autorespondmessage", autorespondMessage);
       return this;
    }
 }

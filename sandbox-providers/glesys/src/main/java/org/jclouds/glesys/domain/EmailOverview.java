@@ -7,6 +7,8 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 
 /**
+ * Structure containing all information about e-mail addresses for a GleSYS account
+ * 
  * @author Adam Lowe
  * @see <a href="https://customer.glesys.com/api.php?a=doc#email_overview" />
  */
@@ -50,10 +52,12 @@ public class EmailOverview {
       this.domains = domains;
    }
 
+   /** @return summary information about the account */
    public EmailOverviewSummary getSummary() {
       return summary;
    }
 
+   /** @return the set of detailed information about the e-mail addresses and aliases for each domain */
    public Set<EmailOverviewDomain> getDomains() {
       return domains == null ? ImmutableSet.<EmailOverviewDomain>of() : domains;
    }
