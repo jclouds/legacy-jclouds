@@ -18,10 +18,7 @@
  */
 package org.jclouds.cloudstack.predicates;
 
-import static org.jclouds.cloudstack.predicates.NetworkPredicates.hasLoadBalancerService;
-import static org.jclouds.cloudstack.predicates.NetworkPredicates.supportsPortForwarding;
-import static org.jclouds.cloudstack.predicates.NetworkPredicates.supportsStaticNAT;
-
+import com.google.common.base.Predicate;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkService;
 import org.testng.annotations.Test;
@@ -29,6 +26,10 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+
+import static org.jclouds.cloudstack.predicates.NetworkPredicates.*;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 /**
  * 
@@ -92,5 +93,18 @@ public class NetworkPredicatesTest {
       assert Predicates.and(supportsPortForwarding(), supportsStaticNAT()).apply(network);
       assert !hasLoadBalancerService().apply(network);
 
+   }
+
+   public void testDefaultNetworkInZone() {
+      Network defaultInZone = Network.builder().isDefault(true).zoneId(42).build();
+      Network defaultNotInZone = Network.builder().isDefault(true).zoneId(200).build();
+      Network notDefaultInZone = Network.builder().isDefault(false).zoneId(42).build();
+      Network notDefaultNotInZone = Network.builder().isDefault(false).zoneId(200).build();
+
+      Predicate<Network> predicate = defaultNetworkInZone(42);
+      assertTrue(predicate.apply(defaultInZone));
+      assertFalse(predicate.apply(defaultNotInZone));
+      assertFalse(predicate.apply(notDefaultInZone));
+      assertFalse(predicate.apply(notDefaultNotInZone));
    }
 }
