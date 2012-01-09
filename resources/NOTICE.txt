@@ -41,6 +41,10 @@ distributed under the Apache Software License, Version 2.0.
 This product includes Guava (http://code.google.com/p/guava-libraries)
 distributed under the Apache Software License, Version 2.0.
 
+org.jclouds.util.Suppliers2 and Suppliers2Test contain pieces of Guava's Suppliers
+distributed under the Apache Software License, Version 2.0.
+(c) 2010 Google Inc.
+
 This product includes BouncyCastle (http://www.bouncycastle.org/licence.html)
 distributed with the following notice:
   "Copyright (c) 2000 - 2011 The Legion Of The Bouncy Castle (http://www.bouncycastle.org)
