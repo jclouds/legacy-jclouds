@@ -71,9 +71,8 @@ public interface FirewallClient {
     *          optional arguments for firewall rule creation
     * @return
     */
-   AsyncCreateResponse createFirewallRule(long ipAddressId, FirewallRule.Protocol protocol,
-         CreateFirewallRuleOptions... options);
-
+   AsyncCreateResponse createFirewallRuleForIpAndProtocol(long ipAddressId,
+         FirewallRule.Protocol protocol, CreateFirewallRuleOptions... options);
 
    /**
     * Deletes a firewall rule
@@ -106,21 +105,20 @@ public interface FirewallClient {
    /**
     * Creates an port forwarding rule
     * 
-    * @param virtualMachineId
-    *           the ID of the virtual machine for the port forwarding rule
-    * @param IPAddressId
-    *           the public IP address id of the forwarding rule, already
-    *           associated via associatePort
+    *
+    * @param ipAddressId
     * @param protocol
     *           the protocol for the rule. Valid values are TCP or UDP.
-    * @param privatePort
-    *           the private port of the port forwarding rule
     * @param publicPort
     *           the public port of the port forwarding rule
+    * @param virtualMachineId
+    *           the ID of the virtual machine for the port forwarding rule
+    * @param privatePort
+    *           the private port of the port forwarding rule
     * @return response used to track creation
     */
-   AsyncCreateResponse createPortForwardingRuleForVirtualMachine(long virtualMachineId, long IPAddressId,
-         String protocol, int privatePort, int publicPort);
+   AsyncCreateResponse createPortForwardingRuleForVirtualMachine(long ipAddressId,
+      String protocol, int publicPort, long virtualMachineId, int privatePort);
 
    /**
     * Deletes an port forwarding rule

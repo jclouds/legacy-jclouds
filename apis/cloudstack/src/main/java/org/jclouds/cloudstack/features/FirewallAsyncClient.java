@@ -78,14 +78,14 @@ public interface FirewallAsyncClient {
    ListenableFuture<FirewallRule> getFirewallRule(@QueryParam("id") long id);
 
    /**
-    * @see FirewallClient#createFirewallRule
+    * @see FirewallClient#createFirewallRuleForIpAndProtocol
     */
    @GET
    @QueryParams(keys = "command", values = "createFirewallRule")
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<AsyncCreateResponse> createFirewallRule(@QueryParam("ipaddressid") long ipAddressId,
-      @QueryParam("protocol") FirewallRule.Protocol protocol, CreateFirewallRuleOptions... options);
+   ListenableFuture<AsyncCreateResponse> createFirewallRuleForIpAndProtocol(@QueryParam("ipaddressid") long ipAddressId,
+         @QueryParam("protocol") FirewallRule.Protocol protocol, CreateFirewallRuleOptions... options);
 
    /**
     * @see FirewallClient#deleteFirewallRule
@@ -124,9 +124,9 @@ public interface FirewallAsyncClient {
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<AsyncCreateResponse> createPortForwardingRuleForVirtualMachine(
-      @QueryParam("virtualmachineid") long virtualMachineId, @QueryParam("ipaddressid") long IPAddressId,
-      @QueryParam("protocol") String protocol, @QueryParam("privateport") int privatePort,
-      @QueryParam("publicport") int publicPort);
+      @QueryParam("ipaddressid") long ipAddressId, @QueryParam("protocol") String protocol,
+      @QueryParam("publicport") int publicPort, @QueryParam("virtualmachineid") long virtualMachineId,
+      @QueryParam("privateport") int privatePort);
 
    /**
     * @see FirewallClient#deletePortForwardingRule
