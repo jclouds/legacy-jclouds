@@ -18,7 +18,7 @@
  */
 package org.jclouds.rest.suppliers;
 
-import static com.google.common.base.Suppliers.memoizeWithExpiration;
+import static org.jclouds.util.Suppliers2.memoizeWithExpirationOnAbsoluteInterval;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -49,7 +49,7 @@ public class MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<T> imp
 
    public MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier(
          AtomicReference<AuthorizationException> authException, long seconds, Supplier<T> delegate) {
-      this.delegate = memoizeWithExpiration(new RetryOnTimeOutExceptionSupplier<T>(
+      this.delegate = memoizeWithExpirationOnAbsoluteInterval(new RetryOnTimeOutExceptionSupplier<T>(
             new SetAndThrowAuthorizationExceptionSupplier<T>(delegate, authException)), seconds, TimeUnit.SECONDS);
       this.seconds = seconds;
    }
