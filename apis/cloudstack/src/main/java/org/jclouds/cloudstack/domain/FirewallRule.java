@@ -60,7 +60,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
       private String icmpType;
 
       private String ipAddress;
-      private String ipAddressId;
+      private long ipAddressId;
 
       private Protocol protocol;
       private String state;
@@ -100,7 +100,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
          return this;
       }
 
-      public Builder ipAddressId(String ipAddressId) {
+      public Builder ipAddressId(long ipAddressId) {
          this.ipAddressId = ipAddressId;
          return this;
       }
@@ -135,12 +135,12 @@ public class FirewallRule implements Comparable<FirewallRule> {
    @SerializedName("ipaddress")
    private String ipAddress;
    @SerializedName("ipaddressid")
-   private String ipAddressId;
+   private long ipAddressId;
    private Protocol protocol;
    private String state;
 
    public FirewallRule(long id, String CIDRs, int startPort, int endPort,
-         String icmpCode, String icmpType, String ipAddress, String ipAddressId,
+         String icmpCode, String icmpType, String ipAddress, long ipAddressId,
          Protocol protocol, String state) {
       this.id = id;
       this.CIDRs = CIDRs;
@@ -187,7 +187,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
       return ipAddress;
    }
 
-   public String getIpAddressId() {
+   public long getIpAddressId() {
       return ipAddressId;
    }
 
@@ -217,7 +217,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
          return false;
       if (ipAddress != null ? !ipAddress.equals(that.ipAddress) : that.ipAddress != null)
          return false;
-      if (ipAddressId != null ? !ipAddressId.equals(that.ipAddressId) : that.ipAddressId != null)
+      if (ipAddressId != that.ipAddressId)
          return false;
       if (protocol != null ? !protocol.equals(that.protocol) : that.protocol != null)
          return false;
@@ -236,7 +236,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
       result = 31 * result + (icmpCode != null ? icmpCode.hashCode() : 0);
       result = 31 * result + (icmpType != null ? icmpType.hashCode() : 0);
       result = 31 * result + (ipAddress != null ? ipAddress.hashCode() : 0);
-      result = 31 * result + (ipAddressId != null ? ipAddressId.hashCode() : 0);
+      result = 31 * result + (int) (ipAddressId ^ (ipAddressId >>> 32));
       result = 31 * result + (protocol != null ? protocol.hashCode() : 0);
       result = 31 * result + (state != null ? state.hashCode() : 0);
       return result;

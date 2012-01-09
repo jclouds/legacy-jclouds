@@ -1,0 +1,4 @@
+{ "listfirewallrulesresponse" : { "count":3 ,"firewallrule" : [
+    {"id":2017,"protocol":"tcp","startport":"30","endport":"35","ipaddressid":2,"ipaddress":"10.27.27.51","state":"Active","cidrlist":"0.0.0.0/0"},
+    {"id":2016,"protocol":"tcp","startport":"22","endport":"22","ipaddressid":2,"ipaddress":"10.27.27.51","state":"Active","cidrlist":"0.0.0.0/0"},
+    {"id":10,"protocol":"tcp","startport":"22","endport":"22","ipaddressid":8,"ipaddress":"10.27.27.57","state":"Active","cidrlist":"0.0.0.0/0"} ] } }
