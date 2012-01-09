@@ -139,26 +139,32 @@ public class Email implements Comparable<Email> {
       this.modified = modified;
    }
 
+   /** @return the e-mail address for this e-mail account */
    public String getAccount() {
       return account;
    }
 
+   /** @return the quota for this e-mail account */
    public String getQuota() {
       return quota;
    }
 
+   /** @return the amount of quota currently in use */
    public String getUsedQuota() {
       return usedQuota;
    }
 
+   /** @return the antispam level of the e-mail account */
    public int getAntispamLevel() {
       return antispamLevel;
    }
 
+   /** @return true if antivirus is enabled for this e-mail account */
    public boolean getAntiVirus() {
       return antiVirus;
    }
 
+   /** @return true if auto-respond is enabled for this e-mail account */
    public boolean getAutoRespond() {
       return autoRespond;
    }
@@ -167,14 +173,17 @@ public class Email implements Comparable<Email> {
       return autoRespondMessage;
    }
 
+   /** @return true if saving is enabled for auto-respond e-mails */
    public boolean getAutoRespondSaveEmail() {
       return autoRespondSaveEmail;
    }
 
+   /** @return when this account was created */
    public Date getCreated() {
       return created;
    }
 
+   /** @return when this account was last modified */
    public Date getModified() {
       return modified;
    }

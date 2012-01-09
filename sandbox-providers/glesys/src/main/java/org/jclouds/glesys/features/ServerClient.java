@@ -100,9 +100,9 @@ public interface ServerClient {
    /**
     * Get information about the OS templates available
     *
-    * @return a map of templates, keyed on platform
+    * @return the set of information about each template
     */
-   Map<String, Set<ServerTemplate>> getTemplates();
+   Set<ServerTemplate> getTemplates();
 
    /**
     * Get information about valid arguments to #createServer for each platform
