@@ -171,7 +171,7 @@ public class AMIClientLiveTest extends BaseVersionedServiceLiveTest {
       Snapshot snapshot = createSnapshot(computeService);
 
       // List of images before...
-      Set<? extends org.jclouds.compute.domain.Image> before = computeService.listImages();
+      int sizeBefore = computeService.listImages().size();
 
       // Register a new image...
       final String imageRegisteredId = client.registerUnixImageBackedByEbsInRegion(null, "jcloudstest1", snapshot.getId());
@@ -184,7 +184,7 @@ public class AMIClientLiveTest extends BaseVersionedServiceLiveTest {
 
       // List of images after - should be one larger than before
       Set<? extends org.jclouds.compute.domain.Image> after = computeService.listImages();
-      assertEquals(after.size(), before.size() + 1);
+      assertEquals(after.size(), sizeBefore + 1);
 
       // Detailed check: filter for the AMI ID
       Iterable<? extends org.jclouds.compute.domain.Image> filtered = Iterables.filter(after,
