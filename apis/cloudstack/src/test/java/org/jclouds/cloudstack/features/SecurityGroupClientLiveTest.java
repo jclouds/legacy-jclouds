@@ -31,6 +31,7 @@ import org.jclouds.cloudstack.domain.SecurityGroup;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.options.AccountInDomainOptions;
+import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
 import org.jclouds.cloudstack.options.ListSecurityGroupsOptions;
 import org.jclouds.net.IPSocket;
 import org.jclouds.util.Strings2;
@@ -193,6 +194,23 @@ public class SecurityGroupClientLiveTest extends BaseCloudStackClientLiveTest {
       assert group.getDomain() != null : group;
       assert group.getDomainId() >= 0 : group;
       assert group.getIngressRules() != null : group;
+   }
+
+   @Test
+   public void testCreateVMWithoutSecurityGroupAssignsDefault() throws Exception {
+      if (!securityGroupsSupported)
+         return;
+      Long defaultTemplate = (imageId != null && !"".equals(imageId)) ? new Long(imageId) : null;
+      VirtualMachine newVm = VirtualMachineClientLiveTest.createVirtualMachineWithOptionsInZone(DeployVirtualMachineOptions.NONE,
+            zone.getId(), defaultTemplateOrPreferredInZone(defaultTemplate, client, zone.getId()), client,
+            jobComplete, virtualMachineRunning);
+      try {
+         VirtualMachine runningVm = client.getVirtualMachineClient().getVirtualMachine(newVm.getId());
+         assertTrue(runningVm.getSecurityGroups().size() == 1);
+         assertEquals(Iterables.getOnlyElement(runningVm.getSecurityGroups()).getName(), "default");
+      } finally {
+         assertTrue(jobComplete.apply(client.getVirtualMachineClient().destroyVirtualMachine(newVm.getId())));
+      }
    }
 
    @AfterGroups(groups = "live")

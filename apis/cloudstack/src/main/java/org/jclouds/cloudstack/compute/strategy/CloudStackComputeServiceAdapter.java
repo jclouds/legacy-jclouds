@@ -20,27 +20,33 @@ package org.jclouds.cloudstack.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.jclouds.cloudstack.options.DeployVirtualMachineOptions.Builder.displayName;
+import static org.jclouds.cloudstack.predicates.NetworkPredicates.defaultNetworkInZone;
 import static org.jclouds.cloudstack.predicates.NetworkPredicates.supportsStaticNAT;
 import static org.jclouds.cloudstack.predicates.TemplatePredicates.isReady;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
+import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.ServiceOffering;
 import org.jclouds.cloudstack.domain.Template;
@@ -88,6 +94,8 @@ public class CloudStackComputeServiceAdapter implements
    private final CreatePortForwardingRulesForIP setupPortForwardingRulesForIP;
    private final LoadingCache<Long, Set<IPForwardingRule>> vmToRules;
    private final Map<String, Credentials> credentialStore;
+   private final Map<NetworkType, ? extends OptionsConverter> optionsConverters;
+   private final Supplier<LoadingCache<Long, Zone>> zoneIdToZone;
 
    @Inject
    public CloudStackComputeServiceAdapter(CloudStackClient client, Predicate<Long> jobComplete,
@@ -95,7 +103,8 @@ public class CloudStackComputeServiceAdapter implements
          BlockUntilJobCompletesAndReturnResult blockUntilJobCompletesAndReturnResult,
          StaticNATVirtualMachineInNetwork.Factory staticNATVMInNetwork,
          CreatePortForwardingRulesForIP setupPortForwardingRulesForIP, LoadingCache<Long, Set<IPForwardingRule>> vmToRules,
-         Map<String, Credentials> credentialStore) {
+         Map<String, Credentials> credentialStore, Map<NetworkType, ? extends OptionsConverter> optionsConverters,
+         Supplier<LoadingCache<Long, Zone>> zoneIdToZone) {
       this.client = checkNotNull(client, "client");
       this.jobComplete = checkNotNull(jobComplete, "jobComplete");
       this.networkSupplier = checkNotNull(networkSupplier, "networkSupplier");
@@ -105,6 +114,8 @@ public class CloudStackComputeServiceAdapter implements
       this.setupPortForwardingRulesForIP = checkNotNull(setupPortForwardingRulesForIP, "setupPortForwardingRulesForIP");
       this.vmToRules = checkNotNull(vmToRules, "vmToRules");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
+      this.optionsConverters = optionsConverters;
+      this.zoneIdToZone = zoneIdToZone;
    }
 
    @Override
@@ -118,30 +129,19 @@ public class CloudStackComputeServiceAdapter implements
       Map<Long, Network> networks = networkSupplier.get();
 
       final long zoneId = Long.parseLong(template.getLocation().getId());
+      Zone zone = null;
+      try {
+         zone = zoneIdToZone.get().get(zoneId);
+      } catch (ExecutionException e) {
+         Throwables.propagate(e);
+      }
 
       CloudStackTemplateOptions templateOptions = template.getOptions().as(CloudStackTemplateOptions.class);
 
-      DeployVirtualMachineOptions options = displayName(name).name(name);
-      if (templateOptions.getSecurityGroupIds().size() > 0) {
-         options.securityGroupIds(templateOptions.getSecurityGroupIds());
-      } else if (templateOptions.getNetworkIds().size() > 0) {
-         options.networkIds(templateOptions.getNetworkIds());
-      } else if (networks.size() > 0) {
-         try {
-            options.networkId(getOnlyElement(filter(networks.values(), and(new Predicate<Network>() {
-
-               @Override
-               public boolean apply(Network arg0) {
-                  return arg0.getZoneId() == zoneId && arg0.isDefault();
-               }
-
-            }, supportsStaticNAT()))).getId());
-         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("please choose a specific network in zone " + zoneId + ": " + networks);
-         }
-      } else {
-         throw new IllegalArgumentException("please setup a network or security group for zone: " + zoneId);
-      }
+      checkState(optionsConverters.containsKey(zone.getNetworkType()), "no options converter configured for network type %s",zone.getNetworkType());
+      DeployVirtualMachineOptions options = DeployVirtualMachineOptions.Builder.displayName(name).name(name);
+      OptionsConverter optionsConverter = optionsConverters.get(zone.getNetworkType());
+      options = optionsConverter.apply(templateOptions, networks, zoneId, options);
 
       if (templateOptions.getIpOnDefaultNetwork() != null) {
          options.ipOnDefaultNetwork(templateOptions.getIpOnDefaultNetwork());

@@ -93,6 +93,19 @@ public class NetworkPredicates {
       }
    }
 
+   private static class DefaultNetworkInZone implements Predicate<Network> {
+      private final long zoneId;
+
+      public DefaultNetworkInZone(long zoneId) {
+         this.zoneId = zoneId;
+      }
+
+      @Override
+      public boolean apply(Network network) {
+         return network.getZoneId() == zoneId && network.isDefault();
+      }
+   }
+
    public static class NetworkServiceNamed implements Predicate<NetworkService> {
       private final String name;
 
@@ -187,6 +200,16 @@ public class NetworkPredicates {
     */
    public static Predicate<Network> isVirtualNetwork() {
       return IsVirtualNetwork.INSTANCE;
+   }
+
+   /**
+    * Filters for default networks in a specific zone.
+    *
+    * @param zoneId the ID of the required zone.
+    * @return networks in the zone that have the default flag set.
+    */
+   public static Predicate<Network> defaultNetworkInZone(final long zoneId) {
+      return new DefaultNetworkInZone(zoneId);
    }
 
    /**

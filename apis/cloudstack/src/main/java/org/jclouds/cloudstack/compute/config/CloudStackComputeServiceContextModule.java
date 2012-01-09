@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
@@ -38,9 +39,13 @@ import org.jclouds.cloudstack.compute.functions.TemplateToOperatingSystem;
 import org.jclouds.cloudstack.compute.functions.VirtualMachineToNodeMetadata;
 import org.jclouds.cloudstack.compute.functions.ZoneToLocation;
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
+import org.jclouds.cloudstack.compute.strategy.AdvancedNetworkOptionsConverter;
+import org.jclouds.cloudstack.compute.strategy.BasicNetworkOptionsConverter;
 import org.jclouds.cloudstack.compute.strategy.CloudStackComputeServiceAdapter;
+import org.jclouds.cloudstack.compute.strategy.OptionsConverter;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
+import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.OSType;
 import org.jclouds.cloudstack.domain.ServiceOffering;
 import org.jclouds.cloudstack.domain.Template;
@@ -49,9 +54,11 @@ import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.features.GuestOSClient;
 import org.jclouds.cloudstack.functions.StaticNATVirtualMachineInNetwork;
+import org.jclouds.cloudstack.functions.ZoneIdToZone;
 import org.jclouds.cloudstack.predicates.JobComplete;
 import org.jclouds.cloudstack.suppliers.GetCurrentUser;
 import org.jclouds.cloudstack.suppliers.NetworksForCurrentUser;
+import org.jclouds.cloudstack.suppliers.ZoneIdToZoneSupplier;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
@@ -108,6 +115,10 @@ public class CloudStackComputeServiceContextModule
       install(new FactoryModuleBuilder().build(StaticNATVirtualMachineInNetwork.Factory.class));
       bind(new TypeLiteral<CacheLoader<Long, Set<IPForwardingRule>>>() {
       }).to(GetIPForwardingRulesByVirtualMachine.class);
+      bind(new TypeLiteral<CacheLoader<Long, Zone>>() {
+      }).to(ZoneIdToZone.class);
+      bind(new TypeLiteral<Supplier<LoadingCache<Long, Zone>>>() {
+      }).to(ZoneIdToZoneSupplier.class);
    }
 
    @Provides
@@ -198,4 +209,11 @@ public class CloudStackComputeServiceContextModule
       }
    }
 
+   @Provides
+   @Singleton
+   Map<NetworkType, ? extends OptionsConverter> optionsConverters(){
+      return ImmutableMap.of(
+         NetworkType.ADVANCED, new AdvancedNetworkOptionsConverter(),
+         NetworkType.BASIC, new BasicNetworkOptionsConverter());
+   }
 }
