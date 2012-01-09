@@ -39,6 +39,8 @@ import org.jclouds.cloudstack.compute.functions.TemplateToOperatingSystem;
 import org.jclouds.cloudstack.compute.functions.VirtualMachineToNodeMetadata;
 import org.jclouds.cloudstack.compute.functions.ZoneToLocation;
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
+import org.jclouds.cloudstack.compute.strategy.AdvancedNetworkOptionsConverter;
+import org.jclouds.cloudstack.compute.strategy.BasicNetworkOptionsConverter;
 import org.jclouds.cloudstack.compute.strategy.CloudStackComputeServiceAdapter;
 import org.jclouds.cloudstack.compute.strategy.OptionsConverter;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
@@ -211,7 +213,7 @@ public class CloudStackComputeServiceContextModule
    @Singleton
    Map<NetworkType, ? extends OptionsConverter> optionsConverters(){
       return ImmutableMap.of(
-         NetworkType.ADVANCED, new OptionsConverter.AdvancedNetworkOptionsConverter(),
-         NetworkType.BASIC, new OptionsConverter.BasicNetworkOptionsConverter());
+         NetworkType.ADVANCED, new AdvancedNetworkOptionsConverter(),
+         NetworkType.BASIC, new BasicNetworkOptionsConverter());
    }
 }

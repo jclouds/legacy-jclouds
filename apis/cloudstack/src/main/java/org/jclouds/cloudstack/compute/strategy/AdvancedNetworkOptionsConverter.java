@@ -32,23 +32,28 @@ import static org.jclouds.cloudstack.predicates.NetworkPredicates.defaultNetwork
 import static org.jclouds.cloudstack.predicates.NetworkPredicates.supportsStaticNAT;
 
 /**
- * Convert template options into DeployVirtualMachineOptions. Expressed as an interface, because in
- * CloudStack different zone network types have different requirements when it comes to networks and
- * security groups.
+ * Convert template options into DeployVirtualMachineOptions, when the target zone has advanced networking.
  *
  * @author Richard Downer
  */
-public interface OptionsConverter {
-
-   /**
-    * Convert a CloudStackTemplateOptions and apply to a DeployVirtualMachineOptions instance.
-    *
-    * @param templateOptions the input set of options
-    * @param networks the networks available
-    * @param zoneId the zone of the new virtual machine
-    * @param options where the resulting set of options will be applied
-    * @return same as "options" parameter
-    */
-   DeployVirtualMachineOptions apply(CloudStackTemplateOptions templateOptions, Map<Long, Network> networks, long zoneId, DeployVirtualMachineOptions options);
-
+public class AdvancedNetworkOptionsConverter implements OptionsConverter {
+   @Override
+   public DeployVirtualMachineOptions apply(CloudStackTemplateOptions templateOptions, Map<Long, Network> networks, long zoneId, DeployVirtualMachineOptions options) {
+      // security groups not allowed.
+      // at least one network must be given to CloudStack,
+      // but jclouds will try to autodetect an appropriate network if none given.
+      checkArgument(templateOptions.getSecurityGroupIds().isEmpty(), "security groups cannot be specified for locations (zones) that use advanced networking");
+      if (templateOptions.getNetworkIds().size() > 0) {
+         options.networkIds(templateOptions.getNetworkIds());
+      } else {
+         checkArgument(!networks.isEmpty(), "please setup a network for zone: " + zoneId);
+         Network defaultNetworkInZone = Iterables.getFirst(filter(networks.values(), and(defaultNetworkInZone(zoneId), supportsStaticNAT())), null);
+         if(defaultNetworkInZone == null) {
+            throw new IllegalArgumentException("please choose a specific network in zone " + zoneId + ": " + networks);
+         } else {
+            options.networkId(defaultNetworkInZone.getId());
+         }
+      }
+      return options;
+   }
 }
