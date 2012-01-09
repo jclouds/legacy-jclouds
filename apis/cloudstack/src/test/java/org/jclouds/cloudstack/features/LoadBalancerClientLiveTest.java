@@ -19,6 +19,8 @@
 package org.jclouds.cloudstack.features;
 
 import static com.google.common.collect.Iterables.find;
+import static org.jclouds.cloudstack.predicates.NetworkPredicates.hasLoadBalancerService;
+import static org.jclouds.cloudstack.predicates.NetworkPredicates.isVirtualNetwork;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -48,6 +50,8 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
+import javax.annotation.Nullable;
+
 /**
  * Tests behavior of {@code LoadBalancerClientLiveTest}
  * 
@@ -71,7 +75,16 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
       prefix += "rule";
       try {
          network = find(client.getNetworkClient().listNetworks(),
-               Predicates.and(NetworkPredicates.hasLoadBalancerService(), NetworkPredicates.isVirtualNetwork()));
+               Predicates.and(hasLoadBalancerService(), isVirtualNetwork(),
+                  new Predicate<Network>() {
+                     @Override
+                     public boolean apply(@Nullable Network network) {
+                        return network.isDefault()
+                           && !network.isSecurityGroupEnabled()
+                           && !network.isSystem()
+                           && network.getAccount().equals(user.getName());
+                     }
+                  }));
       } catch (NoSuchElementException e) {
          networksDisabled = true;
       }
@@ -82,8 +95,8 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
          return;
       Long defaultTemplate = (imageId != null && !"".equals(imageId)) ? new Long(imageId) : null;
       vm = VirtualMachineClientLiveTest.createVirtualMachineInNetwork(network,
-            defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()), client, jobComplete,
-            virtualMachineRunning);
+            defaultTemplateOrPreferredInZone(defaultTemplate, client, network.getZoneId()),
+            client, jobComplete, virtualMachineRunning);
       if (vm.getPassword() != null && !loginCredentials.hasPasswordOption())
          loginCredentials = loginCredentials.toBuilder().password(vm.getPassword()).build();
    }
