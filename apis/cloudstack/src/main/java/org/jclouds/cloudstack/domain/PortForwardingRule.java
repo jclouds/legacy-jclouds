@@ -20,15 +20,58 @@ package org.jclouds.cloudstack.domain;
 
 import java.util.Set;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
+import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * @author Adrian Cole
+ * @author Adrian Cole, Andrei Savu
  */
 public class PortForwardingRule implements Comparable<PortForwardingRule> {
+
+   public static enum Protocol {
+      TCP,
+      UDP,
+      ICMP,
+      UNKNOWN;
+
+      public static Protocol fromValue(String value) {
+         try {
+            return valueOf(value.toUpperCase());
+         } catch (IllegalArgumentException e) {
+            return UNKNOWN;
+         }
+      }
+
+      @Override
+      public String toString() {
+         return name().toLowerCase();
+      }
+   }
+
+   public static enum State {
+      STAGED,     // Rule been created but has never got through network rule conflict detection.
+                  // Rules in this state can not be sent to network elements.
+      ADD,        // Add means the rule has been created and has gone through network rule conflict detection.
+      ACTIVE,     // Rule has been sent to the network elements and reported to be active.
+      DELETEING,  // Revoke means this rule has been revoked. If this rule has been sent to the
+                  // network elements, the rule will be deleted from database.
+      UNKNOWN;
+
+      public static State fromValue(String value) {
+         try {
+            return valueOf(value.toUpperCase());
+         } catch (IllegalArgumentException e) {
+            return UNKNOWN;
+         }
+      }
+
+      @Override
+      public String toString() {
+         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
+      }
+   }
+
    public static Builder builder() {
       return new Builder();
    }
@@ -38,9 +81,9 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
       private String IPAddress;
       private long IPAddressId;
       private int privatePort;
-      private String protocol;
+      private Protocol protocol;
       public int publicPort;
-      private String state;
+      private State state;
       private String virtualMachineDisplayName;
       public long virtualMachineId;
       private String virtualMachineName;
@@ -68,7 +111,7 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
          return this;
       }
 
-      public Builder protocol(String protocol) {
+      public Builder protocol(Protocol protocol) {
          this.protocol = protocol;
          return this;
       }
@@ -78,7 +121,7 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
          return this;
       }
 
-      public Builder state(String state) {
+      public Builder state(State state) {
          this.state = state;
          return this;
       }
@@ -115,7 +158,7 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
 
       public PortForwardingRule build() {
          return new PortForwardingRule(id, IPAddress, IPAddressId, privatePort, protocol, publicPort, state,
-               virtualMachineDisplayName, virtualMachineId, virtualMachineName, CIDRs, privateEndPort, publicEndPort);
+            virtualMachineDisplayName, virtualMachineId, virtualMachineName, CIDRs, privateEndPort, publicEndPort);
       }
    }
 
@@ -126,10 +169,10 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
    private long IPAddressId;
    @SerializedName("privateport")
    private int privatePort;
-   private String protocol;
+   private Protocol protocol;
    @SerializedName("publicport")
    public int publicPort;
-   private String state;
+   private State state;
    @SerializedName("virtualmachinedisplayname")
    private String virtualMachineDisplayName;
    @SerializedName("virtualmachineid")
@@ -143,8 +186,8 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
    @SerializedName("publicendport")
    private int publicEndPort;
 
-   public PortForwardingRule(long id, String iPAddress, long iPAddressId, int privatePort, String protocol,
-                             int publicPort, String state, String virtualMachineDisplayName, long virtualMachineId,
+   public PortForwardingRule(long id, String iPAddress, long iPAddressId, int privatePort, Protocol protocol,
+                             int publicPort, State state, String virtualMachineDisplayName, long virtualMachineId,
                              String virtualMachineName, Set<String> CIDRs, int privateEndPort, int publicEndPort) {
       this.id = id;
       this.IPAddress = iPAddress;
@@ -197,7 +240,7 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
    /**
     * @return the protocol of the port forwarding rule
     */
-   public String getProtocol() {
+   public Protocol getProtocol() {
       return protocol;
    }
 
@@ -211,7 +254,7 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
    /**
     * @return the state of the rule
     */
-   public String getState() {
+   public State getState() {
       return state;
    }
 
@@ -324,20 +367,20 @@ public class PortForwardingRule implements Comparable<PortForwardingRule> {
    @Override
    public String toString() {
       return "PortForwardingRule{" +
-            "id=" + id +
-            ", IPAddress='" + IPAddress + '\'' +
-            ", IPAddressId=" + IPAddressId +
-            ", privatePort=" + privatePort +
-            ", protocol='" + protocol + '\'' +
-            ", publicPort=" + publicPort +
-            ", state='" + state + '\'' +
-            ", virtualMachineDisplayName='" + virtualMachineDisplayName + '\'' +
-            ", virtualMachineId=" + virtualMachineId +
-            ", virtualMachineName='" + virtualMachineName + '\'' +
-            ", CIDRs=" + getCIDRs() +
-            ", privateEndPort=" + privateEndPort +
-            ", publicEndPort=" + publicEndPort +
-            '}';
+         "id=" + id +
+         ", IPAddress='" + IPAddress + '\'' +
+         ", IPAddressId=" + IPAddressId +
+         ", privatePort=" + privatePort +
+         ", protocol='" + protocol + '\'' +
+         ", publicPort=" + publicPort +
+         ", state='" + state + '\'' +
+         ", virtualMachineDisplayName='" + virtualMachineDisplayName + '\'' +
+         ", virtualMachineId=" + virtualMachineId +
+         ", virtualMachineName='" + virtualMachineName + '\'' +
+         ", CIDRs=" + getCIDRs() +
+         ", privateEndPort=" + privateEndPort +
+         ", publicEndPort=" + publicEndPort +
+         '}';
    }
 
 }

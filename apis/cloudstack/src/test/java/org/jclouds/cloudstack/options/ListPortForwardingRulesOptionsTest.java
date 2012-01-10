@@ -18,9 +18,9 @@
  */
 package org.jclouds.cloudstack.options;
 
-import static org.jclouds.cloudstack.options.ListPortForwardingRulesOptions.Builder.IPAddressId;
 import static org.jclouds.cloudstack.options.ListPortForwardingRulesOptions.Builder.accountInDomain;
 import static org.jclouds.cloudstack.options.ListPortForwardingRulesOptions.Builder.domainId;
+import static org.jclouds.cloudstack.options.ListPortForwardingRulesOptions.Builder.ipAddressId;
 import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
@@ -48,12 +48,12 @@ public class ListPortForwardingRulesOptionsTest {
    }
 
    public void testName() {
-      ListPortForwardingRulesOptions options = new ListPortForwardingRulesOptions().IPAddressId(9);
+      ListPortForwardingRulesOptions options = new ListPortForwardingRulesOptions().ipAddressId(9);
       assertEquals(ImmutableList.of("9"), options.buildQueryParameters().get("ipaddressid"));
    }
 
    public void testNameStatic() {
-      ListPortForwardingRulesOptions options = IPAddressId(9);
+      ListPortForwardingRulesOptions options = ipAddressId(9);
       assertEquals(ImmutableList.of("9"), options.buildQueryParameters().get("ipaddressid"));
    }
 

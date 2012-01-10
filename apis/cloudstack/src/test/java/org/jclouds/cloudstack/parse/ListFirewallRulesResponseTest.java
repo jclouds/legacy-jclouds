@@ -18,25 +18,24 @@
  */
 package org.jclouds.cloudstack.parse;
 
-import java.util.Set;
-
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.jclouds.cloudstack.config.CloudStackParserModule;
-import org.jclouds.cloudstack.domain.PortForwardingRule;
+import org.jclouds.cloudstack.domain.FirewallRule;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Set;
 
 /**
  * 
- * @author Adrian Cole
+ * @author Andrei Savu
  */
 @Test(groups = "unit")
-public class ListPortForwardingRulesResponseTest extends BaseSetParserTest<PortForwardingRule> {
+public class ListFirewallRulesResponseTest extends BaseSetParserTest<FirewallRule> {
 
    @Override
    protected Injector injector() {
@@ -53,20 +52,21 @@ public class ListPortForwardingRulesResponseTest extends BaseSetParserTest<PortF
 
    @Override
    public String resource() {
-      return "/listportforwardingrulesresponse.json";
+      return "/listfirewallrulesresponse.json";
    }
 
    @Override
-   @SelectJson("portforwardingrule")
-   public Set<PortForwardingRule> expected() {
-      Set<String> cidrs = ImmutableSet.of("0.0.0.0/1", "128.0.0.0/1");
-      return ImmutableSet.<PortForwardingRule> of(
-         PortForwardingRule.builder().id(15).privatePort(22).protocol(PortForwardingRule.Protocol.TCP)
-            .publicPort(2022).virtualMachineId(3).virtualMachineName("i-3-3-VM").IPAddressId(3)
-            .IPAddress("72.52.126.32").state(PortForwardingRule.State.ACTIVE).CIDRs(cidrs).build(),
-         PortForwardingRule.builder().id(18).privatePort(22).protocol(PortForwardingRule.Protocol.TCP)
-            .publicPort(22).virtualMachineId(89).virtualMachineName("i-3-89-VM").IPAddressId(34)
-            .IPAddress("72.52.126.63").state(PortForwardingRule.State.ACTIVE).build());
+   @SelectJson("firewallrule")
+   public Set<FirewallRule> expected() {
+      Set<String> CIDRs = ImmutableSet.of("0.0.0.0/0");
+      return ImmutableSet.of(
+         FirewallRule.builder().id(2017).protocol(FirewallRule.Protocol.TCP).startPort(30)
+            .endPort(35).ipAddressId(2).ipAddress("10.27.27.51").state(FirewallRule.State.ACTIVE).CIDRs(CIDRs).build(),
+         FirewallRule.builder().id(2016).protocol(FirewallRule.Protocol.TCP).startPort(22)
+            .endPort(22).ipAddressId(2).ipAddress("10.27.27.51").state(FirewallRule.State.ACTIVE).CIDRs(CIDRs).build(),
+         FirewallRule.builder().id(10).protocol(FirewallRule.Protocol.TCP).startPort(22)
+            .endPort(22).ipAddressId(8).ipAddress("10.27.27.57").state(FirewallRule.State.ACTIVE).CIDRs(CIDRs).build()
+      );
    }
 
 }
