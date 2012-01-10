@@ -21,6 +21,7 @@ package org.jclouds.virtualbox.domain;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.virtualbox.statements.ScanNetworkWithPing;
 import org.testng.annotations.Test;
 
 /**

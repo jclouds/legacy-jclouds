@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.virtualbox.domain;
+package org.jclouds.virtualbox.statements;
 
 import org.jclouds.scriptbuilder.domain.AppendFile;
 import org.jclouds.scriptbuilder.domain.Call;
