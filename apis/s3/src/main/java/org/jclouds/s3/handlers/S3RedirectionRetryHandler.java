@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.aws.handlers;
+package org.jclouds.s3.handlers;
 
 import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 
@@ -40,11 +40,11 @@ import org.jclouds.http.handlers.RedirectionRetryHandler;
  * @author Adrian Cole
  */
 @Singleton
-public class AWSRedirectionRetryHandler extends RedirectionRetryHandler {
+public class S3RedirectionRetryHandler extends RedirectionRetryHandler {
    private final AWSUtils utils;
 
    @Inject
-   public AWSRedirectionRetryHandler(Provider<UriBuilder> uriBuilderProvider,
+   public S3RedirectionRetryHandler(Provider<UriBuilder> uriBuilderProvider,
          BackoffLimitedRetryHandler backoffHandler, AWSUtils utils) {
       super(uriBuilderProvider, backoffHandler);
       this.utils = utils;
@@ -54,7 +54,8 @@ public class AWSRedirectionRetryHandler extends RedirectionRetryHandler {
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
       if (response.getFirstHeaderOrNull(HttpHeaders.LOCATION) == null
             && (response.getStatusCode() == 301 || response.getStatusCode() == 307)) {
-         if (command.getCurrentRequest().getMethod() == HttpMethod.HEAD) {
+         if (command.getCurrentRequest().getMethod().equals(HttpMethod.HEAD)) {
+            command.incrementRedirectCount();
             command.setCurrentRequest(command.getCurrentRequest().toBuilder().method("GET").build());
             return true;
          } else {
