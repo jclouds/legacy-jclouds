@@ -13,6 +13,7 @@ title: Quick Start Index
 * [Eucalyptus](/documentation/quickstart/eucalyptus)
 * [File System](/documentation/quickstart/filesystem)
 * [Go Grid](/documentation/quickstart/go-grid)
+* [HP Cloud Services](/documentation/quickstart/hpcloud)
 * [IBM Developer Cloud](/documentation/quickstart/ibm-developer-cloud)
 * [Open Stack](/documentation/quickstart/openstack)
 * [Rackspace](/documentation/quickstart/rackspace)
