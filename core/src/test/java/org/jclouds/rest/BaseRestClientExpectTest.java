@@ -23,11 +23,11 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContext;
-import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
@@ -58,7 +58,9 @@ import org.testng.annotations.Test;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
@@ -69,6 +71,24 @@ import com.google.inject.name.Names;
 /**
  * 
  * Allows us to test a client via its side effects.
+ * 
+ * <p/>
+ * Example usage:
+ * 
+ * <pre>
+ * 
+ * HttpRequest bucketFooExists = HttpRequest.builder().method(&quot;HEAD&quot;).endpoint(
+ *          URI.create(&quot;https://foo.s3.amazonaws.com/?max-keys=0&quot;)).headers(
+ *          ImmutableMultimap.&lt;String, String&gt; builder().put(&quot;Host&quot;, &quot;foo.s3.amazonaws.com&quot;).put(&quot;Date&quot;, CONSTANT_DATE)
+ *                   .put(&quot;Authorization&quot;, &quot;AWS identity:86P4BBb7xT+gBqq7jxM8Tc28ktY=&quot;).build()).build();
+ * 
+ * S3Client clientWhenBucketExists = requestSendsResponse(bucketFooExists, HttpResponse.builder().statusCode(200).build());
+ * assert clientWhenBucketExists.bucketExists(&quot;foo&quot;);
+ * 
+ * S3Client clientWhenBucketDoesntExist = requestSendsResponse(bucketFooExists, HttpResponse.builder().statusCode(404)
+ *          .build());
+ * assert !clientWhenBucketDoesntExist.bucketExists(&quot;foo&quot;);
+ * </pre>
  * 
  * @author Adrian Cole
  */
@@ -88,6 +108,12 @@ public abstract class BaseRestClientExpectTest<S> {
 
    protected String provider = "mock";
 
+   /**
+    * Override this to supply alternative bindings for use in the test. This is commonly used to
+    * override suppliers of dates so that the test results are predicatable.
+    * 
+    * @return optional guice module which can override bindings
+    */
    protected Module createModule() {
       return new Module() {
 
@@ -98,11 +124,28 @@ public abstract class BaseRestClientExpectTest<S> {
 
       };
    }
-   
-   protected Payload payloadFromResource(String resource) {
+
+   /**
+    * Convenience method used when creating a response that includes an http payload.
+    * 
+    * <p/>
+    * ex.
+    * 
+    * <pre>
+    * HttpResponse.builder().statusCode(200).payload(payloadFromResource(&quot;/ip_get_details.json&quot;)).build()
+    * </pre>
+    * 
+    * @param resource
+    *           resource file such as {@code /serverlist.json}
+    * @return payload for use in http responses.
+    */
+   public Payload payloadFromResource(String resource) {
       return Payloads.newInputStreamPayload(getClass().getResourceAsStream(resource));
    }
 
+   /**
+    * Mock executor service which uses the supplied function to return http responses.
+    */
    @SingleThreaded
    @Singleton
    public static class ExpectHttpCommandExecutorService extends BaseHttpCommandExecutorService<HttpRequest> {
@@ -119,18 +162,18 @@ public abstract class BaseRestClientExpectTest<S> {
       }
 
       @Override
-      protected void cleanup(HttpRequest nativeResponse) {
+      public void cleanup(HttpRequest nativeResponse) {
          if (nativeResponse.getPayload() != null)
             nativeResponse.getPayload().release();
       }
 
       @Override
-      protected HttpRequest convert(HttpRequest request) throws IOException, InterruptedException {
+      public HttpRequest convert(HttpRequest request) throws IOException, InterruptedException {
          return request;
       }
 
       @Override
-      protected HttpResponse invoke(HttpRequest nativeRequest) throws IOException, InterruptedException {
+      public HttpResponse invoke(HttpRequest nativeRequest) throws IOException, InterruptedException {
          return fn.apply(nativeRequest);
       }
    }
@@ -145,7 +188,7 @@ public abstract class BaseRestClientExpectTest<S> {
       }
 
       @Override
-      protected void configure() {
+      public void configure() {
          bind(ExecutorService.class).annotatedWith(Names.named(Constants.PROPERTY_USER_THREADS)).toInstance(
                   MoreExecutors.sameThreadExecutor());
          bind(ExecutorService.class).annotatedWith(Names.named(Constants.PROPERTY_IO_WORKER_THREADS)).toInstance(
@@ -156,18 +199,72 @@ public abstract class BaseRestClientExpectTest<S> {
       }
    }
 
-   protected S requestSendsResponse(final HttpRequest fn, final HttpResponse out) {
-      return createClient(new Function<HttpRequest, HttpResponse>() {
-
-         @Override
-         public HttpResponse apply(HttpRequest command) {
-            assertEquals(renderRequest(command), renderRequest(fn));
-            return out;
-         }
-      });
+   /**
+    * creates a client for a mock server which only responds to a single http request
+    * 
+    * @param request
+    *           the http request the mock server responds to
+    * @param response
+    *           the response the mock server returns for the request
+    * @return a client configured with this behavior
+    */
+   public S requestSendsResponse(HttpRequest request, HttpResponse response) {
+      return requestsSendsResponses(ImmutableMap.of(request, response));
    }
 
-   private String renderRequest(HttpRequest request) {
+   /**
+    * creates a client for a mock server which only responds to two types of requests
+    * 
+    * @param requestA
+    *           an http request the mock server responds to
+    * @param responseA
+    *           the response for {@code requestA}
+    * @param requestB
+    *           another http request the mock server responds to
+    * @param responseB
+    *           the response for {@code requestB}
+    * @return a client configured with this behavior
+    */
+   public S requestsSendsResponses(HttpRequest requestA, HttpResponse responseA, HttpRequest requestB,
+            HttpResponse responseB) {
+      return requestsSendsResponses(ImmutableMap.of(requestA, responseA, requestB, responseB));
+   }
+
+   /**
+    * creates a client for a mock server which only responds to three types of requests
+    * 
+    * @param requestA
+    *           an http request the mock server responds to
+    * @param responseA
+    *           the response for {@code requestA}
+    * @param requestB
+    *           another http request the mock server responds to
+    * @param responseB
+    *           the response for {@code requestB}
+    * @param requestC
+    *           another http request the mock server responds to
+    * @param responseC
+    *           the response for {@code requestC}
+    * @return a client configured with this behavior
+    */
+   public S requestsSendsResponses(HttpRequest requestA, HttpResponse responseA, HttpRequest requestB,
+            HttpResponse responseB, HttpRequest requestC, HttpResponse responseC) {
+      return requestsSendsResponses(ImmutableMap.of(requestA, responseA, requestB, responseB, requestC, responseC));
+   }
+
+   /**
+    * creates a client for a mock server which returns responses for requests based on the supplied
+    * Map parameter.
+    * 
+    * @param requestToResponse
+    *           valid requests and responses for the mock to respond to
+    * @return a client configured with this behavior
+    */
+   public S requestsSendsResponses(Map<HttpRequest, HttpResponse> requestToResponse) {
+      return createClient(Functions.forMap(requestToResponse));
+   }
+
+   public String renderRequest(HttpRequest request) {
       StringBuilder builder = new StringBuilder().append(request.getRequestLine()).append('\n');
       for (Entry<String, String> header : request.getHeaders().entries()) {
          builder.append(header.getKey()).append(": ").append(header.getValue()).append('\n');
@@ -189,21 +286,21 @@ public abstract class BaseRestClientExpectTest<S> {
       return builder.toString();
    }
 
-   protected S createClient(Function<HttpRequest, HttpResponse> fn) {
+   public S createClient(Function<HttpRequest, HttpResponse> fn) {
       return createClient(fn, createModule(), setupProperties());
    }
 
-   protected S createClient(Function<HttpRequest, HttpResponse> fn, Module module) {
+   public S createClient(Function<HttpRequest, HttpResponse> fn, Module module) {
       return createClient(fn, module, setupProperties());
 
    }
 
-   protected S createClient(Function<HttpRequest, HttpResponse> fn, Properties props) {
+   public S createClient(Function<HttpRequest, HttpResponse> fn, Properties props) {
       return createClient(fn, createModule(), props);
 
    }
 
-   protected S createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
+   public S createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
       RestContextSpec<S, ?> contextSpec = makeContextSpec();
 
       return createContext(contextSpec,
@@ -221,11 +318,17 @@ public abstract class BaseRestClientExpectTest<S> {
                   new Properties());
    }
 
-
+   /**
+    * override this when the provider or api is not located in rest.properties and you are not using
+    * the {@link RegisterContext} annotation on your tests.
+    */
    protected Properties setupRestProperties() {
       return RestContextFactory.getPropertiesFromResource("/rest.properties");
    }
 
+   /**
+    * override this to supply context-specific parameters during tests.
+    */
    protected Properties setupProperties() {
       return new Properties();
    }
