@@ -22,13 +22,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
 
+import org.jclouds.io.Payload;
 import org.jclouds.javax.annotation.Nullable;
 
-import org.jclouds.io.Payload;
-
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -191,55 +190,26 @@ public class HttpRequest extends HttpMessage {
    public Builder toBuilder() {
       return Builder.from(this);
    }
-
+   
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((endpoint == null) ? 0 : endpoint.hashCode());
-      result = prime * result + ((method == null) ? 0 : method.hashCode());
-      result = prime * result + ((payload == null) ? 0 : payload.hashCode());
-      result = prime * result + ((headers == null) ? 0 : headers.hashCode());
-      result = prime * result + ((requestFilters == null) ? 0 : requestFilters.hashCode());
-      result = prime * result + Arrays.hashCode(skips);
-      return result;
+      return Objects.hashCode(method, endpoint, headers, payload);
    }
 
    @Override
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
+      if (!(obj instanceof HttpRequest))
          return false;
       HttpRequest other = (HttpRequest) obj;
-      if (endpoint == null) {
-         if (other.endpoint != null)
-            return false;
-      } else if (!endpoint.equals(other.endpoint))
+      if (!Objects.equal(method, other.method))
          return false;
-      if (method == null) {
-         if (other.method != null)
-            return false;
-      } else if (!method.equals(other.method))
+      if (!Objects.equal(endpoint, other.endpoint))
          return false;
-      if (payload == null) {
-         if (other.payload != null)
-            return false;
-      } else if (!payload.equals(other.payload))
+      if (!Objects.equal(headers, other.headers))
          return false;
-      if (headers == null) {
-         if (other.headers != null)
-            return false;
-      } else if (!headers.equals(other.headers))
-         return false;
-      if (requestFilters == null) {
-         if (other.requestFilters != null)
-            return false;
-      } else if (!requestFilters.equals(other.requestFilters))
-         return false;
-      if (!Arrays.equals(skips, other.skips))
+      if (!Objects.equal(payload, other.payload))
          return false;
       return true;
    }
