@@ -21,9 +21,11 @@ package org.jclouds.cloudservers.handlers;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.jclouds.http.*;
 import org.jclouds.logging.Logger;
 import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
+import org.jclouds.openstack.config.OpenStackAuthenticationModule.GetAuthenticationCache;
 import org.jclouds.openstack.reference.AuthHeaders;
 import org.jclouds.util.Suppliers2.InvalidatableExpiringMemoizingSupplier;
 
@@ -37,13 +39,17 @@ import static org.jclouds.http.HttpUtils.releasePayload;
  * @author Adrian Cole
  * 
  */
+@Singleton
 public class RetryOnRenew implements HttpRetryHandler {
    @Resource
    protected Logger logger = Logger.NULL;
 
    // This doesn't work yet
+//   @Inject
+//   Supplier<AuthenticationResponse> providedAuthenticationResponseCache;
+
    @Inject
-   Supplier<AuthenticationResponse> providedAuthenticationResponseCache;
+   GetAuthenticationCache providedAuthenticationResponseCache;
 
    @Override
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
@@ -58,7 +64,7 @@ public class RetryOnRenew implements HttpRetryHandler {
                   retry = false;
                } else {
                   // Otherwise invalidate the token cache, to force reauthentication
-                  ((InvalidatableExpiringMemoizingSupplier) providedAuthenticationResponseCache).invalidate();
+                  providedAuthenticationResponseCache.invalidate();
                   retry = true;
                }
                break;

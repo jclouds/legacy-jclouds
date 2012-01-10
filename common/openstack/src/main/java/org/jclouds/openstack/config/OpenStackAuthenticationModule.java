@@ -43,6 +43,7 @@ import com.google.common.base.Throwables;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import org.jclouds.util.Suppliers2;
+import org.jclouds.util.Suppliers2.InvalidatableExpiringMemoizingSupplier;
 
 /**
  * Configures the Rackspace authentication service connection, including logging and http transport.
@@ -102,6 +103,29 @@ public class OpenStackAuthenticationModule extends AbstractModule {
       }
 
    }
+
+   @Singleton
+   public static class GetAuthenticationCache implements Supplier<AuthenticationResponse> {
+      private InvalidatableExpiringMemoizingSupplier<AuthenticationResponse> supplier;
+
+      @Inject
+      public GetAuthenticationCache(final GetAuthenticationResponse getAuthenticationResponse) {
+         supplier = (InvalidatableExpiringMemoizingSupplier) Suppliers2.memoizeWithExpirationAndInvalidation(
+               new RetryOnTimeOutExceptionSupplier<AuthenticationResponse>(
+                     getAuthenticationResponse), 23, TimeUnit.HOURS);
+      }
+
+      public void invalidate() {
+         supplier.invalidate();
+      }
+
+      @Override
+      public AuthenticationResponse get() {
+         return supplier.get();
+      }
+   }
+
+
 
    @Provides
    @Singleton
