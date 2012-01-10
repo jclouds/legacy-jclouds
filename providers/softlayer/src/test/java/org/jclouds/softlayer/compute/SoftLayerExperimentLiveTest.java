@@ -48,7 +48,7 @@ public class SoftLayerExperimentLiveTest extends BaseVersionedServiceLiveTest {
          context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet
                   .<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()));
 
-         assertEquals(context.getComputeService().listAssignableLocations().size(), 7);
+         assertEquals(context.getComputeService().listAssignableLocations().size(), 6);
 
       } finally {
          if (context != null)
