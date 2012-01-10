@@ -22,27 +22,53 @@ import com.google.common.collect.ImmutableSet;
 
 /**
  * Options used to control what port forwarding rules are returned
- * 
- * @see <a href=
- *      "http://download.cloud.com/releases/2.2.0/api/user/listIpForwardingRules.html"
- *      />
+ *
  * @author Adrian Cole
+ * @see <a href=
+ *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/global_admin/listPortForwardingRules.html"
+ *      />
  */
 public class ListPortForwardingRulesOptions extends AccountInDomainOptions {
 
    public static final ListPortForwardingRulesOptions NONE = new ListPortForwardingRulesOptions();
 
    /**
-    * @param IPAddressId
-    *           list the rule belonging to this public ip address
+    * @param id
+    *       lists rule with the specified ID
     */
-   public ListPortForwardingRulesOptions IPAddressId(long IPAddressId) {
+   public ListPortForwardingRulesOptions id(long id) {
+      this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
+      return this;
+   }
+
+   /**
+    * @param IPAddressId
+    *       list the rule belonging to this public ip address
+    */
+   public ListPortForwardingRulesOptions ipAddressId(long IPAddressId) {
       this.queryParameters.replaceValues("ipaddressid", ImmutableSet.of(IPAddressId + ""));
       return this;
 
    }
 
    public static class Builder {
+
+      /**
+       * @see ListPortForwardingRulesOptions#id
+       */
+      public static ListPortForwardingRulesOptions id(long id) {
+         ListPortForwardingRulesOptions options = new ListPortForwardingRulesOptions();
+         return options.id(id);
+      }
+
+      /**
+       * @see ListPortForwardingRulesOptions#ipAddressId
+       */
+      public static ListPortForwardingRulesOptions ipAddressId(long ipAddressId) {
+         ListPortForwardingRulesOptions options = new ListPortForwardingRulesOptions();
+         return options.ipAddressId(ipAddressId);
+      }
+
       /**
        * @see ListPortForwardingRulesOptions#accountInDomain
        */
@@ -52,21 +78,12 @@ public class ListPortForwardingRulesOptions extends AccountInDomainOptions {
       }
 
       /**
-       * @see ListPortForwardingRulesOptions#IPAddressId
-       */
-      public static ListPortForwardingRulesOptions IPAddressId(long IPAddressId) {
-         ListPortForwardingRulesOptions options = new ListPortForwardingRulesOptions();
-         return options.IPAddressId(IPAddressId);
-      }
-
-      /**
        * @see ListPortForwardingRulesOptions#domainId
        */
       public static ListPortForwardingRulesOptions domainId(long id) {
          ListPortForwardingRulesOptions options = new ListPortForwardingRulesOptions();
          return options.domainId(id);
       }
-
    }
 
    /**
