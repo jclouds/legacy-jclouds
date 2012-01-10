@@ -53,7 +53,7 @@ public class S3RedirectionRetryHandlerExpectTest extends BaseS3ClientExpectTest 
 
       HttpResponse success = HttpResponse.builder().statusCode(200).build();
 
-      S3Client clientWhenBucketExists = requestsSendsResponses(bucketFooExists, redirectResponse, bucketFooExistsNowUsesGET, success);
+      S3Client clientWhenBucketExists = requestsSendResponses(bucketFooExists, redirectResponse, bucketFooExistsNowUsesGET, success);
       
       assert clientWhenBucketExists.bucketExists("foo");
 

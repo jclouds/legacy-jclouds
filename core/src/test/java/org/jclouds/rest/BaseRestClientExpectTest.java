@@ -225,7 +225,7 @@ public abstract class BaseRestClientExpectTest<S> {
     *           the response for {@code requestB}
     * @return a client configured with this behavior
     */
-   public S requestsSendsResponses(HttpRequest requestA, HttpResponse responseA, HttpRequest requestB,
+   public S requestsSendResponses(HttpRequest requestA, HttpResponse responseA, HttpRequest requestB,
             HttpResponse responseB) {
       return requestsSendsResponses(ImmutableMap.of(requestA, responseA, requestB, responseB));
    }
