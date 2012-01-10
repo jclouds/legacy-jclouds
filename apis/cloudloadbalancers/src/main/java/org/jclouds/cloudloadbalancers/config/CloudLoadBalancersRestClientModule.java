@@ -38,6 +38,7 @@ import org.jclouds.cloudloadbalancers.functions.ConvertLB;
 import org.jclouds.cloudloadbalancers.handlers.ParseCloudLoadBalancersErrorFromHttpResponse;
 import org.jclouds.cloudloadbalancers.reference.RackspaceConstants;
 import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
@@ -51,6 +52,7 @@ import org.jclouds.location.config.ProvideRegionToURIViaProperties;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
 import org.jclouds.openstack.config.OpenStackAuthenticationModule;
+import org.jclouds.openstack.handlers.RetryOnRenew;
 import org.jclouds.openstack.reference.AuthHeaders;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
@@ -154,4 +156,8 @@ public class CloudLoadBalancersRestClientModule extends
             ParseCloudLoadBalancersErrorFromHttpResponse.class);
    }
 
+   @Override
+   protected void bindRetryHandlers() {
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
+   }
 }

@@ -49,6 +49,7 @@ import org.testng.annotations.BeforeClass;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
@@ -76,8 +77,8 @@ public abstract class BaseCloudLoadBalancersAsyncClientTest<T> extends RestClien
          // following from CloudLoadBalancersRestClientModule, except we are hard-coding the auth response
          install(new OpenStackAuthenticationModule() {
             @Override
-            protected Supplier<AuthenticationResponse> provideAuthenticationResponseCache(
-                     final GetAuthenticationResponse getAuthenticationResponse) {
+            protected Supplier<AuthenticationResponse> provideAuthenticationResponseSupplier(
+                     final LoadingCache<String,AuthenticationResponse> cache) {
                return Suppliers.ofInstance(new AuthenticationResponse("token", ImmutableMap.<String, URI> of()));
             }
          });
