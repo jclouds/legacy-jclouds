@@ -124,7 +124,7 @@ public interface FirewallAsyncClient {
    @Unwrap
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<AsyncCreateResponse> createPortForwardingRuleForVirtualMachine(
-      @QueryParam("ipaddressid") long ipAddressId, @QueryParam("protocol") String protocol,
+      @QueryParam("ipaddressid") long ipAddressId, @QueryParam("protocol") PortForwardingRule.Protocol protocol,
       @QueryParam("publicport") int publicPort, @QueryParam("virtualmachineid") long virtualMachineId,
       @QueryParam("privateport") int privatePort);
 

@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.features;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import org.jclouds.cloudstack.domain.PortForwardingRule;
 import org.jclouds.cloudstack.options.ListPortForwardingRulesOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
@@ -82,12 +83,12 @@ public class FirewallAsyncClientTest extends BaseCloudStackAsyncClientTest<Firew
    public void testCreatePortForwardingRuleForVirtualMachine() throws SecurityException, NoSuchMethodException,
          IOException {
       Method method = FirewallAsyncClient.class.getMethod("createPortForwardingRuleForVirtualMachine", long.class,
-            long.class, String.class, int.class, int.class);
-      HttpRequest httpRequest = processor.createRequest(method, 6, 7, "tcp", 22, 22);
+            PortForwardingRule.Protocol.class, int.class, long.class, int.class);
+      HttpRequest httpRequest = processor.createRequest(method, 6L, PortForwardingRule.Protocol.TCP, 22, 7L, 22);
 
       assertRequestLineEquals(
             httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=createPortForwardingRule&virtualmachineid=6&protocol=tcp&ipaddressid=7&privateport=22&publicport=22 HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=createPortForwardingRule&ipaddressid=6&publicport=22&protocol=tcp&virtualmachineid=7&privateport=22 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

@@ -118,7 +118,7 @@ public interface FirewallClient {
     * @return response used to track creation
     */
    AsyncCreateResponse createPortForwardingRuleForVirtualMachine(long ipAddressId,
-      String protocol, int publicPort, long virtualMachineId, int privatePort);
+      PortForwardingRule.Protocol protocol, int publicPort, long virtualMachineId, int privatePort);
 
    /**
     * Deletes an port forwarding rule

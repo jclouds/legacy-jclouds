@@ -199,9 +199,9 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
 
       assertEquals(client.listPortForwardingRules(),
          ImmutableSet.<PortForwardingRule>of(
-            PortForwardingRule.builder().id(15).privatePort(22).protocol("tcp").publicPort(2022).virtualMachineId(3)
+            PortForwardingRule.builder().id(15).privatePort(22).protocol(PortForwardingRule.Protocol.TCP).publicPort(2022).virtualMachineId(3)
                .virtualMachineName("i-3-3-VM").IPAddressId(3).IPAddress("72.52.126.32").state("Active").CIDRs(cidrs).build(),
-            PortForwardingRule.builder().id(18).privatePort(22).protocol("tcp").publicPort(22).virtualMachineId(89)
+            PortForwardingRule.builder().id(18).privatePort(22).protocol(PortForwardingRule.Protocol.TCP).publicPort(22).virtualMachineId(89)
                .virtualMachineName("i-3-89-VM").IPAddressId(34).IPAddress("72.52.126.63").state("Active").build())
       );
    }
@@ -247,7 +247,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
       Set<String> cidrs = ImmutableSet.of("0.0.0.0/1", "128.0.0.0/1");
 
       assertEquals(client.getPortForwardingRule(15),
-         PortForwardingRule.builder().id(15).privatePort(22).protocol("tcp").publicPort(2022).virtualMachineId(3)
+         PortForwardingRule.builder().id(15).privatePort(22).protocol(PortForwardingRule.Protocol.TCP).publicPort(2022).virtualMachineId(3)
             .virtualMachineName("i-3-3-VM").IPAddressId(3).IPAddress("72.52.126.32").state("Active").CIDRs(cidrs).build());
    }
 
@@ -290,7 +290,8 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .build())
          .getFirewallClient();
 
-      AsyncCreateResponse response = client.createPortForwardingRuleForVirtualMachine(2, "tcp", 22, 1234, 22);
+      AsyncCreateResponse response = client.createPortForwardingRuleForVirtualMachine(
+         2, PortForwardingRule.Protocol.TCP, 22, 1234, 22);
       assertEquals(response.getJobId(), 2035);
       assertEquals(response.getId(), 2015);
    }

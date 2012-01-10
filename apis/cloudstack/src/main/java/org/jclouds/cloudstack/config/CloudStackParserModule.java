@@ -85,7 +85,7 @@ public class CloudStackParserModule extends AbstractModule {
          private long IPAddressId;
          @SerializedName("privateport")
          private int privatePort;
-         private String protocol;
+         private PortForwardingRule.Protocol protocol;
          @SerializedName("publicport")
          public int publicPort;
          private String state;

@@ -96,7 +96,7 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
          ip = reuseOrAssociate.apply(network);
          try {
             AsyncCreateResponse job = client.getFirewallClient()
-               .createPortForwardingRuleForVirtualMachine(ip.getId(), "tcp", 22, vm.getId(), 22);
+               .createPortForwardingRuleForVirtualMachine(ip.getId(), PortForwardingRule.Protocol.TCP, 22, vm.getId(), 22);
             assertTrue(jobComplete.apply(job.getJobId()));
             portForwardingRule = client.getFirewallClient().getPortForwardingRule(job.getId());
 
