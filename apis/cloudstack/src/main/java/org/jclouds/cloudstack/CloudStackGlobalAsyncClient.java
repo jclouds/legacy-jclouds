@@ -21,6 +21,8 @@ package org.jclouds.cloudstack;
 import org.jclouds.cloudstack.features.GlobalAccountAsyncClient;
 import org.jclouds.cloudstack.features.GlobalAlertAsyncClient;
 import org.jclouds.cloudstack.features.GlobalCapacityAsyncClient;
+import org.jclouds.cloudstack.features.GlobalConfigurationAsyncClient;
+import org.jclouds.cloudstack.features.GlobalConfigurationClient;
 import org.jclouds.cloudstack.features.GlobalHostAsyncClient;
 import org.jclouds.cloudstack.features.GlobalOfferingAsyncClient;
 import org.jclouds.cloudstack.features.GlobalStoragePoolAsyncClient;
@@ -90,4 +92,11 @@ public interface CloudStackGlobalAsyncClient extends CloudStackDomainAsyncClient
     */
    @Delegate
    GlobalUsageAsyncClient getUsageClient();
+
+   /**
+    * Provides asynchronous access to Configuration
+    */
+   @Delegate
+   @Override
+   GlobalConfigurationAsyncClient getConfigurationClient();
 }
