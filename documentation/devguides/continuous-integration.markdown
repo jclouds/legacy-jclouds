@@ -1,45 +1,16 @@
 ---
 layout: docs
-title: JClouds Automated testing
+title: jclouds Continuous Integration
 ---
 
-# JClouds Automated testing + snapshots repository.
+# jclouds Automated testing + snapshots repository.
 
 ## Introduction
 
-There is an instance of Hudson monitoring SVN commits every 15 minutes. 
-When a commit is done, it builds the code, runs the tests, and 
-deploys new snapshot jars to the Apache Archiva server.
+[CloudBees](http://www.cloudbees.com) is kindly supporting jclouds by providing free access to their hosted [DEV@cloud](http://www.cloudbees.com/dev.cb) continuous integration service. jclouds' [Jenkins image there](http://jclouds.ci.cloudbees.com) is set up to build all active jclouds branches under Java 6 and 7, as well as a number of other projects.
 
-## Hudson
+From the main trunk build, snapshot artifacts are published to [Sonatype's OSS Nexus](https://oss.sonatype.org/) and are available from its [snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/) (under [org/jclouds](https://oss.sonatype.org/content/repositories/snapshots/org/jclouds/)).
 
-Hudson can be accessed from [hudson](http://jclouds.rimuhosting.com/hudson). Anyone should be able to see the build status. 
-If you think you need more access (i.e. to run builds manually), please ask Adrian or Ivan. 
+## Jenkins
 
-Once every 15minutes, if SVN has been committed to, Hudson builds the project, and 
-as part of the build, deploys to Apache Archiva.
-
-### Adding a user to manage the jclouds build
-
-*  manage-hudson > Manage users
-*  look at there user id in the url of the person
-*  back to manage hudson > configure system
-*  then add the user with the right access
-
-## Nexus 
-
-Installation of Nexus is on jclouds.rimuhosting.com.
-
-Nexus is set up to purge all snapshots older than 90 days every night (keeping a minimum of 10 builds), 
-but we can of course modify that too.
-
-Nexus details:
-
-*  [UI](http://jclouds.rimuhosting.com:8081/nexus/)
-*  [Snapshot repo](https://oss.sonatype.org/content/repositories/snapshots)
-
-### Starting nexus 
-*  `ssh root@jclouds.rimuhosting.com`
-*  `su - nexus`
-*  `./nexus start`
-
+If you think you might need access to jclouds' Jenkins, or would like a job set up there to build your jclouds-related project, please post a request to the [jclouds-dev mailing list](http://groups.google.com/group/jclouds-dev).
