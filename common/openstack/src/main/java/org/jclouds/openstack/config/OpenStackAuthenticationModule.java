@@ -42,6 +42,7 @@ import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import org.jclouds.util.Suppliers2;
 
 /**
  * Configures the Rackspace authentication service connection, including logging and http transport.
@@ -106,7 +107,7 @@ public class OpenStackAuthenticationModule extends AbstractModule {
    @Singleton
    protected Supplier<AuthenticationResponse> provideAuthenticationResponseCache(
             final GetAuthenticationResponse getAuthenticationResponse) {
-      return Suppliers.memoizeWithExpiration(new RetryOnTimeOutExceptionSupplier<AuthenticationResponse>(
+      return Suppliers2.memoizeWithExpirationAndInvalidation(new RetryOnTimeOutExceptionSupplier<AuthenticationResponse>(
                getAuthenticationResponse), 23, TimeUnit.HOURS);
    }
 

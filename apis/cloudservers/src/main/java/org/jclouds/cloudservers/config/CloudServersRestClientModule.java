@@ -26,7 +26,9 @@ import org.jclouds.cloudservers.CloudServersAsyncClient;
 import org.jclouds.cloudservers.CloudServersClient;
 import org.jclouds.cloudservers.ServerManagement;
 import org.jclouds.cloudservers.handlers.ParseCloudServersErrorFromHttpResponse;
+import org.jclouds.cloudservers.handlers.RetryOnRenew;
 import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
@@ -72,6 +74,11 @@ public class CloudServersRestClientModule extends RestClientModule<CloudServersC
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseCloudServersErrorFromHttpResponse.class);
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(ParseCloudServersErrorFromHttpResponse.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ParseCloudServersErrorFromHttpResponse.class);
+   }
+
+   @Override
+   protected void bindRetryHandlers() {
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
    }
 
    @Provides
