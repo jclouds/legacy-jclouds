@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.s3;
+package org.jclouds.s3.internal;
 
 import static org.testng.Assert.assertEquals;
 
@@ -27,6 +27,9 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
+import org.jclouds.s3.S3AsyncClient;
+import org.jclouds.s3.S3ContextBuilder;
+import org.jclouds.s3.S3PropertiesBuilder;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
 import org.jclouds.s3.filters.RequestAuthorizeSignature;
 import org.testng.annotations.BeforeClass;

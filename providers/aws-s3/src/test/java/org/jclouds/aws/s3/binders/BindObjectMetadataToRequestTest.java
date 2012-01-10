@@ -28,10 +28,10 @@ import javax.ws.rs.HttpMethod;
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.s3.BaseS3AsyncClientTest;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.s3.domain.ObjectMetadataBuilder;
+import org.jclouds.s3.internal.BaseS3AsyncClientTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;

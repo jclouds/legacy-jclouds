@@ -32,10 +32,10 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.s3.BaseS3AsyncClientTest;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.config.S3RestClientModule;
+import org.jclouds.s3.internal.BaseS3AsyncClientTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
