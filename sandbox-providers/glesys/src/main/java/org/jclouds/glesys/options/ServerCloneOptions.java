@@ -34,13 +34,6 @@ public class ServerCloneOptions extends ServerEditOptions {
       }
 
       /**
-       * @see org.jclouds.glesys.options.ServerCloneOptions#hostname
-       */
-      public static ServerCloneOptions hostname(String hostname) {
-         return ServerCloneOptions.class.cast(new ServerCloneOptions().hostname(hostname));
-      }
-
-      /**
        * @see org.jclouds.glesys.options.ServerEditOptions#description
        */
       public static ServerCloneOptions description(String description) {

@@ -32,7 +32,7 @@ import org.jclouds.glesys.options.EmailEditOptions;
  * <p/>
  *
  * @author Adam Lowe
- * @see org.jclouds.glesys.features.DomainAsyncClient
+ * @see org.jclouds.glesys.features.EmailAsyncClient
  * @see <a href="https://customer.glesys.com/api.php" />
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
