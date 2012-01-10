@@ -27,6 +27,7 @@ import org.jclouds.cloudservers.CloudServersClient;
 import org.jclouds.cloudservers.ServerManagement;
 import org.jclouds.cloudservers.handlers.ParseCloudServersErrorFromHttpResponse;
 import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
@@ -35,6 +36,7 @@ import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
 import org.jclouds.openstack.config.OpenStackAuthenticationModule;
+import org.jclouds.openstack.handlers.RetryOnRenew;
 import org.jclouds.openstack.reference.AuthHeaders;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
@@ -72,6 +74,11 @@ public class CloudServersRestClientModule extends RestClientModule<CloudServersC
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseCloudServersErrorFromHttpResponse.class);
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(ParseCloudServersErrorFromHttpResponse.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ParseCloudServersErrorFromHttpResponse.class);
+   }
+
+   @Override
+   protected void bindRetryHandlers() {
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
    }
 
    @Provides
