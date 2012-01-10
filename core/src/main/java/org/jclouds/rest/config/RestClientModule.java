@@ -29,8 +29,8 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
-import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -71,6 +71,9 @@ public class RestClientModule<S, A> extends AbstractModule {
             (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(
                   RestContextImpl.class, syncClientType, asyncClientType))).in(
             Scopes.SINGLETON);
+      bind(TypeLiteral.get(Types.newParameterizedType(RestContext.class, syncClientType, asyncClientType))).to(
+               (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class, syncClientType,
+                        asyncClientType))).in(Scopes.SINGLETON);
       bindAsyncClient();
       bindClient();
       bindErrorHandlers();

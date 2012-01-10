@@ -60,9 +60,6 @@ public class RimuHostingComputeServiceDependenciesModule extends AbstractModule 
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<RimuHostingClient, RimuHostingAsyncClient>>() {
       }).in(Scopes.SINGLETON);
-      bind(new TypeLiteral<RestContext<RimuHostingClient, RimuHostingAsyncClient>>() {
-      }).to(new TypeLiteral<RestContextImpl<RimuHostingClient, RimuHostingAsyncClient>>() {
-      }).in(Scopes.SINGLETON);
       bind(new TypeLiteral<Function<Server, Iterable<String>>>() {
       }).to(ServerToPublicAddresses.class);
 

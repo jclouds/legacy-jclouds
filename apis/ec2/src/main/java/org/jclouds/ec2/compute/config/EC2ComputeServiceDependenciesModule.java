@@ -112,9 +112,6 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<EC2Client, EC2AsyncClient>>() {
       }).in(Scopes.SINGLETON);
-      bind(new TypeLiteral<RestContext<EC2Client, EC2AsyncClient>>() {
-      }).to(new TypeLiteral<RestContextImpl<EC2Client, EC2AsyncClient>>() {
-      }).in(Scopes.SINGLETON);
    }
 
    /**

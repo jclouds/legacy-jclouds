@@ -91,6 +91,9 @@ public abstract class BaseCloudLoadBalancersAsyncClientTest<T> extends RestClien
                (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(
                      RestContextImpl.class, syncClientType, asyncClientType))).in(
                Scopes.SINGLETON);
+         bind(TypeLiteral.get(Types.newParameterizedType(RestContext.class, syncClientType, asyncClientType))).to(
+                  (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class, syncClientType,
+                           asyncClientType))).in(Scopes.SINGLETON);
          bindAsyncClient();
          bindClient();
          bindErrorHandlers();
