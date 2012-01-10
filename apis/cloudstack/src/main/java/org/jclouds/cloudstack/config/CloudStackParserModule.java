@@ -28,6 +28,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.Account.State;
+import org.jclouds.cloudstack.domain.FirewallRule;
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
 import org.jclouds.cloudstack.domain.PortForwardingRule;
 import org.jclouds.cloudstack.domain.User;
@@ -46,20 +47,21 @@ import com.google.inject.TypeLiteral;
 
 /**
  * Configures the cloudstack parsers.
- * 
- * @author Adrian Cole
+ *
+ * @author Adrian Cole, Andrei Savu
  */
 public class CloudStackParserModule extends AbstractModule {
 
-   public static class PortForwardingRuleAdaptor implements JsonSerializer<PortForwardingRule>, JsonDeserializer<PortForwardingRule> {
+   @Singleton
+   public static class PortForwardingRuleAdapter implements JsonSerializer<PortForwardingRule>, JsonDeserializer<PortForwardingRule> {
 
       public JsonElement serialize(PortForwardingRule src, Type typeOfSrc, JsonSerializationContext context) {
          return context.serialize(src);
       }
 
       public PortForwardingRule deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
-         return apply(context.<PortForwardingRuleInternal> deserialize(json, PortForwardingRuleInternal.class));
+         throws JsonParseException {
+         return apply(context.<PortForwardingRuleInternal>deserialize(json, PortForwardingRuleInternal.class));
       }
 
       public PortForwardingRule apply(PortForwardingRuleInternal in) {
@@ -105,6 +107,52 @@ public class CloudStackParserModule extends AbstractModule {
    }
 
    @Singleton
+   public static class FirewallRuleAdapter implements JsonSerializer<FirewallRule>, JsonDeserializer<FirewallRule> {
+
+      public JsonElement serialize(FirewallRule src, Type typeOfSrc, JsonSerializationContext context) {
+         return context.serialize(src);
+      }
+
+      public FirewallRule deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+         throws JsonParseException {
+         return apply(context.<FirewallRuleInternal>deserialize(json, FirewallRuleInternal.class));
+      }
+
+      public FirewallRule apply(FirewallRuleInternal in) {
+         Set<String> cidrSet;
+         if (in.CIDRs != null) {
+            String[] elements = in.CIDRs.split(",");
+            cidrSet = Sets.newTreeSet(Arrays.asList(elements));
+         } else {
+            cidrSet = Collections.emptySet();
+         }
+         return FirewallRule.builder().id(in.id).CIDRs(cidrSet).startPort(in.startPort).endPort(in.endPort)
+            .icmpCode(in.icmpCode).icmpType(in.icmpType).ipAddress(in.ipAddress).ipAddressId(in.ipAddressId)
+            .protocol(in.protocol).state(in.state).build();
+      }
+
+      static final class FirewallRuleInternal {
+         private long id;
+         @SerializedName("cidrlist")
+         private String CIDRs;
+         @SerializedName("startport")
+         private int startPort;
+         @SerializedName("endport")
+         private int endPort;
+         @SerializedName("icmpcode")
+         private String icmpCode;
+         @SerializedName("icmptype")
+         private String icmpType;
+         @SerializedName("ipaddress")
+         private String ipAddress;
+         @SerializedName("ipaddressid")
+         private long ipAddressId;
+         private FirewallRule.Protocol protocol;
+         private String state;
+      }
+   }
+
+   @Singleton
    public static class LoadBalancerRuleAdapter implements JsonSerializer<LoadBalancerRule>, JsonDeserializer<LoadBalancerRule> {
 
       public JsonElement serialize(LoadBalancerRule src, Type typeOfSrc, JsonSerializationContext context) {
@@ -112,8 +160,8 @@ public class CloudStackParserModule extends AbstractModule {
       }
 
       public LoadBalancerRule deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
-         return apply(context.<LoadBalancerRuleInternal> deserialize(json, LoadBalancerRuleInternal.class));
+         throws JsonParseException {
+         return apply(context.<LoadBalancerRuleInternal>deserialize(json, LoadBalancerRuleInternal.class));
       }
 
       public LoadBalancerRule apply(LoadBalancerRuleInternal in) {
@@ -157,22 +205,22 @@ public class CloudStackParserModule extends AbstractModule {
       }
 
       public Account deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
-         return apply(context.<AccountInternal> deserialize(json, AccountInternal.class));
+         throws JsonParseException {
+         return apply(context.<AccountInternal>deserialize(json, AccountInternal.class));
       }
 
       public Account apply(AccountInternal in) {
          return Account.builder().id(in.id).type(in.type).domain(in.domain).domainId(in.domainId)
-               .IPsAvailable(nullIfUnlimited(in.IPsAvailable)).IPLimit(nullIfUnlimited(in.IPLimit)).IPs(in.IPs)
-               .cleanupRequired(in.cleanupRequired).name(in.name).receivedBytes(in.receivedBytes)
-               .sentBytes(in.sentBytes).snapshotsAvailable(nullIfUnlimited(in.snapshotsAvailable))
-               .snapshotLimit(nullIfUnlimited(in.snapshotLimit)).snapshots(in.snapshots).state(in.state)
-               .templatesAvailable(nullIfUnlimited(in.templatesAvailable))
-               .templateLimit(nullIfUnlimited(in.templateLimit)).templates(in.templates)
-               .VMsAvailable(nullIfUnlimited(in.VMsAvailable)).VMLimit(nullIfUnlimited(in.VMLimit))
-               .VMsRunning(in.VMsRunning).VMsStopped(in.VMsStopped).VMs(in.VMs)
-               .volumesAvailable(nullIfUnlimited(in.volumesAvailable)).volumeLimit(nullIfUnlimited(in.volumeLimit))
-               .volumes(in.volumes).users(in.users).build();
+            .IPsAvailable(nullIfUnlimited(in.IPsAvailable)).IPLimit(nullIfUnlimited(in.IPLimit)).IPs(in.IPs)
+            .cleanupRequired(in.cleanupRequired).name(in.name).receivedBytes(in.receivedBytes)
+            .sentBytes(in.sentBytes).snapshotsAvailable(nullIfUnlimited(in.snapshotsAvailable))
+            .snapshotLimit(nullIfUnlimited(in.snapshotLimit)).snapshots(in.snapshots).state(in.state)
+            .templatesAvailable(nullIfUnlimited(in.templatesAvailable))
+            .templateLimit(nullIfUnlimited(in.templateLimit)).templates(in.templates)
+            .VMsAvailable(nullIfUnlimited(in.VMsAvailable)).VMLimit(nullIfUnlimited(in.VMLimit))
+            .VMsRunning(in.VMsRunning).VMsStopped(in.VMsStopped).VMs(in.VMs)
+            .volumesAvailable(nullIfUnlimited(in.volumesAvailable)).volumeLimit(nullIfUnlimited(in.volumeLimit))
+            .volumes(in.volumes).users(in.users).build();
       }
 
       static final class AccountInternal {
@@ -237,10 +285,11 @@ public class CloudStackParserModule extends AbstractModule {
    @Override
    protected void configure() {
       bind(new TypeLiteral<Map<Type, Object>>() {
-      }).toInstance(ImmutableMap.<Type, Object> of(
+      }).toInstance(ImmutableMap.<Type, Object>of(
          Account.class, new BreakGenericSetAdapter(),
          LoadBalancerRule.class, new LoadBalancerRuleAdapter(),
-         PortForwardingRule.class, new PortForwardingRuleAdaptor()
+         PortForwardingRule.class, new PortForwardingRuleAdapter(),
+         FirewallRule.class, new FirewallRuleAdapter()
       ));
    }
 

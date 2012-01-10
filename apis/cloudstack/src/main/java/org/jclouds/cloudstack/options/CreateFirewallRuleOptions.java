@@ -41,7 +41,7 @@ public class CreateFirewallRuleOptions extends BaseHttpRequestOptions {
     *       the list of CIDRs to forward traffic from
     */
    public CreateFirewallRuleOptions CIDRs(Set<String> CIDRs) {
-      this.queryParameters.replaceValues("id", ImmutableSet.of(Joiner.on(",").join(CIDRs)));
+      this.queryParameters.replaceValues("cidrlist", ImmutableSet.of(Joiner.on(",").join(CIDRs)));
       return this;
    }
 

@@ -18,7 +18,10 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.Set;
 
 /**
  * @author Andrei Savu
@@ -51,7 +54,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
 
    public static class Builder {
       private long id;
-      private String CIDRs;
+      private Set<String> CIDRs;
 
       private int startPort;
       private int endPort;
@@ -70,8 +73,8 @@ public class FirewallRule implements Comparable<FirewallRule> {
          return this;
       }
 
-      public Builder CIDRs(String CIDRs) {
-         this.CIDRs = CIDRs;
+      public Builder CIDRs(Set<String> CIDRs) {
+         this.CIDRs = ImmutableSet.copyOf(CIDRs);
          return this;
       }
 
@@ -123,7 +126,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
 
    private long id;
    @SerializedName("cidrlist")
-   private String CIDRs;
+   private Set<String> CIDRs;
    @SerializedName("startport")
    private int startPort;
    @SerializedName("endport")
@@ -139,11 +142,11 @@ public class FirewallRule implements Comparable<FirewallRule> {
    private Protocol protocol;
    private String state;
 
-   public FirewallRule(long id, String CIDRs, int startPort, int endPort,
+   public FirewallRule(long id, Set<String> CIDRs, int startPort, int endPort,
          String icmpCode, String icmpType, String ipAddress, long ipAddressId,
          Protocol protocol, String state) {
       this.id = id;
-      this.CIDRs = CIDRs;
+      this.CIDRs = ImmutableSet.copyOf(CIDRs);
       this.startPort = startPort;
       this.endPort = endPort;
       this.icmpCode = icmpCode;
@@ -163,7 +166,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
       return id;
    }
 
-   public String getCIDRs() {
+   public Set<String> getCIDRs() {
       return CIDRs;
    }
 

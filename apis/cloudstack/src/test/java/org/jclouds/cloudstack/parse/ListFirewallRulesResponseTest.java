@@ -58,13 +58,14 @@ public class ListFirewallRulesResponseTest extends BaseSetParserTest<FirewallRul
    @Override
    @SelectJson("firewallrule")
    public Set<FirewallRule> expected() {
+      Set<String> CIDRs = ImmutableSet.of("0.0.0.0/0");
       return ImmutableSet.of(
          FirewallRule.builder().id(2017).protocol(FirewallRule.Protocol.TCP).startPort(30)
-            .endPort(35).ipAddressId(2).ipAddress("10.27.27.51").state("Active").CIDRs("0.0.0.0/0").build(),
+            .endPort(35).ipAddressId(2).ipAddress("10.27.27.51").state("Active").CIDRs(CIDRs).build(),
          FirewallRule.builder().id(2016).protocol(FirewallRule.Protocol.TCP).startPort(22)
-            .endPort(22).ipAddressId(2).ipAddress("10.27.27.51").state("Active").CIDRs("0.0.0.0/0").build(),
+            .endPort(22).ipAddressId(2).ipAddress("10.27.27.51").state("Active").CIDRs(CIDRs).build(),
          FirewallRule.builder().id(10).protocol(FirewallRule.Protocol.TCP).startPort(22)
-            .endPort(22).ipAddressId(8).ipAddress("10.27.27.57").state("Active").CIDRs("0.0.0.0/0").build()
+            .endPort(22).ipAddressId(8).ipAddress("10.27.27.57").state("Active").CIDRs(CIDRs).build()
       );
    }
 
