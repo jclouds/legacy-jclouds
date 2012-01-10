@@ -10,8 +10,8 @@ title: Quick Start - HP Cloud Services
 1. Sign up for [HP Cloud Services](http://hpcloud.com/).
 2. Get your Account ID and Access Key by going to this [page](https://manage.hpcloud.com/api_keys).
 3. Ensure you are using a recent JDK 6 version. 
-4. Setup your project to include `hpcloud-object-storage`
-   The maven dependency `org.jclouds.provider/hpcloud-object-storage` will add the following jar files to your project:
+4. Setup your project to include `hpcloud-objectstorage-lvs`
+   The maven dependency `org.jclouds.provider/hpcloud-objectstorage-lvs` will add the following jar files to your project:
   	* jclouds-core
   	* jclouds-blobstore
   	* openstack-common
@@ -24,7 +24,7 @@ Instructions for downloading the dependencies are available in the [Installation
 
 {% highlight java %}
 // get a context with hpcloud that offers the portable BlobStore api
-BlobStoreContext context = new BlobStoreContextFactory().createContext("hpcloud-object-storage", user, password);
+BlobStoreContext context = new BlobStoreContextFactory().createContext("hpcloud-objectstorage-lvs", user, password);
 
 // create a container in the default location
 context.getBlobStore().createContainerInLocation(null, container);
