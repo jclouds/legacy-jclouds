@@ -35,7 +35,7 @@ import com.google.common.collect.ImmutableMultimap;
 @Test(groups = "unit", testName = "S3RedirectionRetryHandlerExpectTest")
 public class S3RedirectionRetryHandlerExpectTest extends BaseS3ClientExpectTest {
 
-   public void testRedirectOnHeadBucketChangesRequestToGetBucketAndIncrementsCount() {
+   public void testRedirectOnHeadBucketChangesRequestToGetBucket() {
 
       HttpRequest bucketFooExists = HttpRequest.builder().method("HEAD").endpoint(
                URI.create("https://foo.s3.amazonaws.com/?max-keys=0")).headers(
