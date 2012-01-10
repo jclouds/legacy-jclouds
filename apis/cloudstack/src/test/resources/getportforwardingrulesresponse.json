@@ -1,0 +1,2 @@
+{ "listportforwardingrulesresponse" : { "portforwardingrule" : [
+    {"id":15,"privateport":"22","protocol":"tcp","publicport":"2022","virtualmachineid":3,"virtualmachinename":"i-3-3-VM","ipaddressid":3,"ipaddress":"72.52.126.32","state":"Active","cidrlist":"0.0.0.0/1,128.0.0.0/1"} ] } }
