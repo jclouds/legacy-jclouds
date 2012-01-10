@@ -47,4 +47,36 @@ public interface GlobalConfigurationClient extends ConfigurationClient {
     */
    Set<ConfigurationEntry> listConfigurationEntries(ListConfigurationEntriesOptions... options);
 
+   /**
+    * Update a configuration entry
+    *
+    * @param name
+    *          the name of the configuration
+    * @param value
+    *          the value of the configuration
+    * @return
+    *          the updated configuration value
+    */
+   ConfigurationEntry updateConfigurationEntry(String name, String value);
+
+   /**
+    * Create a new configuration value
+    *
+    * @param category
+    *          the component category
+    * @param component
+    *          the component of the configuration
+    * @param instance
+    *          the instance of the configuration
+    * @param name
+    *          the name of the configuration
+    * @param description
+    *          the description of the configuration
+    * @param value
+    *          the value of the configuration
+    * @return
+    */
+   ConfigurationEntry createConfigurationEntry(String category, String component,
+      String instance, String name, String description, String value );
+
 }

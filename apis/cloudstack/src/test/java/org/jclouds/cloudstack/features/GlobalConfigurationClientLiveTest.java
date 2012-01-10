@@ -18,12 +18,21 @@
  */
 package org.jclouds.cloudstack.features;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import org.jclouds.cloudstack.domain.ConfigurationEntry;
 import org.testng.annotations.Test;
 import org.testng.collections.Sets;
 
+import javax.annotation.Nullable;
 import java.util.Set;
+
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static org.jclouds.cloudstack.options.ListConfigurationEntriesOptions.Builder.name;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 /**
  * Tests behavior of {@code GlobalConfigurationClient}
@@ -41,7 +50,7 @@ public class GlobalConfigurationClientLiveTest extends BaseCloudStackClientLiveT
          .getConfigurationClient().listConfigurationEntries();
 
       Set<String> categories = Sets.newHashSet();
-      for(ConfigurationEntry entry : entries) {
+      for (ConfigurationEntry entry : entries) {
          checkConfigurationEntry(entry);
          categories.add(entry.getCategory());
       }
@@ -50,9 +59,55 @@ public class GlobalConfigurationClientLiveTest extends BaseCloudStackClientLiveT
          "Storage", "Usage", "Snapshots", "Account Defaults", "Console Proxy", "Alert"));
    }
 
+   @Test
+   public void testUpdateConfigurationEntry() {
+      assert globalAdminEnabled;
+
+      Set<ConfigurationEntry> entries = globalAdminClient
+         .getConfigurationClient().listConfigurationEntries();
+
+      long expungeDelay = Long.parseLong(getValueByName(entries, "expunge.delay"));
+      assert expungeDelay > 0;
+
+      globalAdminClient.getConfigurationClient()
+         .updateConfigurationEntry("expunge.delay", "" + (expungeDelay + 1));
+
+      long newDelay = Long.parseLong(getOnlyElement(globalAdminClient.getConfigurationClient()
+         .listConfigurationEntries(name("expunge.delay"))).getValue());
+      assertEquals(newDelay, expungeDelay + 1);
+
+      globalAdminClient.getConfigurationClient()
+         .updateConfigurationEntry("expunge.delay", "" + expungeDelay);
+   }
+
+   @Test(enabled = false)
+   public void testCreateConfigurationEntry() {
+      assert globalAdminEnabled;
+
+      ConfigurationEntry result = globalAdminClient.getConfigurationClient()
+         .createConfigurationEntry("Advanced", "component",
+            "instance", prefix + "-jclouds", "description", "jclouds");
+      checkConfigurationEntry(result);
+   }
+
    private void checkConfigurationEntry(ConfigurationEntry entry) {
+      assertEquals(entry, getEntryByName(globalAdminClient.getConfigurationClient()
+         .listConfigurationEntries(), entry.getName()));
       assert entry.getCategory() != null : entry;
       assert entry.getDescription() != null : entry;
       assert entry.getName() != null : entry;
+   }
+
+   private String getValueByName(Set<ConfigurationEntry> entries, String name) {
+      return getEntryByName(entries, name).getValue();
+   }
+
+   private ConfigurationEntry getEntryByName(Set<ConfigurationEntry> entries, final String name) {
+      return Iterables.find(entries, new Predicate<ConfigurationEntry>() {
+         @Override
+         public boolean apply(@Nullable ConfigurationEntry entry) {
+            return entry != null && Objects.equal(name, entry.getName());
+         }
+      });
    }
 }
