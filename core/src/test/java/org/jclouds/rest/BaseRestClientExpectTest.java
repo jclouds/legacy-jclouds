@@ -209,7 +209,7 @@ public abstract class BaseRestClientExpectTest<S> {
     * @return a client configured with this behavior
     */
    public S requestSendsResponse(HttpRequest request, HttpResponse response) {
-      return requestsSendsResponses(ImmutableMap.of(request, response));
+      return requestsSendResponses(ImmutableMap.of(request, response));
    }
 
    /**
@@ -227,7 +227,7 @@ public abstract class BaseRestClientExpectTest<S> {
     */
    public S requestsSendResponses(HttpRequest requestA, HttpResponse responseA, HttpRequest requestB,
             HttpResponse responseB) {
-      return requestsSendsResponses(ImmutableMap.of(requestA, responseA, requestB, responseB));
+      return requestsSendResponses(ImmutableMap.of(requestA, responseA, requestB, responseB));
    }
 
    /**
@@ -247,9 +247,9 @@ public abstract class BaseRestClientExpectTest<S> {
     *           the response for {@code requestC}
     * @return a client configured with this behavior
     */
-   public S requestsSendsResponses(HttpRequest requestA, HttpResponse responseA, HttpRequest requestB,
+   public S requestsSendResponses(HttpRequest requestA, HttpResponse responseA, HttpRequest requestB,
             HttpResponse responseB, HttpRequest requestC, HttpResponse responseC) {
-      return requestsSendsResponses(ImmutableMap.of(requestA, responseA, requestB, responseB, requestC, responseC));
+      return requestsSendResponses(ImmutableMap.of(requestA, responseA, requestB, responseB, requestC, responseC));
    }
 
    /**
@@ -260,7 +260,7 @@ public abstract class BaseRestClientExpectTest<S> {
     *           valid requests and responses for the mock to respond to
     * @return a client configured with this behavior
     */
-   public S requestsSendsResponses(Map<HttpRequest, HttpResponse> requestToResponse) {
+   public S requestsSendResponses(Map<HttpRequest, HttpResponse> requestToResponse) {
       return createClient(Functions.forMap(requestToResponse));
    }
 
