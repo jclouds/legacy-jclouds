@@ -90,7 +90,7 @@ public class CloudStackParserModule extends AbstractModule {
          private PortForwardingRule.Protocol protocol;
          @SerializedName("publicport")
          public int publicPort;
-         private String state;
+         private PortForwardingRule.State state;
          @SerializedName("virtualmachinedisplayname")
          private String virtualMachineDisplayName;
          @SerializedName("virtualmachineid")
@@ -148,7 +148,7 @@ public class CloudStackParserModule extends AbstractModule {
          @SerializedName("ipaddressid")
          private long ipAddressId;
          private FirewallRule.Protocol protocol;
-         private String state;
+         private FirewallRule.State state;
       }
    }
 

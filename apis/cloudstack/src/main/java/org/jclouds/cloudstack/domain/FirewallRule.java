@@ -18,8 +18,10 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.SerializedName;
+import org.omg.PortableInterceptor.ACTIVE;
 
 import java.util.Set;
 
@@ -48,6 +50,29 @@ public class FirewallRule implements Comparable<FirewallRule> {
       }
    }
 
+   public static enum State {
+      STAGED,     // Rule been created but has never got through network rule conflict detection.
+                  // Rules in this state can not be sent to network elements.
+      ADD,        // Add means the rule has been created and has gone through network rule conflict detection.
+      ACTIVE,     // Rule has been sent to the network elements and reported to be active.
+      DELETEING,  // Revoke means this rule has been revoked. If this rule has been sent to the
+                  // network elements, the rule will be deleted from database.
+      UNKNOWN;
+
+      public static State fromValue(String value) {
+         try {
+            return valueOf(value.toUpperCase());
+         } catch(IllegalArgumentException e) {
+            return UNKNOWN;
+         }
+      }
+
+      @Override
+      public String toString() {
+         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
+      }
+   }
+
    public static Builder builder() {
       return new Builder();
    }
@@ -66,7 +91,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
       private long ipAddressId;
 
       private Protocol protocol;
-      private String state;
+      private State state;
 
       public Builder id(long id) {
          this.id = id;
@@ -113,7 +138,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
          return this;
       }
 
-      public Builder state(String state) {
+      public Builder state(State state) {
          this.state = state;
          return this;
       }
@@ -140,11 +165,11 @@ public class FirewallRule implements Comparable<FirewallRule> {
    @SerializedName("ipaddressid")
    private long ipAddressId;
    private Protocol protocol;
-   private String state;
+   private State state;
 
    public FirewallRule(long id, Set<String> CIDRs, int startPort, int endPort,
          String icmpCode, String icmpType, String ipAddress, long ipAddressId,
-         Protocol protocol, String state) {
+         Protocol protocol, State state) {
       this.id = id;
       this.CIDRs = ImmutableSet.copyOf(CIDRs);
       this.startPort = startPort;
@@ -198,7 +223,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
       return protocol;
    }
 
-   public String getState() {
+   public State getState() {
       return state;
    }
 

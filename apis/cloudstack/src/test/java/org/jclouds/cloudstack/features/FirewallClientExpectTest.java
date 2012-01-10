@@ -66,11 +66,14 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
       assertEquals(client.listFirewallRules(),
          ImmutableSet.of(
             FirewallRule.builder().id(2017).protocol(FirewallRule.Protocol.TCP).startPort(30)
-               .endPort(35).ipAddressId(2).ipAddress("10.27.27.51").state("Active").CIDRs(CIDRs).build(),
+               .endPort(35).ipAddressId(2).ipAddress("10.27.27.51").state(FirewallRule.State.ACTIVE)
+               .CIDRs(CIDRs).build(),
             FirewallRule.builder().id(2016).protocol(FirewallRule.Protocol.TCP).startPort(22)
-               .endPort(22).ipAddressId(2).ipAddress("10.27.27.51").state("Active").CIDRs(CIDRs).build(),
+               .endPort(22).ipAddressId(2).ipAddress("10.27.27.51").state(FirewallRule.State.ACTIVE)
+               .CIDRs(CIDRs).build(),
             FirewallRule.builder().id(10).protocol(FirewallRule.Protocol.TCP).startPort(22)
-               .endPort(22).ipAddressId(8).ipAddress("10.27.27.57").state("Active").CIDRs(CIDRs).build()
+               .endPort(22).ipAddressId(8).ipAddress("10.27.27.57").state(FirewallRule.State.ACTIVE)
+               .CIDRs(CIDRs).build()
          ));
    }
 
@@ -114,7 +117,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
 
       assertEquals(client.getFirewallRule(2017),
          FirewallRule.builder().id(2017).protocol(FirewallRule.Protocol.TCP).startPort(30)
-            .endPort(35).ipAddressId(2).ipAddress("10.27.27.51").state("Active")
+            .endPort(35).ipAddressId(2).ipAddress("10.27.27.51").state(FirewallRule.State.ACTIVE)
             .CIDRs(ImmutableSet.of("0.0.0.0/0")).build()
       );
    }
@@ -201,10 +204,12 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
 
       assertEquals(client.listPortForwardingRules(),
          ImmutableSet.<PortForwardingRule>of(
-            PortForwardingRule.builder().id(15).privatePort(22).protocol(PortForwardingRule.Protocol.TCP).publicPort(2022).virtualMachineId(3)
-               .virtualMachineName("i-3-3-VM").IPAddressId(3).IPAddress("72.52.126.32").state("Active").CIDRs(cidrs).build(),
-            PortForwardingRule.builder().id(18).privatePort(22).protocol(PortForwardingRule.Protocol.TCP).publicPort(22).virtualMachineId(89)
-               .virtualMachineName("i-3-89-VM").IPAddressId(34).IPAddress("72.52.126.63").state("Active").build())
+            PortForwardingRule.builder().id(15).privatePort(22).protocol(PortForwardingRule.Protocol.TCP)
+               .publicPort(2022).virtualMachineId(3).virtualMachineName("i-3-3-VM").IPAddressId(3)
+               .IPAddress("72.52.126.32").state(PortForwardingRule.State.ACTIVE).CIDRs(cidrs).build(),
+            PortForwardingRule.builder().id(18).privatePort(22).protocol(PortForwardingRule.Protocol.TCP)
+               .publicPort(22).virtualMachineId(89).virtualMachineName("i-3-89-VM").IPAddressId(34)
+               .IPAddress("72.52.126.63").state(PortForwardingRule.State.ACTIVE).build())
       );
    }
 
@@ -249,8 +254,9 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
       Set<String> cidrs = ImmutableSet.of("0.0.0.0/1", "128.0.0.0/1");
 
       assertEquals(client.getPortForwardingRule(15),
-         PortForwardingRule.builder().id(15).privatePort(22).protocol(PortForwardingRule.Protocol.TCP).publicPort(2022).virtualMachineId(3)
-            .virtualMachineName("i-3-3-VM").IPAddressId(3).IPAddress("72.52.126.32").state("Active").CIDRs(cidrs).build());
+         PortForwardingRule.builder().id(15).privatePort(22).protocol(PortForwardingRule.Protocol.TCP)
+            .publicPort(2022).virtualMachineId(3).virtualMachineName("i-3-3-VM").IPAddressId(3)
+            .IPAddress("72.52.126.32").state(PortForwardingRule.State.ACTIVE).CIDRs(cidrs).build());
    }
 
    public void testGetPortForwardingRuleWhenResponseIs404() {
