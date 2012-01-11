@@ -23,6 +23,8 @@ import static org.testng.Assert.assertEquals;
 import java.net.URI;
 import java.util.Set;
 
+import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
@@ -39,7 +41,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Andrei Savu
  */
 @Test(groups = "unit", testName = "AccountClientExpectTest")
-public class AccountClientExpectTest extends BaseCloudStackRestClientExpectTest {
+public class AccountClientExpectTest extends BaseCloudStackRestClientExpectTest<AccountClient> {
 
 
    public void testListAccountsWhenResponseIs2xx() {
@@ -57,8 +59,7 @@ public class AccountClientExpectTest extends BaseCloudStackRestClientExpectTest 
          HttpResponse.builder()
             .statusCode(200)
             .payload(payloadFromResource("/listaccountsresponse.json"))
-            .build())
-         .getAccountClient();
+            .build());
 
       Set<User> users = ImmutableSet.of(
          User.builder()
@@ -105,5 +106,10 @@ public class AccountClientExpectTest extends BaseCloudStackRestClientExpectTest 
             .VMsRunning(1)
             .state(Account.State.ENABLED)
             .users(users).build()));
+   }
+
+   @Override
+   protected AccountClient clientFrom(CloudStackContext context) {
+      return CloudStackClient.class.cast(context.getProviderSpecificContext().getApi()).getAccountClient();
    }
 }

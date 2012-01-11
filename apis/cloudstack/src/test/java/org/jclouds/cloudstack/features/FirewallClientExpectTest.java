@@ -18,23 +18,23 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.cloudstack.domain.Account;
-import org.jclouds.cloudstack.domain.AsyncCreateResponse;
-import org.jclouds.cloudstack.domain.FirewallRule;
-import org.jclouds.cloudstack.domain.PortForwardingRule;
-import org.jclouds.cloudstack.domain.User;
-import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpResponse;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 import java.net.URI;
 import java.util.Set;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
+import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackContext;
+import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.cloudstack.domain.FirewallRule;
+import org.jclouds.cloudstack.domain.PortForwardingRule;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Test the CloudStack FirewallClient
@@ -42,7 +42,7 @@ import static org.testng.Assert.assertNull;
  * @author Andrei Savu
  */
 @Test(groups = "unit", testName = "FirewallClientExpectTest")
-public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest {
+public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest<FirewallClient> {
 
    public void testListFirewallRulesWhenResponseIs2xx() {
       FirewallClient client = requestSendsResponse(
@@ -59,8 +59,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
          HttpResponse.builder()
             .statusCode(200)
             .payload(payloadFromResource("/listfirewallrulesresponse.json"))
-            .build())
-         .getFirewallClient();
+            .build());
 
       Set<String> CIDRs  = ImmutableSet.of("0.0.0.0/0");
       assertEquals(client.listFirewallRules(),
@@ -91,8 +90,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .build(),
          HttpResponse.builder()
             .statusCode(404)
-            .build())
-         .getFirewallClient();
+            .build());
 
       assertEquals(client.listFirewallRules(), ImmutableSet.of());
    }
@@ -112,8 +110,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
          HttpResponse.builder()
             .statusCode(200)
             .payload(payloadFromResource("/getfirewallrulesresponse.json"))
-            .build())
-         .getFirewallClient();
+            .build());
 
       assertEquals(client.getFirewallRule(2017),
          FirewallRule.builder().id(2017).protocol(FirewallRule.Protocol.TCP).startPort(30)
@@ -136,8 +133,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .build(),
          HttpResponse.builder()
             .statusCode(404)
-            .build())
-         .getFirewallClient();
+            .build());
 
       assertNull(client.getFirewallRule(4));
    }
@@ -157,8 +153,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
          HttpResponse.builder()
             .statusCode(200)
             .payload(payloadFromResource("/createfirewallrulesresponse.json"))
-            .build())
-         .getFirewallClient();
+            .build());
 
       AsyncCreateResponse response = client.createFirewallRuleForIpAndProtocol(2, FirewallRule.Protocol.TCP);
       assertEquals(response.getJobId(), 2036);
@@ -176,8 +171,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
          HttpResponse.builder()
             .statusCode(200)
             .payload(payloadFromResource("/deletefirewallrulesresponse.json"))
-            .build())
-         .getFirewallClient();
+            .build());
 
       client.deleteFirewallRule(2015);
    }
@@ -197,8 +191,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
          HttpResponse.builder()
             .statusCode(200)
             .payload(payloadFromResource("/listportforwardingrulesresponse.json"))
-            .build())
-         .getFirewallClient();
+            .build());
 
       Set<String> cidrs = ImmutableSet.of("0.0.0.0/1", "128.0.0.0/1");
 
@@ -227,8 +220,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .build(),
          HttpResponse.builder()
             .statusCode(404)
-            .build())
-         .getFirewallClient();
+            .build());
 
       assertEquals(client.listPortForwardingRules(), ImmutableSet.of());
    }
@@ -248,8 +240,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
          HttpResponse.builder()
             .statusCode(200)
             .payload(payloadFromResource("/getportforwardingrulesresponse.json"))
-            .build())
-         .getFirewallClient();
+            .build());
 
       Set<String> cidrs = ImmutableSet.of("0.0.0.0/1", "128.0.0.0/1");
 
@@ -273,8 +264,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
             .build(),
          HttpResponse.builder()
             .statusCode(404)
-            .build())
-         .getFirewallClient();
+            .build());
 
       assertNull(client.getPortForwardingRule(4));
    }
@@ -295,8 +285,7 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
          HttpResponse.builder()
             .statusCode(200)
             .payload(payloadFromResource("/createportforwardingrulesresponse.json"))
-            .build())
-         .getFirewallClient();
+            .build());
 
       AsyncCreateResponse response = client.createPortForwardingRuleForVirtualMachine(
          2, PortForwardingRule.Protocol.TCP, 22, 1234, 22);
@@ -315,9 +304,13 @@ public class FirewallClientExpectTest extends BaseCloudStackRestClientExpectTest
          HttpResponse.builder()
             .statusCode(200)
             .payload(payloadFromResource("/deleteportforwardingrulesresponse.json"))
-            .build())
-         .getFirewallClient();
+            .build());
 
       client.deletePortForwardingRule(2015);
+   }
+   
+   @Override
+   protected FirewallClient clientFrom(CloudStackContext context) {
+      return CloudStackClient.class.cast(context.getProviderSpecificContext().getApi()).getFirewallClient();
    }
 }
