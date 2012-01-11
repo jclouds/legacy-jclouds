@@ -42,19 +42,27 @@ import org.jclouds.rest.RestContext;
 @Singleton
 public class CloudStackContextImpl extends ComputeServiceContextImpl<CloudStackClient, CloudStackAsyncClient> implements
       CloudStackContext {
+   private final RestContext<CloudStackClient,CloudStackAsyncClient> providerSpecificContext;
    private final RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient> domainContext;
    private final RestContext<CloudStackGlobalClient, CloudStackGlobalAsyncClient> globalContext;
 
    @Inject
    public CloudStackContextImpl(ComputeService computeService, Map<String, Credentials> credentialStore, Utils utils,
-         @SuppressWarnings("rawtypes") RestContext providerSpecificContext,
+         RestContext<CloudStackClient,CloudStackAsyncClient> providerSpecificContext,
          RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient> domainContext,
          RestContext<CloudStackGlobalClient, CloudStackGlobalAsyncClient> globalContext) {
       super(computeService, credentialStore, utils, providerSpecificContext);
+      this.providerSpecificContext=providerSpecificContext;
       this.domainContext = domainContext;
       this.globalContext = globalContext;
    }
-
+   
+   @SuppressWarnings("unchecked")
+   @Override
+   public RestContext<CloudStackClient,CloudStackAsyncClient> getProviderSpecificContext() {
+      return providerSpecificContext;
+   }
+   
    @Override
    public RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient> getDomainContext() {
       return domainContext;

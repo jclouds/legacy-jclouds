@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.User;
@@ -110,6 +109,6 @@ public class AccountClientExpectTest extends BaseCloudStackRestClientExpectTest<
 
    @Override
    protected AccountClient clientFrom(CloudStackContext context) {
-      return CloudStackClient.class.cast(context.getProviderSpecificContext().getApi()).getAccountClient();
+      return context.getProviderSpecificContext().getApi().getAccountClient();
    }
 }
