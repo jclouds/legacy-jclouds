@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.cloudstack.features.GlobalAccountClient;
 import org.jclouds.cloudstack.features.GlobalAlertClient;
 import org.jclouds.cloudstack.features.GlobalCapacityClient;
+import org.jclouds.cloudstack.features.GlobalConfigurationClient;
 import org.jclouds.cloudstack.features.GlobalHostClient;
 import org.jclouds.cloudstack.features.GlobalOfferingClient;
 import org.jclouds.cloudstack.features.GlobalStoragePoolClient;
@@ -94,4 +95,11 @@ public interface CloudStackGlobalClient extends CloudStackDomainClient {
     */
    @Delegate
    GlobalUsageClient getUsageClient();
+
+   /**
+    * Provides synchronous access to Configuration
+    */
+   @Delegate
+   @Override
+   GlobalConfigurationClient getConfigurationClient();
 }
