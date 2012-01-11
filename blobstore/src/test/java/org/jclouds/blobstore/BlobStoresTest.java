@@ -29,6 +29,7 @@ import org.easymock.classextension.EasyMock;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
+import org.jclouds.blobstore.options.ListAllOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.testng.annotations.Test;
 
@@ -42,14 +43,27 @@ public class BlobStoresTest {
    private final String containerName = "mycontainer";
 
    @Test(expectedExceptions={ContainerNotFoundException.class})
+   public void testListAllForUnknownContainerFromTransientBlobStoreEagerly() throws Exception {
+      ListContainerOptions containerOptions = ListContainerOptions.NONE;
+      ListAllOptions listAllOptions = ListAllOptions.Builder.eager(true);
+      BlobStoreContext context = new BlobStoreContextFactory().createContext("transient", "dummyid", "dummykey");
+      try {
+         BlobStore blobStore = context.getBlobStore();
+         BlobStores.listAll(blobStore, "wrongcontainer", containerOptions, listAllOptions);
+      } finally {
+         context.close();
+      }
+   }
+
+   /**
+    * Default listAll is not eager, so test that exception is thrown when first attempt to iterate.
+    */
+   @Test(expectedExceptions={ContainerNotFoundException.class})
    public void testListAllForUnknownContainerFromTransientBlobStore() throws Exception {
       ListContainerOptions options = ListContainerOptions.NONE;
       BlobStoreContext context = new BlobStoreContextFactory().createContext("transient", "dummyid", "dummykey");
       try {
          BlobStore blobStore = context.getBlobStore();
-   
-         // Arguably it would be best to throw the exception as soon as listAll is called; but because
-         // the iterator is lazy we don't the exception until we first call iterator().next() or hasNext().
          Iterable<StorageMetadata> iterable = BlobStores.listAll(blobStore, "wrongcontainer", options);
          iterable.iterator().hasNext();
       } finally {
@@ -59,8 +73,18 @@ public class BlobStoresTest {
    
    @Test
    public void testListAllFromTransientBlobStore() throws Exception {
+      runListAllFromTransientBlobStore(false);
+   }
+
+   @Test
+   public void testListAllFromTransientBlobStoreEagerly() throws Exception {
+      runListAllFromTransientBlobStore(true);
+   }
+
+   private void runListAllFromTransientBlobStore(boolean eager) throws Exception {
+      final int numTimesToIterate = 2;
       final int NUM_BLOBS = 31;
-      ListContainerOptions options = ListContainerOptions.Builder.maxResults(10);
+      ListContainerOptions containerOptions = ListContainerOptions.Builder.maxResults(10);
       BlobStoreContext context = new BlobStoreContextFactory().createContext("transient", "dummyid", "dummykey");
       BlobStore blobStore = null;
       try {
@@ -73,16 +97,20 @@ public class BlobStoresTest {
             expectedNames.add(blobName);
          }
          
-         Iterable<StorageMetadata> iterable = BlobStores.listAll(blobStore, containerName, options);
-         Iterable<String> iterableNames = Iterables.transform(iterable, new Function<StorageMetadata,String>() {
-            @Override public String apply(StorageMetadata input) {
-               return input.getName();
-            }});
+         ListAllOptions listAllOptions = ListAllOptions.Builder.eager(eager);
+         Iterable<StorageMetadata> iterable = BlobStores.listAll(blobStore, containerName, containerOptions, listAllOptions);
          
-         // Note that blob.getMetadata being put does not equal blob metadata being retrieved 
-         // because uri is null in one and populated in the other.
-         // Therefore we just compare names to ensure the iterator worked.
-         assertEquals(ImmutableSet.copyOf(iterableNames), expectedNames);
+         for (int i = 0; i < numTimesToIterate; i++) {
+            Iterable<String> iterableNames = Iterables.transform(iterable, new Function<StorageMetadata,String>() {
+               @Override public String apply(StorageMetadata input) {
+                  return input.getName();
+               }});
+            
+            // Note that blob.getMetadata being put does not equal blob metadata being retrieved 
+            // because uri is null in one and populated in the other.
+            // Therefore we just compare names to ensure the iterator worked.
+            assertEquals(ImmutableSet.copyOf(iterableNames), expectedNames);
+         }
       } finally {
          if (blobStore != null) blobStore.deleteContainer(containerName);
          context.close();
