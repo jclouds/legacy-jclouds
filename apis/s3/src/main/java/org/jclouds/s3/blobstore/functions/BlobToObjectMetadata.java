@@ -28,9 +28,11 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.s3.domain.MutableObjectMetadata;
+import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.s3.domain.internal.MutableObjectMetadataImpl;
 
 import com.google.common.base.Function;
+import org.jclouds.s3.reference.S3Headers;
 
 /**
  * @author Adrian Cole

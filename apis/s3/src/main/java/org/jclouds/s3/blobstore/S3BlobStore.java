@@ -232,15 +232,7 @@ public class S3BlobStore extends BaseBlobStore {
     */
    @Override
    public String putBlob(String container, Blob blob) {
-      PutObjectOptions options = new PutObjectOptions();
-      try {
-         AccessControlList acl = bucketAcls.getUnchecked(container);
-         if (acl != null && acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ))
-            options.withAcl(CannedAccessPolicy.PUBLIC_READ);
-      } catch (CacheLoader.InvalidCacheLoadException e) {
-         // nulls not permitted from cache loader
-      }
-      return sync.putObject(container, blob2Object.apply(blob), options);
+      return putBlob(container, blob, PutOptions.NONE);
    }
 
    /**
@@ -252,9 +244,17 @@ public class S3BlobStore extends BaseBlobStore {
     *           object
     */
    @Override
-   public String putBlob(String container, Blob blob, PutOptions options) {
-      // TODO implement options
-      return putBlob(container, blob);
+   public String putBlob(String container, Blob blob, PutOptions overrides) {
+      // TODO: Make use of options overrides
+      PutObjectOptions options = new PutObjectOptions();
+      try {
+         AccessControlList acl = bucketAcls.getUnchecked(container);
+         if (acl != null && acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ))
+            options.withAcl(CannedAccessPolicy.PUBLIC_READ);
+      } catch (CacheLoader.InvalidCacheLoadException e) {
+         // nulls not permitted from cache loader
+      }
+      return sync.putObject(container, blob2Object.apply(blob), options);
    }
 
    /**

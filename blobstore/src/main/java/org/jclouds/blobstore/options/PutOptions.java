@@ -34,12 +34,12 @@ public class PutOptions implements Cloneable {
 
    public static final ImmutablePutOptions NONE = new ImmutablePutOptions(new PutOptions());
 
-   private boolean multipart;
+   private boolean multipart = false;
 
    public PutOptions() {
    }
 
-   PutOptions(boolean multipart) {
+   public PutOptions(boolean multipart) {
       this.multipart = multipart;
    }
 

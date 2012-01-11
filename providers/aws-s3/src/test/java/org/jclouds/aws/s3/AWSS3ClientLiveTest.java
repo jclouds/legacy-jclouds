@@ -21,8 +21,11 @@ package org.jclouds.aws.s3;
 import static com.google.common.io.ByteStreams.join;
 import static com.google.common.io.ByteStreams.newInputStreamSupplier;
 import static com.google.common.io.ByteStreams.toByteArray;
+import static org.jclouds.aws.s3.blobstore.options.AWSS3PutOptions.Builder.storageClass;
 import static org.jclouds.crypto.CryptoStreams.md5;
 import static org.jclouds.io.Payloads.newByteArrayPayload;
+import static org.jclouds.s3.domain.ObjectMetadata.StorageClass;
+import static org.jclouds.s3.options.ListBucketOptions.Builder.withPrefix;
 import static org.testng.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
@@ -32,6 +35,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
+import org.jclouds.aws.s3.blobstore.AWSS3BlobStore;
+import org.jclouds.aws.s3.blobstore.options.AWSS3PutOptions;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
@@ -39,9 +44,13 @@ import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.http.BaseJettyTest;
 import org.jclouds.http.apachehc.config.ApacheHCHttpCommandExecutorServiceModule;
 import org.jclouds.io.Payload;
+import org.jclouds.s3.S3Client;
 import org.jclouds.s3.S3ClientLiveTest;
+import org.jclouds.s3.domain.ListBucketResponse;
+import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.s3.domain.ObjectMetadataBuilder;
 import org.jclouds.s3.domain.S3Object;
+import org.jclouds.s3.options.ListBucketOptions;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -154,6 +163,29 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
          Blob blob = blobStore.blobBuilder("const.txt")
             .payload(new File("target/const.txt")).build();
          blobStore.putBlob(containerName, blob, PutOptions.Builder.multipart());
+
+      } finally {
+         returnContainer(containerName);
+      }
+   }
+
+   public void testPutWithReducedRedundancyStorage() throws InterruptedException {
+      String containerName = getContainerName();
+      try {
+         String blobName = "test-rrs";
+         BlobStore blobStore = context.getBlobStore();
+         blobStore.createContainerInLocation(null, containerName);
+
+         Blob blob = blobStore.blobBuilder(blobName).payload("something").build();
+         blobStore.putBlob(containerName, blob,
+            storageClass(StorageClass.REDUCED_REDUNDANCY));
+
+         S3Client s3Client = S3Client.class.cast(context.getProviderSpecificContext().getApi());
+         ListBucketResponse response = s3Client.listBucket(containerName, withPrefix(blobName));
+
+         ObjectMetadata metadata = response.iterator().next();
+         assertEquals(metadata.getStorageClass(), StorageClass.REDUCED_REDUNDANCY);
+
       } finally {
          returnContainer(containerName);
       }

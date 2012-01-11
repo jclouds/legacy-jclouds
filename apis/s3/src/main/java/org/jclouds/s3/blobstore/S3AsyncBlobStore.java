@@ -232,6 +232,12 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<String> putBlob(String container, Blob blob) {
+      return putBlob(container, blob, PutOptions.NONE);
+   }
+
+   @Override
+   public ListenableFuture<String> putBlob(String container, Blob blob, PutOptions overrides) {
+      // TODO: Make use of options overrides
       PutObjectOptions options = new PutObjectOptions();
       try {
          AccessControlList acl = bucketAcls.getUnchecked(container);
@@ -254,12 +260,6 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
    @Override
    public ListenableFuture<Void> removeBlob(String container, String key) {
       return async.deleteObject(container, key);
-   }
-
-   @Override
-   public ListenableFuture<String> putBlob(String container, Blob blob, PutOptions options) {
-      // TODO implement options
-      return putBlob(container, blob);
    }
 
    @Override

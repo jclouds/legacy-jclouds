@@ -33,6 +33,7 @@ import org.jclouds.aws.s3.blobstore.AWSS3BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
+import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadSlicer;
@@ -102,7 +103,7 @@ public class SequentialMultipartUploadStrategyTest {
       replay(ometa);
 
       SequentialMultipartUploadStrategy strategy = new SequentialMultipartUploadStrategy(ablobStore, slicer);
-      strategy.execute(container, blob);
+      strategy.execute(container, blob, PutOptions.NONE);
 
       verify(ablobStore);
       verify(slicer);
@@ -167,7 +168,7 @@ public class SequentialMultipartUploadStrategyTest {
 
       SequentialMultipartUploadStrategy strategy = new SequentialMultipartUploadStrategy(ablobStore, slicer);
       try {
-         strategy.execute(container, blob);
+         strategy.execute(container, blob, PutOptions.NONE);
          fail("Should throw RuntimeException with TimeoutException cause!");
       } catch (RuntimeException rtex) {
          TimeoutException timeout = Throwables2.getFirstThrowableOfType(rtex, TimeoutException.class);
