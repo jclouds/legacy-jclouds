@@ -38,21 +38,6 @@
         <url>http://jclouds.googlecode.com/svn/trunk</url>
     </scm>
 
-    <repositories>
-        <!-- TODO to be removed when the dependencies are in central -->
-        <!-- https://issues.sonatype.org/browse/OSSRH-1453 -->
-        <repository>
-            <id>jersey</id>
-            <url>http://download.java.net/maven/2</url>
-            <releases>
-              <enabled>true</enabled>
-            </releases>
-            <snapshots>
-              <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>net.oauth.core</groupId>
@@ -74,7 +59,7 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-core</artifactId>
-            <version>1.6</version>
+            <version>1.11</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject.extensions</groupId>
