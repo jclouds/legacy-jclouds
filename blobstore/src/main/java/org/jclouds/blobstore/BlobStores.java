@@ -22,22 +22,55 @@ import java.util.Iterator;
 
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.options.ListAllOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.AbstractIterator;
 
+/**
+ * Utilities for using Blob Stores.
+ * 
+ * @author Aled Sage
+ * @since 1.3
+ */
 public class BlobStores {
 
+   /**
+    * @see listAll(BlobStore, String, ListContainerOptions, ListAllOptions)
+    */
+   @Beta
+   public static Iterable<StorageMetadata> listAll(BlobStore blobStore, String container,
+            ListContainerOptions containerOptions) {
+      return listAll(blobStore, container, containerOptions, ListAllOptions.NONE);
+   }
+   
    /**
     * A variant of BlobStore.list(String, ListContainerOptions) that
     * produces an Iterable over the entire set of results, not just one
     * page, making multiple calls to BlobStore.list as needed.
+    * 
+    * Note that if listAllOptions.isEager, then the first page will be fetched
+    * immediately and cached. Repeatedly iterating will not re-fetch (and thus
+    * will not refresh) the first page.
+    *  
+    * @throws ContainerNotFoundException If listAllOptions.isEager and container cannot be found
     */
    @Beta
    public static Iterable<StorageMetadata> listAll(final BlobStore blobStore, final String container,
-            final ListContainerOptions options) {
+            final ListContainerOptions containerOptions, final ListAllOptions listAllOptions) {
+      final boolean eager = listAllOptions.isEager();
+      final PageSet<? extends StorageMetadata> firstList;
+      final String firstMarker;
 
+      if (eager) {
+         firstList = blobStore.list(container, containerOptions);
+         firstMarker = firstList.getNextMarker();
+      } else {
+         firstList = null;
+         firstMarker = null;
+      }
+      
       return new Iterable<StorageMetadata>() {
          public Iterator<StorageMetadata> iterator() {
             return new AbstractIterator<StorageMetadata>() {
@@ -47,10 +80,16 @@ public class BlobStores {
                public StorageMetadata computeNext() {
                   while (true) {
                      if (iterator == null) {
-                        ListContainerOptions nextOptions = marker == null ? options : options.clone().afterMarker(marker);
-                        PageSet<? extends StorageMetadata> list = blobStore.list(container, nextOptions);
+                        PageSet<? extends StorageMetadata> list;
+                        if (eager && marker == null) {
+                           list = firstList;
+                           marker = firstMarker;
+                        } else {
+                           ListContainerOptions nextOptions = marker == null ? containerOptions : containerOptions.clone().afterMarker(marker);
+                           list = blobStore.list(container, nextOptions);
+                           marker = list.getNextMarker();
+                        }
                         iterator = list.iterator();
-                        marker = list.getNextMarker();
                      }
                      if (iterator.hasNext()) {
                         return iterator.next();
