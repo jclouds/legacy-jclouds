@@ -38,7 +38,10 @@ import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.functions.CreateAndInstallVm;
+import org.jclouds.virtualbox.functions.CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
+import org.jclouds.virtualbox.util.MachineUtils;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -124,12 +127,11 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
       adminDisk = workingDir + "/testadmin.vdi";
       operatingSystemIso = String.format("%s/%s.iso", workingDir, imageId);
       guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", workingDir, hostVersion);
-
    }
 
    protected void undoVm(VmSpec vmSpecification) {
-      unlockMachineAndApplyOrReturnNullIfNotRegistered(manager.get(), vmSpecification.getVmName(),
-               new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
+      MachineUtils machineUtils = context.utils().injector().getInstance(MachineUtils.class);
+      machineUtils.mutateMachine(vmSpecification.getVmId(), new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
    }
 
    @AfterClass(groups = "live")
