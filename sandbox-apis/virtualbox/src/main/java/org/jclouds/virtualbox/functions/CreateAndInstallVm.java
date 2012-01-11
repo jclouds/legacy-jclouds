@@ -27,6 +27,7 @@ import static org.jclouds.virtualbox.util.MachineUtils.lockSessionOnMachineAndAp
 import static org.virtualbox_4_1.LockType.Shared;
 
 import java.net.URI;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -51,7 +52,10 @@ import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 @Singleton
@@ -75,12 +79,15 @@ public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
    private final Function<IMachine, SshClient> sshClientForIMachine;
 
    @Inject
-   public CreateAndInstallVm(Supplier<VirtualBoxManager> manager,
-            CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
-            ValueOfConfigurationKeyOrNull valueOfConfigurationKeyOrNull, Predicate<SshClient> sshResponds,
-            Function<IMachine, SshClient> sshClientForIMachine, Supplier<NodeMetadata> host,
-            RunScriptOnNode.Factory scriptRunner, @Preconfiguration Supplier<URI> preconfiguration,
-            ExecutionType executionType) {
+   public CreateAndInstallVm(
+         Supplier<VirtualBoxManager> manager,
+         CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
+         ValueOfConfigurationKeyOrNull valueOfConfigurationKeyOrNull,
+         Predicate<SshClient> sshResponds,
+         Function<IMachine, SshClient> sshClientForIMachine,
+         Supplier<NodeMetadata> host, RunScriptOnNode.Factory scriptRunner,
+         @Preconfiguration Supplier<URI> preconfiguration,
+         ExecutionType executionType) {
       this.manager = manager;
       this.createAndRegisterMachineFromIsoIfNotAlreadyExists = CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
       this.valueOfConfigurationKeyOrNull = valueOfConfigurationKeyOrNull;
@@ -98,10 +105,14 @@ public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
 
       // note this may not be reachable, as this likely uses the 10.2.2 address
       URI preconfigurationUri = preconfiguration.get();
-      String keySequence = valueOfConfigurationKeyOrNull.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace(
-               "PRECONFIGURATION_URL", preconfigurationUri.toASCIIString()).replace("HOSTNAME", vmName);
+      String keySequence = valueOfConfigurationKeyOrNull
+            .apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE)
+            .replace("PRECONFIGURATION_URL",
+                  preconfigurationUri.toASCIIString())
+            .replace("HOSTNAME", vmName);
 
-      final IMachine vm = createAndRegisterMachineFromIsoIfNotAlreadyExists.apply(vmSpec);
+      final IMachine vm = createAndRegisterMachineFromIsoIfNotAlreadyExists
+            .apply(vmSpec);
 
       // Launch machine and wait for it to come online
       ensureMachineIsLaunched(vmName);
@@ -111,24 +122,30 @@ public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
       SshClient client = sshClientForIMachine.apply(vm);
 
       logger.debug(">> awaiting installation to finish node(%s)", vmName);
-      checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh", vmName);
+      checkState(sshResponds.apply(client),
+            "timed out waiting for guest %s to be accessible via ssh", vmName);
 
-      logger.debug("<< installation of image complete. Powering down node(%s)", vmName);
-      lockSessionOnMachineAndApply(manager.get(), Shared, vmName, new Function<ISession, Void>() {
+      logger.debug("<< installation of image complete. Powering down node(%s)",
+            vmName);
+      lockSessionOnMachineAndApply(manager.get(), Shared, vmName,
+            new Function<ISession, Void>() {
 
-         @Override
-         public Void apply(ISession session) {
-            IProgress powerDownProgress = session.getConsole().powerDown();
-            powerDownProgress.waitForCompletion(-1);
-            return null;
-         }
+               @Override
+               public Void apply(ISession session) {
+                  IProgress powerDownProgress = session.getConsole()
+                        .powerDown();
+                  powerDownProgress.waitForCompletion(-1);
+                  return null;
+               }
 
-      });
+            });
       return vm;
    }
 
-    private void ensureMachineIsLaunched(String vmName) {
-      applyForMachine(manager.get(), vmName, new LaunchMachineIfNotAlreadyRunning(manager.get(), executionType, ""));
+   private void ensureMachineIsLaunched(String vmName) {
+      applyForMachine(manager.get(), vmName,
+            new LaunchMachineIfNotAlreadyRunning(manager.get(), executionType,
+                  ""));
    }
 
    private void sendKeyboardSequence(String keyboardSequence, String vmName) {
@@ -137,16 +154,20 @@ public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
       for (String line : splitSequence) {
          String converted = stringToKeycode(line);
          for (String word : converted.split("  ")) {
-            sb.append("vboxmanage controlvm ").append(vmName).append(" keyboardputscancode ").append(word).append("; ");
+            sb.append("vboxmanage controlvm ").append(vmName)
+                  .append(" keyboardputscancode ").append(word).append("; ");
             runScriptIfWordEndsWith(sb, word, "<Enter>");
             runScriptIfWordEndsWith(sb, word, "<Return>");
          }
       }
    }
 
-   private void runScriptIfWordEndsWith(StringBuilder sb, String word, String key) {
+   private void runScriptIfWordEndsWith(StringBuilder sb, String word,
+         String key) {
       if (word.endsWith(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get(key))) {
-         scriptRunner.create(host.get(), Statements.exec(sb.toString()), runAsRoot(false).wrapInInitScript(false)).init().call();
+         scriptRunner
+               .create(host.get(), Statements.exec(sb.toString()),
+                     runAsRoot(false).wrapInInitScript(false)).init().call();
          sb.delete(0, sb.length() - 1);
       }
    }
@@ -156,7 +177,9 @@ public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
       if (s.startsWith("<")) {
          String[] specials = s.split("<");
          for (int i = 1; i < specials.length; i++) {
-            keycodes.append(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<" + specials[i])).append("  ");
+            keycodes.append(
+                  KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<"
+                        + specials[i])).append("  ");
          }
          return keycodes.toString();
       }
@@ -170,8 +193,11 @@ public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
             keycodes.append(" ");
          i++;
       }
-      keycodes.append(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<Spacebar>")).append(" ");
+      keycodes.append(
+            KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<Spacebar>"))
+            .append(" ");
 
       return keycodes.toString();
    }
+
 }

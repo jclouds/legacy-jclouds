@@ -54,6 +54,7 @@ import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
 import org.jclouds.virtualbox.functions.admin.StartVBoxIfNotAlreadyRunning;
 import org.jclouds.virtualbox.predicates.SshResponds;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
@@ -106,7 +107,9 @@ public class VirtualBoxComputeServiceContextModule extends
       bind(new TypeLiteral<Function<IMachine, SshClient>>() {
       }).to(IMachineToSshClient.class);
 
-      bind(ExecutionType.class).toInstance(ExecutionType.HEADLESS);
+      bind(ExecutionType.class).toInstance(ExecutionType.GUI);
+      bind(LockType.class).toInstance(LockType.Write);
+
    }
 
    @Provides
