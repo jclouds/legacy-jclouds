@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 
     Licensed to jclouds, Inc. (jclouds) under one or more
@@ -19,11 +19,10 @@
     under the License.
 
 -->
-<queue-entries>
-  <queue>
-    <name>twitter</name>
-    <!-- poll every 30s, but only allow one request at a time to save CPU -->
-    <rate>2/m</rate>
-    <max-concurrent-requests>1</max-concurrent-requests>
-  </queue>
-</queue-entries>
+<cronentries>
+  <cron>
+    <url>/stores/do</url>
+    <description>Enqueue 'store tweet' tasks for all contexts</description>
+    <schedule>every 10 minutes</schedule>
+  </cron>
+</cronentries>

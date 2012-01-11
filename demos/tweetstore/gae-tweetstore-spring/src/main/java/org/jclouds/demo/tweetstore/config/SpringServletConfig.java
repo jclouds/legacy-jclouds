@@ -18,7 +18,6 @@
  */
 package org.jclouds.demo.tweetstore.config;
 
-import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Predicates.in;
@@ -47,6 +46,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.demo.tweetstore.config.util.CredentialsCollector;
 import org.jclouds.demo.tweetstore.controller.AddTweetsController;
+import org.jclouds.demo.tweetstore.controller.EnqueueStoresController;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.demo.tweetstore.functions.ServiceToStoredTweetStatuses;
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
@@ -65,7 +65,6 @@ import twitter4j.conf.ConfigurationBuilder;
 
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskOptions.Method;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -121,10 +120,7 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
 
       // get a queue for submitting store tweet requests
       queue = QueueFactory.getQueue("twitter");
-      // submit a job to store tweets for each configured blobstore
-      for (String name : providerTypeToBlobStoreMap.keySet()) {
-         queue.add(withUrl("/store/do").header("context", name).method(Method.GET));
-      }
+
       logger.trace("Members initialized. Twitter: '%s', container: '%s', provider types: '%s'", twitterClient,
             container, providerTypeToBlobStoreMap.keySet());
    }
@@ -169,6 +165,11 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
       return controller;
    }
 
+   @Bean
+   public EnqueueStoresController enqueueStoresController() {
+      return new EnqueueStoresController(providerTypeToBlobStoreMap, queue);
+   }
+
    private void injectServletConfig(Servlet servlet) {
       logger.trace("About to inject servlet config '%s'", servletConfig);
       try {
@@ -190,10 +191,11 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
       Map<String, Object> urlMap = Maps.newHashMapWithExpectedSize(2);
       urlMap.put("/store/*", storeTweetsController());
       urlMap.put("/tweets/*", addTweetsController());
+      urlMap.put("/stores/*", enqueueStoresController());
       mapping.setUrlMap(urlMap);
       /*
-       * "/store" and "/tweets" are part of the servlet mapping and thus stripped by the mapping if
-       * using default settings.
+       * "/store", "/tweets" and "/stores" are part of the servlet mapping and thus 
+       * stripped by the mapping if using default settings.
        */
       mapping.setAlwaysUseFullPath(true);
       return mapping;
