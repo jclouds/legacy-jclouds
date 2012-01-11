@@ -18,12 +18,17 @@
  */
 package org.jclouds.glesys.features;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.glesys.domain.Domain;
 import org.jclouds.glesys.domain.DomainRecord;
+import org.jclouds.glesys.options.DomainOptions;
+import org.jclouds.glesys.options.DomainRecordEditOptions;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
@@ -80,12 +85,58 @@ public class DomainClientLiveTest extends BaseGleSYSClientLiveTest {
    private RetryablePredicate<Integer> recordCounter;
 
    @Test
+   public void testEditDomain() throws Exception {
+      client.editDomain(testDomain, DomainOptions.Builder.responsiblePerson("tester.jclouds.org"));
+      assertTrue(client.listDomains().contains(Domain.builder().domain(testDomain).build()));
+   }
+
+   @Test
    public void testCreateRecord() throws Exception {
       int before = client.listRecords(testDomain).size();
 
       client.addRecord(testDomain, "test", "A", "127.0.0.1");
 
       assertTrue(recordCounter.apply(before + 1));
+
+      for(DomainRecord record : client.listRecords(testDomain)) {
+         if ("test".equals(record.getHost())) {
+            assertEquals(record.getType(), "A");
+            assertEquals(record.getData(), "127.0.0.1");
+         }
+      }
+   }
+
+   @Test
+   public void testEditRecord() throws Exception {
+      int before = client.listRecords(testDomain).size();
+
+      client.addRecord(testDomain, "testeditbefore", "A", "127.0.0.1");
+
+      assertTrue(recordCounter.apply(before + 1));
+
+      String recordId = null;
+      for(DomainRecord record : client.listRecords(testDomain)) {
+         if ("testeditbefore".equals(record.getHost())) {
+            assertEquals(record.getType(), "A");
+            assertEquals(record.getData(), "127.0.0.1");
+            recordId = record.getId();
+         }
+      }
+
+      assertNotNull(recordId);
+
+      client.editRecord(recordId, DomainRecordEditOptions.Builder.host("testeditafter"));
+
+      boolean found = false;
+      for(DomainRecord record : client.listRecords(testDomain)) {
+         if (recordId.equals(record.getId())) {
+            assertEquals(record.getHost(), "testeditafter");
+            assertEquals(record.getType(), "A");
+            assertEquals(record.getData(), "127.0.0.1");
+            found = true;
+         }
+      }
+      assertTrue(found);
    }
 
    @Test

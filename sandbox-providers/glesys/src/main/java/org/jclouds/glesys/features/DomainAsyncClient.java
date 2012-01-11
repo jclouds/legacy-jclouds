@@ -21,9 +21,10 @@ package org.jclouds.glesys.features;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.glesys.domain.Domain;
 import org.jclouds.glesys.domain.DomainRecord;
+import org.jclouds.glesys.options.DomainAddOptions;
 import org.jclouds.glesys.options.DomainOptions;
 import org.jclouds.glesys.options.DomainRecordAddOptions;
-import org.jclouds.glesys.options.DomainRecordModifyOptions;
+import org.jclouds.glesys.options.DomainRecordEditOptions;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -63,7 +64,7 @@ public interface DomainAsyncClient {
     */
    @POST
    @Path("/domain/add/format/json")
-   ListenableFuture<Void> addDomain(@FormParam("name") String name, DomainOptions... options);
+   ListenableFuture<Void> addDomain(@FormParam("name") String name, DomainAddOptions... options);
 
    /**
     * @see DomainClient#editDomain
@@ -72,26 +73,42 @@ public interface DomainAsyncClient {
    @Path("/domain/edit/format/json")
    ListenableFuture<Void> editDomain(@FormParam("domain") String domain, DomainOptions... options);
 
+
+   /**
+    * @see DomainClient#deleteDomain
+    */
    @POST
    @Path("/domain/delete/format/json")
    ListenableFuture<Void> deleteDomain(@FormParam("domain") String domain);
 
+   /**
+    * @see DomainClient#listRecords
+    */
    @POST
    @Path("/domain/list_records/format/json")
    @SelectJson("records")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Set<DomainRecord>> listRecords(@FormParam("domain") String domain);
 
+   /**
+    * @see DomainClient#addRecord
+    */
    @POST
    @Path("/domain/add_record/format/json")
    ListenableFuture<Void> addRecord(@FormParam("domain") String domain, @FormParam("host") String host,
                                     @FormParam("type") String type, @FormParam("data") String data,
                                     DomainRecordAddOptions... options);
 
+   /**
+    * @see DomainClient#editRecord
+    */
    @POST
    @Path("/domain/update_record/format/json")
-   ListenableFuture<Void> editRecord(@FormParam("record_id") String record_id, DomainRecordModifyOptions... options);
+   ListenableFuture<Void> editRecord(@FormParam("record_id") String record_id, DomainRecordEditOptions... options);
 
+   /**
+    * @see DomainClient#deleteRecord
+    */
    @POST
    @Path("/domain/delete_record/format/json")
    ListenableFuture<Void> deleteRecord(@FormParam("record_id") String recordId);

@@ -21,6 +21,8 @@ package org.jclouds.glesys.domain;
 import com.google.common.base.Objects;
 
 /**
+ * Detailed information about e-mail settings for a single domain
+ * 
  * @author Adam Lowe
  * @see <a href="https://customer.glesys.com/api.php?a=doc#email_overview" />
  */
@@ -68,14 +70,17 @@ public class EmailOverviewDomain {
       this.aliases = aliases;
    }
 
+   /** @return the domain name */
    public String getDomain() {
       return domain;
    }
 
+   /** @return the number of e-mail accounts in the domain */
    public int getAccounts() {
       return accounts;
    }
 
+   /** @return the number of e-mail aliases in the domain */
    public int getAliases() {
       return aliases;
    }

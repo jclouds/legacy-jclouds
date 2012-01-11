@@ -27,59 +27,48 @@ public class ServerCloneOptions extends ServerEditOptions {
        * @see org.jclouds.glesys.options.ServerCloneOptions#disksize
        */
       public static ServerCloneOptions disksize(int disksize) {
-         ServerCloneOptions options = new ServerCloneOptions();
-         return ServerCloneOptions.class.cast(options.disksize(disksize));
+         return ServerCloneOptions.class.cast(new ServerCloneOptions().disksize(disksize));
       }
 
       /**
        * @see org.jclouds.glesys.options.ServerCloneOptions#memorysize
        */
       public static ServerCloneOptions memorysize(int memorysize) {
-         ServerCloneOptions options = new ServerCloneOptions();
-         return ServerCloneOptions.class.cast(options.memorysize(memorysize));
+         return ServerCloneOptions.class.cast(new ServerCloneOptions().memorysize(memorysize));
       }
 
       /**
        * @see org.jclouds.glesys.options.ServerCloneOptions#cpucores
        */
       public static ServerCloneOptions cpucores(int cpucores) {
-         ServerCloneOptions options = new ServerCloneOptions();
-         return ServerCloneOptions.class.cast(options.cpucores(cpucores));
+         return ServerCloneOptions.class.cast(new ServerCloneOptions().cpucores(cpucores));
       }
 
       /**
        * @see org.jclouds.glesys.options.ServerCloneOptions#cpucores
        */
       public static ServerCloneOptions transfer(int transfer) {
-         ServerCloneOptions options = new ServerCloneOptions();
-         return ServerCloneOptions.class.cast(options.transfer(transfer));
-      }
-
-      /**
-       * @see org.jclouds.glesys.options.ServerCloneOptions#hostname
-       */
-      public static ServerCloneOptions hostname(String hostname) {
-         ServerCloneOptions options = new ServerCloneOptions();
-         return ServerCloneOptions.class.cast(options.hostname(hostname));
+         return ServerCloneOptions.class.cast(new ServerCloneOptions().transfer(transfer));
       }
 
       /**
        * @see org.jclouds.glesys.options.ServerEditOptions#description
        */
       public static ServerCloneOptions description(String description) {
-         ServerCloneOptions options = new ServerCloneOptions();
-         return ServerCloneOptions.class.cast(options.description(description));
+         return ServerCloneOptions.class.cast(new ServerCloneOptions().description(description));
       }
 
       /**
        * @see org.jclouds.glesys.options.ServerCloneOptions#dataCenter
        */
       public static ServerCloneOptions dataCenter(String dataCenter) {
-         ServerCloneOptions options = new ServerCloneOptions();
-         return options.dataCenter(dataCenter);
+         return new ServerCloneOptions().dataCenter(dataCenter);
       }
    }
 
+   /**
+    * Configure which datacenter to create the clone in
+    */
    public ServerCloneOptions dataCenter(String dataCenter) {
       formParameters.put("datacenter", dataCenter);
       return this;
