@@ -708,6 +708,59 @@ public class Host implements Comparable<Host> {
    }
 
    @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      Host host = (Host) o;
+
+      if (averageLoad != host.averageLoad) return false;
+      if (clusterId != host.clusterId) return false;
+      if (cpuNumber != host.cpuNumber) return false;
+      if (cpuSpeed != host.cpuSpeed) return false;
+      if (Float.compare(host.cpuWithOverProvisioning, cpuWithOverProvisioning) != 0) return false;
+      if (diskSizeAllocated != host.diskSizeAllocated) return false;
+      if (diskSizeTotal != host.diskSizeTotal) return false;
+      if (hasEnoughCapacity != host.hasEnoughCapacity) return false;
+      if (id != host.id) return false;
+      if (jobId != host.jobId) return false;
+      if (localStorageActive != host.localStorageActive) return false;
+      if (managementServerId != host.managementServerId) return false;
+      if (memoryAllocated != host.memoryAllocated) return false;
+      if (memoryTotal != host.memoryTotal) return false;
+      if (memoryUsed != host.memoryUsed) return false;
+      if (networkKbsRead != host.networkKbsRead) return false;
+      if (networkKbsWrite != host.networkKbsWrite) return false;
+      if (osCategoryId != host.osCategoryId) return false;
+      if (osCategoryName != host.osCategoryName) return false;
+      if (podId != host.podId) return false;
+      if (zoneId != host.zoneId) return false;
+      if (allocationState != host.allocationState) return false;
+      if (capabilities != null ? !capabilities.equals(host.capabilities) : host.capabilities != null) return false;
+      if (clusterName != null ? !clusterName.equals(host.clusterName) : host.clusterName != null) return false;
+      if (clusterType != host.clusterType) return false;
+      if (cpuAllocated != null ? !cpuAllocated.equals(host.cpuAllocated) : host.cpuAllocated != null) return false;
+      if (cpuUsed != null ? !cpuUsed.equals(host.cpuUsed) : host.cpuUsed != null) return false;
+      if (created != null ? !created.equals(host.created) : host.created != null) return false;
+      if (disconnected != null ? !disconnected.equals(host.disconnected) : host.disconnected != null) return false;
+      if (events != null ? !events.equals(host.events) : host.events != null) return false;
+      if (hostTags != null ? !hostTags.equals(host.hostTags) : host.hostTags != null) return false;
+      if (hypervisor != null ? !hypervisor.equals(host.hypervisor) : host.hypervisor != null) return false;
+      if (ipAddress != null ? !ipAddress.equals(host.ipAddress) : host.ipAddress != null) return false;
+      if (jobStatus != host.jobStatus) return false;
+      if (lastPinged != null ? !lastPinged.equals(host.lastPinged) : host.lastPinged != null) return false;
+      if (name != null ? !name.equals(host.name) : host.name != null) return false;
+      if (podName != null ? !podName.equals(host.podName) : host.podName != null) return false;
+      if (removed != null ? !removed.equals(host.removed) : host.removed != null) return false;
+      if (state != host.state) return false;
+      if (type != host.type) return false;
+      if (version != null ? !version.equals(host.version) : host.version != null) return false;
+      if (zoneName != null ? !zoneName.equals(host.zoneName) : host.zoneName != null) return false;
+
+      return true;
+   }
+
+   @Override
    public int hashCode() {
       int result = (int) (id ^ (id >>> 32));
       result = 31 * result + (allocationState != null ? allocationState.hashCode() : 0);
@@ -720,7 +773,7 @@ public class Host implements Comparable<Host> {
       result = 31 * result + cpuNumber;
       result = 31 * result + cpuSpeed;
       result = 31 * result + (cpuUsed != null ? cpuUsed.hashCode() : 0);
-      result = 31 * result + (int) cpuWithOverProvisioning;
+      result = 31 * result + (cpuWithOverProvisioning != +0.0f ? Float.floatToIntBits(cpuWithOverProvisioning) : 0);
       result = 31 * result + (created != null ? created.hashCode() : 0);
       result = 31 * result + (disconnected != null ? disconnected.hashCode() : 0);
       result = 31 * result + (int) (diskSizeAllocated ^ (diskSizeAllocated >>> 32));
@@ -755,89 +808,19 @@ public class Host implements Comparable<Host> {
    }
 
    @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      Host host = (Host) o;
-
-      if (averageLoad != host.averageLoad) return false;
-      if (clusterId != host.clusterId) return false;
-      if (cpuAllocated != host.cpuAllocated) return false;
-      if (cpuNumber != host.cpuNumber) return false;
-      if (cpuSpeed != host.cpuSpeed) return false;
-      if (cpuUsed != host.cpuUsed) return false;
-      if (cpuWithOverProvisioning != host.cpuWithOverProvisioning) return false;
-      if (disconnected != host.disconnected) return false;
-      if (diskSizeAllocated != host.diskSizeAllocated) return false;
-      if (diskSizeTotal != host.diskSizeTotal) return false;
-      if (hasEnoughCapacity != host.hasEnoughCapacity) return false;
-      if (id != host.id) return false;
-      if (localStorageActive != host.localStorageActive) return false;
-      if (jobId != host.jobId) return false;
-      if (managementServerId != host.managementServerId) return false;
-      if (memoryAllocated != host.memoryAllocated) return false;
-      if (memoryTotal != host.memoryTotal) return false;
-      if (memoryUsed != host.memoryUsed) return false;
-      if (networkKbsRead != host.networkKbsRead) return false;
-      if (networkKbsWrite != host.networkKbsWrite) return false;
-      if (osCategoryId != host.osCategoryId) return false;
-      if (osCategoryName != host.osCategoryName) return false;
-      if (podId != host.podId) return false;
-      if (zoneId != host.zoneId) return false;
-      if (allocationState != null ? !allocationState.equals(host.allocationState) : host.allocationState != null)
-         return false;
-      if (capabilities != null ? !capabilities.equals(host.capabilities) : host.capabilities != null)
-         return false;
-      if (clusterName != null ? !clusterName.equals(host.clusterName) : host.clusterName != null)
-         return false;
-      if (clusterType != null ? !clusterType.equals(host.clusterType) : host.clusterType != null)
-         return false;
-      if (created != null ? !created.equals(host.created) : host.created != null)
-         return false;
-      if (events != null ? !events.equals(host.events) : host.events != null)
-         return false;
-      if (hostTags != null ? !hostTags.equals(host.hostTags) : host.hostTags != null)
-         return false;
-      if (hypervisor != null ? !hypervisor.equals(host.hypervisor) : host.hypervisor != null)
-         return false;
-      if (ipAddress != null ? !ipAddress.equals(host.ipAddress) : host.ipAddress != null)
-         return false;
-      if (jobStatus != host.jobStatus) return false;
-      if (lastPinged != null ? !lastPinged.equals(host.lastPinged) : host.lastPinged != null)
-         return false;
-      if (name != null ? !name.equals(host.name) : host.name != null)
-         return false;
-      if (podName != null ? !podName.equals(host.podName) : host.podName != null)
-         return false;
-      if (removed != null ? !removed.equals(host.removed) : host.removed != null)
-         return false;
-      if (state != null ? !state.equals(host.state) : host.state != null)
-         return false;
-      if (type != null ? !type.equals(host.type) : host.type != null)
-         return false;
-      if (version != null ? !version.equals(host.version) : host.version != null)
-         return false;
-      if (zoneName != null ? !zoneName.equals(host.zoneName) : host.zoneName != null)
-         return false;
-
-      return true;
-   }
-
-   @Override
    public String toString() {
       return "Host{" +
          "id=" + id +
-         ", allocationState='" + allocationState + '\'' +
+         ", allocationState=" + allocationState +
          ", averageLoad=" + averageLoad +
          ", capabilities='" + capabilities + '\'' +
          ", clusterId=" + clusterId +
          ", clusterName='" + clusterName + '\'' +
-         ", clusterType='" + clusterType + '\'' +
-         ", cpuAllocated=" + cpuAllocated +
+         ", clusterType=" + clusterType +
+         ", cpuAllocated='" + cpuAllocated + '\'' +
          ", cpuNumber=" + cpuNumber +
          ", cpuSpeed=" + cpuSpeed +
-         ", cpuUsed=" + cpuUsed +
+         ", cpuUsed='" + cpuUsed + '\'' +
          ", cpuWithOverProvisioning=" + cpuWithOverProvisioning +
          ", created=" + created +
          ", disconnected=" + disconnected +
@@ -864,8 +847,8 @@ public class Host implements Comparable<Host> {
          ", podId=" + podId +
          ", podName='" + podName + '\'' +
          ", removed=" + removed +
-         ", state='" + state + '\'' +
-         ", type='" + type + '\'' +
+         ", state=" + state +
+         ", type=" + type +
          ", version='" + version + '\'' +
          ", zoneId=" + zoneId +
          ", zoneName='" + zoneName + '\'' +
