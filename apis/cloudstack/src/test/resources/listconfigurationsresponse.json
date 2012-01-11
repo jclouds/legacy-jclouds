@@ -1,0 +1,4 @@
+{ "listconfigurationsresponse" : { "count":2 ,"configuration" : [
+    {"category":"Advanced","name":"account.cleanup.interval","value":"86400","description":"The interval (in seconds) between cleanup for removed accounts"},
+    {"category":"Advanced","name":"agent.lb.enabled","value":"true","description":"If agent load balancing enabled in cluster setup"}]
+}}

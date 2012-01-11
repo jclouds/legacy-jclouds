@@ -1,0 +1,2 @@
+{ "updateconfigurationresponse" :  { "configuration" :
+    {"category":"Advanced","name":"expunge.delay","value":"11","description":"Determines how long (in seconds) to wait before actually expunging destroyed vm. The default value = the default value of expunge.interval"} }  }
