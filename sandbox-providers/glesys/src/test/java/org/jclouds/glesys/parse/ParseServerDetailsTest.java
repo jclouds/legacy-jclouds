@@ -49,10 +49,6 @@ public class ParseServerDetailsTest extends BaseItemParserTest<ServerDetails> {
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
    public ServerDetails expected() {
-     return getData();
-   }
-
-   public static ServerDetails getData() {
       Cost cost = Cost.builder().amount(6.38).currency("EUR").timePeriod("month").build();
       return ServerDetails.builder().id("vz1908384").hostname("jclouds-unit").cpuCores(1).
             memory(128).disk(5).

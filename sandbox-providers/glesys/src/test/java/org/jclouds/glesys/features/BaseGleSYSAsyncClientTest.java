@@ -45,7 +45,6 @@ import com.google.common.collect.Maps;
 
 /**
  * @author Adrian Cole
- * @author Adam Lowe
  */
 public abstract class BaseGleSYSAsyncClientTest<T> extends RestClientTest<T> {
 
