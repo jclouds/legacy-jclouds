@@ -29,8 +29,6 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeService;
@@ -46,9 +44,9 @@ import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.Image;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RootDeviceType;
-import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.domain.Snapshot;
+import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.ec2.services.AMIClient;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
@@ -56,14 +54,13 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.Module;
-
-import javax.annotation.Nullable;
 
 /**
  * Tests behavior of {@code AMIClient}

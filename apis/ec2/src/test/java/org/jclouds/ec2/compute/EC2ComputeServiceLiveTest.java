@@ -18,11 +18,14 @@
  */
 package org.jclouds.ec2.compute;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import com.google.common.base.Splitter;
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -50,7 +53,6 @@ import org.jclouds.ec2.services.ElasticBlockStoreClient;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.jclouds.ec2.services.SecurityGroupClient;
-import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.scriptbuilder.domain.Statements;
@@ -65,8 +67,6 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.Module;
-
-import static org.testng.Assert.*;
 
 /**
  * 

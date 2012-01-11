@@ -56,8 +56,6 @@ import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;

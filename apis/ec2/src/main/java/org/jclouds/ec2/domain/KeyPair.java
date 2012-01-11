@@ -80,7 +80,7 @@ public class KeyPair implements Comparable<KeyPair> {
       }
 
       public static Builder fromKeyPair(KeyPair in) {
-         return new Builder().region(in.getRegion()).keyName(in.getKeyName()).sha1OfPrivateKey(in.getKeyFingerprint())
+         return new Builder().region(in.getRegion()).keyName(in.getKeyName()).sha1OfPrivateKey(in.getSha1OfPrivateKey())
                   .keyMaterial(in.getKeyMaterial());
       }
    }
@@ -114,14 +114,6 @@ public class KeyPair implements Comparable<KeyPair> {
     */
    public int compareTo(KeyPair o) {
       return (this == o) ? 0 : getKeyName().compareTo(o.getKeyName());
-   }
-
-   /**
-    * @see #getSha1OfPrivateKey
-    */
-   @Deprecated
-   public String getKeyFingerprint() {
-      return sha1OfPrivateKey;
    }
 
    /**

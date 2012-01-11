@@ -26,8 +26,6 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.rimuhosting.miro.RimuHostingAsyncClient;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
 import org.jclouds.rimuhosting.miro.compute.functions.ServerToNodeMetadata;
