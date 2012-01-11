@@ -69,19 +69,4 @@ public interface GlobalConfigurationAsyncClient extends ConfigurationAsyncClient
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<ConfigurationEntry> updateConfigurationEntry(
       @QueryParam("name") String name, @QueryParam("value") String value);
-
-
-   /**
-    * @see GlobalConfigurationClient#createConfigurationEntry
-    */
-   @GET
-   @QueryParams(keys = "command", values = "createConfiguration")
-   @SelectJson("configuration")
-   @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ConfigurationEntry> createConfigurationEntry(@QueryParam("category")String category,
-      @QueryParam("component") String component, @QueryParam("instance") String instance,
-      @QueryParam("name") String name, @QueryParam("description") String description,
-      @QueryParam("value") String value);
-
 }

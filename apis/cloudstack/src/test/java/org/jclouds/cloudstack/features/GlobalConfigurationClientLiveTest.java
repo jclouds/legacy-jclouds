@@ -32,7 +32,6 @@ import java.util.Set;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.jclouds.cloudstack.options.ListConfigurationEntriesOptions.Builder.name;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.fail;
 
 /**
  * Tests behavior of {@code GlobalConfigurationClient}
@@ -80,19 +79,9 @@ public class GlobalConfigurationClientLiveTest extends BaseCloudStackClientLiveT
          .updateConfigurationEntry("expunge.delay", "" + expungeDelay);
    }
 
-   @Test(enabled = false)
-   public void testCreateConfigurationEntry() {
-      assert globalAdminEnabled;
-
-      ConfigurationEntry result = globalAdminClient.getConfigurationClient()
-         .createConfigurationEntry("Advanced", "component",
-            "instance", prefix + "-jclouds", "description", "jclouds");
-      checkConfigurationEntry(result);
-   }
-
    private void checkConfigurationEntry(ConfigurationEntry entry) {
       assertEquals(entry, getEntryByName(globalAdminClient.getConfigurationClient()
-         .listConfigurationEntries(), entry.getName()));
+         .listConfigurationEntries(name(entry.getName())), entry.getName()));
       assert entry.getCategory() != null : entry;
       assert entry.getDescription() != null : entry;
       assert entry.getName() != null : entry;
