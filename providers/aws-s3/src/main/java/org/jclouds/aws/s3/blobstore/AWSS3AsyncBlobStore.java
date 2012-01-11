@@ -25,9 +25,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
+import com.google.common.cache.CacheLoader;
 import org.jclouds.Constants;
 import org.jclouds.aws.s3.AWSS3AsyncClient;
 import org.jclouds.aws.s3.AWSS3Client;
+import org.jclouds.aws.s3.blobstore.options.AWSS3PutObjectOptions;
+import org.jclouds.aws.s3.blobstore.options.AWSS3PutOptions;
 import org.jclouds.aws.s3.blobstore.strategy.AsyncMultipartUploadStrategy;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
@@ -37,6 +40,8 @@ import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
+import org.jclouds.s3.S3AsyncClient;
+import org.jclouds.s3.S3Client;
 import org.jclouds.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
 import org.jclouds.s3.blobstore.functions.BucketToResourceList;
@@ -49,14 +54,20 @@ import org.jclouds.s3.domain.AccessControlList;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.s3.domain.CannedAccessPolicy;
+import org.jclouds.s3.domain.ObjectMetadata;
+
+import static org.jclouds.s3.domain.ObjectMetadata.StorageClass.REDUCED_REDUNDANCY;
 
 /**
- * 
- * @author Tibor Kiss
+ *
+ * @author Tibor Kiss, Andrei Savu
  */
 public class AWSS3AsyncBlobStore extends S3AsyncBlobStore {
 
    private final Provider<AsyncMultipartUploadStrategy> multipartUploadStrategy;
+   private final LoadingCache<String, AccessControlList> bucketAcls;
+   private final BlobToObject blob2Object;
 
    @Inject
    public AWSS3AsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
@@ -71,12 +82,39 @@ public class AWSS3AsyncBlobStore extends S3AsyncBlobStore {
                container2BucketListOptions, bucket2ResourceList, object2Blob, blob2ObjectGetOptions, blob2Object,
                object2BlobMd, fetchBlobMetadataProvider, bucketAcls);
       this.multipartUploadStrategy = multipartUploadStrategy;
+      this.bucketAcls = bucketAcls;
+      this.blob2Object = blob2Object;
    }
 
    @Override
    public ListenableFuture<String> putBlob(String container, Blob blob, PutOptions options) {
-      // need to use a provider if the strategy object is stateful
-      return multipartUploadStrategy.get().execute(container, blob);
+      if (options.isMultipart()) {
+         // need to use a provider if the strategy object is stateful
+         return multipartUploadStrategy.get().execute(container, blob, options);
+      } else if (options instanceof AWSS3PutOptions &&
+         ((AWSS3PutOptions) options).getStorageClass() == REDUCED_REDUNDANCY) {
+         return putBlobWithReducedRedundancy(container, blob);
+
+      } else {
+         return super.putBlob(container, blob, options);
+      }
+   }
+
+   private ListenableFuture<String> putBlobWithReducedRedundancy(String container, Blob blob) {
+      AWSS3PutObjectOptions options = new AWSS3PutObjectOptions();
+      try {
+         AccessControlList acl = bucketAcls.getUnchecked(container);
+         if (acl != null && acl.hasPermission(AccessControlList.GroupGranteeURI.ALL_USERS,
+                                              AccessControlList.Permission.READ)) {
+            options.withAcl(CannedAccessPolicy.PUBLIC_READ);
+         }
+         options.storageClass(ObjectMetadata.StorageClass.REDUCED_REDUNDANCY);
+
+      } catch (CacheLoader.InvalidCacheLoadException e) {
+         // nulls not permitted from cache loader
+      }
+      return S3AsyncClient.class.cast(getContext().getProviderSpecificContext().getApi())
+         .putObject(container, blob2Object.apply(blob), options);
    }
 
 }

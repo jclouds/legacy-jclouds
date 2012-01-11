@@ -22,6 +22,7 @@ import static org.jclouds.blobstore.attr.BlobScopes.CONTAINER;
 
 import java.util.Map;
 
+import org.jclouds.aws.s3.blobstore.options.AWSS3PutObjectOptions;
 import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -54,9 +55,12 @@ import org.jclouds.s3.Bucket;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.binders.BindAsHostPrefixIfConfigured;
+import org.jclouds.s3.binders.BindS3ObjectMetadataToRequest;
 import org.jclouds.s3.domain.ObjectMetadata;
+import org.jclouds.s3.domain.S3Object;
 import org.jclouds.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.s3.functions.BindRegionToXmlPayload;
+import org.jclouds.s3.functions.ObjectKey;
 import org.jclouds.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState;
 import org.jclouds.s3.options.PutBucketOptions;
 import org.jclouds.s3.options.PutObjectOptions;
@@ -74,6 +78,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(RequestAuthorizeSignature.class)
 @BlobScope(CONTAINER)
 public interface AWSS3AsyncClient extends S3AsyncClient {
+
    /**
     * @see S3Client#putBucketInRegion
     */

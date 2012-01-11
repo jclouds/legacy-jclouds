@@ -38,7 +38,15 @@ import org.jclouds.io.ContentMetadata;
 public interface ObjectMetadata extends Comparable<ObjectMetadata> {
 
    public enum StorageClass {
-      STANDARD, REDUCED_REDUNDANCY
+      STANDARD, REDUCED_REDUNDANCY, UNKNOWN;
+
+      public static StorageClass fromValue(String value) {
+         try {
+            return valueOf(value);
+         } catch(IllegalArgumentException e) {
+            return UNKNOWN;
+         }
+      }
    }
 
    /**

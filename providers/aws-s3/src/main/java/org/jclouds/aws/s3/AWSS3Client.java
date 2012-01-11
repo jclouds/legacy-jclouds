@@ -21,30 +21,33 @@ package org.jclouds.aws.s3;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.aws.s3.blobstore.options.AWSS3PutObjectOptions;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.io.Payload;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.domain.ObjectMetadata;
+import org.jclouds.s3.domain.S3Object;
 import org.jclouds.s3.options.PutObjectOptions;
 
 /**
  * Provides access to amazon-specific S3 features
- * 
+ *
  * @author Adrian Cole
  * @see AWSS3AsyncClient
  */
 @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
 public interface AWSS3Client extends S3Client {
+
    /**
     * This operation initiates a multipart upload and returns an upload ID. This upload ID is used
     * to associate all the parts in the specific multipart upload. You specify this upload ID in
     * each of your subsequent upload part requests (see Upload Part). You also include this upload
     * ID in the final request to either complete or abort the multipart upload request.
-    * 
+    *
     * <h4>Note</h4> If you create an object using the multipart upload APIs, currently you cannot
     * copy the object between regions.
-    * 
-    * 
+    *
+    *
     * @param bucketName
     *           namespace of the object you are to upload
     * @param objectMetadata
@@ -61,8 +64,8 @@ public interface AWSS3Client extends S3Client {
     * parts will be freed. However, if any part uploads are currently in progress, those part
     * uploads might or might not succeed. As a result, it might be necessary to abort a given
     * multipart upload multiple times in order to completely free all storage consumed by all parts.
-    * 
-    * 
+    *
+    *
     * @param bucketName
     *           namespace of the object you are deleting
     * @param key
@@ -77,20 +80,20 @@ public interface AWSS3Client extends S3Client {
     * Initiate Multipart Upload) before you can upload any part. In response to your initiate
     * request. Amazon S3 returns an upload ID, a unique identifier, that you must include in your
     * upload part request.
-    * 
+    *
     * <p/>
     * Part numbers can be any number from 1 to 10,000, inclusive. A part number uniquely identifies
     * a part and also defines its position within the object being created. If you upload a new part
     * using the same part number that was used with a previous part, the previously uploaded part is
     * overwritten. Each part must be at least 5 MB in size, except the last part. There is no size
     * limit on the last part of your multipart upload.
-    * 
+    *
     * <p/>
     * To ensure that data is not corrupted when traversing the network, specify the Content-MD5
     * header in the upload part request. Amazon S3 checks the part data against the provided MD5
     * value. If they do not match, Amazon S3 returns an error.
-    * 
-    * 
+    *
+    *
     * @param bucketName
     *           namespace of the object you are storing
     * @param key
@@ -109,7 +112,7 @@ public interface AWSS3Client extends S3Client {
    String uploadPart(String bucketName, String key, int partNumber, String uploadId, Payload part);
 
    /**
-    * 
+    *
     This operation completes a multipart upload by assembling previously uploaded parts.
     * <p/>
     * You first initiate the multipart upload and then upload all parts using the Upload Parts
@@ -129,7 +132,7 @@ public interface AWSS3Client extends S3Client {
     * <p/>
     * Note that if Complete Multipart Upload fails, applications should be prepared to retry the
     * failed requests.
-    * 
+    *
     * @param bucketName
     *           namespace of the object you are deleting
     * @param key

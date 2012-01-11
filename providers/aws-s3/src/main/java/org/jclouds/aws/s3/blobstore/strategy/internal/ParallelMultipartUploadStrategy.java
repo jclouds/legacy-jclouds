@@ -45,6 +45,7 @@ import org.jclouds.aws.s3.blobstore.AWSS3AsyncBlobStore;
 import org.jclouds.aws.s3.blobstore.strategy.AsyncMultipartUploadStrategy;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
+import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.io.Payload;
@@ -153,7 +154,7 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
    }   
    
    @Override
-   public ListenableFuture<String> execute(final String container, final Blob blob) {
+   public ListenableFuture<String> execute(final String container, final Blob blob, final PutOptions options) {
       return Futures.makeListenable(
             ioWorkerExecutor.submit(new Callable<String>() {
                @Override
@@ -240,7 +241,7 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
                         throw rtex;
                      }
                   } else {
-                     ListenableFuture<String> futureETag = ablobstore.putBlob(container, blob);
+                     ListenableFuture<String> futureETag = ablobstore.putBlob(container, blob, options);
                      return maxTime != null ? 
                            futureETag.get(maxTime,TimeUnit.SECONDS) : futureETag.get();
                   }
