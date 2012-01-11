@@ -25,6 +25,7 @@ import static org.jclouds.aws.s3.blobstore.options.AWSS3PutOptions.Builder.stora
 import static org.jclouds.crypto.CryptoStreams.md5;
 import static org.jclouds.io.Payloads.newByteArrayPayload;
 import static org.jclouds.s3.domain.ObjectMetadata.StorageClass;
+import static org.jclouds.s3.options.ListBucketOptions.Builder.withPrefix;
 import static org.testng.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
@@ -45,9 +46,11 @@ import org.jclouds.http.apachehc.config.ApacheHCHttpCommandExecutorServiceModule
 import org.jclouds.io.Payload;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.S3ClientLiveTest;
+import org.jclouds.s3.domain.ListBucketResponse;
 import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.s3.domain.ObjectMetadataBuilder;
 import org.jclouds.s3.domain.S3Object;
+import org.jclouds.s3.options.ListBucketOptions;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -178,12 +181,10 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
             storageClass(StorageClass.REDUCED_REDUNDANCY));
 
          S3Client s3Client = S3Client.class.cast(context.getProviderSpecificContext().getApi());
-         S3Object s3Object = s3Client.getObject(containerName, blobName);
+         ListBucketResponse response = s3Client.listBucket(containerName, withPrefix(blobName));
 
-         /**
-          * This fails because the storage class is not part of the server response
-          */
-         assertEquals(s3Object.getMetadata().getStorageClass(), StorageClass.REDUCED_REDUNDANCY);
+         ObjectMetadata metadata = response.iterator().next();
+         assertEquals(metadata.getStorageClass(), StorageClass.REDUCED_REDUNDANCY);
 
       } finally {
          returnContainer(containerName);
