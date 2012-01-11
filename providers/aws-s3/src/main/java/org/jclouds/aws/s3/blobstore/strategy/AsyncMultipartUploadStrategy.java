@@ -23,6 +23,7 @@ import org.jclouds.blobstore.domain.Blob;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.ImplementedBy;
+import org.jclouds.blobstore.options.PutOptions;
 
 /**
  * @see <a href="http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?qfacts.html"
@@ -32,6 +33,6 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(ParallelMultipartUploadStrategy.class)
 public interface AsyncMultipartUploadStrategy extends MultipartUpload {
    
-   ListenableFuture<String> execute(String container, Blob blob);
+   ListenableFuture<String> execute(String container, Blob blob, PutOptions options);
 
 }
