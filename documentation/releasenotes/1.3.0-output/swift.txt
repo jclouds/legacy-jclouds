@@ -1,7 +1,7 @@
 [INFO] Scanning for projects...
 [WARNING] 
 [WARNING] Some problems were encountered while building the effective model for org.jclouds.api:swift:bundle:1.3.0-SNAPSHOT
-[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/workspace/git/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/workspace/git/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/workspace/git/1.3.x/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/workspace/git/1.3.x/jclouds/project/pom.xml, line 24, column 13
 [WARNING] 
 [WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
 [WARNING] 
@@ -13,7 +13,7 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ swift ---
-[INFO] Deleting /Users/adriancole/workspace/git/jclouds/apis/swift/target
+[INFO] Deleting /Users/adriancole/workspace/git/1.3.x/jclouds/apis/swift/target
 [INFO] 
 [INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ swift ---
 [INFO] 
@@ -29,157 +29,157 @@
 [INFO] 
 [INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ swift ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/apis/swift/src/main/clojure
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/apis/swift/src/main/resources
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.3.x/jclouds/apis/swift/src/main/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.3.x/jclouds/apis/swift/src/main/resources
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ swift ---
-[INFO] Compiling 42 source files to /Users/adriancole/workspace/git/jclouds/apis/swift/target/classes
+[INFO] Compiling 42 source files to /Users/adriancole/workspace/git/1.3.x/jclouds/apis/swift/target/classes
 [INFO] 
 [INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ swift ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/apis/swift/src/test/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.3.x/jclouds/apis/swift/src/test/clojure
 [INFO] Copying 2 resources
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ swift ---
-[INFO] Compiling 23 source files to /Users/adriancole/workspace/git/jclouds/apis/swift/target/test-classes
+[INFO] Compiling 23 source files to /Users/adriancole/workspace/git/1.3.x/jclouds/apis/swift/target/test-classes
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (default-test) @ swift ---
-[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/apis/swift/target/surefire-reports
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.3.x/jclouds/apis/swift/target/surefire-reports
 [INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
 
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
 Running TestSuite
+Starting test testPath(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
 Starting test testOneOptionQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
 Starting test testNullMaxKeys(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
-Starting test testPrefixAndPathUrlEncodingQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
 Starting test testAssignability(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
-[pool-2-thread-4] Test testAssignability(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 13ms
-Starting test testPath(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-4] Test testAssignability(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 20ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-Starting test testMarker(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
-[pool-2-thread-1] Test testPath(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 33ms
+[pool-2-thread-1] Test testPath(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 100ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-[pool-2-thread-5] Test testPrefixAndPathUrlEncodingQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 46ms
+[pool-2-thread-2] Test testOneOptionQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 39ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testMarker(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 32ms
+Starting test testPrefixAndPathUrlEncodingQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-5] Test testPrefixAndPathUrlEncodingQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-Starting test testPathStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
-Starting test testMaxKeys(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
-Starting test testNullPath(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
-[pool-2-thread-1] Test testPathStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 1ms
+Starting test testMarker(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-5] Test testMarker(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
 Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
-Starting test testNoOptionsQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
-[pool-2-thread-1] Test testNoOptionsQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
+Starting test testPathStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-5] Test testPathStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 1ms
 Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
-[pool-2-thread-5] Test testNullPath(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 1ms
+Starting test testNullPath(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-5] Test testNullPath(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
 Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
-Starting test testPrefixStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
-Starting test testPathNPE(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
-[pool-2-thread-5] Test testPrefixStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
+Starting test testMaxKeys(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-5] Test testMaxKeys(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 5ms
 Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
-[pool-2-thread-1] Test testPathNPE(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
+Starting test testNoOptionsQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-5] Test testNoOptionsQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 1ms
 Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
-Starting test testNullMarker(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
-[pool-2-thread-5] Test testNullMarker(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 1ms
-Starting test testMaxKeysNegative(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+Starting test testPathNPE(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-5] Test testPathNPE(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
 Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
-[pool-2-thread-1] Test testMaxKeysNegative(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
+Starting test testPrefixStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-5] Test testPrefixStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
 Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Starting test testNullMarker(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-5] Test testNullMarker(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+Starting test testMaxKeysNegative(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-5] Test testMaxKeysNegative(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
 Starting test testTwoOptionQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
 [pool-2-thread-5] Test testTwoOptionQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+Starting test testPrefixNPE(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-5] Test testPrefixNPE(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
 Starting test testPrefix(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
 [pool-2-thread-5] Test testPrefix(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
-Starting test testMarkerStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
-Starting test testPrefixNPE(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
-[pool-2-thread-1] Test testPrefixNPE(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 1ms
-Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
-Starting test testNullPrefix(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
-[pool-2-thread-1] Test testNullPrefix(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
-Starting test testMarkerNPE(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
-[pool-2-thread-1] Test testMarkerNPE(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
 Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
-Starting test testMaxKeysStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
-[pool-2-thread-1] Test testMaxKeysStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 1ms
+Starting test testMarkerStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-5] Test testMarkerStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 1ms
 Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
-Starting test test404SetsKeyNotFoundExceptionMosso(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest)
-[pool-2-thread-5] Test testMarkerStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 10ms
+Starting test testNullPrefix(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-5] Test testNullPrefix(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
 Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
-Starting test test404SetsContainerNotFoundExceptionSwift(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest)
-[pool-2-thread-3] Test testNullMaxKeys(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 63ms
+Starting test testMarkerNPE(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-5] Test testMarkerNPE(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
 Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testMaxKeys(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 16ms
+Starting test testMaxKeysStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest)
+[pool-2-thread-5] Test testMaxKeysStatic(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 0ms
 Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+Starting test test404SetsKeyNotFoundExceptionMosso(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest)
+Starting test test404SetsContainerNotFoundExceptionSwift(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest)
+[pool-2-thread-3] Test testNullMaxKeys(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 97ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
 Starting test test404SetsKeyNotFoundExceptionSwift(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest)
 Starting test test404SetsContainerNotFoundExceptionMosso(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest)
-[pool-2-thread-2] Test testOneOptionQueryString(org.jclouds.openstack.swift.options.ListContainerOptionsTest) succeeded: 72ms
-Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
 Starting test testReplaceLocalhost(org.jclouds.openstack.functions.ParseAuthenticationResponseFromHeadersTest)
-[pool-2-thread-2] Test testReplaceLocalhost(org.jclouds.openstack.functions.ParseAuthenticationResponseFromHeadersTest) succeeded: 118ms
+[pool-2-thread-2] Test testReplaceLocalhost(org.jclouds.openstack.functions.ParseAuthenticationResponseFromHeadersTest) succeeded: 116ms
 Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
 Starting test testEtagCaseIssue(org.jclouds.openstack.swift.functions.ParseObjectInfoFromHeadersTest)
-[pool-2-thread-5] Test test404SetsContainerNotFoundExceptionSwift(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest) succeeded: 151ms
+[pool-2-thread-3] Test test404SetsKeyNotFoundExceptionSwift(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest) succeeded: 245ms
 Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
-Starting test testApplyInputStream(org.jclouds.openstack.swift.functions.ParseContainerListFromJsonResponseTest)
-[pool-2-thread-4] Test test404SetsContainerNotFoundExceptionMosso(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest) succeeded: 152ms
+[pool-2-thread-4] Test test404SetsContainerNotFoundExceptionSwift(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest) succeeded: 256ms
 Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
 Starting test testApplyInputStream(org.jclouds.openstack.swift.domain.internal.ParseObjectInfoListFromJsonResponseTest)
-[pool-2-thread-3] Test test404SetsKeyNotFoundExceptionSwift(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest) succeeded: 160ms
+[pool-2-thread-1] Test test404SetsContainerNotFoundExceptionMosso(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest) succeeded: 228ms
 Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
-[pool-2-thread-1] Test test404SetsKeyNotFoundExceptionMosso(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest) succeeded: 170ms
+Starting test testApplyInputStream(org.jclouds.openstack.swift.functions.ParseContainerListFromJsonResponseTest)
+[pool-2-thread-5] Test test404SetsKeyNotFoundExceptionMosso(org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponseTest) succeeded: 284ms
 Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
-[pool-2-thread-5] Test testApplyInputStream(org.jclouds.openstack.swift.functions.ParseContainerListFromJsonResponseTest) succeeded: 168ms
+[pool-2-thread-4] Test testApplyInputStream(org.jclouds.openstack.swift.functions.ParseContainerListFromJsonResponseTest) succeeded: 155ms
 Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testEtagCaseIssue(org.jclouds.openstack.swift.functions.ParseObjectInfoFromHeadersTest) succeeded: 209ms
+[pool-2-thread-2] Test testEtagCaseIssue(org.jclouds.openstack.swift.functions.ParseObjectInfoFromHeadersTest) succeeded: 276ms
 Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testApplyInputStream(org.jclouds.openstack.swift.domain.internal.ParseObjectInfoListFromJsonResponseTest) succeeded: 190ms
+[pool-2-thread-3] Test testApplyInputStream(org.jclouds.openstack.swift.domain.internal.ParseObjectInfoListFromJsonResponseTest) succeeded: 178ms
 Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
-Starting test testOver5GBIsBad(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest)
 Starting test testNullIsBad(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest)
+Starting test testOver5GBIsBad(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest)
 Starting test testPassWithMinimumDetailsAndPayload5GB(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest)
 Starting test testExtendedPropertiesBind(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest)
-Starting test testNoContentLengthIsChunked(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest)
-[pool-3-thread-5] Test testNullIsBad(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 9ms
+[pool-3-thread-5] Test testNullIsBad(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 13ms
 Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
 Starting test testMustBeSwiftObject(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest)
 [pool-3-thread-5] Test testMustBeSwiftObject(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 0ms
 Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
 Starting test testNoNameIsBad(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest)
-[pool-3-thread-5] Test testNoNameIsBad(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 0ms
+[pool-3-thread-5] Test testNoNameIsBad(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 1ms
 Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
-[pool-3-thread-4] Test testOver5GBIsBad(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 14ms
+Starting test testNoContentLengthIsChunked(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest)
+[pool-3-thread-4] Test testOver5GBIsBad(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 4ms
 Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
-[pool-3-thread-3] Test testExtendedPropertiesBind(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 18ms
+[pool-3-thread-3] Test testExtendedPropertiesBind(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 19ms
 Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
-[pool-3-thread-2] Test testNoContentLengthIsChunked(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 29ms
+[pool-3-thread-2] Test testNoContentLengthIsChunked(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 18ms
 Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
-[pool-3-thread-1] Test testPassWithMinimumDetailsAndPayload5GB(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 30ms
+[pool-3-thread-1] Test testPassWithMinimumDetailsAndPayload5GB(org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequestTest) succeeded: 24ms
 Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
 Starting test testSignPutBlob(org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSignerTest)
 Starting test testSignGetBlob(org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSignerTest)
 Starting test testSignRemoveBlob(org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSignerTest)
-[pool-4-thread-1] Test testSignRemoveBlob(org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSignerTest) succeeded: 47ms
+[pool-4-thread-2] Test testSignGetBlob(org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSignerTest) succeeded: 40ms
 Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
-[pool-4-thread-3] Test testSignPutBlob(org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSignerTest) succeeded: 51ms
+[pool-4-thread-3] Test testSignPutBlob(org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSignerTest) succeeded: 45ms
 Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
-[pool-4-thread-2] Test testSignGetBlob(org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSignerTest) succeeded: 47ms
+[pool-4-thread-1] Test testSignRemoveBlob(org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSignerTest) succeeded: 42ms
 Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
-Tests run: 39, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.002 sec
+Tests run: 39, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.66 sec
 
 Results :
 
 Tests run: 39, Failures: 0, Errors: 0, Skipped: 0
 
 [INFO] 
-[INFO] --- clojure-maven-plugin:1.3.3:test (test-clojure) @ swift ---
+[INFO] --- clojure-maven-plugin:1.3.8:test (test-clojure) @ swift ---
 
-Testing user
+Testing com.theoryinpractise.clojure.testrunner
 
 Ran 0 tests containing 0 assertions.
 0 failures, 0 errors.
@@ -187,16 +187,16 @@ Ran 0 tests containing 0 assertions.
 [INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ swift ---
 [INFO] 
 [INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ swift ---
-[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/apis/swift/target/swift-1.3.0-SNAPSHOT-sources.jar
+[INFO] Building jar: /Users/adriancole/workspace/git/1.3.x/jclouds/apis/swift/target/swift-1.3.0-SNAPSHOT-sources.jar
 [INFO] 
 [INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ swift ---
 [INFO] Skipping javadoc generation
 [INFO] 
 [INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ swift ---
-[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/apis/swift/target/swift-1.3.0-SNAPSHOT-tests.jar
+[INFO] Building jar: /Users/adriancole/workspace/git/1.3.x/jclouds/apis/swift/target/swift-1.3.0-SNAPSHOT-tests.jar
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (integration) @ swift ---
-[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/apis/swift/target/surefire-reports
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.3.x/jclouds/apis/swift/target/surefire-reports
 [INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
 
 -------------------------------------------------------
@@ -205,301 +205,317 @@ Ran 0 tests containing 0 assertions.
 Running TestSuite
 *** containers to test: [adriancole-blobstore0, adriancole-blobstore1, adriancole-blobstore2, adriancole-blobstore3, adriancole-blobstore4, adriancole-blobstore5, adriancole-blobstore6, adriancole-blobstore7, adriancole-blobstore8, adriancole-blobstore9]
 Starting test blobNotFound(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test blobNotFound(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 641ms
+[pool-4-thread-1] Test blobNotFound(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 613ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 805ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1121ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 900ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 974ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 844ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1099ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 822ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1257ms
 Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1035ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1697ms
 Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 832ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1056ms
 Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 810ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1071ms
 Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 791ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1054ms
 Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 785ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 990ms
 Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 740ms
+[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1030ms
 Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
-Starting test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 850ms
-Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
 Starting test deleteObjectNoContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObjectNoContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 117ms
-Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+[pool-4-thread-1] Test deleteObjectNoContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 148ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
 Starting test deleteObjectNotFound(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObjectNotFound(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 521ms
-Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+[pool-4-thread-1] Test deleteObjectNotFound(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 721ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
 Starting test testBigFileGets(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testBigFileGets(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 26235ms
-Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testBigFileGets(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 29049ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
 Starting test testGetIfMatch(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testGetIfMatch(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1294ms
-Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testGetIfMatch(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1634ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
 Starting test testGetIfModifiedSince(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testGetIfModifiedSince(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 2428ms
-Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testGetIfModifiedSince(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 2060ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
 Starting test testGetIfNoneMatch(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testGetIfNoneMatch(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1135ms
-Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testGetIfNoneMatch(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 3540ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
 Starting test testGetIfUnmodifiedSince(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testGetIfUnmodifiedSince(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1329ms
-Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testGetIfUnmodifiedSince(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 2689ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
 Starting test testGetRange(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testGetRange(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1028ms
-Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testGetRange(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 2004ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
 Starting test testMetadata(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testMetadata(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1322ms
-Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testMetadata(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 2189ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
 Starting test testPutFileParallel(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutFileParallel(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 30276ms
+[pool-4-thread-1] Test testPutFileParallel(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 30739ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
+Starting test testPutObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
+[pool-4-thread-1] Test testPutObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 9950ms
 Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
 Starting test testPutObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 764ms
+[pool-4-thread-1] Test testPutObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 6197ms
 Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
 Starting test testPutObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 860ms
+[pool-4-thread-1] Test testPutObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 3804ms
 Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
-Starting test testPutObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutObject(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1214ms
-Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
 Starting test testPutObjectStream(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutObjectStream(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 1018ms
-Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testPutObjectStream(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest) succeeded: 3545ms
+Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
 Starting test testCopyUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobLiveTest)
-[pool-4-thread-1] Test testCopyUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobLiveTest) succeeded: 5746ms
-Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testCopyUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobLiveTest) failed.
+Test suite progress: tests succeeded: 25, failed: 1, skipped: 0.
 Starting test testContains(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContains(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 1177ms
-Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testContains(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 1446ms
+Test suite progress: tests succeeded: 26, failed: 1, skipped: 0.
 Starting test testEntrySet(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testEntrySet(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 3870ms
-Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testEntrySet(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 6275ms
+Test suite progress: tests succeeded: 27, failed: 1, skipped: 0.
 Starting test testPut(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPut(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 1546ms
-Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testPut(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 2918ms
+Test suite progress: tests succeeded: 28, failed: 1, skipped: 0.
 Starting test testPutAll(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAll(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 1601ms
-Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testPutAll(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 3623ms
+Test suite progress: tests succeeded: 29, failed: 1, skipped: 0.
 Starting test testPutMoreThanSingleListing(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutMoreThanSingleListing(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 4703ms
-Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testPutMoreThanSingleListing(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 9011ms
+Test suite progress: tests succeeded: 30, failed: 1, skipped: 0.
 Starting test testRemove(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testRemove(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 1573ms
-Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testRemove(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 9790ms
+Test suite progress: tests succeeded: 31, failed: 1, skipped: 0.
 Starting test testValues(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testValues(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 2125ms
-Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testValues(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 16870ms
+Test suite progress: tests succeeded: 32, failed: 1, skipped: 0.
 Starting test testClear(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testClear(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 1681ms
-Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testClear(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 4596ms
+Test suite progress: tests succeeded: 33, failed: 1, skipped: 0.
 Starting test testContainsKey(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsKey(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 1077ms
-Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testContainsKey(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 2074ms
+Test suite progress: tests succeeded: 34, failed: 1, skipped: 0.
 Starting test testDirectory(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testDirectory(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 12877ms
-Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testDirectory(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 19853ms
+Test suite progress: tests succeeded: 35, failed: 1, skipped: 0.
 Starting test testIsEmpty(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testIsEmpty(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 1097ms
-Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testIsEmpty(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 1520ms
+Test suite progress: tests succeeded: 36, failed: 1, skipped: 0.
 Starting test testKeySet(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testKeySet(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 1297ms
-Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testKeySet(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 1705ms
+Test suite progress: tests succeeded: 37, failed: 1, skipped: 0.
 Starting test testListContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 799ms
-Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testListContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest) succeeded: 1047ms
+Test suite progress: tests succeeded: 38, failed: 1, skipped: 0.
 Starting test testSignGetUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest)
-[pool-4-thread-1] Test testSignGetUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest) succeeded: 1162ms
-Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testSignGetUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest) succeeded: 1264ms
+Test suite progress: tests succeeded: 39, failed: 1, skipped: 0.
 Starting test testSignGetUrlOptions(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest)
-[pool-4-thread-1] Test testSignGetUrlOptions(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest) succeeded: 2047ms
-Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testSignGetUrlOptions(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest) succeeded: 918ms
+Test suite progress: tests succeeded: 40, failed: 1, skipped: 0.
 Starting test testSignPutUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest)
-[pool-4-thread-1] Test testSignPutUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest) succeeded: 2260ms
-Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testSignPutUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest) succeeded: 780ms
+Test suite progress: tests succeeded: 41, failed: 1, skipped: 0.
 Starting test testSignRemoveUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest)
-[pool-4-thread-1] Test testSignRemoveUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest) succeeded: 8087ms
-Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testSignRemoveUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest) succeeded: 2620ms
+Test suite progress: tests succeeded: 42, failed: 1, skipped: 0.
 Starting test containerDoesntExist(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
-[pool-4-thread-1] Test containerDoesntExist(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 1557ms
-Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
+[pool-4-thread-1] Test containerDoesntExist(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 319ms
+Test suite progress: tests succeeded: 43, failed: 1, skipped: 0.
 Starting test containerExists(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
-[pool-4-thread-1] Test containerExists(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 1568ms
-Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
+[pool-4-thread-1] Test containerExists(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 632ms
+Test suite progress: tests succeeded: 44, failed: 1, skipped: 0.
 Starting test deleteContainerIfEmpty(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
-*** allocated new container adriancole-blobstore4...
-[pool-4-thread-1] Test deleteContainerIfEmpty(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 5596ms
-Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
+*** allocated new container adriancole-blobstore2...
+[pool-4-thread-1] Test deleteContainerIfEmpty(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 1977ms
+Test suite progress: tests succeeded: 45, failed: 1, skipped: 0.
 Starting test deleteContainerWithContents(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
-*** allocated new container adriancole-blobstore5...
-[pool-4-thread-1] Test deleteContainerWithContents(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 5279ms
-Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
-Starting test testClearWhenContentsUnderPath(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testClearWhenContentsUnderPath(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 4457ms
-Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
-Starting test testDirectory(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testDirectory(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 7791ms
-Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
-Starting test testListContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 2492ms
-Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
-Starting test testListContainerMarker(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainerMarker(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 4421ms
-Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
-Starting test testListContainerMaxResults(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainerMaxResults(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 4196ms
-Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
-Starting test testListContainerPrefix(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainerPrefix(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 5323ms
-Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
-Starting test testListRootUsesDelimiter(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testListRootUsesDelimiter(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 4940ms
-Test suite progress: tests succeeded: 55, failed: 0, skipped: 0.
-Starting test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 1088ms
-Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
-Starting test testWithDetails(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testWithDetails(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 908ms
-Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
-Starting test testContainsBytesValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsBytesValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 936ms
-Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
-Starting test testContainsFileValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsFileValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1254ms
-Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
-Starting test testContainsInputStreamValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsInputStreamValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1348ms
-Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
-Starting test testContainsStringValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsStringValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1339ms
-Test suite progress: tests succeeded: 61, failed: 0, skipped: 0.
-Starting test testEntrySet(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testEntrySet(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 5071ms
-Test suite progress: tests succeeded: 62, failed: 0, skipped: 0.
-Starting test testPut(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPut(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 2810ms
-Test suite progress: tests succeeded: 63, failed: 0, skipped: 0.
-Starting test testPutAll(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAll(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1485ms
-Test suite progress: tests succeeded: 64, failed: 0, skipped: 0.
-Starting test testPutAllBytes(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAllBytes(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1504ms
-Test suite progress: tests succeeded: 65, failed: 0, skipped: 0.
-Starting test testPutAllFiles(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAllFiles(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1538ms
-Test suite progress: tests succeeded: 66, failed: 0, skipped: 0.
-Starting test testPutAllStrings(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAllStrings(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1561ms
-Test suite progress: tests succeeded: 67, failed: 0, skipped: 0.
-Starting test testPutBytes(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutBytes(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1647ms
-Test suite progress: tests succeeded: 68, failed: 0, skipped: 0.
-Starting test testPutFile(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutFile(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1649ms
-Test suite progress: tests succeeded: 69, failed: 0, skipped: 0.
-Starting test testPutMoreThanSingleListing(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutMoreThanSingleListing(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 5196ms
-Test suite progress: tests succeeded: 70, failed: 0, skipped: 0.
-Starting test testPutString(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutString(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1635ms
-Test suite progress: tests succeeded: 71, failed: 0, skipped: 0.
-Starting test testRemove(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testRemove(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1658ms
-Test suite progress: tests succeeded: 72, failed: 0, skipped: 0.
-Starting test testValues(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testValues(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1154ms
-Test suite progress: tests succeeded: 73, failed: 0, skipped: 0.
-Starting test testClear(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testClear(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1713ms
-Test suite progress: tests succeeded: 74, failed: 0, skipped: 0.
-Starting test testContainsKey(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsKey(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1063ms
-Test suite progress: tests succeeded: 75, failed: 0, skipped: 0.
-Starting test testDirectory(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testDirectory(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 10378ms
-Test suite progress: tests succeeded: 76, failed: 0, skipped: 0.
-Starting test testIsEmpty(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testIsEmpty(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1121ms
-Test suite progress: tests succeeded: 77, failed: 0, skipped: 0.
-Starting test testKeySet(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testKeySet(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1001ms
-Test suite progress: tests succeeded: 78, failed: 0, skipped: 0.
-Starting test testListContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 764ms
-Test suite progress: tests succeeded: 79, failed: 0, skipped: 0.
-Starting test containerDoesntExist(org.jclouds.openstack.swift.blobstore.integration.SwiftServiceIntegrationLiveTest)
-[pool-4-thread-1] Test containerDoesntExist(org.jclouds.openstack.swift.blobstore.integration.SwiftServiceIntegrationLiveTest) succeeded: 247ms
-Test suite progress: tests succeeded: 80, failed: 0, skipped: 0.
-Starting test testAllLocations(org.jclouds.openstack.swift.blobstore.integration.SwiftServiceIntegrationLiveTest)
 *** allocated new container adriancole-blobstore3...
- >> creating container in location [id=swift, scope=PROVIDER, description=http://50.16.106.110:8080/auth, parent=null, iso3166Codes=[], metadata={}]
- << call complete.. checking
-*** allocated new container adriancole-blobstore313...
-[pool-4-thread-1] Test testAllLocations(org.jclouds.openstack.swift.blobstore.integration.SwiftServiceIntegrationLiveTest) succeeded: 994ms
-Test suite progress: tests succeeded: 81, failed: 0, skipped: 0.
-Starting test testGetAssignableLocations(org.jclouds.openstack.swift.blobstore.integration.SwiftServiceIntegrationLiveTest)
-location [id=swift, scope=PROVIDER, description=http://50.16.106.110:8080/auth, parent=null, iso3166Codes=[], metadata={}]
-[pool-4-thread-1] Test testGetAssignableLocations(org.jclouds.openstack.swift.blobstore.integration.SwiftServiceIntegrationLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 82, failed: 0, skipped: 0.
-Starting test deleteContainerIfEmptyNotFound(org.jclouds.openstack.swift.SwiftClientLiveTest)
-[pool-4-thread-1] Test deleteContainerIfEmptyNotFound(org.jclouds.openstack.swift.SwiftClientLiveTest) succeeded: 222ms
-Test suite progress: tests succeeded: 83, failed: 0, skipped: 0.
-Starting test testHeadAccountMetadata(org.jclouds.openstack.swift.SwiftClientLiveTest)
-[pool-4-thread-1] Test testHeadAccountMetadata(org.jclouds.openstack.swift.SwiftClientLiveTest) succeeded: 1256ms
-Test suite progress: tests succeeded: 84, failed: 0, skipped: 0.
-Starting test testListContainerPath(org.jclouds.openstack.swift.SwiftClientLiveTest)
-[pool-4-thread-1] Test testListContainerPath(org.jclouds.openstack.swift.SwiftClientLiveTest) succeeded: 864ms
-Test suite progress: tests succeeded: 85, failed: 0, skipped: 0.
-Starting test testListOwnedContainers(org.jclouds.openstack.swift.SwiftClientLiveTest)
-[pool-4-thread-1] Test testListOwnedContainers(org.jclouds.openstack.swift.SwiftClientLiveTest) succeeded: 1715ms
-Test suite progress: tests succeeded: 86, failed: 0, skipped: 0.
-Starting test testObjectOperations(org.jclouds.openstack.swift.SwiftClientLiveTest)
-[pool-4-thread-1] Test testObjectOperations(org.jclouds.openstack.swift.SwiftClientLiveTest) succeeded: 3490ms
-Test suite progress: tests succeeded: 87, failed: 0, skipped: 0.
-Starting test testPutContainers(org.jclouds.openstack.swift.SwiftClientLiveTest)
-[pool-4-thread-1] Test testPutContainers(org.jclouds.openstack.swift.SwiftClientLiveTest) succeeded: 1470ms
-Test suite progress: tests succeeded: 88, failed: 0, skipped: 0.
-Starting test testPublicAccess(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerLiveTest)
+[pool-4-thread-1] Test deleteContainerWithContents(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 4642ms
+Test suite progress: tests succeeded: 46, failed: 1, skipped: 0.
+Starting test testClearWhenContentsUnderPath(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testClearWhenContentsUnderPath(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 6177ms
+Test suite progress: tests succeeded: 47, failed: 1, skipped: 0.
+Starting test testDirectory(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testDirectory(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 11623ms
+Test suite progress: tests succeeded: 48, failed: 1, skipped: 0.
+Starting test testListContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 4306ms
+Test suite progress: tests succeeded: 49, failed: 1, skipped: 0.
+Starting test testListContainerMarker(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainerMarker(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 7110ms
+Test suite progress: tests succeeded: 50, failed: 1, skipped: 0.
+Starting test testListContainerMaxResults(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainerMaxResults(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 8151ms
+Test suite progress: tests succeeded: 51, failed: 1, skipped: 0.
+Starting test testListContainerPrefix(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainerPrefix(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 8058ms
+Test suite progress: tests succeeded: 52, failed: 1, skipped: 0.
+Starting test testListRootUsesDelimiter(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testListRootUsesDelimiter(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 8404ms
+Test suite progress: tests succeeded: 53, failed: 1, skipped: 0.
+Starting test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 1213ms
+Test suite progress: tests succeeded: 54, failed: 1, skipped: 0.
+Starting test testWithDetails(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest)
+[pool-4-thread-1] Test testWithDetails(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerIntegrationLiveTest) succeeded: 1260ms
+Test suite progress: tests succeeded: 55, failed: 1, skipped: 0.
+Starting test testContainsBytesValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContainsBytesValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 994ms
+Test suite progress: tests succeeded: 56, failed: 1, skipped: 0.
+Starting test testContainsFileValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContainsFileValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1486ms
+Test suite progress: tests succeeded: 57, failed: 1, skipped: 0.
+Starting test testContainsInputStreamValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContainsInputStreamValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 2555ms
+Test suite progress: tests succeeded: 58, failed: 1, skipped: 0.
+Starting test testContainsStringValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContainsStringValue(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1915ms
+Test suite progress: tests succeeded: 59, failed: 1, skipped: 0.
+Starting test testEntrySet(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testEntrySet(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 9198ms
+Test suite progress: tests succeeded: 60, failed: 1, skipped: 0.
+Starting test testPut(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPut(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 3688ms
+Test suite progress: tests succeeded: 61, failed: 1, skipped: 0.
+Starting test testPutAll(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutAll(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 2035ms
+Test suite progress: tests succeeded: 62, failed: 1, skipped: 0.
+Starting test testPutAllBytes(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutAllBytes(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1849ms
+Test suite progress: tests succeeded: 63, failed: 1, skipped: 0.
+Starting test testPutAllFiles(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutAllFiles(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 2029ms
+Test suite progress: tests succeeded: 64, failed: 1, skipped: 0.
+Starting test testPutAllStrings(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutAllStrings(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 2394ms
+Test suite progress: tests succeeded: 65, failed: 1, skipped: 0.
+Starting test testPutBytes(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutBytes(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 2133ms
+Test suite progress: tests succeeded: 66, failed: 1, skipped: 0.
+Starting test testPutFile(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutFile(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 2708ms
+Test suite progress: tests succeeded: 67, failed: 1, skipped: 0.
+Starting test testPutMoreThanSingleListing(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutMoreThanSingleListing(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 8584ms
+Test suite progress: tests succeeded: 68, failed: 1, skipped: 0.
+Starting test testPutString(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testPutString(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 2422ms
+Test suite progress: tests succeeded: 69, failed: 1, skipped: 0.
+Starting test testRemove(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testRemove(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 2417ms
+Test suite progress: tests succeeded: 70, failed: 1, skipped: 0.
+Starting test testValues(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testValues(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1412ms
+Test suite progress: tests succeeded: 71, failed: 1, skipped: 0.
+Starting test testClear(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testClear(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 2330ms
+Test suite progress: tests succeeded: 72, failed: 1, skipped: 0.
+Starting test testContainsKey(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testContainsKey(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1457ms
+Test suite progress: tests succeeded: 73, failed: 1, skipped: 0.
+Starting test testDirectory(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testDirectory(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 16751ms
+Test suite progress: tests succeeded: 74, failed: 1, skipped: 0.
+Starting test testIsEmpty(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testIsEmpty(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1356ms
+Test suite progress: tests succeeded: 75, failed: 1, skipped: 0.
+Starting test testKeySet(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testKeySet(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 1996ms
+Test suite progress: tests succeeded: 76, failed: 1, skipped: 0.
+Starting test testListContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest)
+[pool-4-thread-1] Test testListContainer(org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest) succeeded: 934ms
+Test suite progress: tests succeeded: 77, failed: 1, skipped: 0.
+Starting test containerDoesntExist(org.jclouds.openstack.swift.blobstore.integration.SwiftServiceIntegrationLiveTest)
+[pool-4-thread-1] Test containerDoesntExist(org.jclouds.openstack.swift.blobstore.integration.SwiftServiceIntegrationLiveTest) succeeded: 138ms
+Test suite progress: tests succeeded: 78, failed: 1, skipped: 0.
+Starting test testAllLocations(org.jclouds.openstack.swift.blobstore.integration.SwiftServiceIntegrationLiveTest)
 *** allocated new container adriancole-blobstore1...
-*** allocated new container adriancole-blobstore115...
-[pool-4-thread-1] Test testPublicAccess(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerLiveTest) succeeded: 1074ms
-Test suite progress: tests succeeded: 89, failed: 0, skipped: 0.
-Tests run: 89, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 258.705 sec
+ >> creating container in location [id=swift, scope=PROVIDER, description=https://region-a.geo-1.objects.hpcloudsvc.com/auth, parent=null, iso3166Codes=[], metadata={}]
+ << call complete.. checking
+*** allocated new container adriancole-blobstore113...
+[pool-4-thread-1] Test testAllLocations(org.jclouds.openstack.swift.blobstore.integration.SwiftServiceIntegrationLiveTest) succeeded: 1593ms
+Test suite progress: tests succeeded: 79, failed: 1, skipped: 0.
+Starting test testGetAssignableLocations(org.jclouds.openstack.swift.blobstore.integration.SwiftServiceIntegrationLiveTest)
+location [id=swift, scope=PROVIDER, description=https://region-a.geo-1.objects.hpcloudsvc.com/auth, parent=null, iso3166Codes=[], metadata={}]
+[pool-4-thread-1] Test testGetAssignableLocations(org.jclouds.openstack.swift.blobstore.integration.SwiftServiceIntegrationLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 80, failed: 1, skipped: 0.
+Starting test deleteContainerIfEmptyNotFound(org.jclouds.openstack.swift.SwiftClientLiveTest)
+[pool-4-thread-1] Test deleteContainerIfEmptyNotFound(org.jclouds.openstack.swift.SwiftClientLiveTest) succeeded: 138ms
+Test suite progress: tests succeeded: 81, failed: 1, skipped: 0.
+Starting test testHeadAccountMetadata(org.jclouds.openstack.swift.SwiftClientLiveTest)
+[pool-4-thread-1] Test testHeadAccountMetadata(org.jclouds.openstack.swift.SwiftClientLiveTest) succeeded: 1518ms
+Test suite progress: tests succeeded: 82, failed: 1, skipped: 0.
+Starting test testListContainerPath(org.jclouds.openstack.swift.SwiftClientLiveTest)
+[pool-4-thread-1] Test testListContainerPath(org.jclouds.openstack.swift.SwiftClientLiveTest) succeeded: 1288ms
+Test suite progress: tests succeeded: 83, failed: 1, skipped: 0.
+Starting test testListOwnedContainers(org.jclouds.openstack.swift.SwiftClientLiveTest)
+[pool-4-thread-1] Test testListOwnedContainers(org.jclouds.openstack.swift.SwiftClientLiveTest) succeeded: 2513ms
+Test suite progress: tests succeeded: 84, failed: 1, skipped: 0.
+Starting test testObjectOperations(org.jclouds.openstack.swift.SwiftClientLiveTest)
+[pool-4-thread-1] Test testObjectOperations(org.jclouds.openstack.swift.SwiftClientLiveTest) succeeded: 5182ms
+Test suite progress: tests succeeded: 85, failed: 1, skipped: 0.
+Starting test testPutContainers(org.jclouds.openstack.swift.SwiftClientLiveTest)
+[pool-4-thread-1] Test testPutContainers(org.jclouds.openstack.swift.SwiftClientLiveTest) succeeded: 1745ms
+Test suite progress: tests succeeded: 86, failed: 1, skipped: 0.
+Starting test testPublicAccess(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerLiveTest)
+*** allocated new container adriancole-blobstore9...
+*** allocated new container adriancole-blobstore915...
+[pool-4-thread-1] Test testPublicAccess(org.jclouds.openstack.swift.blobstore.integration.SwiftContainerLiveTest) succeeded: 2505ms
+Test suite progress: tests succeeded: 87, failed: 1, skipped: 0.
+Exception in thread "user thread 2" java.lang.IllegalStateException: interrupted calling get() on [[method=SwiftAsyncClient.containerExists, request=HEAD https://region-a.geo-1.objects.hpcloudsvc.com:443/v1/AUTH_651c939f-04f0-4fbf-bd50-27f114ccaa15/adriancole-blobstore9 HTTP/1.1]], so could not run listeners
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:66)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:979)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1281)
+	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:218)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:237)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:59)
+	... 3 more
+Caused by: java.util.concurrent.ExecutionException: task submitted from the following trace
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:270)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:241)
+	... 4 more
+Tests run: 88, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 374.295 sec <<< FAILURE!
 
 Results :
 
-Tests run: 89, Failures: 0, Errors: 0, Skipped: 0
+Failed tests:   testCopyUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobLiveTest): Server returned HTTP response code: 403 for URL: http://apache.opensourceresources.org/commons/logging/binaries/commons-logging-1.1.1-bin.tar.gz
 
-[INFO] 
-[INFO] --- maven-install-plugin:2.3:install (default-install) @ swift ---
-[INFO] Installing /Users/adriancole/workspace/git/jclouds/apis/swift/target/swift-1.3.0-SNAPSHOT.jar to /Users/adriancole/.m2/repository/org/jclouds/api/swift/1.3.0-SNAPSHOT/swift-1.3.0-SNAPSHOT.jar
-[INFO] Installing /Users/adriancole/workspace/git/jclouds/apis/swift/pom.xml to /Users/adriancole/.m2/repository/org/jclouds/api/swift/1.3.0-SNAPSHOT/swift-1.3.0-SNAPSHOT.pom
-[INFO] Installing /Users/adriancole/workspace/git/jclouds/apis/swift/target/swift-1.3.0-SNAPSHOT-sources.jar to /Users/adriancole/.m2/repository/org/jclouds/api/swift/1.3.0-SNAPSHOT/swift-1.3.0-SNAPSHOT-sources.jar
-[INFO] Installing /Users/adriancole/workspace/git/jclouds/apis/swift/target/swift-1.3.0-SNAPSHOT-tests.jar to /Users/adriancole/.m2/repository/org/jclouds/api/swift/1.3.0-SNAPSHOT/swift-1.3.0-SNAPSHOT-tests.jar
-[INFO] 
-[INFO] --- maven-bundle-plugin:2.3.4:install (default-install) @ swift ---
-[INFO] Installing org/jclouds/api/swift/1.3.0-SNAPSHOT/swift-1.3.0-SNAPSHOT.jar
-[INFO] Writing OBR metadata
+Tests run: 88, Failures: 1, Errors: 0, Skipped: 0
+
 [INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
+[INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 4:40.859s
-[INFO] Finished at: Thu Dec 15 00:09:57 PST 2011
-[INFO] Final Memory: 20M/265M
+[INFO] Total time: 6:31.524s
+[INFO] Finished at: Wed Jan 11 00:59:03 PST 2012
+[INFO] Final Memory: 21M/265M
 [INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project swift: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/adriancole/workspace/git/1.3.x/jclouds/apis/swift/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

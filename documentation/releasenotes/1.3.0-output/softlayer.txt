@@ -1,7 +1,7 @@
 [INFO] Scanning for projects...
 [WARNING] 
 [WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:softlayer:bundle:1.3.0-SNAPSHOT
-[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/workspace/git/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/workspace/git/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/workspace/git/1.3.x/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/workspace/git/1.3.x/jclouds/project/pom.xml, line 24, column 13
 [WARNING] 
 [WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
 [WARNING] 
@@ -13,7 +13,7 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ softlayer ---
-[INFO] Deleting /Users/adriancole/workspace/git/jclouds/providers/softlayer/target
+[INFO] Deleting /Users/adriancole/workspace/git/1.3.x/jclouds/providers/softlayer/target
 [INFO] 
 [INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ softlayer ---
 [INFO] 
@@ -29,286 +29,292 @@
 [INFO] 
 [INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ softlayer ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/softlayer/src/main/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.3.x/jclouds/providers/softlayer/src/main/clojure
 [INFO] Copying 1 resource
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ softlayer ---
-[INFO] Compiling 41 source files to /Users/adriancole/workspace/git/jclouds/providers/softlayer/target/classes
+[INFO] Compiling 41 source files to /Users/adriancole/workspace/git/1.3.x/jclouds/providers/softlayer/target/classes
 [INFO] 
 [INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ softlayer ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/softlayer/src/test/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.3.x/jclouds/providers/softlayer/src/test/clojure
 [INFO] Copying 7 resources
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ softlayer ---
-[INFO] Compiling 33 source files to /Users/adriancole/workspace/git/jclouds/providers/softlayer/target/test-classes
+[INFO] Compiling 34 source files to /Users/adriancole/workspace/git/1.3.x/jclouds/providers/softlayer/target/test-classes
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (default-test) @ softlayer ---
-[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/softlayer/target/surefire-reports
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/softlayer/target/surefire-reports
 [INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
 
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
 Running TestSuite
+Starting test testPriceMissing(org.jclouds.softlayer.compute.functions.ProductItemsTest)
+Starting test testDescription(org.jclouds.softlayer.compute.functions.ProductItemsTest)
 Starting test testItemCallNoCategoryOnPrice(org.jclouds.softlayer.compute.functions.ProductItemsTest)
-Starting test testDescriptionMissing(org.jclouds.softlayer.compute.functions.ProductItemsTest)
-[pool-2-thread-4] Test testItemCallNoCategoryOnPrice(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 9ms
+[pool-2-thread-1] Test testDescription(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 19ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testDescriptionMissing(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 1ms
-Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
 Starting test testCapacityMissing(org.jclouds.softlayer.compute.functions.ProductItemsTest)
-[pool-2-thread-2] Test testCapacityMissing(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 1ms
+Starting test testDescriptionMissing(org.jclouds.softlayer.compute.functions.ProductItemsTest)
+[pool-2-thread-1] Test testCapacityMissing(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 4ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test testCapacity(org.jclouds.softlayer.compute.functions.ProductItemsTest)
+[pool-2-thread-2] Test testDescriptionMissing(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 0ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
 Starting test testPrice(org.jclouds.softlayer.compute.functions.ProductItemsTest)
-[pool-2-thread-4] Test testPrice(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 3ms
-Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
 Starting test testItemCallCategoryExists(org.jclouds.softlayer.compute.functions.ProductItemsTest)
-[pool-2-thread-4] Test testItemCallCategoryExists(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 1ms
-Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+[pool-2-thread-5] Test testCapacity(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
 Starting test testPriceMultiplePrices(org.jclouds.softlayer.compute.functions.ProductItemsTest)
-[pool-2-thread-4] Test testPriceMultiplePrices(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testPriceMissing(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 46ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
 Starting test testItemCallGetsCategory(org.jclouds.softlayer.compute.functions.ProductItemsTest)
-[pool-2-thread-4] Test testItemCallGetsCategory(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 1ms
-Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testPrice(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 23ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
 Starting test testGetIso3166CodeCountryOnly(org.jclouds.softlayer.compute.functions.DatacenterToLocationTest)
+[pool-2-thread-3] Test testItemCallGetsCategory(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 3ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
 Starting test testDoesNotMatch(org.jclouds.softlayer.predicates.ProductPackagePredicatesTest)
-[pool-2-thread-4] Test testGetIso3166CodeCountryOnly(org.jclouds.softlayer.compute.functions.DatacenterToLocationTest) succeeded: 7ms
+[pool-2-thread-4] Test testItemCallNoCategoryOnPrice(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 49ms
 Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
-Starting test testGetIso3166CodeNoCountryAndState(org.jclouds.softlayer.compute.functions.DatacenterToLocationTest)
-[pool-2-thread-4] Test testGetIso3166CodeNoCountryAndState(org.jclouds.softlayer.compute.functions.DatacenterToLocationTest) succeeded: 1ms
+[pool-2-thread-5] Test testPriceMultiplePrices(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 26ms
 Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
-Starting test testGetIso3166CodeWhitespaceTrimmer(org.jclouds.softlayer.compute.functions.DatacenterToLocationTest)
-Starting test testPriceMissing(org.jclouds.softlayer.compute.functions.ProductItemsTest)
-Starting test testCapacity(org.jclouds.softlayer.compute.functions.ProductItemsTest)
-[pool-2-thread-5] Test testCapacity(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 0ms
+[pool-2-thread-1] Test testGetIso3166CodeCountryOnly(org.jclouds.softlayer.compute.functions.DatacenterToLocationTest) succeeded: 7ms
 Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testDoesNotMatch(org.jclouds.softlayer.predicates.ProductPackagePredicatesTest) succeeded: 7ms
+Starting test testGetIso3166CodeNoCountryAndState(org.jclouds.softlayer.compute.functions.DatacenterToLocationTest)
+[pool-2-thread-1] Test testGetIso3166CodeNoCountryAndState(org.jclouds.softlayer.compute.functions.DatacenterToLocationTest) succeeded: 0ms
 Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
-Starting test testMatches(org.jclouds.softlayer.predicates.ProductPackagePredicatesTest)
-[pool-2-thread-2] Test testMatches(org.jclouds.softlayer.predicates.ProductPackagePredicatesTest) succeeded: 0ms
+Starting test testGetIso3166CodeWhitespaceTrimmer(org.jclouds.softlayer.compute.functions.DatacenterToLocationTest)
+[pool-2-thread-1] Test testGetIso3166CodeWhitespaceTrimmer(org.jclouds.softlayer.compute.functions.DatacenterToLocationTest) succeeded: 0ms
 Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testGetIso3166CodeWhitespaceTrimmer(org.jclouds.softlayer.compute.functions.DatacenterToLocationTest) succeeded: 2ms
-Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
 Starting test testDatacenterToLocation(org.jclouds.softlayer.compute.functions.DatacenterToLocationTest)
-[pool-2-thread-4] Test testDatacenterToLocation(org.jclouds.softlayer.compute.functions.DatacenterToLocationTest) succeeded: 0ms
+[pool-2-thread-1] Test testDatacenterToLocation(org.jclouds.softlayer.compute.functions.DatacenterToLocationTest) succeeded: 0ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testItemCallCategoryExists(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 32ms
 Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
-[pool-2-thread-3] Test testPriceMissing(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 12ms
+[pool-2-thread-3] Test testDoesNotMatch(org.jclouds.softlayer.predicates.ProductPackagePredicatesTest) succeeded: 20ms
 Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
-Starting test testDescription(org.jclouds.softlayer.compute.functions.ProductItemsTest)
-[pool-2-thread-1] Test testDescription(org.jclouds.softlayer.compute.functions.ProductItemsTest) succeeded: 0ms
+Starting test testMatches(org.jclouds.softlayer.predicates.ProductPackagePredicatesTest)
+[pool-2-thread-3] Test testMatches(org.jclouds.softlayer.predicates.ProductPackagePredicatesTest) succeeded: 0ms
 Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
-Starting test testResumeVirtualGuest(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest)
 Starting test testPowerOffVirtualGuest(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest)
 Starting test testGetVirtualGuest(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest)
 Starting test testListVirtualGuests(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest)
+Starting test testResumeVirtualGuest(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest)
 Starting test testPowerOnVirtualGuest(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest)
-[pool-2-thread-2] Test testGetVirtualGuest(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest) succeeded: 100ms
+[pool-2-thread-3] Test testResumeVirtualGuest(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest) succeeded: 78ms
 Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
 Starting test testRebootHardVirtualGuest(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest)
-[pool-2-thread-2] Test testRebootHardVirtualGuest(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest) succeeded: 2ms
+[pool-2-thread-2] Test testPowerOffVirtualGuest(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest) succeeded: 86ms
 Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
 Starting test testPauseVirtualGuest(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest)
-[pool-2-thread-3] Test testPowerOffVirtualGuest(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest) succeeded: 109ms
+[pool-2-thread-2] Test testPauseVirtualGuest(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest) succeeded: 3ms
 Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
 Starting test testCategoryCodePresentTwoCategories(org.jclouds.softlayer.predicates.ProductItemPredicatesTest)
-[pool-2-thread-3] Test testCategoryCodePresentTwoCategories(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 1ms
+[pool-2-thread-2] Test testCategoryCodePresentTwoCategories(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 2ms
 Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testPauseVirtualGuest(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest) succeeded: 3ms
-Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
 Starting test testCapacityPresent(org.jclouds.softlayer.predicates.ProductItemPredicatesTest)
-Starting test testConversion(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
-[pool-2-thread-3] Test testCapacityPresent(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 0ms
-Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testCapacityPresent(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 1ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
 Starting test testMatchesRegex(org.jclouds.softlayer.predicates.ProductItemPredicatesTest)
-[pool-2-thread-5] Test testPowerOnVirtualGuest(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest) succeeded: 118ms
-Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
-Starting test testBitsMissing(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
-[pool-2-thread-1] Test testResumeVirtualGuest(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest) succeeded: 122ms
-Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
-Starting test testBitsNoSpace(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
-[pool-2-thread-1] Test testBitsNoSpace(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 0ms
-Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
-Starting test testIdManyPrices(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
-[pool-2-thread-1] Test testIdManyPrices(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 1ms
-Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
-Starting test testUbuntu(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
-[pool-2-thread-1] Test testUbuntu(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 1ms
-Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
-Starting test testOsFamily(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
-[pool-2-thread-1] Test testOsFamily(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 1ms
-Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
-Starting test testOsVersion(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
-[pool-2-thread-1] Test testOsVersion(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 0ms
-Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
-Starting test testOsVersionMissing(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
-[pool-2-thread-1] Test testOsVersionMissing(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 0ms
-Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
-Starting test testId(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
-[pool-2-thread-1] Test testId(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 0ms
-Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
-Starting test testOsFamilyUnrecognized(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
-[pool-2-thread-1] Test testOsFamilyUnrecognized(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 0ms
-Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
-Starting test testBitsWithSpace(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
-[pool-2-thread-1] Test testBitsWithSpace(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 0ms
-Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
-Starting test testIdMissingPrices(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
-[pool-2-thread-1] Test testIdMissingPrices(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 0ms
-Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
-Starting test testHardware(org.jclouds.softlayer.compute.functions.ProductItemsToHardwareTest)
-[pool-2-thread-1] Test testHardware(org.jclouds.softlayer.compute.functions.ProductItemsToHardwareTest) succeeded: 6ms
-Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testListVirtualGuests(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest) succeeded: 173ms
-Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
-Starting test testHardwareId(org.jclouds.softlayer.compute.functions.ProductItemsToHardwareTest)
-[pool-2-thread-2] Test testConversion(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 66ms
-Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
-Starting test testHardwareWithPrivateCore(org.jclouds.softlayer.compute.functions.ProductItemsToHardwareTest)
-Starting test testHardwareWithTwoDisks(org.jclouds.softlayer.compute.functions.ProductItemsToHardwareTest)
-[pool-2-thread-2] Test testHardwareWithPrivateCore(org.jclouds.softlayer.compute.functions.ProductItemsToHardwareTest) succeeded: 2ms
-Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testHardwareWithTwoDisks(org.jclouds.softlayer.compute.functions.ProductItemsToHardwareTest) succeeded: 1ms
-Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
-Starting test testConstructionWithNoCountry(org.jclouds.softlayer.domain.AddressTest)
-[pool-2-thread-2] Test testConstructionWithNoCountry(org.jclouds.softlayer.domain.AddressTest) succeeded: 1ms
-Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
-Starting test testConstructionWithEmpty(org.jclouds.softlayer.domain.AddressTest)
-[pool-2-thread-2] Test testConstructionWithEmpty(org.jclouds.softlayer.domain.AddressTest) succeeded: 0ms
-Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
-[pool-2-thread-5] Test testBitsMissing(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 82ms
-Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
-[pool-2-thread-3] Test testMatchesRegex(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 94ms
-Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testMatchesRegex(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 1ms
+Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
 Starting test testUnitsPresent(org.jclouds.softlayer.predicates.ProductItemPredicatesTest)
-[pool-2-thread-3] Test testUnitsPresent(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 1ms
-Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testUnitsPresent(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 1ms
+Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
 Starting test testUnitsMissing(org.jclouds.softlayer.predicates.ProductItemPredicatesTest)
-[pool-2-thread-3] Test testUnitsMissing(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 0ms
-Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testUnitsMissing(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 1ms
+Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
 Starting test testCapacityMissing(org.jclouds.softlayer.predicates.ProductItemPredicatesTest)
-[pool-2-thread-3] Test testCapacityMissing(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 0ms
-Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testCapacityMissing(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 0ms
+Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
 Starting test testCategoryCodePresent(org.jclouds.softlayer.predicates.ProductItemPredicatesTest)
-[pool-2-thread-3] Test testCategoryCodePresent(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 0ms
-Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testCategoryCodePresent(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 0ms
+Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
 Starting test testCategoryCodeMissing(org.jclouds.softlayer.predicates.ProductItemPredicatesTest)
-[pool-2-thread-3] Test testCategoryCodeMissing(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 0ms
-Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testCategoryCodeMissing(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 0ms
+Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
 Starting test testCategoryCodeMatches(org.jclouds.softlayer.predicates.ProductItemPredicatesTest)
-[pool-2-thread-3] Test testCategoryCodeMatches(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 0ms
-Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testCategoryCodeMatches(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 1ms
+Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
 Starting test testNoMatchRegex(org.jclouds.softlayer.predicates.ProductItemPredicatesTest)
-[pool-2-thread-3] Test testNoMatchRegex(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 0ms
+[pool-2-thread-2] Test testNoMatchRegex(org.jclouds.softlayer.predicates.ProductItemPredicatesTest) succeeded: 1ms
+Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
+Starting test test401MakesAuthorizationException(org.jclouds.softlayer.handlers.SoftLayerErrorHandlerTest)
+[pool-2-thread-1] Test testListVirtualGuests(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest) succeeded: 111ms
+Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
+Starting test test500MakesIllegalStateExceptionOnActiveTransaction(org.jclouds.softlayer.handlers.SoftLayerErrorHandlerTest)
+[pool-2-thread-3] Test testRebootHardVirtualGuest(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest) succeeded: 32ms
+Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
+Starting test test500MakesResourceNotFoundExceptionOnUnableToDeterminePackage(org.jclouds.softlayer.handlers.SoftLayerErrorHandlerTest)
+[pool-2-thread-5] Test testGetVirtualGuest(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest) succeeded: 119ms
+Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
+Starting test test404MakesResourceNotFoundException(org.jclouds.softlayer.handlers.SoftLayerErrorHandlerTest)
+[pool-2-thread-4] Test testPowerOnVirtualGuest(org.jclouds.softlayer.features.VirtualGuestAsyncClientTest) succeeded: 163ms
+Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
+Starting test testConversion(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
+[pool-2-thread-4] Test testConversion(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 16ms
+Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
+Starting test testBitsMissing(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
+[pool-2-thread-4] Test testBitsMissing(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 0ms
+Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
+Starting test testIdManyPrices(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
+[pool-2-thread-4] Test testIdManyPrices(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 1ms
+Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
+Starting test testBitsNoSpace(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
+[pool-2-thread-4] Test testBitsNoSpace(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 0ms
+Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
+Starting test testUbuntu(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
+[pool-2-thread-4] Test testUbuntu(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 0ms
+Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
+Starting test testOsFamily(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
+[pool-2-thread-4] Test testOsFamily(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 1ms
+Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
+Starting test testOsVersion(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
+[pool-2-thread-4] Test testOsVersion(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 0ms
+Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
+Starting test testOsVersionMissing(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
+[pool-2-thread-4] Test testOsVersionMissing(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 0ms
+Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
+Starting test testId(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
+[pool-2-thread-4] Test testId(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 1ms
+Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
+Starting test testOsFamilyUnrecognized(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
+[pool-2-thread-4] Test testOsFamilyUnrecognized(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 31ms
+Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
+Starting test testBitsWithSpace(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
+[pool-2-thread-4] Test testBitsWithSpace(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 0ms
+Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
+Starting test testIdMissingPrices(org.jclouds.softlayer.compute.functions.ProductItemToImageTest)
+[pool-2-thread-4] Test testIdMissingPrices(org.jclouds.softlayer.compute.functions.ProductItemToImageTest) succeeded: 0ms
+Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
+Starting test testHardware(org.jclouds.softlayer.compute.functions.ProductItemsToHardwareTest)
+[pool-2-thread-4] Test testHardware(org.jclouds.softlayer.compute.functions.ProductItemsToHardwareTest) succeeded: 26ms
+Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
+Starting test testHardwareId(org.jclouds.softlayer.compute.functions.ProductItemsToHardwareTest)
+[pool-2-thread-5] Test test404MakesResourceNotFoundException(org.jclouds.softlayer.handlers.SoftLayerErrorHandlerTest) succeeded: 205ms
+Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
+Starting test testHardwareWithTwoDisks(org.jclouds.softlayer.compute.functions.ProductItemsToHardwareTest)
+[pool-2-thread-5] Test testHardwareWithTwoDisks(org.jclouds.softlayer.compute.functions.ProductItemsToHardwareTest) succeeded: 0ms
+Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
+[pool-2-thread-3] Test test500MakesResourceNotFoundExceptionOnUnableToDeterminePackage(org.jclouds.softlayer.handlers.SoftLayerErrorHandlerTest) succeeded: 279ms
+Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
+Starting test testConstructionWithNoCountry(org.jclouds.softlayer.domain.AddressTest)
+[pool-2-thread-3] Test testConstructionWithNoCountry(org.jclouds.softlayer.domain.AddressTest) succeeded: 0ms
 Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
-[pool-2-thread-1] Test testHardwareId(org.jclouds.softlayer.compute.functions.ProductItemsToHardwareTest) succeeded: 66ms
+Starting test testConstructionWithEmpty(org.jclouds.softlayer.domain.AddressTest)
+[pool-2-thread-3] Test testConstructionWithEmpty(org.jclouds.softlayer.domain.AddressTest) succeeded: 0ms
 Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
-Starting test testNullOrder(org.jclouds.softlayer.binders.ProductOrderToJsonTest)
-Starting test testCorrect(org.jclouds.softlayer.binders.ProductOrderToJsonTest)
-[pool-2-thread-1] Test testCorrect(org.jclouds.softlayer.binders.ProductOrderToJsonTest) succeeded: 36ms
+[pool-2-thread-4] Test testHardwareId(org.jclouds.softlayer.compute.functions.ProductItemsToHardwareTest) succeeded: 69ms
 Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
-Starting test test401MakesAuthorizationException(org.jclouds.softlayer.SoftLayerErrorHandlerTest)
-[pool-2-thread-5] Test testNullOrder(org.jclouds.softlayer.binders.ProductOrderToJsonTest) succeeded: 74ms
+Starting test testHardwareWithPrivateCore(org.jclouds.softlayer.compute.functions.ProductItemsToHardwareTest)
+[pool-2-thread-5] Test testHardwareWithPrivateCore(org.jclouds.softlayer.compute.functions.ProductItemsToHardwareTest) succeeded: 1ms
 Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
-Starting test test404MakesResourceNotFoundException(org.jclouds.softlayer.SoftLayerErrorHandlerTest)
-[pool-2-thread-1] Test test401MakesAuthorizationException(org.jclouds.softlayer.SoftLayerErrorHandlerTest) succeeded: 103ms
+Starting test testNullOrder(org.jclouds.softlayer.binders.ProductOrderToJsonTest)
+[pool-2-thread-5] Test testNullOrder(org.jclouds.softlayer.binders.ProductOrderToJsonTest) succeeded: 0ms
 Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
-Starting test testGetProductPackage(org.jclouds.softlayer.features.ProductPackageAsyncClientTest)
-[pool-2-thread-5] Test test404MakesResourceNotFoundException(org.jclouds.softlayer.SoftLayerErrorHandlerTest) succeeded: 76ms
+Starting test testCorrect(org.jclouds.softlayer.binders.ProductOrderToJsonTest)
+[pool-2-thread-1] Test test500MakesIllegalStateExceptionOnActiveTransaction(org.jclouds.softlayer.handlers.SoftLayerErrorHandlerTest) succeeded: 303ms
 Test suite progress: tests succeeded: 55, failed: 0, skipped: 0.
-[pool-2-thread-3] Test testGetProductPackage(org.jclouds.softlayer.features.ProductPackageAsyncClientTest) succeeded: 21ms
+[pool-2-thread-2] Test test401MakesAuthorizationException(org.jclouds.softlayer.handlers.SoftLayerErrorHandlerTest) succeeded: 319ms
 Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
-Starting test test500MakesResourceNotFoundExceptionOnUnableToDeterminePackage(org.jclouds.softlayer.SoftLayerErrorHandlerTest)
-[pool-2-thread-1] Test test500MakesResourceNotFoundExceptionOnUnableToDeterminePackage(org.jclouds.softlayer.SoftLayerErrorHandlerTest) succeeded: 2ms
+[pool-2-thread-5] Test testCorrect(org.jclouds.softlayer.binders.ProductOrderToJsonTest) succeeded: 18ms
 Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
 Starting test testListDatacenters(org.jclouds.softlayer.features.DatacenterAsyncClientTest)
 Starting test testGetDatacenter(org.jclouds.softlayer.features.DatacenterAsyncClientTest)
-[pool-2-thread-2] Test testGetDatacenter(org.jclouds.softlayer.features.DatacenterAsyncClientTest) succeeded: 17ms
+[pool-2-thread-4] Test testGetDatacenter(org.jclouds.softlayer.features.DatacenterAsyncClientTest) succeeded: 124ms
 Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testListDatacenters(org.jclouds.softlayer.features.DatacenterAsyncClientTest) succeeded: 21ms
+Starting test testGetProductPackage(org.jclouds.softlayer.features.ProductPackageAsyncClientTest)
+[pool-2-thread-1] Test testGetProductPackage(org.jclouds.softlayer.features.ProductPackageAsyncClientTest) succeeded: 4ms
 Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
-Starting test testGetActivePackages(org.jclouds.softlayer.features.AccountAsyncClientTest)
-[pool-2-thread-5] Test testGetActivePackages(org.jclouds.softlayer.features.AccountAsyncClientTest) succeeded: 7ms
+[pool-2-thread-3] Test testListDatacenters(org.jclouds.softlayer.features.DatacenterAsyncClientTest) succeeded: 140ms
 Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
+Starting test testGetActivePackages(org.jclouds.softlayer.features.AccountAsyncClientTest)
+[pool-2-thread-2] Test testGetActivePackages(org.jclouds.softlayer.features.AccountAsyncClientTest) succeeded: 20ms
+Test suite progress: tests succeeded: 61, failed: 0, skipped: 0.
 Starting test testApplyWhereVirtualGuestIsRunning(org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadataTest)
 Starting test testApplyWhereVirtualIsBad(org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadataTest)
-[pool-3-thread-2] Test testApplyWhereVirtualIsBad(org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadataTest) succeeded: 4ms
-Test suite progress: tests succeeded: 61, failed: 0, skipped: 0.
-[pool-3-thread-1] Test testApplyWhereVirtualGuestIsRunning(org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadataTest) succeeded: 11ms
-Test suite progress: tests succeeded: 62, failed: 0, skipped: 0.
 Starting test testApplyWhereVirtualGuestWithNoPassword(org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadataTest)
-[pool-3-thread-3] Test testApplyWhereVirtualGuestWithNoPassword(org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadataTest) succeeded: 1ms
-Test suite progress: tests succeeded: 63, failed: 0, skipped: 0.
 Starting test testApplyWhereVirtualGuestIsHalted(org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadataTest)
-[pool-3-thread-4] Test testApplyWhereVirtualGuestIsHalted(org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadataTest) succeeded: 1ms
-Test suite progress: tests succeeded: 64, failed: 0, skipped: 0.
 Starting test testApplyWhereVirtualGuestIsPaused(org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadataTest)
-[pool-3-thread-5] Test testApplyWhereVirtualGuestIsPaused(org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadataTest) succeeded: 1ms
+[pool-3-thread-3] Test testApplyWhereVirtualGuestWithNoPassword(org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadataTest) succeeded: 37ms
+Test suite progress: tests succeeded: 62, failed: 0, skipped: 0.
+[pool-3-thread-2] Test testApplyWhereVirtualIsBad(org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadataTest) succeeded: 38ms
+Test suite progress: tests succeeded: 63, failed: 0, skipped: 0.
+[pool-3-thread-4] Test testApplyWhereVirtualGuestIsHalted(org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadataTest) succeeded: 36ms
+Test suite progress: tests succeeded: 64, failed: 0, skipped: 0.
+[pool-3-thread-1] Test testApplyWhereVirtualGuestIsRunning(org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadataTest) succeeded: 41ms
 Test suite progress: tests succeeded: 65, failed: 0, skipped: 0.
+[pool-3-thread-5] Test testApplyWhereVirtualGuestIsPaused(org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadataTest) succeeded: 36ms
+Test suite progress: tests succeeded: 66, failed: 0, skipped: 0.
 Starting test testDomainName(org.jclouds.softlayer.compute.options.SoftLayerTemplateOptionsTest)
 Starting test testDomainNameIsInvalidThrowsIllegalArgument(org.jclouds.softlayer.compute.options.SoftLayerTemplateOptionsTest)
 Starting test testDomainNameStatic(org.jclouds.softlayer.compute.options.SoftLayerTemplateOptionsTest)
+[pool-4-thread-3] Test testDomainNameStatic(org.jclouds.softlayer.compute.options.SoftLayerTemplateOptionsTest) succeeded: 8ms
+Test suite progress: tests succeeded: 67, failed: 0, skipped: 0.
+[pool-4-thread-1] Test testDomainName(org.jclouds.softlayer.compute.options.SoftLayerTemplateOptionsTest) succeeded: 23ms
+Test suite progress: tests succeeded: 68, failed: 0, skipped: 0.
+[pool-4-thread-2] Test testDomainNameIsInvalidThrowsIllegalArgument(org.jclouds.softlayer.compute.options.SoftLayerTemplateOptionsTest) succeeded: 11ms
+Test suite progress: tests succeeded: 69, failed: 0, skipped: 0.
 Starting test testDomainNameNullHasDecentMessage(org.jclouds.softlayer.compute.options.SoftLayerTemplateOptionsTest)
 [pool-4-thread-4] Test testDomainNameNullHasDecentMessage(org.jclouds.softlayer.compute.options.SoftLayerTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 66, failed: 0, skipped: 0.
-Starting test testDefaultDomainName(org.jclouds.softlayer.compute.options.SoftLayerTemplateOptionsTest)
-[pool-4-thread-5] Test testDefaultDomainName(org.jclouds.softlayer.compute.options.SoftLayerTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 67, failed: 0, skipped: 0.
-Starting test testAs(org.jclouds.softlayer.compute.options.SoftLayerTemplateOptionsTest)
-[pool-4-thread-5] Test testAs(org.jclouds.softlayer.compute.options.SoftLayerTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 68, failed: 0, skipped: 0.
-[pool-4-thread-1] Test testDomainName(org.jclouds.softlayer.compute.options.SoftLayerTemplateOptionsTest) succeeded: 23ms
-Test suite progress: tests succeeded: 69, failed: 0, skipped: 0.
-[pool-4-thread-3] Test testDomainNameStatic(org.jclouds.softlayer.compute.options.SoftLayerTemplateOptionsTest) succeeded: 20ms
 Test suite progress: tests succeeded: 70, failed: 0, skipped: 0.
-[pool-4-thread-2] Test testDomainNameIsInvalidThrowsIllegalArgument(org.jclouds.softlayer.compute.options.SoftLayerTemplateOptionsTest) succeeded: 21ms
+Starting test testDefaultDomainName(org.jclouds.softlayer.compute.options.SoftLayerTemplateOptionsTest)
+Starting test testAs(org.jclouds.softlayer.compute.options.SoftLayerTemplateOptionsTest)
+[pool-4-thread-5] Test testDefaultDomainName(org.jclouds.softlayer.compute.options.SoftLayerTemplateOptionsTest) succeeded: 0ms
 Test suite progress: tests succeeded: 71, failed: 0, skipped: 0.
-Starting test test(org.jclouds.softlayer.parse.ParseProductOrderTest)
-[pool-5-thread-1] Test test(org.jclouds.softlayer.parse.ParseProductOrderTest) succeeded: 33ms
+[pool-4-thread-4] Test testAs(org.jclouds.softlayer.compute.options.SoftLayerTemplateOptionsTest) succeeded: 0ms
 Test suite progress: tests succeeded: 72, failed: 0, skipped: 0.
-Starting test test(org.jclouds.softlayer.parse.ParseVirtualGuestRunningTest)
+Starting test testCancelGuestReturnsTrueOn200AndFalseOn404(org.jclouds.softlayer.features.VirtualGuestClientExpectTest)
+[pool-5-thread-1] Test testCancelGuestReturnsTrueOn200AndFalseOn404(org.jclouds.softlayer.features.VirtualGuestClientExpectTest) succeeded: 2605ms
+Test suite progress: tests succeeded: 73, failed: 0, skipped: 0.
+Starting test test(org.jclouds.softlayer.parse.ParseProductOrderTest)
+[pool-6-thread-1] Test test(org.jclouds.softlayer.parse.ParseProductOrderTest) succeeded: 102ms
+Test suite progress: tests succeeded: 74, failed: 0, skipped: 0.
 Starting test test(org.jclouds.softlayer.parse.ParseVirtualGuestWithNoPasswordTest)
+Starting test test(org.jclouds.softlayer.parse.ParseVirtualGuestRunningTest)
 Starting test test(org.jclouds.softlayer.parse.ParseVirtualGuestHaltedTest)
 Starting test test(org.jclouds.softlayer.parse.ParseVirtualGuestPausedTest)
-[pool-6-thread-4] Test test(org.jclouds.softlayer.parse.ParseVirtualGuestPausedTest) succeeded: 15ms
-Test suite progress: tests succeeded: 73, failed: 0, skipped: 0.
-[pool-6-thread-2] Test test(org.jclouds.softlayer.parse.ParseVirtualGuestWithNoPasswordTest) succeeded: 35ms
-Test suite progress: tests succeeded: 74, failed: 0, skipped: 0.
-[pool-6-thread-1] Test test(org.jclouds.softlayer.parse.ParseVirtualGuestRunningTest) succeeded: 36ms
+[pool-7-thread-4] Test test(org.jclouds.softlayer.parse.ParseVirtualGuestHaltedTest) succeeded: 63ms
 Test suite progress: tests succeeded: 75, failed: 0, skipped: 0.
-[pool-6-thread-3] Test test(org.jclouds.softlayer.parse.ParseVirtualGuestHaltedTest) succeeded: 16ms
+[pool-7-thread-2] Test test(org.jclouds.softlayer.parse.ParseVirtualGuestPausedTest) succeeded: 105ms
 Test suite progress: tests succeeded: 76, failed: 0, skipped: 0.
-Starting test testSync(org.jclouds.softlayer.SoftLayerAsyncClientTest)
-Starting test testAsync(org.jclouds.softlayer.SoftLayerAsyncClientTest)
-[pool-7-thread-1] Test testAsync(org.jclouds.softlayer.SoftLayerAsyncClientTest) succeeded: 9ms
+[pool-7-thread-3] Test test(org.jclouds.softlayer.parse.ParseVirtualGuestRunningTest) succeeded: 122ms
 Test suite progress: tests succeeded: 77, failed: 0, skipped: 0.
-[pool-7-thread-2] Test testSync(org.jclouds.softlayer.SoftLayerAsyncClientTest) succeeded: 10ms
+[pool-7-thread-1] Test test(org.jclouds.softlayer.parse.ParseVirtualGuestWithNoPasswordTest) succeeded: 147ms
 Test suite progress: tests succeeded: 78, failed: 0, skipped: 0.
+Starting test testAsync(org.jclouds.softlayer.SoftLayerAsyncClientTest)
+Starting test testSync(org.jclouds.softlayer.SoftLayerAsyncClientTest)
+[pool-8-thread-1] Test testAsync(org.jclouds.softlayer.SoftLayerAsyncClientTest) succeeded: 10ms
+Test suite progress: tests succeeded: 79, failed: 0, skipped: 0.
+[pool-8-thread-2] Test testSync(org.jclouds.softlayer.SoftLayerAsyncClientTest) succeeded: 11ms
+Test suite progress: tests succeeded: 80, failed: 0, skipped: 0.
+Starting test testOfTypeContains(org.jclouds.softlayer.SoftLayerProviderTest)
 Starting test testInRestProperties(org.jclouds.softlayer.SoftLayerProviderTest)
 Starting test testWithId(org.jclouds.softlayer.SoftLayerProviderTest)
-[pool-8-thread-1] Test testInRestProperties(org.jclouds.softlayer.SoftLayerProviderTest) succeeded: 22ms
-Test suite progress: tests succeeded: 79, failed: 0, skipped: 0.
-[pool-8-thread-2] Test testWithId(org.jclouds.softlayer.SoftLayerProviderTest) succeeded: 23ms
-Test suite progress: tests succeeded: 80, failed: 0, skipped: 0.
 Starting test testAllContains(org.jclouds.softlayer.SoftLayerProviderTest)
-[pool-8-thread-3] Test testAllContains(org.jclouds.softlayer.SoftLayerProviderTest) succeeded: 1ms
+[pool-9-thread-3] Test testAllContains(org.jclouds.softlayer.SoftLayerProviderTest) succeeded: 28ms
 Test suite progress: tests succeeded: 81, failed: 0, skipped: 0.
-Starting test testOfTypeContains(org.jclouds.softlayer.SoftLayerProviderTest)
-[pool-8-thread-4] Test testOfTypeContains(org.jclouds.softlayer.SoftLayerProviderTest) succeeded: 1ms
+[pool-9-thread-2] Test testWithId(org.jclouds.softlayer.SoftLayerProviderTest) succeeded: 30ms
 Test suite progress: tests succeeded: 82, failed: 0, skipped: 0.
-Tests run: 82, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.24 sec
+[pool-9-thread-4] Test testOfTypeContains(org.jclouds.softlayer.SoftLayerProviderTest) succeeded: 32ms
+Test suite progress: tests succeeded: 83, failed: 0, skipped: 0.
+[pool-9-thread-1] Test testInRestProperties(org.jclouds.softlayer.SoftLayerProviderTest) succeeded: 35ms
+Test suite progress: tests succeeded: 84, failed: 0, skipped: 0.
+Tests run: 84, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 10.064 sec
 
 Results :
 
-Tests run: 82, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 84, Failures: 0, Errors: 0, Skipped: 0
 
 [INFO] 
-[INFO] --- clojure-maven-plugin:1.3.3:test (test-clojure) @ softlayer ---
+[INFO] --- clojure-maven-plugin:1.3.8:test (test-clojure) @ softlayer ---
 
-Testing user
+Testing com.theoryinpractise.clojure.testrunner
 
 Ran 0 tests containing 0 assertions.
 0 failures, 0 errors.
@@ -316,16 +322,16 @@ Ran 0 tests containing 0 assertions.
 [INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ softlayer ---
 [INFO] 
 [INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ softlayer ---
-[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/softlayer/target/softlayer-1.3.0-SNAPSHOT-sources.jar
+[INFO] Building jar: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/softlayer/target/softlayer-1.3.0-SNAPSHOT-sources.jar
 [INFO] 
 [INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ softlayer ---
 [INFO] Skipping javadoc generation
 [INFO] 
 [INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ softlayer ---
-[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/softlayer/target/softlayer-1.3.0-SNAPSHOT-tests.jar
+[INFO] Building jar: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/softlayer/target/softlayer-1.3.0-SNAPSHOT-tests.jar
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (integration) @ softlayer ---
-[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/softlayer/target/surefire-reports
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/softlayer/target/surefire-reports
 [INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
 
 -------------------------------------------------------
@@ -335,42 +341,74 @@ Running TestSuite
 Starting test testAndExperiment(org.jclouds.softlayer.compute.SoftLayerExperimentLiveTest)
 Starting test testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials(org.jclouds.softlayer.compute.SoftLayerComputeServiceAdapterLiveTest)
 Starting test setServiceDefaults(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
-[pool-2-thread-2] Test setServiceDefaults(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test setServiceDefaults(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
 Starting test testCompareSizes(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
-Starting test testDatacentersForCloudLayer(org.jclouds.softlayer.features.ProductPackageClientLiveTest)
-[pool-2-thread-4] Test testDatacentersForCloudLayer(org.jclouds.softlayer.features.ProductPackageClientLiveTest) succeeded: 2ms
+[pool-2-thread-3] Test testAndExperiment(org.jclouds.softlayer.compute.SoftLayerExperimentLiveTest) succeeded: 21706ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test testDatacentersForCloudLayer(org.jclouds.softlayer.features.ProductPackageClientLiveTest)
+[pool-2-thread-4] Test testDatacentersForCloudLayer(org.jclouds.softlayer.features.ProductPackageClientLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 1, skipped: 0.
 Starting test testGetOneGBRamPrice(org.jclouds.softlayer.features.ProductPackageClientLiveTest)
-[pool-2-thread-4] Test testGetOneGBRamPrice(org.jclouds.softlayer.features.ProductPackageClientLiveTest) succeeded: 3ms
-Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testGetOneGBRamPrice(org.jclouds.softlayer.features.ProductPackageClientLiveTest) succeeded: 101ms
+Test suite progress: tests succeeded: 3, failed: 1, skipped: 0.
 Starting test testGetProductPackage(org.jclouds.softlayer.features.ProductPackageClientLiveTest)
-[pool-2-thread-3] Test testAndExperiment(org.jclouds.softlayer.compute.SoftLayerExperimentLiveTest) succeeded: 23335ms
-Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-Dec 15, 2011 8:20:58 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+Jan 10, 2012 6:28:35 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
 INFO: smallest [id=1640,1644,13899, providerId=1640,1644,13899, name=null, processors=[[cores=1.0, speed=2.0]], ram=1, volumes=[[id=3891, type=LOCAL, size=25.0, device=null, durable=false, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
-Dec 15, 2011 8:20:58 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+Jan 10, 2012 6:28:36 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
 INFO: fastest [id=2235,1644,13899, providerId=2235,1644,13899, name=null, processors=[[cores=16.0, speed=2.0]], ram=1, volumes=[[id=3891, type=LOCAL, size=25.0, device=null, durable=false, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
-Dec 15, 2011 8:20:58 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+Jan 10, 2012 6:28:36 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
 INFO: biggest [id=2235,1927,13887, providerId=2235,1927,13887, name=null, processors=[[cores=16.0, speed=2.0]], ram=16, volumes=[[id=3876, type=LOCAL, size=100.0, device=null, durable=false, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
-[pool-2-thread-2] Test testCompareSizes(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 20962ms
-Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testCompareSizes(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 18694ms
+Test suite progress: tests succeeded: 4, failed: 1, skipped: 0.
 Starting test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
-[pool-2-thread-4] Test testGetProductPackage(org.jclouds.softlayer.features.ProductPackageClientLiveTest) succeeded: 290757ms
-Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testGetProductPackage(org.jclouds.softlayer.features.ProductPackageClientLiveTest) succeeded: 282326ms
+Test suite progress: tests succeeded: 5, failed: 1, skipped: 0.
 Starting test testGetTwoCPUCoresPrice(org.jclouds.softlayer.features.ProductPackageClientLiveTest)
-[pool-2-thread-4] Test testGetTwoCPUCoresPrice(org.jclouds.softlayer.features.ProductPackageClientLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testGetTwoCPUCoresPrice(org.jclouds.softlayer.features.ProductPackageClientLiveTest) succeeded: 33ms
+Test suite progress: tests succeeded: 6, failed: 1, skipped: 0.
 Starting test testGetUbuntuPrice(org.jclouds.softlayer.features.ProductPackageClientLiveTest)
-[pool-2-thread-4] Test testGetUbuntuPrice(org.jclouds.softlayer.features.ProductPackageClientLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testGetUbuntuPrice(org.jclouds.softlayer.features.ProductPackageClientLiveTest) succeeded: 15ms
+Test suite progress: tests succeeded: 7, failed: 1, skipped: 0.
 SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
 SLF4J: Defaulting to no-operation (NOP) logger implementation
 SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
-<< problem applying options to node(544165): 
-org.jclouds.rest.AuthorizationException: (root:password@159.253.136.98:22) (root:password@159.253.136.98:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
+Filesystem           1K-blocks      Used Available Use% Mounted on
+/dev/xvda2            25705564   1027288  23372472   5% /
+none                    494656       124    494532   1% /dev
+none                    534632         0    534632   0% /dev/shm
+none                    534632        44    534588   1% /var/run
+none                    534632         0    534632   0% /var/lock
+none                    534632         0    534632   0% /lib/init/rw
+/dev/xvda1               93207     18715     69680  22% /boot
+
+/dev/xvda2 on / type ext3 (rw,noatime,errors=remount-ro)
+proc on /proc type proc (rw,noexec,nosuid,nodev)
+none on /sys type sysfs (rw,noexec,nosuid,nodev)
+none on /sys/kernel/debug type debugfs (rw)
+none on /sys/kernel/security type securityfs (rw)
+none on /dev type devtmpfs (rw,mode=0755)
+none on /dev/pts type devpts (rw,noexec,nosuid,gid=5,mode=0620)
+none on /dev/shm type tmpfs (rw,nosuid,nodev)
+none on /var/run type tmpfs (rw,nosuid,mode=0755)
+none on /var/lock type tmpfs (rw,noexec,nosuid,nodev)
+none on /lib/init/rw type tmpfs (rw,nosuid,mode=0755)
+/dev/xvda1 on /boot type ext3 (rw,noatime)
+
+Linux node-1502663675 2.6.32-340-ec2 #40-Ubuntu SMP Wed Nov 16 14:36:38 UTC 2011 x86_64 GNU/Linux
+
+[pool-2-thread-1] Test testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials(org.jclouds.softlayer.compute.SoftLayerComputeServiceAdapterLiveTest) succeeded: 513115ms
+Test suite progress: tests succeeded: 8, failed: 1, skipped: 0.
+Starting test testListHardwareProfiles(org.jclouds.softlayer.compute.SoftLayerComputeServiceAdapterLiveTest)
+[pool-2-thread-1] Test testListHardwareProfiles(org.jclouds.softlayer.compute.SoftLayerComputeServiceAdapterLiveTest) succeeded: 5956ms
+Test suite progress: tests succeeded: 9, failed: 1, skipped: 0.
+Starting test testListLocations(org.jclouds.softlayer.compute.SoftLayerComputeServiceAdapterLiveTest)
+[pool-2-thread-1] Test testListLocations(org.jclouds.softlayer.compute.SoftLayerComputeServiceAdapterLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 10, failed: 1, skipped: 0.
+<< problem applying options to node(574628): 
+org.jclouds.rest.AuthorizationException: (root:pw[5d907853a9617cfd55fb62eae803595b]@50.23.128.68:22) (root:pw[5d907853a9617cfd55fb62eae803595b]@50.23.128.68:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
 	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:411)
-	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:241)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:242)
 	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:252)
 	at org.jclouds.compute.callables.RunScriptOnNodeUsingSsh.call(RunScriptOnNodeUsingSsh.java:73)
 	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:69)
@@ -387,79 +425,69 @@ Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available auth
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:265)
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:235)
 	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:219)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:197)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:173)
-	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:222)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:198)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:174)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:223)
 	... 9 more
 Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
 	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
 	... 17 more
-[pool-2-thread-2] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 791272ms
-Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
-Starting test testCorrectAuthException(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
-[pool-2-thread-2] Test testCorrectAuthException(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 3805ms
-Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
-Starting test testCreateAndRunAService(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
-Dec 15, 2011 8:44:08 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << available node(544191) os([name=null, family=ubuntu, version=10.04, arch=null, is64Bit=true, description=Ubuntu Linux 10.04 LTS Lucid Lynx - Minimal Install (64 bit)]) in 590s
-[pool-2-thread-1] Test testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials(org.jclouds.softlayer.compute.SoftLayerComputeServiceAdapterLiveTest) failed.
-Test suite progress: tests succeeded: 10, failed: 1, skipped: 0.
-Starting test testListHardwareProfiles(org.jclouds.softlayer.compute.SoftLayerComputeServiceAdapterLiveTest)
-[pool-2-thread-1] Test testListHardwareProfiles(org.jclouds.softlayer.compute.SoftLayerComputeServiceAdapterLiveTest) succeeded: 7188ms
+[pool-2-thread-2] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 762587ms
 Test suite progress: tests succeeded: 11, failed: 1, skipped: 0.
-Starting test testListLocations(org.jclouds.softlayer.compute.SoftLayerComputeServiceAdapterLiveTest)
-[pool-2-thread-1] Test testListLocations(org.jclouds.softlayer.compute.SoftLayerComputeServiceAdapterLiveTest) succeeded: 0ms
+Starting test testCorrectAuthException(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
+[pool-2-thread-2] Test testCorrectAuthException(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 4005ms
 Test suite progress: tests succeeded: 12, failed: 1, skipped: 0.
-Dec 15, 2011 8:48:48 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << configured node(544191) with java full version "1.7.0_01-b08" and JBoss 7.0.2.Final in 261s
-Dec 15, 2011 8:48:59 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+Starting test testCreateAndRunAService(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
+Jan 10, 2012 6:58:43 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << available node(574632) os([name=null, family=ubuntu, version=10.04, arch=null, is64Bit=true, description=Ubuntu Linux 10.04 LTS Lucid Lynx - Minimal Install (64 bit)]) in 1033s
+Jan 10, 2012 7:00:46 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << configured node(574632) with java full version "1.7.0_02-b13" and JBoss 7.0.2.Final in 106s
+Jan 10, 2012 7:00:55 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
 WARNING: could not get info on ip 209.132.182.31; check freegeoip
-Dec 15, 2011 8:48:59 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of jboss7(download.jboss.org) from perpective of node(544191): 209.132.182.31
-Dec 15, 2011 8:49:11 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
-WARNING: could not get info on ip 72.246.30.49; check freegeoip
-Dec 15, 2011 8:49:11 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of jdk7(download.oracle.com) from perpective of node(544191): 72.246.30.49
-Dec 15, 2011 8:49:21 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
-WARNING: could not get info on ip 159.253.136.100; check freegeoip
-Dec 15, 2011 8:49:21 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of node(544191) from perspective of amazonaws: 159.253.136.100
-Dec 15, 2011 8:49:45 AM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
-INFO: << initial start of jboss on node(544191) [backgroundProcessMilliseconds=11261, socketOpenMilliseconds=385, reportedStartupTimeMilliseconds=1592]
-Dec 15, 2011 8:50:08 AM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
-INFO: << warm start of jboss on node(544191) [backgroundProcessMilliseconds=7444, socketOpenMilliseconds=167, reportedStartupTimeMilliseconds=1456]
-[pool-2-thread-2] Test testCreateAndRunAService(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 1000480ms
+Jan 10, 2012 7:00:55 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jboss7(download.jboss.org) from perpective of node(574632): 209.132.182.31
+Jan 10, 2012 7:01:02 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+WARNING: could not get info on ip 128.241.220.119; check freegeoip
+Jan 10, 2012 7:01:02 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jdk7(download.oracle.com) from perpective of node(574632): 128.241.220.119
+Jan 10, 2012 7:01:11 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+WARNING: could not get info on ip 50.23.128.67; check freegeoip
+Jan 10, 2012 7:01:11 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of node(574632) from perspective of amazonaws: 50.23.128.67
+Jan 10, 2012 7:01:23 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << initial start of jboss on node(574632) [backgroundProcessMilliseconds=7042, socketOpenMilliseconds=377, reportedStartupTimeMilliseconds=1744]
+Jan 10, 2012 7:01:39 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << warm start of jboss on node(574632) [backgroundProcessMilliseconds=5897, socketOpenMilliseconds=282, reportedStartupTimeMilliseconds=1605]
+[pool-2-thread-2] Test testCreateAndRunAService(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 1277928ms
 Test suite progress: tests succeeded: 13, failed: 1, skipped: 0.
 Starting test testCreateTwoNodesWithRunScript(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
-[pool-2-thread-2] Test testCreateTwoNodesWithRunScript(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 607493ms
+[pool-2-thread-2] Test testCreateTwoNodesWithRunScript(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 1315282ms
 Test suite progress: tests succeeded: 14, failed: 1, skipped: 0.
 Starting test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
-Dec 15, 2011 9:01:07 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired
-INFO: creating another node based on existing nodes' location: [id=265592, scope=ZONE, description=Amsterdam 1, parent=softlayer, iso3166Codes=[NL], metadata={}]
-[pool-2-thread-2] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 639949ms
+Jan 10, 2012 7:24:41 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired
+INFO: creating another node based on existing nodes' location: [id=18171, scope=ZONE, description=Seattle, parent=softlayer, iso3166Codes=[US-WA], metadata={}]
+[pool-2-thread-2] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 1108818ms
 Test suite progress: tests succeeded: 15, failed: 1, skipped: 0.
 Starting test testCredentialsCache(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
-[pool-2-thread-2] Test testCredentialsCache(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 63ms
+[pool-2-thread-2] Test testCredentialsCache(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 64ms
 Test suite progress: tests succeeded: 16, failed: 1, skipped: 0.
 Starting test testGet(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
-[pool-2-thread-2] Test testGet(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 30941ms
+[pool-2-thread-2] Test testGet(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 35025ms
 Test suite progress: tests succeeded: 17, failed: 1, skipped: 0.
 Starting test testGetAssignableLocations(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
-Dec 15, 2011 9:12:12 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
-WARNING: location [id=265592, scope=ZONE, description=Amsterdam 1, parent=softlayer, iso3166Codes=[NL], metadata={}]
-Dec 15, 2011 9:12:12 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
-WARNING: location [id=224092, scope=ZONE, description=Singapore 1, parent=softlayer, iso3166Codes=[SG], metadata={}]
-Dec 15, 2011 9:12:12 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
-WARNING: location [id=168642, scope=ZONE, description=San Jose 1, parent=softlayer, iso3166Codes=[US-CA], metadata={}]
-Dec 15, 2011 9:12:12 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
-WARNING: location [id=138124, scope=ZONE, description=Dallas 5, parent=softlayer, iso3166Codes=[US-TX], metadata={}]
-Dec 15, 2011 9:12:12 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
-WARNING: location [id=37473, scope=ZONE, description=Washington, DC, parent=softlayer, iso3166Codes=[US-VA], metadata={}]
-Dec 15, 2011 9:12:12 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+Jan 10, 2012 7:43:39 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
 WARNING: location [id=18171, scope=ZONE, description=Seattle, parent=softlayer, iso3166Codes=[US-WA], metadata={}]
-Dec 15, 2011 9:12:12 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
-WARNING: location [id=3, scope=ZONE, description=Dallas, parent=softlayer, iso3166Codes=[US-TX], metadata={}]
-[pool-2-thread-2] Test testGetAssignableLocations(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 3ms
+Jan 10, 2012 7:43:39 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=37473, scope=ZONE, description=Washington, DC, parent=softlayer, iso3166Codes=[US-VA], metadata={}]
+Jan 10, 2012 7:43:39 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=138124, scope=ZONE, description=Dallas 5, parent=softlayer, iso3166Codes=[US-TX], metadata={}]
+Jan 10, 2012 7:43:39 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=168642, scope=ZONE, description=San Jose 1, parent=softlayer, iso3166Codes=[US-CA], metadata={}]
+Jan 10, 2012 7:43:39 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=224092, scope=ZONE, description=Singapore 1, parent=softlayer, iso3166Codes=[SG], metadata={}]
+Jan 10, 2012 7:43:39 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=265592, scope=ZONE, description=Amsterdam 1, parent=softlayer, iso3166Codes=[NL], metadata={}]
+[pool-2-thread-2] Test testGetAssignableLocations(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 15ms
 Test suite progress: tests succeeded: 18, failed: 1, skipped: 0.
 Starting test testImagesCache(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
 [pool-2-thread-2] Test testImagesCache(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 3ms
@@ -468,68 +496,67 @@ Starting test testListImages(org.jclouds.softlayer.compute.SoftLayerComputeServi
 [pool-2-thread-2] Test testListImages(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 20, failed: 1, skipped: 0.
 Starting test testListSizes(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
-[pool-2-thread-2] Test testListSizes(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 76ms
+[pool-2-thread-2] Test testListSizes(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 86ms
 Test suite progress: tests succeeded: 21, failed: 1, skipped: 0.
 Starting test testReboot(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
-[pool-2-thread-2] Test testReboot(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 117858ms
+[pool-2-thread-2] Test testReboot(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 116399ms
 Test suite progress: tests succeeded: 22, failed: 1, skipped: 0.
 Starting test testSuspendResume(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
-[pool-2-thread-2] Test testSuspendResume(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 183620ms
+[pool-2-thread-2] Test testSuspendResume(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 158378ms
 Test suite progress: tests succeeded: 23, failed: 1, skipped: 0.
 Starting test testGetNodesWithDetails(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
-[pool-2-thread-2] Test testGetNodesWithDetails(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 12282ms
+[pool-2-thread-2] Test testGetNodesWithDetails(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 16375ms
 Test suite progress: tests succeeded: 24, failed: 1, skipped: 0.
 Starting test testListNodes(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
-[pool-2-thread-2] Test testListNodes(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 12335ms
+[pool-2-thread-2] Test testListNodes(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 15564ms
 Test suite progress: tests succeeded: 25, failed: 1, skipped: 0.
 Starting test testDestroyNodes(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
-[pool-2-thread-2] Test testDestroyNodes(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 73280ms
+[pool-2-thread-2] Test testDestroyNodes(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 100773ms
 Test suite progress: tests succeeded: 26, failed: 1, skipped: 0.
 Starting test testTemplateMatch(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
-[pool-2-thread-2] Test testTemplateMatch(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 5853ms
+[pool-2-thread-2] Test testTemplateMatch(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 89ms
 Test suite progress: tests succeeded: 27, failed: 1, skipped: 0.
 Starting test testOptionToNotBlock(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
 [pool-2-thread-2] Test testOptionToNotBlock(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 28, failed: 1, skipped: 0.
 Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
-[pool-2-thread-2] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 460ms
+[pool-2-thread-2] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 4416ms
 Test suite progress: tests succeeded: 29, failed: 1, skipped: 0.
 Starting test testAssignability(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest)
-[pool-2-thread-2] Test testAssignability(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 73ms
+[pool-2-thread-2] Test testAssignability(org.jclouds.softlayer.compute.SoftLayerComputeServiceLiveTest) succeeded: 95ms
 Test suite progress: tests succeeded: 30, failed: 1, skipped: 0.
 Starting test testGetActivePackages(org.jclouds.softlayer.features.AccountClientLiveTest)
-[pool-2-thread-2] Test testGetActivePackages(org.jclouds.softlayer.features.AccountClientLiveTest) succeeded: 480ms
+[pool-2-thread-2] Test testGetActivePackages(org.jclouds.softlayer.features.AccountClientLiveTest) succeeded: 572ms
 Test suite progress: tests succeeded: 31, failed: 1, skipped: 0.
 Starting test testFastestTemplateBuilder(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testFastestTemplateBuilder(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 5873ms
+[pool-2-thread-2] Test testFastestTemplateBuilder(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 5769ms
 Test suite progress: tests succeeded: 32, failed: 1, skipped: 0.
 Starting test testTemplateBuilderFindsMegabitUplink(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderFindsMegabitUplink(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 5837ms
+[pool-2-thread-2] Test testTemplateBuilderFindsMegabitUplink(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 6010ms
 Test suite progress: tests succeeded: 33, failed: 1, skipped: 0.
 Starting test testTemplateBuilderFindsGigabitUplink(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderFindsGigabitUplink(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 5762ms
+[pool-2-thread-2] Test testTemplateBuilderFindsGigabitUplink(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 6075ms
 Test suite progress: tests succeeded: 34, failed: 1, skipped: 0.
 Starting test testGetAssignableLocations(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-location [id=265592, scope=ZONE, description=Amsterdam 1, parent=softlayer, iso3166Codes=[NL], metadata={}]
-location [id=224092, scope=ZONE, description=Singapore 1, parent=softlayer, iso3166Codes=[SG], metadata={}]
-location [id=168642, scope=ZONE, description=San Jose 1, parent=softlayer, iso3166Codes=[US-CA], metadata={}]
-location [id=138124, scope=ZONE, description=Dallas 5, parent=softlayer, iso3166Codes=[US-TX], metadata={}]
-location [id=37473, scope=ZONE, description=Washington, DC, parent=softlayer, iso3166Codes=[US-VA], metadata={}]
 location [id=18171, scope=ZONE, description=Seattle, parent=softlayer, iso3166Codes=[US-WA], metadata={}]
-location [id=3, scope=ZONE, description=Dallas, parent=softlayer, iso3166Codes=[US-TX], metadata={}]
-[pool-2-thread-2] Test testGetAssignableLocations(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 8ms
+location [id=37473, scope=ZONE, description=Washington, DC, parent=softlayer, iso3166Codes=[US-VA], metadata={}]
+location [id=138124, scope=ZONE, description=Dallas 5, parent=softlayer, iso3166Codes=[US-TX], metadata={}]
+location [id=168642, scope=ZONE, description=San Jose 1, parent=softlayer, iso3166Codes=[US-CA], metadata={}]
+location [id=224092, scope=ZONE, description=Singapore 1, parent=softlayer, iso3166Codes=[SG], metadata={}]
+location [id=265592, scope=ZONE, description=Amsterdam 1, parent=softlayer, iso3166Codes=[NL], metadata={}]
+[pool-2-thread-2] Test testGetAssignableLocations(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 16ms
 Test suite progress: tests succeeded: 35, failed: 1, skipped: 0.
 Starting test testDefaultTemplateBuilder(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testDefaultTemplateBuilder(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 9ms
+[pool-2-thread-2] Test testDefaultTemplateBuilder(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 25ms
 Test suite progress: tests succeeded: 36, failed: 1, skipped: 0.
 Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
 [pool-2-thread-2] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 11927ms
 Test suite progress: tests succeeded: 37, failed: 1, skipped: 0.
 Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 11987ms
+[pool-2-thread-2] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 11720ms
 Test suite progress: tests succeeded: 38, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 39, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
 [pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
@@ -538,7 +565,7 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLa
 [pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 41, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 42, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
 [pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
@@ -547,31 +574,31 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLa
 [pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 44, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 3ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 45, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 46, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 47, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 48, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
 [pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 49, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 3ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 50, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 51, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 8ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 52, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 53, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
 [pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
@@ -583,19 +610,19 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLa
 [pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 56, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 57, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
 [pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 58, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 59, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
 [pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 60, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 61, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
 [pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
@@ -607,22 +634,22 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLa
 [pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 64, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 65, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 66, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
 [pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 67, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 68, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 3ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 69, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 70, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
 [pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
@@ -631,88 +658,88 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLa
 [pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 72, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 73, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 74, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
 [pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 75, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 3ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 76, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 77, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 78, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 79, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 80, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 81, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 82, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 83, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 84, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 85, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 86, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 87, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 88, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 89, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
 [pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 90, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 91, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 92, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 93, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
 [pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 94, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 95, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
 [pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 96, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 97, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 98, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 99, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 100, failed: 1, skipped: 0.
 Starting test testBiggestTemplateBuilder(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
 [pool-2-thread-2] Test testBiggestTemplateBuilder(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
@@ -721,37 +748,37 @@ Starting test testCompareSizes(org.jclouds.softlayer.compute.SoftLayerTemplateBu
 smallest [id=1640,1644,13899, providerId=1640,1644,13899, name=null, processors=[[cores=1.0, speed=2.0]], ram=1, volumes=[[id=3891, type=LOCAL, size=25.0, device=null, durable=false, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
 fastest [id=2235,1644,13899, providerId=2235,1644,13899, name=null, processors=[[cores=16.0, speed=2.0]], ram=1, volumes=[[id=3891, type=LOCAL, size=25.0, device=null, durable=false, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
 biggest [id=2235,1927,13887, providerId=2235,1927,13887, name=null, processors=[[cores=16.0, speed=2.0]], ram=16, volumes=[[id=3876, type=LOCAL, size=100.0, device=null, durable=false, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
-[pool-2-thread-2] Test testCompareSizes(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 39ms
+[pool-2-thread-2] Test testCompareSizes(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 33ms
 Test suite progress: tests succeeded: 102, failed: 1, skipped: 0.
 Starting test testDefaultTemplateBuilderWhenPrivateNetwork(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testDefaultTemplateBuilderWhenPrivateNetwork(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 5711ms
+[pool-2-thread-2] Test testDefaultTemplateBuilderWhenPrivateNetwork(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 5936ms
 Test suite progress: tests succeeded: 103, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanUseImageId(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanUseImageId(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 5765ms
+[pool-2-thread-2] Test testTemplateBuilderCanUseImageId(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 5961ms
 Test suite progress: tests succeeded: 104, failed: 1, skipped: 0.
 Starting test testBiggestTemplateBuilderWhenBootIsSAN(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testBiggestTemplateBuilderWhenBootIsSAN(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 5749ms
+[pool-2-thread-2] Test testBiggestTemplateBuilderWhenBootIsSAN(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 5924ms
 Test suite progress: tests succeeded: 105, failed: 1, skipped: 0.
 Starting test testFromTemplate(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testFromTemplate(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 37ms
+[pool-2-thread-2] Test testFromTemplate(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 28ms
 Test suite progress: tests succeeded: 106, failed: 1, skipped: 0.
 Starting test testBiggestTemplateBuilderWhenPrivateNetwork(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testBiggestTemplateBuilderWhenPrivateNetwork(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 5759ms
+[pool-2-thread-2] Test testBiggestTemplateBuilderWhenPrivateNetwork(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 5805ms
 Test suite progress: tests succeeded: 107, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 18ms
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 108, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 109, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 110, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 111, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 112, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
 [pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
@@ -763,19 +790,19 @@ Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayer
 [pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 7ms
 Test suite progress: tests succeeded: 115, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 21ms
 Test suite progress: tests succeeded: 116, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
 [pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 117, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 118, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 119, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 12ms
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 4ms
 Test suite progress: tests succeeded: 120, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
 [pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
@@ -784,53 +811,53 @@ Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayer
 [pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 122, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 123, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 124, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 4ms
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 125, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 3ms
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 4ms
 Test suite progress: tests succeeded: 126, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 3ms
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 127, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 128, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 7ms
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.softlayer.compute.SoftLayerTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 129, failed: 1, skipped: 0.
 Starting test testListDatacenters(org.jclouds.softlayer.features.DatacenterClientLiveTest)
-[pool-2-thread-2] Test testListDatacenters(org.jclouds.softlayer.features.DatacenterClientLiveTest) succeeded: 17542ms
+[pool-2-thread-2] Test testListDatacenters(org.jclouds.softlayer.features.DatacenterClientLiveTest) succeeded: 5701ms
 Test suite progress: tests succeeded: 130, failed: 1, skipped: 0.
 Starting test testListDatacentersContent(org.jclouds.softlayer.features.DatacenterClientLiveTest)
-[pool-2-thread-2] Test testListDatacentersContent(org.jclouds.softlayer.features.DatacenterClientLiveTest) succeeded: 721ms
+[pool-2-thread-2] Test testListDatacentersContent(org.jclouds.softlayer.features.DatacenterClientLiveTest) succeeded: 377ms
 Test suite progress: tests succeeded: 131, failed: 1, skipped: 0.
 Starting test testListVirtualGuests(org.jclouds.softlayer.features.VirtualGuestClientLiveTest)
-[pool-2-thread-2] Test testListVirtualGuests(org.jclouds.softlayer.features.VirtualGuestClientLiveTest) succeeded: 1580ms
+[pool-2-thread-2] Test testListVirtualGuests(org.jclouds.softlayer.features.VirtualGuestClientLiveTest) succeeded: 1953ms
 Test suite progress: tests succeeded: 132, failed: 1, skipped: 0.
-Tests run: 133, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 3,591.723 sec <<< FAILURE!
+Tests run: 133, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 5,033.564 sec <<< FAILURE!
 
 Results :
 
-Failed tests:   testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials(org.jclouds.softlayer.compute.SoftLayerComputeServiceAdapterLiveTest): expected:<544166> but was:<544166>
+Failed tests:   testDatacentersForCloudLayer(org.jclouds.softlayer.features.ProductPackageClientLiveTest): expected:<7> but was:<6>
 
 Tests run: 133, Failures: 1, Errors: 0, Skipped: 0
 
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 1:00:07.726s
-[INFO] Finished at: Thu Dec 15 09:20:26 PST 2011
+[INFO] Total time: 1:24:30.269s
+[INFO] Finished at: Tue Jan 10 19:52:06 PST 2012
 [INFO] Final Memory: 21M/265M
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project softlayer: There are test failures.
 [ERROR] 
-[ERROR] Please refer to /Users/adriancole/workspace/git/jclouds/providers/softlayer/target/surefire-reports for the individual test results.
+[ERROR] Please refer to /Users/adriancole/workspace/git/1.3.x/jclouds/providers/softlayer/target/surefire-reports for the individual test results.
 [ERROR] -> [Help 1]
 [ERROR] 
 [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.

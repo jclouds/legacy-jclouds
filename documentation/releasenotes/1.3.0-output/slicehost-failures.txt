@@ -1,12 +1,15 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 129, Failures: 5, Errors: 0, Skipped: 8, Time elapsed: 1,042.294 sec <<< FAILURE!
-testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)  Time elapsed: 198.31 sec  <<< FAILURE!
-java.lang.IllegalStateException: node 20454315 needs to be running before executing a script on it. current state: PENDING
-	at org.jclouds.compute.internal.BaseComputeService.runScriptOnNode(BaseComputeService.java:553)
-	at org.jclouds.compute.internal.BaseComputeService.runScriptOnNode(BaseComputeService.java:533)
-	at org.jclouds.compute.BaseComputeServiceLiveTest.testAScriptExecutionAfterBootWithBasicTemplate(BaseComputeServiceLiveTest.java:243)
+Tests run: 129, Failures: 5, Errors: 0, Skipped: 8, Time elapsed: 1,111.14 sec <<< FAILURE!
+testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)  Time elapsed: 217.957 sec  <<< FAILURE!
+java.lang.AssertionError: expected:<RUNNING> but was:<PENDING>
+	at org.testng.Assert.fail(Assert.java:89)
+	at org.testng.Assert.failNotEquals(Assert.java:480)
+	at org.testng.Assert.assertEquals(Assert.java:118)
+	at org.testng.Assert.assertEquals(Assert.java:160)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.checkNodes(BaseComputeServiceLiveTest.java:449)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.testAScriptExecutionAfterBootWithBasicTemplate(BaseComputeServiceLiveTest.java:253)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
@@ -27,8 +30,8 @@ java.lang.IllegalStateException: node 20454315 needs to be running before execut
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-testCreateAndRunAService(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)  Time elapsed: 279.16 sec  <<< FAILURE!
-java.lang.AssertionError: failed to open socket [address=184.106.187.252, port=8080] on node [id=20454320, providerId=20454320, group=slicehost-s, name=slicehost-s-fd0, location=[id=slicehost, scope=PROVIDER, description=https://api.slicehost.com, parent=null, iso3166Codes=[US-IL, US-TX, US-MO], metadata={}], uri=null, imageId=119, os=[name=null, family=ubuntu, version=11.10, arch=null, is64Bit=true, description=Ubuntu 11.10], state=PENDING, loginPort=22, hostname=slicehost-s-fd0, privateAddresses=[10.180.86.119], publicAddresses=[184.106.187.252], hardware=[id=1, providerId=1, name=256 slice, processors=[[cores=0.25, speed=1.0]], ram=256, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]], loginUser=root, userMetadata={}, tags=[]]:
+testCreateAndRunAService(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)  Time elapsed: 282.513 sec  <<< FAILURE!
+java.lang.AssertionError: failed to open socket [address=184.106.96.74, port=8080] on node [id=20496898, providerId=20496898, group=slicehost-s, name=slicehost-s-176, location=[id=slicehost, scope=PROVIDER, description=https://api.slicehost.com, parent=null, iso3166Codes=[US-IL, US-TX, US-MO], metadata={}], uri=null, imageId=119, os=[name=null, family=ubuntu, version=11.10, arch=null, is64Bit=true, description=Ubuntu 11.10], state=RUNNING, loginPort=22, hostname=slicehost-s-176, privateAddresses=[10.180.84.79], publicAddresses=[184.106.96.74], hardware=[id=1, providerId=1, name=256 slice, processors=[[cores=0.25, speed=1.0]], ram=256, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]], loginUser=root, userMetadata={}, tags=[]]:
 [output=, error=, exitCode=0][output=/usr/local/jboss/jboss.sh: line 13: java: command not found
 , error=, exitCode=0]
 	at org.jclouds.compute.BaseComputeServiceLiveTest.trackAvailabilityOfProcessOnNode(BaseComputeServiceLiveTest.java:597)
@@ -53,7 +56,7 @@ java.lang.AssertionError: failed to open socket [address=184.106.187.252, port=8
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-testCreateTwoNodesWithRunScript(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)  Time elapsed: 194.647 sec  <<< FAILURE!
+testCreateTwoNodesWithRunScript(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)  Time elapsed: 225.549 sec  <<< FAILURE!
 java.lang.AssertionError: [output=bash: java: command not found
 , error=, exitCode=127]
 [output=#!/bin/bash
@@ -75,7 +78,7 @@ END_OF_FILE
 chmod 0440 /etc/sudoers
 mkdir -p /home/users
 groupadd -f wheel
-useradd -s /bin/bash -g wheel -m  -d /home/users/adriancole -p '$6$tXhJ4VvjuLvJuwyF$ZFARav8kzJBugKUxYyZOicqapUMcUYOxu6V8OnwsBf52hA3M3xXs.EG4EvciqZU8IkMVb8752n0QR8J8ECagC0' adriancole
+useradd -s /bin/bash -g wheel -m  -d /home/users/adriancole -p '$6$P4PrXK72vrOtJkW0$mfppSXUXvqArDe8Jyw9WCI8SaN7D3o0/aYQDKSRMxWyyYZR3NMOsFJFn2Aq/m4yZw.VX/UgHfeZBoHtbhQ1bS/' adriancole
 mkdir -p /home/users/adriancole/.ssh
 cat >> /home/users/adriancole/.ssh/authorized_keys <<'END_OF_FILE'
 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA3oKzzot7fqISh01hu3+iZe0dxKBi43edm2xxb//0KW8NfnrYdagMmX1nQFtdF/6EkKSoTHLMCxZEBHYozW8cRDHlwvz5rh9fb7ApuM8zUO19IUFroC/gsuQgvWcHmlRNA257VEUPLzeRaWbCyvLeRcc2y25Z1rvgGQin0MccWuApE/iBdxGXUfcW8rOy9WNxpYjwbV9t5vOabPD8PMd2U+uRPcbRbAdv/pu2kVDN11KvXWP0XX56xT4sqSeBX0FSvZxVyx+SAixlr6hGkavC7ZIoC+hoHjEl0Fecx9gKYLp4KdyxyqPs5hRMc9x3vJ5/lrIZHhVB172tR3IOY/ossw== adriancole@Adrian-Coles-iMac.local
@@ -87,7 +90,7 @@ exec 3<> /etc/ssh/sshd_config && awk -v TEXT="PasswordAuthentication no
 PermitRootLogin no
 " 'BEGIN {print TEXT}{print}' /etc/ssh/sshd_config >&3
 /etc/init.d/sshd reload||/etc/init.d/ssh reload
-awk -v user=^${SUDO_USER:=${USER}}: -v password='$6$EzMCN0PakTY2bApl$B3NtwqB44G2DJTmfRPV7jqAnTd02IM4p38Vqp.0FH9h8l/1OlwWvgCPQdrNizVo5ibQf9tQz2jbpyJwmc2D2o.' 'BEGIN { FS=OFS=":" } $0 ~ user { $2 = password } 1' /etc/shadow >/etc/shadow.${SUDO_USER:=${USER}}
+awk -v user=^${SUDO_USER:=${USER}}: -v password='$6$ENv4b63eRBfN7OIv$0CDyCTjEJ/.RFcH1uUL3BxRi.vM1k6IsPDoRsQVNRxoL8A6OruYHIR3Hd9eURzfShKYBqs0oNioH3/Wt006vF1' 'BEGIN { FS=OFS=":" } $0 ~ user { $2 = password } 1' /etc/shadow >/etc/shadow.${SUDO_USER:=${USER}}
 test -f /etc/shadow.${SUDO_USER:=${USER}} && mv /etc/shadow.${SUDO_USER:=${USER}} /etc/shadow
 grep `hostname` /etc/hosts >/dev/null || awk -v hostname=`hostname` 'END { print $1" "hostname }' /proc/net/arp >> /etc/hosts
 nslookup yahoo.com >/dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf
@@ -155,11 +158,11 @@ mv: cannot stat `/usr/local/jdk1.7*/*': No such file or directory
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-testDestroyNodes(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)  Time elapsed: 38.203 sec  <<< FAILURE!
-java.lang.AssertionError: [id=20454324, providerId=20454324, group=slicehost-, name=slicehost--429, location=[id=slicehost, scope=PROVIDER, description=https://api.slicehost.com, parent=null, iso3166Codes=[US-IL, US-TX, US-MO], metadata={}], uri=null, imageId=119, os=[name=null, family=ubuntu, version=11.10, arch=null, is64Bit=true, description=Ubuntu 11.10], state=RUNNING, loginPort=22, hostname=slicehost--429, privateAddresses=[10.180.86.139], publicAddresses=[184.106.179.251], hardware=[id=1, providerId=1, name=256 slice, processors=[[cores=0.25, speed=1.0]], ram=256, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]], loginUser=adriancole, userMetadata={}, tags=[]]
+testDestroyNodes(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)  Time elapsed: 37.575 sec  <<< FAILURE!
+java.lang.AssertionError: [id=20496902, providerId=20496902, group=slicehost-, name=slicehost--f60, location=[id=slicehost, scope=PROVIDER, description=https://api.slicehost.com, parent=null, iso3166Codes=[US-IL, US-TX, US-MO], metadata={}], uri=null, imageId=119, os=[name=null, family=ubuntu, version=11.10, arch=null, is64Bit=true, description=Ubuntu 11.10], state=RUNNING, loginPort=22, hostname=slicehost--f60, privateAddresses=[10.180.78.219], publicAddresses=[184.106.171.167], hardware=[id=1, providerId=1, name=256 slice, processors=[[cores=0.25, speed=1.0]], ram=256, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]], loginUser=adriancole, userMetadata={}, tags=[]]
 	at org.jclouds.compute.BaseComputeServiceLiveTest.testDestroyNodes(BaseComputeServiceLiveTest.java:564)
 	at org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest.testDestroyNodes(SlicehostComputeServiceLiveTest.java:71)
-testCreateSlice(org.jclouds.slicehost.SlicehostClientLiveTest)  Time elapsed: 1.249 sec  <<< FAILURE!
+testCreateSlice(org.jclouds.slicehost.SlicehostClientLiveTest)  Time elapsed: 0.304 sec  <<< FAILURE!
 java.lang.IllegalStateException: Invalid Image or Backup
 	at org.jclouds.slicehost.handlers.ParseSlicehostErrorFromHttpResponse.handleError(ParseSlicehostErrorFromHttpResponse.java:87)
 	at org.jclouds.http.handlers.DelegatingErrorHandler.handleError(DelegatingErrorHandler.java:69)
@@ -174,17 +177,17 @@ java.lang.IllegalStateException: Invalid Image or Backup
 	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.submit(ExecutorServiceModule.java:182)
 	at org.jclouds.http.internal.BaseHttpCommandExecutorService.submit(BaseHttpCommandExecutorService.java:131)
 	at org.jclouds.http.TransformingHttpCommandExecutorServiceImpl.submit(TransformingHttpCommandExecutorServiceImpl.java:54)
-	at org.jclouds.http.TransformingHttpCommandImpl.execute(TransformingHttpCommandImpl.java:72)
+	at org.jclouds.http.TransformingHttpCommandImpl.execute(TransformingHttpCommandImpl.java:73)
 	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFuture(AsyncRestClientProxy.java:156)
 	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:126)
-	at $Proxy63.createSlice(Unknown Source)
+	at $Proxy61.createSlice(Unknown Source)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
 	at java.lang.reflect.Method.invoke(Method.java:597)
 	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
-	at $Proxy64.createSlice(Unknown Source)
-	at org.jclouds.slicehost.SlicehostClientLiveTest.testCreateSlice(SlicehostClientLiveTest.java:236)
+	at $Proxy62.createSlice(Unknown Source)
+	at org.jclouds.slicehost.SlicehostClientLiveTest.testCreateSlice(SlicehostClientLiveTest.java:215)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
@@ -208,14 +211,14 @@ java.lang.IllegalStateException: Invalid Image or Backup
 	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.submit(ExecutorServiceModule.java:182)
 	at org.jclouds.http.internal.BaseHttpCommandExecutorService.submit(BaseHttpCommandExecutorService.java:131)
 	at org.jclouds.http.TransformingHttpCommandExecutorServiceImpl.submit(TransformingHttpCommandExecutorServiceImpl.java:54)
-	at org.jclouds.http.TransformingHttpCommandImpl.execute(TransformingHttpCommandImpl.java:72)
+	at org.jclouds.http.TransformingHttpCommandImpl.execute(TransformingHttpCommandImpl.java:73)
 	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFuture(AsyncRestClientProxy.java:156)
 	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:126)
-	at $Proxy63.createSlice(Unknown Source)
+	at $Proxy61.createSlice(Unknown Source)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
 	at java.lang.reflect.Method.invoke(Method.java:597)
 	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
-	at $Proxy64.createSlice(Unknown Source)
-	at org.jclouds.slicehost.SlicehostClientLiveTest.testCreateSlice(SlicehostClientLiveTest.java:236)
+	at $Proxy62.createSlice(Unknown Source)
+	at org.jclouds.slicehost.SlicehostClientLiveTest.testCreateSlice(SlicehostClientLiveTest.java:215)

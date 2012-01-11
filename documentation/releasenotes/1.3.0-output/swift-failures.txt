@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 89, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 621.535 sec <<< FAILURE!
-testCopyUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUSBlobLiveTest)  Time elapsed: 0.783 sec  <<< FAILURE!
+Tests run: 88, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 374.295 sec <<< FAILURE!
+testCopyUrl(org.jclouds.openstack.swift.blobstore.integration.SwiftBlobLiveTest)  Time elapsed: 0.24 sec  <<< FAILURE!
 java.io.IOException: Server returned HTTP response code: 403 for URL: http://apache.opensourceresources.org/commons/logging/binaries/commons-logging-1.1.1-bin.tar.gz
 	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
 	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)

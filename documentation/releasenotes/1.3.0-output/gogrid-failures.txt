@@ -1,7 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 115, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 3,467.155 sec <<< FAILURE!
-testResizeRam(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)  Time elapsed: 1,117.286 sec  <<< FAILURE!
-java.lang.AssertionError
-	at org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest.testResizeRam(GoGridComputeServiceLiveTest.java:88)
+Tests run: 115, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1,867.001 sec

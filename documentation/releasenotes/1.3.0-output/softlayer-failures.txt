@@ -1,11 +1,12 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 133, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 3,591.723 sec <<< FAILURE!
-testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials(org.jclouds.softlayer.compute.SoftLayerComputeServiceAdapterLiveTest)  Time elapsed: 647.36 sec  <<< FAILURE!
-java.lang.AssertionError: expected:<544166> but was:<544166>
+Tests run: 133, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 5,033.606 sec <<< FAILURE!
+testDatacentersForCloudLayer(org.jclouds.softlayer.features.ProductPackageClientLiveTest)  Time elapsed: 0.002 sec  <<< FAILURE!
+java.lang.AssertionError: expected:<7> but was:<6>
 	at org.testng.Assert.fail(Assert.java:89)
 	at org.testng.Assert.failNotEquals(Assert.java:480)
 	at org.testng.Assert.assertEquals(Assert.java:118)
-	at org.testng.Assert.assertEquals(Assert.java:160)
-	at org.jclouds.softlayer.compute.SoftLayerComputeServiceAdapterLiveTest.testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials(SoftLayerComputeServiceAdapterLiveTest.java:80)
+	at org.testng.Assert.assertEquals(Assert.java:365)
+	at org.testng.Assert.assertEquals(Assert.java:375)
+	at org.jclouds.softlayer.features.ProductPackageClientLiveTest.testDatacentersForCloudLayer(ProductPackageClientLiveTest.java:122)

@@ -1,7 +1,7 @@
 [INFO] Scanning for projects...
 [WARNING] 
 [WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:cloudfiles-uk:bundle:1.3.0-SNAPSHOT
-[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/workspace/git/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/workspace/git/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/workspace/git/1.3.x/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/workspace/git/1.3.x/jclouds/project/pom.xml, line 24, column 13
 [WARNING] 
 [WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
 [WARNING] 
@@ -13,7 +13,7 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ cloudfiles-uk ---
-[INFO] Deleting /Users/adriancole/workspace/git/jclouds/providers/cloudfiles-uk/target
+[INFO] Deleting /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudfiles-uk/target
 [INFO] 
 [INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ cloudfiles-uk ---
 [INFO] 
@@ -29,24 +29,24 @@
 [INFO] 
 [INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ cloudfiles-uk ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/cloudfiles-uk/src/main/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudfiles-uk/src/main/clojure
 [INFO] Copying 1 resource
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ cloudfiles-uk ---
-[INFO] Compiling 2 source files to /Users/adriancole/workspace/git/jclouds/providers/cloudfiles-uk/target/classes
+[INFO] Compiling 2 source files to /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudfiles-uk/target/classes
 [INFO] 
 [INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ cloudfiles-uk ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/cloudfiles-uk/src/test/clojure
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/cloudfiles-uk/src/test/resources
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudfiles-uk/src/test/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudfiles-uk/src/test/resources
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ cloudfiles-uk ---
-[INFO] Compiling 11 source files to /Users/adriancole/workspace/git/jclouds/providers/cloudfiles-uk/target/test-classes
+[INFO] Compiling 11 source files to /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudfiles-uk/target/test-classes
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (default-test) @ cloudfiles-uk ---
-[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/cloudfiles-uk/target/surefire-reports
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudfiles-uk/target/surefire-reports
 [INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
 
 -------------------------------------------------------
@@ -56,25 +56,25 @@ Running org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest
 Starting test testInRestProperties(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest)
 Starting test testWithId(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest)
 Starting test testAllContains(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest)
-Starting test testOfTypeContains(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest)
-[pool-2-thread-2] Test testWithId(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest) succeeded: 39ms
+[pool-2-thread-3] Test testAllContains(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest) succeeded: 125ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testOfTypeContains(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest) succeeded: 7ms
+[pool-2-thread-2] Test testWithId(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest) succeeded: 155ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-[pool-2-thread-3] Test testAllContains(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest) succeeded: 11ms
+[pool-2-thread-1] Test testInRestProperties(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest) succeeded: 178ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-[pool-2-thread-1] Test testInRestProperties(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest) succeeded: 77ms
+Starting test testOfTypeContains(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest)
+[pool-2-thread-4] Test testOfTypeContains(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest) succeeded: 2ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.359 sec
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.543 sec
 
 Results :
 
 Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
 
 [INFO] 
-[INFO] --- clojure-maven-plugin:1.3.3:test (test-clojure) @ cloudfiles-uk ---
+[INFO] --- clojure-maven-plugin:1.3.8:test (test-clojure) @ cloudfiles-uk ---
 
-Testing user
+Testing com.theoryinpractise.clojure.testrunner
 
 Ran 0 tests containing 0 assertions.
 0 failures, 0 errors.
@@ -82,16 +82,16 @@ Ran 0 tests containing 0 assertions.
 [INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ cloudfiles-uk ---
 [INFO] 
 [INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ cloudfiles-uk ---
-[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/cloudfiles-uk/target/cloudfiles-uk-1.3.0-SNAPSHOT-sources.jar
+[INFO] Building jar: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudfiles-uk/target/cloudfiles-uk-1.3.0-SNAPSHOT-sources.jar
 [INFO] 
 [INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ cloudfiles-uk ---
 [INFO] Skipping javadoc generation
 [INFO] 
 [INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ cloudfiles-uk ---
-[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/cloudfiles-uk/target/cloudfiles-uk-1.3.0-SNAPSHOT-tests.jar
+[INFO] Building jar: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudfiles-uk/target/cloudfiles-uk-1.3.0-SNAPSHOT-tests.jar
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (integration) @ cloudfiles-uk ---
-[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/cloudfiles-uk/target/surefire-reports
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudfiles-uk/target/surefire-reports
 [INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
 
 -------------------------------------------------------
@@ -100,832 +100,398 @@ Ran 0 tests containing 0 assertions.
 Running TestSuite
 unable to delete container adriancole-blobstore8, ignoring...
 org.jclouds.http.HttpResponseException: Error parsing input
-[message=OK, statusCode=200, headers={X-Container-Object-Count=[101], Date=[Thu, 15 Dec 2011 09:39:59 GMT], X-Container-Bytes-Used=[193], X-Trans-Id=[tx125385fe9ead40eba97c2f0b3da44fd6], Accept-Ranges=[bytes], Connection=[keep-alive]}, payload=[content=true, contentMetadata=[contentDisposition=null, contentEncoding=null, contentLanguage=null, contentLength=15034, contentMD5=null, contentType=application/json; charset=utf-8], written=false]]
+[message=OK, statusCode=200, headers={X-Container-Object-Count=[101], Date=[Wed, 11 Jan 2012 07:15:24 GMT], X-Container-Bytes-Used=[193], X-Trans-Id=[txd9abfa5193094ba5ab2dec8af4bfe08c], Accept-Ranges=[bytes], Connection=[keep-alive]}, payload=[content=true, contentMetadata=[contentDisposition=null, contentEncoding=null, contentLanguage=null, contentLength=15034, contentMD5=null, contentType=application/json; charset=utf-8], written=false]]
 	at org.jclouds.http.functions.ParseJson.apply(ParseJson.java:71)
 	at org.jclouds.http.functions.ParseJson.apply(ParseJson.java:46)
 	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:503)
 	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:501)
 	at com.google.common.util.concurrent.Futures$3.apply(Futures.java:279)
-	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:851)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:729)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-Caused by: com.google.gson.JsonParseException: The JsonDeserializer org.jclouds.json.config.GsonModule$Iso8601DateAdapter@659e733e failed to deserialize json object "2011-07-28T19:59:51" given the type class java.util.Date
-	at com.google.gson.JsonDeserializerExceptionWrapper.deserialize(JsonDeserializerExceptionWrapper.java:64)
-	at com.google.gson.JsonDeserializationVisitor.invokeCustomDeserializer(JsonDeserializationVisitor.java:92)
-	at com.google.gson.JsonObjectDeserializationVisitor.visitFieldUsingCustomHandler(JsonObjectDeserializationVisitor.java:117)
-	at com.google.gson.ReflectingFieldNavigator.visitFieldsReflectively(ReflectingFieldNavigator.java:63)
-	at com.google.gson.ObjectNavigator.accept(ObjectNavigator.java:120)
-	at com.google.gson.JsonDeserializationContextDefault.fromJsonObject(JsonDeserializationContextDefault.java:76)
-	at com.google.gson.JsonDeserializationContextDefault.deserialize(JsonDeserializationContextDefault.java:54)
-	at com.google.gson.DefaultTypeAdapters$CollectionTypeAdapter.deserialize(DefaultTypeAdapters.java:663)
-	at com.google.gson.DefaultTypeAdapters$CollectionTypeAdapter.deserialize(DefaultTypeAdapters.java:624)
-	at com.google.gson.JsonDeserializerExceptionWrapper.deserialize(JsonDeserializerExceptionWrapper.java:51)
-	at com.google.gson.JsonDeserializationVisitor.invokeCustomDeserializer(JsonDeserializationVisitor.java:92)
-	at com.google.gson.JsonDeserializationVisitor.visitUsingCustomHandler(JsonDeserializationVisitor.java:80)
-	at com.google.gson.ObjectNavigator.accept(ObjectNavigator.java:101)
-	at com.google.gson.JsonDeserializationContextDefault.fromJsonArray(JsonDeserializationContextDefault.java:67)
-	at com.google.gson.JsonDeserializationContextDefault.deserialize(JsonDeserializationContextDefault.java:52)
-	at com.google.gson.Gson.fromJson(Gson.java:551)
-	at com.google.gson.Gson.fromJson(Gson.java:498)
-	at com.google.gson.Gson.fromJson(Gson.java:467)
-	at com.google.gson.Gson.fromJson(Gson.java:417)
+Caused by: java.lang.RuntimeException: java.text.ParseException: Unparseable date: "2011-07-28T19:59:51"
+	at org.jclouds.date.internal.SimpleDateFormatDateService.iso8601SecondsDateParse(SimpleDateFormatDateService.java:143)
+	at org.jclouds.json.config.GsonModule$Iso8601DateAdapter.parseDate(GsonModule.java:169)
+	at org.jclouds.json.config.GsonModule$Iso8601DateAdapter.read(GsonModule.java:162)
+	at org.jclouds.json.config.GsonModule$Iso8601DateAdapter.read(GsonModule.java:148)
+	at com.google.gson.TypeAdapter$1.read(TypeAdapter.java:198)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$1.read(ReflectiveTypeAdapterFactory.java:93)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:176)
+	at com.google.gson.internal.bind.TypeAdapterRuntimeTypeWrapper.read(TypeAdapterRuntimeTypeWrapper.java:40)
+	at com.google.gson.internal.bind.CollectionTypeAdapterFactory$Adapter.read(CollectionTypeAdapterFactory.java:81)
+	at com.google.gson.internal.bind.CollectionTypeAdapterFactory$Adapter.read(CollectionTypeAdapterFactory.java:60)
+	at com.google.gson.Gson.fromJson(Gson.java:755)
+	at com.google.gson.Gson.fromJson(Gson.java:721)
+	at com.google.gson.Gson.fromJson(Gson.java:670)
 	at org.jclouds.json.internal.GsonWrapper.fromJson(GsonWrapper.java:47)
 	at org.jclouds.http.functions.ParseJson.apply(ParseJson.java:86)
 	at org.jclouds.openstack.swift.functions.ParseObjectInfoListFromJsonResponse.apply(ParseObjectInfoListFromJsonResponse.java:81)
 	at org.jclouds.openstack.swift.functions.ParseObjectInfoListFromJsonResponse.apply(ParseObjectInfoListFromJsonResponse.java:55)
 	at org.jclouds.http.functions.ParseJson.apply(ParseJson.java:66)
 	... 8 more
-Caused by: java.lang.RuntimeException: java.text.ParseException: Unparseable date: "2011-07-28T19:59:51"
-	at org.jclouds.date.internal.SimpleDateFormatDateService.iso8601SecondsDateParse(SimpleDateFormatDateService.java:143)
-	at org.jclouds.json.config.GsonModule$Iso8601DateAdapter.deserialize(GsonModule.java:175)
-	at org.jclouds.json.config.GsonModule$Iso8601DateAdapter.deserialize(GsonModule.java:156)
-	at com.google.gson.JsonDeserializerExceptionWrapper.deserialize(JsonDeserializerExceptionWrapper.java:51)
-	... 31 more
 Caused by: java.text.ParseException: Unparseable date: "2011-07-28T19:59:51"
 	at java.text.DateFormat.parse(DateFormat.java:337)
 	at org.jclouds.date.internal.SimpleDateFormatDateService.iso8601SecondsDateParse(SimpleDateFormatDateService.java:141)
-	... 34 more
+	... 25 more
 unable to delete container adriancole-blobstore8, ignoring...
 org.jclouds.http.HttpResponseException: Error parsing input
-[message=OK, statusCode=200, headers={X-Container-Object-Count=[101], Date=[Thu, 15 Dec 2011 09:40:23 GMT], X-Container-Bytes-Used=[193], X-Trans-Id=[txda056b95a67e48e4bb5fa18d2e21d4bc], Accept-Ranges=[bytes], Connection=[keep-alive]}, payload=[content=true, contentMetadata=[contentDisposition=null, contentEncoding=null, contentLanguage=null, contentLength=15034, contentMD5=null, contentType=application/json; charset=utf-8], written=false]]
+[message=OK, statusCode=200, headers={X-Container-Object-Count=[101], Date=[Wed, 11 Jan 2012 07:15:28 GMT], X-Container-Bytes-Used=[193], X-Trans-Id=[tx3163b2299503436d903edc1938be8546], Accept-Ranges=[bytes], Connection=[keep-alive]}, payload=[content=true, contentMetadata=[contentDisposition=null, contentEncoding=null, contentLanguage=null, contentLength=15034, contentMD5=null, contentType=application/json; charset=utf-8], written=false]]
 	at org.jclouds.http.functions.ParseJson.apply(ParseJson.java:71)
 	at org.jclouds.http.functions.ParseJson.apply(ParseJson.java:46)
 	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:503)
 	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:501)
 	at com.google.common.util.concurrent.Futures$3.apply(Futures.java:279)
-	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:851)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:729)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-Caused by: com.google.gson.JsonParseException: The JsonDeserializer org.jclouds.json.config.GsonModule$Iso8601DateAdapter@659e733e failed to deserialize json object "2011-07-28T19:59:51" given the type class java.util.Date
-	at com.google.gson.JsonDeserializerExceptionWrapper.deserialize(JsonDeserializerExceptionWrapper.java:64)
-	at com.google.gson.JsonDeserializationVisitor.invokeCustomDeserializer(JsonDeserializationVisitor.java:92)
-	at com.google.gson.JsonObjectDeserializationVisitor.visitFieldUsingCustomHandler(JsonObjectDeserializationVisitor.java:117)
-	at com.google.gson.ReflectingFieldNavigator.visitFieldsReflectively(ReflectingFieldNavigator.java:63)
-	at com.google.gson.ObjectNavigator.accept(ObjectNavigator.java:120)
-	at com.google.gson.JsonDeserializationContextDefault.fromJsonObject(JsonDeserializationContextDefault.java:76)
-	at com.google.gson.JsonDeserializationContextDefault.deserialize(JsonDeserializationContextDefault.java:54)
-	at com.google.gson.DefaultTypeAdapters$CollectionTypeAdapter.deserialize(DefaultTypeAdapters.java:663)
-	at com.google.gson.DefaultTypeAdapters$CollectionTypeAdapter.deserialize(DefaultTypeAdapters.java:624)
-	at com.google.gson.JsonDeserializerExceptionWrapper.deserialize(JsonDeserializerExceptionWrapper.java:51)
-	at com.google.gson.JsonDeserializationVisitor.invokeCustomDeserializer(JsonDeserializationVisitor.java:92)
-	at com.google.gson.JsonDeserializationVisitor.visitUsingCustomHandler(JsonDeserializationVisitor.java:80)
-	at com.google.gson.ObjectNavigator.accept(ObjectNavigator.java:101)
-	at com.google.gson.JsonDeserializationContextDefault.fromJsonArray(JsonDeserializationContextDefault.java:67)
-	at com.google.gson.JsonDeserializationContextDefault.deserialize(JsonDeserializationContextDefault.java:52)
-	at com.google.gson.Gson.fromJson(Gson.java:551)
-	at com.google.gson.Gson.fromJson(Gson.java:498)
-	at com.google.gson.Gson.fromJson(Gson.java:467)
-	at com.google.gson.Gson.fromJson(Gson.java:417)
+Caused by: java.lang.RuntimeException: java.text.ParseException: Unparseable date: "2011-07-28T19:59:51"
+	at org.jclouds.date.internal.SimpleDateFormatDateService.iso8601SecondsDateParse(SimpleDateFormatDateService.java:143)
+	at org.jclouds.json.config.GsonModule$Iso8601DateAdapter.parseDate(GsonModule.java:169)
+	at org.jclouds.json.config.GsonModule$Iso8601DateAdapter.read(GsonModule.java:162)
+	at org.jclouds.json.config.GsonModule$Iso8601DateAdapter.read(GsonModule.java:148)
+	at com.google.gson.TypeAdapter$1.read(TypeAdapter.java:198)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$1.read(ReflectiveTypeAdapterFactory.java:93)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:176)
+	at com.google.gson.internal.bind.TypeAdapterRuntimeTypeWrapper.read(TypeAdapterRuntimeTypeWrapper.java:40)
+	at com.google.gson.internal.bind.CollectionTypeAdapterFactory$Adapter.read(CollectionTypeAdapterFactory.java:81)
+	at com.google.gson.internal.bind.CollectionTypeAdapterFactory$Adapter.read(CollectionTypeAdapterFactory.java:60)
+	at com.google.gson.Gson.fromJson(Gson.java:755)
+	at com.google.gson.Gson.fromJson(Gson.java:721)
+	at com.google.gson.Gson.fromJson(Gson.java:670)
 	at org.jclouds.json.internal.GsonWrapper.fromJson(GsonWrapper.java:47)
 	at org.jclouds.http.functions.ParseJson.apply(ParseJson.java:86)
 	at org.jclouds.openstack.swift.functions.ParseObjectInfoListFromJsonResponse.apply(ParseObjectInfoListFromJsonResponse.java:81)
 	at org.jclouds.openstack.swift.functions.ParseObjectInfoListFromJsonResponse.apply(ParseObjectInfoListFromJsonResponse.java:55)
 	at org.jclouds.http.functions.ParseJson.apply(ParseJson.java:66)
 	... 8 more
-Caused by: java.lang.RuntimeException: java.text.ParseException: Unparseable date: "2011-07-28T19:59:51"
-	at org.jclouds.date.internal.SimpleDateFormatDateService.iso8601SecondsDateParse(SimpleDateFormatDateService.java:143)
-	at org.jclouds.json.config.GsonModule$Iso8601DateAdapter.deserialize(GsonModule.java:175)
-	at org.jclouds.json.config.GsonModule$Iso8601DateAdapter.deserialize(GsonModule.java:156)
-	at com.google.gson.JsonDeserializerExceptionWrapper.deserialize(JsonDeserializerExceptionWrapper.java:51)
-	... 31 more
 Caused by: java.text.ParseException: Unparseable date: "2011-07-28T19:59:51"
 	at java.text.DateFormat.parse(DateFormat.java:337)
 	at org.jclouds.date.internal.SimpleDateFormatDateService.iso8601SecondsDateParse(SimpleDateFormatDateService.java:141)
-	... 34 more
+	... 25 more
 *** containers to test: [adriancole-blobstore0, adriancole-blobstore1, adriancole-blobstore2, adriancole-blobstore3, adriancole-blobstore4, adriancole-blobstore5, adriancole-blobstore6, adriancole-blobstore7, adriancole-blobstore9, adriancole-blobstore10]
 Starting test blobNotFound(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test blobNotFound(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 3763ms
+[pool-4-thread-1] Test blobNotFound(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 3140ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 1, failed: 1, skipped: 0.
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 4862ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 1, failed: 2, skipped: 0.
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 8091ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 1, failed: 3, skipped: 0.
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 7973ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 1, failed: 4, skipped: 0.
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 6307ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 1, failed: 5, skipped: 0.
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 8938ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 1, failed: 6, skipped: 0.
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 4649ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 1, failed: 7, skipped: 0.
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 4595ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 1, failed: 8, skipped: 0.
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 4412ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 1, failed: 9, skipped: 0.
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 4788ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 1, failed: 10, skipped: 0.
-Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 1, failed: 11, skipped: 0.
+[pool-4-thread-1] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 4886ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
 Starting test deleteObjectNoContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObjectNoContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 692ms
-Test suite progress: tests succeeded: 2, failed: 11, skipped: 0.
+[pool-4-thread-1] Test deleteObjectNoContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 709ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
 Starting test deleteObjectNotFound(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObjectNotFound(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 2882ms
-Test suite progress: tests succeeded: 3, failed: 11, skipped: 0.
+[pool-4-thread-1] Test deleteObjectNotFound(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 3018ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
 Starting test testBigFileGets(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testBigFileGets(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 12, skipped: 0.
+[pool-4-thread-1] Test testBigFileGets(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 54459ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
 Starting test testGetIfMatch(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testGetIfMatch(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 13, skipped: 0.
+[pool-4-thread-1] Test testGetIfMatch(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 9529ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
 Starting test testGetIfModifiedSince(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testGetIfModifiedSince(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 14, skipped: 0.
+[pool-4-thread-1] Test testGetIfModifiedSince(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 14654ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
 Starting test testGetIfNoneMatch(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testGetIfNoneMatch(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 15, skipped: 0.
+[pool-4-thread-1] Test testGetIfNoneMatch(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 16706ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
 Starting test testGetIfUnmodifiedSince(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testGetIfUnmodifiedSince(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 16, skipped: 0.
+[pool-4-thread-1] Test testGetIfUnmodifiedSince(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 10660ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
 Starting test testGetRange(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testGetRange(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 17, skipped: 0.
+[pool-4-thread-1] Test testGetRange(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 8490ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
 Starting test testMetadata(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testMetadata(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 18, skipped: 0.
+[pool-4-thread-1] Test testMetadata(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 7789ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
 Starting test testPutFileParallel(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-ERROR: putFileParallel, completed: 0/10, errors: 1, rate: 2ms/op
-java.util.concurrent.ExecutionException: java.lang.NullPointerException
-	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:222)
-	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
-	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-Caused by: java.lang.NullPointerException
-	at com.google.common.base.Preconditions.checkNotNull(Preconditions.java:187)
-	at com.google.common.cache.LocalCache.get(LocalCache.java:3966)
-	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:3971)
-	at com.google.common.cache.LocalCache$LocalManualCache.get(LocalCache.java:4831)
-	at com.google.common.cache.LocalCache$LocalManualCache.getUnchecked(LocalCache.java:4836)
-	at org.jclouds.cloudfiles.blobstore.functions.PublicUriForObjectInfo.apply(PublicUriForObjectInfo.java:52)
-	at org.jclouds.cloudfiles.blobstore.functions.CloudFilesObjectToBlobMetadata.apply(CloudFilesObjectToBlobMetadata.java:47)
-	at org.jclouds.openstack.swift.blobstore.functions.ObjectToBlob.apply(ObjectToBlob.java:49)
-	at org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequest.bindToRequest(BindSwiftObjectMetadataToRequest.java:64)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.decorateRequest(RestAnnotationProcessor.java:981)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.createRequest(RestAnnotationProcessor.java:532)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFuture(AsyncRestClientProxy.java:145)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:126)
-	at $Proxy65.putObject(Unknown Source)
-	at sun.reflect.GeneratedMethodAccessor11.invoke(Unknown Source)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
-	at $Proxy66.putObject(Unknown Source)
-	at org.jclouds.openstack.swift.blobstore.SwiftBlobStore.putBlob(SwiftBlobStore.java:196)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:147)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:139)
-	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-	... 3 more
-ERROR: putFileParallel, completed: 0/10, errors: 4, rate: 2ms/op
-java.util.concurrent.ExecutionException: java.lang.NullPointerException
-	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:222)
-	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
-	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-Caused by: java.lang.NullPointerException
-	at com.google.common.base.Preconditions.checkNotNull(Preconditions.java:187)
-	at com.google.common.cache.LocalCache.get(LocalCache.java:3966)
-	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:3971)
-	at com.google.common.cache.LocalCache$LocalManualCache.get(LocalCache.java:4831)
-	at com.google.common.cache.LocalCache$LocalManualCache.getUnchecked(LocalCache.java:4836)
-	at org.jclouds.cloudfiles.blobstore.functions.PublicUriForObjectInfo.apply(PublicUriForObjectInfo.java:52)
-	at org.jclouds.cloudfiles.blobstore.functions.CloudFilesObjectToBlobMetadata.apply(CloudFilesObjectToBlobMetadata.java:47)
-	at org.jclouds.openstack.swift.blobstore.functions.ObjectToBlob.apply(ObjectToBlob.java:49)
-	at org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequest.bindToRequest(BindSwiftObjectMetadataToRequest.java:64)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.decorateRequest(RestAnnotationProcessor.java:981)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.createRequest(RestAnnotationProcessor.java:532)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFuture(AsyncRestClientProxy.java:145)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:126)
-	at $Proxy65.putObject(Unknown Source)
-	at sun.reflect.GeneratedMethodAccessor11.invoke(Unknown Source)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
-	at $Proxy66.putObject(Unknown Source)
-	at org.jclouds.openstack.swift.blobstore.SwiftBlobStore.putBlob(SwiftBlobStore.java:196)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:147)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:139)
-	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-	... 3 more
-ERROR: putFileParallel, completed: 0/10, errors: 3, rate: 2ms/op
-java.util.concurrent.ExecutionException: java.lang.NullPointerException
-	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:222)
-	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
-	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-Caused by: java.lang.NullPointerException
-	at com.google.common.base.Preconditions.checkNotNull(Preconditions.java:187)
-	at com.google.common.cache.LocalCache.get(LocalCache.java:3966)
-	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:3971)
-	at com.google.common.cache.LocalCache$LocalManualCache.get(LocalCache.java:4831)
-	at com.google.common.cache.LocalCache$LocalManualCache.getUnchecked(LocalCache.java:4836)
-	at org.jclouds.cloudfiles.blobstore.functions.PublicUriForObjectInfo.apply(PublicUriForObjectInfo.java:52)
-	at org.jclouds.cloudfiles.blobstore.functions.CloudFilesObjectToBlobMetadata.apply(CloudFilesObjectToBlobMetadata.java:47)
-	at org.jclouds.openstack.swift.blobstore.functions.ObjectToBlob.apply(ObjectToBlob.java:49)
-	at org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequest.bindToRequest(BindSwiftObjectMetadataToRequest.java:64)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.decorateRequest(RestAnnotationProcessor.java:981)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.createRequest(RestAnnotationProcessor.java:532)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFuture(AsyncRestClientProxy.java:145)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:126)
-	at $Proxy65.putObject(Unknown Source)
-	at sun.reflect.GeneratedMethodAccessor11.invoke(Unknown Source)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
-	at $Proxy66.putObject(Unknown Source)
-	at org.jclouds.openstack.swift.blobstore.SwiftBlobStore.putBlob(SwiftBlobStore.java:196)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:147)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:139)
-	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-	... 3 more
-ERROR: putFileParallel, completed: 0/10, errors: 2, rate: 2ms/op
-java.util.concurrent.ExecutionException: java.lang.NullPointerException
-	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:222)
-	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
-	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-Caused by: java.lang.NullPointerException
-	at com.google.common.base.Preconditions.checkNotNull(Preconditions.java:187)
-	at com.google.common.cache.LocalCache.get(LocalCache.java:3966)
-	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:3971)
-	at com.google.common.cache.LocalCache$LocalManualCache.get(LocalCache.java:4831)
-	at com.google.common.cache.LocalCache$LocalManualCache.getUnchecked(LocalCache.java:4836)
-	at org.jclouds.cloudfiles.blobstore.functions.PublicUriForObjectInfo.apply(PublicUriForObjectInfo.java:52)
-	at org.jclouds.cloudfiles.blobstore.functions.CloudFilesObjectToBlobMetadata.apply(CloudFilesObjectToBlobMetadata.java:47)
-	at org.jclouds.openstack.swift.blobstore.functions.ObjectToBlob.apply(ObjectToBlob.java:49)
-	at org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequest.bindToRequest(BindSwiftObjectMetadataToRequest.java:64)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.decorateRequest(RestAnnotationProcessor.java:981)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.createRequest(RestAnnotationProcessor.java:532)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFuture(AsyncRestClientProxy.java:145)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:126)
-	at $Proxy65.putObject(Unknown Source)
-	at sun.reflect.GeneratedMethodAccessor11.invoke(Unknown Source)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
-	at $Proxy66.putObject(Unknown Source)
-	at org.jclouds.openstack.swift.blobstore.SwiftBlobStore.putBlob(SwiftBlobStore.java:196)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:147)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:139)
-	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-	... 3 more
-ERROR: putFileParallel, completed: 0/10, errors: 5, rate: 2ms/op
-java.util.concurrent.ExecutionException: java.lang.NullPointerException
-	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:222)
-	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
-	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-Caused by: java.lang.NullPointerException
-	at com.google.common.base.Preconditions.checkNotNull(Preconditions.java:187)
-	at com.google.common.cache.LocalCache.get(LocalCache.java:3966)
-	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:3971)
-	at com.google.common.cache.LocalCache$LocalManualCache.get(LocalCache.java:4831)
-	at com.google.common.cache.LocalCache$LocalManualCache.getUnchecked(LocalCache.java:4836)
-	at org.jclouds.cloudfiles.blobstore.functions.PublicUriForObjectInfo.apply(PublicUriForObjectInfo.java:52)
-	at org.jclouds.cloudfiles.blobstore.functions.CloudFilesObjectToBlobMetadata.apply(CloudFilesObjectToBlobMetadata.java:47)
-	at org.jclouds.openstack.swift.blobstore.functions.ObjectToBlob.apply(ObjectToBlob.java:49)
-	at org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequest.bindToRequest(BindSwiftObjectMetadataToRequest.java:64)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.decorateRequest(RestAnnotationProcessor.java:981)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.createRequest(RestAnnotationProcessor.java:532)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFuture(AsyncRestClientProxy.java:145)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:126)
-	at $Proxy65.putObject(Unknown Source)
-	at sun.reflect.GeneratedMethodAccessor11.invoke(Unknown Source)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
-	at $Proxy66.putObject(Unknown Source)
-	at org.jclouds.openstack.swift.blobstore.SwiftBlobStore.putBlob(SwiftBlobStore.java:196)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:147)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:139)
-	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-	... 3 more
-ERROR: putFileParallel, completed: 0/10, errors: 7, rate: 2ms/op
-java.util.concurrent.ExecutionException: java.lang.NullPointerException
-	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:222)
-	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
-	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-Caused by: java.lang.NullPointerException
-	at com.google.common.base.Preconditions.checkNotNull(Preconditions.java:187)
-	at com.google.common.cache.LocalCache.get(LocalCache.java:3966)
-	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:3971)
-	at com.google.common.cache.LocalCache$LocalManualCache.get(LocalCache.java:4831)
-	at com.google.common.cache.LocalCache$LocalManualCache.getUnchecked(LocalCache.java:4836)
-	at org.jclouds.cloudfiles.blobstore.functions.PublicUriForObjectInfo.apply(PublicUriForObjectInfo.java:52)
-	at org.jclouds.cloudfiles.blobstore.functions.CloudFilesObjectToBlobMetadata.apply(CloudFilesObjectToBlobMetadata.java:47)
-	at org.jclouds.openstack.swift.blobstore.functions.ObjectToBlob.apply(ObjectToBlob.java:49)
-	at org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequest.bindToRequest(BindSwiftObjectMetadataToRequest.java:64)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.decorateRequest(RestAnnotationProcessor.java:981)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.createRequest(RestAnnotationProcessor.java:532)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFuture(AsyncRestClientProxy.java:145)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:126)
-	at $Proxy65.putObject(Unknown Source)
-	at sun.reflect.GeneratedMethodAccessor11.invoke(Unknown Source)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
-	at $Proxy66.putObject(Unknown Source)
-	at org.jclouds.openstack.swift.blobstore.SwiftBlobStore.putBlob(SwiftBlobStore.java:196)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:147)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:139)
-	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-	... 3 more
-ERROR: putFileParallel, completed: 0/10, errors: 8, rate: 3ms/op
-java.util.concurrent.ExecutionException: java.lang.NullPointerException
-	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:222)
-	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
-	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-Caused by: java.lang.NullPointerException
-	at com.google.common.base.Preconditions.checkNotNull(Preconditions.java:187)
-	at com.google.common.cache.LocalCache.get(LocalCache.java:3966)
-	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:3971)
-	at com.google.common.cache.LocalCache$LocalManualCache.get(LocalCache.java:4831)
-	at com.google.common.cache.LocalCache$LocalManualCache.getUnchecked(LocalCache.java:4836)
-	at org.jclouds.cloudfiles.blobstore.functions.PublicUriForObjectInfo.apply(PublicUriForObjectInfo.java:52)
-	at org.jclouds.cloudfiles.blobstore.functions.CloudFilesObjectToBlobMetadata.apply(CloudFilesObjectToBlobMetadata.java:47)
-	at org.jclouds.openstack.swift.blobstore.functions.ObjectToBlob.apply(ObjectToBlob.java:49)
-	at org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequest.bindToRequest(BindSwiftObjectMetadataToRequest.java:64)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.decorateRequest(RestAnnotationProcessor.java:981)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.createRequest(RestAnnotationProcessor.java:532)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFuture(AsyncRestClientProxy.java:145)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:126)
-	at $Proxy65.putObject(Unknown Source)
-	at sun.reflect.GeneratedMethodAccessor11.invoke(Unknown Source)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
-	at $Proxy66.putObject(Unknown Source)
-	at org.jclouds.openstack.swift.blobstore.SwiftBlobStore.putBlob(SwiftBlobStore.java:196)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:147)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:139)
-	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-	... 3 more
-ERROR: putFileParallel, completed: 0/10, errors: 6, rate: 2ms/op
-java.util.concurrent.ExecutionException: java.lang.NullPointerException
-	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:222)
-	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
-	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-Caused by: java.lang.NullPointerException
-	at com.google.common.base.Preconditions.checkNotNull(Preconditions.java:187)
-	at com.google.common.cache.LocalCache.get(LocalCache.java:3966)
-	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:3971)
-	at com.google.common.cache.LocalCache$LocalManualCache.get(LocalCache.java:4831)
-	at com.google.common.cache.LocalCache$LocalManualCache.getUnchecked(LocalCache.java:4836)
-	at org.jclouds.cloudfiles.blobstore.functions.PublicUriForObjectInfo.apply(PublicUriForObjectInfo.java:52)
-	at org.jclouds.cloudfiles.blobstore.functions.CloudFilesObjectToBlobMetadata.apply(CloudFilesObjectToBlobMetadata.java:47)
-	at org.jclouds.openstack.swift.blobstore.functions.ObjectToBlob.apply(ObjectToBlob.java:49)
-	at org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequest.bindToRequest(BindSwiftObjectMetadataToRequest.java:64)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.decorateRequest(RestAnnotationProcessor.java:981)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.createRequest(RestAnnotationProcessor.java:532)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFuture(AsyncRestClientProxy.java:145)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:126)
-	at $Proxy65.putObject(Unknown Source)
-	at sun.reflect.GeneratedMethodAccessor11.invoke(Unknown Source)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
-	at $Proxy66.putObject(Unknown Source)
-	at org.jclouds.openstack.swift.blobstore.SwiftBlobStore.putBlob(SwiftBlobStore.java:196)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:147)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:139)
-	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-	... 3 more
-ERROR: putFileParallel, completed: 0/10, errors: 10, rate: 3ms/op
-java.util.concurrent.ExecutionException: java.lang.NullPointerException
-	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:222)
-	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
-	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-Caused by: java.lang.NullPointerException
-	at com.google.common.base.Preconditions.checkNotNull(Preconditions.java:187)
-	at com.google.common.cache.LocalCache.get(LocalCache.java:3966)
-	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:3971)
-	at com.google.common.cache.LocalCache$LocalManualCache.get(LocalCache.java:4831)
-	at com.google.common.cache.LocalCache$LocalManualCache.getUnchecked(LocalCache.java:4836)
-	at org.jclouds.cloudfiles.blobstore.functions.PublicUriForObjectInfo.apply(PublicUriForObjectInfo.java:52)
-	at org.jclouds.cloudfiles.blobstore.functions.CloudFilesObjectToBlobMetadata.apply(CloudFilesObjectToBlobMetadata.java:47)
-	at org.jclouds.openstack.swift.blobstore.functions.ObjectToBlob.apply(ObjectToBlob.java:49)
-	at org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequest.bindToRequest(BindSwiftObjectMetadataToRequest.java:64)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.decorateRequest(RestAnnotationProcessor.java:981)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.createRequest(RestAnnotationProcessor.java:532)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFuture(AsyncRestClientProxy.java:145)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:126)
-	at $Proxy65.putObject(Unknown Source)
-	at sun.reflect.GeneratedMethodAccessor11.invoke(Unknown Source)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
-	at $Proxy66.putObject(Unknown Source)
-	at org.jclouds.openstack.swift.blobstore.SwiftBlobStore.putBlob(SwiftBlobStore.java:196)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:147)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:139)
-	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-	... 3 more
-ERROR: putFileParallel, completed: 0/10, errors: 9, rate: 3ms/op
-java.util.concurrent.ExecutionException: java.lang.NullPointerException
-	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:222)
-	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
-	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:126)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-Caused by: java.lang.NullPointerException
-	at com.google.common.base.Preconditions.checkNotNull(Preconditions.java:187)
-	at com.google.common.cache.LocalCache.get(LocalCache.java:3966)
-	at com.google.common.cache.LocalCache.getOrLoad(LocalCache.java:3971)
-	at com.google.common.cache.LocalCache$LocalManualCache.get(LocalCache.java:4831)
-	at com.google.common.cache.LocalCache$LocalManualCache.getUnchecked(LocalCache.java:4836)
-	at org.jclouds.cloudfiles.blobstore.functions.PublicUriForObjectInfo.apply(PublicUriForObjectInfo.java:52)
-	at org.jclouds.cloudfiles.blobstore.functions.CloudFilesObjectToBlobMetadata.apply(CloudFilesObjectToBlobMetadata.java:47)
-	at org.jclouds.openstack.swift.blobstore.functions.ObjectToBlob.apply(ObjectToBlob.java:49)
-	at org.jclouds.openstack.swift.binders.BindSwiftObjectMetadataToRequest.bindToRequest(BindSwiftObjectMetadataToRequest.java:64)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.decorateRequest(RestAnnotationProcessor.java:981)
-	at org.jclouds.rest.internal.RestAnnotationProcessor.createRequest(RestAnnotationProcessor.java:532)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFuture(AsyncRestClientProxy.java:145)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:126)
-	at $Proxy65.putObject(Unknown Source)
-	at sun.reflect.GeneratedMethodAccessor11.invoke(Unknown Source)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
-	at $Proxy66.putObject(Unknown Source)
-	at org.jclouds.openstack.swift.blobstore.SwiftBlobStore.putBlob(SwiftBlobStore.java:196)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:147)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$1.call(BaseBlobIntegrationTest.java:139)
-	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-	... 3 more
-ERROR: putFileParallel, completed: 0/10, errors: 10, rate: 3ms/op
-java.lang.RuntimeException: putFileParallel, completed: 0/10, errors: 10, rate: 3ms/op
-	at org.jclouds.concurrent.FutureIterables.awaitCompletion(FutureIterables.java:149)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest.testPutFileParallel(BaseBlobIntegrationTest.java:161)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:76)
-	at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
-	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
-	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
-	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
-	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
-	at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
-	at org.testng.TestRunner.privateRun(TestRunner.java:749)
-	at org.testng.TestRunner.run(TestRunner.java:600)
-	at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
-	at org.testng.SuiteRunner.access$000(SuiteRunner.java:34)
-	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:351)
-	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:147)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-[pool-4-thread-1] Test testPutFileParallel(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 19, skipped: 0.
+[pool-4-thread-1] Test testPutFileParallel(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 32313ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
 Starting test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 20, skipped: 0.
+[pool-4-thread-1] Test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 5480ms
+Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
 Starting test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 21, skipped: 0.
+[pool-4-thread-1] Test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 5377ms
+Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
 Starting test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 22, skipped: 0.
+[pool-4-thread-1] Test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 8501ms
+Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
 Starting test testPutObjectStream(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutObjectStream(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 23, skipped: 0.
+[pool-4-thread-1] Test testPutObjectStream(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 6824ms
+Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
 Starting test testCopyUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobLiveTest)
 [pool-4-thread-1] Test testCopyUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 24, skipped: 0.
+Test suite progress: tests succeeded: 25, failed: 1, skipped: 0.
 Starting test testContains(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContains(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 25, skipped: 0.
+[pool-4-thread-1] Test testContains(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 7287ms
+Test suite progress: tests succeeded: 26, failed: 1, skipped: 0.
 Starting test testEntrySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testEntrySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 26, skipped: 0.
+[pool-4-thread-1] Test testEntrySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 44112ms
+Test suite progress: tests succeeded: 27, failed: 1, skipped: 0.
 Starting test testPut(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPut(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 27, skipped: 0.
+[pool-4-thread-1] Test testPut(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 15164ms
+Test suite progress: tests succeeded: 28, failed: 1, skipped: 0.
 Starting test testPutAll(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAll(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 28, skipped: 0.
+[pool-4-thread-1] Test testPutAll(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 23341ms
+Test suite progress: tests succeeded: 29, failed: 1, skipped: 0.
 Starting test testPutMoreThanSingleListing(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutMoreThanSingleListing(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 29, skipped: 0.
+[pool-4-thread-1] Test testPutMoreThanSingleListing(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 21172ms
+Test suite progress: tests succeeded: 30, failed: 1, skipped: 0.
 Starting test testRemove(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testRemove(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 30, skipped: 0.
+[pool-4-thread-1] Test testRemove(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 9249ms
+Test suite progress: tests succeeded: 31, failed: 1, skipped: 0.
 Starting test testValues(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testValues(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 31, skipped: 0.
+[pool-4-thread-1] Test testValues(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 15875ms
+Test suite progress: tests succeeded: 32, failed: 1, skipped: 0.
 Starting test testClear(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testClear(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 32, skipped: 0.
+[pool-4-thread-1] Test testClear(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 10810ms
+Test suite progress: tests succeeded: 33, failed: 1, skipped: 0.
 Starting test testContainsKey(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsKey(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 33, skipped: 0.
+[pool-4-thread-1] Test testContainsKey(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 7401ms
+Test suite progress: tests succeeded: 34, failed: 1, skipped: 0.
 Starting test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 34, skipped: 0.
+[pool-4-thread-1] Test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 85864ms
+Test suite progress: tests succeeded: 35, failed: 1, skipped: 0.
 Starting test testIsEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testIsEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 35, skipped: 0.
+[pool-4-thread-1] Test testIsEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 7870ms
+Test suite progress: tests succeeded: 36, failed: 1, skipped: 0.
 Starting test testKeySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testKeySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 3, failed: 36, skipped: 0.
+[pool-4-thread-1] Test testKeySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 12379ms
+Test suite progress: tests succeeded: 37, failed: 1, skipped: 0.
 Starting test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 2779ms
-Test suite progress: tests succeeded: 4, failed: 36, skipped: 0.
+[pool-4-thread-1] Test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 4968ms
+Test suite progress: tests succeeded: 38, failed: 1, skipped: 0.
 Starting test testSignGetUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest)
-[pool-4-thread-1] Test testSignGetUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest) failed.
-Test suite progress: tests succeeded: 4, failed: 37, skipped: 0.
+[pool-4-thread-1] Test testSignGetUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest) succeeded: 9393ms
+Test suite progress: tests succeeded: 39, failed: 1, skipped: 0.
 Starting test testSignGetUrlOptions(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest)
-[pool-4-thread-1] Test testSignGetUrlOptions(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest) failed.
-Test suite progress: tests succeeded: 4, failed: 38, skipped: 0.
+[pool-4-thread-1] Test testSignGetUrlOptions(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest) succeeded: 4952ms
+Test suite progress: tests succeeded: 40, failed: 1, skipped: 0.
 Starting test testSignPutUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest)
-[pool-4-thread-1] Test testSignPutUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest) failed.
-Test suite progress: tests succeeded: 4, failed: 39, skipped: 0.
+[pool-4-thread-1] Test testSignPutUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest) succeeded: 4404ms
+Test suite progress: tests succeeded: 41, failed: 1, skipped: 0.
 Starting test testSignRemoveUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest)
-[pool-4-thread-1] Test testSignRemoveUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest) failed.
-Test suite progress: tests succeeded: 4, failed: 40, skipped: 0.
+[pool-4-thread-1] Test testSignRemoveUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest) succeeded: 12688ms
+Test suite progress: tests succeeded: 42, failed: 1, skipped: 0.
 Starting test containerDoesntExist(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-[pool-4-thread-1] Test containerDoesntExist(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 2248ms
-Test suite progress: tests succeeded: 5, failed: 40, skipped: 0.
+[pool-4-thread-1] Test containerDoesntExist(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 1385ms
+Test suite progress: tests succeeded: 43, failed: 1, skipped: 0.
 Starting test containerExists(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-[pool-4-thread-1] Test containerExists(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 2777ms
-Test suite progress: tests succeeded: 6, failed: 40, skipped: 0.
+[pool-4-thread-1] Test containerExists(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 2789ms
+Test suite progress: tests succeeded: 44, failed: 1, skipped: 0.
 Starting test deleteContainerIfEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-*** allocated new container adriancole-blobstore4...
-[pool-4-thread-1] Test deleteContainerIfEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 7700ms
-Test suite progress: tests succeeded: 7, failed: 40, skipped: 0.
+*** allocated new container adriancole-blobstore2...
+[pool-4-thread-1] Test deleteContainerIfEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 9966ms
+Test suite progress: tests succeeded: 45, failed: 1, skipped: 0.
 Starting test deleteContainerWithContents(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-*** allocated new container adriancole-blobstore5...
-[pool-4-thread-1] Test deleteContainerWithContents(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 41, skipped: 0.
+*** allocated new container adriancole-blobstore3...
+[pool-4-thread-1] Test deleteContainerWithContents(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 23704ms
+Test suite progress: tests succeeded: 46, failed: 1, skipped: 0.
 Starting test testClearWhenContentsUnderPath(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testClearWhenContentsUnderPath(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 42, skipped: 0.
+[pool-4-thread-1] Test testClearWhenContentsUnderPath(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 41866ms
+Test suite progress: tests succeeded: 47, failed: 1, skipped: 0.
 Starting test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 43, skipped: 0.
+[pool-4-thread-1] Test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 85482ms
+Test suite progress: tests succeeded: 48, failed: 1, skipped: 0.
 Starting test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 44, skipped: 0.
+[pool-4-thread-1] Test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 28799ms
+Test suite progress: tests succeeded: 49, failed: 1, skipped: 0.
 Starting test testListContainerMarker(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainerMarker(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 45, skipped: 0.
+[pool-4-thread-1] Test testListContainerMarker(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 67982ms
+Test suite progress: tests succeeded: 50, failed: 1, skipped: 0.
 Starting test testListContainerMaxResults(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainerMaxResults(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 46, skipped: 0.
+[pool-4-thread-1] Test testListContainerMaxResults(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 31033ms
+Test suite progress: tests succeeded: 51, failed: 1, skipped: 0.
 Starting test testListContainerPrefix(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainerPrefix(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 47, skipped: 0.
+[pool-4-thread-1] Test testListContainerPrefix(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 49073ms
+Test suite progress: tests succeeded: 52, failed: 1, skipped: 0.
 Starting test testListRootUsesDelimiter(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testListRootUsesDelimiter(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 48, skipped: 0.
+[pool-4-thread-1] Test testListRootUsesDelimiter(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 39929ms
+Test suite progress: tests succeeded: 53, failed: 1, skipped: 0.
 Starting test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 49, skipped: 0.
+[pool-4-thread-1] Test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 6577ms
+Test suite progress: tests succeeded: 54, failed: 1, skipped: 0.
 Starting test testWithDetails(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testWithDetails(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 50, skipped: 0.
+[pool-4-thread-1] Test testWithDetails(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 8414ms
+Test suite progress: tests succeeded: 55, failed: 1, skipped: 0.
+Exception in thread "user thread 22" java.lang.IllegalStateException: interrupted calling get() on [[method=CloudFilesAsyncClient.getCDNMetadata, request=HEAD https://cdn3.clouddrive.com/v1/MossoCloudFS_83a9d536-2e25-4166-bd3b-a503a934f953/adriancole-blobstore4 HTTP/1.1]], so could not run listeners
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:66)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:979)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1281)
+	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:218)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:237)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:59)
+	... 3 more
+Caused by: java.util.concurrent.ExecutionException: task submitted from the following trace
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:270)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:241)
+	... 4 more
 Starting test testPublicAccess(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerLiveTest)
-*** allocated new container adriancole-blobstore7...
-*** allocated new container adriancole-blobstore714...
-[pool-4-thread-1] Test testPublicAccess(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 51, skipped: 0.
+*** allocated new container adriancole-blobstore5...
+*** allocated new container adriancole-blobstore514...
+[pool-4-thread-1] Test testPublicAccess(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerLiveTest) succeeded: 9905ms
+Test suite progress: tests succeeded: 56, failed: 1, skipped: 0.
+Jan 10, 2012 11:31:50 PM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable com.google.common.util.concurrent.Futures$ChainingListenableFuture@5889b953 with executor java.util.concurrent.ThreadPoolExecutor@39e6258e
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.execute(ExecutorServiceModule.java:198)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:149)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:134)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
 Starting test testContainsBytesValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsBytesValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 52, skipped: 0.
+[pool-4-thread-1] Test testContainsBytesValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 17029ms
+Test suite progress: tests succeeded: 57, failed: 1, skipped: 0.
 Starting test testContainsFileValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsFileValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 53, skipped: 0.
+[pool-4-thread-1] Test testContainsFileValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 25165ms
+Test suite progress: tests succeeded: 58, failed: 1, skipped: 0.
 Starting test testContainsInputStreamValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsInputStreamValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 54, skipped: 0.
+[pool-4-thread-1] Test testContainsInputStreamValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 7795ms
+Test suite progress: tests succeeded: 59, failed: 1, skipped: 0.
 Starting test testContainsStringValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsStringValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 55, skipped: 0.
+[pool-4-thread-1] Test testContainsStringValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 36897ms
+Test suite progress: tests succeeded: 60, failed: 1, skipped: 0.
 Starting test testEntrySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testEntrySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 56, skipped: 0.
+[pool-4-thread-1] Test testEntrySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 34025ms
+Test suite progress: tests succeeded: 61, failed: 1, skipped: 0.
 Starting test testPut(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPut(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 57, skipped: 0.
+[pool-4-thread-1] Test testPut(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 10639ms
+Test suite progress: tests succeeded: 62, failed: 1, skipped: 0.
 Starting test testPutAll(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAll(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 58, skipped: 0.
+[pool-4-thread-1] Test testPutAll(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 23571ms
+Test suite progress: tests succeeded: 63, failed: 1, skipped: 0.
 Starting test testPutAllBytes(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAllBytes(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 59, skipped: 0.
+[pool-4-thread-1] Test testPutAllBytes(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 25103ms
+Test suite progress: tests succeeded: 64, failed: 1, skipped: 0.
 Starting test testPutAllFiles(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAllFiles(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 60, skipped: 0.
+[pool-4-thread-1] Test testPutAllFiles(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 22613ms
+Test suite progress: tests succeeded: 65, failed: 1, skipped: 0.
 Starting test testPutAllStrings(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAllStrings(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 61, skipped: 0.
+[pool-4-thread-1] Test testPutAllStrings(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 9667ms
+Test suite progress: tests succeeded: 66, failed: 1, skipped: 0.
 Starting test testPutBytes(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutBytes(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 62, skipped: 0.
+[pool-4-thread-1] Test testPutBytes(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 14089ms
+Test suite progress: tests succeeded: 67, failed: 1, skipped: 0.
 Starting test testPutFile(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutFile(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 63, skipped: 0.
+[pool-4-thread-1] Test testPutFile(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 10683ms
+Test suite progress: tests succeeded: 68, failed: 1, skipped: 0.
 Starting test testPutMoreThanSingleListing(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutMoreThanSingleListing(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 64, skipped: 0.
+[pool-4-thread-1] Test testPutMoreThanSingleListing(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 22194ms
+Test suite progress: tests succeeded: 69, failed: 1, skipped: 0.
 Starting test testPutString(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutString(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 65, skipped: 0.
+[pool-4-thread-1] Test testPutString(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 16495ms
+Test suite progress: tests succeeded: 70, failed: 1, skipped: 0.
 Starting test testRemove(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testRemove(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 66, skipped: 0.
+[pool-4-thread-1] Test testRemove(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 13339ms
+Test suite progress: tests succeeded: 71, failed: 1, skipped: 0.
 Starting test testValues(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testValues(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 67, skipped: 0.
+[pool-4-thread-1] Test testValues(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 17257ms
+Test suite progress: tests succeeded: 72, failed: 1, skipped: 0.
 Starting test testClear(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testClear(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 68, skipped: 0.
+[pool-4-thread-1] Test testClear(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 12104ms
+Test suite progress: tests succeeded: 73, failed: 1, skipped: 0.
 Starting test testContainsKey(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsKey(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 69, skipped: 0.
+[pool-4-thread-1] Test testContainsKey(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 7134ms
+Test suite progress: tests succeeded: 74, failed: 1, skipped: 0.
 Starting test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 70, skipped: 0.
+[pool-4-thread-1] Test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 67608ms
+Test suite progress: tests succeeded: 75, failed: 1, skipped: 0.
 Starting test testIsEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testIsEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 71, skipped: 0.
+[pool-4-thread-1] Test testIsEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 5759ms
+Test suite progress: tests succeeded: 76, failed: 1, skipped: 0.
 Starting test testKeySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testKeySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) failed.
-Test suite progress: tests succeeded: 7, failed: 72, skipped: 0.
+[pool-4-thread-1] Test testKeySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 9737ms
+Test suite progress: tests succeeded: 77, failed: 1, skipped: 0.
 Starting test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 2822ms
-Test suite progress: tests succeeded: 8, failed: 72, skipped: 0.
+[pool-4-thread-1] Test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 2787ms
+Test suite progress: tests succeeded: 78, failed: 1, skipped: 0.
 Starting test containerDoesntExist(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest)
-[pool-4-thread-1] Test containerDoesntExist(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest) succeeded: 1558ms
-Test suite progress: tests succeeded: 9, failed: 72, skipped: 0.
+[pool-4-thread-1] Test containerDoesntExist(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest) succeeded: 704ms
+Test suite progress: tests succeeded: 79, failed: 1, skipped: 0.
 Starting test testAllLocations(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest)
-*** allocated new container adriancole-blobstore10...
+*** allocated new container adriancole-blobstore7...
  >> creating container in location [id=cloudfiles-uk, scope=PROVIDER, description=https://lon.auth.api.rackspacecloud.com, parent=null, iso3166Codes=[GB-SLG], metadata={}]
  << call complete.. checking
-*** allocated new container adriancole-blobstore1016...
-[pool-4-thread-1] Test testAllLocations(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest) succeeded: 5646ms
-Test suite progress: tests succeeded: 10, failed: 72, skipped: 0.
+*** allocated new container adriancole-blobstore716...
+[pool-4-thread-1] Test testAllLocations(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest) succeeded: 11125ms
+Test suite progress: tests succeeded: 80, failed: 1, skipped: 0.
 Starting test testGetAssignableLocations(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest)
 location [id=cloudfiles-uk, scope=PROVIDER, description=https://lon.auth.api.rackspacecloud.com, parent=null, iso3166Codes=[GB-SLG], metadata={}]
-[pool-4-thread-1] Test testGetAssignableLocations(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 11, failed: 72, skipped: 0.
+[pool-4-thread-1] Test testGetAssignableLocations(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 81, failed: 1, skipped: 0.
 Starting test deleteContainerIfEmptyNotFound(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
-[pool-4-thread-1] Test deleteContainerIfEmptyNotFound(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 1584ms
-Test suite progress: tests succeeded: 12, failed: 72, skipped: 0.
+[pool-4-thread-1] Test deleteContainerIfEmptyNotFound(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 688ms
+Test suite progress: tests succeeded: 82, failed: 1, skipped: 0.
 Starting test testHeadAccountMetadata(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
-[pool-4-thread-1] Test testHeadAccountMetadata(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 6545ms
-Test suite progress: tests succeeded: 13, failed: 72, skipped: 0.
+[pool-4-thread-1] Test testHeadAccountMetadata(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 4930ms
+Test suite progress: tests succeeded: 83, failed: 1, skipped: 0.
 Starting test testListContainerPath(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
-[pool-4-thread-1] Test testListContainerPath(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) failed.
-Test suite progress: tests succeeded: 13, failed: 73, skipped: 0.
+[pool-4-thread-1] Test testListContainerPath(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 7573ms
+Test suite progress: tests succeeded: 84, failed: 1, skipped: 0.
 Starting test testListOwnedContainers(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
-[pool-4-thread-1] Test testListOwnedContainers(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 8418ms
-Test suite progress: tests succeeded: 14, failed: 73, skipped: 0.
+[pool-4-thread-1] Test testListOwnedContainers(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 20482ms
+Test suite progress: tests succeeded: 85, failed: 1, skipped: 0.
 Starting test testObjectOperations(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
-[pool-4-thread-1] Test testObjectOperations(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) failed.
-Test suite progress: tests succeeded: 14, failed: 74, skipped: 0.
+[pool-4-thread-1] Test testObjectOperations(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 13025ms
+Test suite progress: tests succeeded: 86, failed: 1, skipped: 0.
 Starting test testPutContainers(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
-[pool-4-thread-1] Test testPutContainers(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 6870ms
-Test suite progress: tests succeeded: 15, failed: 74, skipped: 0.
-Tests run: 89, Failures: 74, Errors: 0, Skipped: 0, Time elapsed: 323.696 sec <<< FAILURE!
+[pool-4-thread-1] Test testPutContainers(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 9287ms
+Test suite progress: tests succeeded: 87, failed: 1, skipped: 0.
+Tests run: 88, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 1,505.642 sec <<< FAILURE!
 
 Results :
 
-Failed tests:   deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  testBigFileGets(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  testGetIfMatch(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  testGetIfModifiedSince(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  testGetIfNoneMatch(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  testGetIfUnmodifiedSince(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  testGetRange(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  testMetadata(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  testPutFileParallel(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest): {0=java.util.concurrent.ExecutionException: java.lang.NullPointerException, 1=java.util.concurrent.ExecutionException: java.lang.NullPointerException, 2=java.util.concurrent.ExecutionException: java.lang.NullPointerException, 3=java.util.concurrent.ExecutionException: java.lang.NullPointerException, 4=java.util.concurrent.ExecutionException: java.lang.NullPointerException, 5=java.util.concurrent.ExecutionException: java.lang.NullPointerException, 6=java.util.concurrent.ExecutionException: java.lang.NullPointerException, 7=java.util.concurrent.ExecutionException: java.lang.NullPointerException, 8=java.util.concurrent.ExecutionException: java.lang.NullPointerException, 9=java.util.concurrent.ExecutionException: java.lang.NullPointerException}
-  testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  testPutObjectStream(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
-  testCopyUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobLiveTest)
-  testContains(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-  testEntrySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest): error putting into container adriancole-blobstore7: {[metadata=[type=BLOB, id=null, name=four, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=two, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=three, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=five, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=one, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException}
-  testPut(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-  testPutAll(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest): error putting into container adriancole-blobstore10: {[metadata=[type=BLOB, id=null, name=four, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=five, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=one, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=three, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=two, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException}
-  testPutMoreThanSingleListing(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest): error putting into container adriancole-blobstore0: {[metadata=[type=BLOB, id=null, name=59, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=87, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=18, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=75, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=91, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=96, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=46, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=1, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=38, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=24, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=77, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=93, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=33, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=61, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=19, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=70, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=8, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=64, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=58, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=45, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=89, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=32, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=22, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=76, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=3, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=90, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=84, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=65, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=9, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=30, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=98, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=60, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=73, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=2, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=85, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=35, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=79, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=16, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=13, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=88, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=10, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=44, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=23, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=56, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=86, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=72, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=99, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=53, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=25, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=11, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=0, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=47, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=4, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=21, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=92, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=15, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=67, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=7, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=68, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=54, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=41, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=62, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=83, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=80, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=14, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=48, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=27, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=42, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=28, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=97, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=74, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=71, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=55, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=100, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=39, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=43, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=49, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=52, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=82, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=81, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=26, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=36, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=51, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=95, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=57, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=29, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=94, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=20, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=34, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=37, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=78, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=50, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=12, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=5, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=31, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=17, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=40, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=63, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=6, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=66, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=69, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException}
-  testRemove(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-  testValues(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest): error putting into container adriancole-blobstore2: {[metadata=[type=BLOB, id=null, name=four, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=three, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=two, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=five, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=one, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException}
-  testClear(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-  testContainsKey(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-  testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-  testIsEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-  testKeySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
-  testSignGetUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest)
-  testSignGetUrlOptions(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest)
-  testSignPutUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest)
-  testSignRemoveUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest)
-  deleteContainerWithContents(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-  testClearWhenContentsUnderPath(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-  testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-  testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-  testListContainerMarker(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-  testListContainerMaxResults(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-  testListContainerPrefix(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-  testListRootUsesDelimiter(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-  testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-  testWithDetails(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
-  testPublicAccess(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerLiveTest)
-  testContainsBytesValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-  testContainsFileValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-  testContainsInputStreamValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-  testContainsStringValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-  testEntrySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest): error putting into container adriancole-blobstore2: {[metadata=[type=BLOB, id=null, name=four, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=three, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=two, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=five, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=one, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException}
-  testPut(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-  testPutAll(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest): error putting into container adriancole-blobstore6: {[metadata=[type=BLOB, id=null, name=two, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=five, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=three, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=one, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=four, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException}
-  testPutAllBytes(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest): error putting into container adriancole-blobstore9: {[metadata=[type=BLOB, id=null, name=two, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=three, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=five, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=four, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=one, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException}
-  testPutAllFiles(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest): error putting into container adriancole-blobstore10: {[metadata=[type=BLOB, id=null, name=three, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=one, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=two, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=four, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=five, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException}
-  testPutAllStrings(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest): error putting into container adriancole-blobstore0: {[metadata=[type=BLOB, id=null, name=four, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=three, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=two, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=five, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=one, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException}
-  testPutBytes(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-  testPutFile(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-  testPutMoreThanSingleListing(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest): error putting into container adriancole-blobstore3: {[metadata=[type=BLOB, id=null, name=59, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=87, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=18, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=75, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=91, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=96, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=46, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=1, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=24, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=38, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=77, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=93, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=33, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=61, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=19, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=70, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=8, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=58, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=64, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=45, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=89, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=22, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=32, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=76, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=3, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=90, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=84, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=65, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=9, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=98, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=30, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=60, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=73, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=2, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=35, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=85, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=79, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=16, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=13, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=88, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=10, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=44, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=23, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=56, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=72, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=86, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=99, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=53, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=25, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=11, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=0, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=47, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=4, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=21, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=92, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=15, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=67, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=7, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=54, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=68, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=41, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=62, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=83, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=80, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=14, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=48, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=27, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=42, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=28, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=97, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=74, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=71, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=55, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=100, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=39, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=43, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=49, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=52, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=82, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=81, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=26, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=36, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=51, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=95, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=57, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=29, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=20, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=94, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=34, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=37, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=50, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=78, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=12, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=5, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=31, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=17, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=40, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=63, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=6, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=66, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=69, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException}
-  testPutString(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-  testRemove(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-  testValues(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest): error putting into container adriancole-blobstore10: {[metadata=[type=BLOB, id=null, name=one, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=three, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=two, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=five, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException, [metadata=[type=BLOB, id=null, name=four, location=null, uri=null, userMetadata={}]]=java.util.concurrent.ExecutionException: java.lang.NullPointerException}
-  testClear(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-  testContainsKey(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-  testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-  testIsEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-  testKeySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
-  testListContainerPath(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
-  testObjectOperations(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
+Failed tests:   testCopyUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobLiveTest): Server returned HTTP response code: 403 for URL: http://apache.opensourceresources.org/commons/logging/binaries/commons-logging-1.1.1-bin.tar.gz
 
-Tests run: 89, Failures: 74, Errors: 0, Skipped: 0
+Tests run: 88, Failures: 1, Errors: 0, Skipped: 0
 
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 5:35.755s
-[INFO] Finished at: Thu Dec 15 01:45:04 PST 2011
-[INFO] Final Memory: 19M/265M
+[INFO] Total time: 25:30.835s
+[INFO] Finished at: Tue Jan 10 23:39:54 PST 2012
+[INFO] Final Memory: 20M/265M
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project cloudfiles-uk: There are test failures.
 [ERROR] 
-[ERROR] Please refer to /Users/adriancole/workspace/git/jclouds/providers/cloudfiles-uk/target/surefire-reports for the individual test results.
+[ERROR] Please refer to /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudfiles-uk/target/surefire-reports for the individual test results.
 [ERROR] -> [Help 1]
 [ERROR] 
 [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.

@@ -1,7 +1,7 @@
 [INFO] Scanning for projects...
 [WARNING] 
 [WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:slicehost:bundle:1.3.0-SNAPSHOT
-[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/workspace/git/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/workspace/git/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/workspace/git/1.3.x/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/workspace/git/1.3.x/jclouds/project/pom.xml, line 24, column 13
 [WARNING] 
 [WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
 [WARNING] 
@@ -13,7 +13,7 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ slicehost ---
-[INFO] Deleting /Users/adriancole/workspace/git/jclouds/providers/slicehost/target
+[INFO] Deleting /Users/adriancole/workspace/git/1.3.x/jclouds/providers/slicehost/target
 [INFO] 
 [INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ slicehost ---
 [INFO] 
@@ -29,133 +29,133 @@
 [INFO] 
 [INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ slicehost ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/slicehost/src/main/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.3.x/jclouds/providers/slicehost/src/main/clojure
 [INFO] Copying 1 resource
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ slicehost ---
-[INFO] Compiling 31 source files to /Users/adriancole/workspace/git/jclouds/providers/slicehost/target/classes
+[INFO] Compiling 31 source files to /Users/adriancole/workspace/git/1.3.x/jclouds/providers/slicehost/target/classes
 [INFO] 
 [INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ slicehost ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/slicehost/src/test/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.3.x/jclouds/providers/slicehost/src/test/clojure
 [INFO] Copying 10 resources
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ slicehost ---
-[INFO] Compiling 15 source files to /Users/adriancole/workspace/git/jclouds/providers/slicehost/target/test-classes
+[INFO] Compiling 15 source files to /Users/adriancole/workspace/git/1.3.x/jclouds/providers/slicehost/target/test-classes
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (default-test) @ slicehost ---
-[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/slicehost/target/surefire-reports
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/slicehost/target/surefire-reports
 [INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
 
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
 Running TestSuite
+Starting test test32(org.jclouds.slicehost.compute.functions.SlicehostImageToImageTest)
 Starting test test(org.jclouds.slicehost.compute.functions.SlicehostImageToImageTest)
-Starting test test(org.jclouds.slicehost.xml.ImageHandlerTest)
 Starting test test(org.jclouds.slicehost.xml.FlavorHandlerTest)
 Starting test test32(org.jclouds.slicehost.xml.ImageHandlerTest)
-Starting test test32(org.jclouds.slicehost.compute.functions.SlicehostImageToImageTest)
-[pool-2-thread-3] Test test(org.jclouds.slicehost.xml.FlavorHandlerTest) succeeded: 714ms
+Starting test test(org.jclouds.slicehost.xml.ImageHandlerTest)
+[pool-2-thread-4] Test test32(org.jclouds.slicehost.xml.ImageHandlerTest) succeeded: 254ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-[pool-2-thread-4] Test test32(org.jclouds.slicehost.xml.ImageHandlerTest) succeeded: 712ms
-Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
 Starting test testApplyWhereImageAndHardwareFound(org.jclouds.slicehost.compute.functions.SliceToNodeMetadataTest)
-Starting test testApplyWhereImageAndHardwareNotFound(org.jclouds.slicehost.compute.functions.SliceToNodeMetadataTest)
-[pool-2-thread-5] Test test(org.jclouds.slicehost.xml.ImageHandlerTest) succeeded: 723ms
+[pool-2-thread-3] Test test(org.jclouds.slicehost.xml.FlavorHandlerTest) succeeded: 259ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+[pool-2-thread-5] Test test(org.jclouds.slicehost.xml.ImageHandlerTest) succeeded: 293ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test testApplyWhereImageAndHardwareNotFound(org.jclouds.slicehost.compute.functions.SliceToNodeMetadataTest)
 Starting test testApplyWhereImageFoundAndHardwareNotFound(org.jclouds.slicehost.compute.functions.SliceToNodeMetadataTest)
-[pool-2-thread-4] Test testApplyWhereImageAndHardwareNotFound(org.jclouds.slicehost.compute.functions.SliceToNodeMetadataTest) succeeded: 138ms
+[pool-2-thread-5] Test testApplyWhereImageAndHardwareNotFound(org.jclouds.slicehost.compute.functions.SliceToNodeMetadataTest) succeeded: 143ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
 Starting test testAllStatusCovered(org.jclouds.slicehost.compute.config.SlicehostComputeServiceContextModuleTest)
-[pool-2-thread-4] Test testAllStatusCovered(org.jclouds.slicehost.compute.config.SlicehostComputeServiceContextModuleTest) succeeded: 0ms
+[pool-2-thread-5] Test testAllStatusCovered(org.jclouds.slicehost.compute.config.SlicehostComputeServiceContextModuleTest) succeeded: 0ms
 Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
 Starting test test(org.jclouds.slicehost.compute.functions.FlavorToHardwareTest)
-[pool-2-thread-4] Test test(org.jclouds.slicehost.compute.functions.FlavorToHardwareTest) succeeded: 18ms
+[pool-2-thread-2] Test test(org.jclouds.slicehost.compute.functions.SlicehostImageToImageTest) succeeded: 609ms
 Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
-[pool-2-thread-1] Test test32(org.jclouds.slicehost.compute.functions.SlicehostImageToImageTest) succeeded: 1092ms
+[pool-2-thread-1] Test test32(org.jclouds.slicehost.compute.functions.SlicehostImageToImageTest) succeeded: 678ms
 Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
-[pool-2-thread-2] Test test(org.jclouds.slicehost.compute.functions.SlicehostImageToImageTest) succeeded: 1102ms
+[pool-2-thread-5] Test test(org.jclouds.slicehost.compute.functions.FlavorToHardwareTest) succeeded: 159ms
 Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
-[pool-2-thread-5] Test testApplyWhereImageFoundAndHardwareNotFound(org.jclouds.slicehost.compute.functions.SliceToNodeMetadataTest) succeeded: 378ms
+[pool-2-thread-3] Test testApplyWhereImageFoundAndHardwareNotFound(org.jclouds.slicehost.compute.functions.SliceToNodeMetadataTest) succeeded: 235ms
 Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
-[pool-2-thread-3] Test testApplyWhereImageAndHardwareFound(org.jclouds.slicehost.compute.functions.SliceToNodeMetadataTest) succeeded: 386ms
+[pool-2-thread-4] Test testApplyWhereImageAndHardwareFound(org.jclouds.slicehost.compute.functions.SliceToNodeMetadataTest) succeeded: 357ms
 Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
 Starting test testDestroySlice(org.jclouds.slicehost.SlicehostAsyncClientTest)
+Starting test testListFlavors(org.jclouds.slicehost.SlicehostAsyncClientTest)
+Starting test testListImages(org.jclouds.slicehost.SlicehostAsyncClientTest)
 Starting test testRebuildSliceFromImage(org.jclouds.slicehost.SlicehostAsyncClientTest)
 Starting test testCreateSlice(org.jclouds.slicehost.SlicehostAsyncClientTest)
-Starting test testListImages(org.jclouds.slicehost.SlicehostAsyncClientTest)
-Starting test testListFlavors(org.jclouds.slicehost.SlicehostAsyncClientTest)
-[pool-3-thread-4] Test testRebuildSliceFromImage(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 334ms
+[pool-3-thread-5] Test testListFlavors(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 58ms
 Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
 Starting test testHardReboot(org.jclouds.slicehost.SlicehostAsyncClientTest)
-[pool-3-thread-4] Test testHardReboot(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 5ms
+[pool-3-thread-5] Test testHardReboot(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 7ms
 Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
 Starting test testReboot(org.jclouds.slicehost.SlicehostAsyncClientTest)
-[pool-3-thread-3] Test testDestroySlice(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 345ms
+[pool-3-thread-5] Test testReboot(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 5ms
 Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
 Starting test testListSlices(org.jclouds.slicehost.SlicehostAsyncClientTest)
-[pool-3-thread-5] Test testListFlavors(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 332ms
+[pool-3-thread-5] Test testListSlices(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 31ms
 Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
 Starting test testGetImage(org.jclouds.slicehost.SlicehostAsyncClientTest)
-[pool-3-thread-2] Test testListImages(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 354ms
+[pool-3-thread-5] Test testGetImage(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 3ms
 Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
 Starting test testGetSlice(org.jclouds.slicehost.SlicehostAsyncClientTest)
-[pool-3-thread-4] Test testReboot(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 21ms
+[pool-3-thread-5] Test testGetSlice(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 5ms
 Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
-[pool-3-thread-3] Test testListSlices(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 15ms
-Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
 Starting test testGetFlavor(org.jclouds.slicehost.SlicehostAsyncClientTest)
+[pool-3-thread-5] Test testGetFlavor(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
 Starting test testRebuildSliceFromBackup(org.jclouds.slicehost.SlicehostAsyncClientTest)
-[pool-3-thread-2] Test testGetSlice(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 86ms
+[pool-3-thread-3] Test testDestroySlice(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 128ms
 Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
-[pool-3-thread-1] Test testCreateSlice(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 446ms
+[pool-3-thread-2] Test testListImages(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 132ms
 Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
-[pool-3-thread-4] Test testGetFlavor(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 87ms
+[pool-3-thread-4] Test testRebuildSliceFromImage(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 132ms
 Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
-[pool-3-thread-3] Test testRebuildSliceFromBackup(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 89ms
+[pool-3-thread-5] Test testRebuildSliceFromBackup(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 20ms
 Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
-[pool-3-thread-5] Test testGetImage(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 100ms
+[pool-3-thread-1] Test testCreateSlice(org.jclouds.slicehost.SlicehostAsyncClientTest) succeeded: 141ms
 Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
 Starting test testInRestProperties(org.jclouds.slicehost.SlicehostProviderTest)
-[pool-4-thread-1] Test testInRestProperties(org.jclouds.slicehost.SlicehostProviderTest) succeeded: 14ms
-Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
 Starting test testWithId(org.jclouds.slicehost.SlicehostProviderTest)
+[pool-4-thread-2] Test testWithId(org.jclouds.slicehost.SlicehostProviderTest) succeeded: 4ms
+Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
 Starting test testAllContains(org.jclouds.slicehost.SlicehostProviderTest)
-Starting test testOfTypeContains(org.jclouds.slicehost.SlicehostProviderTest)
-[pool-4-thread-2] Test testWithId(org.jclouds.slicehost.SlicehostProviderTest) succeeded: 65ms
+[pool-4-thread-3] Test testAllContains(org.jclouds.slicehost.SlicehostProviderTest) succeeded: 2ms
 Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
-[pool-4-thread-3] Test testAllContains(org.jclouds.slicehost.SlicehostProviderTest) succeeded: 65ms
+[pool-4-thread-1] Test testInRestProperties(org.jclouds.slicehost.SlicehostProviderTest) succeeded: 23ms
 Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
-[pool-4-thread-4] Test testOfTypeContains(org.jclouds.slicehost.SlicehostProviderTest) succeeded: 65ms
+Starting test testOfTypeContains(org.jclouds.slicehost.SlicehostProviderTest)
+[pool-4-thread-4] Test testOfTypeContains(org.jclouds.slicehost.SlicehostProviderTest) succeeded: 2ms
 Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
 Starting test test(org.jclouds.slicehost.xml.FlavorsHandlerTest)
-[pool-5-thread-1] Test test(org.jclouds.slicehost.xml.FlavorsHandlerTest) succeeded: 42ms
+[pool-5-thread-1] Test test(org.jclouds.slicehost.xml.FlavorsHandlerTest) succeeded: 8ms
 Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
 Starting test test(org.jclouds.slicehost.xml.ImagesHandlerTest)
-[pool-6-thread-1] Test test(org.jclouds.slicehost.xml.ImagesHandlerTest) succeeded: 4ms
+[pool-6-thread-1] Test test(org.jclouds.slicehost.xml.ImagesHandlerTest) succeeded: 3ms
 Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
 Starting test test(org.jclouds.slicehost.xml.SliceHandlerTest)
 Starting test testNew(org.jclouds.slicehost.xml.SliceHandlerTest)
-[pool-7-thread-1] Test test(org.jclouds.slicehost.xml.SliceHandlerTest) succeeded: 3ms
+[pool-7-thread-2] Test testNew(org.jclouds.slicehost.xml.SliceHandlerTest) succeeded: 3ms
 Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
-[pool-7-thread-2] Test testNew(org.jclouds.slicehost.xml.SliceHandlerTest) succeeded: 6ms
+[pool-7-thread-1] Test test(org.jclouds.slicehost.xml.SliceHandlerTest) succeeded: 6ms
 Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
 Starting test test(org.jclouds.slicehost.xml.SlicesHandlerTest)
 [pool-8-thread-1] Test test(org.jclouds.slicehost.xml.SlicesHandlerTest) succeeded: 2ms
 Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
-Tests run: 31, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.486 sec
+Tests run: 31, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.239 sec
 
 Results :
 
 Tests run: 31, Failures: 0, Errors: 0, Skipped: 0
 
 [INFO] 
-[INFO] --- clojure-maven-plugin:1.3.3:test (test-clojure) @ slicehost ---
+[INFO] --- clojure-maven-plugin:1.3.8:test (test-clojure) @ slicehost ---
 
-Testing user
+Testing com.theoryinpractise.clojure.testrunner
 
 Ran 0 tests containing 0 assertions.
 0 failures, 0 errors.
@@ -163,16 +163,16 @@ Ran 0 tests containing 0 assertions.
 [INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ slicehost ---
 [INFO] 
 [INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ slicehost ---
-[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/slicehost/target/slicehost-1.3.0-SNAPSHOT-sources.jar
+[INFO] Building jar: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/slicehost/target/slicehost-1.3.0-SNAPSHOT-sources.jar
 [INFO] 
 [INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ slicehost ---
 [INFO] Skipping javadoc generation
 [INFO] 
 [INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ slicehost ---
-[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/slicehost/target/slicehost-1.3.0-SNAPSHOT-tests.jar
+[INFO] Building jar: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/slicehost/target/slicehost-1.3.0-SNAPSHOT-tests.jar
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (integration) @ slicehost ---
-[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/slicehost/target/surefire-reports
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/slicehost/target/surefire-reports
 [INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
 
 -------------------------------------------------------
@@ -180,419 +180,449 @@ Ran 0 tests containing 0 assertions.
 -------------------------------------------------------
 Running TestSuite
 Starting test setServiceDefaults(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)
-[pool-2-thread-1] Test setServiceDefaults(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test setServiceDefaults(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
 Starting test testCompareSizes(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)
-Dec 22, 2011 3:29:23 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+Jan 11, 2012 12:36:14 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
 INFO: smallest [id=1, providerId=1, name=256 slice, processors=[[cores=0.25, speed=1.0]], ram=256, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
-Dec 22, 2011 3:29:23 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
-INFO: fastest [id=7, providerId=7, name=15.5GB slice, processors=[[cores=15.5, speed=1.0]], ram=15872, volumes=[[id=null, type=LOCAL, size=62.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
-Dec 22, 2011 3:29:23 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
-INFO: biggest [id=7, providerId=7, name=15.5GB slice, processors=[[cores=15.5, speed=1.0]], ram=15872, volumes=[[id=null, type=LOCAL, size=62.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
-[pool-2-thread-1] Test testCompareSizes(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 3779ms
+Jan 11, 2012 12:36:14 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: fastest [id=8, providerId=8, name=30GB slice, processors=[[cores=30.0, speed=1.0]], ram=30720, volumes=[[id=null, type=LOCAL, size=120.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
+Jan 11, 2012 12:36:14 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: biggest [id=8, providerId=8, name=30GB slice, processors=[[cores=30.0, speed=1.0]], ram=30720, volumes=[[id=null, type=LOCAL, size=120.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
+[pool-2-thread-1] Test testCompareSizes(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 2992ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
 Starting test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)
 SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
 SLF4J: Defaulting to no-operation (NOP) logger implementation
 SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+log4j:WARN No appenders could be found for logger (jclouds.ssh).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+<< problem applying options to node(20496897): 
+org.jclouds.rest.AuthorizationException: (root:pw[5d907853a9617cfd55fb62eae803595b]@184.106.189.226:22) (root:pw[5d907853a9617cfd55fb62eae803595b]@184.106.189.226:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
+	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:411)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:242)
+	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:252)
+	at org.jclouds.compute.callables.RunScriptOnNodeUsingSsh.call(RunScriptOnNodeUsingSsh.java:73)
+	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:69)
+	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:44)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available authentication methods
+	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:114)
+	at net.schmizz.sshj.SSHClient.auth(SSHClient.java:204)
+	at net.schmizz.sshj.SSHClient.auth(SSHClient.java:189)
+	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:265)
+	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:235)
+	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:219)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:198)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:174)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:223)
+	... 9 more
+Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
+	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
+	... 17 more
 [pool-2-thread-1] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) failed.
 Test suite progress: tests succeeded: 2, failed: 1, skipped: 0.
 Starting test testCorrectAuthException(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)
-[pool-2-thread-1] Test testCorrectAuthException(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 4654ms
+[pool-2-thread-1] Test testCorrectAuthException(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 1735ms
 Test suite progress: tests succeeded: 3, failed: 1, skipped: 0.
-Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)
-[pool-2-thread-1] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 1087ms
-Test suite progress: tests succeeded: 4, failed: 1, skipped: 0.
 Starting test testCreateAndRunAService(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)
-Dec 22, 2011 3:35:49 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << available node(20454320) os([name=null, family=ubuntu, version=11.10, arch=null, is64Bit=true, description=Ubuntu 11.10]) in 179s
-Dec 22, 2011 3:35:58 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << configured node(20454320) with bash: java: command not found and JBoss ls: cannot access /usr/local/jboss/bundles/org/jboss/as/osgi/configadmin/main: No such file or directory in 5s
-Dec 22, 2011 3:36:02 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+Jan 11, 2012 12:43:04 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << available node(20496898) os([name=null, family=ubuntu, version=11.10, arch=null, is64Bit=true, description=Ubuntu 11.10]) in 187s
+Jan 11, 2012 12:43:14 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << configured node(20496898) with bash: java: command not found and JBoss ls: cannot access /usr/local/jboss/bundles/org/jboss/as/osgi/configadmin/main: No such file or directory in 6s
+Jan 11, 2012 12:43:16 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
 WARNING: could not get info on ip 209.132.182.31; check freegeoip
-Dec 22, 2011 3:36:02 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of jboss7(download.jboss.org) from perpective of node(20454320): 209.132.182.31
-Dec 22, 2011 3:36:04 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
-WARNING: could not get info on ip 128.242.186.201; check freegeoip
-Dec 22, 2011 3:36:04 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of jdk7(download.oracle.com) from perpective of node(20454320): 128.242.186.201
+Jan 11, 2012 12:43:16 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jboss7(download.jboss.org) from perpective of node(20496898): 209.132.182.31
+Jan 11, 2012 12:43:18 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+WARNING: could not get info on ip 128.242.186.238; check freegeoip
+Jan 11, 2012 12:43:18 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jdk7(download.oracle.com) from perpective of node(20496898): 128.242.186.238
 [pool-2-thread-1] Test testCreateAndRunAService(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) failed.
-Test suite progress: tests succeeded: 4, failed: 2, skipped: 0.
+Test suite progress: tests succeeded: 3, failed: 2, skipped: 0.
 Starting test testCreateTwoNodesWithRunScript(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)
 [pool-2-thread-1] Test testCreateTwoNodesWithRunScript(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) failed.
-Test suite progress: tests succeeded: 4, failed: 3, skipped: 0.
+Test suite progress: tests succeeded: 3, failed: 3, skipped: 0.
 [pool-2-thread-1] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) skipped.
-Test suite progress: tests succeeded: 4, failed: 3, skipped: 1.
+Test suite progress: tests succeeded: 3, failed: 3, skipped: 1.
 [pool-2-thread-1] Test testCredentialsCache(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) skipped.
-Test suite progress: tests succeeded: 4, failed: 3, skipped: 2.
+Test suite progress: tests succeeded: 3, failed: 3, skipped: 2.
 [pool-2-thread-1] Test testGet(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) skipped.
-Test suite progress: tests succeeded: 4, failed: 3, skipped: 3.
+Test suite progress: tests succeeded: 3, failed: 3, skipped: 3.
 Starting test testGetAssignableLocations(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)
-Dec 22, 2011 3:40:41 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+Jan 11, 2012 12:48:22 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
 WARNING: location [id=slicehost, scope=PROVIDER, description=https://api.slicehost.com, parent=null, iso3166Codes=[US-IL, US-TX, US-MO], metadata={}]
-[pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 5, failed: 3, skipped: 3.
+[pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 4, failed: 3, skipped: 3.
 Starting test testImagesCache(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)
 [pool-2-thread-1] Test testImagesCache(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 6, failed: 3, skipped: 3.
+Test suite progress: tests succeeded: 5, failed: 3, skipped: 3.
 Starting test testListImages(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)
 [pool-2-thread-1] Test testListImages(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 7, failed: 3, skipped: 3.
+Test suite progress: tests succeeded: 6, failed: 3, skipped: 3.
 Starting test testListSizes(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)
 [pool-2-thread-1] Test testListSizes(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 8, failed: 3, skipped: 3.
+Test suite progress: tests succeeded: 7, failed: 3, skipped: 3.
 Starting test testOptionToNotBlock(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)
-[pool-2-thread-1] Test testOptionToNotBlock(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 185272ms
-Test suite progress: tests succeeded: 9, failed: 3, skipped: 3.
+[pool-2-thread-1] Test testOptionToNotBlock(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 187044ms
+Test suite progress: tests succeeded: 8, failed: 3, skipped: 3.
 [pool-2-thread-1] Test testReboot(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) skipped.
-Test suite progress: tests succeeded: 9, failed: 3, skipped: 4.
+Test suite progress: tests succeeded: 8, failed: 3, skipped: 4.
 Starting test testTemplateMatch(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)
 [pool-2-thread-1] Test testTemplateMatch(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 4ms
-Test suite progress: tests succeeded: 10, failed: 3, skipped: 4.
+Test suite progress: tests succeeded: 9, failed: 3, skipped: 4.
 Starting test testSuspendResume(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)
-[pool-2-thread-1] Test testSuspendResume(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 4434ms
-Test suite progress: tests succeeded: 11, failed: 3, skipped: 4.
+[pool-2-thread-1] Test testSuspendResume(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 4361ms
+Test suite progress: tests succeeded: 10, failed: 3, skipped: 4.
 Starting test testGetNodesWithDetails(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)
-[pool-2-thread-1] Test testGetNodesWithDetails(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 1677ms
-Test suite progress: tests succeeded: 12, failed: 3, skipped: 4.
+[pool-2-thread-1] Test testGetNodesWithDetails(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 3597ms
+Test suite progress: tests succeeded: 11, failed: 3, skipped: 4.
 Starting test testListNodes(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)
-[pool-2-thread-1] Test testListNodes(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 2846ms
-Test suite progress: tests succeeded: 13, failed: 3, skipped: 4.
+[pool-2-thread-1] Test testListNodes(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 745ms
+Test suite progress: tests succeeded: 12, failed: 3, skipped: 4.
 Starting test testDestroyNodes(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)
 [pool-2-thread-1] Test testDestroyNodes(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 12, failed: 4, skipped: 4.
+Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest)
+[pool-2-thread-1] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest) succeeded: 3241ms
 Test suite progress: tests succeeded: 13, failed: 4, skipped: 4.
-Starting test testCreateSlice(org.jclouds.slicehost.SlicehostClientLiveTest)
-[pool-2-thread-1] Test testCreateSlice(org.jclouds.slicehost.SlicehostClientLiveTest) failed.
-Test suite progress: tests succeeded: 13, failed: 5, skipped: 4.
-Starting test testGetImageDetailsNotFound(org.jclouds.slicehost.SlicehostClientLiveTest)
-[pool-2-thread-1] Test testGetImageDetailsNotFound(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 1402ms
-Test suite progress: tests succeeded: 14, failed: 5, skipped: 4.
-Starting test testGetImagesDetail(org.jclouds.slicehost.SlicehostClientLiveTest)
-[pool-2-thread-1] Test testGetImagesDetail(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 78425ms
-Test suite progress: tests succeeded: 15, failed: 5, skipped: 4.
-Starting test testGetSlicesDetail(org.jclouds.slicehost.SlicehostClientLiveTest)
-[pool-2-thread-1] Test testGetSlicesDetail(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 6423ms
-Test suite progress: tests succeeded: 16, failed: 5, skipped: 4.
-Starting test testListFlavorsDetail(org.jclouds.slicehost.SlicehostClientLiveTest)
-[pool-2-thread-1] Test testListFlavorsDetail(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 287ms
-Test suite progress: tests succeeded: 17, failed: 5, skipped: 4.
-Starting test testListImages(org.jclouds.slicehost.SlicehostClientLiveTest)
-[pool-2-thread-1] Test testListImages(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 1923ms
-Test suite progress: tests succeeded: 18, failed: 5, skipped: 4.
-Starting test testListImagesDetail(org.jclouds.slicehost.SlicehostClientLiveTest)
-[pool-2-thread-1] Test testListImagesDetail(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 1892ms
-Test suite progress: tests succeeded: 19, failed: 5, skipped: 4.
-Starting test testListSlices(org.jclouds.slicehost.SlicehostClientLiveTest)
-[pool-2-thread-1] Test testListSlices(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 2315ms
-Test suite progress: tests succeeded: 20, failed: 5, skipped: 4.
-Starting test testListSlicesDetail(org.jclouds.slicehost.SlicehostClientLiveTest)
-[pool-2-thread-1] Test testListSlicesDetail(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 2326ms
-Test suite progress: tests succeeded: 21, failed: 5, skipped: 4.
-[pool-2-thread-1] Test testSliceDetails(org.jclouds.slicehost.SlicehostClientLiveTest) skipped.
-Test suite progress: tests succeeded: 21, failed: 5, skipped: 5.
-[pool-2-thread-1] Test testRebootHard(org.jclouds.slicehost.SlicehostClientLiveTest) skipped.
-Test suite progress: tests succeeded: 21, failed: 5, skipped: 6.
-[pool-2-thread-1] Test testRebootSoft(org.jclouds.slicehost.SlicehostClientLiveTest) skipped.
-Test suite progress: tests succeeded: 21, failed: 5, skipped: 7.
-[pool-2-thread-1] Test destroySlice1(org.jclouds.slicehost.SlicehostClientLiveTest) skipped.
-Test suite progress: tests succeeded: 21, failed: 5, skipped: 8.
-Starting test testGetFlavorDetailsNotFound(org.jclouds.slicehost.SlicehostClientLiveTest)
-[pool-2-thread-1] Test testGetFlavorDetailsNotFound(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 283ms
-Test suite progress: tests succeeded: 22, failed: 5, skipped: 8.
-Starting test testGetFlavorsDetail(org.jclouds.slicehost.SlicehostClientLiveTest)
-[pool-2-thread-1] Test testGetFlavorsDetail(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 3472ms
-Test suite progress: tests succeeded: 23, failed: 5, skipped: 8.
-Starting test testListFlavors(org.jclouds.slicehost.SlicehostClientLiveTest)
-[pool-2-thread-1] Test testListFlavors(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 286ms
-Test suite progress: tests succeeded: 24, failed: 5, skipped: 8.
-Starting test testGetSliceDetailsNotFound(org.jclouds.slicehost.SlicehostClientLiveTest)
-[pool-2-thread-1] Test testGetSliceDetailsNotFound(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 301ms
-Test suite progress: tests succeeded: 25, failed: 5, skipped: 8.
 Starting test testCompareSizes(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 smallest [id=1, providerId=1, name=256 slice, processors=[[cores=0.25, speed=1.0]], ram=256, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
-fastest [id=7, providerId=7, name=15.5GB slice, processors=[[cores=15.5, speed=1.0]], ram=15872, volumes=[[id=null, type=LOCAL, size=62.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
-biggest [id=7, providerId=7, name=15.5GB slice, processors=[[cores=15.5, speed=1.0]], ram=15872, volumes=[[id=null, type=LOCAL, size=62.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
-[pool-2-thread-1] Test testCompareSizes(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1739ms
-Test suite progress: tests succeeded: 26, failed: 5, skipped: 8.
+fastest [id=8, providerId=8, name=30GB slice, processors=[[cores=30.0, speed=1.0]], ram=30720, volumes=[[id=null, type=LOCAL, size=120.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
+biggest [id=8, providerId=8, name=30GB slice, processors=[[cores=30.0, speed=1.0]], ram=30720, volumes=[[id=null, type=LOCAL, size=120.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
+[pool-2-thread-1] Test testCompareSizes(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1589ms
+Test suite progress: tests succeeded: 14, failed: 4, skipped: 4.
 Starting test testGetAssignableLocations(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 location [id=slicehost, scope=PROVIDER, description=https://api.slicehost.com, parent=null, iso3166Codes=[US-IL, US-TX, US-MO], metadata={}]
 [pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 27, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 15, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 28, failed: 5, skipped: 8.
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 16, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 29, failed: 5, skipped: 8.
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 17, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 4ms
-Test suite progress: tests succeeded: 30, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 18, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 31, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 19, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 20, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 32, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 21, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 33, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 22, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 23, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 34, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 24, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 25, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 35, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 26, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 36, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 27, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 37, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 28, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 38, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 29, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 39, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 30, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 40, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 31, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 41, failed: 5, skipped: 8.
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 32, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 42, failed: 5, skipped: 8.
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 33, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 43, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 44, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 45, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 46, failed: 5, skipped: 8.
+[pool-2-thread-1] Test testTemplateBuilderCanFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 10ms
+Test suite progress: tests succeeded: 34, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCanUseImageId(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCanUseImageId(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1913ms
-Test suite progress: tests succeeded: 47, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 5ms
-Test suite progress: tests succeeded: 48, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 49, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 50, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 51, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 52, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 53, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 54, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 55, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 56, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 57, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 58, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 59, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 5ms
-Test suite progress: tests succeeded: 60, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 61, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 62, failed: 5, skipped: 8.
+[pool-2-thread-1] Test testTemplateBuilderCanUseImageId(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1814ms
+Test suite progress: tests succeeded: 35, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 3ms
-Test suite progress: tests succeeded: 63, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 36, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 37, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 38, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 39, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 40, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 41, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 64, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 42, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 43, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 44, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 45, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 46, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 65, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 47, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 66, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 48, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 67, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 68, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 69, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 49, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 70, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 50, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 71, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 51, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 72, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 52, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 73, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 53, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 74, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 75, failed: 5, skipped: 8.
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 54, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 76, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 55, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 77, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 56, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 57, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 58, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 59, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 60, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 61, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 78, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 62, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 79, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 80, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 81, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 82, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 83, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 84, failed: 5, skipped: 8.
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 5ms
+Test suite progress: tests succeeded: 63, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 85, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 64, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 86, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 65, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 87, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 66, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 10ms
+Test suite progress: tests succeeded: 67, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 68, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 69, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 70, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 88, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 89, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 90, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 91, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 92, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 71, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 93, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 72, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 94, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 73, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 4ms
+Test suite progress: tests succeeded: 74, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 95, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 75, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 76, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 77, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 96, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 78, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 97, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 98, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 99, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 79, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 100, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 80, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 101, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 81, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 102, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 82, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 103, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 83, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 104, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 105, failed: 5, skipped: 8.
-Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 106, failed: 5, skipped: 8.
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 13ms
+Test suite progress: tests succeeded: 84, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 107, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 85, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 108, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 86, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 109, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 87, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 110, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 88, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 111, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 89, failed: 4, skipped: 4.
 Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 112, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 90, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 91, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 92, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 93, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 94, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 95, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 96, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 97, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 98, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 99, failed: 4, skipped: 4.
+Starting test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
+[pool-2-thread-1] Test testTemplateBuilderCannotFind(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 100, failed: 4, skipped: 4.
 Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 3578ms
-Test suite progress: tests succeeded: 113, failed: 5, skipped: 8.
+[pool-2-thread-1] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 3821ms
+Test suite progress: tests succeeded: 101, failed: 4, skipped: 4.
 Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 3411ms
-Test suite progress: tests succeeded: 114, failed: 5, skipped: 8.
+[pool-2-thread-1] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 3671ms
+Test suite progress: tests succeeded: 102, failed: 4, skipped: 4.
 Starting test testDefaultTemplateBuilder(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
 [pool-2-thread-1] Test testDefaultTemplateBuilder(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 115, failed: 5, skipped: 8.
+Test suite progress: tests succeeded: 103, failed: 4, skipped: 4.
 Starting test testFromTemplate(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest)
-[pool-2-thread-1] Test testFromTemplate(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 1ms
+[pool-2-thread-1] Test testFromTemplate(org.jclouds.slicehost.compute.SlicehostTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 104, failed: 4, skipped: 4.
+Starting test testCreateSlice(org.jclouds.slicehost.SlicehostClientLiveTest)
+[pool-2-thread-1] Test testCreateSlice(org.jclouds.slicehost.SlicehostClientLiveTest) failed.
+Test suite progress: tests succeeded: 104, failed: 5, skipped: 4.
+Starting test testGetImageDetailsNotFound(org.jclouds.slicehost.SlicehostClientLiveTest)
+[pool-2-thread-1] Test testGetImageDetailsNotFound(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 1210ms
+Test suite progress: tests succeeded: 105, failed: 5, skipped: 4.
+Starting test testGetImagesDetail(org.jclouds.slicehost.SlicehostClientLiveTest)
+[pool-2-thread-1] Test testGetImagesDetail(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 79367ms
+Test suite progress: tests succeeded: 106, failed: 5, skipped: 4.
+Starting test testGetSlicesDetail(org.jclouds.slicehost.SlicehostClientLiveTest)
+[pool-2-thread-1] Test testGetSlicesDetail(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 8839ms
+Test suite progress: tests succeeded: 107, failed: 5, skipped: 4.
+Starting test testListFlavorsDetail(org.jclouds.slicehost.SlicehostClientLiveTest)
+[pool-2-thread-1] Test testListFlavorsDetail(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 896ms
+Test suite progress: tests succeeded: 108, failed: 5, skipped: 4.
+Starting test testListImages(org.jclouds.slicehost.SlicehostClientLiveTest)
+[pool-2-thread-1] Test testListImages(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 2299ms
+Test suite progress: tests succeeded: 109, failed: 5, skipped: 4.
+Starting test testListImagesDetail(org.jclouds.slicehost.SlicehostClientLiveTest)
+[pool-2-thread-1] Test testListImagesDetail(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 2165ms
+Test suite progress: tests succeeded: 110, failed: 5, skipped: 4.
+Starting test testListSlices(org.jclouds.slicehost.SlicehostClientLiveTest)
+[pool-2-thread-1] Test testListSlices(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 2206ms
+Test suite progress: tests succeeded: 111, failed: 5, skipped: 4.
+Starting test testListSlicesDetail(org.jclouds.slicehost.SlicehostClientLiveTest)
+[pool-2-thread-1] Test testListSlicesDetail(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 2608ms
+Test suite progress: tests succeeded: 112, failed: 5, skipped: 4.
+[pool-2-thread-1] Test testSliceDetails(org.jclouds.slicehost.SlicehostClientLiveTest) skipped.
+Test suite progress: tests succeeded: 112, failed: 5, skipped: 5.
+[pool-2-thread-1] Test testRebootHard(org.jclouds.slicehost.SlicehostClientLiveTest) skipped.
+Test suite progress: tests succeeded: 112, failed: 5, skipped: 6.
+[pool-2-thread-1] Test testRebootSoft(org.jclouds.slicehost.SlicehostClientLiveTest) skipped.
+Test suite progress: tests succeeded: 112, failed: 5, skipped: 7.
+[pool-2-thread-1] Test destroySlice1(org.jclouds.slicehost.SlicehostClientLiveTest) skipped.
+Test suite progress: tests succeeded: 112, failed: 5, skipped: 8.
+Starting test testGetFlavorDetailsNotFound(org.jclouds.slicehost.SlicehostClientLiveTest)
+[pool-2-thread-1] Test testGetFlavorDetailsNotFound(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 811ms
+Test suite progress: tests succeeded: 113, failed: 5, skipped: 8.
+Starting test testGetFlavorsDetail(org.jclouds.slicehost.SlicehostClientLiveTest)
+[pool-2-thread-1] Test testGetFlavorsDetail(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 13594ms
+Test suite progress: tests succeeded: 114, failed: 5, skipped: 8.
+Starting test testListFlavors(org.jclouds.slicehost.SlicehostClientLiveTest)
+[pool-2-thread-1] Test testListFlavors(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 867ms
+Test suite progress: tests succeeded: 115, failed: 5, skipped: 8.
+Starting test testGetSliceDetailsNotFound(org.jclouds.slicehost.SlicehostClientLiveTest)
+[pool-2-thread-1] Test testGetSliceDetailsNotFound(org.jclouds.slicehost.SlicehostClientLiveTest) succeeded: 616ms
 Test suite progress: tests succeeded: 116, failed: 5, skipped: 8.
-Tests run: 129, Failures: 5, Errors: 0, Skipped: 8, Time elapsed: 1,042.293 sec <<< FAILURE!
+Tests run: 129, Failures: 5, Errors: 0, Skipped: 8, Time elapsed: 1,111.139 sec <<< FAILURE!
 
 Results :
 
-Failed tests:   testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest): node 20454315 needs to be running before executing a script on it. current state: PENDING
-  testCreateAndRunAService(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest): failed to open socket [address=184.106.187.252, port=8080] on node [id=20454320, providerId=20454320, group=slicehost-s, name=slicehost-s-fd0, location=[id=slicehost, scope=PROVIDER, description=https://api.slicehost.com, parent=null, iso3166Codes=[US-IL, US-TX, US-MO], metadata={}], uri=null, imageId=119, os=[name=null, family=ubuntu, version=11.10, arch=null, is64Bit=true, description=Ubuntu 11.10], state=PENDING, loginPort=22, hostname=slicehost-s-fd0, privateAddresses=[10.180.86.119], publicAddresses=[184.106.187.252], hardware=[id=1, providerId=1, name=256 slice, processors=[[cores=0.25, speed=1.0]], ram=256, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]], loginUser=root, userMetadata={}, tags=[]]:
+Failed tests:   testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest): expected:<RUNNING> but was:<PENDING>
+  testCreateAndRunAService(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest): failed to open socket [address=184.106.96.74, port=8080] on node [id=20496898, providerId=20496898, group=slicehost-s, name=slicehost-s-176, location=[id=slicehost, scope=PROVIDER, description=https://api.slicehost.com, parent=null, iso3166Codes=[US-IL, US-TX, US-MO], metadata={}], uri=null, imageId=119, os=[name=null, family=ubuntu, version=11.10, arch=null, is64Bit=true, description=Ubuntu 11.10], state=RUNNING, loginPort=22, hostname=slicehost-s-176, privateAddresses=[10.180.84.79], publicAddresses=[184.106.96.74], hardware=[id=1, providerId=1, name=256 slice, processors=[[cores=0.25, speed=1.0]], ram=256, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]], loginUser=root, userMetadata={}, tags=[]]:
   testCreateTwoNodesWithRunScript(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest): [output=bash: java: command not found
-  testDestroyNodes(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest): [id=20454324, providerId=20454324, group=slicehost-, name=slicehost--429, location=[id=slicehost, scope=PROVIDER, description=https://api.slicehost.com, parent=null, iso3166Codes=[US-IL, US-TX, US-MO], metadata={}], uri=null, imageId=119, os=[name=null, family=ubuntu, version=11.10, arch=null, is64Bit=true, description=Ubuntu 11.10], state=RUNNING, loginPort=22, hostname=slicehost--429, privateAddresses=[10.180.86.139], publicAddresses=[184.106.179.251], hardware=[id=1, providerId=1, name=256 slice, processors=[[cores=0.25, speed=1.0]], ram=256, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]], loginUser=adriancole, userMetadata={}, tags=[]]
+  testDestroyNodes(org.jclouds.slicehost.compute.SlicehostComputeServiceLiveTest): [id=20496902, providerId=20496902, group=slicehost-, name=slicehost--f60, location=[id=slicehost, scope=PROVIDER, description=https://api.slicehost.com, parent=null, iso3166Codes=[US-IL, US-TX, US-MO], metadata={}], uri=null, imageId=119, os=[name=null, family=ubuntu, version=11.10, arch=null, is64Bit=true, description=Ubuntu 11.10], state=RUNNING, loginPort=22, hostname=slicehost--f60, privateAddresses=[10.180.78.219], publicAddresses=[184.106.171.167], hardware=[id=1, providerId=1, name=256 slice, processors=[[cores=0.25, speed=1.0]], ram=256, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]], loginUser=adriancole, userMetadata={}, tags=[]]
   testCreateSlice(org.jclouds.slicehost.SlicehostClientLiveTest): Invalid Image or Backup
 
 Tests run: 129, Failures: 5, Errors: 0, Skipped: 8
@@ -600,13 +630,13 @@ Tests run: 129, Failures: 5, Errors: 0, Skipped: 8
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 17:57.054s
-[INFO] Finished at: Thu Dec 22 03:46:39 PST 2011
-[INFO] Final Memory: 20M/265M
+[INFO] Total time: 18:57.510s
+[INFO] Finished at: Wed Jan 11 00:54:39 PST 2012
+[INFO] Final Memory: 21M/265M
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project slicehost: There are test failures.
 [ERROR] 
-[ERROR] Please refer to /Users/adriancole/workspace/git/jclouds/providers/slicehost/target/surefire-reports for the individual test results.
+[ERROR] Please refer to /Users/adriancole/workspace/git/1.3.x/jclouds/providers/slicehost/target/surefire-reports for the individual test results.
 [ERROR] -> [Help 1]
 [ERROR] 
 [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.

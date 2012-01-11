@@ -1,7 +1,7 @@
 [INFO] Scanning for projects...
 [WARNING] 
 [WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:serverlove-z1-man:bundle:1.3.0-SNAPSHOT
-[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/workspace/git/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/workspace/git/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/workspace/git/1.3.x/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/workspace/git/1.3.x/jclouds/project/pom.xml, line 24, column 13
 [WARNING] 
 [WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
 [WARNING] 
@@ -13,7 +13,7 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ serverlove-z1-man ---
-[INFO] Deleting /Users/adriancole/workspace/git/jclouds/providers/serverlove-z1-man/target
+[INFO] Deleting /Users/adriancole/workspace/git/1.3.x/jclouds/providers/serverlove-z1-man/target
 [INFO] 
 [INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ serverlove-z1-man ---
 [INFO] 
@@ -29,24 +29,24 @@
 [INFO] 
 [INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ serverlove-z1-man ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/serverlove-z1-man/src/main/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.3.x/jclouds/providers/serverlove-z1-man/src/main/clojure
 [INFO] Copying 2 resources
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ serverlove-z1-man ---
-[INFO] Compiling 4 source files to /Users/adriancole/workspace/git/jclouds/providers/serverlove-z1-man/target/classes
+[INFO] Compiling 4 source files to /Users/adriancole/workspace/git/1.3.x/jclouds/providers/serverlove-z1-man/target/classes
 [INFO] 
 [INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ serverlove-z1-man ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/serverlove-z1-man/src/test/clojure
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/serverlove-z1-man/src/test/resources
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.3.x/jclouds/providers/serverlove-z1-man/src/test/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.3.x/jclouds/providers/serverlove-z1-man/src/test/resources
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ serverlove-z1-man ---
-[INFO] Compiling 4 source files to /Users/adriancole/workspace/git/jclouds/providers/serverlove-z1-man/target/test-classes
+[INFO] Compiling 4 source files to /Users/adriancole/workspace/git/1.3.x/jclouds/providers/serverlove-z1-man/target/test-classes
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (default-test) @ serverlove-z1-man ---
-[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/serverlove-z1-man/target/surefire-reports
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/serverlove-z1-man/target/surefire-reports
 [INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
 
 -------------------------------------------------------
@@ -54,27 +54,27 @@
 -------------------------------------------------------
 Running org.jclouds.serverlove.ServerloveManchesterProviderTest
 Starting test testInRestProperties(org.jclouds.serverlove.ServerloveManchesterProviderTest)
-Starting test testWithId(org.jclouds.serverlove.ServerloveManchesterProviderTest)
 Starting test testAllContains(org.jclouds.serverlove.ServerloveManchesterProviderTest)
 Starting test testOfTypeContains(org.jclouds.serverlove.ServerloveManchesterProviderTest)
-[pool-2-thread-3] Test testAllContains(org.jclouds.serverlove.ServerloveManchesterProviderTest) succeeded: 38ms
+Starting test testWithId(org.jclouds.serverlove.ServerloveManchesterProviderTest)
+[pool-2-thread-3] Test testAllContains(org.jclouds.serverlove.ServerloveManchesterProviderTest) succeeded: 213ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testOfTypeContains(org.jclouds.serverlove.ServerloveManchesterProviderTest) succeeded: 38ms
+[pool-2-thread-2] Test testWithId(org.jclouds.serverlove.ServerloveManchesterProviderTest) succeeded: 205ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testWithId(org.jclouds.serverlove.ServerloveManchesterProviderTest) succeeded: 42ms
+[pool-2-thread-4] Test testOfTypeContains(org.jclouds.serverlove.ServerloveManchesterProviderTest) succeeded: 206ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-[pool-2-thread-1] Test testInRestProperties(org.jclouds.serverlove.ServerloveManchesterProviderTest) succeeded: 110ms
+[pool-2-thread-1] Test testInRestProperties(org.jclouds.serverlove.ServerloveManchesterProviderTest) succeeded: 336ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.404 sec
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.254 sec
 
 Results :
 
 Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
 
 [INFO] 
-[INFO] --- clojure-maven-plugin:1.3.3:test (test-clojure) @ serverlove-z1-man ---
+[INFO] --- clojure-maven-plugin:1.3.8:test (test-clojure) @ serverlove-z1-man ---
 
-Testing user
+Testing com.theoryinpractise.clojure.testrunner
 
 Ran 0 tests containing 0 assertions.
 0 failures, 0 errors.
@@ -82,86 +82,354 @@ Ran 0 tests containing 0 assertions.
 [INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ serverlove-z1-man ---
 [INFO] 
 [INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ serverlove-z1-man ---
-[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/serverlove-z1-man/target/serverlove-z1-man-1.3.0-SNAPSHOT-sources.jar
+[INFO] Building jar: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/serverlove-z1-man/target/serverlove-z1-man-1.3.0-SNAPSHOT-sources.jar
 [INFO] 
 [INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ serverlove-z1-man ---
 [INFO] Skipping javadoc generation
 [INFO] 
 [INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ serverlove-z1-man ---
-[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/serverlove-z1-man/target/serverlove-z1-man-1.3.0-SNAPSHOT-tests.jar
+[INFO] Building jar: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/serverlove-z1-man/target/serverlove-z1-man-1.3.0-SNAPSHOT-tests.jar
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (integration) @ serverlove-z1-man ---
-[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/serverlove-z1-man/target/surefire-reports
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/serverlove-z1-man/target/surefire-reports
 [INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
 
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
 Running TestSuite
-Starting test testCreateDrive(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
+Starting test testCompareSizes(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
 Starting test setServiceDefaults(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
-[pool-2-thread-1] Test setServiceDefaults(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test setServiceDefaults(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
 Starting test testCompareSizes(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
-Dec 15, 2011 7:39:58 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+Starting test testCreateDrive(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
+smallest [id=cpu=1000.000000,ram=512,disk=1.000000, providerId=cpu=1000.000000,ram=512,disk=1.000000, name=null, processors=[[cores=1.0, speed=1000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], supportsImage=sizeLessThanOrEqual(1.0), tags=[]]
+fastest [id=cpu=20000.000000,ram=512,disk=20.000000, providerId=cpu=20000.000000,ram=512,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
+biggest [id=cpu=20000.000000,ram=8192,disk=20.000000, providerId=cpu=20000.000000,ram=8192,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=8192, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
+Jan 11, 2012 12:39:41 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
 INFO: smallest [id=cpu=1000.000000,ram=512,disk=1.000000, providerId=cpu=1000.000000,ram=512,disk=1.000000, name=null, processors=[[cores=1.0, speed=1000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], supportsImage=sizeLessThanOrEqual(1.0), tags=[]]
-Dec 15, 2011 7:39:58 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+Jan 11, 2012 12:39:41 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
 INFO: fastest [id=cpu=20000.000000,ram=512,disk=20.000000, providerId=cpu=20000.000000,ram=512,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
-Dec 15, 2011 7:39:58 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+Jan 11, 2012 12:39:41 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
 INFO: biggest [id=cpu=20000.000000,ram=8192,disk=20.000000, providerId=cpu=20000.000000,ram=8192,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=8192, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
-[pool-2-thread-1] Test testCompareSizes(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 10451ms
+[pool-2-thread-1] Test testCompareSizes(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 6816ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
 Starting test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
-[pool-2-thread-2] Test testCreateDrive(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 19717ms
+[pool-2-thread-2] Test testCompareSizes(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 7205ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-Starting test testSetDriveData(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
-[pool-2-thread-2] Test testSetDriveData(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 6671ms
+Starting test testDefaultTemplateBuilder(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testDefaultTemplateBuilder(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 5ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Starting test testFromTemplate(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testFromTemplate(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 52ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test testGetAssignableLocations(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+location [id=serverlove-z1-man, scope=PROVIDER, description=https://api.z1-man.serverlove.com, parent=null, iso3166Codes=[GB-MAN], metadata={}]
+[pool-2-thread-2] Test testGetAssignableLocations(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 4ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCanUseImageId(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-3] Test testCreateDrive(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 3646ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+Starting test testGetDrive(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCanUseImageId(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 5783ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 4ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 13ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 11ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 5ms
+Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 55, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 61, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 62, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 63, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 64, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 65, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 66, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 67, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 68, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 69, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 70, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 71, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 72, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 73, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 74, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 75, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 76, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 77, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 78, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 79, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 80, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 81, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 82, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 83, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 84, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 85, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 86, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 87, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 88, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 89, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 90, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 91, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 92, failed: 0, skipped: 0.
+Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-3] Test testGetDrive(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 4104ms
+Test suite progress: tests succeeded: 93, failed: 0, skipped: 0.
+Starting test testGetServer(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
+[pool-2-thread-3] Test testGetServer(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 1935ms
+Test suite progress: tests succeeded: 94, failed: 0, skipped: 0.
+Starting test testListDriveInfo(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
+[pool-2-thread-3] Test testListDriveInfo(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 998ms
+Test suite progress: tests succeeded: 95, failed: 0, skipped: 0.
+Starting test testListDrives(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
+[pool-2-thread-3] Test testListDrives(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 914ms
+Test suite progress: tests succeeded: 96, failed: 0, skipped: 0.
+Starting test testListServers(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
+[pool-2-thread-3] Test testListServers(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 1012ms
+Test suite progress: tests succeeded: 97, failed: 0, skipped: 0.
+Starting test testSetDriveData(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
+[pool-2-thread-3] Test testSetDriveData(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 1337ms
+Test suite progress: tests succeeded: 98, failed: 0, skipped: 0.
 Starting test testCreateAndStartServer(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
-Dec 15, 2011 7:40:13 AM org.jclouds.elasticstack.ElasticStackClientLiveTest testCreateAndStartServer
+Jan 11, 2012 12:39:55 AM org.jclouds.elasticstack.ElasticStackClientLiveTest testCreateAndStartServer
 INFO: preparing drive
-before prepare[size=1073741824, claimType=shared, readers=[ffffffff-ffff-ffff-ffff-ffffffffffff], uuid=f462e208-cba2-405e-802e-4317fc19e4eb, name=rediculous, tags=[networking, security, gateway], userMetadata={foo=bar}, status=active, user=a1b7181f-ae16-497f-9b82-abcde554bff0, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=4096, readRequests=1, writeBytes=4096, writeRequests=1]]
-after prepare[size=1073741824, claimType=shared, readers=[ffffffff-ffff-ffff-ffff-ffffffffffff], uuid=f462e208-cba2-405e-802e-4317fc19e4eb, name=rediculous, tags=[networking, security, gateway], userMetadata={foo=bar}, status=active, user=a1b7181f-ae16-497f-9b82-abcde554bff0, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=4096, readRequests=1, writeBytes=717459456, writeRequests=175333]]
-Dec 15, 2011 7:43:50 AM org.jclouds.elasticstack.ElasticStackClientLiveTest testCreateAndStartServer
+before prepare[size=1073741824, claimType=shared, readers=[ffffffff-ffff-ffff-ffff-ffffffffffff], uuid=b1a08991-7a84-4865-a306-ed9f55a3903d, name=rediculous, tags=[networking, security, gateway], userMetadata={foo=bar}, status=active, user=a1b7181f-ae16-497f-9b82-abcde554bff0, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=4096, readRequests=1, writeBytes=4096, writeRequests=1]]
+[pool-2-thread-2] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 10693ms
+Test suite progress: tests succeeded: 99, failed: 0, skipped: 0.
+Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 11758ms
+Test suite progress: tests succeeded: 100, failed: 0, skipped: 0.
+Starting test testTemplateBuilder(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
+[pool-2-thread-2] Test testTemplateBuilder(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 101, failed: 0, skipped: 0.
+after prepare[size=1073741824, claimType=shared, readers=[ffffffff-ffff-ffff-ffff-ffffffffffff], uuid=b1a08991-7a84-4865-a306-ed9f55a3903d, name=rediculous, tags=[networking, security, gateway], userMetadata={foo=bar}, status=active, user=a1b7181f-ae16-497f-9b82-abcde554bff0, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=4096, readRequests=1, writeBytes=717459456, writeRequests=175333]]
+Jan 11, 2012 12:40:18 AM org.jclouds.elasticstack.ElasticStackClientLiveTest testCreateAndStartServer
 INFO: starting server
+{"status":"ACTIVE","started":"Jan 16, 1970 12:24:31 AM","user":"a1b7181f-ae16-497f-9b82-abcde554bff0","metrics":{"txPackets":0,"tx":0,"rxPackets":0,"rx":0,"driveMetrics":{"ide:0:0":{"readBytes":204800,"readRequests":50,"writeBytes":0,"writeRequests":0}}},"cpu":1000,"smp":1,"mem":512,"persistent":true,"devices":{"ide:0:0":{"bus":0,"unit":0,"driveUuid":"b1a08991-7a84-4865-a306-ed9f55a3903d","mediaType":"DISK"}},"bootDeviceIds":["ide:0:0"],"nics":[{"dhcp":"178.250.53.68","model":"E1000","block":[]}],"vnc":{"ip":"178.250.53.68","password":"Il0veVNC","tls":false},"uuid":"c36b23bf-99dc-4fcc-a6ce-c6f50f387031","name":"adriancole.test","tags":[],"userMetadata":{}}
+[pool-2-thread-3] Test testCreateAndStartServer(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 29414ms
+Test suite progress: tests succeeded: 102, failed: 0, skipped: 0.
+Starting test testConnectivity(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
+Jan 11, 2012 12:40:24 AM org.jclouds.elasticstack.ElasticStackClientLiveTest testConnectivity
+INFO: awaiting vnc: [address=178.250.53.68, port=5900]
+Jan 11, 2012 12:40:24 AM org.jclouds.elasticstack.ElasticStackClientLiveTest testConnectivity
+INFO: awaiting ssh: [address=178.250.53.68, port=22]
 SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
 SLF4J: Defaulting to no-operation (NOP) logger implementation
 SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
-<< problem applying options to node(aaa5b25a-2bc2-4ad2-a789-be47e81bd9b5): 
-org.jclouds.rest.AuthorizationException: (root:password@178.250.52.142:22) (root:password@178.250.52.142:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
-	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:411)
-	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:241)
-	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:252)
-	at org.jclouds.compute.callables.RunScriptOnNodeUsingSsh.call(RunScriptOnNodeUsingSsh.java:73)
-	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:69)
-	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:44)
-	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available authentication methods
-	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:114)
-	at net.schmizz.sshj.SSHClient.auth(SSHClient.java:204)
-	at net.schmizz.sshj.SSHClient.auth(SSHClient.java:189)
-	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:265)
-	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:235)
-	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:219)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:197)
-	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:173)
-	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:222)
-	... 9 more
-Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
-	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
-	... 17 more
-{"status":"ACTIVE","started":"Jan 15, 1970 11:46:03 PM","user":"a1b7181f-ae16-497f-9b82-abcde554bff0","metrics":{"txPackets":0,"tx":0,"rxPackets":0,"rx":0,"driveMetrics":{"ide:0:0":{"readBytes":30859264,"readRequests":7534,"writeBytes":0,"writeRequests":0}}},"cpu":1000,"smp":1,"mem":512,"persistent":true,"devices":{"ide:0:0":{"bus":0,"unit":0,"driveUuid":"f462e208-cba2-405e-802e-4317fc19e4eb","mediaType":"DISK"}},"bootDeviceIds":["ide:0:0"],"nics":[{"dhcp":"178.250.53.9","model":"E1000","block":[]}],"vnc":{"ip":"178.250.53.9","password":"Il0veVNC","tls":false},"uuid":"0cc48bc6-9193-4fa1-ab2f-0f18a8a3d89c","name":"adriancole.test","tags":[],"userMetadata":{}}
-[pool-2-thread-2] Test testCreateAndStartServer(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 243102ms
-Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
-Starting test testConnectivity(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
-Dec 15, 2011 7:44:17 AM org.jclouds.elasticstack.ElasticStackClientLiveTest testConnectivity
-INFO: awaiting vnc: [address=178.250.53.9, port=5900]
-Dec 15, 2011 7:44:17 AM org.jclouds.elasticstack.ElasticStackClientLiveTest testConnectivity
-INFO: awaiting ssh: [address=178.250.53.9, port=22]
 Filesystem           1K-blocks      Used Available Use% Mounted on
 /dev/sda               1033848    548872    436840  56% /
 none                    248436       160    248276   1% /dev
@@ -186,409 +454,141 @@ none on /var/lib/ureadahead/debugfs type debugfs (rw,relatime)
 
 Linux ubuntu 2.6.32-34-generic #77-Ubuntu SMP Tue Sep 13 19:39:17 UTC 2011 x86_64 GNU/Linux
 
-[pool-2-thread-2] Test testConnectivity(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 4575ms
-Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
-Starting test testLifeCycle(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
-[pool-2-thread-2] Test testLifeCycle(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 40190ms
-Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
-Starting test testSetServerConfiguration(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
-[pool-2-thread-2] Test testSetServerConfiguration(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 14667ms
-Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
-Starting test testDestroyServer(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
-[pool-2-thread-2] Test testDestroyServer(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 1780ms
-Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
-Starting test testDestroyDrive(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
-[pool-2-thread-1] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 322808ms
-Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
-Starting test testCorrectAuthException(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
-[pool-2-thread-1] Test testCorrectAuthException(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 984ms
-Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
-Starting test testCreateAndRunAService(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
-[pool-2-thread-2] Test testDestroyDrive(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 6804ms
-Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
-Starting test testWeCanReadAndWriteToDrive(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
-[pool-2-thread-2] Test testWeCanReadAndWriteToDrive(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 18317ms
-Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
-Starting test testWeCopyADriveContentsViaGzip(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
-before image; drive 2[size=4194304, claimType=exclusive, readers=[], uuid=9d139e63-6da2-4685-9f3e-c9434eba5b16, name=adriancole.test2, tags=[], userMetadata={}, status=active, user=a1b7181f-ae16-497f-9b82-abcde554bff0, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=8192, readRequests=2, writeBytes=8192, writeRequests=3]]
-before image; drive 3[size=4194304, claimType=exclusive, readers=[], uuid=dc5234bf-70ee-4f4c-adeb-cef545890886, name=adriancole.test3, tags=[], userMetadata={}, status=active, user=a1b7181f-ae16-497f-9b82-abcde554bff0, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=4096, readRequests=1, writeBytes=4096, writeRequests=1]]
-after image; drive 2[size=4194304, claimType=exclusive, readers=[], uuid=9d139e63-6da2-4685-9f3e-c9434eba5b16, name=adriancole.test2, tags=[], userMetadata={}, status=active, user=a1b7181f-ae16-497f-9b82-abcde554bff0, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=4202496, readRequests=1026, writeBytes=8192, writeRequests=3]]
-after image; drive 3[size=4194304, claimType=exclusive, readers=[], uuid=dc5234bf-70ee-4f4c-adeb-cef545890886, name=adriancole.test3, tags=[], userMetadata={}, status=active, user=a1b7181f-ae16-497f-9b82-abcde554bff0, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=4096, readRequests=1, writeBytes=4198400, writeRequests=1026]]
-Dec 15, 2011 7:46:26 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << available node(229179fb-0597-44ac-b34a-d07d20fbd7a2) os([name=Ubuntu 10.04 LTS, family=ubuntu, version=10.04, arch=null, is64Bit=true, description=img/Ubuntu 10.04 LTS/1]) in 62s
-[pool-2-thread-2] Test testWeCopyADriveContentsViaGzip(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 46357ms
-Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
-Starting test testCompareSizes(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-smallest [id=cpu=1000.000000,ram=512,disk=1.000000, providerId=cpu=1000.000000,ram=512,disk=1.000000, name=null, processors=[[cores=1.0, speed=1000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], supportsImage=sizeLessThanOrEqual(1.0), tags=[]]
-fastest [id=cpu=20000.000000,ram=512,disk=20.000000, providerId=cpu=20000.000000,ram=512,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
-biggest [id=cpu=20000.000000,ram=8192,disk=20.000000, providerId=cpu=20000.000000,ram=8192,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=8192, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
-[pool-2-thread-2] Test testCompareSizes(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 7471ms
-Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
-Starting test testDefaultTemplateBuilder(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testDefaultTemplateBuilder(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
-Starting test testFromTemplate(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testFromTemplate(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 3ms
-Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
-Starting test testGetAssignableLocations(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-location [id=serverlove-z1-man, scope=PROVIDER, description=https://api.z1-man.serverlove.com, parent=null, iso3166Codes=[GB-MAN], metadata={}]
-[pool-2-thread-2] Test testGetAssignableLocations(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 5ms
-Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 14ms
-Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanUseImageId(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCanUseImageId(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 4967ms
-Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 3ms
-Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 55, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 61, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 62, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 63, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 64, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 65, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 66, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 67, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 68, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 69, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 70, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 71, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 72, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 73, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 74, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 75, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 76, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 77, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 78, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 79, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 80, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 81, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 82, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 5ms
-Test suite progress: tests succeeded: 83, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 84, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 85, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 86, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 87, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 88, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 89, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 90, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 91, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 92, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 93, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 94, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 95, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 96, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 97, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 98, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 99, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 100, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 101, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 102, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderCannotFind(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 0ms
+[pool-2-thread-3] Test testConnectivity(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 15344ms
 Test suite progress: tests succeeded: 103, failed: 0, skipped: 0.
-Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 21906ms
+Starting test testLifeCycle(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
+[pool-2-thread-3] Test testLifeCycle(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 11219ms
 Test suite progress: tests succeeded: 104, failed: 0, skipped: 0.
-Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 11736ms
+Starting test testSetServerConfiguration(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
+[pool-2-thread-3] Test testSetServerConfiguration(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 3826ms
 Test suite progress: tests succeeded: 105, failed: 0, skipped: 0.
-Starting test testTemplateBuilder(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest)
-[pool-2-thread-2] Test testTemplateBuilder(org.jclouds.serverlove.compute.ServerloveManchesterTemplateBuilderLiveTest) succeeded: 2ms
+Starting test testDestroyServer(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
+<< problem applying options to node(b6b12e4f-1c20-4da0-bfbe-b8d9bc499d68): 
+org.jclouds.rest.AuthorizationException: (root:pw[5d907853a9617cfd55fb62eae803595b]@178.250.53.15:22) (root:pw[5d907853a9617cfd55fb62eae803595b]@178.250.53.15:22) error acquiring SSHClient(timeout=60000) (out of retries - max 5): Exhausted available authentication methods
+	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:411)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:233)
+	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:252)
+	at org.jclouds.compute.callables.RunScriptOnNodeUsingSsh.call(RunScriptOnNodeUsingSsh.java:73)
+	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:69)
+	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:44)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available authentication methods
+	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:114)
+	at net.schmizz.sshj.SSHClient.auth(SSHClient.java:204)
+	at net.schmizz.sshj.SSHClient.auth(SSHClient.java:189)
+	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:265)
+	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:235)
+	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:219)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:198)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:174)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:223)
+	... 9 more
+Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
+	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
+	... 17 more
+[pool-2-thread-3] Test testDestroyServer(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 1874ms
 Test suite progress: tests succeeded: 106, failed: 0, skipped: 0.
-Starting test testGetDrive(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
-[pool-2-thread-2] Test testGetDrive(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 8228ms
+Starting test testDestroyDrive(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
+[pool-2-thread-3] Test testDestroyDrive(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 2127ms
 Test suite progress: tests succeeded: 107, failed: 0, skipped: 0.
-Starting test testGetServer(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
-[pool-2-thread-2] Test testGetServer(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 3006ms
+Starting test testWeCanReadAndWriteToDrive(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
+[pool-2-thread-3] Test testWeCanReadAndWriteToDrive(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 4778ms
 Test suite progress: tests succeeded: 108, failed: 0, skipped: 0.
-Starting test testListDriveInfo(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
-[pool-2-thread-2] Test testListDriveInfo(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 5996ms
+Starting test testWeCopyADriveContentsViaGzip(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
+before image; drive 2[size=4194304, claimType=exclusive, readers=[], uuid=310b5070-ff29-4f6d-bbcc-8e0297fd8f89, name=adriancole.test2, tags=[], userMetadata={}, status=active, user=a1b7181f-ae16-497f-9b82-abcde554bff0, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=8192, readRequests=2, writeBytes=8192, writeRequests=3]]
+before image; drive 3[size=4194304, claimType=exclusive, readers=[], uuid=ba9b040c-06c8-41d3-938c-c78b1c088891, name=adriancole.test3, tags=[], userMetadata={}, status=active, user=a1b7181f-ae16-497f-9b82-abcde554bff0, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=4096, readRequests=1, writeBytes=4096, writeRequests=1]]
+after image; drive 2[size=4194304, claimType=exclusive, readers=[], uuid=310b5070-ff29-4f6d-bbcc-8e0297fd8f89, name=adriancole.test2, tags=[], userMetadata={}, status=active, user=a1b7181f-ae16-497f-9b82-abcde554bff0, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=4202496, readRequests=1026, writeBytes=8192, writeRequests=3]]
+after image; drive 3[size=4194304, claimType=exclusive, readers=[], uuid=ba9b040c-06c8-41d3-938c-c78b1c088891, name=adriancole.test3, tags=[], userMetadata={}, status=active, user=a1b7181f-ae16-497f-9b82-abcde554bff0, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=4096, readRequests=1, writeBytes=4198400, writeRequests=1026]]
+[pool-2-thread-3] Test testWeCopyADriveContentsViaGzip(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 12421ms
 Test suite progress: tests succeeded: 109, failed: 0, skipped: 0.
-Starting test testListDrives(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
-[pool-2-thread-2] Test testListDrives(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 867ms
-Test suite progress: tests succeeded: 110, failed: 0, skipped: 0.
-Starting test testListServers(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
-[pool-2-thread-2] Test testListServers(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 917ms
-Test suite progress: tests succeeded: 111, failed: 0, skipped: 0.
 Starting test testListServerInfo(org.jclouds.serverlove.ServerloveManchesterClientLiveTest)
-[pool-2-thread-2] Test testListServerInfo(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 989ms
+[pool-2-thread-3] Test testListServerInfo(org.jclouds.serverlove.ServerloveManchesterClientLiveTest) succeeded: 972ms
+Test suite progress: tests succeeded: 110, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 146854ms
+Test suite progress: tests succeeded: 111, failed: 0, skipped: 0.
+Starting test testCorrectAuthException(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
+[pool-2-thread-1] Test testCorrectAuthException(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 985ms
 Test suite progress: tests succeeded: 112, failed: 0, skipped: 0.
-Dec 15, 2011 7:50:45 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << configured node(229179fb-0597-44ac-b34a-d07d20fbd7a2) with java full version "1.7.0_01-b08" and JBoss 7.0.2.Final in 252s
-Dec 15, 2011 7:50:48 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+Starting test testCreateAndRunAService(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
+Jan 11, 2012 12:42:47 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << available node(a12246e8-2af2-44a5-980f-f872ccbb2855) os([name=Ubuntu 10.04 LTS, family=ubuntu, version=10.04, arch=null, is64Bit=true, description=img/Ubuntu 10.04 LTS/1]) in 37s
+Jan 11, 2012 12:44:34 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << configured node(a12246e8-2af2-44a5-980f-f872ccbb2855) with java full version "1.7.0_02-b13" and JBoss 7.0.2.Final in 101s
+Jan 11, 2012 12:44:38 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
 WARNING: could not get info on ip 209.132.182.31; check freegeoip
-Dec 15, 2011 7:50:48 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of jboss7(download.jboss.org) from perpective of node(229179fb-0597-44ac-b34a-d07d20fbd7a2): 209.132.182.31
-Dec 15, 2011 7:50:52 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
-WARNING: could not get info on ip 80.239.148.178; check freegeoip
-Dec 15, 2011 7:50:52 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of jdk7(download.oracle.com) from perpective of node(229179fb-0597-44ac-b34a-d07d20fbd7a2): 80.239.148.178
-Dec 15, 2011 7:50:56 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
-WARNING: could not get info on ip 178.250.53.9; check freegeoip
-Dec 15, 2011 7:50:56 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of node(229179fb-0597-44ac-b34a-d07d20fbd7a2) from perspective of amazonaws: 178.250.53.9
-Dec 15, 2011 7:51:08 AM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
-INFO: << initial start of jboss on node(229179fb-0597-44ac-b34a-d07d20fbd7a2) [backgroundProcessMilliseconds=7723, socketOpenMilliseconds=1663, reportedStartupTimeMilliseconds=3131]
-Dec 15, 2011 7:51:20 AM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
-INFO: << warm start of jboss on node(229179fb-0597-44ac-b34a-d07d20fbd7a2) [backgroundProcessMilliseconds=4204, socketOpenMilliseconds=1244, reportedStartupTimeMilliseconds=2679]
-[pool-2-thread-1] Test testCreateAndRunAService(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 376994ms
+Jan 11, 2012 12:44:38 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jboss7(download.jboss.org) from perpective of node(a12246e8-2af2-44a5-980f-f872ccbb2855): 209.132.182.31
+Jan 11, 2012 12:44:42 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+WARNING: could not get info on ip 80.239.148.136; check freegeoip
+Jan 11, 2012 12:44:42 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jdk7(download.oracle.com) from perpective of node(a12246e8-2af2-44a5-980f-f872ccbb2855): 80.239.148.136
+Jan 11, 2012 12:44:45 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+WARNING: could not get info on ip 178.250.53.68; check freegeoip
+Jan 11, 2012 12:44:45 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of node(a12246e8-2af2-44a5-980f-f872ccbb2855) from perspective of amazonaws: 178.250.53.68
+Jan 11, 2012 12:44:58 AM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << initial start of jboss on node(a12246e8-2af2-44a5-980f-f872ccbb2855) [backgroundProcessMilliseconds=7889, socketOpenMilliseconds=1291, reportedStartupTimeMilliseconds=2676]
+Jan 11, 2012 12:45:09 AM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << warm start of jboss on node(a12246e8-2af2-44a5-980f-f872ccbb2855) [backgroundProcessMilliseconds=4205, socketOpenMilliseconds=1045, reportedStartupTimeMilliseconds=2461]
+[pool-2-thread-1] Test testCreateAndRunAService(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 188758ms
 Test suite progress: tests succeeded: 113, failed: 0, skipped: 0.
 Starting test testCreateTwoNodesWithRunScript(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
-[pool-2-thread-1] Test testCreateTwoNodesWithRunScript(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 114802ms
+[pool-2-thread-1] Test testCreateTwoNodesWithRunScript(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 85591ms
 Test suite progress: tests succeeded: 114, failed: 0, skipped: 0.
 Starting test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
-Dec 15, 2011 7:53:34 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired
+Jan 11, 2012 12:46:43 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired
 INFO: creating another node based on existing nodes' location: [id=serverlove-z1-man, scope=PROVIDER, description=https://api.z1-man.serverlove.com, parent=null, iso3166Codes=[GB-MAN], metadata={}]
-[pool-2-thread-1] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 104372ms
+[pool-2-thread-1] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 84239ms
 Test suite progress: tests succeeded: 115, failed: 0, skipped: 0.
 Starting test testCredentialsCache(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
-[pool-2-thread-1] Test testCredentialsCache(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 89ms
+[pool-2-thread-1] Test testCredentialsCache(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 113ms
 Test suite progress: tests succeeded: 116, failed: 0, skipped: 0.
 Starting test testGet(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
-[pool-2-thread-1] Test testGet(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 22237ms
+[pool-2-thread-1] Test testGet(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 12860ms
 Test suite progress: tests succeeded: 117, failed: 0, skipped: 0.
 Starting test testGetAssignableLocations(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
-Dec 15, 2011 7:55:40 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+Jan 11, 2012 12:48:20 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
 WARNING: location [id=serverlove-z1-man, scope=PROVIDER, description=https://api.z1-man.serverlove.com, parent=null, iso3166Codes=[GB-MAN], metadata={}]
 [pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 118, failed: 0, skipped: 0.
 Starting test testImagesCache(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
-[pool-2-thread-1] Test testImagesCache(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 0ms
+[pool-2-thread-1] Test testImagesCache(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 119, failed: 0, skipped: 0.
 Starting test testListImages(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
 [pool-2-thread-1] Test testListImages(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 120, failed: 0, skipped: 0.
 Starting test testListSizes(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
-[pool-2-thread-1] Test testListSizes(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 2ms
+[pool-2-thread-1] Test testListSizes(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 121, failed: 0, skipped: 0.
 Starting test testReboot(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
-[pool-2-thread-1] Test testReboot(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 13268ms
+[pool-2-thread-1] Test testReboot(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 13129ms
 Test suite progress: tests succeeded: 122, failed: 0, skipped: 0.
 Starting test testSuspendResume(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
-[pool-2-thread-1] Test testSuspendResume(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 84980ms
+[pool-2-thread-1] Test testSuspendResume(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 33355ms
 Test suite progress: tests succeeded: 123, failed: 0, skipped: 0.
 Starting test testGetNodesWithDetails(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
-[pool-2-thread-1] Test testGetNodesWithDetails(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 1123ms
+[pool-2-thread-1] Test testGetNodesWithDetails(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 947ms
 Test suite progress: tests succeeded: 124, failed: 0, skipped: 0.
 Starting test testListNodes(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
-[pool-2-thread-1] Test testListNodes(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 979ms
+[pool-2-thread-1] Test testListNodes(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 1933ms
 Test suite progress: tests succeeded: 125, failed: 0, skipped: 0.
 Starting test testDestroyNodes(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
-[pool-2-thread-1] Test testDestroyNodes(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 25622ms
+[pool-2-thread-1] Test testDestroyNodes(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 12479ms
 Test suite progress: tests succeeded: 126, failed: 0, skipped: 0.
 Starting test testTemplateMatch(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
-[pool-2-thread-1] Test testTemplateMatch(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 5ms
+[pool-2-thread-1] Test testTemplateMatch(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 127, failed: 0, skipped: 0.
 Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
-[pool-2-thread-1] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 929ms
+[pool-2-thread-1] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 948ms
 Test suite progress: tests succeeded: 128, failed: 0, skipped: 0.
 Starting test testOptionToNotBlock(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)
 [pool-2-thread-1] Test testOptionToNotBlock(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 129, failed: 0, skipped: 0.
-Tests run: 129, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1,085.643 sec
+Tests run: 129, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 598.803 sec
 
 Results :
 
@@ -596,10 +596,10 @@ Tests run: 129, Failures: 0, Errors: 0, Skipped: 0
 
 [INFO] 
 [INFO] --- maven-install-plugin:2.3:install (default-install) @ serverlove-z1-man ---
-[INFO] Installing /Users/adriancole/workspace/git/jclouds/providers/serverlove-z1-man/target/serverlove-z1-man-1.3.0-SNAPSHOT.jar to /Users/adriancole/.m2/repository/org/jclouds/provider/serverlove-z1-man/1.3.0-SNAPSHOT/serverlove-z1-man-1.3.0-SNAPSHOT.jar
-[INFO] Installing /Users/adriancole/workspace/git/jclouds/providers/serverlove-z1-man/pom.xml to /Users/adriancole/.m2/repository/org/jclouds/provider/serverlove-z1-man/1.3.0-SNAPSHOT/serverlove-z1-man-1.3.0-SNAPSHOT.pom
-[INFO] Installing /Users/adriancole/workspace/git/jclouds/providers/serverlove-z1-man/target/serverlove-z1-man-1.3.0-SNAPSHOT-sources.jar to /Users/adriancole/.m2/repository/org/jclouds/provider/serverlove-z1-man/1.3.0-SNAPSHOT/serverlove-z1-man-1.3.0-SNAPSHOT-sources.jar
-[INFO] Installing /Users/adriancole/workspace/git/jclouds/providers/serverlove-z1-man/target/serverlove-z1-man-1.3.0-SNAPSHOT-tests.jar to /Users/adriancole/.m2/repository/org/jclouds/provider/serverlove-z1-man/1.3.0-SNAPSHOT/serverlove-z1-man-1.3.0-SNAPSHOT-tests.jar
+[INFO] Installing /Users/adriancole/workspace/git/1.3.x/jclouds/providers/serverlove-z1-man/target/serverlove-z1-man-1.3.0-SNAPSHOT.jar to /Users/adriancole/.m2/repository/org/jclouds/provider/serverlove-z1-man/1.3.0-SNAPSHOT/serverlove-z1-man-1.3.0-SNAPSHOT.jar
+[INFO] Installing /Users/adriancole/workspace/git/1.3.x/jclouds/providers/serverlove-z1-man/pom.xml to /Users/adriancole/.m2/repository/org/jclouds/provider/serverlove-z1-man/1.3.0-SNAPSHOT/serverlove-z1-man-1.3.0-SNAPSHOT.pom
+[INFO] Installing /Users/adriancole/workspace/git/1.3.x/jclouds/providers/serverlove-z1-man/target/serverlove-z1-man-1.3.0-SNAPSHOT-sources.jar to /Users/adriancole/.m2/repository/org/jclouds/provider/serverlove-z1-man/1.3.0-SNAPSHOT/serverlove-z1-man-1.3.0-SNAPSHOT-sources.jar
+[INFO] Installing /Users/adriancole/workspace/git/1.3.x/jclouds/providers/serverlove-z1-man/target/serverlove-z1-man-1.3.0-SNAPSHOT-tests.jar to /Users/adriancole/.m2/repository/org/jclouds/provider/serverlove-z1-man/1.3.0-SNAPSHOT/serverlove-z1-man-1.3.0-SNAPSHOT-tests.jar
 [INFO] 
 [INFO] --- maven-bundle-plugin:2.3.4:install (default-install) @ serverlove-z1-man ---
 [INFO] Installing org/jclouds/provider/serverlove-z1-man/1.3.0-SNAPSHOT/serverlove-z1-man-1.3.0-SNAPSHOT.jar
@@ -607,7 +607,7 @@ Tests run: 129, Failures: 0, Errors: 0, Skipped: 0
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 18:24.825s
-[INFO] Finished at: Thu Dec 15 07:57:54 PST 2011
-[INFO] Final Memory: 19M/265M
+[INFO] Total time: 10:29.214s
+[INFO] Finished at: Wed Jan 11 00:49:36 PST 2012
+[INFO] Final Memory: 20M/265M
 [INFO] ------------------------------------------------------------------------
