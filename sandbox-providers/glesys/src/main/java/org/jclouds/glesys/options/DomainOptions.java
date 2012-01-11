@@ -130,7 +130,7 @@ public class DomainOptions extends BaseHttpRequestOptions {
     * Configure the number of seconds a master or slave will wait before considering the data stale if it cannot reach the primary name server
     */
    public DomainOptions expire(int expire) {
-      formParameters.put("primary_ns", Integer.toString(expire));
+      formParameters.put("expire", Integer.toString(expire));
       return this;
    }
 
