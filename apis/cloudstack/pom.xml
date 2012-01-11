@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.3.0-rc-2</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.api</groupId>
@@ -50,7 +50,7 @@
   <properties>
     <test.cloudstack.endpoint>http://localhost:8080/client/api</test.cloudstack.endpoint>
     <test.cloudstack.api-version>2.2.12</test.cloudstack.api-version>
-    <test.cloudstack.build-version></test.cloudstack.build-version>
+    <test.cloudstack.build-version />
     <test.cloudstack.identity>FIXME_apiKey</test.cloudstack.identity>
     <test.cloudstack.credential>FIXME_secretKey</test.cloudstack.credential>
     <test.cloudstack.domainAdminIdentity />

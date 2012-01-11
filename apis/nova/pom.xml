@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.3.0-rc-2</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.api</groupId>
@@ -36,7 +36,7 @@
   <properties>
     <test.nova.endpoint>http://localhost:8773/services/Cloud</test.nova.endpoint>
     <test.nova.api-version>1.1</test.nova.api-version>
-    <test.nova.build-version></test.nova.build-version>
+    <test.nova.build-version />
     <test.nova.identity>FIXME_IDENTITY</test.nova.identity>
     <test.nova.credential>FIXME_CREDENTIALS</test.nova.credential>
     <test.nova.image-id />

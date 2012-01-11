@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.3.0-rc-2</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.api</groupId>
@@ -36,7 +36,7 @@
   <properties>
     <test.vcloud.endpoint>FIXME</test.vcloud.endpoint>
     <test.vcloud.api-version>1.0</test.vcloud.api-version>
-    <test.vcloud.build-version></test.vcloud.build-version>
+    <test.vcloud.build-version />
     <test.vcloud.identity>FIXME</test.vcloud.identity>
     <test.vcloud.credential>FIXME</test.vcloud.credential>
     <test.vcloud.image-id />
