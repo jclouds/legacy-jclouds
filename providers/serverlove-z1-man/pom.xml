@@ -35,7 +35,8 @@
 
     <properties>
         <test.serverlove-z1-man.endpoint>https://api.z1-man.serverlove.com</test.serverlove-z1-man.endpoint>
-        <test.serverlove-z1-man.apiversion>1.0</test.serverlove-z1-man.apiversion>
+        <test.serverlove-z1-man.api-version>1.0</test.serverlove-z1-man.api-version>
+        <test.serverlove-z1-man.build-version></test.serverlove-z1-man.build-version>
         <test.serverlove-z1-man.identity>FIXME_IDENTITY</test.serverlove-z1-man.identity>
         <test.serverlove-z1-man.credential>FIXME_CREDENTIAL</test.serverlove-z1-man.credential>
         <test.serverlove-z1-man.image-id />
@@ -100,7 +101,8 @@
                                 <configuration>
                                     <systemPropertyVariables>
                                         <test.serverlove-z1-man.endpoint>${test.serverlove-z1-man.endpoint}</test.serverlove-z1-man.endpoint>
-                                        <test.serverlove-z1-man.apiversion>${test.serverlove-z1-man.apiversion}</test.serverlove-z1-man.apiversion>
+                                        <test.serverlove-z1-man.api-version>${test.serverlove-z1-man.api-version}</test.serverlove-z1-man.api-version>
+                                        <test.serverlove-z1-man.build-version>${test.serverlove-z1-man.build-version}</test.serverlove-z1-man.build-version>
                                         <test.serverlove-z1-man.identity>${test.serverlove-z1-man.identity}</test.serverlove-z1-man.identity>
                                         <test.serverlove-z1-man.credential>${test.serverlove-z1-man.credential}</test.serverlove-z1-man.credential>
                                         <test.serverlove-z1-man.image-id>${test.serverlove-z1-man.image-id}</test.serverlove-z1-man.image-id>

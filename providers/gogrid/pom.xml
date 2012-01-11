@@ -35,7 +35,8 @@
 
     <properties>
         <test.gogrid.endpoint>https://api.gogrid.com/api</test.gogrid.endpoint>
-        <test.gogrid.apiversion>1.5</test.gogrid.apiversion>
+        <test.gogrid.api-version>1.5</test.gogrid.api-version>
+        <test.gogrid.build-version></test.gogrid.build-version>
         <test.gogrid.identity>FIXME</test.gogrid.identity>
         <test.gogrid.credential>FIXME</test.gogrid.credential>
         <test.gogrid.image-id />
@@ -93,7 +94,8 @@
                                     <threadCount>1</threadCount>
                                     <systemPropertyVariables>
                                         <test.gogrid.endpoint>${test.gogrid.endpoint}</test.gogrid.endpoint>
-                                        <test.gogrid.apiversion>${test.gogrid.apiversion}</test.gogrid.apiversion>
+                                        <test.gogrid.api-version>${test.gogrid.api-version}</test.gogrid.api-version>
+                                        <test.gogrid.build-version>${test.gogrid.build-version}</test.gogrid.build-version>
                                         <test.gogrid.identity>${test.gogrid.identity}</test.gogrid.identity>
                                         <test.gogrid.credential>${test.gogrid.credential}</test.gogrid.credential>
                                         <test.gogrid.image-id>${test.gogrid.image-id}</test.gogrid.image-id>

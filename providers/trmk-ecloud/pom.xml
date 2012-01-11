@@ -36,7 +36,8 @@
     <properties>
         <test.trmk-ecloud.endpoint>https://services.enterprisecloud.terremark.com/api</test.trmk-ecloud.endpoint>
         <test.trmk-ecloud.datacenter>MIA</test.trmk-ecloud.datacenter>
-        <test.trmk-ecloud.apiversion>0.8b-ext2.8</test.trmk-ecloud.apiversion>
+        <test.trmk-ecloud.api-version>0.8b-ext2.8</test.trmk-ecloud.api-version>
+        <test.trmk-ecloud.build-version></test.trmk-ecloud.build-version>
         <test.trmk-ecloud.identity>FIXME</test.trmk-ecloud.identity>
         <test.trmk-ecloud.credential>FIXME</test.trmk-ecloud.credential>
         <test.trmk-ecloud.image-id />
@@ -102,7 +103,8 @@
                                     <threadCount>1</threadCount>
                                     <systemPropertyVariables>
                                         <test.trmk-ecloud.endpoint>${test.trmk-ecloud.endpoint}</test.trmk-ecloud.endpoint>
-                                        <test.trmk-ecloud.apiversion>${test.trmk-ecloud.apiversion}</test.trmk-ecloud.apiversion>
+                                        <test.trmk-ecloud.api-version>${test.trmk-ecloud.api-version}</test.trmk-ecloud.api-version>
+                                        <test.trmk-ecloud.build-version>${test.trmk-ecloud.build-version}</test.trmk-ecloud.build-version>
                                         <test.trmk-ecloud.identity>${test.trmk-ecloud.identity}</test.trmk-ecloud.identity>
                                         <test.trmk-ecloud.credential>${test.trmk-ecloud.credential}</test.trmk-ecloud.credential>
                                         <test.trmk-ecloud.datacenter>${test.trmk-ecloud.datacenter}</test.trmk-ecloud.datacenter>

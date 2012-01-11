@@ -18,11 +18,15 @@
  */
 package org.jclouds.compute.config;
 
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.collect.Memoized;
 import org.jclouds.collect.TransformingSetSupplier;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.ComputeServiceContext;
@@ -41,10 +45,13 @@ import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.compute.strategy.impl.AdaptingComputeServiceStrategies;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
@@ -64,33 +71,39 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
       this.asyncClientType = asyncClientType;
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings( { "unchecked", "rawtypes" })
    @Override
    protected void configure() {
       super.configure();
       bind(new TypeLiteral<ComputeServiceContext>() {
-      }).to((TypeLiteral) TypeLiteral.get(Types.newParameterizedType(ComputeServiceContextImpl.class, syncClientType,
-            asyncClientType))).in(Scopes.SINGLETON);
+      }).to(
+               (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(ComputeServiceContextImpl.class,
+                        syncClientType, asyncClientType))).in(Scopes.SINGLETON);
+   }
+
+   @Override
+   protected void configureLocationModule() {
+      // configuring below
    }
 
    @Provides
    @Singleton
-   protected Supplier<Set<? extends Location>> provideLocations(final ComputeServiceAdapter<N, H, I, L> adapter,
-         Function<L, Location> transformer) {
-      return new TransformingSetSupplier<L, Location>(new Supplier<Iterable<L>>() {
-
-         @Override
-         public Iterable<L> get() {
-            return adapter.listLocations();
-         }
-
-      }, transformer);
+   @Memoized
+   protected Supplier<Set<? extends Location>> supplyLocationCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+            final ComputeServiceAdapter<N, H, I, L> adapter, final Function<L, Location> transformer) {
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Location>>(authException,
+               seconds, new Supplier<Set<? extends Location>>() {
+                  @Override
+                  public Set<? extends Location> get() {
+                     return ImmutableSet.<Location> copyOf(Iterables.transform(adapter.listLocations(), transformer));
+                  }
+               });
    }
 
    @Provides
    @Singleton
    protected Supplier<Set<? extends Hardware>> provideHardware(final ComputeServiceAdapter<N, H, I, L> adapter,
-         Function<H, Hardware> transformer) {
+            Function<H, Hardware> transformer) {
       return new TransformingSetSupplier<H, Hardware>(new Supplier<Iterable<H>>() {
 
          @Override
@@ -104,7 +117,7 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
    @Provides
    @Singleton
    protected Supplier<Set<? extends Image>> provideImages(final ComputeServiceAdapter<N, H, I, L> adapter,
-         Function<I, Image> transformer, AddDefaultCredentialsToImage addDefaultCredentialsToImage) {
+            Function<I, Image> transformer, AddDefaultCredentialsToImage addDefaultCredentialsToImage) {
       return new TransformingSetSupplier<I, Image>(new Supplier<Iterable<I>>() {
 
          @Override
@@ -139,7 +152,7 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
    @Provides
    @Singleton
    protected CreateNodeWithGroupEncodedIntoName defineAddNodeWithTagStrategy(
-         AdaptingComputeServiceStrategies<N, H, I, L> in) {
+            AdaptingComputeServiceStrategies<N, H, I, L> in) {
       return in;
    }
 

@@ -27,6 +27,7 @@ import org.jclouds.openstack.nova.NovaClient;
 import org.jclouds.openstack.nova.ServerManagement;
 import org.jclouds.openstack.nova.handlers.ParseNovaErrorFromHttpResponse;
 import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
@@ -35,6 +36,7 @@ import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
 import org.jclouds.openstack.config.OpenStackAuthenticationModule;
+import org.jclouds.openstack.handlers.RetryOnRenew;
 import org.jclouds.openstack.reference.AuthHeaders;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
@@ -74,6 +76,11 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ParseNovaErrorFromHttpResponse.class);
    }
 
+   @Override
+   protected void bindRetryHandlers() {
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
+   }
+   
    @Provides
    @Singleton
    @ServerManagement

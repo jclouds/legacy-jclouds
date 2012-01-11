@@ -18,8 +18,7 @@
  */
 package org.jclouds.servermanager.compute;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.StandaloneComputeServiceContextSpec;
@@ -28,7 +27,6 @@ import org.jclouds.servermanager.Hardware;
 import org.jclouds.servermanager.Image;
 import org.jclouds.servermanager.Server;
 import org.jclouds.servermanager.ServerManager;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -38,29 +36,19 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
-public class ServerManagerExperimentLiveTest {
-   protected String provider = "servermanager";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
-
-   @BeforeClass
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = System.getProperty("test." + provider + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
+@Test(groups = "live", singleThreaded = true, testName = "ServerManagerExperimentLiveTest")
+public class ServerManagerExperimentLiveTest extends BaseVersionedServiceLiveTest {
+   public ServerManagerExperimentLiveTest() {
+      provider = "servermanager";
    }
-
+   
    @Test
    public void testAndExperiment() {
       ComputeServiceContext context = null;
       try {
          context = new ComputeServiceContextFactory()
                   .createContext(new StandaloneComputeServiceContextSpec<ServerManager, Server, Hardware, Image, Datacenter>(
-                           "servermanager", endpoint, apiversion, "", identity, credential, ServerManager.class,
+                           "servermanager", endpoint, apiVersion, buildVersion, "", identity, credential, ServerManager.class,
                            ServerManagerComputeServiceContextBuilder.class, ImmutableSet.<Module> of()));
 
          context.getComputeService().listNodes();

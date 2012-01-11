@@ -18,15 +18,11 @@
  */
 package org.jclouds.compute;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.emptyToNull;
-
 import java.util.Properties;
 
-import org.jclouds.Constants;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.domain.LoginCredentials.Builder;
-import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.BaseRestClientLiveTest;
 import org.testng.annotations.BeforeClass;
 
 import com.google.common.base.Splitter;
@@ -36,42 +32,16 @@ import com.google.common.collect.Iterables;
  * 
  * @author Jason King
  */
-public abstract class BaseVersionedServiceLiveTest {
-   protected String prefix = System.getProperty("user.name");
+public abstract class BaseVersionedServiceLiveTest extends BaseRestClientLiveTest {
 
-   protected String provider;
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
    protected String imageId;
    protected String loginUser;
    protected String authenticateSudo;
    protected LoginCredentials loginCredentials = LoginCredentials.builder().user("root").build();
 
-   protected Properties setupRestProperties() {
-      return RestContextFactory.getPropertiesFromResource("/rest.properties");
-   }
-
+   @Override
    protected Properties setupProperties() {
-
-      if (emptyToNull(provider) == null)
-         throw new NullPointerException("provider must not be null or empty:" + provider);
-      if (emptyToNull(identity) == null)
-         throw new NullPointerException("identity must not be null or empty:" + provider);
-
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-
-      overrides.setProperty(provider + ".identity", identity);
-
-      if (credential != null)
-         overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
+      Properties overrides= super.setupProperties();   
       if (imageId != null)
          overrides.setProperty(provider + ".image-id", imageId);
       if (loginUser != null)
@@ -84,10 +54,7 @@ public abstract class BaseVersionedServiceLiveTest {
 
    @BeforeClass
    protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = System.getProperty("test." + provider + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
+      super.setupCredentials();
       imageId = System.getProperty("test." + provider + ".image-id");
       loginUser = System.getProperty("test." + provider + ".image.login-user");
       authenticateSudo = System.getProperty("test." + provider + ".image.authenticate-sudo");

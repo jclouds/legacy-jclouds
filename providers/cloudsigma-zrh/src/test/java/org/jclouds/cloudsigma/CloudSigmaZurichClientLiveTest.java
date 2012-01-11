@@ -29,6 +29,5 @@ import org.testng.annotations.Test;
 public class CloudSigmaZurichClientLiveTest extends CloudSigmaClientLiveTest {
    public CloudSigmaZurichClientLiveTest() {
       provider = "cloudsigma-zrh";
-      bootDrive = "7fad4fe1-daf3-4cb8-a847-082aae4d8506";
    }
 }

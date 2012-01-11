@@ -18,7 +18,6 @@
  */
 package org.jclouds.cloudsigma;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -28,7 +27,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import org.jclouds.Constants;
 import org.jclouds.cloudsigma.domain.ClaimType;
 import org.jclouds.cloudsigma.domain.CreateDriveRequest;
 import org.jclouds.cloudsigma.domain.DriveData;
@@ -46,6 +44,8 @@ import org.jclouds.cloudsigma.domain.VLANInfo;
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.cloudsigma.predicates.DriveClaimed;
 import org.jclouds.cloudsigma.util.Servers;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.LoginCredentials;
@@ -62,6 +62,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
@@ -73,56 +74,39 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", singleThreaded = true)
-public class CloudSigmaClientLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "CloudSigmaClientLiveTest")
+public class CloudSigmaClientLiveTest extends BaseVersionedServiceLiveTest {
+   public CloudSigmaClientLiveTest() {
+      provider = "cloudsigma";
+   }
+   
    protected long driveSize = 8 * 1024 * 1024 * 1024l;
    protected int maxDriveImageTime = 300;
    protected String vncPassword = "Il0veVNC";
-   protected String bootDrive = "f3c7c665-cd54-4a78-8fd2-7ec2f028cf29";
    protected CloudSigmaClient client;
    protected RestContext<CloudSigmaClient, CloudSigmaAsyncClient> context;
    protected Predicate<IPSocket> socketTester;
 
-   protected String provider = "cloudsigma";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
    protected Predicate<DriveInfo> driveNotClaimed;
-
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = System.getProperty("test." + provider + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      if (credential != null)
-         overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
-      return overrides;
-   }
+   protected ComputeServiceContext computeContext;
 
    @BeforeGroups(groups = "live")
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
-
+      computeContext = new ComputeServiceContextFactory().createContext(provider,
+            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+      context = computeContext.getProviderSpecificContext();
+      
       client = context.getApi();
       driveNotClaimed = new RetryablePredicate<DriveInfo>(Predicates.not(new DriveClaimed(client)), maxDriveImageTime,
             1, TimeUnit.SECONDS);
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), maxDriveImageTime, 1,
             TimeUnit.SECONDS);
+      
+      if (Strings.emptyToNull(imageId) == null) {
+         imageId = computeContext.getComputeService().templateBuilder().build().getImage().getId();
+      }
    }
 
    @Test
@@ -459,7 +443,7 @@ public class CloudSigmaClientLiveTest {
 
    protected void prepareDrive() {
       client.destroyDrive(drive.getUuid());
-      drive = client.cloneDrive(bootDrive, drive.getName(),
+      drive = client.cloneDrive(imageId, drive.getName(),
             new CloneDriveOptions()
             .size(driveSize)
             .tags("cat:mouse", "monkey:banana")

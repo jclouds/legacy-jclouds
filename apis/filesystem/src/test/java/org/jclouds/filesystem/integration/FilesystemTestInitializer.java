@@ -44,15 +44,16 @@ public class FilesystemTestInitializer extends TransientBlobStoreTestInitializer
    }
 
    @Override
-   protected BlobStoreContext createLiveContext(Module configurationModule, String endpoint, String apiversion,
-            String app, String identity, String credential) throws IOException {
+   protected BlobStoreContext createLiveContext(Module configurationModule, String endpoint, String apiVersion,
+            String buildVersion, String app, String identity, String credential) throws IOException {
       return new BlobStoreContextFactory().createContext(provider, ImmutableSet.of(configurationModule,
-               new Log4JLoggingModule()), setupProperties(endpoint, apiversion, identity, credential));
+               new Log4JLoggingModule()), setupProperties(endpoint, apiVersion, buildVersion, identity, credential));
    }
 
    @Override
-   protected Properties setupProperties(String endpoint, String apiversion, String identity, String credential) {
-      Properties props = super.setupProperties(endpoint, apiversion, identity, credential);
+   protected Properties setupProperties(String endpoint, String apiVersion, String buildVersion, String identity,
+            String credential) {
+      Properties props = super.setupProperties(endpoint, apiVersion, buildVersion, identity, credential);
       props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, TestUtils.TARGET_BASE_DIR);
       return props;
    }

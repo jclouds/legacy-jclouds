@@ -18,7 +18,6 @@
  */
 package org.jclouds.aws.ec2.services;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.collect.Sets.newTreeSet;
@@ -36,12 +35,12 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 
-import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.ComputeTestUtils;
@@ -66,38 +65,15 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true)
-public class AWSKeyPairClientLiveTest {
+public class AWSKeyPairClientLiveTest extends BaseVersionedServiceLiveTest {
+   public AWSKeyPairClientLiveTest() {
+      provider = "aws-ec2";
+   }
 
    private AWSKeyPairClient client;
    private RestContext<AWSEC2Client, AWSEC2AsyncClient> context;
 
-   protected String provider = "aws-ec2";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
    private ComputeServiceContext computeContext;
-
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint", null);
-      apiversion = System.getProperty("test." + provider + ".apiversion", null);
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
-      return overrides;
-   }
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {

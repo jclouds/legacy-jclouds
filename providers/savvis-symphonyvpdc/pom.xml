@@ -49,7 +49,8 @@
     
     <properties>
         <test.savvis-symphonyvpdc.endpoint>https://api.symphonyvpdc.savvis.net/vpdc</test.savvis-symphonyvpdc.endpoint>
-        <test.savvis-symphonyvpdc.apiversion>1.0</test.savvis-symphonyvpdc.apiversion>
+        <test.savvis-symphonyvpdc.api-version>1.0</test.savvis-symphonyvpdc.api-version>
+        <test.savvis-symphonyvpdc.build-version></test.savvis-symphonyvpdc.build-version>
         <test.savvis-symphonyvpdc.identity>FIXME</test.savvis-symphonyvpdc.identity>
         <test.savvis-symphonyvpdc.credential>FIXME</test.savvis-symphonyvpdc.credential>
         <test.savvis-symphonyvpdc.image-id />
@@ -114,7 +115,8 @@
                                 	<threadCount>1</threadCount>
                                     <systemPropertyVariables>
                                         <test.savvis-symphonyvpdc.endpoint>${test.savvis-symphonyvpdc.endpoint}</test.savvis-symphonyvpdc.endpoint>
-                                        <test.savvis-symphonyvpdc.apiversion>${test.savvis-symphonyvpdc.apiversion}</test.savvis-symphonyvpdc.apiversion>
+                                        <test.savvis-symphonyvpdc.api-version>${test.savvis-symphonyvpdc.api-version}</test.savvis-symphonyvpdc.api-version>
+                                        <test.savvis-symphonyvpdc.build-version>${test.savvis-symphonyvpdc.build-version}</test.savvis-symphonyvpdc.build-version>
                                         <test.savvis-symphonyvpdc.identity>${test.savvis-symphonyvpdc.identity}</test.savvis-symphonyvpdc.identity>
                                         <test.savvis-symphonyvpdc.credential>${test.savvis-symphonyvpdc.credential}</test.savvis-symphonyvpdc.credential>
                                         <test.savvis-symphonyvpdc.image-id>${test.savvis-symphonyvpdc.image-id}</test.savvis-symphonyvpdc.image-id>

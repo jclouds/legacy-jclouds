@@ -18,15 +18,15 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.inject.TypeLiteral;
+import java.util.Map;
+
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.FormParam;
-import java.util.Map;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests annotation parsing of {@code ArchiveAsyncClient}
@@ -47,7 +47,7 @@ public class ArchiveAsyncClientTest extends BaseGleSYSAsyncClientTest<ArchiveAsy
    }
    
    public void testArchiveDetails() throws Exception {
-      testMethod("archiveDetails", "details", "POST", true, ReturnNullOnNotFoundOr404.class, userName);
+      testMethod("getArchiveDetails", "details", "POST", true, ReturnNullOnNotFoundOr404.class, userName);
    }
    
    public void testCreateArchive() throws Exception {
@@ -61,7 +61,7 @@ public class ArchiveAsyncClientTest extends BaseGleSYSAsyncClientTest<ArchiveAsy
 
    public void testResizeArchive() throws Exception {
       testMethod("resizeArchive", "resize", "POST", false, MapHttp4xxCodesToExceptions.class, userName,
-            newEntry("size", 5));
+            newEntry("size", "5 GB"));
    }
    
    public void testChangeArchivePassword() throws Exception {

@@ -65,6 +65,7 @@ public abstract class RestClientTest<T> extends BaseRestClientTest {
    @BeforeClass
    protected void setupFactory() throws IOException {
       RestContextSpec<?, ?> contextSpec = createContextSpec();
+      
       injector = createContextBuilder(contextSpec,
             ImmutableSet.of(new MockModule(), new NullLoggingModule(), createModule()), getProperties())
             .buildInjector();

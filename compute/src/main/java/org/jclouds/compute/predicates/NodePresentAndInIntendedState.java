@@ -25,9 +25,9 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
@@ -43,18 +43,18 @@ import com.google.inject.Inject;
 @Singleton
 public class NodePresentAndInIntendedState implements Predicate<NodeMetadata> {
 
-   private final ComputeService client;
+   private final GetNodeMetadataStrategy client;
    private final NodeState intended;
    private final Set<NodeState> invalids;
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public NodePresentAndInIntendedState(NodeState intended, ComputeService client) {
+   public NodePresentAndInIntendedState(NodeState intended, GetNodeMetadataStrategy client) {
       this(intended, ImmutableSet.of(NodeState.ERROR), client);
    }
 
-   public NodePresentAndInIntendedState(NodeState intended, Set<NodeState> invalids, ComputeService client) {
+   public NodePresentAndInIntendedState(NodeState intended, Set<NodeState> invalids, GetNodeMetadataStrategy client) {
       this.intended = intended;
       this.client = client;
       this.invalids = invalids;
@@ -75,6 +75,6 @@ public class NodePresentAndInIntendedState implements Predicate<NodeMetadata> {
    private NodeMetadata refresh(NodeMetadata node) {
       if (node == null || node.getId() == null)
          return null;
-      return client.getNodeMetadata(node.getId());
+      return client.getNode(node.getId());
    }
 }

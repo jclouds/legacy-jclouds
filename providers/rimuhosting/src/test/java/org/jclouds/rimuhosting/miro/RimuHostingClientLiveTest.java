@@ -18,7 +18,6 @@
  */
 package org.jclouds.rimuhosting.miro;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -26,7 +25,7 @@ import static org.testng.Assert.assertTrue;
 import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.Constants;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
@@ -47,41 +46,21 @@ import com.google.inject.Module;
  * 
  * @author Ivan Meredith
  */
-@Test(groups = "live")
-public class RimuHostingClientLiveTest {
-
+@Test(groups = "live", singleThreaded = true, testName = "RimuHostingClientLiveTest")
+public class RimuHostingClientLiveTest extends BaseVersionedServiceLiveTest {
+   public RimuHostingClientLiveTest() {
+      provider = "rimuhosting";
+   }
+   
    private RimuHostingClient connection;
    private RestContext<RimuHostingClient, RimuHostingAsyncClient> context;
-
-   protected String provider = "rimuhosting";
-   protected String identity;
-   protected String endpoint;
-   protected String apiversion;
-
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
-      return overrides;
-   }
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
 
-      this.context = new RestContextFactory().createContext("rimuhosting", ImmutableSet
+      this.context = new RestContextFactory().createContext(provider, ImmutableSet
                .<Module> of(new Log4JLoggingModule()), overrides);
       this.connection = context.getApi();
 

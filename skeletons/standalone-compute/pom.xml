@@ -37,7 +37,8 @@
         <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
         <test.servermanager.identity>FIXME</test.servermanager.identity>
         <test.servermanager.endpoint>https://servermanager.com</test.servermanager.endpoint>
-        <test.servermanager.apiversion>1.0</test.servermanager.apiversion>
+        <test.servermanager.api-version>1.0</test.servermanager.api-version>
+        <test.servermanager.build-version></test.servermanager.build-version>
         <test.servermanager.identity>FIXME</test.servermanager.identity>
     </properties>
     <dependencies>
@@ -98,7 +99,8 @@
                                 <configuration>
                                     <systemPropertyVariables>
                                         <test.servermanager.endpoint>${test.servermanager.endpoint}</test.servermanager.endpoint>
-                                        <test.servermanager.apiversion>${test.servermanager.apiversion}</test.servermanager.apiversion>
+                                        <test.servermanager.api-version>${test.servermanager.api-version}</test.servermanager.api-version>
+                                        <test.servermanager.build-version>${test.servermanager.build-version}</test.servermanager.build-version>
                                         <test.servermanager.identity>${test.servermanager.identity}</test.servermanager.identity>
                                         <jclouds.compute.blacklist-nodes>${jclouds.compute.blacklist-nodes}</jclouds.compute.blacklist-nodes>
                                     </systemPropertyVariables>

@@ -18,7 +18,6 @@
  */
 package org.jclouds.ec2.services;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.ec2.options.DescribeAvailabilityZonesOptions.Builder.availabilityZones;
 import static org.jclouds.ec2.options.DescribeRegionsOptions.Builder.regions;
 import static org.testng.Assert.assertEquals;
@@ -26,13 +25,13 @@ import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.Map.Entry;
 
-import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
@@ -40,7 +39,6 @@ import org.jclouds.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -54,38 +52,14 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
-public class AvailabilityZoneAndRegionClientLiveTest {
-
+@Test(groups = "live", singleThreaded = true, testName = "AvailabilityZoneAndRegionClientLiveTest")
+public class AvailabilityZoneAndRegionClientLiveTest extends BaseVersionedServiceLiveTest {
+   public AvailabilityZoneAndRegionClientLiveTest() {
+      provider = "ec2";
+   }
+   
    private AvailabilityZoneAndRegionClient client;
    private RestContext<EC2Client, EC2AsyncClient> context;
-   protected String provider = "ec2";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
-
-   @BeforeClass
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = System.getProperty("test." + provider + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      if (credential != null)
-         overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
-      return overrides;
-   }
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {

@@ -39,10 +39,10 @@ public class SwiftTestInitializer extends TransientBlobStoreTestInitializer {
    }
 
    @Override
-   protected BlobStoreContext createLiveContext(Module configurationModule, String endpoint, String apiversion,
-            String app, String identity, String credential) throws IOException {
+   protected BlobStoreContext createLiveContext(Module configurationModule, String endpoint, String apiVersion,
+            String buildVersion, String app, String identity, String credential) throws IOException {
       return new BlobStoreContextFactory().createContext(provider, ImmutableSet.of(configurationModule,
-               new Log4JLoggingModule()), setupProperties(endpoint, apiversion, identity, credential));
+               new Log4JLoggingModule()), setupProperties(endpoint, apiVersion, buildVersion, identity, credential));
    }
 
 }

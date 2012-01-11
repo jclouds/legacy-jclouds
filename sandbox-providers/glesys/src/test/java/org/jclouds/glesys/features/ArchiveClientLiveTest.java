@@ -18,28 +18,27 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import org.jclouds.glesys.domain.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.glesys.domain.ArchiveAllowedArguments;
+import org.jclouds.glesys.domain.ArchiveDetails;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import static com.google.common.base.Predicates.equalTo;
-import static org.testng.Assert.*;
+import com.google.common.base.Predicate;
 
 /**
  * Tests behavior of {@code ArchiveClient}
  *
  * @author Adam Lowe
  */
-@Test(groups = "live", testName = "ArchiveClientLiveTest")
+@Test(groups = "live", testName = "ArchiveClientLiveTest", singleThreaded = true)
 public class ArchiveClientLiveTest extends BaseGleSYSClientLiveTest {
 
    @BeforeGroups(groups = {"live"})
@@ -97,7 +96,7 @@ public class ArchiveClientLiveTest extends BaseGleSYSClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateArchive")
    public void testArchiveDetails() throws Exception {
-      ArchiveDetails details = client.archiveDetails(archiveUser);
+      ArchiveDetails details = client.getArchiveDetails(archiveUser);
       assertEquals(details.getUsername(), archiveUser);
       assertNotNull(details.getFreeSize());
       assertNotNull(details.getTotalSize());
@@ -109,15 +108,14 @@ public class ArchiveClientLiveTest extends BaseGleSYSClientLiveTest {
       // TODO assert something useful!
    }
 
-   // TODO enable this once issue is resolved
-   @Test(enabled=false, dependsOnMethods = "testCreateArchive")
+   @Test(dependsOnMethods = "testCreateArchive")
    public void testResizeArchive() throws Exception {
-      client.resizeArchive(archiveUser, 30);
+      client.resizeArchive(archiveUser, 20);
 
       assertTrue(new RetryablePredicate<String>(
             new Predicate<String>() {
                public boolean apply(String value){
-                  return client.archiveDetails(archiveUser) != null && value.equals(client.archiveDetails(archiveUser).getTotalSize());
+                  return client.getArchiveDetails(archiveUser) != null && value.equals(client.getArchiveDetails(archiveUser).getTotalSize());
                }
             }, 30, 1, TimeUnit.SECONDS).apply("20 GB"));
    }

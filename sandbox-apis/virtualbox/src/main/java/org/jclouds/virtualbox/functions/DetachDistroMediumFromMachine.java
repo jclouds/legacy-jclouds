@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.virtualbox.functions;
 
 import javax.annotation.Nullable;
@@ -32,19 +31,20 @@ import com.google.common.base.Function;
 public class DetachDistroMediumFromMachine implements Function<IMachine, Void> {
 
    private final String controller;
-   private int controllerPort;
-   private int device;
+   private int port;
+   private int deviceSlot;
 
-   public DetachDistroMediumFromMachine(String controller, int controllerPort, int device) {
+   public DetachDistroMediumFromMachine(String controller, int port, int deviceSlot) {
       this.controller = controller;
-      this.controllerPort = controllerPort;
-      this.device = device;
+      this.port = port;
+      this.deviceSlot = deviceSlot;
    }
 
+   //TODO: should this be a function on HardDisk?
    @Override
    public Void apply(@Nullable IMachine machine) {
       try {
-         machine.detachDevice(controller, controllerPort, device);
+         machine.detachDevice(controller, port, deviceSlot);
          machine.saveSettings();
       } catch (VBoxException e) {
          if (!alreadyDetached(e))

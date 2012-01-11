@@ -20,7 +20,6 @@ package org.jclouds.ec2.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Map.Entry;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -138,18 +137,6 @@ public class IpPermissionImpl implements IpPermission {
    @Override
    public int getToPort() {
       return toPort;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   @Deprecated
-   public Set<UserIdGroupPair> getGroups() {
-      ImmutableSet.Builder<UserIdGroupPair> groups = ImmutableSet.<UserIdGroupPair> builder();
-      for (Entry<String, String> pair : userIdGroupPairs.entries())
-         groups.add(new UserIdGroupPair(pair.getKey(), pair.getValue()));
-      return groups.build();
    }
 
    /**

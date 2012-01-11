@@ -17,15 +17,13 @@
  * under the License.
  */
 package org.jclouds.aws.filters;
-
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 import static org.testng.Assert.assertEquals;
 
-import java.util.List;
-import java.util.Map;
-
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.date.TimeStamp;
+import org.jclouds.http.IntegrationTestAsyncClient;
+import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.RestContextBuilder;
@@ -49,8 +47,9 @@ import com.google.inject.name.Names;
 @Test(groups = "unit", testName = "FormSignerTest")
 public class FormSignerTest {
    @SuppressWarnings("unchecked")
-   public static final RestContextSpec<Map, List> DUMMY_SPEC = new RestContextSpec<Map, List>("provider", "endpoint",
-            "apiVersion", "", "identity", "credential", Map.class, List.class, PropertiesBuilder.class,
+   public static final RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> DUMMY_SPEC = new RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient>(
+            "provider", "endpoint", "apiVersion", "buildVersion", "", "identity", "credential",
+            IntegrationTestClient.class, IntegrationTestAsyncClient.class, PropertiesBuilder.class,
             (Class) RestContextBuilder.class, ImmutableList.<Module> of(new MockModule(), new NullLoggingModule(),
                      new AbstractModule() {
                         @Override

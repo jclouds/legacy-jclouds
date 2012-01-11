@@ -31,6 +31,7 @@ import static com.google.inject.name.Names.bindProperties;
 import static com.google.inject.util.Types.newParameterizedType;
 import static org.jclouds.Constants.PROPERTY_API;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
 import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_IDENTITY;
@@ -39,14 +40,17 @@ import static org.jclouds.Constants.PROPERTY_PROVIDER;
 import static org.jclouds.Constants.PROPERTY_TIMEOUTS_PREFIX;
 
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.google.common.collect.*;
 import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
@@ -54,6 +58,7 @@ import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.lifecycle.config.LifeCycleModule;
 import org.jclouds.location.Iso3166;
 import org.jclouds.location.Provider;
 import org.jclouds.location.config.ProvideIso3166CodesByLocationIdViaProperties;
@@ -61,6 +66,7 @@ import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rest.annotations.Api;
 import org.jclouds.rest.annotations.ApiVersion;
+import org.jclouds.rest.annotations.BuildVersion;
 import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.config.CredentialStoreModule;
@@ -70,12 +76,19 @@ import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.ExecutionList;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Provides;
+import com.google.inject.Stage;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -149,6 +162,8 @@ public class RestContextBuilder<S, A> {
             bind(String.class).annotatedWith(Api.class).toInstance(toBind.getProperty(PROPERTY_API));
          if (toBind.containsKey(PROPERTY_API_VERSION))
             bind(String.class).annotatedWith(ApiVersion.class).toInstance(toBind.getProperty(PROPERTY_API_VERSION));
+         if (toBind.containsKey(PROPERTY_BUILD_VERSION))
+            bind(String.class).annotatedWith(BuildVersion.class).toInstance(toBind.getProperty(PROPERTY_BUILD_VERSION));
          if (toBind.containsKey(PROPERTY_IDENTITY))
             bind(String.class).annotatedWith(Identity.class).toInstance(
                      checkNotNull(toBind.getProperty(PROPERTY_IDENTITY), PROPERTY_IDENTITY));
@@ -182,8 +197,11 @@ public class RestContextBuilder<S, A> {
       ifHttpConfigureRestOtherwiseGuiceClientFactory(modules);
       addExecutorServiceIfNotPresent(modules);
       addCredentialStoreIfNotPresent(modules);
+      modules.add(new LifeCycleModule());
       modules.add(new BindPropertiesAndPrincipalContext(properties));
-      return Guice.createInjector(modules);
+      Injector returnVal = Guice.createInjector(Stage.PRODUCTION, modules);
+      returnVal.getInstance(ExecutionList.class).execute();
+      return returnVal;
    }
 
    @VisibleForTesting

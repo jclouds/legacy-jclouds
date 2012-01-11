@@ -18,7 +18,9 @@
  */
 package org.jclouds.cloudstack.features;
 
+import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
+import org.jclouds.cloudstack.options.ListClustersOptions;
 import org.jclouds.cloudstack.options.ListHostsOptions;
 import org.jclouds.concurrent.Timeout;
 
@@ -46,4 +48,11 @@ public interface GlobalHostClient {
     */
    Set<Host> listHosts(ListHostsOptions... options);
 
+   /**
+    * Lists clusters
+    *
+    * @param options if present, how to constrain the list
+    * @return clusters matching query, or empty set if no clusters match
+    */
+   Set<Cluster> listClusters(ListClustersOptions... options);
 }

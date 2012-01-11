@@ -35,7 +35,8 @@
 
   <properties>
     <test.bluelock-vcloud-zone01.endpoint>https://zone01.bluelock.com/api</test.bluelock-vcloud-zone01.endpoint>
-    <test.bluelock-vcloud-zone01.apiversion>1.0</test.bluelock-vcloud-zone01.apiversion>
+    <test.bluelock-vcloud-zone01.api-version>1.0</test.bluelock-vcloud-zone01.api-version>
+    <test.bluelock-vcloud-zone01.build-version></test.bluelock-vcloud-zone01.build-version>
     <test.bluelock-vcloud-zone01.identity>FIXME_IDENTITY</test.bluelock-vcloud-zone01.identity>
     <test.bluelock-vcloud-zone01.credential>FIXME_CREDENTIAL</test.bluelock-vcloud-zone01.credential>
     <test.bluelock-vcloud-zone01.image-id />
@@ -102,7 +103,8 @@
                 <configuration>
                   <systemPropertyVariables>
                     <test.bluelock-vcloud-zone01.endpoint>${test.bluelock-vcloud-zone01.endpoint}</test.bluelock-vcloud-zone01.endpoint>
-                    <test.bluelock-vcloud-zone01.apiversion>${test.bluelock-vcloud-zone01.apiversion}</test.bluelock-vcloud-zone01.apiversion>
+                    <test.bluelock-vcloud-zone01.api-version>${test.bluelock-vcloud-zone01.api-version}</test.bluelock-vcloud-zone01.api-version>
+                    <test.bluelock-vcloud-zone01.build-version>${test.bluelock-vcloud-zone01.build-version}</test.bluelock-vcloud-zone01.build-version>
                     <test.bluelock-vcloud-zone01.identity>${test.bluelock-vcloud-zone01.identity}</test.bluelock-vcloud-zone01.identity>
                     <test.bluelock-vcloud-zone01.credential>${test.bluelock-vcloud-zone01.credential}</test.bluelock-vcloud-zone01.credential>
                     <test.bluelock-vcloud-zone01.image-id>${test.bluelock-vcloud-zone01.image-id}</test.bluelock-vcloud-zone01.image-id>

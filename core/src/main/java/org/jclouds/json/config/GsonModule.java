@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.crypto.CryptoStreams;
@@ -35,20 +36,14 @@ import org.jclouds.domain.JsonBall;
 import org.jclouds.json.Json;
 import org.jclouds.json.internal.EnumTypeAdapterThatReturnsFromValue;
 import org.jclouds.json.internal.GsonWrapper;
-import org.jclouds.json.internal.JsonLiteral;
+import org.jclouds.json.internal.NullHackJsonLiteralAdapter;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Maps;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.primitives.Bytes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.google.gson.TypeAdapter;
 import com.google.gson.internal.JsonReaderInternalAccess;
 import com.google.gson.reflect.TypeToken;
@@ -57,7 +52,6 @@ import com.google.gson.stream.JsonWriter;
 import com.google.inject.AbstractModule;
 import com.google.inject.ImplementedBy;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
 
 /**
  * Contains logic for parsing objects from Strings.
@@ -69,9 +63,9 @@ public class GsonModule extends AbstractModule {
    @SuppressWarnings("rawtypes")
    @Provides
    @Singleton
-   Gson provideGson(JsonBallAdapter jsonAdapter, DateAdapter adapter, ByteListAdapter byteListAdapter,
-         ByteArrayAdapter byteArrayAdapter, PropertiesAdapter propertiesAdapter, JsonAdapterBindings bindings)
-         throws ClassNotFoundException, Exception {
+   Gson provideGson(TypeAdapter<JsonBall> jsonAdapter, DateAdapter adapter, ByteListAdapter byteListAdapter,
+            ByteArrayAdapter byteArrayAdapter, PropertiesAdapter propertiesAdapter, JsonAdapterBindings bindings)
+            throws ClassNotFoundException, Exception {
       GsonBuilder builder = new GsonBuilder();
 
       // simple (type adapters)
@@ -80,40 +74,35 @@ public class GsonModule extends AbstractModule {
       builder.registerTypeAdapter(new TypeToken<List<Byte>>() {
       }.getType(), byteListAdapter.nullSafe());
       builder.registerTypeAdapter(byte[].class, byteArrayAdapter.nullSafe());
+      builder.registerTypeAdapter(JsonBall.class, jsonAdapter.nullSafe());
 
       // complicated (serializers/deserializers as they need context to operate)
       builder.registerTypeHierarchyAdapter(Enum.class, new EnumTypeAdapterThatReturnsFromValue());
-      builder.registerTypeAdapter(JsonBall.class, jsonAdapter);
 
       for (Map.Entry<Type, Object> binding : bindings.getBindings().entrySet()) {
          builder.registerTypeAdapter(binding.getKey(), binding.getValue());
       }
-      
+
       return builder.create();
-   }
-
-   // http://code.google.com/p/google-gson/issues/detail?id=326
-   @ImplementedBy(JsonBallAdapterImpl.class)
-   public static interface JsonBallAdapter extends JsonSerializer<JsonBall>, JsonDeserializer<JsonBall> {
-
-   }
-
-   @Singleton
-   public static class JsonBallAdapterImpl implements JsonBallAdapter {
-
-      public JsonElement serialize(JsonBall src, Type typeOfSrc, JsonSerializationContext context) {
-         return new JsonLiteral(src);
-      }
-
-      public JsonBall deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
-         return new JsonBall(json.toString());
-      }
-
    }
 
    @ImplementedBy(CDateAdapter.class)
    public static abstract class DateAdapter extends TypeAdapter<Date> {
+
+   }
+
+   @Provides
+   @Singleton
+   protected TypeAdapter<JsonBall> provideJsonBallAdapter(NullHackJsonBallAdapter in) {
+      return in;
+   }
+
+   public static class NullHackJsonBallAdapter extends NullHackJsonLiteralAdapter<JsonBall> {
+
+      @Override
+      protected JsonBall createJsonLiteralFromRawJson(String json) {
+         return new JsonBall(json);
+      }
 
    }
 
@@ -185,15 +174,15 @@ public class GsonModule extends AbstractModule {
 
    @Singleton
    public static class PropertiesAdapter extends TypeAdapter<Properties> {
-      private final Json json;
-      private final Type mapType = new TypeLiteral<Map<String, String>>() {
-      }.getRawType();
+      private final Provider<Gson> gson;
+      private final TypeToken<Map<String, String>> mapType = new TypeToken<Map<String, String>>() {
+      };
 
       @Inject
-      public PropertiesAdapter(Json json) {
-         this.json = json;
+      public PropertiesAdapter(Provider<Gson> gson) {
+         this.gson = gson;
       }
-      
+
       @Override
       public void write(JsonWriter out, Properties value) throws IOException {
          Builder<String, String> srcMap = ImmutableMap.<String, String> builder();
@@ -201,7 +190,7 @@ public class GsonModule extends AbstractModule {
             String propName = (String) propNames.nextElement();
             srcMap.put(propName, value.getProperty(propName));
          }
-         out.value(new JsonLiteral(json.toJson(srcMap.build(), mapType)));
+         gson.get().getAdapter(mapType).write(out, srcMap.build());
       }
 
       @Override
@@ -209,8 +198,8 @@ public class GsonModule extends AbstractModule {
          Properties props = new Properties();
          in.beginObject();
          while (in.hasNext()) {
-           JsonReaderInternalAccess.INSTANCE.promoteNameToValue(in);
-           props.setProperty(in.nextString(), in.nextString());
+            JsonReaderInternalAccess.INSTANCE.promoteNameToValue(in);
+            props.setProperty(in.nextString(), in.nextString());
          }
          in.endObject();
          return props;

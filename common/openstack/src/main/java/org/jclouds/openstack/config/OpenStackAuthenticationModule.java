@@ -40,6 +40,10 @@ import org.jclouds.rest.AsyncClientFactory;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -104,10 +108,41 @@ public class OpenStackAuthenticationModule extends AbstractModule {
 
    @Provides
    @Singleton
-   Supplier<AuthenticationResponse> provideAuthenticationResponseCache(
+   public LoadingCache<String,AuthenticationResponse> provideAuthenticationResponseCache2(
             final GetAuthenticationResponse getAuthenticationResponse) {
-      return Suppliers.memoizeWithExpiration(new RetryOnTimeOutExceptionSupplier<AuthenticationResponse>(
-               getAuthenticationResponse), 23, TimeUnit.HOURS);
+      
+      final RetryOnTimeOutExceptionSupplier<AuthenticationResponse> delegate = 
+               new RetryOnTimeOutExceptionSupplier<AuthenticationResponse>(getAuthenticationResponse);
+
+      CacheLoader<String, AuthenticationResponse> cacheLoader = new CacheLoader<String, AuthenticationResponse>() {
+         @Override
+         public AuthenticationResponse load(String key) throws Exception {
+            return delegate.get();
+         }
+      };
+      
+      LoadingCache<String, AuthenticationResponse> cache = CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS)
+               .build(cacheLoader);
+      
+      return cache;
+   }
+
+   @Provides
+   @Singleton
+   protected Supplier<AuthenticationResponse> provideAuthenticationResponseSupplier(
+            final LoadingCache<String,AuthenticationResponse> cache) {
+      return new Supplier<AuthenticationResponse>() {
+         @Override
+         public AuthenticationResponse get() {
+            try {
+               return cache.get("key");
+            } catch (UncheckedExecutionException e) {
+               throw Throwables.propagate(e.getCause());
+            } catch (ExecutionException e) {
+               throw Throwables.propagate(e.getCause());
+            }
+         }
+      };
    }
 
    @Provides

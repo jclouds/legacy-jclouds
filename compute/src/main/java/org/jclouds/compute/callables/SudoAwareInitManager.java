@@ -21,7 +21,6 @@ package org.jclouds.compute.callables;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
@@ -61,7 +60,6 @@ public class SudoAwareInitManager {
       this.init = checkNotNull(init, "init");
    }
 
-   @PostConstruct
    public SudoAwareInitManager init() {
       ssh = sshFactory.apply(node);
       return this;

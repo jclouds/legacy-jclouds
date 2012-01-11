@@ -21,58 +21,33 @@ package org.jclouds.virtualbox.compute;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
-
-import java.net.URI;
-import java.util.Map;
+import static org.testng.Assert.assertTrue;
 
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
-import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
-import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.domain.Credentials;
-import org.jclouds.json.Json;
-import org.jclouds.json.config.GsonModule;
-import org.jclouds.location.suppliers.JustProvider;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
-import org.jclouds.virtualbox.functions.IMachineToImage;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.VirtualBoxManager;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.inject.Guice;
 
 @Test(groups = "live", singleThreaded = true, testName = "VirtualBoxComputeServiceAdapterLiveTest")
 public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClientLiveTest {
 
    private VirtualBoxComputeServiceAdapter adapter;
    private NodeAndInitialCredentials<IMachine> machine;
-   private final Map<OsFamily, Map<String, String>> osVersionMap = new BaseComputeServiceContextModule() {
-   }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
-         .getInstance(Json.class));
 
-   @BeforeGroups(groups = { "live" })
+   @Override
    public void setupClient() {
       super.setupClient();
-      final VirtualBoxManager manager = getManager();
-      Function<IMachine, Image> iMachineToImage = new IMachineToImage(manager, osVersionMap);
-      adapter = new VirtualBoxComputeServiceAdapter(manager, new JustProvider(provider, URI.create(endpoint),
-            ImmutableSet.<String> of()), iMachineToImage);
-   }
-
-   protected VirtualBoxManager getManager() {
-      return (VirtualBoxManager) context.getProviderSpecificContext().getApi();
+      adapter = context.utils().injector().getInstance(VirtualBoxComputeServiceAdapter.class);
    }
 
    @Test
@@ -120,7 +95,7 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
    @Test
    public void testListHardwareProfiles() {
       Iterable<IMachine> profiles = adapter.listHardwareProfiles();
-      assertFalse(Iterables.isEmpty(profiles));
+      assertTrue(Iterables.isEmpty(profiles));
       // check state;
    }
 
@@ -132,8 +107,8 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
       }
       // check state;
    }
-
-   @AfterGroups(groups = "live")
+  
+   @Override
    protected void tearDown() throws Exception {
       if (machine != null)
          adapter.destroyNode(machine.getNodeId() + "");

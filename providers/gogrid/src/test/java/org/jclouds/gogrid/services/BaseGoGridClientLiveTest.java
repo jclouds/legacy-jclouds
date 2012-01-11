@@ -18,10 +18,9 @@
  */
 package org.jclouds.gogrid.services;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Properties;
 
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.gogrid.GoGridAsyncClient;
@@ -41,36 +40,14 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
-public class BaseGoGridClientLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "BaseGoGridClientLiveTest")
+public class BaseGoGridClientLiveTest extends BaseVersionedServiceLiveTest {
+   public BaseGoGridClientLiveTest() {
+      provider = "gogrid";
+   }
 
    protected RestContext<GoGridClient, GoGridAsyncClient> restContext;
-   protected String provider = "gogrid";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
    protected ComputeServiceContext context;
-   protected String prefix = System.getProperty("user.name");
-
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(provider + ".identity", identity);
-      overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
-      return overrides;
-   }
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {

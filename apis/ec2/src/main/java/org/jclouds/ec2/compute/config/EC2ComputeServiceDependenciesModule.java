@@ -56,8 +56,6 @@ import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
@@ -111,9 +109,6 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       }).annotatedWith(Names.named("ELASTICIP")).to(LoadPublicIpForInstanceOrNull.class);      
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<EC2Client, EC2AsyncClient>>() {
-      }).in(Scopes.SINGLETON);
-      bind(new TypeLiteral<RestContext<EC2Client, EC2AsyncClient>>() {
-      }).to(new TypeLiteral<RestContextImpl<EC2Client, EC2AsyncClient>>() {
       }).in(Scopes.SINGLETON);
    }
 

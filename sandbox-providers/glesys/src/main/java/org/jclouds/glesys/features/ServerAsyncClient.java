@@ -18,19 +18,41 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import org.jclouds.glesys.domain.*;
-import org.jclouds.glesys.options.*;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.glesys.domain.Server;
+import org.jclouds.glesys.domain.ServerAllowedArguments;
+import org.jclouds.glesys.domain.ServerConsole;
+import org.jclouds.glesys.domain.ServerCreated;
+import org.jclouds.glesys.domain.ServerDetails;
+import org.jclouds.glesys.domain.ServerLimit;
+import org.jclouds.glesys.domain.ServerStatus;
+import org.jclouds.glesys.domain.ServerTemplate;
+import org.jclouds.glesys.functions.ParseServerTemplatesFromHttpResponse;
+import org.jclouds.glesys.options.ServerCloneOptions;
+import org.jclouds.glesys.options.ServerCreateOptions;
+import org.jclouds.glesys.options.ServerDestroyOptions;
+import org.jclouds.glesys.options.ServerEditOptions;
+import org.jclouds.glesys.options.ServerStatusOptions;
+import org.jclouds.glesys.options.ServerStopOptions;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import java.util.*;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides asynchronous access to Server via their REST API.
@@ -90,7 +112,7 @@ public interface ServerAsyncClient {
     */
    @POST
    @Path("/server/console/format/json")
-   @SelectJson("server")
+   @SelectJson("remote")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<ServerConsole> getServerConsole(@FormParam("serverid") String id);
@@ -110,9 +132,9 @@ public interface ServerAsyncClient {
     */
    @GET
    @Path("/server/templates/format/json")
-   @SelectJson("templates")
+   @ResponseParser(ParseServerTemplatesFromHttpResponse.class)
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Map<String, Set<ServerTemplate>>> getTemplates();
+   ListenableFuture<Set<ServerTemplate>> getTemplates();
    
    /**
     * @see ServerClient#stopServer
@@ -183,7 +205,7 @@ public interface ServerAsyncClient {
     */
    @POST
    @Path("/server/destroy/format/json")
-   ListenableFuture<Void> destroyServer(@FormParam("serverid") String id, @FormParam("keepip") int keepIp);
+   ListenableFuture<Void> destroyServer(@FormParam("serverid") String id, ServerDestroyOptions keepIp);
 
    /**
     * @see ServerClient#resetPassword

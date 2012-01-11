@@ -33,6 +33,8 @@ import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VirtualBoxManager;
 
+import com.google.common.base.Suppliers;
+
 @Test(groups = "unit")
 public class IMachineToHardwareTest {
 
@@ -57,7 +59,7 @@ public class IMachineToHardwareTest {
 
       replay(vbm, vBox, vm, guestOsType);
 
-      Hardware hardware = new IMachineToHardware(vbm).apply(vm);
+      Hardware hardware = new IMachineToHardware(Suppliers.ofInstance(vbm)).apply(vm);
 
       assertEquals(hardware.getId(), machineId);
       assertEquals(hardware.getProviderId(), machineId);

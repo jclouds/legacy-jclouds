@@ -21,17 +21,17 @@ package org.jclouds.cloudstack.filters;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
-import java.util.List;
-import java.util.Map;
 
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.IntegrationTestAsyncClient;
+import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rest.BaseRestClientTest.MockModule;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.BaseRestClientTest.MockModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -48,8 +48,8 @@ import com.google.inject.Module;
 @Test(groups = "unit", testName = "QuerySignerTest")
 public class QuerySignerTest {
    @SuppressWarnings({ "unchecked", "rawtypes" })
-   public static final RestContextSpec<Map, List> DUMMY_SPEC = new RestContextSpec<Map, List>("cloudstack",
-         "http://localhost:8080/client/api", "2.2", "", "apiKey", "secretKey", Map.class, List.class,
+   public static final RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> DUMMY_SPEC = new RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient>("cloudstack",
+         "http://localhost:8080/client/api", "2.2", "", "", "apiKey", "secretKey", IntegrationTestClient.class, IntegrationTestAsyncClient.class,
          PropertiesBuilder.class, (Class) RestContextBuilder.class, ImmutableList.<Module> of(new MockModule(),
                new NullLoggingModule(), new AbstractModule() {
                   @Override

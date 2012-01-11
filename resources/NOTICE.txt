@@ -18,7 +18,7 @@
 ====
 
 jclouds
-Copyright 2009-2011 jclouds, Inc.
+Copyright 2009-2012 jclouds, Inc.
 
 This product includes software developed at
 jclouds, Inc. (http://www.jclouds.org/).
@@ -32,26 +32,18 @@ distributed under the CDDL Version 1.0 license.
 This product includes net.oauth.core 
 distributed under the Apache Software License, Version 2.0.
 
-net.oauth.signature.pem.PKCS1EncodedPublicKeySpec is taken from net.oauth.core
-distributed under the Apache Software License, Version 2.0.
-(c) 1998-2009 AOL LLC
-
 This product includes Gson (http://code.google.com/p/google-gson)
 distributed under the Apache Software License, Version 2.0.
-
-com.google.gson.stream.JsonWriter patches the same class taken from Gson
-distributed under the Apache Software License, Version 2.0.
-(c) 2010 Google Inc.
-
-com.google.gson.ObjectMapTypeAdapter contains pieces of Gson's MapTypeAdapter
-distributed under the Apache Software License, Version 2.0.
-(c) 2010 Google Inc.
 
 This product includes Guice (http://code.google.com/p/google-guice)
 distributed under the Apache Software License, Version 2.0.
 
 This product includes Guava (http://code.google.com/p/guava-libraries)
 distributed under the Apache Software License, Version 2.0.
+
+org.jclouds.util.Suppliers2 and Suppliers2Test contain pieces of Guava's Suppliers
+distributed under the Apache Software License, Version 2.0.
+(c) 2010 Google Inc.
 
 This product includes BouncyCastle (http://www.bouncycastle.org/licence.html)
 distributed with the following notice:

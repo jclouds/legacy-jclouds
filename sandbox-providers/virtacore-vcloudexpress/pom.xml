@@ -34,7 +34,8 @@
 
     <properties>
         <test.virtacore-vcloudexpress.endpoint>https://vcloud.virtacore.com/api</test.virtacore-vcloudexpress.endpoint>
-        <test.virtacore-vcloudexpress.apiversion>1.0</test.virtacore-vcloudexpress.apiversion>
+        <test.virtacore-vcloudexpress.api-version>1.0</test.virtacore-vcloudexpress.api-version>
+        <test.virtacore-vcloudexpress.build-version></test.virtacore-vcloudexpress.build-version>
         <test.virtacore-vcloudexpress.identity>FIXME_IDENTITY</test.virtacore-vcloudexpress.identity>
         <test.virtacore-vcloudexpress.credential>FIXME_CREDENTIAL</test.virtacore-vcloudexpress.credential>
         <test.virtacore-vcloudexpress.image-id></test.virtacore-vcloudexpress.image-id>
@@ -99,7 +100,8 @@
                                 <configuration>
                                     <systemPropertyVariables>
                                         <test.virtacore-vcloudexpress.endpoint>${test.virtacore-vcloudexpress.endpoint}</test.virtacore-vcloudexpress.endpoint>
-                                        <test.virtacore-vcloudexpress.apiversion>${test.virtacore-vcloudexpress.apiversion}</test.virtacore-vcloudexpress.apiversion>
+                                        <test.virtacore-vcloudexpress.api-version>${test.virtacore-vcloudexpress.api-version}</test.virtacore-vcloudexpress.api-version>
+                                        <test.virtacore-vcloudexpress.build-version>${test.virtacore-vcloudexpress.build-version}</test.virtacore-vcloudexpress.build-version>
                                         <test.virtacore-vcloudexpress.identity>${test.virtacore-vcloudexpress.identity}</test.virtacore-vcloudexpress.identity>
                                         <test.virtacore-vcloudexpress.credential>${test.virtacore-vcloudexpress.credential}</test.virtacore-vcloudexpress.credential>
                                         <test.virtacore-vcloudexpress.image-id>${test.virtacore-vcloudexpress.image-id}</test.virtacore-vcloudexpress.image-id>

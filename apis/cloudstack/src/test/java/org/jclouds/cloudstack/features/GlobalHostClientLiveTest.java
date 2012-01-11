@@ -18,10 +18,13 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
+import com.google.common.base.Strings;
+import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
 import org.testng.annotations.Test;
 
@@ -59,6 +62,31 @@ public class GlobalHostClientLiveTest extends BaseCloudStackClientLiveTest {
       if (host.getType() == Host.Type.CONSOLE_PROXY) {
          assert host.getName().startsWith("v-");
       }
+   }
+
+   @Test(groups = "live", enabled = true)
+   public void testListClusters() throws Exception {
+      assertTrue(globalAdminEnabled, "Test cannot run without global admin identity and credentials");
+
+      Set<Cluster> clusters = globalAdminClient.getHostClient().listClusters();
+      assert clusters.size() > 0 : clusters;
+
+      for(Cluster cluster : clusters) {
+         checkCluster(cluster);
+      }
+   }
+
+   private void checkCluster(Cluster cluster) {
+      assertTrue(cluster.getId() > 0);
+      assertFalse(Strings.isNullOrEmpty(cluster.getName()));
+      assertTrue(cluster.getAllocationState() != Host.AllocationState.UNKNOWN);
+      assertTrue(cluster.getClusterType() != Host.ClusterType.UNKNOWN);
+      assertFalse(Strings.isNullOrEmpty(cluster.getHypervisor()));
+      assertTrue(cluster.getManagedState() != Cluster.ManagedState.UNRECOGNIZED);
+      assertTrue(cluster.getPodId() > 0);
+      assertFalse(Strings.isNullOrEmpty(cluster.getPodName()));
+      assertTrue(cluster.getZoneId() > 0);
+      assertFalse(Strings.isNullOrEmpty(cluster.getZoneName()));
    }
 
 }

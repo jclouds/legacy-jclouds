@@ -40,6 +40,7 @@ import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VirtualBoxManager;
 
+import com.google.common.base.Suppliers;
 import com.google.inject.Guice;
 
 @Test(groups = "unit")
@@ -67,7 +68,7 @@ public class IMachineToImageTest {
 
       replay(vbm, vBox, vm, guestOsType);
 
-      IMachineToImage fn = new IMachineToImage(vbm, map);
+      IMachineToImage fn = new IMachineToImage(Suppliers.ofInstance(vbm), map);
 
       Image image = fn.apply(vm);
 
@@ -98,7 +99,7 @@ public class IMachineToImageTest {
 
       replay(vbm, vBox, vm, guestOsType);
 
-      IMachineToImage fn = new IMachineToImage(vbm, map);
+      IMachineToImage fn = new IMachineToImage(Suppliers.ofInstance(vbm), map);
 
       Image image = fn.apply(vm);
 
@@ -129,7 +130,9 @@ public class IMachineToImageTest {
 
       replay(vbm, vBox, vm, guestOsType);
 
-      Image image = new IMachineToImage(vbm, map).apply(vm);
+      IMachineToImage fn = new IMachineToImage(Suppliers.ofInstance(vbm), map);
+
+      Image image = fn.apply(vm);
 
       assertEquals(image.getOperatingSystem().getDescription(), "SomeOtherOs 2.04");
       assertEquals(image.getOperatingSystem().getVersion(), "");

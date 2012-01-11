@@ -24,8 +24,6 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 
-import java.util.Collections;
-
 import javax.inject.Inject;
 
 import org.jclouds.compute.ComputeServiceAdapter;
@@ -43,7 +41,9 @@ import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
 import com.google.inject.Singleton;
 
 /**
@@ -56,12 +56,12 @@ import com.google.inject.Singleton;
 @Singleton
 public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IMachine, IMachine, Image, Location> {
 
-   private final VirtualBoxManager manager;
+   private final Supplier<VirtualBoxManager> manager;
    private final JustProvider justProvider;
-   private Function<IMachine, Image> iMachineToImage;
+   private final Function<IMachine, Image> iMachineToImage;
 
    @Inject
-   public VirtualBoxComputeServiceAdapter(VirtualBoxManager manager, JustProvider justProvider,
+   public VirtualBoxComputeServiceAdapter(Supplier<VirtualBoxManager> manager, JustProvider justProvider,
          Function<IMachine, Image> iMachineToImage) {
       this.iMachineToImage = iMachineToImage;
       this.manager = checkNotNull(manager, "manager");
@@ -76,24 +76,35 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
    @Override
    public Iterable<IMachine> listNodes() {
-      return Collections.emptyList();
+      return Iterables.filter(manager.get().getVBox().getMachines(), new Predicate<IMachine>() {
+
+         @Override
+         public boolean apply(IMachine arg0) {
+            return !arg0.getName().startsWith(VIRTUALBOX_IMAGE_PREFIX);
+         }
+
+      });
    }
 
    @Override
    public Iterable<IMachine> listHardwareProfiles() {
-      return manager.getVBox().getMachines();
+      return imageMachines();
    }
 
    @Override
    public Iterable<Image> listImages() {
+      return transform(imageMachines(), iMachineToImage);
+   }
+
+   private Iterable<IMachine> imageMachines() {
       final Predicate<? super IMachine> imagePredicate = new Predicate<IMachine>() {
          @Override
          public boolean apply(@Nullable IMachine iMachine) {
             return iMachine.getName().startsWith(VIRTUALBOX_IMAGE_PREFIX);
          }
       };
-      final Iterable<IMachine> imageMachines = filter(manager.getVBox().getMachines(), imagePredicate);
-      return transform(imageMachines, iMachineToImage);
+      final Iterable<IMachine> imageMachines = filter(manager.get().getVBox().getMachines(), imagePredicate);
+      return imageMachines;
    }
 
    @SuppressWarnings("unchecked")
@@ -104,29 +115,29 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
    @Override
    public IMachine getNode(String vmName) {
-      return manager.getVBox().findMachine(vmName);
+      return manager.get().getVBox().findMachine(vmName);
    }
 
    @Override
    public void destroyNode(String vmName) {
-      IMachine machine = manager.getVBox().findMachine(vmName);
+      IMachine machine = manager.get().getVBox().findMachine(vmName);
       powerDownMachine(machine);
       machine.unregister(CleanupMode.Full);
    }
 
    @Override
    public void rebootNode(String vmName) {
-      IMachine machine = manager.getVBox().findMachine(vmName);
+      IMachine machine = manager.get().getVBox().findMachine(vmName);
       powerDownMachine(machine);
-      launchVMProcess(machine, manager.getSessionObject());
+      launchVMProcess(machine, manager.get().getSessionObject());
    }
 
    @Override
    public void resumeNode(String vmName) {
-      IMachine machine = manager.getVBox().findMachine(vmName);
+      IMachine machine = manager.get().getVBox().findMachine(vmName);
       ISession machineSession;
       try {
-         machineSession = manager.openMachineSession(machine);
+         machineSession = manager.get().openMachineSession(machine);
          machineSession.getConsole().resume();
          machineSession.unlockMachine();
       } catch (Exception e) {
@@ -136,10 +147,10 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
    @Override
    public void suspendNode(String vmName) {
-      IMachine machine = manager.getVBox().findMachine(vmName);
+      IMachine machine = manager.get().getVBox().findMachine(vmName);
       ISession machineSession;
       try {
-         machineSession = manager.openMachineSession(machine);
+         machineSession = manager.get().openMachineSession(machine);
          machineSession.getConsole().pause();
          machineSession.unlockMachine();
       } catch (Exception e) {
@@ -161,7 +172,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
    private void powerDownMachine(IMachine machine) {
       try {
-         ISession machineSession = manager.openMachineSession(machine);
+         ISession machineSession = manager.get().openMachineSession(machine);
          IProgress progress = machineSession.getConsole().powerDown();
          progress.waitForCompletion(-1);
          machineSession.unlockMachine();

@@ -24,8 +24,8 @@ import java.util.Properties;
 
 import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
 import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
-import org.virtualbox_4_1.VirtualBoxManager;
 
+import com.google.common.base.Supplier;
 import com.google.inject.Module;
 
 /**
@@ -33,10 +33,11 @@ import com.google.inject.Module;
  * 
  * @author Mattias Holmqvist, Andrea Turli
  */
-public class VirtualBoxContextBuilder extends StandaloneComputeServiceContextBuilder<VirtualBoxManager> {
+@SuppressWarnings("unchecked")
+public class VirtualBoxContextBuilder extends StandaloneComputeServiceContextBuilder<Supplier> {
 
    public VirtualBoxContextBuilder(Properties properties) {
-      super(VirtualBoxManager.class, properties);
+      super(Supplier.class, properties);
    }
 
    @Override

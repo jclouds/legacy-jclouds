@@ -1,14 +1,36 @@
+/**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.jclouds.glesys.functions.internal;
 
-import com.google.gson.*;
-import org.jclouds.json.config.GsonModule;
-
-import javax.inject.Singleton;
-import java.lang.reflect.Type;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.inject.Singleton;
+
+import org.jclouds.json.config.GsonModule;
+
+import com.google.common.base.Throwables;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 
 /**
  * Parser for Glesys Date formats
@@ -16,24 +38,23 @@ import java.util.Date;
  * @author Adam Lowe
  */
 @Singleton
-public class GlesysDateAdapter implements GsonModule.DateAdapter {
+public class GlesysDateAdapter extends GsonModule.DateAdapter {
    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-   public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
+   public void write(JsonWriter writer, Date value) throws IOException {
       synchronized (dateFormat) {
-         return new JsonPrimitive(dateFormat.format(src));
+         writer.value(dateFormat.format(value));
       }
    }
 
-   public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-         throws JsonParseException {
-      String toParse = json.getAsJsonPrimitive().getAsString();
+   public Date read(JsonReader reader) throws IOException {
+      String toParse = reader.nextString();
       try {
          synchronized (dateFormat) {
             return dateFormat.parse(toParse);
          }
       } catch (ParseException e) {
-         throw new RuntimeException(e);
+         throw Throwables.propagate(e);
       }
    }
 }

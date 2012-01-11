@@ -46,6 +46,7 @@ import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Iterators;
 import com.google.inject.Guice;
 
@@ -83,8 +84,8 @@ public class VirtualBoxComputeServiceAdapterTest {
 
       replay(manager, justProvider, vBox, clonedMachine, imageMachine, osType);
 
-      Function<IMachine, Image> iMachineToImage = new IMachineToImage(manager, osMap);
-      VirtualBoxComputeServiceAdapter adapter = new VirtualBoxComputeServiceAdapter(manager, justProvider,
+      Function<IMachine, Image> iMachineToImage = new IMachineToImage(Suppliers.ofInstance(manager), osMap);
+      VirtualBoxComputeServiceAdapter adapter = new VirtualBoxComputeServiceAdapter(Suppliers.ofInstance(manager), justProvider,
             iMachineToImage);
 
       Iterator<Image> iterator = adapter.listImages().iterator();

@@ -45,12 +45,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.eclipse.jetty.http.ssl.SslContextFactory;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jetty.server.ssl.SslSocketConnector;
+import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.jclouds.Constants;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.InputSuppliers;
@@ -253,14 +254,18 @@ public abstract class BaseJettyTest {
 
       server2 = new Server();
       server2.setHandler(server2Handler);
-      SslSocketConnector ssl = new SslSocketConnector();
-      ssl.setPort(testPort + 1);
-      ssl.setMaxIdleTime(30000);
-      ssl.setKeystore("src/test/resources/test.jks");
-      ssl.setKeyPassword("jclouds");
-      ssl.setTruststore("src/test/resources/test.jks");
-      ssl.setTrustPassword("jclouds");
-      server2.setConnectors(new Connector[] { ssl });
+
+      SslSelectChannelConnector ssl_connector = new SslSelectChannelConnector();
+      ssl_connector.setPort(testPort + 1);
+      ssl_connector.setMaxIdleTime(30000);
+      SslContextFactory ssl = ssl_connector.getSslContextFactory();
+      ssl.setKeyStorePath("src/test/resources/test.jks");
+      ssl.setKeyStorePassword("jclouds");
+      ssl.setTrustStore("src/test/resources/test.jks");
+      ssl.setTrustStorePassword("jclouds");
+
+      server2.setConnectors(new Connector[]{  ssl_connector });
+     
       server2.start();
    }
 
@@ -282,7 +287,7 @@ public abstract class BaseJettyTest {
       properties.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       properties.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
-               "http://localhost:" + testPort, "1", "", "identity", null, IntegrationTestClient.class,
+               "http://localhost:" + testPort, "1", "", "", "identity", null, IntegrationTestClient.class,
                IntegrationTestAsyncClient.class, ImmutableSet.<Module> copyOf(connectionModules));
       return createContextBuilder(contextSpec, properties);
    }
@@ -328,12 +333,10 @@ public abstract class BaseJettyTest {
 
    protected boolean failIfNoContentLength(HttpServletRequest request, HttpServletResponse response) throws IOException {
       Multimap<String, String> realHeaders = LinkedHashMultimap.create();
-      @SuppressWarnings("rawtypes")
-      Enumeration headers = request.getHeaderNames();
+      Enumeration<String> headers = request.getHeaderNames();
       while (headers.hasMoreElements()) {
          String header = headers.nextElement().toString();
-         @SuppressWarnings("rawtypes")
-         Enumeration values = request.getHeaders(header);
+         Enumeration<String> values = request.getHeaders(header);
          while (values.hasMoreElements()) {
             realHeaders.put(header, values.nextElement().toString());
          }

@@ -28,10 +28,13 @@ import java.lang.annotation.Target;
 
 import javax.inject.Qualifier;
 
+import org.jclouds.Constants;
+
 /**
  * Designates that this Resource qualifies an object to an api version.
  * 
  * @author Adrian Cole
+ * @see Constants#PROPERTY_API_VERSION
  */
 @Target( { ANNOTATION_TYPE, FIELD, PARAMETER })
 @Retention(RUNTIME)

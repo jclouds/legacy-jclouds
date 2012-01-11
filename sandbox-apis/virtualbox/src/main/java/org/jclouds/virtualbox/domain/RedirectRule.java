@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.virtualbox.domain;
 
 import com.google.common.base.Objects;
@@ -34,7 +33,15 @@ public class RedirectRule {
    private final int hostPort;
    private final String guest;
    private final int guestPort;
-
+   
+   /**
+    * @param protocol
+    * @param host incoming address
+    * @param hostPort
+    * @param guest guest address or empty string for all addresses
+    * @param guestPort
+    * @return
+    */
    public RedirectRule(NATProtocol protocol, String host, int hostPort, String guest, int guestPort) {
       checkNotNull(protocol);
       checkNotNull(host);

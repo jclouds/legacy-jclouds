@@ -25,11 +25,9 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Set;
 
@@ -37,12 +35,48 @@ import java.util.Set;
  * Provides asynchronous access to IP Addresses via their REST API.
  * <p/>
  *
- * @author Adrian Cole
+ * @author Adrian Cole, Mattias Holmqvist
+ *
  * @see ServerClient
  * @see <a href="https://customer.glesys.com/api.php" />
  */
 @RequestFilters(BasicAuthentication.class)
 public interface IpAsyncClient {
+
+
+   /**
+    * @see IpClient#take
+    */
+   @POST
+   @Path("/ip/take/format/json")
+   ListenableFuture<Void> take(@FormParam("ipaddress") String ipAddress);
+
+
+   /**
+    * @see IpClient#release
+    */
+   @POST
+   @Path("/ip/release/format/json")
+   ListenableFuture<Void> release(@FormParam("ipaddress") String ipAddress);
+
+   /**
+    * @see IpClient#add
+    */
+   @POST
+   @Path("/ip/add/format/json")
+   ListenableFuture<Void> addIpToServer(@FormParam("ipaddress") String ipAddress,
+                                        @FormParam("serverid") String serverId);
+
+
+   /**
+    * @see IpClient#remove
+    *
+    * TODO: add optional release_ip parameter
+    */
+   @POST
+   @Path("/ip/remove/format/json")
+   ListenableFuture<Void> removeIpFromServer(@FormParam("ipaddress") String ipAddress,
+                                 @FormParam("serverid") String serverId);
 
 
    /**
@@ -64,7 +98,7 @@ public interface IpAsyncClient {
    @Path("/ip/details/ipaddress/{ipaddress}/format/json")
    @Consumes(MediaType.APPLICATION_JSON)
    @SelectJson("details")
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<IpDetails> getIpDetails(@PathParam("ipaddress") String ipAddress);
 
 }

@@ -21,7 +21,6 @@ package org.jclouds.s3.config;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -30,10 +29,12 @@ import org.jclouds.aws.config.AWSRestClientModule;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RequestSigner;
@@ -42,6 +43,7 @@ import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.s3.handlers.ParseS3ErrorFromXmlContent;
+import org.jclouds.s3.handlers.S3RedirectionRetryHandler;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
@@ -99,6 +101,11 @@ public class S3RestClientModule<S extends S3Client, A extends S3AsyncClient> ext
    @Singleton
    protected RequestSigner provideRequestSigner(RequestAuthorizeSignature in) {
       return in;
+   }
+   
+   @Override
+   protected void bindRetryHandlers() {
+      bind(HttpRetryHandler.class).annotatedWith(Redirection.class).to(S3RedirectionRetryHandler.class);
    }
 
    @Provides

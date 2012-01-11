@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,14 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.virtualbox.domain.StorageController;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.StorageBus;
 import org.virtualbox_4_1.VBoxException;
 
 import com.google.common.base.Function;

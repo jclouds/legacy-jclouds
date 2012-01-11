@@ -48,6 +48,7 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.binders.BindMapToMatrixParams;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.binders.BindToStringPayload;
+import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;
@@ -73,6 +74,7 @@ public interface IntegrationTestAsyncClient {
 
    @HEAD
    @Path("/objects/{id}")
+   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> exists(@PathParam("id") String path);
 
    @GET

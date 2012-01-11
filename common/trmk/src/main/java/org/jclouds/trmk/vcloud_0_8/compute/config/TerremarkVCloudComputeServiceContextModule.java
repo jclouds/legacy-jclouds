@@ -34,8 +34,6 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
 import org.jclouds.trmk.vcloud_0_8.compute.TerremarkVCloudComputeService;
@@ -95,9 +93,6 @@ public class TerremarkVCloudComputeServiceContextModule extends BaseComputeServi
       bindVAppConverter();
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<TerremarkVCloudClient, TerremarkVCloudAsyncClient>>() {
-      }).in(Scopes.SINGLETON);
-      bind(new TypeLiteral<RestContext<TerremarkVCloudClient, TerremarkVCloudAsyncClient>>() {
-      }).to(new TypeLiteral<RestContextImpl<TerremarkVCloudClient, TerremarkVCloudAsyncClient>>() {
       }).in(Scopes.SINGLETON);
       bind(new TypeLiteral<Function<Org, Iterable<? extends Image>>>() {
       }).to(new TypeLiteral<ImagesInVCloudExpressOrg>() {

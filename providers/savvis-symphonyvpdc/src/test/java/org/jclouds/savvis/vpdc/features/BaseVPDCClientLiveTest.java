@@ -23,7 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.Constants;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -46,42 +46,28 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
-public class BaseVPDCClientLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "BaseVPDCClientLiveTest")
+public class BaseVPDCClientLiveTest extends BaseVersionedServiceLiveTest {
+   public BaseVPDCClientLiveTest() {
+      provider = "savvis-symphonyvpdc";
+   }
 
    protected RestContext<VPDCClient, VPDCAsyncClient> restContext;
-   protected String provider = "savvis-symphonyvpdc";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
    protected ComputeServiceContext context;
    protected String email;
    protected RetryablePredicate<String> taskTester;
-   protected String prefix = System.getProperty("user.name");
 
+   @Override
    protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
+      super.setupCredentials();
       email = checkNotNull(System.getProperty("test." + VPDCConstants.PROPERTY_VPDC_VDC_EMAIL), "test."
                + VPDCConstants.PROPERTY_VPDC_VDC_EMAIL);
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
    }
-
+   
+   @Override
    protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(provider + ".identity", identity);
-      overrides.setProperty(provider + ".credential", credential);
+      Properties overrides = super.setupProperties();
       overrides.setProperty(VPDCConstants.PROPERTY_VPDC_VDC_EMAIL, email);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
-      // TODO savvis uses untrusted certificates, remove these once savvis fixes the issue
-	   overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-	   overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       return overrides;
    }
 

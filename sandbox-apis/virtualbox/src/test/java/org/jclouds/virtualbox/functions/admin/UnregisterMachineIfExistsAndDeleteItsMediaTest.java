@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.virtualbox.functions.admin;
 
 import static org.easymock.EasyMock.expect;
@@ -33,7 +32,6 @@ import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.NatAdapter;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
-import org.jclouds.virtualbox.util.PropertyUtils;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
@@ -61,11 +59,10 @@ public class UnregisterMachineIfExistsAndDeleteItsMediaTest {
       List<IMedium> media = new ArrayList<IMedium>();
       List<IMedium> mediums = Collections.unmodifiableList(media);
       
-      String workingDir = PropertyUtils.getWorkingDirFromProperty();
       StorageController ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)
-              .attachISO(0, 0, workingDir + "/ubuntu-11.04-server-i386.iso")
-              .attachHardDisk(HardDisk.builder().diskpath(workingDir + "/testadmin.vdi").controllerPort(0).deviceSlot(1).build())
-              .attachISO(1, 1, workingDir + "/VBoxGuestAdditions_4.1.2.iso").build();
+              .attachISO(0, 0, "/tmp/ubuntu-11.04-server-i386.iso")
+              .attachHardDisk(HardDisk.builder().diskpath("/tmp/testadmin.vdi").controllerPort(0).deviceSlot(1).build())
+              .attachISO(1, 1, "/tmp/VBoxGuestAdditions_4.1.2.iso").build();
       VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).memoryMB(512).osTypeId(osTypeId)
               .controller(ideController)
               .forceOverwrite(true)
@@ -83,7 +80,7 @@ public class UnregisterMachineIfExistsAndDeleteItsMediaTest {
 
       replay(manager, vBox, registeredMachine, progress);
 
-      new UnregisterMachineIfExistsAndDeleteItsMedia(manager).apply(vmSpecification);
+      new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification).apply(registeredMachine);
    }
 
 }

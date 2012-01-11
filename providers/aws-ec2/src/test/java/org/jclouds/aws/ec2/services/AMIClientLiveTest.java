@@ -18,7 +18,6 @@
  */
 package org.jclouds.aws.ec2.services;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.ec2.options.AWSDescribeImagesOptions.Builder.filters;
 import static org.jclouds.aws.ec2.options.AWSDescribeImagesOptions.Builder.imageIds;
 import static org.jclouds.ec2.options.RegisterImageBackedByEbsOptions.Builder.addNewBlockDevice;
@@ -30,22 +29,32 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
+import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.RunNodesException;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.Image;
+import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RootDeviceType;
+import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.ec2.domain.Snapshot;
 import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.ec2.services.AMIClient;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -59,50 +68,29 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true)
-public class AMIClientLiveTest {
-
+public class AMIClientLiveTest extends BaseVersionedServiceLiveTest {
+   public AMIClientLiveTest() {
+      provider = "aws-ec2";
+      // TODO: parameterize this.
+      imageId = "ami-cdf819a4";
+   }
+   
    private AMIClient client;
-   private String imageId = "ami-cdf819a4";
    private static final String DEFAULT_MANIFEST = "adrianimages/image.manifest.xml";
    private static final String DEFAULT_SNAPSHOT = "TODO";
    private RestContext<EC2Client, EC2AsyncClient> context;
 
    private Set<String> imagesToDeregister = Sets.newHashSet();
+   private Set<String> snapshotsToDelete = Sets.newHashSet();
 
-   protected String provider = "aws-ec2";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
-
-   @BeforeClass
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = System.getProperty("test." + provider + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      if (credential != null)
-         overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
-      return overrides;
-   }
-
+   private ComputeServiceContext jcloudsContext;
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
+      jcloudsContext = new ComputeServiceContextFactory().createContext(provider,
+         ImmutableSet.<Module>of(new Log4JLoggingModule()), overrides);
+      context = jcloudsContext.getProviderSpecificContext();
       client = context.getApi().getAMIServices();
    }
 
@@ -175,6 +163,50 @@ public class AMIClientLiveTest {
       assertEquals(imageRegisteredFromManifestWithOptions.getDescription(), "adrian");
    }
 
+   @Test
+   public void testNewlyRegisteredImageCanBeListed() throws Exception {
+      ComputeService computeService = jcloudsContext.getComputeService();
+      Snapshot snapshot = createSnapshot(computeService);
+
+      // List of images before...
+      int sizeBefore = computeService.listImages().size();
+
+      // Register a new image...
+      final String imageRegisteredId = client.registerUnixImageBackedByEbsInRegion(null, "jcloudstest1", snapshot.getId());
+      imagesToDeregister.add(imageRegisteredId);
+      final Image imageRegistered = Iterables.getOnlyElement(client.describeImagesInRegion(null, imageIds(imageRegisteredId)));
+
+      // This is the suggested method to ensure the new image ID is inserted into the cache
+      // (suggested by adriancole_ on #jclouds)
+      computeService.templateBuilder().imageId(imageRegistered.getRegion() + "/" + imageRegisteredId).build();
+
+      // List of images after - should be one larger than before
+      Set<? extends org.jclouds.compute.domain.Image> after = computeService.listImages();
+      assertEquals(after.size(), sizeBefore + 1);
+
+      // Detailed check: filter for the AMI ID
+      Iterable<? extends org.jclouds.compute.domain.Image> filtered = Iterables.filter(after,
+         ImagePredicates.idEquals(imageRegistered.getRegion() + "/" + imageRegisteredId));
+      assertEquals(Iterables.size(filtered), 1);
+   }
+
+   // Fires up an instance, finds its root volume ID, takes a snapshot, then terminates the instance.
+   private Snapshot createSnapshot(ComputeService computeService) throws RunNodesException {
+      Template options = computeService.templateBuilder().smallest().build();
+      Set<? extends NodeMetadata> nodes = computeService.createNodesInGroup("jcloudstest", 1, options);
+      try {
+         String instanceId = Iterables.getOnlyElement(nodes).getProviderId();
+         Reservation<? extends RunningInstance> reservation = Iterables.getOnlyElement(context.getApi().getInstanceServices().describeInstancesInRegion(null, instanceId));
+         RunningInstance instance = Iterables.getOnlyElement(reservation);
+         BlockDevice device = instance.getEbsBlockDevices().get("/dev/sda1");
+         Snapshot snapshot = context.getApi().getElasticBlockStoreServices().createSnapshotInRegion(null, device.getVolumeId());
+         snapshotsToDelete.add(snapshot.getId());
+         return snapshot;
+      } finally {
+         computeService.destroyNodesMatching(Predicates.in(nodes));
+      }
+   }
+
    @Test(enabled = false)
    // awaiting EBS functionality to be added to jclouds
    public void testRegisterImageBackedByEBS() {
@@ -245,8 +277,10 @@ public class AMIClientLiveTest {
    }
 
    @AfterTest
-   public void deregisterImages() {
+   public void cleanUp() {
       for (String imageId : imagesToDeregister)
          client.deregisterImageInRegion(null, imageId);
+      for (String snapshotId : snapshotsToDelete)
+         context.getApi().getElasticBlockStoreServices().deleteSnapshotInRegion(null, snapshotId);
    }
 }

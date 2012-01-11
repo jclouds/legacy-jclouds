@@ -52,6 +52,9 @@ public class PublicUriForObjectInfo implements Function<ObjectInfo, URI> {
       try {
          return uriBuilders.get().uri(cdnContainer.getUnchecked(from.getContainer())).path(from.getName()).replaceQuery("")
                   .build();
+      } catch (NullPointerException e) {
+         // nulls not permitted from cache loader
+         return null;
       } catch (CacheLoader.InvalidCacheLoadException e) {
          // nulls not permitted from cache loader
          return null;

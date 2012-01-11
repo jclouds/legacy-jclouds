@@ -35,7 +35,8 @@
 
     <properties>
         <test.elastichosts-lon-p.endpoint>https://api.lon-p.elastichosts.com</test.elastichosts-lon-p.endpoint>
-        <test.elastichosts-lon-p.apiversion>2.0</test.elastichosts-lon-p.apiversion>
+        <test.elastichosts-lon-p.api-version>2.0</test.elastichosts-lon-p.api-version>
+        <test.elastichosts-lon-p.build-version></test.elastichosts-lon-p.build-version>
         <test.elastichosts-lon-p.identity>FIXME_IDENTITY</test.elastichosts-lon-p.identity>
         <test.elastichosts-lon-p.credential>FIXME_CREDENTIAL</test.elastichosts-lon-p.credential>
         <test.elastichosts-lon-p.image-id />
@@ -100,7 +101,8 @@
                                 <configuration>
                                     <systemPropertyVariables>
                                         <test.elastichosts-lon-p.endpoint>${test.elastichosts-lon-p.endpoint}</test.elastichosts-lon-p.endpoint>
-                                        <test.elastichosts-lon-p.apiversion>${test.elastichosts-lon-p.apiversion}</test.elastichosts-lon-p.apiversion>
+                                        <test.elastichosts-lon-p.api-version>${test.elastichosts-lon-p.api-version}</test.elastichosts-lon-p.api-version>
+                                        <test.elastichosts-lon-p.build-version>${test.elastichosts-lon-p.build-version}</test.elastichosts-lon-p.build-version>
                                         <test.elastichosts-lon-p.identity>${test.elastichosts-lon-p.identity}</test.elastichosts-lon-p.identity>
                                         <test.elastichosts-lon-p.credential>${test.elastichosts-lon-p.credential}</test.elastichosts-lon-p.credential>
                                         <test.elastichosts-lon-p.image-id>${test.elastichosts-lon-p.image-id}</test.elastichosts-lon-p.image-id>

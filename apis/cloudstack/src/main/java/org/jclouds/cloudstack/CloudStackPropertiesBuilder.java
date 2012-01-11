@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 
 import java.util.Properties;
 
@@ -33,6 +34,7 @@ public class CloudStackPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+      properties.setProperty(PROPERTY_ENDPOINT, "http://localhost:8080/client/api");
       properties.setProperty(PROPERTY_API_VERSION, "2.2");
       properties.setProperty("jclouds.ssh.max-retries", "7");
       properties.setProperty("jclouds.ssh.retry-auth", "true");

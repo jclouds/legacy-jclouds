@@ -36,7 +36,6 @@ import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -248,7 +247,6 @@ public class SshjSshClient implements SshClient {
       return null;
    }
 
-   @PostConstruct
    public void connect() {
       try {
          ssh = acquire(sshConnection);

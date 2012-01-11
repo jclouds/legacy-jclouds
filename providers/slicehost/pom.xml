@@ -35,7 +35,8 @@
 
     <properties>
         <test.slicehost.endpoint>https://api.slicehost.com</test.slicehost.endpoint>
-        <test.slicehost.apiversion>1.4.1.1</test.slicehost.apiversion>
+        <test.slicehost.api-version>1.4.1.1</test.slicehost.api-version>
+        <test.slicehost.build-version></test.slicehost.build-version>
         <test.slicehost.identity>FIXME</test.slicehost.identity>
         <test.slicehost.image-id />
     </properties>
@@ -93,7 +94,8 @@
                                     <threadCount>1</threadCount>
                                     <systemPropertyVariables>
                                         <test.slicehost.endpoint>${test.slicehost.endpoint}</test.slicehost.endpoint>
-                                        <test.slicehost.apiversion>${test.slicehost.apiversion}</test.slicehost.apiversion>
+                                        <test.slicehost.api-version>${test.slicehost.api-version}</test.slicehost.api-version>
+                                        <test.slicehost.build-version>${test.slicehost.build-version}</test.slicehost.build-version>
                                         <test.slicehost.identity>${test.slicehost.identity}</test.slicehost.identity>
                                         <test.slicehost.image-id>${test.slicehost.image-id}</test.slicehost.image-id>
                                     </systemPropertyVariables>

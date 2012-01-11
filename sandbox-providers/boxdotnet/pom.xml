@@ -49,7 +49,8 @@
 
     <properties>
         <test.boxdotnet.endpoint>https://www.box.net/api/1.0/rest</test.boxdotnet.endpoint>
-        <test.boxdotnet.apiversion>1.0</test.boxdotnet.apiversion>
+        <test.boxdotnet.api-version>1.0</test.boxdotnet.api-version>
+        <test.boxdotnet.build-version></test.boxdotnet.build-version>
         <test.boxdotnet.identity>FIXME</test.boxdotnet.identity>
         <test.boxdotnet.credential>FIXME</test.boxdotnet.credential>
     </properties>
@@ -97,7 +98,8 @@
                                 <configuration>
                                     <systemPropertyVariables>
                                         <test.boxdotnet.endpoint>${test.boxdotnet.endpoint}</test.boxdotnet.endpoint>
-                                        <test.boxdotnet.apiversion>${test.boxdotnet.apiversion}</test.boxdotnet.apiversion>
+                                        <test.boxdotnet.api-version>${test.boxdotnet.api-version}</test.boxdotnet.api-version>
+                                        <test.boxdotnet.build-version>${test.boxdotnet.build-version}</test.boxdotnet.build-version>
                                         <test.boxdotnet.identity>${test.boxdotnet.identity}</test.boxdotnet.identity>
                                         <test.boxdotnet.credential>${test.boxdotnet.credential}</test.boxdotnet.credential>
                                     </systemPropertyVariables>

@@ -26,8 +26,6 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.rimuhosting.miro.RimuHostingAsyncClient;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
 import org.jclouds.rimuhosting.miro.compute.functions.ServerToNodeMetadata;
@@ -59,9 +57,6 @@ public class RimuHostingComputeServiceDependenciesModule extends AbstractModule 
       }).to(ServerToNodeMetadata.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<RimuHostingClient, RimuHostingAsyncClient>>() {
-      }).in(Scopes.SINGLETON);
-      bind(new TypeLiteral<RestContext<RimuHostingClient, RimuHostingAsyncClient>>() {
-      }).to(new TypeLiteral<RestContextImpl<RimuHostingClient, RimuHostingAsyncClient>>() {
       }).in(Scopes.SINGLETON);
       bind(new TypeLiteral<Function<Server, Iterable<String>>>() {
       }).to(ServerToPublicAddresses.class);

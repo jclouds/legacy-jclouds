@@ -25,28 +25,33 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
+import java.net.URI;
+
 import org.eclipse.jetty.server.Server;
 import org.testng.annotations.Test;
 
 /**
- * @author Andrea Turli
+ * @author Andrea Turli, Adrian Cole
  */
 @Test(groups = "unit", singleThreaded = true, testName = "StartJettyIfNotAlreadyRunningTest")
 public class StartJettyIfNotAlreadyRunningTest {
-
-   private String basebaseResource = ".";
-   private int port = 8080;
-
    @Test
    public void testLaunchJettyServerWhenAlreadyRunningDoesntLaunchAgain() {
       Server jetty = createMock(Server.class);
+
+      String preconfigurationUrl = "http://foo:8080";
+      
       expect(jetty.getState()).andReturn(Server.STARTED);
       replay(jetty);
 
-      assertEquals(new StartJettyIfNotAlreadyRunning(jetty, port).apply(basebaseResource), jetty);
+      StartJettyIfNotAlreadyRunning starter = new StartJettyIfNotAlreadyRunning(jetty, preconfigurationUrl);
+      starter.start();
+
+      assertEquals(starter.get(), URI.create(preconfigurationUrl));
       verify(jetty);
 
    }
+
 
    @Test
    public void testLaunchJettyServerWhenNotRunningStartsJettyOnCorrectHostPortAndBasedir() {

@@ -36,7 +36,8 @@
     <properties>
         <test.initializer>org.jclouds.hosteurope.storage.blobstore.HostEuropeStorageTestInitializer</test.initializer>
         <test.hosteurope-storage.endpoint>https://cs.hosteurope.de</test.hosteurope-storage.endpoint>
-        <test.hosteurope-storage.apiversion>2006-03-01</test.hosteurope-storage.apiversion>
+        <test.hosteurope-storage.api-version>2006-03-01</test.hosteurope-storage.api-version>
+        <test.hosteurope-storage.build-version></test.hosteurope-storage.build-version>
         <test.hosteurope-storage.identity>FIX_ME</test.hosteurope-storage.identity>
         <test.hosteurope-storage.credential>FIX_ME</test.hosteurope-storage.credential>
     </properties>
@@ -108,7 +109,8 @@
                                 <configuration>
                                     <systemPropertyVariables>
                                         <test.hosteurope-storage.endpoint>${test.hosteurope-storage.endpoint}</test.hosteurope-storage.endpoint>
-                                        <test.hosteurope-storage.apiversion>${test.hosteurope-storage.apiversion}</test.hosteurope-storage.apiversion>
+                                        <test.hosteurope-storage.api-version>${test.hosteurope-storage.api-version}</test.hosteurope-storage.api-version>
+                                        <test.hosteurope-storage.build-version>${test.hosteurope-storage.build-version}</test.hosteurope-storage.build-version>
                                         <test.hosteurope-storage.identity>${test.hosteurope-storage.identity}</test.hosteurope-storage.identity>
                                         <test.hosteurope-storage.credential>${test.hosteurope-storage.credential}</test.hosteurope-storage.credential>
                                         <test.initializer>${test.initializer}</test.initializer>

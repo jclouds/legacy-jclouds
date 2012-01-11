@@ -35,12 +35,14 @@
 
     <properties>
         <test.aws-elb.endpoint>https://elasticloadbalancing.us-east-1.amazonaws.com</test.aws-elb.endpoint>
-        <test.aws-elb.apiversion>2010-07-01</test.aws-elb.apiversion>
+        <test.aws-elb.api-version>2010-07-01</test.aws-elb.api-version>
+        <test.aws-elb.build-version></test.aws-elb.build-version>
         <test.aws-elb.identity>${test.aws.identity}</test.aws-elb.identity>
         <test.aws-elb.credential>${test.aws.credential}</test.aws-elb.credential>
         <test.aws-elb.compute.provider>aws-ec2</test.aws-elb.compute.provider>
         <test.aws-elb.compute.endpoint>https://ec2.us-east-1.amazonaws.com</test.aws-elb.compute.endpoint>
-        <test.aws-elb.compute.apiversion>2010-06-15</test.aws-elb.compute.apiversion>
+        <test.aws-elb.compute.api-version>2010-06-15</test.aws-elb.compute.api-version>
+        <test.aws-elb.compute.build-version></test.aws-elb.compute.build-version>
         <test.aws-elb.compute.identity>${test.aws.identity}</test.aws-elb.compute.identity>
         <test.aws-elb.compute.credential>${test.aws.credential}</test.aws-elb.compute.credential>
         <test.aws-elb.compute.image-id></test.aws-elb.compute.image-id>
@@ -119,12 +121,14 @@
                                 <configuration>
                                     <systemPropertyVariables>
                                         <test.aws-elb.endpoint>${test.aws-elb.endpoint}</test.aws-elb.endpoint>
-                                        <test.aws-elb.apiversion>${test.aws-elb.apiversion}</test.aws-elb.apiversion>
+                                        <test.aws-elb.api-version>${test.aws-elb.api-version}</test.aws-elb.api-version>
+                                        <test.aws-elb.build-version>${test.aws-elb.build-version}</test.aws-elb.build-version>
                                         <test.aws-elb.identity>${test.aws-elb.identity}</test.aws-elb.identity>
                                         <test.aws-elb.credential>${test.aws-elb.credential}</test.aws-elb.credential>
                                         <test.aws-elb.compute.provider>${test.aws-elb.compute.provider}</test.aws-elb.compute.provider>
                                         <test.aws-elb.compute.endpoint>${test.aws-elb.compute.endpoint}</test.aws-elb.compute.endpoint>
-                                        <test.aws-elb.compute.apiversion>${test.aws-elb.compute.apiversion}</test.aws-elb.compute.apiversion>
+                                        <test.aws-elb.compute.build-version>${test.aws-elb.compute.build-version}</test.aws-elb.compute.build-version>
+                                        <test.aws-elb.compute.api-version>${test.aws-elb.compute.api-version}</test.aws-elb.compute.api-version>
                                         <test.aws-elb.compute.identity>${test.aws-elb.compute.identity}</test.aws-elb.compute.identity>
                                         <test.aws-elb.compute.credential>${test.aws-elb.compute.credential}</test.aws-elb.compute.credential>
                                         <test.aws-elb.compute.image-id>${test.aws-elb.compute.image-id}</test.aws-elb.compute.image-id>

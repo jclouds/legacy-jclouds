@@ -58,7 +58,8 @@ $symbol_dollar = '$' )
     <properties>
         <test.${lcaseProviderName}.identity>${providerIdentity}</test.${lcaseProviderName}.identity>
         <test.${lcaseProviderName}.credential>${providerCredential}</test.${lcaseProviderName}.credential>
-        <test.${lcaseProviderName}.apiversion>${providerApiVersion}</test.${lcaseProviderName}.apiversion>
+        <test.${lcaseProviderName}.api-version>${providerApiVersion}</test.${lcaseProviderName}.api-version>
+        <test.${lcaseProviderName}.build-version></test.${lcaseProviderName}.build-version>
         <test.${lcaseProviderName}.endpoint>${providerEndpoint}</test.${lcaseProviderName}.endpoint>
     </properties>
     <dependencies>
@@ -107,7 +108,8 @@ $symbol_dollar = '$' )
                                         <test.${lcaseProviderName}.identity>\$\{test.${lcaseProviderName}.identity\}</test.${lcaseProviderName}.identity>
                                         <test.${lcaseProviderName}.credential>\$\{test.${lcaseProviderName}.credential\}</test.${lcaseProviderName}.credential>
                                         <test.${lcaseProviderName}.endpoint>\$\{test.${lcaseProviderName}.endpoint\}</test.${lcaseProviderName}.endpoint>
-                                        <test.${lcaseProviderName}.apiversion>\$\{test.${lcaseProviderName}.apiversion\}</test.${lcaseProviderName}.apiversion>
+                                        <test.${lcaseProviderName}.api-version>\$\{test.${lcaseProviderName}.api-version\}</test.${lcaseProviderName}.api-version>
+                                        <test.${lcaseProviderName}.build-version>\$\{test.${lcaseProviderName}.build-version\}</test.${lcaseProviderName}.build-version>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>

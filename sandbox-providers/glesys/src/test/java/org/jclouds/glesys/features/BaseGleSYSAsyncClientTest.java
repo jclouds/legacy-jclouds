@@ -18,9 +18,16 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Maps;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
 import org.jclouds.glesys.GleSYSAsyncClient;
 import org.jclouds.glesys.GleSYSClient;
 import org.jclouds.http.HttpRequest;
@@ -30,21 +37,18 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
+import org.jclouds.util.Strings2;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import static org.testng.Assert.*;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Maps;
 
 /**
  * @author Adrian Cole
  * @author Adam Lowe
  */
 public abstract class BaseGleSYSAsyncClientTest<T> extends RestClientTest<T> {
-   protected Class asyncClientClass;
+   protected Class<T> asyncClientClass;
    protected String remoteServicePrefix;
 
    @Override
@@ -58,7 +62,8 @@ public abstract class BaseGleSYSAsyncClientTest<T> extends RestClientTest<T> {
       Properties props = new Properties();
       return new RestContextFactory().createContextSpec("glesys", "username", "apiKey", props);
    }
-
+   
+   @Deprecated
    protected Map.Entry<String, String> newEntry(String key, Object value) {
       return Maps.immutableEntry(key, value.toString());
    }
@@ -66,8 +71,6 @@ public abstract class BaseGleSYSAsyncClientTest<T> extends RestClientTest<T> {
    /**
     * Test that a method call is annotated correctly.
     * <p/>
-    * TODO de-code ampersands and spaces in args properly
-    *
     * @param localMethod     the method to call in asyncClientClass
     * @param remoteCall      the name of the expected call on the remote server
     * @param httpMethod      "GET" or "POST"
@@ -75,7 +78,17 @@ public abstract class BaseGleSYSAsyncClientTest<T> extends RestClientTest<T> {
     * @param exceptionParser the class of exception handler expected
     * @param args            either Map.Entry or BaseHttpRequestOptions that make up the arguments to the method
     */
-   protected void testMethod(String localMethod, String remoteCall, String httpMethod, boolean expectResponse, Class exceptionParser, Object... args) throws Exception {
+   //TODO: kill this and related logic and transition to BaseRestClientExpectTest<GleSYSClient>
+   @Deprecated
+   protected void testMethod(String localMethod, String remoteCall, String httpMethod, boolean expectResponse,
+            Class<?> exceptionParser, Object... args) throws Exception {
+      testMethod(localMethod, remoteCall, httpMethod, expectResponse, ParseFirstJsonValueNamed.class, exceptionParser,
+               args);
+   }
+   
+   @Deprecated
+   @SuppressWarnings("unchecked")
+   protected void testMethod(String localMethod, String remoteCall, String httpMethod, boolean expectResponse, Class<?> responseParser, Class<?> exceptionParser, Object... args) throws Exception {
       List<String> argStrings = new ArrayList<String>();
       List<Object> argValues = new ArrayList<Object>();
 
@@ -87,7 +100,7 @@ public abstract class BaseGleSYSAsyncClientTest<T> extends RestClientTest<T> {
             argValues.add(arg);
          } else {
             Map.Entry<String, String> entry = (Map.Entry<String, String>) arg;
-            argStrings.add(entry.getKey() + "=" + entry.getValue());
+            argStrings.add(entry.getKey() + "=" + Strings2.urlEncode(entry.getValue()));
             argValues.add(entry.getValue());
          }
       }
@@ -108,7 +121,7 @@ public abstract class BaseGleSYSAsyncClientTest<T> extends RestClientTest<T> {
 
       if (expectResponse) {
          assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
-         assertResponseParserClassEquals(method, httpRequest, ParseFirstJsonValueNamed.class);
+         assertResponseParserClassEquals(method, httpRequest, responseParser);
       }
 
       if (argStrings.isEmpty()) {

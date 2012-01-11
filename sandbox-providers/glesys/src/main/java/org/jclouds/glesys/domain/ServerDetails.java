@@ -20,7 +20,6 @@ package org.jclouds.glesys.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
 /**

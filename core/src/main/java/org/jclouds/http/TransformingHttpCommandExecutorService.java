@@ -22,6 +22,7 @@ import java.util.concurrent.Future;
 
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.ImplementedBy;
 
 /**
  * Executor which will invoke and transform the response of an {@code EndpointCommand} into generic
@@ -29,6 +30,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Adrian Cole
  */
+@ImplementedBy(TransformingHttpCommandExecutorServiceImpl.class)
 public interface TransformingHttpCommandExecutorService {
    /**
     * 

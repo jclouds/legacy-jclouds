@@ -37,7 +37,8 @@ public abstract class BaseTestInitializer {
       String app = System.getProperty("test.app");
       String identity = System.getProperty("test." + provider + ".identity");
       String credential = System.getProperty("test." + provider + ".credential");
-      String apiversion = System.getProperty("test." + provider + ".apiversion");
+      String apiVersion = System.getProperty("test." + provider + ".api-version");
+      String buildVersion = System.getProperty("test." + provider + ".build-version");
       if (endpoint != null)
          testContext.setAttribute("test." + provider + ".endpoint", endpoint);
       if (app != null)
@@ -46,16 +47,27 @@ public abstract class BaseTestInitializer {
          testContext.setAttribute("test." + provider + ".identity", identity);
       if (credential != null)
          testContext.setAttribute("test." + provider + ".credential", credential);
-      if (credential != null)
-         testContext.setAttribute("test." + provider + ".apiversion", apiversion);
+      if (apiVersion != null)
+         testContext.setAttribute("test." + provider + ".api-version", apiVersion);
+      if (buildVersion != null)
+         testContext.setAttribute("test." + provider + ".build-version", buildVersion);
       if (identity != null) {
-         return createLiveContext(configurationModule, endpoint, apiversion, app, identity, credential);
+         return createLiveContext(configurationModule, endpoint, apiVersion, buildVersion, app, identity, credential);
       } else {
          return createStubContext();
       }
    }
+   
 
-   protected Properties setupProperties(String endpoint, String apiversion, String identity, String credential) {
+   /**
+    * To be removed in jclouds 1.4
+    */
+   @Deprecated
+   protected Properties setupProperties(String endpoint, String apiVersion, String identity, String credential) {
+      return setupProperties(endpoint, apiVersion, "", identity, credential);
+   }
+
+   protected Properties setupProperties(String endpoint, String apiVersion, String buildVersion, String identity, String credential) {
       Properties overrides = new Properties();
       overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
@@ -65,8 +77,10 @@ public abstract class BaseTestInitializer {
          overrides.setProperty(provider + ".credential", credential);
       if (endpoint != null)
          overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
+      if (buildVersion != null)
+         overrides.setProperty(provider + ".build-version", buildVersion);
+      if (apiVersion != null)
+         overrides.setProperty(provider + ".api-version", apiVersion);
       return overrides;
    }
 
@@ -74,6 +88,6 @@ public abstract class BaseTestInitializer {
       return new BlobStoreContextFactory().createContext("transient", "foo", "bar");
    }
 
-   protected abstract BlobStoreContext createLiveContext(Module configurationModule, String url, String apiversion,
-            String app, String identity, String key) throws IOException;
+   protected abstract BlobStoreContext createLiveContext(Module configurationModule, String url, String apiVersion,
+            String buildVersion, String app, String identity, String key) throws IOException;
 }

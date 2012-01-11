@@ -1,0 +1,122 @@
+/**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.jclouds.cloudstack.options;
+
+import com.google.common.collect.ImmutableSet;
+import org.jclouds.cloudstack.domain.Cluster;
+import org.jclouds.cloudstack.domain.Host;
+import org.jclouds.http.options.BaseHttpRequestOptions;
+
+/**
+ * Options used to control what cluster information is returned
+ *
+ * @author Richard Downer
+ * @see <a
+ *      href="http://download.cloud.com/releases/2.2.0/api_2.2.12/global_admin/listClusters.html"
+ *      />
+ */
+public class ListClustersOptions extends BaseHttpRequestOptions {
+
+   public static final ListHostsOptions NONE = new ListHostsOptions();
+
+   public ListClustersOptions allocationState(Host.AllocationState allocationState) {
+      this.queryParameters.replaceValues("allocationstate", ImmutableSet.of(allocationState.toString()));
+      return this;
+   }
+
+   public ListClustersOptions clusterType(Host.ClusterType clusterType) {
+      this.queryParameters.replaceValues("clustertype", ImmutableSet.of(clusterType.toString()));
+      return this;
+   }
+
+   public ListClustersOptions hypervisor(String hypervisor) {
+      this.queryParameters.replaceValues("hypervisor", ImmutableSet.of(hypervisor));
+      return this;
+   }
+
+   public ListClustersOptions id(long id) {
+      this.queryParameters.replaceValues("id", ImmutableSet.of(id + ""));
+      return this;
+   }
+
+   public ListClustersOptions keyword(String keyword) {
+      this.queryParameters.replaceValues("keyword", ImmutableSet.of(keyword));
+      return this;
+   }
+
+   public ListClustersOptions managedState(Cluster.ManagedState managedState) {
+      this.queryParameters.replaceValues("managedstate", ImmutableSet.of(managedState.toString()));
+      return this;
+   }
+
+   public ListClustersOptions name(String name) {
+      this.queryParameters.replaceValues("name", ImmutableSet.of(name));
+      return this;
+   }
+
+   public ListClustersOptions podId(long podId) {
+      this.queryParameters.replaceValues("podid", ImmutableSet.of(podId + ""));
+      return this;
+   }
+
+   public ListClustersOptions zoneId(long zoneId) {
+      this.queryParameters.replaceValues("zoneid", ImmutableSet.of(zoneId + ""));
+      return this;
+   }
+
+   public static class Builder {
+
+      public static ListClustersOptions allocationState(Host.AllocationState allocationState) {
+         return new ListClustersOptions().allocationState(allocationState);
+      }
+
+      public static ListClustersOptions clusterType(Host.ClusterType clusterType) {
+         return new ListClustersOptions().clusterType(clusterType);
+      }
+
+      public static ListClustersOptions hypervisor(String hypervisor) {
+         return new ListClustersOptions().hypervisor(hypervisor);
+      }
+
+      public static ListClustersOptions id(long id) {
+         return new ListClustersOptions().id(id);
+      }
+
+      public static ListClustersOptions keyword(String keyword) {
+         return new ListClustersOptions().keyword(keyword);
+      }
+
+      public static ListClustersOptions managedState(Cluster.ManagedState managedState) {
+         return new ListClustersOptions().managedState(managedState);
+      }
+
+      public static ListClustersOptions name(String name) {
+         return new ListClustersOptions().name(name);
+      }
+
+      public static ListClustersOptions podId(long podId) {
+         return new ListClustersOptions().podId(podId);
+      }
+
+      public static ListClustersOptions zoneId(long zoneId) {
+         return new ListClustersOptions().zoneId(zoneId);
+      }
+
+   }
+}

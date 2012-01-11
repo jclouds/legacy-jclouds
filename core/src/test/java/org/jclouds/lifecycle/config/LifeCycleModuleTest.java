@@ -27,6 +27,8 @@ import javax.inject.Named;
 import org.jclouds.Constants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.lifecycle.Closer;
+
+import com.google.common.util.concurrent.ExecutionList;
 import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
@@ -75,6 +77,9 @@ public class LifeCycleModuleTest {
             return 1;
          }
       }, new ExecutorServiceModule());
+      // TODO: currently have to manually invoke the execution list, as otherwise it may occur
+      // before everything is wired up
+      i.getInstance(ExecutionList.class).execute();
       return i;
    }
 

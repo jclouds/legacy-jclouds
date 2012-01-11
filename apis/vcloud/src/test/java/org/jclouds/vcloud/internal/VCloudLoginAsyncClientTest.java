@@ -107,7 +107,7 @@ public class VCloudLoginAsyncClientTest extends RestClientTest<VCloudLoginAsyncC
 
    @Override
    public RestContextSpec<VCloudLoginClient, VCloudLoginAsyncClient> createContextSpec() {
-      return contextSpec("test", "http://localhost:8080/login", "1", "", "identity", "credential",
+      return contextSpec("test", "http://localhost:8080/login", "1", "", "", "identity", "credential",
                VCloudLoginClient.class, VCloudLoginAsyncClient.class);
    }
 }

@@ -206,8 +206,13 @@
         <dependencies>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-server</artifactId>
+                <version>8.0.4.v20111024</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-security</artifactId>
-                <version>7.4.0.RC0</version>
+                <version>8.0.4.v20111024</version>
             </dependency>
             <dependency>
                 <groupId>com.jcraft</groupId>
@@ -276,7 +281,7 @@
             <plugin>
                 <groupId>com.theoryinpractise</groupId>
                 <artifactId>clojure-maven-plugin</artifactId>
-                <version>1.3.3</version>
+                <version>1.3.8</version>
                 <configuration>
                     <sourceDirectories>
                         <sourceDirectory>src/main/clojure</sourceDirectory>

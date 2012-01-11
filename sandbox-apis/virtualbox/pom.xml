@@ -35,12 +35,13 @@
 
   <properties>
     <test.virtualbox.endpoint>http://localhost:18083/</test.virtualbox.endpoint>
-    <test.virtualbox.apiversion>4.1.4</test.virtualbox.apiversion>
+    <test.virtualbox.api-version>4.1.4</test.virtualbox.api-version>
+    <test.virtualbox.build-version>4.1.8r75467</test.virtualbox.build-version>
     <test.virtualbox.identity>administrator</test.virtualbox.identity>
     <test.virtualbox.credential>12345</test.virtualbox.credential>
-    <test.virtualbox.image-id></test.virtualbox.image-id>
-    <test.virtualbox.image.login-user></test.virtualbox.image.login-user>
-    <test.virtualbox.image.authenticate-sudo></test.virtualbox.image.authenticate-sudo>
+    <test.virtualbox.image-id>ubuntu-11.04-server-i386</test.virtualbox.image-id>
+    <test.virtualbox.image.login-user>toor:password</test.virtualbox.image.login-user>
+    <test.virtualbox.image.authenticate-sudo>true</test.virtualbox.image.authenticate-sudo>
   </properties>
 
   <dependencies>
@@ -52,7 +53,7 @@
     <dependency>
       <groupId>org.virtualbox</groupId>
       <artifactId>vboxjws</artifactId>
-      <version>${test.virtualbox.apiversion}</version>
+      <version>${test.virtualbox.api-version}</version>
     </dependency>
     <dependency>
       <groupId>org.jclouds.api</groupId>
@@ -67,7 +68,6 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
-      <version>7.4.0.RC0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -102,12 +102,6 @@
       <version>0.9.29</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.jclouds.driver</groupId>
-      <artifactId>jclouds-log4j</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
   
   <profiles>
@@ -129,7 +123,8 @@
                   <threadCount>1</threadCount>
                   <systemPropertyVariables>
                     <test.virtualbox.endpoint>${test.virtualbox.endpoint}</test.virtualbox.endpoint>
-                    <test.virtualbox.apiversion>${test.virtualbox.apiversion}</test.virtualbox.apiversion>
+                    <test.virtualbox.api-version>${test.virtualbox.api-version}</test.virtualbox.api-version>
+                    <test.virtualbox.build-version>${test.virtualbox.build-version}</test.virtualbox.build-version>
                     <test.virtualbox.identity>${test.virtualbox.identity}</test.virtualbox.identity>
                     <test.virtualbox.credential>${test.virtualbox.credential}</test.virtualbox.credential>
                     <test.virtualbox.image-id>${test.virtualbox.image-id}</test.virtualbox.image-id>

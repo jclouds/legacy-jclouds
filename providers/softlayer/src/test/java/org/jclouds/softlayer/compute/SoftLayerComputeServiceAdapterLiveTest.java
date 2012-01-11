@@ -77,7 +77,7 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
 
       guest = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
       assertEquals(guest.getNode().getHostname(), name);
-      assertEquals(guest.getNodeId(), guest.getNode().getId());
+      assertEquals(guest.getNodeId(), guest.getNode().getId() + "");
       assertEquals(guest.getNode().getDomain(), template.getOptions().as(SoftLayerTemplateOptions.class)
             .getDomainName());
       assert InetAddresses.isInetAddress(guest.getNode().getPrimaryBackendIpAddress()) : guest;

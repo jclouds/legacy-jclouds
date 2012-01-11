@@ -26,8 +26,8 @@ import java.util.Properties;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.s3.BaseS3AsyncClientTest;
 import org.jclouds.s3.S3AsyncClient;
+import org.jclouds.s3.internal.BaseS3AsyncClientTest;
 import org.testng.annotations.Test;
 
 import com.google.inject.TypeLiteral;

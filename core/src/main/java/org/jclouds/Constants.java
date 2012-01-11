@@ -191,12 +191,23 @@ public interface Constants {
    public static final String PROPERTY_API = "jclouds.api";
 
    /**
-    * String property.
+    * String property. default empty string
     * <p/>
     * Explicitly identifies the version of an api.
     */
    public static final String PROPERTY_API_VERSION = "jclouds.api-version";
 
+   /**
+    * String property.
+    * <p/>
+    * Explicitly identifies the build that the server jclouds connects to is running.
+    * 
+    * For example, for virtualbox, the api version may be {@code 4.1.8} while the build version is
+    * {@code 4.1.8r75467}. Or a vcloud endpoint may be api version {@code 1.0} while the build is
+    * {@code 1.5.0.0.124312}
+    */
+   public static final String PROPERTY_BUILD_VERSION = "jclouds.build-version";
+   
    /**
     * String property.
     * <p/>

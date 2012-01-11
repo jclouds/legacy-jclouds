@@ -26,7 +26,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.jclouds.Constants;
@@ -109,8 +108,7 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFu
     * Submits a thread that will either set the result of the future or the exception that took
     * place
     */
-   @PostConstruct
-   BlockUntilInitScriptStatusIsZeroThenReturnOutput init() {
+   public BlockUntilInitScriptStatusIsZeroThenReturnOutput init() {
       userThreads.submit(new Runnable() {
          @Override
          public void run() {

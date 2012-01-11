@@ -33,7 +33,6 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.javax.annotation.Nullable;
@@ -43,6 +42,9 @@ import org.virtualbox_4_1.INetworkAdapter;
 import org.virtualbox_4_1.MachineState;
 
 import com.google.common.base.Function;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> {
 
@@ -54,8 +56,7 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
    public NodeMetadata apply(@Nullable IMachine vm) {
 
       NodeMetadataBuilder nodeMetadataBuilder = new NodeMetadataBuilder();
-      String s = vm.getName();
-      nodeMetadataBuilder.name(s);
+      nodeMetadataBuilder.name(vm.getName()).ids(vm.getName());
 
       // TODO Set up location properly
       LocationBuilder locationBuilder = new LocationBuilder();
@@ -79,7 +80,7 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
       hardwareBuilder.is64Bit(false);
 
       nodeMetadataBuilder.hostname(vm.getName());
-      nodeMetadataBuilder.loginPort(18083);
+      
 
       MachineState vmState = vm.getState();
       NodeState nodeState = machineToNodeState.get(vmState);
@@ -91,14 +92,21 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
 
       INetworkAdapter networkAdapter = vm.getNetworkAdapter(0l);
       if (networkAdapter != null) {
-         String bridgedInterface = networkAdapter.getBridgedInterface();
-         System.out.println("Interface: " + bridgedInterface);
+         nodeMetadataBuilder.privateAddresses(ImmutableSet.of(networkAdapter.getNatDriver().getHostIP()));
+         for (String nameProtocolnumberAddressInboudportGuestTargetport : networkAdapter.getNatDriver().getRedirects()){
+            Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
+            String protocolNumber  = Iterables.get(stuff, 1);
+            String hostAddress= Iterables.get(stuff, 2);
+            String inboundPort= Iterables.get(stuff, 3);
+            String targetPort= Iterables.get(stuff, 5);
+            if ("1".equals(protocolNumber) && "22".equals(targetPort))
+               nodeMetadataBuilder.privateAddresses(ImmutableSet.of(hostAddress)).loginPort(Integer.parseInt(inboundPort));
+         }
       }
 
       // nodeMetadataBuilder.imageId("");
       // nodeMetadataBuilder.group("");
 
-      nodeMetadataBuilder.id(vm.getId());
       return nodeMetadataBuilder.build();
    }
 

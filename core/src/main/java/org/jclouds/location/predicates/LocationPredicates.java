@@ -68,6 +68,30 @@ public class LocationPredicates {
       }
    }
 
+   public static Predicate<Location> idEquals(String id) {
+      return new IdEquals(id);
+   }
+
+   static class IdEquals implements Predicate<Location> {
+
+      private final String id;
+
+      IdEquals(String id) {
+         this.id = checkNotNull(id, "id");
+      }
+
+      @Override
+      public boolean apply(Location input) {
+
+         return input.getId().equals(id);
+      }
+
+      @Override
+      public String toString() {
+         return "idEquals(" + id + ")";
+      }
+   }
+   
    public static Predicate<Location> isZoneOrRegionWhereRegionIdEquals(String region) {
       return new IsZoneOrRegionWhereRegionIdEquals(region);
    }

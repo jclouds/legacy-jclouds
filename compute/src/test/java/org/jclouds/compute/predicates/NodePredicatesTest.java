@@ -22,9 +22,9 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -38,15 +38,15 @@ import org.testng.annotations.Test;
 public class NodePredicatesTest {
 
    private NodeMetadata node;
-   private ComputeService computeService;
+   private GetNodeMetadataStrategy computeService;
 
    @BeforeMethod
    public void setUp() throws Exception {
       node = createMock(NodeMetadata.class);
-      computeService = createMock(ComputeService.class);
+      computeService = createMock(GetNodeMetadataStrategy.class);
 
       expect(node.getId()).andReturn("myid").anyTimes();
-      expect(computeService.getNodeMetadata("myid")).andReturn(node).anyTimes();
+      expect(computeService.getNode("myid")).andReturn(node).anyTimes();
       expect(node.getLocation()).andReturn(null).anyTimes();
    }
 

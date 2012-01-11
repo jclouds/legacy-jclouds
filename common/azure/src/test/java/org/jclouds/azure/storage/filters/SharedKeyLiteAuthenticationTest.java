@@ -22,8 +22,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
@@ -31,6 +29,8 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.azure.storage.config.AzureStorageRestClientModule;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.IntegrationTestAsyncClient;
+import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.RestContextFactory;
@@ -137,10 +137,11 @@ public class SharedKeyLiteAuthenticationTest {
    }
 
    @SuppressWarnings("unchecked")
-   public static final RestContextSpec<Map, List> DUMMY_SPEC = new RestContextSpec<Map, List>("provider", "endpoint",
-            "apiVersion", "", "identity", "credential", Map.class, List.class, PropertiesBuilder.class,
-            (Class) RestContextBuilder.class, ImmutableList.<Module> of(new MockModule(), new NullLoggingModule(),
-                     new AzureStorageRestClientModule<Exception, RuntimeException>(Exception.class,
-                              RuntimeException.class)));
+   public static final RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> DUMMY_SPEC = new RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient>(
+            "provider", "endpoint", "apiVersion", "buildVersion", "", "identity", "credential", IntegrationTestClient.class,
+            IntegrationTestAsyncClient.class, PropertiesBuilder.class, (Class) RestContextBuilder.class, ImmutableList
+                     .<Module> of(new MockModule(), new NullLoggingModule(),
+                              new AzureStorageRestClientModule<IntegrationTestClient, IntegrationTestAsyncClient>(IntegrationTestClient.class,
+                                       IntegrationTestAsyncClient.class)));
 
 }

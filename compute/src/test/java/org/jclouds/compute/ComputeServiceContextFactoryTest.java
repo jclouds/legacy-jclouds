@@ -43,7 +43,7 @@ public class ComputeServiceContextFactoryTest {
       @SuppressWarnings("rawtypes")
       ComputeServiceContext context = new ComputeServiceContextFactory()
                .createContext(new StandaloneComputeServiceContextSpec<ConcurrentMap, NodeMetadata, Hardware, Image, Location>(
-                        "stub", "stub", "1", "", "identity", "credential", ConcurrentMap.class,
+                        "stub", "stub", "1", "", "", "identity", "credential", ConcurrentMap.class,
                         StubComputeServiceContextBuilder.class, ImmutableSet.<Module> of()));
 
       context.getComputeService().listNodes();

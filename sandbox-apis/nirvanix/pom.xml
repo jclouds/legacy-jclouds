@@ -46,7 +46,8 @@
 
     <properties>
         <test.nirvanix.endpoint>http://services.nirvanix.com</test.nirvanix.endpoint>
-        <test.nirvanix.apiversion>2.5.6</test.nirvanix.apiversion>
+        <test.nirvanix.api-version>2.5.6</test.nirvanix.api-version>
+        <test.nirvanix.build-version></test.nirvanix.build-version>
         <test.nirvanix.identity>FIXME</test.nirvanix.identity>
         <test.nirvanix.credential> FIXME </test.nirvanix.credential>
     </properties>
@@ -106,7 +107,8 @@
                                 <configuration>
                                     <systemPropertyVariables>
                                         <test.nirvanix.endpoint>${test.nirvanix.endpoint}</test.nirvanix.endpoint>
-                                        <test.nirvanix.apiversion>${test.nirvanix.apiversion}</test.nirvanix.apiversion>
+                                        <test.nirvanix.api-version>${test.nirvanix.api-version}</test.nirvanix.api-version>
+                                        <test.nirvanix.build-version>${test.nirvanix.build-version}</test.nirvanix.build-version>
                                         <test.nirvanix.identity>${test.nirvanix.identity}</test.nirvanix.identity>
                                         <test.nirvanix.credential>${test.nirvanix.credential}</test.nirvanix.credential>
                                     </systemPropertyVariables>

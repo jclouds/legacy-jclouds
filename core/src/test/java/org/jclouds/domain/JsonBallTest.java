@@ -54,7 +54,7 @@ public class JsonBallTest {
 
    }
 
-   public void testHash() {
+   public void testObject() {
       String json = "{\"tomcat6\":{\"ssl_port\":8433}}";
 
       Map<String, JsonBall> map = ImmutableMap.<String, JsonBall> of("tomcat6", new JsonBall("{\"ssl_port\":8433}"));
@@ -85,9 +85,20 @@ public class JsonBallTest {
    }
 
    public void testNumber() {
-      String json = "{\"number\":1}";
+      String json = "{\"number\":1.0}";
 
-      Map<String, JsonBall> map = ImmutableMap.<String, JsonBall> of("number", new JsonBall("1"));
+      Map<String, JsonBall> map = ImmutableMap.<String, JsonBall> of("number", new JsonBall(1.0));
+
+      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newStringPayload(json))), map);
+      assertEquals(mapper.toJson(map), json);
+
+   }
+
+
+   public void testBoolean() {
+      String json = "{\"boolean\":false}";
+
+      Map<String, JsonBall> map = ImmutableMap.<String, JsonBall> of("boolean", new JsonBall(false));
 
       assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newStringPayload(json))), map);
       assertEquals(mapper.toJson(map), json);

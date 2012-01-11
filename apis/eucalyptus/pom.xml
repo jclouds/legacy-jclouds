@@ -35,7 +35,8 @@
 
   <properties>
     <test.eucalyptus.endpoint>http://ecc.eucalyptus.com:8773/services/Eucalyptus</test.eucalyptus.endpoint>
-    <test.eucalyptus.apiversion>2010-06-15</test.eucalyptus.apiversion>
+    <test.eucalyptus.api-version>2010-06-15</test.eucalyptus.api-version>
+    <test.eucalyptus.build-version></test.eucalyptus.build-version>
     <test.eucalyptus.identity>FIXME_IDENTITY</test.eucalyptus.identity>
     <test.eucalyptus.credential>FIXME_CREDENTIAL</test.eucalyptus.credential>
     <test.eucalyptus.image-id />
@@ -102,7 +103,8 @@
                 <configuration>
                   <systemPropertyVariables>
                     <test.eucalyptus.endpoint>${test.eucalyptus.endpoint}</test.eucalyptus.endpoint>
-                    <test.eucalyptus.apiversion>${test.eucalyptus.apiversion}</test.eucalyptus.apiversion>
+                    <test.eucalyptus.api-version>${test.eucalyptus.api-version}</test.eucalyptus.api-version>
+                    <test.eucalyptus.build-version>${test.eucalyptus.build-version}</test.eucalyptus.build-version>
                     <test.eucalyptus.identity>${test.eucalyptus.identity}</test.eucalyptus.identity>
                     <test.eucalyptus.credential>${test.eucalyptus.credential}</test.eucalyptus.credential>
                     <test.eucalyptus.image-id>${test.eucalyptus.image-id}</test.eucalyptus.image-id>

@@ -46,14 +46,6 @@ public interface IpPermission extends Comparable<IpPermission> {
 
    /**
     * List of security group and user ID pairs.
-    * 
-    * @see #getUserIdGroupPairs
-    */
-   @Deprecated
-   Set<UserIdGroupPair> getGroups();
-
-   /**
-    * List of security group and user ID pairs.
     */
    Multimap<String, String> getUserIdGroupPairs();
 

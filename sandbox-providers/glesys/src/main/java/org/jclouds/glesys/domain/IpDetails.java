@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Represents detailed information about an available IP address.
+ * Represents detailed information about an IP address.
  */
 public class IpDetails {
 

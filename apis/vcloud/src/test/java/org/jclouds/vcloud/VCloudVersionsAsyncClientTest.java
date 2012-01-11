@@ -81,7 +81,7 @@ public class VCloudVersionsAsyncClientTest extends RestClientTest<VCloudVersions
 
    @Override
    public RestContextSpec<VCloudVersionsClient, VCloudVersionsAsyncClient> createContextSpec() {
-      return contextSpec("test", "http://localhost:8080", "1", "", "identity", "credential",
+      return contextSpec("test", "http://localhost:8080", "1", "", "", "identity", "credential",
                VCloudVersionsClient.class, VCloudVersionsAsyncClient.class);
    }
 

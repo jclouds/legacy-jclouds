@@ -52,7 +52,6 @@ public class AttachMediumToMachineIfNotAlreadyAttachedTest {
 
       String controllerName = "IDE Controller";
       String diskPath = "/Users/johndoe/jclouds-virtualbox-images/admin.vdi";
-      String diskName = "admin";
       String diskFormat = "vdi";
       int controllerPort = 0;
       int deviceSlot = 1;

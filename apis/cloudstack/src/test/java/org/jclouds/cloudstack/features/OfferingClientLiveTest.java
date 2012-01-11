@@ -64,7 +64,7 @@ public class OfferingClientLiveTest extends BaseCloudStackClientLiveTest {
 
          } catch (NoSuchElementException e) {
             // This bug is present both in 2.2.8 and 2.2.12
-           assertTrue("2.2.8".equals(apiversion) || "2.2.12".equals(apiversion));
+           assertTrue("2.2.8".equals(apiVersion) || "2.2.12".equals(apiVersion));
          }
       }
    }

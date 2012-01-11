@@ -35,7 +35,8 @@
 
   <properties>
     <test.cloudsigma-lvs.endpoint>https://api.lvs.cloudsigma.com</test.cloudsigma-lvs.endpoint>
-    <test.cloudsigma-lvs.apiversion>1.0</test.cloudsigma-lvs.apiversion>
+    <test.cloudsigma-lvs.api-version>1.0</test.cloudsigma-lvs.api-version>
+    <test.cloudsigma-lvs.build-version></test.cloudsigma-lvs.build-version>
     <test.cloudsigma-lvs.identity>FIXME</test.cloudsigma-lvs.identity>
     <test.cloudsigma-lvs.credential>FIXME</test.cloudsigma-lvs.credential>
     <test.cloudsigma-lvs.image-id />
@@ -102,7 +103,8 @@
                 <configuration>
                   <systemPropertyVariables>
                     <test.cloudsigma-lvs.endpoint>${test.cloudsigma-lvs.endpoint}</test.cloudsigma-lvs.endpoint>
-                    <test.cloudsigma-lvs.apiversion>${test.cloudsigma-lvs.apiversion}</test.cloudsigma-lvs.apiversion>
+                    <test.cloudsigma-lvs.api-version>${test.cloudsigma-lvs.api-version}</test.cloudsigma-lvs.api-version>
+                    <test.cloudsigma-lvs.build-version>${test.cloudsigma-lvs.build-version}</test.cloudsigma-lvs.build-version>
                     <test.cloudsigma-lvs.identity>${test.cloudsigma-lvs.identity}</test.cloudsigma-lvs.identity>
                     <test.cloudsigma-lvs.credential>${test.cloudsigma-lvs.credential}</test.cloudsigma-lvs.credential>
                     <test.cloudsigma-lvs.image-id>${test.cloudsigma-lvs.image-id}</test.cloudsigma-lvs.image-id>

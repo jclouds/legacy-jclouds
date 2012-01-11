@@ -48,7 +48,7 @@ public interface ArchiveClient {
     * @param username the username associated with the archive
     * @return the archive information or null if not found
     */
-   ArchiveDetails archiveDetails(String username);
+   ArchiveDetails getArchiveDetails(String username);
 
    /**
     * Create a new backup volume.
@@ -73,7 +73,7 @@ public interface ArchiveClient {
     * Then delete the old volume.
     *
     * @param username the username associated with the archive
-    * @param size     the new size required in GB
+    * @param size     the new size required, see #getArchiveAllowedArguments for valid values
     */
    void resizeArchive(String username, int size);
 

@@ -47,7 +47,7 @@ public class ParseServerCreatedTest extends BaseItemParserTest<ServerCreated> {
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
    public ServerCreated expected() {
-      return ServerCreated.builder().id("xm3630641").hostname("jclouds-test-host").ips(ServerCreatedIp.builder().ip("109.74.10.27").version(4).cost(2.00).build()).build();
+      return ServerCreated.builder().id("xm3630641").hostname("jclouds-test-host").ips(ServerCreatedIp.builder().ip("109.74.10.27").version4().cost(2.00).build()).build();
    }
     
 

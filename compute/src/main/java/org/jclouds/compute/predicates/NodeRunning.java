@@ -20,8 +20,8 @@ package org.jclouds.compute.predicates;
 
 import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
@@ -36,7 +36,7 @@ import com.google.inject.Inject;
 public class NodeRunning extends NodePresentAndInIntendedState {
 
    @Inject
-   public NodeRunning(ComputeService client) {
+   public NodeRunning(GetNodeMetadataStrategy client) {
       super(NodeState.RUNNING, ImmutableSet.of(NodeState.ERROR, NodeState.TERMINATED), client);
    }
 }

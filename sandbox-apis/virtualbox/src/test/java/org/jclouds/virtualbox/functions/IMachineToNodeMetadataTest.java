@@ -31,6 +31,7 @@ import org.testng.annotations.Test;
 import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
 
 public class IMachineToNodeMetadataTest {
@@ -47,7 +48,7 @@ public class IMachineToNodeMetadataTest {
 
       VirtualBox virtualBox = new VirtualBox();
       IMachineToNodeMetadata parser = new IMachineToNodeMetadata();
-      IMachineToHardware hwParser = new IMachineToHardware(manager);
+      IMachineToHardware hwParser = new IMachineToHardware(Suppliers.ofInstance(manager));
 
       // hwParser.apply()
 

@@ -44,7 +44,6 @@ import org.jclouds.gogrid.domain.ServerState;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -73,8 +72,8 @@ public class ServerToNodeMetadataTest {
       expect(serverStateToNodeState.get(ServerState.ON)).andReturn(NodeState.RUNNING);
 
       Location location = new LocationBuilder().scope(LocationScope.ZONE).id("1").description("US-West-1").build();
-      Map<String, ? extends Location> locations = ImmutableMap.<String, Location> of("1", location);
-
+      Set< ? extends Location> locations = ImmutableSet.< Location> of( location);
+      
       expect(server.getIp()).andReturn(new Ip("127.0.0.1"));
 
       ServerImage image = createMock(ServerImage.class);
@@ -94,7 +93,7 @@ public class ServerToNodeMetadataTest {
       ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, Suppliers
                .<Set<? extends Image>> ofInstance(images), Suppliers
                .<Set<? extends Hardware>> ofInstance(GoGridHardwareSupplier.H_ALL), Suppliers
-               .<Map<String, ? extends Location>> ofInstance(locations));
+               .<Set<? extends Location>> ofInstance(locations));
 
       NodeMetadata metadata = parser.apply(server);
       assertEquals(metadata.getLocation(), location);

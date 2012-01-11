@@ -35,7 +35,8 @@
 
   <properties>
     <test.nova.endpoint>http://localhost:8773/services/Cloud</test.nova.endpoint>
-    <test.nova.apiversion>1.1</test.nova.apiversion>
+    <test.nova.api-version>1.1</test.nova.api-version>
+    <test.nova.build-version></test.nova.build-version>
     <test.nova.identity>FIXME_IDENTITY</test.nova.identity>
     <test.nova.credential>FIXME_CREDENTIALS</test.nova.credential>
     <test.nova.image-id />
@@ -115,7 +116,8 @@
                 <configuration>
                   <systemPropertyVariables>
                     <test.nova.endpoint>${test.nova.endpoint}</test.nova.endpoint>
-                    <test.nova.apiversion>${test.nova.apiversion}</test.nova.apiversion>
+                    <test.nova.api-version>${test.nova.api-version}</test.nova.api-version>
+                    <test.nova.build-version>${test.nova.build-version}</test.nova.build-version>
                     <test.nova.identity>${test.nova.identity}</test.nova.identity>
                     <test.nova.credential>${test.nova.credential}</test.nova.credential>
                     <test.nova.image-id>${test.nova.image-id}</test.nova.image-id>

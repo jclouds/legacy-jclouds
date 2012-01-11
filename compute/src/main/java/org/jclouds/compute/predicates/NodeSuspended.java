@@ -20,8 +20,8 @@ package org.jclouds.compute.predicates;
 
 import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 
 import com.google.inject.Inject;
 
@@ -35,7 +35,7 @@ import com.google.inject.Inject;
 public class NodeSuspended extends NodePresentAndInIntendedState {
 
    @Inject
-   public NodeSuspended(ComputeService client) {
+   public NodeSuspended(GetNodeMetadataStrategy client) {
       super(NodeState.SUSPENDED, client);
    }
 }

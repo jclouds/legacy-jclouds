@@ -24,11 +24,9 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
-import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
@@ -36,6 +34,7 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Provider;
 import org.jclouds.location.Region;
 import org.jclouds.location.config.ProvideRegionToURIViaProperties;
@@ -73,7 +72,6 @@ public class AWSRestClientModule<S, A> extends RestClientModule<S, A> {
 
    @Override
    protected void bindRetryHandlers() {
-      bind(HttpRetryHandler.class).annotatedWith(Redirection.class).to(AWSRedirectionRetryHandler.class);
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(AWSClientErrorRetryHandler.class);
    }
 

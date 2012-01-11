@@ -20,12 +20,6 @@ package org.jclouds.rest.internal;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.reportMatcher;
-import static org.easymock.classextension.EasyMock.createNiceMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
 import static org.jclouds.io.Payloads.calculateMD5;
 import static org.jclouds.io.Payloads.newInputStreamPayload;
 import static org.jclouds.io.Payloads.newStringPayload;
@@ -53,6 +47,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
@@ -75,26 +70,24 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.easymock.IArgumentMatcher;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpCommand;
+import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
-import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
@@ -180,8 +173,8 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    @RequiresHttp
    @ConfiguresRestClient
-   protected static class CallerCalleeModule extends RestClientModule<Caller, AsyncCaller> {
-      CallerCalleeModule() {
+   protected static class CallerModule extends RestClientModule<Caller, AsyncCaller> {
+      CallerModule() {
          super(Caller.class, AsyncCaller.class, ImmutableMap.<Class<?>, Class<?>> of(Callee.class, AsyncCallee.class));
       }
 
@@ -227,13 +220,17 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       public AsyncCallee getCallee(@EndpointParam URI endpoint);
    }
 
-   @SuppressWarnings("unchecked")
-   public void testDelegateAsyncIncludesVersion() throws SecurityException, NoSuchMethodException,
-         InterruptedException, ExecutionException {
-      Injector child = injectorForClient();
-      TransformingHttpCommandExecutorService mock = child.getInstance(TransformingHttpCommandExecutorService.class);
+   public void testAsyncDelegateIsLazyLoadedAndRequestIncludesVersionAndPath() throws InterruptedException, ExecutionException {
+      Injector child = injectorForCaller(new HttpCommandExecutorService() {
 
-      ReleasePayloadAndReturn function = child.getInstance(ReleasePayloadAndReturn.class);
+         @Override
+         public Future<HttpResponse> submit(HttpCommand command) {
+            assertEquals(command.getCurrentRequest().getRequestLine(),
+                     "GET http://localhost:9999/client/1/foo HTTP/1.1");
+            return Futures.immediateFuture(HttpResponse.builder().build());
+         }
+
+      });
 
       try {
          child.getInstance(AsyncCallee.class);
@@ -242,42 +239,21 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       }
 
-      AsyncCaller caller = child.getInstance(AsyncCaller.class);
-      expect(mock.submit(requestLineEquals("GET http://localhost:9999/client/1/foo HTTP/1.1"), eq(function)))
-            .andReturn(createNiceMock(ListenableFuture.class)).atLeastOnce();
-      replay(mock);
-
-      caller.getCallee().onePath("foo");
-
-      verify(mock);
+      child.getInstance(AsyncCaller.class).getCallee().onePath("foo").get();
 
    }
 
-   public static HttpCommand requestLineEquals(final String requestLine) {
-      reportMatcher(new IArgumentMatcher() {
+   public void testDelegateIsLazyLoadedAndRequestIncludesVersionAndPath() throws InterruptedException, ExecutionException {
+      Injector child = injectorForCaller(new HttpCommandExecutorService() {
 
          @Override
-         public void appendTo(StringBuffer buffer) {
-            buffer.append("requestLineEquals(");
-            buffer.append(requestLine);
-            buffer.append(")");
-         }
-
-         @Override
-         public boolean matches(Object arg) {
-            return ((HttpCommand) arg).getCurrentRequest().getRequestLine().equals(requestLine);
+         public Future<HttpResponse> submit(HttpCommand command) {
+            assertEquals(command.getCurrentRequest().getRequestLine(),
+                     "GET http://localhost:1111/client/1/foo HTTP/1.1");
+            return Futures.immediateFuture(HttpResponse.builder().build());
          }
 
       });
-      return null;
-   }
-
-   public void testDelegateWithOverridingEndpoint() throws SecurityException, NoSuchMethodException,
-         InterruptedException, ExecutionException {
-      Injector child = injectorForClient();
-      TransformingHttpCommandExecutorService mock = child.getInstance(TransformingHttpCommandExecutorService.class);
-
-      ReleasePayloadAndReturn function = child.getInstance(ReleasePayloadAndReturn.class);
 
       try {
          child.getInstance(Callee.class);
@@ -286,23 +262,45 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       }
 
-      Caller caller = child.getInstance(Caller.class);
-      expect(mock.submit(requestLineEquals("GET http://localhost:1111/client/1/foo HTTP/1.1"), eq(function)))
-            .andReturn(Futures.<Void> immediateFuture(null)).atLeastOnce();
-      replay(mock);
+      child.getInstance(Caller.class).getCallee().onePath("foo");
 
-      caller.getCallee().onePath("foo");
+   }
+   
 
-      verify(mock);
+   public void testAsyncDelegateIsLazyLoadedAndRequestIncludesEndpointVersionAndPath() throws InterruptedException, ExecutionException {
+      Injector child = injectorForCaller(new HttpCommandExecutorService() {
+
+         @Override
+         public Future<HttpResponse> submit(HttpCommand command) {
+            assertEquals(command.getCurrentRequest().getRequestLine(),
+                     "GET http://howdyboys/client/1/foo HTTP/1.1");
+            return Futures.immediateFuture(HttpResponse.builder().build());
+         }
+
+      });
+
+      try {
+         child.getInstance(AsyncCallee.class);
+         assert false : "Callee shouldn't be bound yet";
+      } catch (ConfigurationException e) {
+
+      }
+
+      child.getInstance(AsyncCaller.class).getCallee(URI.create("http://howdyboys")).onePath("foo").get();
 
    }
 
-   public void testDelegateWithOverridingEndpointOnMethod() throws SecurityException, NoSuchMethodException,
-         InterruptedException, ExecutionException {
-      Injector child = injectorForClient();
-      TransformingHttpCommandExecutorService mock = child.getInstance(TransformingHttpCommandExecutorService.class);
+   public void testDelegateIsLazyLoadedAndRequestIncludesEndpointVersionAndPath() throws InterruptedException, ExecutionException {
+      Injector child = injectorForCaller(new HttpCommandExecutorService() {
 
-      ReleasePayloadAndReturn function = child.getInstance(ReleasePayloadAndReturn.class);
+         @Override
+         public Future<HttpResponse> submit(HttpCommand command) {
+            assertEquals(command.getCurrentRequest().getRequestLine(),
+                     "GET http://howdyboys/client/1/foo HTTP/1.1");
+            return Futures.immediateFuture(HttpResponse.builder().build());
+         }
+
+      });
 
       try {
          child.getInstance(Callee.class);
@@ -311,22 +309,15 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       }
 
-      Caller caller = child.getInstance(Caller.class);
-      expect(mock.submit(requestLineEquals("GET http://howdyboys/client/1/foo HTTP/1.1"), eq(function))).andReturn(
-            Futures.<Void> immediateFuture(null)).atLeastOnce();
-      replay(mock);
-
-      caller.getCallee(URI.create("http://howdyboys")).onePath("foo");
-
-      verify(mock);
+      child.getInstance(Caller.class).getCallee(URI.create("http://howdyboys")).onePath("foo");
 
    }
+   
+   private Injector injectorForCaller(HttpCommandExecutorService service) {
 
-   private Injector injectorForClient() {
-
-      RestContextSpec<Caller, AsyncCaller> contextSpec = contextSpec("test", "http://localhost:9999", "1", "",
-            "userfoo", null, Caller.class, AsyncCaller.class,
-            ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule(), new CallerCalleeModule()));
+      RestContextSpec<Caller, AsyncCaller> contextSpec = contextSpec("test", "http://localhost:9999", "1", "", "",
+               "userfoo", null, Caller.class, AsyncCaller.class, ImmutableSet.<Module> of(new MockModule(service),
+                        new NullLoggingModule(), new CallerModule()));
 
       return createContextBuilder(contextSpec).buildInjector();
 
@@ -2435,8 +2426,8 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    @BeforeClass
    void setupFactory() {
-      RestContextSpec<String, Integer> contextSpec = contextSpec("test", "http://localhost:9999", "1", "", "userfoo",
-            null, String.class, Integer.class,
+      RestContextSpec<Callee, AsyncCallee> contextSpec = contextSpec("test", "http://localhost:9999", "1", "", "", "userfoo",
+            null, Callee.class, AsyncCallee.class,
             ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule(), new AbstractModule() {
 
                @Override

@@ -18,20 +18,22 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.common.collect.Maps;
-import com.google.inject.TypeLiteral;
-import org.jclouds.glesys.options.*;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.functions.ParseFirstJsonValueNamed;
+import java.util.Map;
+
+import org.jclouds.glesys.functions.ParseServerTemplatesFromHttpResponse;
+import org.jclouds.glesys.options.ServerCloneOptions;
+import org.jclouds.glesys.options.ServerCreateOptions;
+import org.jclouds.glesys.options.ServerDestroyOptions;
+import org.jclouds.glesys.options.ServerEditOptions;
+import org.jclouds.glesys.options.ServerStatusOptions;
+import org.jclouds.glesys.options.ServerStopOptions;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Map;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests annotation parsing of {@code ServerAsyncClient}
@@ -58,7 +60,8 @@ public class ServerAsyncClientTest extends BaseGleSYSAsyncClientTest<ServerAsync
    }
 
    public void testGetTemplates() throws Exception {
-      testMethod("getTemplates", "templates", "GET", true, MapHttp4xxCodesToExceptions.class);
+      testMethod("getTemplates", "templates", "GET", true, ParseServerTemplatesFromHttpResponse.class,
+               MapHttp4xxCodesToExceptions.class);
    }
 
    public void testGetServer() throws Exception {
@@ -118,6 +121,11 @@ public class ServerAsyncClientTest extends BaseGleSYSAsyncClientTest<ServerAsync
 
    public void testRebootServer() throws Exception {
       testMethod("rebootServer", "reboot", "POST", false, MapHttp4xxCodesToExceptions.class, serverIdOnly);
+   }
+
+   public void testDestroyServer() throws Exception {
+      testMethod("destroyServer", "destroy", "POST", false, MapHttp4xxCodesToExceptions.class, serverIdOnly, ServerDestroyOptions.Builder.keepIp());
+      testMethod("destroyServer", "destroy", "POST", false, MapHttp4xxCodesToExceptions.class, serverIdOnly, ServerDestroyOptions.Builder.discardIp());
    }
 
    @Override
