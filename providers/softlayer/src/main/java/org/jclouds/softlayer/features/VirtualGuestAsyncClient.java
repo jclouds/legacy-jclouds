@@ -18,13 +18,22 @@
  */
 package org.jclouds.softlayer.features;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.Set;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.softlayer.binders.ProductOrderToJson;
@@ -32,9 +41,7 @@ import org.jclouds.softlayer.domain.ProductOrder;
 import org.jclouds.softlayer.domain.ProductOrderReceipt;
 import org.jclouds.softlayer.domain.VirtualGuest;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import java.util.Set;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides asynchronous access to VirtualGuest via their REST API.
@@ -121,7 +128,7 @@ public interface VirtualGuestAsyncClient {
    @GET
    @Path("/SoftLayer_Billing_Item/{id}/cancelService.json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> cancelService(@PathParam("id") long id);
 
    /**
@@ -141,7 +148,7 @@ public interface VirtualGuestAsyncClient {
    @GET
    @Path("SoftLayer_Virtual_Guest/{id}/getOrderTemplate/MONTHLY.json")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<ProductOrder> getOrderTemplate(@PathParam("id") long id);
 
 }

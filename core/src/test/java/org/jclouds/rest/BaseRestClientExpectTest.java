@@ -209,9 +209,13 @@ public abstract class BaseRestClientExpectTest<S> {
     * @return a client configured with this behavior
     */
    public S requestSendsResponse(HttpRequest request, HttpResponse response) {
-      return requestsSendResponses(ImmutableMap.of(request, response));
+      return requestSendsResponse(request, response, createModule());
    }
-
+   
+   public S requestSendsResponse(HttpRequest request, HttpResponse response, Module module) {
+      return requestsSendResponses(ImmutableMap.of(request, response), module);
+   }
+   
    /**
     * creates a client for a mock server which only responds to two types of requests
     * 
@@ -227,7 +231,12 @@ public abstract class BaseRestClientExpectTest<S> {
     */
    public S requestsSendResponses(HttpRequest requestA, HttpResponse responseA, HttpRequest requestB,
             HttpResponse responseB) {
-      return requestsSendResponses(ImmutableMap.of(requestA, responseA, requestB, responseB));
+      return requestsSendResponses(requestA, responseA, requestB, responseB, createModule());
+   }
+
+   public S requestsSendResponses(HttpRequest requestA, HttpResponse responseA, HttpRequest requestB,
+            HttpResponse responseB, Module module) {
+      return requestsSendResponses(ImmutableMap.of(requestA, responseA, requestB, responseB), module);
    }
 
    /**
@@ -249,9 +258,14 @@ public abstract class BaseRestClientExpectTest<S> {
     */
    public S requestsSendResponses(HttpRequest requestA, HttpResponse responseA, HttpRequest requestB,
             HttpResponse responseB, HttpRequest requestC, HttpResponse responseC) {
-      return requestsSendResponses(ImmutableMap.of(requestA, responseA, requestB, responseB, requestC, responseC));
+      return requestsSendResponses(requestA, responseA, requestB, responseB, requestC, responseC, createModule());
    }
-
+   
+   public S requestsSendResponses(HttpRequest requestA, HttpResponse responseA, HttpRequest requestB,
+            HttpResponse responseB, HttpRequest requestC, HttpResponse responseC, Module module) {
+      return requestsSendResponses(ImmutableMap.of(requestA, responseA, requestB, responseB, requestC, responseC), module);
+   }
+   
    /**
     * creates a client for a mock server which returns responses for requests based on the supplied
     * Map parameter.
@@ -261,7 +275,11 @@ public abstract class BaseRestClientExpectTest<S> {
     * @return a client configured with this behavior
     */
    public S requestsSendResponses(Map<HttpRequest, HttpResponse> requestToResponse) {
-      return createClient(Functions.forMap(requestToResponse));
+      return requestsSendResponses(requestToResponse, createModule());
+   }
+
+   public S requestsSendResponses(Map<HttpRequest, HttpResponse> requestToResponse, Module module) {
+      return createClient(Functions.forMap(requestToResponse), module);
    }
 
    public String renderRequest(HttpRequest request) {

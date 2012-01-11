@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.softlayer;
+package org.jclouds.softlayer.handlers;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.reportMatcher;
@@ -55,6 +55,17 @@ public class SoftLayerErrorHandlerTest {
             "",
             "{\"error\":\"Unable to determine package for 'node2102835255.me.org'.\"}",
             ResourceNotFoundException.class);
+   }
+   
+   @Test
+   public void test500MakesIllegalStateExceptionOnActiveTransaction() {
+      assertCodeMakes(
+            "GET",
+            URI.create("https://api.softlayer.com/rest/v3/SoftLayer_Billing_Item/8676376/cancelService.json"),
+            500,
+            "",
+            "{\"error\":\"There is currently an active transaction.\"}",
+            IllegalStateException.class);
    }
 
    @Test
