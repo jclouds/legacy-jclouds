@@ -74,18 +74,22 @@ public class Archive implements Comparable<Archive> {
    private final String freeSize;
    private final boolean locked;
 
+   /** @return the name (username) of the archive */
    public String getUsername() {
       return username;
    }
 
+   /** @return the total size of the archive, ex. "10 GB" */
    public String getTotalSize() {
       return totalSize;
    }
 
+   /** @return the free space left of the archive */
    public String getFreeSize() {
       return freeSize;
    }
 
+   /** @return true if the archive is locked */
    public boolean isLocked() {
       return locked;
    }
@@ -96,7 +100,6 @@ public class Archive implements Comparable<Archive> {
       this.freeSize = freeSize;
       this.locked = locked;
    }
-
 
    @Override
    public int hashCode() {

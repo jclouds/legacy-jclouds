@@ -111,7 +111,7 @@ public class ServerDetails extends Server {
    public ServerDetails(String id, String hostname, String datacenter, String platform, String description,
                         int cpuCores, int memory, int disk, Cost cost) {
       super(id, hostname, datacenter, platform);
-      this.description = checkNotNull(description, "description");
+      this.description = description;
       this.cpuCores = cpuCores;
       this.memory = memory;
       this.disk = disk;

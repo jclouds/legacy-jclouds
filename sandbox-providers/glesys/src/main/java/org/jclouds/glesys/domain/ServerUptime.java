@@ -81,6 +81,9 @@ public class ServerUptime {
       return new ServerUptime(time);
    }
 
+   /**
+    * @return the number of seconds the server has been up
+    */
    public long getTime() {
       return time;
    }

@@ -45,11 +45,8 @@ import com.google.common.collect.Maps;
 
 /**
  * @author Adrian Cole
- * @author Adam Lowe
  */
 public abstract class BaseGleSYSAsyncClientTest<T> extends RestClientTest<T> {
-   protected Class<T> asyncClientClass;
-   protected String remoteServicePrefix;
 
    @Override
    protected void checkFilters(HttpRequest request) {
@@ -62,83 +59,4 @@ public abstract class BaseGleSYSAsyncClientTest<T> extends RestClientTest<T> {
       Properties props = new Properties();
       return new RestContextFactory().createContextSpec("glesys", "username", "apiKey", props);
    }
-   
-   @Deprecated
-   protected Map.Entry<String, String> newEntry(String key, Object value) {
-      return Maps.immutableEntry(key, value.toString());
-   }
-
-   /**
-    * Test that a method call is annotated correctly.
-    * <p/>
-    * @param localMethod     the method to call in asyncClientClass
-    * @param remoteCall      the name of the expected call on the remote server
-    * @param httpMethod      "GET" or "POST"
-    * @param expectResponse  if true check Accept header and response parsers
-    * @param exceptionParser the class of exception handler expected
-    * @param args            either Map.Entry or BaseHttpRequestOptions that make up the arguments to the method
-    */
-   //TODO: kill this and related logic and transition to BaseRestClientExpectTest<GleSYSClient>
-   @Deprecated
-   protected void testMethod(String localMethod, String remoteCall, String httpMethod, boolean expectResponse,
-            Class<?> exceptionParser, Object... args) throws Exception {
-      testMethod(localMethod, remoteCall, httpMethod, expectResponse, ParseFirstJsonValueNamed.class, exceptionParser,
-               args);
-   }
-   
-   @Deprecated
-   @SuppressWarnings("unchecked")
-   protected void testMethod(String localMethod, String remoteCall, String httpMethod, boolean expectResponse, Class<?> responseParser, Class<?> exceptionParser, Object... args) throws Exception {
-      List<String> argStrings = new ArrayList<String>();
-      List<Object> argValues = new ArrayList<Object>();
-
-      for (Object arg : args) {
-         if (arg instanceof BaseHttpRequestOptions) {
-            for (Map.Entry<String, String> httpEntry : ((BaseHttpRequestOptions) arg).buildFormParameters().entries()) {
-               argStrings.add(httpEntry.getKey() + "=" + httpEntry.getValue());
-            }
-            argValues.add(arg);
-         } else {
-            Map.Entry<String, String> entry = (Map.Entry<String, String>) arg;
-            argStrings.add(entry.getKey() + "=" + Strings2.urlEncode(entry.getValue()));
-            argValues.add(entry.getValue());
-         }
-      }
-
-      Method method = null;
-      for (Method m : asyncClientClass.getMethods()) {
-         if (m.getName().equals(localMethod)) {
-            assertNull(method, "More than one method called " + localMethod + " in class " + asyncClientClass);
-            method = m;
-         }
-      }
-
-      assertNotNull(method, "Failed to locate method " + localMethod + " in class " + asyncClientClass);
-
-      HttpRequest httpRequest = processor.createRequest(method, argValues.toArray());
-
-      assertRequestLineEquals(httpRequest, httpMethod + " https://api.glesys.com/" + remoteServicePrefix + "/" + remoteCall + "/format/json HTTP/1.1");
-
-      if (expectResponse) {
-         assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
-         assertResponseParserClassEquals(method, httpRequest, responseParser);
-      }
-
-      if (argStrings.isEmpty()) {
-         assertPayloadEquals(httpRequest, null, null, false);
-      } else {
-         assertNotNull(httpRequest.getPayload());
-         String payload = (String) httpRequest.getPayload().getRawContent();
-         Iterable<String> in = Splitter.on("&").split(payload);
-         assertContentHeadersEqual(httpRequest, "application/x-www-form-urlencoded", null, null, null, 0L + payload.length(), null);
-         assertEquals(ImmutableSortedSet.copyOf(in), ImmutableSortedSet.copyOf(argStrings));
-
-      }
-
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, exceptionParser);
-
-      checkFilters(httpRequest);
-   }
-
 }

@@ -84,18 +84,22 @@ public class Domain implements Comparable<Domain> {
       this.glesysNameServer = glesysNameServer;
    }
 
+   /** @return the domain name, ex. "jclouds.org" */
    public String getDomain() {
       return domain;
    }
 
+   /** @return the date the domain was registered with GleSYS */
    public Date getCreateTime() {
       return createTime;
    }
 
+   /** @return the number of DNS records for this domain */
    public int getRecordCount() {
       return recordCount;
    }
 
+   /** @return true if a GleSYS nameserver holds the records */
    public boolean getGlesysNameServer() {
       return glesysNameServer;
    }
