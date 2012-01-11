@@ -49,7 +49,7 @@ public class GlobalConfigurationClientExpectTest extends BaseRestClientExpectTes
       provider = "cloudstack";
    }
 
-   @Test(enabled = false)
+   @Test
    public void testListConfigurationEntriesWhenResponseIs2xx() {
       GlobalConfigurationClient client = requestSendsResponse(
          HttpRequest.builder()
