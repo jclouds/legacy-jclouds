@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.features;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.CloudStackGlobalClient;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.ConfigurationEntry;
@@ -43,11 +44,7 @@ import static org.testng.Assert.assertNull;
  * @author Andrei Savu
  */
 @Test(groups = "unit", testName = "GlobalConfigurationClientExpectTest")
-public class GlobalConfigurationClientExpectTest extends BaseRestClientExpectTest<CloudStackGlobalClient> {
-
-   public GlobalConfigurationClientExpectTest() {
-      provider = "cloudstack";
-   }
+public class GlobalConfigurationClientExpectTest extends BaseCloudStackRestClientExpectTest<GlobalConfigurationClient> {
 
    @Test
    public void testListConfigurationEntriesWhenResponseIs2xx() {
@@ -55,8 +52,8 @@ public class GlobalConfigurationClientExpectTest extends BaseRestClientExpectTes
          HttpRequest.builder()
             .method("GET")
             .endpoint(
-               URI.create("http://localhost:8080/client/api?response=json&command=listFirewallRules&" +
-                  "apiKey=identity&signature=MktZKKH3USVKiC9SlYTSHMCaCcg%3D"))
+               URI.create("http://localhost:8080/client/api?response=json&" +
+                  "command=listConfigurations&apiKey=identity&signature=FUQCDbc4TH2S%2B7ExDgrOCqKI2bw%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
@@ -65,8 +62,7 @@ public class GlobalConfigurationClientExpectTest extends BaseRestClientExpectTes
          HttpResponse.builder()
             .statusCode(200)
             .payload(payloadFromResource("/listconfigurationsresponse.json"))
-            .build())
-         .getConfigurationClient();
+            .build());
 
       assertEquals(client.listConfigurationEntries(),
          ImmutableSet.of(
@@ -75,5 +71,77 @@ public class GlobalConfigurationClientExpectTest extends BaseRestClientExpectTes
             ConfigurationEntry.builder().category("Advanced").name("agent.lb.enabled").value("true")
                .description("If agent load balancing enabled in cluster setup").build()
          ));
+   }
+
+   @Test
+   public void testListConfigurationEntriesEmptyOn404() {
+      GlobalConfigurationClient client = requestSendsResponse(
+         HttpRequest.builder()
+            .method("GET")
+            .endpoint(
+               URI.create("http://localhost:8080/client/api?response=json&" +
+                  "command=listConfigurations&apiKey=identity&signature=FUQCDbc4TH2S%2B7ExDgrOCqKI2bw%3D"))
+            .headers(
+               ImmutableMultimap.<String, String>builder()
+                  .put("Accept", "application/json")
+                  .build())
+            .build(),
+         HttpResponse.builder()
+            .statusCode(404)
+            .build());
+
+      assertEquals(client.listConfigurationEntries(), ImmutableSet.of());
+   }
+
+   @Test
+   public void testUpdateConfigurationEntryWhenResponseIs2xx() {
+      GlobalConfigurationClient client = requestSendsResponse(
+         HttpRequest.builder()
+            .method("GET")
+            .endpoint(
+               URI.create("http://localhost:8080/client/api?response=json&" +
+                  "command=updateConfiguration&name=expunge.delay&value=11&" +
+                  "apiKey=identity&signature=I2yG35EhfgIXYObeLfU3cvf%2BPeE%3D"))
+            .headers(
+               ImmutableMultimap.<String, String>builder()
+                  .put("Accept", "application/json")
+                  .build())
+            .build(),
+         HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResource("/updateconfigurationsresponse.json"))
+            .build());
+
+      assertEquals(client.updateConfigurationEntry("expunge.delay", "11"),
+         ConfigurationEntry.builder().category("Advanced").name("expunge.delay").value("11")
+            .description("Determines how long (in seconds) to wait before actually expunging " +
+               "destroyed vm. The default value = the default value of expunge.interval").build()
+      );
+   }
+
+   @Test
+   public void testUpdateConfigurationEntryNullOn404() {
+      GlobalConfigurationClient client = requestSendsResponse(
+         HttpRequest.builder()
+            .method("GET")
+            .endpoint(
+               URI.create("http://localhost:8080/client/api?response=json&" +
+                  "command=updateConfiguration&name=expunge.delay&value=11&" +
+                  "apiKey=identity&signature=I2yG35EhfgIXYObeLfU3cvf%2BPeE%3D"))
+            .headers(
+               ImmutableMultimap.<String, String>builder()
+                  .put("Accept", "application/json")
+                  .build())
+            .build(),
+         HttpResponse.builder()
+            .statusCode(404)
+            .build());
+
+      assertNull(client.updateConfigurationEntry("expunge.delay", "11"));
+   }
+
+   @Override
+   protected GlobalConfigurationClient clientFrom(CloudStackContext context) {
+      return context.getGlobalContext().getApi().getConfigurationClient();
    }
 }
