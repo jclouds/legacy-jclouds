@@ -304,6 +304,41 @@ public abstract class BaseRestClientExpectTest<S> {
       });
    }
 
+   public S orderedRequestsSendResponses(HttpRequest requestA, HttpResponse responseA) {
+      return orderedRequestsSendResponses(ImmutableList.of(requestA), ImmutableList.of(responseA));
+   }
+
+   public S orderedRequestsSendResponses(HttpRequest requestA, HttpResponse responseA, HttpRequest requestB,
+            HttpResponse responseB) {
+      return orderedRequestsSendResponses(ImmutableList.of(requestA, requestB), ImmutableList.of(responseA, responseB));
+   }
+
+   public S orderedRequestsSendResponses(HttpRequest requestA, HttpResponse responseA, HttpRequest requestB,
+            HttpResponse responseB, HttpRequest requestC, HttpResponse responseC) {
+      return orderedRequestsSendResponses(ImmutableList.of(requestA, requestB, requestC), ImmutableList.of(responseA, responseB, responseC));
+   }
+
+   public S orderedRequestsSendResponses(HttpRequest requestA, HttpResponse responseA, HttpRequest requestB,
+            HttpResponse responseB, HttpRequest requestC, HttpResponse responseC, HttpRequest requestD, HttpResponse responseD) {
+      return orderedRequestsSendResponses(ImmutableList.of(requestA, requestB, requestC, requestD), ImmutableList.of(responseA, responseB, responseC, responseD));
+   }
+
+   public S orderedRequestsSendResponses(final List<HttpRequest> requests, final List<HttpResponse> responses) {
+      final AtomicInteger counter = new AtomicInteger(0);
+      
+      return createClient(new Function<HttpRequest,HttpResponse>() {
+         @Override
+         public HttpResponse apply(HttpRequest input) {
+            int index = counter.getAndIncrement();
+            if (index >= requests.size()) {
+               throw new IndexOutOfBoundsException("request index "+index+", but only "+requests.size()+" request/response pairs");
+            }
+            assert input.equals(requests.get(index)) : "expected="+requests.get(index)+"; actual="+input;
+            return responses.get(index);
+         }
+      });
+   }
+
    /**
     * creates a client for a mock server which returns responses for requests based on the supplied
     * Map parameter.
