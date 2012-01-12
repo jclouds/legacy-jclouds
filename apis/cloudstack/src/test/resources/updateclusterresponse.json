@@ -1,0 +1,1 @@
+{ "updateclusterresponse" : { "cluster" : {"warning":"this test data is fabricated","id":1,"name":"Xen Clust 1","podid":1,"podname":"Dev Pod 1","zoneid":1,"zonename":"Dev Zone 1","hypervisortype":"XenServer","clustertype":"CloudManaged","allocationstate":"Enabled","managedstate":"Managed"} } }
