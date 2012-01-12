@@ -91,6 +91,14 @@ public interface GlobalHostClient {
    void deleteHost(long hostId, DeleteHostOptions... options);
 
    /**
+    * Prepares a host for maintenance.
+    *
+    * @param hostId the host ID
+    * @return a job reference number for tracking this asynchronous job.
+    */
+   Long prepareHostForMaintenance(long hostId);
+
+   /**
     * Lists clusters
     *
     * @param options if present, how to constrain the list

@@ -166,6 +166,21 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    }
 
    @Test
+   public void testPrepareHostForMaintenanceWhenResponseIs2xx() {
+      HttpRequest request = HttpRequest.builder()
+         .method("GET")
+         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=prepareHostForMaintenance&id=1&apiKey=identity&signature=9tDwdox%2FxAKmZr9kVrR6Ttnxf3U%3D"))
+         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
+         .build();
+      HttpResponse response = HttpResponse.builder()
+         .payload(payloadFromResource("/preparehostformaintenanceresponse.json"))
+         .statusCode(200).build();
+
+      Long actual = requestSendsResponse(request, response).prepareHostForMaintenance(1);
+      assertEquals(actual, Long.valueOf(2036L));
+   }
+
+   @Test
    public void testListClustersWhenResponseIs2xx() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")
