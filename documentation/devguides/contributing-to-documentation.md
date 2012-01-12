@@ -21,14 +21,13 @@ To change or contribute to the documentation:
 
 More about the site: 
 
-As indicated above, the site is built using [github pages](http://pages.github.com/) - which is built using Jekyll[2], 
-a static site generator written ruby. Jekyll. 
+As indicated above, the site is built using [github pages](http://pages.github.com/) which uses [Jekyll](https://github.com/mojombo/jekyll/), a static site generator written in Ruby, under the covers. To preview any changes you make, install Jekyll (from [here](https://github.com/mojombo/jekyll/wiki/install), with Pygments too) then run `jekyll -pygments --safe --server` and open [localhost:4000](http://localhost:4000) in the browser.
 
 The site structure is pretty simple as you can see in the [source of this site](https://github.com/jclouds/jclouds.github.com).
 The *_layouts* folder contains the docs.html file which is used as the layout - containing main column and the sidebar. 
 The sidebar is an *include* which is inside the *_includes folder*. 
 
-`(Due a bug the sidebar can't be a markdown file, but this will be changed as soon as the bug is fixed).`
+(Due a bug the sidebar can't be a markdown file, but this will be changed as soon as the bug is fixed. Also when running in the jekyll server, links without the .html are not resolved, and you'll have to manually append `.html` to some links; this runs fine on the server, so don't worry about it; however if you know a better way please let us know!)
 
 Each folder under the documentation contains an *index.markdown* that will list all the pages that belong to 
 this "section". You can even edit the pages directly on github if you don't want to 
