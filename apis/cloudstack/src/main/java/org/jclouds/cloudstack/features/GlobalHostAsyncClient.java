@@ -23,6 +23,7 @@ import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.AddHostOptions;
+import org.jclouds.cloudstack.options.DeleteHostOptions;
 import org.jclouds.cloudstack.options.ListClustersOptions;
 import org.jclouds.cloudstack.options.ListHostsOptions;
 import org.jclouds.cloudstack.options.UpdateHostOptions;
@@ -101,6 +102,17 @@ public interface GlobalHostAsyncClient {
    @QueryParams(keys = "command", values = "updateHostPassword")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Void> updateHostPassword(@QueryParam("hostid") long hostId, @QueryParam("username") String username, @QueryParam("password") String password);
+
+   /**
+    * Deletes a host.
+    *
+    * @param hostId the host ID
+    * @param options optional arguments
+    */
+   @GET
+   @QueryParams(keys = "command", values = "deleteHost")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Void> deleteHost(@QueryParam("id") long hostId, DeleteHostOptions... options);
 
    /**
     * @see GlobalHostClient#listClusters

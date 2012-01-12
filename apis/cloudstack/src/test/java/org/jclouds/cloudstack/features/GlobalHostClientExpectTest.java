@@ -26,6 +26,7 @@ import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.ConfigurationEntry;
 import org.jclouds.cloudstack.domain.Host;
 import org.jclouds.cloudstack.options.AddHostOptions;
+import org.jclouds.cloudstack.options.DeleteHostOptions;
 import org.jclouds.cloudstack.options.UpdateHostOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -149,6 +150,19 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
          .statusCode(200).build();
 
       requestSendsResponse(request, response).updateHostPassword(1, "fred", "sekrit");
+   }
+
+   @Test
+   public void testDeleteHostWhenResponseIs2xx() {
+      HttpRequest request = HttpRequest.builder()
+         .method("GET")
+         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=deleteHost&id=1&forced=true&forcedestroylocalstorage=true&apiKey=identity&signature=ZdvO1BWBkdPiDAjsVlKtqDe6N7k%3D"))
+         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
+         .build();
+      HttpResponse response = HttpResponse.builder()
+         .statusCode(200).build();
+
+      requestSendsResponse(request, response).deleteHost(1, DeleteHostOptions.Builder.forced(true).forceDestroyLocalStorage(true));
    }
 
    @Test

@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.features;
 import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
 import org.jclouds.cloudstack.options.AddHostOptions;
+import org.jclouds.cloudstack.options.DeleteHostOptions;
 import org.jclouds.cloudstack.options.ListClustersOptions;
 import org.jclouds.cloudstack.options.ListHostsOptions;
 import org.jclouds.cloudstack.options.UpdateHostOptions;
@@ -80,6 +81,14 @@ public interface GlobalHostClient {
     * @param password the password for the host
     */
    void updateHostPassword(long hostId, String username, String password);
+
+   /**
+    * Deletes a host.
+    *
+    * @param hostId the host ID
+    * @param options optional arguments
+    */
+   void deleteHost(long hostId, DeleteHostOptions... options);
 
    /**
     * Lists clusters
