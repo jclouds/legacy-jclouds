@@ -181,6 +181,21 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    }
 
    @Test
+   public void testCancelHostMaintenanceWhenResponseIs2xx() {
+      HttpRequest request = HttpRequest.builder()
+         .method("GET")
+         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=cancelHostMaintenance&id=1&apiKey=identity&signature=9RduzuBoyRZKNTzAoVqUo9gRTfk%3D"))
+         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
+         .build();
+      HttpResponse response = HttpResponse.builder()
+         .payload(payloadFromResource("/cancelhostmaintenanceresponse.json"))
+         .statusCode(200).build();
+
+      Long actual = requestSendsResponse(request, response).cancelHostMaintenance(1);
+      assertEquals(actual, Long.valueOf(2036L));
+   }
+
+   @Test
    public void testListClustersWhenResponseIs2xx() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")

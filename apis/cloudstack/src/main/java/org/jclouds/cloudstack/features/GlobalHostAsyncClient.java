@@ -127,6 +127,18 @@ public interface GlobalHostAsyncClient {
    ListenableFuture<Long> prepareHostForMaintenance(@QueryParam("id") long hostId);
 
    /**
+    * Cancels host maintenance.
+    *
+    * @param hostId the host ID
+    * @return a job reference number for tracking this asynchronous job.
+    */
+   @GET
+   @QueryParams(keys = "command", values = "cancelHostMaintenance")
+   @SelectJson("jobid")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Long> cancelHostMaintenance(@QueryParam("id") long hostId);
+
+   /**
     * @see GlobalHostClient#listClusters
     */
    @GET

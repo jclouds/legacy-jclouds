@@ -99,6 +99,14 @@ public interface GlobalHostClient {
    Long prepareHostForMaintenance(long hostId);
 
    /**
+    * Cancels host maintenance.
+    *
+    * @param hostId the host ID
+    * @return a job reference number for tracking this asynchronous job.
+    */
+   Long cancelHostMaintenance(long hostId);
+
+   /**
     * Lists clusters
     *
     * @param options if present, how to constrain the list
