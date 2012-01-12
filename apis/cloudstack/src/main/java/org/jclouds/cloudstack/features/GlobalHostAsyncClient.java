@@ -91,6 +91,18 @@ public interface GlobalHostAsyncClient {
    ListenableFuture<Host> updateHost(@QueryParam("id") long hostId, UpdateHostOptions... options);
 
    /**
+    * Update password of a host on management server.
+    *
+    * @param hostId the host ID
+    * @param username the username for the host
+    * @param password the password for the host
+    */
+   @GET
+   @QueryParams(keys = "command", values = "updateHostPassword")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Void> updateHostPassword(@QueryParam("hostid") long hostId, @QueryParam("username") String username, @QueryParam("password") String password);
+
+   /**
     * @see GlobalHostClient#listClusters
     */
    @GET

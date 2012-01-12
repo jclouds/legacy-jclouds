@@ -73,6 +73,15 @@ public interface GlobalHostClient {
    Host updateHost(long hostId, UpdateHostOptions... options);
 
    /**
+    * Update password of a host on management server.
+    *
+    * @param hostId the host ID
+    * @param username the username for the host
+    * @param password the password for the host
+    */
+   void updateHostPassword(long hostId, String username, String password);
+
+   /**
     * Lists clusters
     *
     * @param options if present, how to constrain the list

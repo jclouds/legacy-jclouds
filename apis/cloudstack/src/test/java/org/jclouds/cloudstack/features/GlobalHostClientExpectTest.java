@@ -139,6 +139,19 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    }
 
    @Test
+   public void testUpdateHostPasswordWhenResponseIs2xx() {
+      HttpRequest request = HttpRequest.builder()
+         .method("GET")
+         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=updateHostPassword&hostid=1&password=sekrit&username=fred&apiKey=identity&signature=g9nMKDWoiU72y0HhaRFekZCgfJc%3D"))
+         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
+         .build();
+      HttpResponse response = HttpResponse.builder()
+         .statusCode(200).build();
+
+      requestSendsResponse(request, response).updateHostPassword(1, "fred", "sekrit");
+   }
+
+   @Test
    public void testListClustersWhenResponseIs2xx() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")
