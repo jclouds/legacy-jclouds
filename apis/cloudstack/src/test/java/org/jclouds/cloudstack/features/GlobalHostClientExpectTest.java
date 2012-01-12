@@ -22,6 +22,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.CloudStackContext;
+import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.ConfigurationEntry;
 import org.jclouds.cloudstack.domain.Host;
 import org.jclouds.http.HttpRequest;
@@ -80,18 +81,6 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
       assertEquals(actual, expected);
    }
 
-   private Date makeDate(int year, int month, int date, int hour, int minute, int second, String timeZoneName) {
-      Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(timeZoneName));
-      cal.set(Calendar.YEAR, year);
-      cal.set(Calendar.MONTH, month);
-      cal.set(Calendar.DATE, date);
-      cal.set(Calendar.HOUR_OF_DAY, hour);
-      cal.set(Calendar.MINUTE, minute);
-      cal.set(Calendar.SECOND, second);
-      cal.set(Calendar.MILLISECOND, 0);
-      return cal.getTime();
-   }
-
    @Test
    public void testListHostsEmptyOn404() {
       HttpRequest request = HttpRequest.builder()
@@ -103,6 +92,51 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
       GlobalHostClient client = requestSendsResponse(request, response);
 
       assertEquals(client.listHosts(), ImmutableSet.of());
+   }
+
+   @Test
+   public void testListClustersWhenResponseIs2xx() {
+      HttpRequest request = HttpRequest.builder()
+         .method("GET")
+         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=listClusters&apiKey=identity&signature=MWOOe7bm1J14DIfLjAGqsSVb8oo%3D"))
+         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
+         .build();
+      HttpResponse response = HttpResponse.builder()
+         .payload(payloadFromResource("/listclustersresponse.json"))
+         .statusCode(200).build();
+
+      Set<Cluster> actual = requestSendsResponse(request, response).listClusters();
+
+      Cluster cluster1 = Cluster.builder().id(1).name("Xen Clust 1").podId(1).podName("Dev Pod 1").zoneId(1).zoneName("Dev Zone 1").hypervisor("XenServer").clusterType(Host.ClusterType.CLOUD_MANAGED).allocationState(Host.AllocationState.ENABLED).managedState(Cluster.ManagedState.MANAGED).build();
+      Cluster cluster2 = Cluster.builder().id(2).name("Xen Clust 1").podId(2).podName("Dev Pod 2").zoneId(2).zoneName("Dev Zone 2").hypervisor("XenServer").clusterType(Host.ClusterType.CLOUD_MANAGED).allocationState(Host.AllocationState.ENABLED).managedState(Cluster.ManagedState.MANAGED).build();
+      ImmutableSet<Cluster> expected = ImmutableSet.of(cluster1, cluster2);
+
+      assertEquals(actual, expected);
+   }
+
+   @Test
+   public void testListClustersEmptyOn404() {
+      HttpRequest request = HttpRequest.builder()
+         .method("GET")
+         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=listClusters&apiKey=identity&signature=MWOOe7bm1J14DIfLjAGqsSVb8oo%3D"))
+         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
+         .build();
+      HttpResponse response = HttpResponse.builder().statusCode(404).build();
+      GlobalHostClient client = requestSendsResponse(request, response);
+
+      assertEquals(client.listClusters(), ImmutableSet.of());
+   }
+
+   private Date makeDate(int year, int month, int date, int hour, int minute, int second, String timeZoneName) {
+      Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(timeZoneName));
+      cal.set(Calendar.YEAR, year);
+      cal.set(Calendar.MONTH, month);
+      cal.set(Calendar.DATE, date);
+      cal.set(Calendar.HOUR_OF_DAY, hour);
+      cal.set(Calendar.MINUTE, minute);
+      cal.set(Calendar.SECOND, second);
+      cal.set(Calendar.MILLISECOND, 0);
+      return cal.getTime();
    }
 
    @Override
