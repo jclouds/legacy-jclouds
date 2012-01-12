@@ -1,5 +1,6 @@
 package org.jclouds.blobstore.options;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 
 /**
@@ -10,6 +11,7 @@ import com.google.common.base.Objects;
  * @author Aled Sage
  * @since 1.3
  */
+@Beta
 public class ListAllOptions implements Cloneable {
 
    public static final ImmutableListAllOptions NONE = new ImmutableListAllOptions(new ListAllOptions());
