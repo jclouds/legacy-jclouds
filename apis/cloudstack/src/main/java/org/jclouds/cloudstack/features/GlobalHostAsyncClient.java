@@ -22,6 +22,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
 import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.options.AddHostOptions;
 import org.jclouds.cloudstack.options.ListClustersOptions;
 import org.jclouds.cloudstack.options.ListHostsOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -32,6 +33,7 @@ import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.util.Set;
 
@@ -56,6 +58,23 @@ public interface GlobalHostAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<Host>> listHosts(ListHostsOptions... options);
+
+   /**
+    * Adds a new host.
+    *
+    * @param zoneId the Zone ID for the host
+    * @param url the host URL
+    * @param hypervisor hypervisor type of the host
+    * @param username the username for the host
+    * @param password the password for the host
+    * @param options optional arguments
+    * @return the new host.
+    */
+   @GET
+   @QueryParams(keys = "command", values = "addHost")
+   @SelectJson("host")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Host> addHost(@QueryParam("zoneid") long zoneId, @QueryParam("url") String url, @QueryParam("hypervisor") String hypervisor, @QueryParam("username") String username, @QueryParam("password") String password, AddHostOptions... options);
 
    /**
     * @see GlobalHostClient#listClusters

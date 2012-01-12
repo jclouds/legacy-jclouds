@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
+import org.jclouds.cloudstack.options.AddHostOptions;
 import org.jclouds.cloudstack.options.ListClustersOptions;
 import org.jclouds.cloudstack.options.ListHostsOptions;
 import org.jclouds.concurrent.Timeout;
@@ -47,6 +48,19 @@ public interface GlobalHostClient {
     *         offerings are found
     */
    Set<Host> listHosts(ListHostsOptions... options);
+
+   /**
+    * Adds a new host.
+    *
+    * @param zoneId the Zone ID for the host
+    * @param url the host URL
+    * @param hypervisor hypervisor type of the host
+    * @param username the username for the host
+    * @param password the password for the host
+    * @param options optional arguments
+    * @return the new host.
+    */
+   Host addHost(long zoneId, String url, String hypervisor, String username, String password, AddHostOptions... options);
 
    /**
     * Lists clusters
