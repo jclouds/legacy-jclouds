@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.nova.domain.Addresses;
 import org.jclouds.openstack.nova.domain.Flavor;
+import org.jclouds.openstack.nova.domain.FloatingIP;
 import org.jclouds.openstack.nova.domain.Image;
 import org.jclouds.openstack.nova.domain.RebootType;
 import org.jclouds.openstack.nova.domain.Server;
@@ -281,4 +282,29 @@ public interface NovaClient {
     */
    Set<String> listPrivateAddresses(int serverId);
 
+	/**
+	 * Add a floating IP to the given server. The floating IP can just be added
+	 * if the server has a fixed IP. It means that it is not possible to
+	 * directly add the floating IP just after creating the server but have to
+	 * poll if the server has an IP.
+	 * 
+	 * @param serverId
+	 * @param ip
+	 */
+   void addFloatingIp(int serverId, String ip);
+   
+   /**
+    * Get all the defined floating IPs
+    * 
+    * @return
+    */
+   Set<FloatingIP> listFloatingIPs();
+
+   /**
+    * Get floating IP details from its ID
+    * 
+    * @param id the floating IP id
+    * @return the floating IP or null if not found
+    */
+   FloatingIP getFloatingIP(int id);
 }
