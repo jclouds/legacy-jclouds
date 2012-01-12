@@ -154,4 +154,13 @@ public interface GlobalHostClient {
     * @return the modified cluster
     */
    Cluster updateCluster(long clusterId, UpdateClusterOptions... options);
+
+   /**
+    * Update password of a cluster on management server.
+    *
+    * @param hostId the cluster ID
+    * @param username the username for the cluster
+    * @param password the password for the cluster
+    */
+   void updateClusterPassword(long clusterId, String username, String password);
 }

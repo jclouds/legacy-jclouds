@@ -204,4 +204,17 @@ public interface GlobalHostAsyncClient {
    @SelectJson("cluster")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Cluster> updateCluster(@QueryParam("id") long clusterId, UpdateClusterOptions... options);
+
+   /**
+    * Update password of a cluster on management server.
+    *
+    * @param clusterId the cluster ID
+    * @param username the username for the cluster
+    * @param password the password for the cluster
+    */
+   @GET
+   @QueryParams(keys = "command", values = "updateHostPassword")
+   @SelectJson("cluster")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Void> updateClusterPassword(@QueryParam("clusterid") long clusterId, @QueryParam("username") String username, @QueryParam("password") String password);
 }

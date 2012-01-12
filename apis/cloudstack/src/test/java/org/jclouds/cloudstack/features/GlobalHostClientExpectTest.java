@@ -303,6 +303,19 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
       assertEquals(actual, expected);
    }
 
+   @Test
+   public void testUpdateClusterPasswordWhenResponseIs2xx() {
+      HttpRequest request = HttpRequest.builder()
+         .method("GET")
+         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=updateHostPassword&clusterid=1&password=sekrit&username=fred&apiKey=identity&signature=xwc83%2BoYK0cuAiFQAlg%2F7%2F1IVHE%3D"))
+         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
+         .build();
+      HttpResponse response = HttpResponse.builder()
+         .statusCode(200).build();
+
+      requestSendsResponse(request, response).updateClusterPassword(1, "fred", "sekrit");
+   }
+
    private Date makeDate(int year, int month, int date, int hour, int minute, int second, String timeZoneName) {
       Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(timeZoneName));
       cal.set(Calendar.YEAR, year);
