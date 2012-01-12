@@ -26,6 +26,7 @@ import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.ConfigurationEntry;
 import org.jclouds.cloudstack.domain.Host;
 import org.jclouds.cloudstack.options.AddHostOptions;
+import org.jclouds.cloudstack.options.AddSecondaryStorageOptions;
 import org.jclouds.cloudstack.options.DeleteHostOptions;
 import org.jclouds.cloudstack.options.UpdateHostOptions;
 import org.jclouds.http.HttpRequest;
@@ -208,6 +209,27 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
 
       Long actual = requestSendsResponse(request, response).reconnectHost(1);
       assertEquals(actual, Long.valueOf(2036L));
+   }
+
+   @Test
+   public void testAddSecondaryStorageWhenResponseIs2xx() {
+      HttpRequest request = HttpRequest.builder()
+         .method("GET")
+         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=addSecondaryStorage&url=nfs%3A%2F%2F10.26.26.165%2Fmnt%2Fnfs%2Fcs_sec&zoneid=1&apiKey=identity&signature=MccRKx1yPP43ImiO70WlhVDlAIA%3D"))
+         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
+         .build();
+      HttpResponse response = HttpResponse.builder()
+         .payload(payloadFromResource("/addsecondarystorageresponse.json"))
+         .statusCode(200).build();
+
+      Date disconnected = makeDate(2011, Calendar.NOVEMBER, 26, 23, 33, 38, "UTC");
+      Date lastPinged = makeDate(1970, Calendar.JANUARY, 16, 0, 42, 30, "UTC");
+      Date created = makeDate(2011, Calendar.NOVEMBER, 26, 23, 33, 38, "UTC");
+      Host expected = Host.builder().id(2).name("nfs://10.26.26.165/mnt/nfs/cs_sec").state(Host.State.ALERT).disconnected(disconnected).type(Host.Type.SECONDARY_STORAGE).ipAddress("nfs").zoneId(1).zoneName("Dev Zone 1").version("2.2.12.20110928142833").hypervisor("None").lastPinged(lastPinged).localStorageActive(false).created(created).events("ManagementServerDown; AgentDisconnected; Remove; MaintenanceRequested; AgentConnected; Ping").hasEnoughCapacity(false).allocationState(Host.AllocationState.ENABLED).build();
+
+      Host actual = requestSendsResponse(request, response).addSecondaryStorage("nfs://10.26.26.165/mnt/nfs/cs_sec", AddSecondaryStorageOptions.Builder.zoneId(1));
+
+      assertEquals(actual, expected);
    }
 
    @Test

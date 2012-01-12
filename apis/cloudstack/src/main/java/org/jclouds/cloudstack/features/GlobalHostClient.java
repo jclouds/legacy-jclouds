@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.features;
 import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
 import org.jclouds.cloudstack.options.AddHostOptions;
+import org.jclouds.cloudstack.options.AddSecondaryStorageOptions;
 import org.jclouds.cloudstack.options.DeleteHostOptions;
 import org.jclouds.cloudstack.options.ListClustersOptions;
 import org.jclouds.cloudstack.options.ListHostsOptions;
@@ -113,6 +114,15 @@ public interface GlobalHostClient {
     * @return a job reference number for tracking this asynchronous job.
     */
    Long reconnectHost(long hostId);
+
+   /**
+    * Adds secondary storage.
+    *
+    * @param url the URL for the secondary storage
+    * @param options optional arguments
+    * @return the host of the storage.
+    */
+   Host addSecondaryStorage(String url, AddSecondaryStorageOptions... options);
 
    /**
     * Lists clusters

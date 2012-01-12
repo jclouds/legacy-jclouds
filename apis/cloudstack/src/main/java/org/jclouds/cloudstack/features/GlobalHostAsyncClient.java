@@ -23,6 +23,7 @@ import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.AddHostOptions;
+import org.jclouds.cloudstack.options.AddSecondaryStorageOptions;
 import org.jclouds.cloudstack.options.DeleteHostOptions;
 import org.jclouds.cloudstack.options.ListClustersOptions;
 import org.jclouds.cloudstack.options.ListHostsOptions;
@@ -149,6 +150,19 @@ public interface GlobalHostAsyncClient {
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> reconnectHost(@QueryParam("id") long hostId);
+
+   /**
+    * Adds secondary storage.
+    *
+    * @param url the URL for the secondary storage
+    * @param options optional arguments
+    * @return the host of the storage.
+    */
+   @GET
+   @QueryParams(keys = "command", values = "addSecondaryStorage")
+   @SelectJson("host")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Host> addSecondaryStorage(@QueryParam("url") String url, AddSecondaryStorageOptions... options);
 
    /**
     * @see GlobalHostClient#listClusters
