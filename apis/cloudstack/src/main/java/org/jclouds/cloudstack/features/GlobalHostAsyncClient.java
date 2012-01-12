@@ -28,6 +28,7 @@ import org.jclouds.cloudstack.options.AddSecondaryStorageOptions;
 import org.jclouds.cloudstack.options.DeleteHostOptions;
 import org.jclouds.cloudstack.options.ListClustersOptions;
 import org.jclouds.cloudstack.options.ListHostsOptions;
+import org.jclouds.cloudstack.options.UpdateClusterOptions;
 import org.jclouds.cloudstack.options.UpdateHostOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
@@ -190,4 +191,17 @@ public interface GlobalHostAsyncClient {
    @SelectJson("cluster")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Cluster> addCluster(@QueryParam("zoneid") long zoneId, @QueryParam("clustername") String clusterName, @QueryParam("clustertype") Host.ClusterType clusterType, @QueryParam("hypervisor") String hypervisor, AddClusterOptions... options);
+
+   /**
+    * Updates an existing cluster.
+    *
+    * @param clusterId the ID of the cluster
+    * @param options optional arguments
+    * @return the modified cluster
+    */
+   @GET
+   @QueryParams(keys = "command", values = "updateCluster")
+   @SelectJson("cluster")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Cluster> updateCluster(@QueryParam("id") long clusterId, UpdateClusterOptions... options);
 }

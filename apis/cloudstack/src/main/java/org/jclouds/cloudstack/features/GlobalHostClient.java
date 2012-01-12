@@ -26,6 +26,7 @@ import org.jclouds.cloudstack.options.AddSecondaryStorageOptions;
 import org.jclouds.cloudstack.options.DeleteHostOptions;
 import org.jclouds.cloudstack.options.ListClustersOptions;
 import org.jclouds.cloudstack.options.ListHostsOptions;
+import org.jclouds.cloudstack.options.UpdateClusterOptions;
 import org.jclouds.cloudstack.options.UpdateHostOptions;
 import org.jclouds.concurrent.Timeout;
 
@@ -144,4 +145,13 @@ public interface GlobalHostClient {
     * @return the new cluster.
     */
    Cluster addCluster(long zoneId, String clusterName, Host.ClusterType clusterType, String hypervisor, AddClusterOptions... options);
+
+   /**
+    * Updates an existing cluster.
+    *
+    * @param clusterId the ID of the cluster
+    * @param options optional arguments
+    * @return the modified cluster
+    */
+   Cluster updateCluster(long clusterId, UpdateClusterOptions... options);
 }

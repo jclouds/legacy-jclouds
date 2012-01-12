@@ -29,6 +29,7 @@ import org.jclouds.cloudstack.options.AddClusterOptions;
 import org.jclouds.cloudstack.options.AddHostOptions;
 import org.jclouds.cloudstack.options.AddSecondaryStorageOptions;
 import org.jclouds.cloudstack.options.DeleteHostOptions;
+import org.jclouds.cloudstack.options.UpdateClusterOptions;
 import org.jclouds.cloudstack.options.UpdateHostOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -280,6 +281,24 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
       Cluster expected = Cluster.builder().id(1).name("Xen Clust 1").podId(1).podName("Dev Pod 1").zoneId(1).zoneName("Dev Zone 1").hypervisor("XenServer").clusterType(Host.ClusterType.CLOUD_MANAGED).allocationState(Host.AllocationState.ENABLED).managedState(Cluster.ManagedState.MANAGED).build();
 
       Cluster actual = requestSendsResponse(request, response).addCluster(1, "Xen Clust 1", Host.ClusterType.CLOUD_MANAGED, "XenServer", AddClusterOptions.Builder.allocationState(Host.AllocationState.ENABLED).podId(1).url("http://example.com/cluster").username("fred").password("sekrit"));
+
+      assertEquals(actual, expected);
+   }
+
+   @Test
+   public void testUpdateClusterWhenResponseIs2xx() {
+      HttpRequest request = HttpRequest.builder()
+         .method("GET")
+         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=updateCluster&id=1&allocationstate=Enabled&clustername=Xen%20Clust%201&clustertype=CloudManaged&hypervisor=XenServer&managedstate=Managed&apiKey=identity&signature=%2FwbuYKwInciSXWkUf05lEfJZShQ%3D"))
+         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
+         .build();
+      HttpResponse response = HttpResponse.builder()
+         .payload(payloadFromResource("/updateclusterresponse.json"))
+         .statusCode(200).build();
+
+      Cluster expected = Cluster.builder().id(1).name("Xen Clust 1").podId(1).podName("Dev Pod 1").zoneId(1).zoneName("Dev Zone 1").hypervisor("XenServer").clusterType(Host.ClusterType.CLOUD_MANAGED).allocationState(Host.AllocationState.ENABLED).managedState(Cluster.ManagedState.MANAGED).build();
+
+      Cluster actual = requestSendsResponse(request, response).updateCluster(1, UpdateClusterOptions.Builder.allocationState(Host.AllocationState.ENABLED).clusterName("Xen Clust 1").clusterType(Host.ClusterType.CLOUD_MANAGED).hypervisor("XenServer").managedState(Cluster.ManagedState.MANAGED));
 
       assertEquals(actual, expected);
    }
