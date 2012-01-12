@@ -23,6 +23,7 @@ import org.jclouds.cloudstack.domain.Host;
 import org.jclouds.cloudstack.options.AddHostOptions;
 import org.jclouds.cloudstack.options.ListClustersOptions;
 import org.jclouds.cloudstack.options.ListHostsOptions;
+import org.jclouds.cloudstack.options.UpdateHostOptions;
 import org.jclouds.concurrent.Timeout;
 
 import java.util.Set;
@@ -61,6 +62,15 @@ public interface GlobalHostClient {
     * @return the new host.
     */
    Host addHost(long zoneId, String url, String hypervisor, String username, String password, AddHostOptions... options);
+
+   /**
+    * Updates a host.
+    *
+    * @param hostId the ID of the host to update
+    * @param options optional arguments
+    * @return the modified host.
+    */
+   Host updateHost(long hostId, UpdateHostOptions... options);
 
    /**
     * Lists clusters

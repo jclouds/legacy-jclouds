@@ -26,6 +26,7 @@ import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.ConfigurationEntry;
 import org.jclouds.cloudstack.domain.Host;
 import org.jclouds.cloudstack.options.AddHostOptions;
+import org.jclouds.cloudstack.options.UpdateHostOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
@@ -113,6 +114,26 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
 
       Host actual = requestSendsResponse(request, response).addHost(1, "http://example.com", "XenServer", "fred", "sekrit",
          AddHostOptions.Builder.hostTags(Collections.<String>emptySet()).allocationState(Host.AllocationState.ENABLED).clusterId(1).clusterName("Xen Clust 1").podId(1));
+
+      assertEquals(actual, expected);
+   }
+
+   @Test
+   public void testUpdateHostWhenResponseIs2xx() {
+      HttpRequest request = HttpRequest.builder()
+         .method("GET")
+         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=updateHost&id=1&allocationstate=Enabled&hosttags=&oscategoryid=5&apiKey=identity&signature=qTxNq9yQG8S108giqS%2FROFzgev8%3D"))
+         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
+         .build();
+      HttpResponse response = HttpResponse.builder()
+         .payload(payloadFromResource("/updatehostresponse.json"))
+         .statusCode(200).build();
+
+      Date lastPinged = makeDate(1970, Calendar.JANUARY, 16, 0, 54, 43, "UTC");
+      Date created = makeDate(2011, Calendar.NOVEMBER, 26, 23, 28, 36, "UTC");
+      Host expected = Host.builder().id(1).name("cs2-xevsrv.alucloud.local").state(Host.State.UP).type(Host.Type.ROUTING).ipAddress("10.26.26.107").zoneId(1).zoneName("Dev Zone 1").podId(1).podName("Dev Pod 1").version("2.2.12.20110928142833").hypervisor("XenServer").cpuNumber(24).cpuSpeed(2266).cpuAllocated("2.76%").cpuUsed("0.1%").cpuWithOverProvisioning(54384.0F).networkKbsRead(4443).networkKbsWrite(15048).memoryTotal(100549733760L).memoryAllocated(3623878656L).memoryUsed(3623878656L).capabilities("xen-3.0-x86_64 , xen-3.0-x86_32p , hvm-3.0-x86_32 , hvm-3.0-x86_32p , hvm-3.0-x86_64").lastPinged(lastPinged).managementServerId(223098941760041L).clusterId(1).clusterName("Xen Clust 1").clusterType(Host.ClusterType.CLOUD_MANAGED).localStorageActive(false).created(created).events("PrepareUnmanaged; HypervisorVersionChanged; ManagementServerDown; PingTimeout; AgentDisconnected; MaintenanceRequested; HostDown; AgentConnected; StartAgentRebalance; ShutdownRequested; Ping").hostTags("").hasEnoughCapacity(false).allocationState(Host.AllocationState.ENABLED).build();
+
+      Host actual = requestSendsResponse(request, response).updateHost(1, UpdateHostOptions.Builder.allocationState(Host.AllocationState.ENABLED).hostTags(Collections.<String>emptySet()).osCategoryId(5));
 
       assertEquals(actual, expected);
    }

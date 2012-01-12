@@ -25,6 +25,7 @@ import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.AddHostOptions;
 import org.jclouds.cloudstack.options.ListClustersOptions;
 import org.jclouds.cloudstack.options.ListHostsOptions;
+import org.jclouds.cloudstack.options.UpdateHostOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -75,6 +76,19 @@ public interface GlobalHostAsyncClient {
    @SelectJson("host")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Host> addHost(@QueryParam("zoneid") long zoneId, @QueryParam("url") String url, @QueryParam("hypervisor") String hypervisor, @QueryParam("username") String username, @QueryParam("password") String password, AddHostOptions... options);
+
+   /**
+    * Updates a host.
+    *
+    * @param hostId the ID of the host to update
+    * @param options optional arguments
+    * @return the modified host.
+    */
+   @GET
+   @QueryParams(keys = "command", values = "updateHost")
+   @SelectJson("host")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Host> updateHost(@QueryParam("id") long hostId, UpdateHostOptions... options);
 
    /**
     * @see GlobalHostClient#listClusters
