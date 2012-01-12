@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
+import org.jclouds.cloudstack.options.AddClusterOptions;
 import org.jclouds.cloudstack.options.AddHostOptions;
 import org.jclouds.cloudstack.options.AddSecondaryStorageOptions;
 import org.jclouds.cloudstack.options.DeleteHostOptions;
@@ -131,4 +132,16 @@ public interface GlobalHostClient {
     * @return clusters matching query, or empty set if no clusters match
     */
    Set<Cluster> listClusters(ListClustersOptions... options);
+
+   /**
+    * Adds a new cluster.
+    *
+    * @param zoneId the Zone ID for the cluster
+    * @param clusterName the cluster name
+    * @param clusterType type of the cluster
+    * @param hypervisor hypervisor type of the cluster
+    * @param options optional arguments
+    * @return the new cluster.
+    */
+   Cluster addCluster(long zoneId, String clusterName, Host.ClusterType clusterType, String hypervisor, AddClusterOptions... options);
 }

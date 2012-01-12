@@ -22,6 +22,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
 import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.options.AddClusterOptions;
 import org.jclouds.cloudstack.options.AddHostOptions;
 import org.jclouds.cloudstack.options.AddSecondaryStorageOptions;
 import org.jclouds.cloudstack.options.DeleteHostOptions;
@@ -173,4 +174,20 @@ public interface GlobalHostAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<Cluster>> listClusters(ListClustersOptions... options);
+
+   /**
+    * Adds a new cluster.
+    *
+    * @param zoneId the Zone ID for the cluster
+    * @param clusterName the cluster name
+    * @param clusterType type of the cluster
+    * @param hypervisor hypervisor type of the cluster
+    * @param options optional arguments
+    * @return the new cluster.
+    */
+   @GET
+   @QueryParams(keys = "command", values = "addCluster")
+   @SelectJson("cluster")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Cluster> addCluster(@QueryParam("zoneid") long zoneId, @QueryParam("clustername") String clusterName, @QueryParam("clustertype") Host.ClusterType clusterType, @QueryParam("hypervisor") String hypervisor, AddClusterOptions... options);
 }

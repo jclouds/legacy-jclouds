@@ -25,6 +25,7 @@ import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.ConfigurationEntry;
 import org.jclouds.cloudstack.domain.Host;
+import org.jclouds.cloudstack.options.AddClusterOptions;
 import org.jclouds.cloudstack.options.AddHostOptions;
 import org.jclouds.cloudstack.options.AddSecondaryStorageOptions;
 import org.jclouds.cloudstack.options.DeleteHostOptions;
@@ -263,6 +264,24 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
       GlobalHostClient client = requestSendsResponse(request, response);
 
       assertEquals(client.listClusters(), ImmutableSet.of());
+   }
+
+   @Test
+   public void testAddClusterWhenResponseIs2xx() {
+      HttpRequest request = HttpRequest.builder()
+         .method("GET")
+         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=addCluster&zoneid=1&clustertype=CloudManaged&clustername=Xen%20Clust%201&hypervisor=XenServer&allocationstate=Enabled&podid=1&url=http%3A%2F%2Fexample.com%2Fcluster&username=fred&password=sekrit&apiKey=identity&signature=2uIQ5qF0bVycXK111wxvogWp1Yw%3D"))
+         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
+         .build();
+      HttpResponse response = HttpResponse.builder()
+         .payload(payloadFromResource("/addclusterresponse.json"))
+         .statusCode(200).build();
+
+      Cluster expected = Cluster.builder().id(1).name("Xen Clust 1").podId(1).podName("Dev Pod 1").zoneId(1).zoneName("Dev Zone 1").hypervisor("XenServer").clusterType(Host.ClusterType.CLOUD_MANAGED).allocationState(Host.AllocationState.ENABLED).managedState(Cluster.ManagedState.MANAGED).build();
+
+      Cluster actual = requestSendsResponse(request, response).addCluster(1, "Xen Clust 1", Host.ClusterType.CLOUD_MANAGED, "XenServer", AddClusterOptions.Builder.allocationState(Host.AllocationState.ENABLED).podId(1).url("http://example.com/cluster").username("fred").password("sekrit"));
+
+      assertEquals(actual, expected);
    }
 
    private Date makeDate(int year, int month, int date, int hour, int minute, int second, String timeZoneName) {
