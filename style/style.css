@@ -12,7 +12,7 @@ font-size: 0.68em;
 
 p {
 margin: 0px;
-padding: 0px 0px 16px 0px;
+padding: 8px 0px 8px 0px;
 line-height: 1.2em;
 }
 
@@ -23,8 +23,29 @@ letter-spacing: .1em;
 
 h2 {
 margin: 0px;
-padding: 0px 0px 4px 0px;
+padding: 16px 0px 4px 0px;
+font-size: 120%; 
+}
+
+h3 {
+margin: 0px;
+padding: 8px 0px 4px 0px;
+font-size: 100%; 
+}
+
+h4 {
+margin: 0px;
+padding: 6px 0px 2px 0px;
 font-size: 100%;
+font-style: italic;
+}
+
+h5 {
+margin: 0px;
+padding: 4px 0px 2px 0px;
+font-size: 100%;
+font-weight: normal;
+font-style: italic;
 }
 
 img {
@@ -61,24 +82,24 @@ border-left: 8px solid;
 
 /* unordered list */
 ul {
-margin: 8px 0px 0px 16px;
+margin: 6px 0px 0px 12px;
 padding: 0px;
 }
 
 ul li {
 list-style-type: square;
-margin: 0px 0px 11px 0px;
+margin: 0px 0px 8px 0px;
 padding: 0px;
 }
 
 /* ordered list */
 ol {
-margin: 8px 0px 0px 24px;
+margin: 6px 0px 0px 18px;
 padding: 0px;
 }
 
 ol li {
-margin: 0px 0px 11px 0px;
+margin: 0px 0px 8px 0px;
 padding: 0px;
 }
 
@@ -255,6 +276,11 @@ border-bottom: 1px dashed;
 border-bottom: 1px solid;
 }
 
+#column2 p a, #column2 p a:hover {
+/* inside a paragraph, underlining with 2px of padding can result in the line below being scored out */
+padding: 0px 0px 0px 0px;
+}
+
 /* contact page - form layout */
 form {
 margin-top: 0px;
@@ -304,4 +330,7 @@ pre {
 	overflow-y: visible; 
 	width: 512px;
 	font-size: 150%;
+}
+code {
+ 	font-family: 'Droid Sans Mono', sans-serif;
 }

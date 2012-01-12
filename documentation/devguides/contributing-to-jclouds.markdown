@@ -95,7 +95,7 @@ Parameters:
 	<tr>
 		<td>*package*</td> 
 		<td>The Java base package of the project's classes.</td>
-		<td> _same as_ `groupId`.`artifactId` </td>
+		<td><i>groupId.artifactId</i></td>
 		<td></td>
 	</tr>
 	<tr>
@@ -128,11 +128,11 @@ you must delete the files this code will replace.  Here are the files:
 		<td>adding compute logger</td>
 	</tr>
 	<tr>
-		<td>src/main/java/org/jclouds/`artifactId`/`providerName`ContextBuilder</td>
+		<td>src/main/java/org/jclouds/ <i>artifactId</i>/<i>providerName</i>ContextBuilder</td>
 		<td>converts to build a ComputeServiceContext instead of a RestContext</td>
 	</tr>
 	<tr>
-		<td>src/main/java/org/jclouds/`artifactId`/`providerName`ContextFactory</td>
+		<td>src/main/java/org/jclouds/ <i>artifactId</i>/<i>providerName</i>ContextFactory</td>
 		<td>converts to build a ComputeServiceContext instead of a RestContext</td>
 	</tr>
 </table>
