@@ -107,6 +107,14 @@ public interface GlobalHostClient {
    Long cancelHostMaintenance(long hostId);
 
    /**
+    * Reconnects a host.
+    *
+    * @param hostId
+    * @return a job reference number for tracking this asynchronous job.
+    */
+   Long reconnectHost(long hostId);
+
+   /**
     * Lists clusters
     *
     * @param options if present, how to constrain the list

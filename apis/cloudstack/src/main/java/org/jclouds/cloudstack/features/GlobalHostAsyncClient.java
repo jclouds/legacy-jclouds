@@ -139,6 +139,18 @@ public interface GlobalHostAsyncClient {
    ListenableFuture<Long> cancelHostMaintenance(@QueryParam("id") long hostId);
 
    /**
+    * Reconnects a host.
+    *
+    * @param hostId
+    * @return a job reference number for tracking this asynchronous job.
+    */
+   @GET
+   @QueryParams(keys = "command", values = "reconnectHost")
+   @SelectJson("jobid")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Long> reconnectHost(@QueryParam("id") long hostId);
+
+   /**
     * @see GlobalHostClient#listClusters
     */
    @GET

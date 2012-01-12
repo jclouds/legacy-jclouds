@@ -196,6 +196,21 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
    }
 
    @Test
+   public void testReconnectHostWhenResponseIs2xx() {
+      HttpRequest request = HttpRequest.builder()
+         .method("GET")
+         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=reconnectHost&id=1&apiKey=identity&signature=wJEF02vwdyOnJOTa%2BWMMK906aRU%3D"))
+         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
+         .build();
+      HttpResponse response = HttpResponse.builder()
+         .payload(payloadFromResource("/reconnecthostresponse.json"))
+         .statusCode(200).build();
+
+      Long actual = requestSendsResponse(request, response).reconnectHost(1);
+      assertEquals(actual, Long.valueOf(2036L));
+   }
+
+   @Test
    public void testListClustersWhenResponseIs2xx() {
       HttpRequest request = HttpRequest.builder()
          .method("GET")
