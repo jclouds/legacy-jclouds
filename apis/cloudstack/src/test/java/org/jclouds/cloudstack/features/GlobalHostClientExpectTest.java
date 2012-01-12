@@ -316,6 +316,19 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
       requestSendsResponse(request, response).updateClusterPassword(1, "fred", "sekrit");
    }
 
+   @Test
+   public void testDeleteClusterWhenResponseIs2xx() {
+      HttpRequest request = HttpRequest.builder()
+         .method("GET")
+         .endpoint(URI.create("http://localhost:8080/client/api?response=json&command=deleteCluster&id=1&apiKey=identity&signature=CKH26MFgKGY7Sosd17LjBMNa3AI%3D"))
+         .headers(ImmutableMultimap.<String, String>builder().put("Accept", "application/json").build())
+         .build();
+      HttpResponse response = HttpResponse.builder()
+         .statusCode(200).build();
+
+      requestSendsResponse(request, response).deleteCluster(1);
+   }
+
    private Date makeDate(int year, int month, int date, int hour, int minute, int second, String timeZoneName) {
       Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(timeZoneName));
       cal.set(Calendar.YEAR, year);

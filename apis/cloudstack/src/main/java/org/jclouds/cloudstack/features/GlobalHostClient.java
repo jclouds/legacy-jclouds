@@ -163,4 +163,12 @@ public interface GlobalHostClient {
     * @param password the password for the cluster
     */
    void updateClusterPassword(long clusterId, String username, String password);
+
+   /**
+    * Deletes a cluster.
+    *
+    * @param clusterId the cluster ID
+    */
+   void deleteCluster(long clusterId);
+
 }

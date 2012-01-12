@@ -217,4 +217,15 @@ public interface GlobalHostAsyncClient {
    @SelectJson("cluster")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Void> updateClusterPassword(@QueryParam("clusterid") long clusterId, @QueryParam("username") String username, @QueryParam("password") String password);
+
+   /**
+    * Deletes a cluster.
+    *
+    * @param clusterId the cluster ID
+    */
+   @GET
+   @QueryParams(keys = "command", values = "deleteCluster")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Void> deleteCluster(@QueryParam("id") long clusterId);
+
 }
