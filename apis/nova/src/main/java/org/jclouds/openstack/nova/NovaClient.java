@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.nova.domain.Addresses;
 import org.jclouds.openstack.nova.domain.Flavor;
+import org.jclouds.openstack.nova.domain.FloatingIP;
 import org.jclouds.openstack.nova.domain.Image;
 import org.jclouds.openstack.nova.domain.RebootType;
 import org.jclouds.openstack.nova.domain.Server;
@@ -281,4 +282,35 @@ public interface NovaClient {
     */
    Set<String> listPrivateAddresses(int serverId);
 
+	/**
+	 * Add a floating IP to the given server. The floating IP can just be added
+	 * if the server has a fixed IP. It means that it is not possible to
+	 * directly add the floating IP just after creating the server but have to
+	 * poll if the server has an IP.
+	 * 
+	 * @see <a href="http://wiki.openstack.org/os_api_floating_ip">http://wiki.openstack.org/os_api_floating_ip</a>
+	 * @since 2011.3 "Diablo" release, OpenStack API 1.1
+	 * @param serverId
+	 * @param ip
+	 */
+   void addFloatingIP(int serverId, String ip);
+   
+   /**
+    * Get all the defined floating IPs in nova
+    * 
+    * @see <a href="http://wiki.openstack.org/os_api_floating_ip">http://wiki.openstack.org/os_api_floating_ip</a>
+	* @since 2011.3 "Diablo" release, OpenStack API 1.1
+    * @return all the available floating IP for the current tenant
+    */
+   Set<FloatingIP> listFloatingIPs();
+
+   /**
+    * Get floating IP details from its ID
+    * 
+    * @see <a href="http://wiki.openstack.org/os_api_floating_ip">http://wiki.openstack.org/os_api_floating_ip</a>
+	* @since 2011.3 "Diablo" release, OpenStack API 1.1
+    * @param id the floating IP id
+    * @return the floating IP or null if not found
+    */
+   FloatingIP getFloatingIP(int id);
 }

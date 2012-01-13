@@ -58,6 +58,7 @@ import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.wit
 import static org.jclouds.openstack.nova.options.ListOptions.Builder.changesSince;
 import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
 import static org.jclouds.openstack.nova.options.RebuildServerOptions.Builder.withImage;
+//import static org.junit.Assert.*;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -132,6 +133,26 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
 
       checkFilters(request);
 
+   }
+   
+   @Test
+   public void testCreateServerWithKeyName() throws Exception {
+	   Method method = NovaAsyncClient.class.getMethod("createServer", String.class, String.class, String.class,
+	            createServerOptionsVarargsClass);
+	      HttpRequest request = processor.createRequest(method, "ralphie", 2, 1,
+	            withMetadata(ImmutableMap.of("foo", "bar")).withKeyName("mykey"));
+
+	      assertRequestLineEquals(request, "POST http://endpoint/vapi-version/servers?format=json HTTP/1.1");
+	      assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
+	      assertPayloadEquals(request,
+	            "{\"server\":{\"name\":\"ralphie\",\"imageRef\":\"2\",\"flavorRef\":\"1\",\"metadata\":{\"foo\":\"bar\"},\"key_name\":\"mykey\"}}",
+	            "application/json", false);
+
+	      assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
+	      assertSaxResponseParserClassEquals(method, null);
+	      assertExceptionParserClassEquals(method, null);
+
+	      checkFilters(request);
    }
 
    public void testDeleteImage() throws IOException, SecurityException, NoSuchMethodException {
@@ -636,7 +657,43 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
 
       checkFilters(request);
    }
+   
+	public void testGetFloatingIP() throws SecurityException,
+			NoSuchMethodException {
+		Method method = NovaAsyncClient.class.getMethod("getFloatingIP",
+				int.class);
+		HttpRequest request = processor.createRequest(method, 2);
 
+		assertRequestLineEquals(request,
+				"GET http://endpoint/vapi-version/os-floating-ips/2?format=json HTTP/1.1");
+		assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
+		assertPayloadEquals(request, null, null, false);
+
+		assertResponseParserClassEquals(method, request,
+				UnwrapOnlyJsonValue.class);
+		assertSaxResponseParserClassEquals(method, null);
+		assertExceptionParserClassEquals(method,
+				ReturnNullOnNotFoundOr404.class);
+
+		checkFilters(request);
+	}
+	
+	public void testListFloatingIPs() throws SecurityException, NoSuchMethodException {
+	      Method method = NovaAsyncClient.class.getMethod("listFloatingIPs");
+	      HttpRequest request = processor.createRequest(method);
+
+	      assertRequestLineEquals(request,
+	            "GET http://endpoint/vapi-version/os-floating-ips?format=json HTTP/1.1");
+	      assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
+	      assertPayloadEquals(request, null, null, false);
+
+	      assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
+	      assertSaxResponseParserClassEquals(method, null);
+	      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+
+	      checkFilters(request);	
+	}
+   
    @Override
    protected TypeLiteral<RestAnnotationProcessor<NovaAsyncClient>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<NovaAsyncClient>>() {
