@@ -46,8 +46,8 @@ public class VirtualGuestClientExpectTest extends BaseRestClientExpectTest<SoftL
                .endpoint(URI.create("https://api.softlayer.com/rest/v3/SoftLayer_Billing_Item/11/cancelService.json"))
                .headers(
                ImmutableMultimap.<String, String> builder()
-               .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==")
-               .put("Accept", "application/json").build()).build();
+               .put("Accept", "application/json")
+               .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build();
 
       HttpResponse found = HttpResponse.builder().statusCode(200).build();
 
