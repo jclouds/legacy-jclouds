@@ -72,7 +72,12 @@ Adrian-Coles-MacBook-Pro:tmp adrian$ cd jclouds/vcloud/terremark/
 
 ### Running unit tests
 
-XXX
+Unit tests run automatically as part of the build. To run these for the whole project, simply run:
+
+`mvn clean install`
+
+from the `jclouds` root directory. It may take a while. To run for only the project you are actively working on,
+run the same command from the root directory of that project. 
 
 
 ### Running live tests 
@@ -82,82 +87,125 @@ When live is enabled, any tests that have `LiveTest` suffix will be run during t
 In order for this to operate, you must specify the following either inside your `~/.m2/settings.xml` 
 or directly on the commandline:
 
-*  test._provider_.identity
-*  test._provider_.credential (some clouds do not require this)
+ * test._provider_.identity
+ * test._provider_.credential (some clouds do not require this)
 
 The following parameters can also be specified (*optional*):
 
-* test._provider_.endpoint
-* test._provider_.api-version
-* test._provider_.build-version (when an implementation targets a specific build running on the server)
-* test._provider_.image-id (compute)
-* test._provider_.image.login-user (compute, as username or username:password)
-* test._provider_.image.authenticate-sudo (compute, password for username above is required for sudo)
+ * test._provider_.endpoint
+ * test._provider_.api-version
+ * test._provider_.build-version (when an implementation targets a specific build running on the server)
+ * test._provider_.image-id (compute)
+ * test._provider_.image.login-user (compute, as username or username:password)
+ * test._provider_.image.authenticate-sudo (compute, password for username above is required for sudo)
 
-Here's an example of running a live test with a specific username and password:
+Here's an example of running a live test with a specific username and password (from the `providers/trmk-vcloudexpress` directory):
 
 `mvn -Plive clean install -Dtest.trmk-vcloudexpress.identity=adrian@jclouds.org -Dtest.trmk-vcloudexpress.endpoint=https://services.vcloudexpress.terremark.com/api -Dtest.trmk-vcloudexpress.credential=12312412`
 
-### Running specific tests
-
-XXX
 
 
 ### Writing Unit Tests
+
+These instructions assume you are familiar with (TestNG)[testng.org].
+Some of the tests make heavy use of `@Before` and `@Test(dependsOn...)`, as well as TestNG's parametrization support, 
+so if you haven't been a power user of TestNG it might be helpful to review some of its more advanced features.
+
+jclouds also makes heavy use of (Google Guava)[http://code.google.com/p/guava-libraries/]'s `Function` interface 
+to allow smaller pieces to be more easily unit-tested (as well as composed, ie chained together, at runtime). 
+You can see examples of this type of testing in, for instance, `apis/ec2/src/test/java/org/jclouds/ec2/compute/functions`.
+
+For testing provider-client behaviour, we have developed some other design patterns and helpful fixtures, described below. 
+
+*Important:* If you're in doubt about how to unit test some code, hollar for help.
+We don't like code which is *only* exercised in live tests!  
+
 
 ## "Expect"-Style unit tests
 
 "Expect" tests allow you to simulate a conversation with a running service by recording the 
 requests we expect to generate, and the corresponding responses the service would return.
 
+For a given provider, testing a specific method on the `Client` API (for example `S3Client.bufferExists(name)`,
+as shown below), these tests:
+
+ * create the _request_ which the client should send, using `org.jclouds.http.HttpRequest.builder()`
+ * create a _response_ which the server might return, using `org.jclouds.http.HttpResponse.builder()`
+ * build a mock `Client` implementation with those objects
+
+Then, when the specific method being tested is invoked on that implementation, the tests:
+
+ * assert that the `Client` sends a request equivalent to the one we created
+ * passed the response we created to the client as a response
+ * returns the value of the method we invoked, once the client has done the _actual_ computation it would do on such a response from a real server 
+
+You can of course define a sequence of request/response objects, as in the following example
+asserting that `S3Client.bufferExists` correctly responds to a 301 status code (redirect) in response 
+to a HEAD request by sending the same request as a GET:
+
 {% highlight java %}
 @Test(groups = "unit", testName = "S3RedirectionRetryHandlerExpectTest")
-public class S3RedirectionRetryHandlerExpectTest extends
-BaseS3ClientExpectTest {
+public class S3RedirectionRetryHandlerExpectTest extends BaseS3ClientExpectTest {
 
    public void testRedirectOnHeadBucketChangesRequestToGetBucket() {
 
-      HttpRequest bucketFooExists =
-HttpRequest.builder().method("HEAD").endpoint(
-               URI.create("https://foo.s3.amazonaws.com/?max-keys=0")).headers(
-               ImmutableMultimap.<String, String>
-builder().put("Host", "foo.s3.amazonaws.com").put("Date",
-                        CONSTANT_DATE).put("Authorization", "AWS
-identity:86P4BBb7xT+gBqq7jxM8Tc28ktY=").build())
+      HttpRequest bucketFooExists = HttpRequest.builder().method("HEAD").
+               endpoint(URI.create("https://foo.s3.amazonaws.com/?max-keys=0")).
+               headers(ImmutableMultimap.<String, String>builder().
+                  put("Host", "foo.s3.amazonaws.com").
+                  put("Date", CONSTANT_DATE).
+                  put("Authorization", "AWS identity:86P4BBb7xT+gBqq7jxM8Tc28ktY=").
+                  build())
                .build();
 
-      HttpResponse redirectResponse =
-HttpResponse.builder().statusCode(301).build();
+      HttpResponse redirectResponse = HttpResponse.builder().statusCode(301).build();
 
-      HttpRequest bucketFooExistsNowUsesGET =
-HttpRequest.builder().method("GET").endpoint(
-               URI.create("https://foo.s3.amazonaws.com/?max-keys=0")).headers(
-               ImmutableMultimap.<String, String>
-builder().put("Host", "foo.s3.amazonaws.com").put("Date",
-                        CONSTANT_DATE).put("Authorization", "AWS
-identity:ZWVz2v/jGB+ZMmijoyfH9mFMPo0=").build())
+      HttpRequest bucketFooExistsNowUsesGET = HttpRequest.builder().method("GET").
+               endpoint(URI.create("https://foo.s3.amazonaws.com/?max-keys=0")).
+               headers(ImmutableMultimap.<String, String>builder().
+                  put("Host", "foo.s3.amazonaws.com").
+                  put("Date", CONSTANT_DATE).
+                  put("Authorization", "AWS identity:ZWVz2v/jGB+ZMmijoyfH9mFMPo0=").
+                  build())
                .build();
 
       HttpResponse success = HttpResponse.builder().statusCode(200).build();
 
-      S3Client clientWhenBucketExists =
-requestsSendsResponses(bucketFooExists, redirectResponse,
-bucketFooExistsNowUsesGET, success);
+      S3Client clientWhenBucketExists = requestsSendsResponses(
+         bucketFooExists, redirectResponse, bucketFooExistsNowUsesGET, success);
 
       assert clientWhenBucketExists.bucketExists("foo");
-
+      
    }
 }
 {% endhighlight %}
 
+A few final comments to help you on your way:
+ * These `Builder` classes allow you to base requests on existing calls, so the above test could have instead been implemented using `HttpRequest bucketFooExistsNowUsesGET = HttpRequest.Builder.from(bucketFooExists).method("GET").build()`
+ * The request object should _exactly_ match what the `Client` produces; if a partial match or more flexible comparison is required, the API could be extended to permit this, or use the syntax below
+ * For an even more elaborate multi-step example, see `apis/cloudservers/src/test/java/org/jclouds/cloudservers/CloudServersExpectTest.java`
 
-## Annotated unit tests
 
-XXX
+## Other aspects of unit tests
+
+Many of the tests have not been ported to the _Expect_ test syntax described above,
+and capture the request generated by a client and perform assertions on the fields therein.
+This allows more intricate testing, although it is more work and harder to pass a result back to it.
+For an example of this type of test, see for example `SlicehostAsyncClientTest`.
+
 
 ## Curl Cheat Sheet
 
-XXX
+The tool `curl` is a very handy and powerful way to download contents from web sites and (more importantly for us) services. 
+(It is similar to `wget` but slightly more geared towards services than sites.)
+Here are some of the main command-line optoins:
+
+ * `curl -o output_file url` : download from `url` and write to `output_file`
+  * `-u user:pass` : use the given user and password (inserted in above)
+  * `-H line` : pass `line` as a header
+  * `-d data` : pass `data` for a POST
+  * `-F name=content` : pass `name=content` as multi-part POST data
+ * `curl -h` : show help
 
 
 ## Post-mortem: when failures occur
@@ -220,6 +268,11 @@ In this case, a few tests didn't pass, although most did.  There are a few logs 
 </table>
 
 
+<!--
+  could have advanced topics section
 
-## Advanced topics in testing
+  could talk about running a _specific_ test
+
+  want more info on logging (likely a different page) 
+-->
 
