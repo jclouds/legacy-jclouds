@@ -70,6 +70,8 @@ import org.jclouds.cloudstack.features.GlobalUsageAsyncClient;
 import org.jclouds.cloudstack.features.GlobalUsageClient;
 import org.jclouds.cloudstack.features.GlobalUserAsyncClient;
 import org.jclouds.cloudstack.features.GlobalUserClient;
+import org.jclouds.cloudstack.features.GlobalZoneAsyncClient;
+import org.jclouds.cloudstack.features.GlobalZoneClient;
 import org.jclouds.cloudstack.features.GuestOSAsyncClient;
 import org.jclouds.cloudstack.features.GuestOSClient;
 import org.jclouds.cloudstack.features.HypervisorAsyncClient;
@@ -131,6 +133,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
          .put(ZoneClient.class, ZoneAsyncClient.class)//
+         .put(GlobalZoneClient.class, GlobalZoneAsyncClient.class)//
          .put(TemplateClient.class, TemplateAsyncClient.class)//
          .put(OfferingClient.class, OfferingAsyncClient.class)//
          .put(NetworkClient.class, NetworkAsyncClient.class)//

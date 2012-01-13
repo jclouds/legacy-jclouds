@@ -1,0 +1,4 @@
+{ "updatezoneresponse" :  { "zone" :
+    {"id":6,"name":"test-zone","dns1":"8.8.8.8","internaldns1":"10.10.10.10","networktype":"Basic",
+        "securitygroupsenabled":true,"allocationstate":"Enabled","zonetoken":"7b6e27df-30a6-3024-9d8b-7971a3127f64",
+        "dhcpprovider":"DhcpServer"} }  }
