@@ -37,7 +37,6 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Strings2;
-import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.VCloudResponseException;
 import org.jclouds.vcloud.domain.VCloudError;
 import org.jclouds.vcloud.domain.VCloudError.MinorCode;
@@ -68,19 +67,18 @@ public class ParseVCloudErrorFromHttpResponse implements HttpErrorHandler {
          VCloudError error = null;
          String message = null;
          if (response.getPayload() != null) {
-            String contentType = response.getPayload().getContentMetadata().getContentType();
-            if (VCloudMediaType.ERROR_XML.equals(contentType)) {
+            try {
                error = utils.parseErrorFromContent(request, response);
                if (error != null) {
                   message = error.getMessage();
                   exception = new VCloudResponseException(command, response, error);
-               }
-            } else {
-               try {
+               } else {
                   message = Strings2.toStringAndClose(response.getPayload().getInput());
                   exception = message != null ? new HttpResponseException(command, response, message) : exception;
-               } catch (IOException e) {
                }
+            } catch (IOException e) {
+            } finally {
+               response.getPayload().release();
             }
          }
          message = message != null ? message : String.format("%s -> %s", request.getRequestLine(), response
