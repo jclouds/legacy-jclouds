@@ -79,7 +79,6 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
                .getIpAddressAllocationMode();
 
       options.description(VCloudTemplateOptions.class.cast(template.getOptions()).getDescription());
-      options.customizeOnInstantiate(false);
       options.deploy(false);
       options.powerOn(false);
 

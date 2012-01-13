@@ -88,16 +88,7 @@ public class InstantiateVAppTemplateOptions {
       this.block = block;
       return this;
    }
-
-   /**
-    * If true, then customization is executed for all children that include a
-    * GuestCustomizationSection.
-    */
-   public InstantiateVAppTemplateOptions customizeOnInstantiate(boolean customizeOnInstantiate) {
-      this.customizeOnInstantiate = customizeOnInstantiate;
-      return this;
-   }
-
+   
    /**
     * {@networkConfig VAppTemplate}s have internal networks that can be
     * connected in order to access the internet or other external networks.
@@ -121,10 +112,6 @@ public class InstantiateVAppTemplateOptions {
 
    public Set<NetworkConfig> getNetworkConfig() {
       return networkConfig;
-   }
-
-   public Boolean shouldCustomizeOnInstantiate() {
-      return customizeOnInstantiate;
    }
 
    public static class Builder {
@@ -159,14 +146,6 @@ public class InstantiateVAppTemplateOptions {
       public static InstantiateVAppTemplateOptions powerOn(boolean powerOn) {
          InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
          return options.powerOn(powerOn);
-      }
-
-      /**
-       * @see InstantiateVAppTemplateOptions#customizeOnInstantiate
-       */
-      public static InstantiateVAppTemplateOptions customizeOnInstantiate(Boolean customizeOnInstantiate) {
-         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-         return options.customizeOnInstantiate(customizeOnInstantiate);
       }
 
       /**

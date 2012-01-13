@@ -101,7 +101,6 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
 
       boolean deploy = true;
       boolean powerOn = true;
-      Boolean customizeOnInstantiate = null;
 
       Set<NetworkConfig> networkConfig = null;
 
@@ -116,7 +115,6 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
                   networknetworkConfigDecorator));
          deploy = ifNullDefaultTo(options.shouldDeploy(), deploy);
          powerOn = ifNullDefaultTo(options.shouldPowerOn(), powerOn);
-         customizeOnInstantiate = options.shouldCustomizeOnInstantiate();
       }
 
       if (networkConfig == null)
@@ -125,8 +123,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       try {
          return stringBinder.bindToRequest(
                request,
-               generateXml(name, options.getDescription(), deploy, powerOn, template, networkConfig,
-                     customizeOnInstantiate));
+               generateXml(name, options.getDescription(), deploy, powerOn, template, networkConfig));
       } catch (ParserConfigurationException e) {
          throw new RuntimeException(e);
       } catch (FactoryConfigurationError e) {
@@ -202,29 +199,19 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    }
 
    protected String generateXml(String name, @Nullable String description, boolean deploy, boolean powerOn,
-         URI template, Iterable<NetworkConfig> networkConfig, @Nullable Boolean customizeOnInstantiate)
+         URI template, Iterable<NetworkConfig> networkConfig)
          throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
       XMLBuilder rootBuilder = buildRoot(name).a("deploy", deploy + "").a("powerOn", powerOn + "");
       if (description != null)
          rootBuilder.e("Description").t(description);
       XMLBuilder instantiationParamsBuilder = rootBuilder.e("InstantiationParams");
       addNetworkConfig(instantiationParamsBuilder, networkConfig);
-      addCustomizationConfig(instantiationParamsBuilder, customizeOnInstantiate);
       rootBuilder.e("Source").a("href", template.toASCIIString());
       rootBuilder.e("AllEULAsAccepted").t("true");
 
       Properties outputProperties = new Properties();
       outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
       return rootBuilder.asString(outputProperties);
-   }
-
-   protected void addCustomizationConfig(XMLBuilder instantiationParamsBuilder, Boolean customizeOnInstantiate) {
-      if (customizeOnInstantiate != null) {
-         // XMLBuilder customizationSectionBuilder =
-         // instantiationParamsBuilder.e("CustomizationSection");
-         // customizationSectionBuilder.e("ovf:Info").t("VApp template customization section");
-         // customizationSectionBuilder.e("CustomizeOnInstantiate").t(customizeOnInstantiate.toString());
-      }
    }
 
    protected void addNetworkConfig(XMLBuilder instantiationParamsBuilder,
