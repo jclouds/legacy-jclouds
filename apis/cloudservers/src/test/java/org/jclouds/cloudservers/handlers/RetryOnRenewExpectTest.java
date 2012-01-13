@@ -151,7 +151,7 @@ public class RetryOnRenewExpectTest extends BaseCloudServersRestClientExpectTest
    }
 
    // FIXME stack trace shows the AuthorizationException, but it's buried inside a guice TestException
-   @Test(enabled=false, expectedExceptions=AuthorizationException.class)
+   @Test(expectedExceptions=AuthorizationException.class)
    public void testDoesNotReauthenticateOnAuthentication401() {
       HttpRequest initialAuth = HttpRequest.builder().method("GET").endpoint(URI.create("https://auth/v1.0"))
                .headers(
@@ -166,7 +166,7 @@ public class RetryOnRenewExpectTest extends BaseCloudServersRestClientExpectTest
                .payload(Payloads.newStringPayload("[{\"unauthorized\":{\"message\":\"A different message implying fatal.\",\"code\":401}}]"))
                .build();
 
-      CloudServersClient client = orderedRequestsSendResponses(initialAuth, unauthResponse);
+      CloudServersClient client = requestSendsResponse(initialAuth, unauthResponse);
                     
       client.deleteImage(11);
    }
