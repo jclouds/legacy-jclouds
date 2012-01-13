@@ -76,6 +76,7 @@ public class CreateServerOptions implements MapBinder {
       final String flavorRef;
       Map<String, String> metadata;
       List<File> personality;
+      String key_name;
 
       private ServerRequest(String name, String imageRef, String flavorRef) {
          this.name = name;
@@ -87,6 +88,7 @@ public class CreateServerOptions implements MapBinder {
 
    private Map<String, String> metadata = Maps.newHashMap();
    private List<File> files = Lists.newArrayList();
+   private String keyName;
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
@@ -97,6 +99,8 @@ public class CreateServerOptions implements MapBinder {
          server.metadata = metadata;
       if (files.size() > 0)
          server.personality = files;
+      if (keyName != null)
+    	  server.key_name = keyName;
 
       return bindToRequest(request, ImmutableMap.of("server", server));
    }
@@ -144,6 +148,19 @@ public class CreateServerOptions implements MapBinder {
       return this;
    }
 
+	/**
+	 * A keypair name can be defined when creating a server. This key will be
+	 * linked to the server and used to SSH connect to the machine
+	 * 
+	 * @param keyName
+	 * @return
+	 */
+   public CreateServerOptions withKeyName(String keyName) {
+	   checkNotNull(keyName, "keyName");
+	   this.keyName = keyName;
+       return this;
+    }
+   
    public static class Builder {
 
       /**
@@ -161,6 +178,14 @@ public class CreateServerOptions implements MapBinder {
          CreateServerOptions options = new CreateServerOptions();
          return options.withMetadata(metadata);
       }
+      
+      /**
+       * @see CreateServerOptions#withKeyName(String)
+       */
+      public static CreateServerOptions withKeyName(String keyName) {
+          CreateServerOptions options = new CreateServerOptions();
+          return options.withKeyName(keyName);
+       }
    }
 
    @Override
