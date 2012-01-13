@@ -211,7 +211,7 @@ public class OperatingSystem {
          return true;
       if (obj == null)
          return false;
-      if (getClass() != obj.getClass())
+      if (!(obj instanceof OperatingSystem))
          return false;
       OperatingSystem other = (OperatingSystem) obj;
       if (arch == null) {
