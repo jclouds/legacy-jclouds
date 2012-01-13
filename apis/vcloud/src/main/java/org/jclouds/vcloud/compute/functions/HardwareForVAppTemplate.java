@@ -81,7 +81,11 @@ public class HardwareForVAppTemplate implements Function<VAppTemplate, Hardware>
       }
       VirtualHardwareSection hardware = Iterables.get(ovf.getVirtualSystem().getVirtualHardwareSections(), 0);
       HardwareBuilder builder = rasdToHardwareBuilder.apply(hardware.getItems());
-      builder.location(findLocationForResource.apply(checkNotNull(from.getVDC(), "VDC")));
+      if (from.getVDC() != null) {
+         builder.location(findLocationForResource.apply(from.getVDC()));
+      } else {
+         // otherwise, it could be in a public catalog, which is not assigned to a VDC
+      }
       builder.ids(from.getHref().toASCIIString()).name(from.getName()).supportsImage(
                ImagePredicates.idEquals(from.getHref().toASCIIString()));
       return builder.build();

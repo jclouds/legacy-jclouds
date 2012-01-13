@@ -53,7 +53,11 @@ public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
       builder.ids(from.getHref().toASCIIString());
       builder.uri(from.getHref());
       builder.name(from.getName());
-      builder.location(findLocationForResource.apply(checkNotNull(from.getVDC(), "VDC")));
+      if (from.getVDC() != null) {
+         builder.location(findLocationForResource.apply(from.getVDC()));
+      } else {
+         // otherwise, it could be in a public catalog, which is not assigned to a VDC
+      }
       builder.description(from.getDescription() != null ? from.getDescription() : from.getName());
       Envelope ovf = client.getVAppTemplateClient().getOvfEnvelopeForVAppTemplate(from.getHref());
       builder.operatingSystem(CIMOperatingSystem.toComputeOs(ovf));
