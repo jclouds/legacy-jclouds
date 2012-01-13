@@ -40,6 +40,8 @@ import org.jclouds.cloudstack.features.ConfigurationAsyncClient;
 import org.jclouds.cloudstack.features.ConfigurationClient;
 import org.jclouds.cloudstack.features.DomainAccountAsyncClient;
 import org.jclouds.cloudstack.features.DomainAccountClient;
+import org.jclouds.cloudstack.features.DomainDomainAsyncClient;
+import org.jclouds.cloudstack.features.DomainDomainClient;
 import org.jclouds.cloudstack.features.DomainLimitAsyncClient;
 import org.jclouds.cloudstack.features.DomainLimitClient;
 import org.jclouds.cloudstack.features.DomainUserAsyncClient;
@@ -56,6 +58,8 @@ import org.jclouds.cloudstack.features.GlobalCapacityAsyncClient;
 import org.jclouds.cloudstack.features.GlobalCapacityClient;
 import org.jclouds.cloudstack.features.GlobalConfigurationAsyncClient;
 import org.jclouds.cloudstack.features.GlobalConfigurationClient;
+import org.jclouds.cloudstack.features.GlobalDomainAsyncClient;
+import org.jclouds.cloudstack.features.GlobalDomainClient;
 import org.jclouds.cloudstack.features.GlobalHostAsyncClient;
 import org.jclouds.cloudstack.features.GlobalHostClient;
 import org.jclouds.cloudstack.features.GlobalOfferingAsyncClient;
@@ -144,6 +148,8 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
          .put(AccountClient.class, AccountAsyncClient.class)//
          .put(DomainAccountClient.class, DomainAccountAsyncClient.class)//
          .put(DomainUserClient.class, DomainUserAsyncClient.class)//
+         .put(DomainDomainClient.class, DomainDomainAsyncClient.class)//
+         .put(GlobalDomainClient.class, GlobalDomainAsyncClient.class)//
          .put(GlobalAccountClient.class, GlobalAccountAsyncClient.class)//
          .put(GlobalUserClient.class, GlobalUserAsyncClient.class)//
          .put(EventClient.class, EventAsyncClient.class)//
