@@ -329,7 +329,6 @@ pre {
 	overflow: auto; 
 	overflow-y: visible; 
 	width: 512px;
-	font-size: 150%;
 }
 code {
  	font-family: 'Droid Sans Mono', sans-serif;
