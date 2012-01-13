@@ -21,10 +21,11 @@ package org.jclouds.openstack.nova.domain;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Check <a href="http://wiki.openstack.org/os_api_floating_ip">Floating IP Wiki page</a>
+ * Check <a href="http://wiki.openstack.org/os_api_floating_ip">Floating IP Wiki
+ * page</a>. Available since OpenStack Diablo release and API 1.1.
  * 
  * @author chamerling
- *
+ * 
  */
 public class FloatingIP extends Resource {
 	

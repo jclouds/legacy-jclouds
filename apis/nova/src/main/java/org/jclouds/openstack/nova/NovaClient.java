@@ -288,21 +288,27 @@ public interface NovaClient {
 	 * directly add the floating IP just after creating the server but have to
 	 * poll if the server has an IP.
 	 * 
+	 * @see <a href="http://wiki.openstack.org/os_api_floating_ip">http://wiki.openstack.org/os_api_floating_ip</a>
+	 * @since 2011.3 "Diablo" release, OpenStack API 1.1
 	 * @param serverId
 	 * @param ip
 	 */
-   void addFloatingIp(int serverId, String ip);
+   void addFloatingIP(int serverId, String ip);
    
    /**
-    * Get all the defined floating IPs
+    * Get all the defined floating IPs in nova
     * 
-    * @return
+    * @see <a href="http://wiki.openstack.org/os_api_floating_ip">http://wiki.openstack.org/os_api_floating_ip</a>
+	* @since 2011.3 "Diablo" release, OpenStack API 1.1
+    * @return all the available floating IP for the current tenant
     */
    Set<FloatingIP> listFloatingIPs();
 
    /**
     * Get floating IP details from its ID
     * 
+    * @see <a href="http://wiki.openstack.org/os_api_floating_ip">http://wiki.openstack.org/os_api_floating_ip</a>
+	* @since 2011.3 "Diablo" release, OpenStack API 1.1
     * @param id the floating IP id
     * @return the floating IP or null if not found
     */

@@ -323,7 +323,7 @@ public interface NovaAsyncClient {
    @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"addFloatingIp\":%7B\"address\":\"{address}\"%7D%7D")
-   ListenableFuture<Void> addFloatingIp(@PathParam("id") int serverId, @PayloadParam("address") String ip);
+   ListenableFuture<Void> addFloatingIP(@PathParam("id") int serverId, @PayloadParam("address") String ip);
 
    @GET
    @Unwrap

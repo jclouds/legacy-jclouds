@@ -147,7 +147,14 @@ public class CreateServerOptions implements MapBinder {
       this.metadata = metadata;
       return this;
    }
-   
+
+	/**
+	 * A keypair name can be defined when creating a server. This key will be
+	 * linked to the server and used to SSH connect to the machine
+	 * 
+	 * @param keyName
+	 * @return
+	 */
    public CreateServerOptions withKeyName(String keyName) {
 	   checkNotNull(keyName, "keyName");
 	   this.keyName = keyName;
@@ -173,7 +180,7 @@ public class CreateServerOptions implements MapBinder {
       }
       
       /**
-       * @see CreateServerOptions#withKeyPair(String)
+       * @see CreateServerOptions#withKeyName(String)
        */
       public static CreateServerOptions withKeyName(String keyName) {
           CreateServerOptions options = new CreateServerOptions();
