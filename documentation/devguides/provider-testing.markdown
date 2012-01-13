@@ -42,16 +42,16 @@ This section is about how to run using *maven*.
 
 #### Verifying installation
 
-We currently use maven 3.0 beta 3, so ensure you have "mvn" in your path.  
+We currently use maven 3.0.3, so ensure you have "mvn" in your path.  
 To test this out, issue the `mvn -version` command.  It should look like below:
 
 {% highlight text %}
-Adrian-Coles-MacBook-Pro:~ adrian$ mvn --version
-Apache Maven 3.0-beta-3 (r990787; 2010-08-30 13:44:03+0100)
-Java version: 1.6.0_20
-Java home: /System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home
+Apache Maven 3.0.3 (r1075438; 2011-02-28 09:31:09-0800)
+Maven home: /Users/adriancole/apache-maven-3.0.3
+Java version: 1.6.0_29, vendor: Apple Inc.
+Java home: /System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home
 Default locale: en_US, platform encoding: MacRoman
-OS name: "mac os x" version: "10.6.4" arch: "x86_64" Family: "mac"
+OS name: "mac os x", version: "10.7.2", arch: "x86_64", family: "mac"
 {% endhighlight %}
 
 Note you should be in the directory of the service you'd like to test.  For example, 
@@ -84,8 +84,15 @@ or directly on the commandline:
 
 *  test._provider_.identity
 *  test._provider_.credential (some clouds do not require this)
-*  test._provider_.endpoint (optional)
-*  test._provider_.apiversion (optional)
+
+The following parameters can also be specified (*optional*):
+
+* test._provider_.endpoint
+* test._provider_.api-version
+* test._provider_.build-version (when an implementation targets a specific build running on the server)
+* test._provider_.image-id (compute)
+* test._provider_.image.login-user (compute, as username or username:password)
+* test._provider_.image.authenticate-sudo (compute, password for username above is required for sudo)
 
 Here's an example of running a live test with a specific username and password:
 
@@ -100,7 +107,8 @@ XXX
 
 ## "Expect"-Style unit tests
 
-XXX
+"Expect" tests allow you to simulate a conversation with a running service by recording the 
+requests we expect to generate, and the corresponding responses the service would return.
 
 {% highlight java %}
 @Test(groups = "unit", testName = "S3RedirectionRetryHandlerExpectTest")
