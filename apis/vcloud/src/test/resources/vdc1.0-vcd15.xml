@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Vdc xmlns="http://www.vmware.com/vcloud/v1" status="1" name="orgVDC-jclouds-Tier1-PAYG" type="application/vnd.vmware.vcloud.vdc+xml" href="https://zone.myvcloud.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1 https://zone.myvcloud.com/api/v1.0/schema/master.xsd">
+    <Link rel="up" type="application/vnd.vmware.vcloud.org+xml" href="https://zone.myvcloud.com/api/v1.0/org/c076f90a-397a-49fa-89b8-b294c1599cd0"/>
+    <Link rel="add" type="application/vnd.vmware.vcloud.uploadVAppTemplateParams+xml" href="https://zone.myvcloud.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/uploadVAppTemplate"/>
+    <Link rel="add" type="application/vnd.vmware.vcloud.media+xml" href="https://zone.myvcloud.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/media"/>
+    <Link rel="add" type="application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml" href="https://zone.myvcloud.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/instantiateVAppTemplate"/>
+    <Link rel="add" type="application/vnd.vmware.vcloud.cloneVAppParams+xml" href="https://zone.myvcloud.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/cloneVApp"/>
+    <Link rel="add" type="application/vnd.vmware.vcloud.cloneVAppTemplateParams+xml" href="https://zone.myvcloud.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/cloneVAppTemplate"/>
+    <Link rel="add" type="application/vnd.vmware.vcloud.cloneMediaParams+xml" href="https://zone.myvcloud.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/cloneMedia"/>
+    <Link rel="add" type="application/vnd.vmware.vcloud.captureVAppParams+xml" href="https://zone.myvcloud.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/captureVApp"/>
+    <Link rel="add" type="application/vnd.vmware.vcloud.composeVAppParams+xml" href="https://zone.myvcloud.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/composeVApp"/>
+    <Description>Pay As You go resources for organization jclouds </Description>
+    <AllocationModel>AllocationVApp</AllocationModel>
+    <StorageCapacity>
+        <Units>MB</Units>
+        <Allocated>0</Allocated>
+        <Limit>0</Limit>
+        <Used>14336</Used>
+        <Overhead>0</Overhead>
+    </StorageCapacity>
+    <ComputeCapacity>
+        <Cpu>
+            <Units>MHz</Units>
+            <Allocated>0</Allocated>
+            <Limit>0</Limit>
+            <Used>0</Used>
+            <Overhead>0</Overhead>
+        </Cpu>
+        <Memory>
+            <Units>MB</Units>
+            <Allocated>0</Allocated>
+            <Limit>0</Limit>
+            <Used>0</Used>
+            <Overhead>0</Overhead>
+        </Memory>
+    </ComputeCapacity>
+    <ResourceEntities>
+        <ResourceEntity type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="UbuntuServer-x64-2GB" href="https://zone.myvcloud.com/api/v1.0/vAppTemplate/vappTemplate-51891b97-c5dd-47dc-a687-aabae354f728"/>
+    </ResourceEntities>
+    <AvailableNetworks>
+        <Network type="application/vnd.vmware.vcloud.network+xml" name="orgNet-jclouds-External" href="https://zone.myvcloud.com/api/v1.0/network/b466c0c5-8a5c-4335-b703-a2e2e6b5f3e1"/>
+    </AvailableNetworks>
+    <NicQuota>0</NicQuota>
+    <NetworkQuota>10</NetworkQuota>
+    <VmQuota>10</VmQuota>
+    <IsEnabled>true</IsEnabled>
+</Vdc>

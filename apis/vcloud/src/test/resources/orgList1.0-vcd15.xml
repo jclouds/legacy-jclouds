@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OrgList xmlns="http://www.vmware.com/vcloud/v1" type="application/vnd.vmware.vcloud.orgList+xml" href="https://zone.myvcloud.com/api/v1.0/org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1 https://zone.myvcloud.com/api/v1.0/schema/master.xsd">
+    <Org type="application/vnd.vmware.vcloud.org+xml" name="jclouds" href="https://zone.myvcloud.com/api/v1.0/org/c076f90a-397a-49fa-89b8-b294c1599cd0"/>
+</OrgList>   
