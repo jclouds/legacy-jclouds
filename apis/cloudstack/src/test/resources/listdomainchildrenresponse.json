@@ -1,0 +1,3 @@
+{ "listdomainchildrenresponse" : { "count":2 ,"domain" : [
+    {"id":2,"name":"jclouds1","level":1,"parentdomainid":1,"parentdomainname":"ROOT","haschild":false},
+    {"id":3,"name":"jclouds2","level":1,"parentdomainid":1,"parentdomainname":"ROOT","haschild":false} ] } }
