@@ -18,9 +18,13 @@
  */
 package org.jclouds.aws.s3;
 
+import com.google.common.collect.ImmutableMultimap;
 import org.jclouds.aws.s3.internal.BaseAWSS3ClientExpectTest;
+import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.io.payloads.StringPayload;
+import org.jclouds.s3.blobstore.functions.BlobToObject;
 import org.testng.annotations.Test;
 
 import java.net.URI;
@@ -31,6 +35,7 @@ import static org.jclouds.s3.domain.ObjectMetadata.StorageClass;
 /**
  * @author Andrei Savu
  */
+@Test
 public class AWSS3ClientExpectTest extends BaseAWSS3ClientExpectTest {
 
    @Test
@@ -38,13 +43,35 @@ public class AWSS3ClientExpectTest extends BaseAWSS3ClientExpectTest {
       AWSS3Client client = requestSendsResponse(
          HttpRequest.builder()
             .method("PUT")
-            .endpoint(URI.create("http://test.s3.amazon.com/"))
+            .endpoint(URI.create("https://test.s3.amazonaws.com/test"))
+            .headers(ImmutableMultimap.of(
+               "x-amz-storage-class", "REDUCED_REDUNDANCY",
+               "Host", "test.s3.amazonaws.com",
+               "Date", CONSTANT_DATE,
+               "Authorization", "AWS identity:1mJrW85/mqZpYTFIK5Ebtt2MM6E="
+            ))
+            .payload(new StringPayload("content"))
             .build(),
          HttpResponse.builder()
             .statusCode(200)
+            .headers(ImmutableMultimap.of(
+               "x-amz-id-2", "w0rL+9fALQiCOToesVQefs8WalIgn+ZhMD7hHMKYud/xv7MyKkAWQOtFNEfK97Ri",
+               "x-amz-request-id", "7A84C3CD4437A4C0",
+               "Date", CONSTANT_DATE,
+               "ETag", "437b930db84b8079c2dd804a71936b5f",
+               "Server", "AmazonS3"
+            ))
             .build()
       );
 
-      client.putObject("test", null, storageClass(StorageClass.REDUCED_REDUNDANCY));
+      Blob blob = blobStore.blobBuilder("test").payload("content").build();
+      BlobToObject blobToObject = getInstance(BlobToObject.class);
+
+      client.putObject("test", blobToObject.apply(blob),
+         storageClass(StorageClass.REDUCED_REDUNDANCY));
+   }
+
+   public <T> T getInstance(Class<T> klass) {
+      return blobStoreContext.utils().injector().getInstance(klass);
    }
 }

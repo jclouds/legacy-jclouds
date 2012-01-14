@@ -18,14 +18,24 @@
  */
 package org.jclouds.aws.s3.internal;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.config.AWSS3RestClientModule;
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.date.TimeStamp;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.BaseRestClientExpectTest;
 import org.jclouds.rest.ConfiguresRestClient;
+
+import java.util.Properties;
 
 /**
  * Base class for writing Expect tests for AWS-S3
@@ -35,6 +45,9 @@ import org.jclouds.rest.ConfiguresRestClient;
 public class BaseAWSS3ClientExpectTest extends BaseRestClientExpectTest<AWSS3Client> {
 
    protected static final String CONSTANT_DATE = "2009-11-08T15:54:08.897Z";
+
+   protected BlobStoreContext blobStoreContext;
+   protected BlobStore blobStore;
 
    public BaseAWSS3ClientExpectTest() {
       provider = "aws-s3";
@@ -52,6 +65,19 @@ public class BaseAWSS3ClientExpectTest extends BaseRestClientExpectTest<AWSS3Cli
    @Override
    protected Module createModule() {
       return new TestAWSS3RestClientModule();
+   }
+
+   @Override
+   public AWSS3Client createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
+      return clientFrom(BlobStoreContext.class.cast(new BlobStoreContextFactory(setupRestProperties())
+         .createContext(provider, "identity", "credential", ImmutableSet.<Module>of(new ExpectModule(fn),
+            new NullLoggingModule(), module), props)));
+   }
+
+   protected AWSS3Client clientFrom(BlobStoreContext context) {
+      blobStoreContext = context;
+      blobStore = context.getBlobStore();
+      return AWSS3Client.class.cast(context.getProviderSpecificContext().getApi());
    }
 
 }
