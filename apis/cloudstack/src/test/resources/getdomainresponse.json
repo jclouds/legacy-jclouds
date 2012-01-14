@@ -1,0 +1,2 @@
+{ "listdomainsresponse" : { "count":1 ,"domain" : [
+    {"id":1,"name":"ROOT","level":0,"haschild":true} ] } }
