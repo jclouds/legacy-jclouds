@@ -24,7 +24,6 @@ import static com.google.common.io.ByteStreams.toByteArray;
 import static org.jclouds.aws.s3.blobstore.options.AWSS3PutOptions.Builder.storageClass;
 import static org.jclouds.crypto.CryptoStreams.md5;
 import static org.jclouds.io.Payloads.newByteArrayPayload;
-import static org.jclouds.s3.domain.ObjectMetadata.StorageClass;
 import static org.jclouds.s3.options.ListBucketOptions.Builder.withPrefix;
 import static org.testng.Assert.assertEquals;
 
@@ -35,8 +34,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
-import org.jclouds.aws.s3.blobstore.AWSS3BlobStore;
-import org.jclouds.aws.s3.blobstore.options.AWSS3PutOptions;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
@@ -50,7 +47,7 @@ import org.jclouds.s3.domain.ListBucketResponse;
 import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.s3.domain.ObjectMetadataBuilder;
 import org.jclouds.s3.domain.S3Object;
-import org.jclouds.s3.options.ListBucketOptions;
+import org.jclouds.s3.domain.ObjectMetadata.StorageClass;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
