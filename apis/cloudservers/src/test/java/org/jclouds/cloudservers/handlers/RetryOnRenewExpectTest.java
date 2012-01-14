@@ -67,6 +67,19 @@ public class RetryOnRenewExpectTest extends BaseCloudServersRestClientExpectTest
                .put("Content-Length", "0")
                .build()).build();
       
+      HttpRequest deleteImage = HttpRequest.builder().method("DELETE").endpoint(
+               URI.create("https://servers.api.rackspacecloud.com/v1.0/413274/images/11?now=1257695648897")).headers(
+               ImmutableMultimap.<String, String> builder()
+               .put("X-Auth-Token", authToken).build()).build();
+
+      HttpResponse pleaseRenew = HttpResponse.builder().statusCode(401)
+               .message("HTTP/1.1 401 Unauthorized")
+               .payload(Payloads.newStringPayload("[{\"unauthorized\":{\"message\":\"Invalid authentication token.  Please renew.\",\"code\":401}}]"))
+               .build();
+      
+      // second auth uses same creds as initial one
+      HttpRequest redoAuth = initialAuth;
+      
       HttpResponse responseWithUrls2 = HttpResponse.builder().statusCode(204).message("HTTP/1.1 204 No Content")
                .headers(ImmutableMultimap.<String,String>builder()
                .put("Server", "Apache/2.2.3 (Red Hat)")
@@ -82,17 +95,7 @@ public class RetryOnRenewExpectTest extends BaseCloudServersRestClientExpectTest
                .put("X-CDN-Management-Url", "https://cdn1.clouddrive.com/v1/MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22")
                .put("Content-Length", "0")
                .build()).build();
-                     
-      HttpRequest deleteImage = HttpRequest.builder().method("DELETE").endpoint(
-               URI.create("https://servers.api.rackspacecloud.com/v1.0/413274/images/11?now=1257695648897")).headers(
-               ImmutableMultimap.<String, String> builder()
-               .put("X-Auth-Token", authToken).build()).build();
-
-      HttpResponse pleaseRenew = HttpResponse.builder().statusCode(401)
-               .message("HTTP/1.1 401 Unauthorized")
-               .payload(Payloads.newStringPayload("[{\"unauthorized\":{\"message\":\"Invalid authentication token.  Please renew.\",\"code\":401}}]"))
-               .build();
-
+            
       HttpRequest deleteImage2 = HttpRequest.builder().method("DELETE").endpoint(
                URI.create("https://servers.api.rackspacecloud.com/v1.0/413274/images/11?now=1257695648897")).headers(
                ImmutableMultimap.<String, String> builder()
@@ -101,7 +104,7 @@ public class RetryOnRenewExpectTest extends BaseCloudServersRestClientExpectTest
       HttpResponse imageDeleted = HttpResponse.builder().statusCode(204).message("HTTP/1.1 204 No Content").build();
 
       CloudServersClient clientWhenImageExists = orderedRequestsSendResponses(initialAuth, responseWithUrls,
-                deleteImage, pleaseRenew, initialAuth, responseWithUrls2, deleteImage2, imageDeleted);
+                deleteImage, pleaseRenew, redoAuth, responseWithUrls2, deleteImage2, imageDeleted);
       
       assert clientWhenImageExists.deleteImage(11);
    }
