@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import javax.annotation.Resource;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
@@ -48,12 +49,8 @@ public class RetryOnRenew implements HttpRetryHandler {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   // This doesn't work yet
-//   @Inject
-//   Supplier<AuthenticationResponse> providedAuthenticationResponseCache;
-
    @Inject
-   LoadingCache<String,AuthenticationResponse> authenticationResponseCache;
+   LoadingCache<Credentials, AuthenticationResponse> authenticationResponseCache;
 
    @Override
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
@@ -63,8 +60,8 @@ public class RetryOnRenew implements HttpRetryHandler {
             case 401:
                // Do not retry on 401 from authentication request
                Multimap<String, String> headers = command.getCurrentRequest().getHeaders();
-               if (headers != null && headers.containsKey(AuthHeaders.AUTH_USER) && headers.containsKey(AuthHeaders.AUTH_KEY) &&
-                     !headers.containsKey(AuthHeaders.AUTH_TOKEN)) {
+               if (headers != null && headers.containsKey(AuthHeaders.AUTH_USER)
+                        && headers.containsKey(AuthHeaders.AUTH_KEY) && !headers.containsKey(AuthHeaders.AUTH_TOKEN)) {
                   retry = false;
                } else {
                   String content = parsePayloadOrNull(response);
@@ -79,12 +76,12 @@ public class RetryOnRenew implements HttpRetryHandler {
                break;
          }
          return retry;
-         
+
       } finally {
          releasePayload(response);
       }
    }
-   
+
    String parsePayloadOrNull(HttpResponse response) {
       if (response.getPayload() != null) {
          try {

@@ -29,14 +29,17 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier;
+import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
 import org.jclouds.date.TimeStamp;
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.location.Provider;
 import org.jclouds.openstack.Authentication;
 import org.jclouds.openstack.OpenStackAuthAsyncClient;
 import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
 import org.jclouds.rest.AsyncClientFactory;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
@@ -46,6 +49,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * Configures the Rackspace authentication service connection, including logging and http transport.
@@ -57,6 +61,8 @@ public class OpenStackAuthenticationModule extends AbstractModule {
 
    @Override
    protected void configure() {
+      bind(new TypeLiteral<Function<Credentials, AuthenticationResponse>>() {
+      }).to(GetAuthenticationResponse.class);
    }
 
    /**
@@ -74,68 +80,57 @@ public class OpenStackAuthenticationModule extends AbstractModule {
       };
    }
 
+   @Provides
+   @Provider
+   protected Credentials provideAuthenticationCredentials(@Named(Constants.PROPERTY_IDENTITY) String user,
+            @Named(Constants.PROPERTY_CREDENTIAL) String key) {
+      return new Credentials(user, key);
+   }
+
    @Singleton
-   public static class GetAuthenticationResponse implements Supplier<AuthenticationResponse> {
-      protected final OpenStackAuthAsyncClient client;
-      protected final String user;
-      protected final String key;
+   public static class GetAuthenticationResponse extends
+            RetryOnTimeOutExceptionFunction<Credentials, AuthenticationResponse> {
 
       @Inject
-      public GetAuthenticationResponse(AsyncClientFactory factory, @Named(Constants.PROPERTY_IDENTITY) String user,
-               @Named(Constants.PROPERTY_CREDENTIAL) String key) {
-         this.client = factory.create(OpenStackAuthAsyncClient.class);
-         this.user = user;
-         this.key = key;
-      }
+      public GetAuthenticationResponse(final AsyncClientFactory factory) {
+         super(new Function<Credentials, AuthenticationResponse>() {
 
-      @Override
-      public AuthenticationResponse get() {
-         try {
-            Future<AuthenticationResponse> response = authenticate();
-            return response.get(30, TimeUnit.SECONDS);
-         } catch (Exception e) {
-            Throwables.propagate(e);
-            assert false : e;
-            return null;
-         }
-      }
+            @Override
+            public AuthenticationResponse apply(Credentials input) {
+               try {
+                  Future<AuthenticationResponse> response = factory.create(OpenStackAuthAsyncClient.class)
+                           .authenticate(input.identity, input.credential);
+                  return response.get(30, TimeUnit.SECONDS);
+               } catch (Exception e) {
+                  throw Throwables.propagate(e);
+               }
+            }
+         });
 
-      protected Future<AuthenticationResponse> authenticate() {
-         return client.authenticate(user, key);
       }
-
    }
 
    @Provides
    @Singleton
-   public LoadingCache<String,AuthenticationResponse> provideAuthenticationResponseCache2(
-            final GetAuthenticationResponse getAuthenticationResponse) {
-      
-      final RetryOnTimeOutExceptionSupplier<AuthenticationResponse> delegate = 
-               new RetryOnTimeOutExceptionSupplier<AuthenticationResponse>(getAuthenticationResponse);
+   public LoadingCache<Credentials, AuthenticationResponse> provideAuthenticationResponseCache2(
+            final Function<Credentials, AuthenticationResponse> getAuthenticationResponse,
+            @Provider final Credentials creds) {
 
-      CacheLoader<String, AuthenticationResponse> cacheLoader = new CacheLoader<String, AuthenticationResponse>() {
-         @Override
-         public AuthenticationResponse load(String key) throws Exception {
-            return delegate.get();
-         }
-      };
-      
-      LoadingCache<String, AuthenticationResponse> cache = CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS)
-               .build(cacheLoader);
-      
+      LoadingCache<Credentials, AuthenticationResponse> cache = CacheBuilder.newBuilder().expireAfterWrite(23,
+               TimeUnit.HOURS).build(CacheLoader.from(getAuthenticationResponse));
+
       return cache;
    }
 
    @Provides
    @Singleton
    protected Supplier<AuthenticationResponse> provideAuthenticationResponseSupplier(
-            final LoadingCache<String,AuthenticationResponse> cache) {
+            final LoadingCache<Credentials, AuthenticationResponse> cache, @Provider final Credentials creds) {
       return new Supplier<AuthenticationResponse>() {
          @Override
          public AuthenticationResponse get() {
             try {
-               return cache.get("key");
+               return cache.get(creds);
             } catch (UncheckedExecutionException e) {
                throw Throwables.propagate(e.getCause());
             } catch (ExecutionException e) {
