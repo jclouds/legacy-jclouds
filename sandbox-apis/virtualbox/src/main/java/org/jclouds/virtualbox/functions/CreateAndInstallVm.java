@@ -18,37 +18,41 @@
  */
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
-import com.google.inject.Inject;
+
+import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
+import static org.virtualbox_4_1.LockType.Shared;
+
+import java.net.URI;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.callables.RunScriptOnNode.Factory;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.virtualbox.Preconfiguration;
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.domain.IMachineSpec;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.settings.KeyboardScancodes;
+import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import javax.annotation.Resource;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import java.net.URI;
-
-import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
-import static org.jclouds.virtualbox.util.MachineUtils.applyForMachine;
-import static org.jclouds.virtualbox.util.MachineUtils.lockSessionOnMachineAndApply;
-import static org.virtualbox_4_1.LockType.Shared;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
+import com.google.inject.Inject;
 
 @Singleton
 public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
@@ -67,12 +71,21 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
    private final Supplier<NodeMetadata> host;
 
    private final Function<IMachine, SshClient> sshClientForIMachine;
+   
+   private final MachineUtils machineUtils;
+
 
    @Inject
-   public CreateAndInstallVm(Supplier<VirtualBoxManager> manager,
-                             CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
-                             Predicate<SshClient> sshResponds, Function<IMachine, SshClient> sshClientForIMachine,
-                             Supplier<NodeMetadata> host, RunScriptOnNode.Factory scriptRunner, ExecutionType executionType) {
+   public CreateAndInstallVm(
+         Supplier<VirtualBoxManager> manager,
+         CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
+         ValueOfConfigurationKeyOrNull valueOfConfigurationKeyOrNull,
+         Predicate<SshClient> sshResponds,
+         Function<IMachine, SshClient> sshClientForIMachine,
+         Supplier<NodeMetadata> host, RunScriptOnNode.Factory scriptRunner,
+         @Preconfiguration Supplier<URI> preconfiguration,
+         ExecutionType executionType,
+         MachineUtils machineUtils) {
       this.manager = manager;
       this.createAndRegisterMachineFromIsoIfNotAlreadyExists = CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
       this.sshResponds = sshResponds;
@@ -80,6 +93,7 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
       this.scriptRunner = scriptRunner;
       this.host = host;
       this.executionType = executionType;
+      this.machineUtils = machineUtils;
    }
 
    @Override
@@ -103,26 +117,36 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
       SshClient client = sshClientForIMachine.apply(vm);
 
       logger.debug(">> awaiting installation to finish node(%s)", vmName);
-      checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh", vmName);
 
-      logger.debug("<< installation of image complete. Powering down node(%s)", vmName);
-      lockSessionOnMachineAndApply(manager.get(), Shared, vmName, new Function<ISession, Void>() {
+      checkState(sshResponds.apply(client),
+            "timed out waiting for guest %s to be accessible via ssh", vmName);
 
-         @Override
-         public Void apply(ISession session) {
-            IProgress powerDownProgress = session.getConsole().powerDown();
-            powerDownProgress.waitForCompletion(-1);
-            return null;
-         }
+      logger.debug("<< installation of image complete. Powering down node(%s)",
+            vmName);
+      
+      lockSessionOnMachineAndApply(manager.get(), Shared, vmName,
+            new Function<ISession, Void>() {
 
-      });
+               @Override
+               public Void apply(ISession session) {
+                  IProgress powerDownProgress = session.getConsole()
+                        .powerDown();
+                  powerDownProgress.waitForCompletion(-1);
+                  return null;
+               }
+
+            });
+      
       return vm;
    }
 
    private void ensureMachineIsLaunched(String vmName) {
+      machineUtils.mutateMachine(vmName, new LaunchMachineIfNotAlreadyRunning(manager.get(), executionType, ""));
+      /*
       applyForMachine(manager.get(), vmName,
             new LaunchMachineIfNotAlreadyRunning(manager.get(), executionType,
                   ""));
+      */
    }
 
    private void sendKeyboardSequence(String keyboardSequence, String vmName) {

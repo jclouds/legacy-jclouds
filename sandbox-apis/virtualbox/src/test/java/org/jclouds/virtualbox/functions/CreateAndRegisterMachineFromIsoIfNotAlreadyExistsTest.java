@@ -99,7 +99,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       replay(manager, createdMachine, vBox, session);
 
-      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Suppliers.ofInstance(manager), "/tmp/workingDir").apply(machineSpec);
+      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Suppliers.ofInstance(manager, machineUtils), "/tmp/workingDir").apply(launchSpecification);
 
       verify(manager, createdMachine, vBox, session);
    }

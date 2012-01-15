@@ -97,6 +97,7 @@ public class MachineUtils {
       }
    }
 
+   /*
    public static <T> T applyForMachine(VirtualBoxManager manager,
          final String machineId, final Function<IMachine, T> function) {
       final IMachine immutableMachine = manager.getVBox()
@@ -131,6 +132,7 @@ public class MachineUtils {
     *           the function to execute
     * @return the result from applying the function to the machine.
     */
+   /*
    public static <T> T lockMachineAndApply(VirtualBoxManager manager,
          final LockType type, final String machineId,
          final Function<IMachine, T> function) {
@@ -167,6 +169,7 @@ public class MachineUtils {
     *           the function to execute
     * @return the result from applying the function to the session.
     */
+   /*
    public static <T> T lockSessionOnMachineAndApply(VirtualBoxManager manager,
          LockType type, String machineId, Function<ISession, T> function) {
       try {
@@ -202,6 +205,7 @@ public class MachineUtils {
     *           the function to execute
     * @return the result from applying the function to the session.
     */
+   /*
    public static <T> T lockMachineAndApplyOrReturnNullIfNotRegistered(
          VirtualBoxManager manager, LockType type, String machineId,
          Function<IMachine, T> function) {
@@ -233,7 +237,7 @@ public class MachineUtils {
     * @param function
     *           the function to execute
     * @return the result from applying the function to the machine.
-    */
+    *//*
    public static <T> T unlockMachineAndApply(VirtualBoxManager manager,
          final String machineId, final Function<IMachine, T> function) {
       ISession session = manager.getSessionObject();
@@ -272,6 +276,7 @@ public class MachineUtils {
     *           the function to execute
     * @return the result from applying the function to the session.
     */
+   /*
    public static <T> T unlockMachineAndApplyOrReturnNullIfNotRegistered(
          VirtualBoxManager manager, String machineId,
          Function<IMachine, T> function) {
@@ -286,4 +291,5 @@ public class MachineUtils {
          return null;
       }
    }
+   */
 }

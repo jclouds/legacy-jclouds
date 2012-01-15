@@ -19,9 +19,6 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static org.jclouds.virtualbox.util.MachineUtils.lockMachineAndApply;
-import static org.virtualbox_4_1.LockType.Write;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,6 +27,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.virtualbox.domain.HardDisk;
+import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.DeviceType;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IMedium;
@@ -51,11 +49,14 @@ import com.google.common.collect.Iterables;
 public class CreateMediumIfNotAlreadyExists implements Function<HardDisk, IMedium> {
 
    private final Supplier<VirtualBoxManager> manager;
+   private final MachineUtils machineUtils;
+
    private final boolean overwriteIfExists;
 
    @Inject
-   public CreateMediumIfNotAlreadyExists(Supplier<VirtualBoxManager> manager, boolean overwriteIfExists) {
+   public CreateMediumIfNotAlreadyExists(Supplier<VirtualBoxManager> manager, MachineUtils machineUtils, boolean overwriteIfExists) {
       this.manager = manager;
+      this.machineUtils = machineUtils;
       this.overwriteIfExists = overwriteIfExists;
    }
 
@@ -95,8 +96,13 @@ public class CreateMediumIfNotAlreadyExists implements Function<HardDisk, IMediu
                         return in.getMedium().getId().equals(medium.getId());
                      }
                   });
+         machineUtils.mutateMachine(immutableMachine.getName(), new DetachDistroMediumFromMachine(
+               mediumAttachment.getController(), mediumAttachment.getPort(), mediumAttachment.getDevice()));
+   /*
+         
          lockMachineAndApply(manager.get(), Write, immutableMachine.getName(), new DetachDistroMediumFromMachine(
                   mediumAttachment.getController(), mediumAttachment.getPort(), mediumAttachment.getDevice()));
+                  */
          deleteMediumAndBlockUntilComplete(medium);
       } else {
          throw e;

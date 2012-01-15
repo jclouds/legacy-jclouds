@@ -42,7 +42,7 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
    public void testCreateMedium() throws Exception {
       String path = System.getProperty("user.home") + "/jclouds-virtualbox-test/test-medium-1.vdi";
       HardDisk hardDisk = HardDisk.builder().diskpath(path).controllerPort(0).deviceSlot(0).build();
-      IMedium iMedium = new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
+      IMedium iMedium = new CreateMediumIfNotAlreadyExists(manager, machineUtils, true).apply(hardDisk);
       manager.get().getVBox().findMedium(path, DeviceType.HardDisk);
       try {
          assertFileCanBeDeleted(path);
@@ -56,7 +56,7 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
       String path = "test-medium-2.vdi";
       HardDisk hardDisk = HardDisk.builder().diskpath(path).controllerPort(0).deviceSlot(0).build();
       try {
-         new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
+         new CreateMediumIfNotAlreadyExists(manager, machineUtils, true).apply(hardDisk);
          fail();
       } catch (VBoxException e) {
          ErrorCode errorCode = ErrorCode.valueOf(e);
@@ -68,8 +68,8 @@ public class CreateMediumIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClient
    public void testCreateSameMediumTwiceWhenUsingOverwrite() throws Exception {
       String path = System.getProperty("user.home") + "/jclouds-virtualbox-test/test-medium-3.vdi";
       HardDisk hardDisk = HardDisk.builder().diskpath(path).controllerPort(0).deviceSlot(0).build();
-      IMedium iMedium = new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
-      iMedium = new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
+      IMedium iMedium = new CreateMediumIfNotAlreadyExists(manager, machineUtils, true).apply(hardDisk);
+      iMedium = new CreateMediumIfNotAlreadyExists(manager, machineUtils, true).apply(hardDisk);
       manager.get().getVBox().findMedium(path, DeviceType.HardDisk);
       try {
          assertFileCanBeDeleted(path);
