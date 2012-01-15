@@ -149,18 +149,23 @@ public class RunScriptData {
   
    public static String aptInstall = "apt-get install -f -y -qq --force-yes";
 
+   public static String aptInstallLazyUpgrade(String packageName) {
+      return aptInstall + " " + packageName + "|| (" + "apt-get update -qq&&" + "apt-get upgrade -y -qq" + ")&&"
+               + aptInstall + " " + packageName;
+   }
+
    public static final Statement APT_RUN_SCRIPT = newStatementList(//
+         exec("which nslookup >&- 2>&-|| " + aptInstallLazyUpgrade("dnsutils")),//
          normalizeHostAndDNSConfig(),//
-         exec("which curl >&- 2>&-|| " + aptInstall + " curl"),//
-         exec("which nslookup >&- 2>&-|| " + aptInstall + " dnsutils"),//
+         exec("which curl >&- 2>&-|| " + aptInstallLazyUpgrade("curl")),//
          JDK7_INSTALL_TGZ);
 
    public static String yumInstall = "yum --nogpgcheck -y install";
 
    public static final Statement YUM_RUN_SCRIPT = newStatementList(//
+         exec("which nslookup >&- 2>&-|| " + yumInstall + " bind-utils"),//
          normalizeHostAndDNSConfig(),//
          exec("which curl >&- 2>&-|| " + yumInstall + " curl"),//
-         exec("which nslookup >&- 2>&-|| " + yumInstall + " bind-utils"),//
          JDK7_INSTALL_TGZ);
 
    public static final Statement ZYPPER_RUN_SCRIPT = newStatementList(//
