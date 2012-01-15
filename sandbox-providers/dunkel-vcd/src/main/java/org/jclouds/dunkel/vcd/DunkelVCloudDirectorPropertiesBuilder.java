@@ -18,6 +18,7 @@
  */
 package org.jclouds.dunkel.vcd;
 
+import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
@@ -35,6 +36,7 @@ public class DunkelVCloudDirectorPropertiesBuilder extends VCloudPropertiesBuild
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ISO3166_CODES, "DE");
+      properties.setProperty(PROPERTY_BUILD_VERSION, "1.0.1.356485");
       properties.setProperty(PROPERTY_ENDPOINT, "https://vcd.dunkel.de/api");
       properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, ".*-intranet");
       return properties;

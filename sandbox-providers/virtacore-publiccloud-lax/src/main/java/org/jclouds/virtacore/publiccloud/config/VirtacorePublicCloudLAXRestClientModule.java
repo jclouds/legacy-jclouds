@@ -16,21 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.virtacore.vcloudexpress;
+package org.jclouds.virtacore.publiccloud.config;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
-import org.jclouds.virtacore.vcloudexpress.VirtacoreVCloudExpressProviderMetadata;
-import org.testng.annotations.Test;
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.vcloud.config.VCloudRestClientModule;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "VirtacoreVCloudExpressProviderTest")
-public class VirtacoreVCloudExpressProviderTest extends BaseProviderMetadataTest {
+@RequiresHttp
+@ConfiguresRestClient
+public class VirtacorePublicCloudLAXRestClientModule extends VCloudRestClientModule {
 
-   public VirtacoreVCloudExpressProviderTest() {
-      super(new VirtacoreVCloudExpressProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+   @Override
+   protected void configure() {
+      super.configure();
    }
+
 }

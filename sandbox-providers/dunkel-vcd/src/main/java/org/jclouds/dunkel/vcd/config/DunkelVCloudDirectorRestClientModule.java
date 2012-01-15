@@ -21,8 +21,6 @@ package org.jclouds.dunkel.vcd.config;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.vcloud.config.VCloudRestClientModule;
-import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
-import org.jclouds.dunkel.vcd.filters.SetVCloudTokenCookieAndAuthorizationHeader;
 
 /**
  * 
@@ -31,11 +29,5 @@ import org.jclouds.dunkel.vcd.filters.SetVCloudTokenCookieAndAuthorizationHeader
 @RequiresHttp
 @ConfiguresRestClient
 public class DunkelVCloudDirectorRestClientModule extends VCloudRestClientModule {
-
-   @Override
-   protected void configure() {
-      super.configure();
-      bind(SetVCloudTokenCookie.class).to(SetVCloudTokenCookieAndAuthorizationHeader.class);
-   }
 
 }

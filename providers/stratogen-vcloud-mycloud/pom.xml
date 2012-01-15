@@ -36,10 +36,12 @@
     <properties>
         <test.stratogen-vcloud-mycloud.endpoint>https://vcd.stratogen.net/api</test.stratogen-vcloud-mycloud.endpoint>
         <test.stratogen-vcloud-mycloud.api-version>1.0</test.stratogen-vcloud-mycloud.api-version>
-        <test.stratogen-vcloud-mycloud.build-version></test.stratogen-vcloud-mycloud.build-version>
+        <test.stratogen-vcloud-mycloud.build-version>1.5.0.464915</test.stratogen-vcloud-mycloud.build-version>
         <test.stratogen-vcloud-mycloud.identity>FIXME_IDENTITY</test.stratogen-vcloud-mycloud.identity>
         <test.stratogen-vcloud-mycloud.credential>FIXME_CREDENTIAL</test.stratogen-vcloud-mycloud.credential>
         <test.stratogen-vcloud-mycloud.image-id></test.stratogen-vcloud-mycloud.image-id>
+        <test.stratogen-vcloud-mycloud.image.login-user></test.stratogen-vcloud-mycloud.image.login-user>
+        <test.stratogen-vcloud-mycloud.image.authenticate-sudo></test.stratogen-vcloud-mycloud.image.authenticate-sudo>
     </properties>
 
     <dependencies>
@@ -106,6 +108,8 @@
                                         <test.stratogen-vcloud-mycloud.identity>${test.stratogen-vcloud-mycloud.identity}</test.stratogen-vcloud-mycloud.identity>
                                         <test.stratogen-vcloud-mycloud.credential>${test.stratogen-vcloud-mycloud.credential}</test.stratogen-vcloud-mycloud.credential>
                                         <test.stratogen-vcloud-mycloud.image-id>${test.stratogen-vcloud-mycloud.image-id}</test.stratogen-vcloud-mycloud.image-id>
+                                        <test.stratogen-vcloud-mycloud.image.login-user>${test.stratogen-vcloud-mycloud.image.login-user}</test.stratogen-vcloud-mycloud.image.login-user>
+                                        <test.stratogen-vcloud-mycloud.image.authenticate-sudo>${test.stratogen-vcloud-mycloud.image.authenticate-sudo}</test.stratogen-vcloud-mycloud.image.authenticate-sudo>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>

@@ -16,7 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.stratogen.vcloud.mycloud.config;
+package org.jclouds.virtacore.publiccloud.config;
+
+import static org.jclouds.compute.domain.OsFamily.RHEL;
 
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
@@ -27,15 +29,15 @@ import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
 import com.google.inject.Injector;
 
 /**
- * per docs, we are to use pool mode.
  * 
  * @author Adrian Cole
  */
-public class StratoGenVCloudMyCloudComputeServiceContextModule extends VCloudComputeServiceContextModule {
-
+public class VirtacorePublicCloudLAXComputeServiceContextModule extends VCloudComputeServiceContextModule {
+   
+   // CIM ostype does not include version info
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.imageNameMatches("Ubuntu server 11.04 64bit no GUI (base)");
+      return template.osFamily(RHEL).os64Bit(true);
    }
    
    @Override

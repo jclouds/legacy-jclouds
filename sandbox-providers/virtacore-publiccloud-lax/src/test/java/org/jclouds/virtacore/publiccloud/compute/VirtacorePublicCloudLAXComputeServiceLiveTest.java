@@ -16,23 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.virtacore.vcloudexpress.config;
+package org.jclouds.virtacore.publiccloud.compute;
 
-import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
-import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
-import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
-
-import com.google.inject.Injector;
+import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
+import org.testng.annotations.Test;
 
 /**
  * 
+ * 
  * @author Adrian Cole
  */
-public class VirtacoreVCloudExpressComputeServiceContextModule extends VCloudComputeServiceContextModule {
-
-   @Override
-   protected TemplateOptions provideTemplateOptions(Injector injector, TemplateOptions options) {
-      return options.as(VCloudTemplateOptions.class).ipAddressAllocationMode(IpAddressAllocationMode.POOL);
+@Test(groups = "live", enabled = true, singleThreaded = true)
+public class VirtacorePublicCloudLAXComputeServiceLiveTest extends VCloudComputeServiceLiveTest {
+   public VirtacorePublicCloudLAXComputeServiceLiveTest() {
+      provider = "virtacore-publiccloud-lax";
    }
+
 }

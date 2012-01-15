@@ -28,17 +28,17 @@
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
-    <artifactId>virtacore-vcloudexpress</artifactId>
-    <name>jclouds Virtacore vCloud Express provider</name>
-    <description>vCloud implementation targeted to Virtacore</description>
+    <artifactId>virtacore-publiccloud-lax</artifactId>
+    <name>jclouds Virtacore Public Cloud LAX provider</name>
+    <description>vCloud implementation targeted to Virtacore's LAX datacenter</description>
 
     <properties>
-        <test.virtacore-vcloudexpress.endpoint>https://vcloud.virtacore.com/api</test.virtacore-vcloudexpress.endpoint>
-        <test.virtacore-vcloudexpress.api-version>1.0</test.virtacore-vcloudexpress.api-version>
-        <test.virtacore-vcloudexpress.build-version></test.virtacore-vcloudexpress.build-version>
-        <test.virtacore-vcloudexpress.identity>FIXME_IDENTITY</test.virtacore-vcloudexpress.identity>
-        <test.virtacore-vcloudexpress.credential>FIXME_CREDENTIAL</test.virtacore-vcloudexpress.credential>
-        <test.virtacore-vcloudexpress.image-id></test.virtacore-vcloudexpress.image-id>
+        <test.virtacore-publiccloud-lax.endpoint>https://cloud.lax.virtacore.com/api/</test.virtacore-publiccloud-lax.endpoint>
+        <test.virtacore-publiccloud-lax.api-version>1.0</test.virtacore-publiccloud-lax.api-version>
+        <test.virtacore-publiccloud-lax.build-version>1.5.0.464915</test.virtacore-publiccloud-lax.build-version>
+        <test.virtacore-publiccloud-lax.identity>FIXME_IDENTITY</test.virtacore-publiccloud-lax.identity>
+        <test.virtacore-publiccloud-lax.credential>FIXME_CREDENTIAL</test.virtacore-publiccloud-lax.credential>
+        <test.virtacore-publiccloud-lax.image-id></test.virtacore-publiccloud-lax.image-id>
     </properties>
 
     <dependencies>
@@ -99,12 +99,15 @@
                                 </goals>
                                 <configuration>
                                     <systemPropertyVariables>
-                                        <test.virtacore-vcloudexpress.endpoint>${test.virtacore-vcloudexpress.endpoint}</test.virtacore-vcloudexpress.endpoint>
-                                        <test.virtacore-vcloudexpress.api-version>${test.virtacore-vcloudexpress.api-version}</test.virtacore-vcloudexpress.api-version>
-                                        <test.virtacore-vcloudexpress.build-version>${test.virtacore-vcloudexpress.build-version}</test.virtacore-vcloudexpress.build-version>
-                                        <test.virtacore-vcloudexpress.identity>${test.virtacore-vcloudexpress.identity}</test.virtacore-vcloudexpress.identity>
-                                        <test.virtacore-vcloudexpress.credential>${test.virtacore-vcloudexpress.credential}</test.virtacore-vcloudexpress.credential>
-                                        <test.virtacore-vcloudexpress.image-id>${test.virtacore-vcloudexpress.image-id}</test.virtacore-vcloudexpress.image-id>
+                                        <test.virtacore-publiccloud-lax.endpoint>${test.virtacore-publiccloud-lax.endpoint}</test.virtacore-publiccloud-lax.endpoint>
+                                        <test.virtacore-publiccloud-lax.api-version>${test.virtacore-publiccloud-lax.api-version}</test.virtacore-publiccloud-lax.api-version>
+                                        <test.virtacore-publiccloud-lax.build-version>${test.virtacore-publiccloud-lax.build-version}</test.virtacore-publiccloud-lax.build-version>
+                                        <test.virtacore-publiccloud-lax.identity>${test.virtacore-publiccloud-lax.identity}</test.virtacore-publiccloud-lax.identity>
+                                        <test.virtacore-publiccloud-lax.credential>${test.virtacore-publiccloud-lax.credential}</test.virtacore-publiccloud-lax.credential>
+                                        <test.virtacore-publiccloud-lax.image-id>${test.virtacore-publiccloud-lax.image-id}</test.virtacore-publiccloud-lax.image-id>
+                                        <test.virtacore-publiccloud-lax.image-id>${test.virtacore-publiccloud-lax.image-id}</test.virtacore-publiccloud-lax.image-id>
+                                        <test.virtacore-publiccloud-lax.image.login-user>${test.virtacore-publiccloud-lax.image.login-user}</test.virtacore-publiccloud-lax.image.login-user>
+                                        <test.virtacore-publiccloud-lax.image.authenticate-sudo>${test.virtacore-publiccloud-lax.image.authenticate-sudo}</test.virtacore-publiccloud-lax.image.authenticate-sudo>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>
@@ -116,5 +119,20 @@
     </profiles>
 
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.jclouds.virtacore.publiccloud.*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
 

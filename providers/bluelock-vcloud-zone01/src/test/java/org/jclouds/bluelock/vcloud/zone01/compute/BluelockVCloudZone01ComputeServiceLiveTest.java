@@ -33,11 +33,6 @@ public class BluelockVCloudZone01ComputeServiceLiveTest extends VCloudComputeSer
    public BluelockVCloudZone01ComputeServiceLiveTest() {
       provider = "bluelock-vcloud-zone01";
    }
-
-   @Override
-   public void setServiceDefaults() {
-      group = "director";
-   }
    
    protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
       // hostname is not completely predictable based on node metadata

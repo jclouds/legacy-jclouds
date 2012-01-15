@@ -18,6 +18,7 @@
  */
 package org.jclouds.stratogen.vcloud.mycloud;
 
+import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
@@ -37,6 +38,7 @@ public class StratoGenVCloudMyCloudPropertiesBuilder extends VCloudPropertiesBui
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ISO3166_CODES, "GB");
       properties.setProperty(PROPERTY_ENDPOINT, "https://vcd.stratogen.net/api");
+      properties.setProperty(PROPERTY_BUILD_VERSION, "1.5.0.464915");
       properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "Direct Internet");
       return properties;
    }

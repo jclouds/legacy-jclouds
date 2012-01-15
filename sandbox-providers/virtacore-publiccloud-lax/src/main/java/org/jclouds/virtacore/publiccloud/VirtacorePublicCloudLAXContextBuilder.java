@@ -16,14 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.virtacore.vcloudexpress;
+package org.jclouds.virtacore.publiccloud;
 
 import java.util.List;
 import java.util.Properties;
 
 import org.jclouds.vcloud.VCloudContextBuilder;
-import org.jclouds.virtacore.vcloudexpress.config.VirtacoreVCloudExpressComputeServiceContextModule;
-import org.jclouds.virtacore.vcloudexpress.config.VirtacoreVCloudExpressRestClientModule;
+import org.jclouds.virtacore.publiccloud.config.VirtacorePublicCloudLAXComputeServiceContextModule;
+import org.jclouds.virtacore.publiccloud.config.VirtacorePublicCloudLAXRestClientModule;
 
 import com.google.inject.Module;
 
@@ -32,20 +32,20 @@ import com.google.inject.Module;
  * @author Adrian Cole
  *
  */
-public class VirtacoreVCloudExpressContextBuilder extends VCloudContextBuilder {
+public class VirtacorePublicCloudLAXContextBuilder extends VCloudContextBuilder {
 
-   public VirtacoreVCloudExpressContextBuilder(Properties props) {
+   public VirtacorePublicCloudLAXContextBuilder(Properties props) {
       super(props);
    }
 
    @Override
    protected void addContextModule(List<Module> modules) {
-      modules.add(new VirtacoreVCloudExpressComputeServiceContextModule());
+      modules.add(new VirtacorePublicCloudLAXComputeServiceContextModule());
    }
 
    @Override
    protected void addClientModule(List<Module> modules) {
-      modules.add(new VirtacoreVCloudExpressRestClientModule());
+      modules.add(new VirtacorePublicCloudLAXRestClientModule());
    }
 
 }

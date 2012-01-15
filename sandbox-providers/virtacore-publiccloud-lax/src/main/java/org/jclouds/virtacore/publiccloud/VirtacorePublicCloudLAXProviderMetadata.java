@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.virtacore.vcloudexpress;
+package org.jclouds.virtacore.publiccloud;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -27,18 +27,18 @@ import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for Virtacore vCloud Express
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Virtacore Public Cloud LAX
  * 
  * @author Adrian Cole
  */
-public class VirtacoreVCloudExpressProviderMetadata extends BaseProviderMetadata {
+public class VirtacorePublicCloudLAXProviderMetadata extends BaseProviderMetadata {
 
    /**
     * {@inheritDoc}
     */
    @Override
    public String getId() {
-      return "virtacore-vcloudexpress";
+      return "virtacore-publiccloud-lax";
    }
 
    /**
@@ -54,7 +54,7 @@ public class VirtacoreVCloudExpressProviderMetadata extends BaseProviderMetadata
     */
    @Override
    public String getName() {
-      return "Virtacore vCloud Express";
+      return "Virtacore Public Cloud LAX";
    }
 
    /**
@@ -94,7 +94,7 @@ public class VirtacoreVCloudExpressProviderMetadata extends BaseProviderMetadata
     */
    @Override
    public URI getApiDocumentation() {
-      return URI.create("http://kb.virtacore.com/categories/vCloud+Express/");
+      return URI.create("http://kb.virtacore.com/questions/100/Does+the+Virtacore+Public+Cloud+have+an+API%3F");
    }
 
    /**
@@ -102,7 +102,7 @@ public class VirtacoreVCloudExpressProviderMetadata extends BaseProviderMetadata
     */
    @Override
    public Set<String> getLinkedServices() {
-      return ImmutableSet.of("virtacore-vcloudexpress");
+      return ImmutableSet.of("virtacore-publiccloud-lax", "virtacore-publiccloud-iad");
    }
 
    /**
@@ -110,7 +110,7 @@ public class VirtacoreVCloudExpressProviderMetadata extends BaseProviderMetadata
     */
    @Override
    public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-VA","US-CA");
+      return ImmutableSet.of("US-CA");
    }
 
 }

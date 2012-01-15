@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.virtacore.vcloudexpress.compute;
+package org.jclouds.virtacore.publiccloud.compute;
 
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
@@ -31,6 +31,7 @@ import org.jclouds.compute.domain.Template;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -38,42 +39,45 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class VirtacoreVCloudExpressTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
+public class VirtacorePublicCloudLAXTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
-   public VirtacoreVCloudExpressTemplateBuilderLiveTest() {
-      provider = "virtacore-vcloudexpress";
+   public VirtacorePublicCloudLAXTemplateBuilderLiveTest() {
+      provider = "virtacore-publiccloud-lax";
    }
 
    @Override
    protected Predicate<OsFamilyVersion64Bit> defineUnsupportedOperatingSystems() {
-      return new Predicate<OsFamilyVersion64Bit>() {
+      return Predicates.not(new Predicate<OsFamilyVersion64Bit>() {
 
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
-            case UBUNTU:
-               return !input.version.equals("");
-            case RHEL:
-               return !input.version.equals("");
-            default:
-               return true;
+               case RHEL:
+                  return input.version.equals("");
+               case SUSE:
+                  // vCloud Connector
+                  return input.version.equals("") && input.is64Bit;
+               default:
+                  return false;
             }
          }
 
-      };
+      });
    }
 
+   // NOTE: almost all virtacore templates are dual-network
    @Override
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
+      assertEquals(defaultTemplate.getImage().getName(), "RHEL 5.6 64bit");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.RHEL);
+      assertEquals(getCores(defaultTemplate.getHardware()), 2.0d);
    }
 
    @Override
    protected Set<String> getIso3166Codes() {
-      return ImmutableSet.<String> of("US-VA", "US-CA");
+      return ImmutableSet.<String> of("US-CA");
    }
 }

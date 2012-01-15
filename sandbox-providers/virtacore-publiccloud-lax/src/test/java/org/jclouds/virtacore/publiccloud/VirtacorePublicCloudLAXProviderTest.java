@@ -16,26 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.virtacore.vcloudexpress.config;
+package org.jclouds.virtacore.publiccloud;
 
-import org.jclouds.http.RequiresHttp;
-import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.vcloud.config.VCloudRestClientModule;
-import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
-import org.jclouds.virtacore.vcloudexpress.filters.SetVCloudTokenCookieAndAuthorizationHeader;
+import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.virtacore.publiccloud.VirtacorePublicCloudLAXProviderMetadata;
+import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@RequiresHttp
-@ConfiguresRestClient
-public class VirtacoreVCloudExpressRestClientModule extends VCloudRestClientModule {
+@Test(groups = "unit", testName = "VirtacorePublicCloudLAXProviderTest")
+public class VirtacorePublicCloudLAXProviderTest extends BaseProviderMetadataTest {
 
-   @Override
-   protected void configure() {
-      super.configure();
-      bind(SetVCloudTokenCookie.class).to(SetVCloudTokenCookieAndAuthorizationHeader.class);
+   public VirtacorePublicCloudLAXProviderTest() {
+      super(new VirtacorePublicCloudLAXProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
    }
-
 }
