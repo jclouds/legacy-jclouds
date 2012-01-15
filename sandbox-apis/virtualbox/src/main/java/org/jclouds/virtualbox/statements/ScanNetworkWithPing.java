@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,9 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.virtualbox.domain;
 
-import static com.google.common.base.Preconditions.checkArgument;
+package org.jclouds.virtualbox.statements;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
@@ -26,37 +26,24 @@ import java.util.Map;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.util.Utils;
-import org.jclouds.virtualbox.functions.MacAddressToBSD;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
  * @author Andrea Turli
  */
-public class GetIPAddressFromMAC implements Statement {
+public class ScanNetworkWithPing implements Statement {
 
-   public static final Map<OsFamily, String> OS_TO_ARP = ImmutableMap
+   public static final Map<OsFamily, String> OS_TO_PING = ImmutableMap
          .of(OsFamily.UNIX,
-               "MAC={macAddress} && [[ `uname -s` = \"Darwin\" ]] && MAC={macAddressBsd}\n arp -an | grep $MAC\n",
-               OsFamily.WINDOWS, "set MAC={macAddress} arp -a | Findstr %MAC%");
+               "for i in {1..254} ; do ping -c 1 -t 1 {network}.$i & done",
+               OsFamily.WINDOWS, "TODO");
 
-   private String macAddress;
-   private String macAddressBsd; 
+   private String network;
 
-   public GetIPAddressFromMAC(String macAddress) {
-   	this(Joiner.on(":").join(Splitter.fixedLength(2).split(macAddress)).toLowerCase(),
-   	      MacAddressToBSD.INSTANCE.apply(Joiner.on(":").join(Splitter.fixedLength(2).split(macAddress)).toLowerCase()));
-   }
-   
-   public GetIPAddressFromMAC(String macAddress, String macAddressBsd) {
-      checkNotNull(macAddress, "macAddress");
-      checkArgument(macAddress.length() == 17);
-      this.macAddress = macAddress;
-      checkNotNull(macAddressBsd, "macAddressBsd");
-      this.macAddressBsd = macAddressBsd;
+   public ScanNetworkWithPing(String network) {
+      this.network = checkNotNull(network, "network");
    }
 
    @Override
@@ -66,10 +53,10 @@ public class GetIPAddressFromMAC implements Statement {
 
    @Override
    public String render(OsFamily family) {
+      network = network.substring(0, network.lastIndexOf("."));
       StringBuilder arp = new StringBuilder();
-      arp.append(Utils.replaceTokens(OS_TO_ARP.get(family), ImmutableMap.of(
-            "macAddress", macAddress, "macAddressBsd", macAddressBsd)));
+      arp.append(Utils.replaceTokens(OS_TO_PING.get(family), ImmutableMap.of("network", network)));
       return arp.toString();
    }
-   
+
 }

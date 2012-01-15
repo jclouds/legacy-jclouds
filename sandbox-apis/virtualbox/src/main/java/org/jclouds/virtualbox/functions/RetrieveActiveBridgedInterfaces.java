@@ -83,7 +83,8 @@ public class RetrieveActiveBridgedInterfaces implements Function<NodeMetadata, L
          }
       } catch (SocketException e) {
          logger.error(e, "Problem in listing network interfaces.");
-         propagate(e);
+         Throwables.propagate(e);
+         assert false;
       }
       return activeNetworkInterfaceNames;
    }
@@ -109,12 +110,6 @@ public class RetrieveActiveBridgedInterfaces implements Function<NodeMetadata, L
       return bridgedInterfaceNames;
    }
 
-   protected <T> T propagate(Exception e) {
-      Throwables.propagate(e);
-      assert false;
-      return null;
-   }
-
    private class IsActiveBridgedInterface implements Predicate<String> {
 
       private NetworkInterface networkInterface;
@@ -130,7 +125,8 @@ public class RetrieveActiveBridgedInterfaces implements Function<NodeMetadata, L
                      .isLoopback());
          } catch (SocketException e) {
             logger.error(e, "Problem in listing network interfaces.");
-            propagate(e);
+            Throwables.propagate(e);
+            assert false;
          }
          return false;
       }

@@ -55,7 +55,7 @@ public class AttachNATAdapterToMachineIfNotAlreadyExists implements Function<IMa
             networkAdapter.getNatDriver().addRedirect(ruleName, rule.getProtocol(), rule.getHost(), rule.getHostPort(),
                      rule.getGuest(), rule.getGuestPort());
          } catch (VBoxException e) {
-            if (e.getMessage().indexOf("already exists") == -1)
+            if (!e.getMessage().contains("already exists"))
                throw e;
          }
       }

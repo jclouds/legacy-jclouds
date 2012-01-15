@@ -28,10 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jclouds.virtualbox.domain.HardDisk;
-import org.jclouds.virtualbox.domain.NatAdapter;
-import org.jclouds.virtualbox.domain.StorageController;
-import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.domain.*;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
@@ -66,8 +63,7 @@ public class UnregisterMachineIfExistsAndDeleteItsMediaTest {
       VmSpec vmSpecification = VmSpec.builder().id(vmId).name(vmName).memoryMB(512).osTypeId(osTypeId)
               .controller(ideController)
               .forceOverwrite(true)
-              .cleanUpMode(CleanupMode.Full)
-              .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build()).build();      
+              .cleanUpMode(CleanupMode.Full).build();
 
       expect(manager.getVBox()).andReturn(vBox).anyTimes();
       expect(vBox.findMachine(vmName)).andReturn(registeredMachine);

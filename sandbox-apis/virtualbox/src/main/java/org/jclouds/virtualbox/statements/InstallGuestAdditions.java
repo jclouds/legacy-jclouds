@@ -16,7 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.virtualbox.domain;
+
+package org.jclouds.virtualbox.statements;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.scriptbuilder.domain.Statements.call;

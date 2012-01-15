@@ -19,7 +19,7 @@
 package org.jclouds.virtualbox.domain;
 
 import static org.jclouds.scriptbuilder.domain.Statements.interpret;
-import static org.jclouds.virtualbox.domain.Statements.exportIpAddressFromVmNamed;
+import static org.jclouds.virtualbox.statements.Statements.exportIpAddressFromVmNamed;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;

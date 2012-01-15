@@ -19,28 +19,19 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.collect.Iterables.any;
-import static com.google.common.collect.Iterables.transform;
-import static org.testng.Assert.assertTrue;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
-
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
+import com.google.common.base.CaseFormat;
+import com.google.common.base.Function;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
-import org.jclouds.virtualbox.domain.HardDisk;
-import org.jclouds.virtualbox.domain.NatAdapter;
-import org.jclouds.virtualbox.domain.StorageController;
-import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.domain.*;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -48,9 +39,16 @@ import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.StorageBus;
 
-import com.google.common.base.CaseFormat;
-import com.google.common.base.Function;
-import com.google.inject.Guice;
+import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.Set;
+
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author Andrea Turli, Mattias Holmqvist
@@ -68,11 +66,11 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
    @BeforeClass(groups = "live")
    public void setupClient() {
       super.setupClient();
-      String vmName = VIRTUALBOX_IMAGE_PREFIX 
-            + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
+      String vmName = VIRTUALBOX_IMAGE_PREFIX
+              + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
 
       HardDisk hardDisk = HardDisk.builder().diskpath(adminDisk).autoDelete(true)
-            .controllerPort(0).deviceSlot(1).build();
+              .controllerPort(0).deviceSlot(1).build();
       StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
               .attachISO(0, 0, operatingSystemIso)
               .attachHardDisk(hardDisk)
@@ -80,14 +78,26 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
       vmSpecification = VmSpec.builder().id("jclouds-image-iso-1").name(vmName).memoryMB(512).osTypeId("")
               .controller(ideController)
               .forceOverwrite(true)
-              .cleanUpMode(CleanupMode.Full)
-              .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build()).build();
+              .cleanUpMode(CleanupMode.Full).build();
       undoVm(vmSpecification);
    }
 
    public void testCreateImageMachineFromIso() throws Exception {
+      Injector injector = context.utils().injector();
+      Function<String, String> configProperties = injector.getInstance(ValueOfConfigurationKeyOrNull.class);
 
-      IMachine imageMachine = context.utils().injector().getInstance(CreateAndInstallVm.class).apply(vmSpecification);
+      IMachineSpec machineSpec = IMachineSpec.builder().vm(vmSpecification)
+              .iso(IsoSpec.builder()
+                      .sourcePath(operatingSystemIso)
+                      .installationScript(configProperties
+                              .apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE)
+                              .replace("HOSTNAME", vmSpecification.getVmName()))
+                      .preConfiguration(preconfigurationUri)
+                      .build())
+              .network(NetworkSpec.builder()
+                      .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build())
+                      .build()).build();
+      IMachine imageMachine = injector.getInstance(CreateAndInstallVm.class).apply(machineSpec);
 
       IMachineToImage iMachineToImage = new IMachineToImage(manager, map);
       Image newImage = iMachineToImage.apply(imageMachine);
@@ -107,6 +117,7 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
          }
       };
    }
+
    @Override
    @AfterClass(groups = "live")
    protected void tearDown() throws Exception {
