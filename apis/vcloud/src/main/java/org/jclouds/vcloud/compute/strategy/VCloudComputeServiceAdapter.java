@@ -92,7 +92,24 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
 
    @Override
    public Iterable<VAppTemplate> listHardwareProfiles() {
-      return templates.get();
+      return supportedTemplates();
+   }
+
+   private Iterable<VAppTemplate> supportedTemplates() {
+      return Iterables.filter(templates.get(), new Predicate<VAppTemplate>() {
+
+         @Override
+         public boolean apply(VAppTemplate from) {
+            try {
+               templateToEnvelope.apply(from);
+            } catch (IllegalArgumentException e){
+               logger.warn("Unsupported: "+ e.getMessage());
+               return false;
+            }
+            return true;
+         }
+
+      });
    }
 
    @Override
