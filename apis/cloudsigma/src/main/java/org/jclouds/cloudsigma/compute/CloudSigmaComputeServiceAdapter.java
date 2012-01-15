@@ -32,6 +32,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.cloudsigma.CloudSigmaClient;
+import org.jclouds.cloudsigma.compute.options.CloudSigmaTemplateOptions;
+import org.jclouds.cloudsigma.domain.AffinityType;
 import org.jclouds.cloudsigma.domain.Device;
 import org.jclouds.cloudsigma.domain.DriveInfo;
 import org.jclouds.cloudsigma.domain.DriveType;
@@ -69,7 +71,7 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 /**
  * defines the connection between the {@link CloudSigmaClient} implementation
  * and the jclouds {@link ComputeService}
- * 
+ *
  */
 @Singleton
 public class CloudSigmaComputeServiceAdapter implements
@@ -109,9 +111,15 @@ public class CloudSigmaComputeServiceAdapter implements
    @Override
    public NodeAndInitialCredentials<ServerInfo> createNodeWithGroupEncodedIntoName(String tag, String name, Template template) {
       long bootSize = (long) (template.getHardware().getVolumes().get(0).getSize() * 1024 * 1024 * 1024l);
-      logger.debug(">> imaging boot drive source(%s) bytes(%d)", template.getImage().getId(), bootSize);
+      AffinityType affinityType = AffinityType.HDD;
+      if (template.getOptions() instanceof CloudSigmaTemplateOptions) {
+         CloudSigmaTemplateOptions options = CloudSigmaTemplateOptions.class.cast(template.getOptions());
+         affinityType = options.getDiskDriveAffinity();
+      }
+      logger.debug(">> imaging boot drive source(%s) bytes(%d) affinityType(%s)",
+         template.getImage().getId(), bootSize, affinityType);
       DriveInfo drive = client.cloneDrive(template.getImage().getId(), template.getImage().getId(),
-            new CloneDriveOptions().size(bootSize));
+         new CloneDriveOptions().size(bootSize).affinity(affinityType));
       boolean success = driveNotClaimed.apply(drive);
       logger.debug("<< image(%s) complete(%s)", drive.getUuid(), success);
       if (!success) {
@@ -152,7 +160,7 @@ public class CloudSigmaComputeServiceAdapter implements
                }
 
             }).ids(id).ram(ram).processors(ImmutableList.of(new Processor(1, cpu)))
-                  .volumes(ImmutableList.<Volume> of(new VolumeImpl(size, true, true))).build());
+                  .volumes(ImmutableList.<Volume>of(new VolumeImpl(size, true, true))).build());
          }
       return hardware.build();
    }
