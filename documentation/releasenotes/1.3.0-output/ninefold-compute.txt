@@ -53,19 +53,19 @@
  T E S T S
 -------------------------------------------------------
 Running org.jclouds.ninefold.compute.NinefoldComputeProviderTest
-Starting test testAllContains(org.jclouds.ninefold.compute.NinefoldComputeProviderTest)
-Starting test testInRestProperties(org.jclouds.ninefold.compute.NinefoldComputeProviderTest)
 Starting test testOfTypeContains(org.jclouds.ninefold.compute.NinefoldComputeProviderTest)
 Starting test testWithId(org.jclouds.ninefold.compute.NinefoldComputeProviderTest)
-[pool-2-thread-1] Test testAllContains(org.jclouds.ninefold.compute.NinefoldComputeProviderTest) succeeded: 44ms
+Starting test testAllContains(org.jclouds.ninefold.compute.NinefoldComputeProviderTest)
+Starting test testInRestProperties(org.jclouds.ninefold.compute.NinefoldComputeProviderTest)
+[pool-2-thread-4] Test testWithId(org.jclouds.ninefold.compute.NinefoldComputeProviderTest) succeeded: 111ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testWithId(org.jclouds.ninefold.compute.NinefoldComputeProviderTest) succeeded: 33ms
+[pool-2-thread-1] Test testAllContains(org.jclouds.ninefold.compute.NinefoldComputeProviderTest) succeeded: 56ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-[pool-2-thread-3] Test testOfTypeContains(org.jclouds.ninefold.compute.NinefoldComputeProviderTest) succeeded: 40ms
+[pool-2-thread-3] Test testOfTypeContains(org.jclouds.ninefold.compute.NinefoldComputeProviderTest) succeeded: 116ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testInRestProperties(org.jclouds.ninefold.compute.NinefoldComputeProviderTest) succeeded: 68ms
+[pool-2-thread-2] Test testInRestProperties(org.jclouds.ninefold.compute.NinefoldComputeProviderTest) succeeded: 160ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.438 sec
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.81 sec
 
 Results :
 
@@ -99,68 +99,68 @@ Ran 0 tests containing 0 assertions.
 -------------------------------------------------------
 Running TestSuite
 Starting test setServiceDefaults(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
-[TestNG] Test setServiceDefaults(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 1ms
+[TestNG] Test setServiceDefaults(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
 Starting test testCompareSizes(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
-Jan 15, 2012 9:08:46 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+Jan 15, 2012 11:32:57 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
 INFO: smallest [id=105, providerId=105, name=Compute Micro PRD, processors=[[cores=1.0, speed=1200.0]], ram=384, volumes=[], supportsImage=ALWAYS_TRUE, tags=[]]
-Jan 15, 2012 9:08:46 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+Jan 15, 2012 11:32:57 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
 INFO: fastest [id=70, providerId=70, name=Compute XLarge PRD, processors=[[cores=8.0, speed=1200.0]], ram=13928, volumes=[], supportsImage=ALWAYS_TRUE, tags=[]]
-Jan 15, 2012 9:08:46 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+Jan 15, 2012 11:32:57 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
 INFO: biggest [id=70, providerId=70, name=Compute XLarge PRD, processors=[[cores=8.0, speed=1200.0]], ram=13928, volumes=[], supportsImage=ALWAYS_TRUE, tags=[]]
-[TestNG] Test testCompareSizes(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 6967ms
+[TestNG] Test testCompareSizes(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 7717ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
 Starting test testCorrectAuthException(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
-[TestNG] Test testCorrectAuthException(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 1153ms
+[TestNG] Test testCorrectAuthException(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 1143ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
 Starting test testCreateAndRunAService(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
-Jan 15, 2012 9:22:37 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << available node(8082) os(null) in 828s
+Jan 15, 2012 11:45:29 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << available node(8086) os(null) in 747s
 SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
 SLF4J: Defaulting to no-operation (NOP) logger implementation
 SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
-Jan 15, 2012 9:26:27 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << configured node(8082) with java full version "1.7.0_02-b13" and JBoss 7.0.2.Final in 216s
-Jan 15, 2012 9:26:31 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+Jan 15, 2012 11:50:48 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << configured node(8086) with java full version "1.7.0_02-b13" and JBoss 7.0.2.Final in 306s
+Jan 15, 2012 11:50:53 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
 WARNING: could not get info on ip 209.132.182.31; check freegeoip
-Jan 15, 2012 9:26:31 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of jboss7(download.jboss.org) from perpective of node(8082): 209.132.182.31
-Jan 15, 2012 9:26:34 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
-WARNING: could not get info on ip 125.7.102.138; check freegeoip
-Jan 15, 2012 9:26:34 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of jdk7(download.oracle.com) from perpective of node(8082): 125.7.102.138
-Jan 15, 2012 9:26:38 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
-WARNING: could not get info on ip 125.7.120.168; check freegeoip
-Jan 15, 2012 9:26:38 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of node(8082) from perspective of amazonaws: 125.7.120.168
-Jan 15, 2012 9:26:50 AM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
-INFO: << initial start of jboss on node(8082) [backgroundProcessMilliseconds=8118, socketOpenMilliseconds=1073, reportedStartupTimeMilliseconds=2417]
-Jan 15, 2012 9:27:02 AM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
-INFO: << warm start of jboss on node(8082) [backgroundProcessMilliseconds=4144, socketOpenMilliseconds=871, reportedStartupTimeMilliseconds=2007]
-[TestNG] Test testCreateAndRunAService(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 1830016ms
+Jan 15, 2012 11:50:53 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jboss7(download.jboss.org) from perpective of node(8086): 209.132.182.31
+Jan 15, 2012 11:50:56 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+WARNING: could not get info on ip 125.7.102.137; check freegeoip
+Jan 15, 2012 11:50:56 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jdk7(download.oracle.com) from perpective of node(8086): 125.7.102.137
+Jan 15, 2012 11:51:00 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+WARNING: could not get info on ip 125.7.123.154; check freegeoip
+Jan 15, 2012 11:51:00 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of node(8086) from perspective of amazonaws: 125.7.123.154
+Jan 15, 2012 11:51:14 AM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << initial start of jboss on node(8086) [backgroundProcessMilliseconds=9091, socketOpenMilliseconds=1760, reportedStartupTimeMilliseconds=3083]
+Jan 15, 2012 11:51:25 AM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << warm start of jboss on node(8086) [backgroundProcessMilliseconds=4057, socketOpenMilliseconds=852, reportedStartupTimeMilliseconds=2018]
+[TestNG] Test testCreateAndRunAService(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 2120962ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
 Starting test testGetAssignableLocations(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
-Jan 15, 2012 9:39:19 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+Jan 15, 2012 12:08:20 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
 WARNING: location [id=1, scope=ZONE, description=Sydney, parent=ninefold-compute, iso3166Codes=[], metadata={}]
-[TestNG] Test testGetAssignableLocations(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 938ms
+[TestNG] Test testGetAssignableLocations(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 940ms
 Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
 Starting test testImagesCache(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
-[TestNG] Test testImagesCache(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 3427ms
+[TestNG] Test testImagesCache(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 3561ms
 Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
 Starting test testListImages(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
 [TestNG] Test testListImages(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
 Starting test testListSizes(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
-[TestNG] Test testListSizes(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 952ms
+[TestNG] Test testListSizes(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 942ms
 Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
 Starting test testOptionToNotBlock(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
 [TestNG] Test testOptionToNotBlock(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
 Starting test testAssignability(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
-[TestNG] Test testAssignability(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 118ms
+[TestNG] Test testAssignability(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 109ms
 Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
 Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
-[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 966ms
+[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) succeeded: 955ms
 Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
 Starting test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest)
 [TestNG] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.ninefold.compute.compute.NinefoldComputeServiceLiveTest) failed.
