@@ -27,7 +27,9 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.xml.sax.XMLReader;
 
+import com.google.common.base.Throwables;
 import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 
@@ -42,18 +44,27 @@ public class SaxParserModule extends AbstractModule {
       bind(ParseSax.Factory.class).to(Factory.class).in(Scopes.SINGLETON);
    }
 
-   private static class Factory implements ParseSax.Factory {
+   static class Factory implements ParseSax.Factory {
+      private final SAXParserFactory factory;
+      private final Injector i;
+
       @Inject
-      private SAXParserFactory factory;
+      Factory(SAXParserFactory factory, Injector i) {
+         this.factory = factory;
+         this.i = i;
+      }
 
       public <T> ParseSax<T> create(HandlerWithResult<T> handler) {
          SAXParser saxParser;
          try {
             saxParser = factory.newSAXParser();
             XMLReader parser = saxParser.getXMLReader();
-            return new ParseSax<T>(parser, handler);
+            // TODO: switch to @AssistedInject
+            ParseSax<T> returnVal = new ParseSax<T>(parser, handler);
+            i.injectMembers(returnVal);
+            return returnVal;
          } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
          }
 
       }

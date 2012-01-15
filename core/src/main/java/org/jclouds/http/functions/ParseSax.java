@@ -21,18 +21,20 @@ package org.jclouds.http.functions;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.io.Closeables.closeQuietly;
+import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 
-import javax.inject.Inject;
+import javax.annotation.Resource;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.logging.Logger;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.Strings2;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -41,6 +43,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
+import com.google.common.io.Closeables;
 
 /**
  * This object will parse the body of an HttpResponse and return the result of type <T> back to the
@@ -50,6 +53,9 @@ import com.google.common.base.Throwables;
  */
 public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext<ParseSax<T>> {
 
+   @Resource
+   private Logger logger = Logger.NULL;
+
    private final XMLReader parser;
    private final HandlerWithResult<T> handler;
    private HttpRequest request;
@@ -58,7 +64,6 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
       <T> ParseSax<T> create(HandlerWithResult<T> handler);
    }
 
-   @Inject
    public ParseSax(XMLReader parser, HandlerWithResult<T> handler) {
       this.parser = checkNotNull(parser, "parser");
       this.handler = checkNotNull(handler, "handler");
@@ -71,34 +76,45 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
       } catch (NullPointerException e) {
          return addDetailsAndPropagate(from, e);
       }
-      if (from.getStatusCode() >= 300)
-         return convertStreamToStringAndParse(from);
-      InputStream is = from.getPayload().getInput();
+      InputStream is = null;
       try {
+         // debug is more normally set, so trace is more appropriate for
+         // something heavy like this
+         if (from.getStatusCode() >= 300 || logger.isTraceEnabled())
+            return convertStreamToStringAndParse(from);
+         is = from.getPayload().getInput();
          return parse(new InputSource(is));
       } catch (RuntimeException e) {
          return addDetailsAndPropagate(from, e);
       } finally {
-         closeQuietly(is);
+         Closeables.closeQuietly(is);
+         from.getPayload().release();
       }
    }
 
-   private T convertStreamToStringAndParse(HttpResponse from) {
+   private T convertStreamToStringAndParse(HttpResponse response) {
+      String from = null;
       try {
-         return parse(Strings2.toStringAndClose(from.getPayload().getInput()));
+         from = new String(closeClientButKeepContentStream(response));
+         validateXml(from);
+         return doParse(new InputSource(new StringReader(from)));
       } catch (Exception e) {
-         return addDetailsAndPropagate(from, e);
+         return addDetailsAndPropagate(response, e, from);
       }
    }
 
    public T parse(String from) {
       try {
-         checkNotNull(from, "xml string");
-         checkArgument(from.indexOf('<') >= 0, String.format("not an xml document [%s] ", from));
-      } catch (RuntimeException e) {
-         return addDetailsAndPropagate(null, e);
+         validateXml(from);
+         return doParse(new InputSource(new StringReader(from)));
+      } catch (Exception e) {
+         return addDetailsAndPropagate(null, e, from);
       }
-      return parse(new InputSource(new StringReader(from)));
+   }
+
+   private void validateXml(String from) {
+      checkNotNull(from, "xml string");
+      checkArgument(from.indexOf('<') >= 0, String.format("not an xml document [%s] ", from));
    }
 
    public T parse(InputStream from) {
@@ -127,6 +143,10 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
    }
 
    public T addDetailsAndPropagate(HttpResponse response, Exception e) {
+      return addDetailsAndPropagate(response, e, null);
+   }
+
+   public T addDetailsAndPropagate(HttpResponse response, Exception e, @Nullable String text) {
       StringBuilder message = new StringBuilder();
       if (request != null) {
          message.append("request: ").append(request.getRequestLine());
@@ -144,15 +164,16 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
          }
          if (message.length() != 0)
             message.append("; ");
-         message.append(String.format("error at %d:%d in document %s", parseException.getColumnNumber(),
-               parseException.getLineNumber(), systemId));
+         message.append(String.format("error at %d:%d in document %s", parseException.getColumnNumber(), parseException
+                  .getLineNumber(), systemId));
       }
+      if (text != null)
+         message.append("; source:\n").append(text);
       if (message.length() != 0) {
          message.append("; cause: ").append(e.toString());
          throw new RuntimeException(message.toString(), e);
       } else {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
 
    }
@@ -167,7 +188,7 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
     * @author Adrian Cole
     */
    public abstract static class HandlerWithResult<T> extends DefaultHandler implements
-         InvocationContext<HandlerWithResult<T>> {
+            InvocationContext<HandlerWithResult<T>> {
       private HttpRequest request;
 
       protected HttpRequest getRequest() {
