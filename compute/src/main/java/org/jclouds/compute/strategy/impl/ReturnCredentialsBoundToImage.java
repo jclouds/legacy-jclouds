@@ -51,7 +51,8 @@ public class ReturnCredentialsBoundToImage implements PopulateDefaultLoginCreden
 
    @Override
    public LoginCredentials apply(Object resourceToAuthenticate) {
-      checkState(resourceToAuthenticate instanceof Image, "this is only valid for images");
+      checkState(resourceToAuthenticate instanceof Image, "this is only valid for images, not %s",
+               resourceToAuthenticate.getClass().getSimpleName());
       if (creds != null)
          return creds;
       Image image = Image.class.cast(resourceToAuthenticate);
