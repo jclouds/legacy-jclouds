@@ -18,6 +18,11 @@
  */
 package org.jclouds.compute.config;
 
+import static com.google.common.base.Functions.compose;
+import static com.google.common.base.Predicates.notNull;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.transform;
+import static com.google.inject.util.Types.newParameterizedType;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 import java.util.Set;
@@ -48,14 +53,11 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
-import com.google.inject.util.Types;
 
 /**
  * 
@@ -77,8 +79,8 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
       super.configure();
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(
-               (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(ComputeServiceContextImpl.class,
-                        syncClientType, asyncClientType))).in(Scopes.SINGLETON);
+               (TypeLiteral) TypeLiteral.get(newParameterizedType(ComputeServiceContextImpl.class, syncClientType,
+                        asyncClientType))).in(Scopes.SINGLETON);
    }
 
    @Override
@@ -95,7 +97,8 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
                seconds, new Supplier<Set<? extends Location>>() {
                   @Override
                   public Set<? extends Location> get() {
-                     return ImmutableSet.<Location> copyOf(Iterables.transform(adapter.listLocations(), transformer));
+                     return ImmutableSet.<Location> copyOf(transform(filter(adapter.listLocations(), notNull()),
+                              transformer));
                   }
                });
    }
@@ -108,7 +111,7 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
 
          @Override
          public Iterable<H> get() {
-            return adapter.listHardwareProfiles();
+            return filter(adapter.listHardwareProfiles(), notNull());
          }
 
       }, transformer);
@@ -122,10 +125,10 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
 
          @Override
          public Iterable<I> get() {
-            return adapter.listImages();
+            return filter(adapter.listImages(), notNull());
          }
 
-      }, Functions.compose(addDefaultCredentialsToImage, transformer));
+      }, compose(addDefaultCredentialsToImage, transformer));
    }
 
    @Singleton
@@ -139,6 +142,8 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
 
       @Override
       public Image apply(Image arg0) {
+         if (arg0 == null)
+            return null;
          LoginCredentials credentials = credsForImage.apply(arg0);
          return credentials != null ? ImageBuilder.fromImage(arg0).defaultCredentials(credentials).build() : arg0;
       }
