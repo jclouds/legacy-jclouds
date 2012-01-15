@@ -126,7 +126,8 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
             throw rtex;
          }
       } else {
-         return ablobstore.putBlob(container, blob, options);
+         // TODO: find a way to disable multipart.  if we pass the original options, it goes into a stack overflow
+         return ablobstore.putBlob(container, blob, PutOptions.NONE);
       }
    }
 }
