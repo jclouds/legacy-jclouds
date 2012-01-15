@@ -51,6 +51,7 @@ import javax.net.ssl.SSLContext;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
+import org.jclouds.JcloudsVersion;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
@@ -77,7 +78,9 @@ import com.google.common.io.CountingOutputStream;
 @Singleton
 public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorService<HttpURLConnection> {
 
-   public static final String USER_AGENT = "jclouds/1.0 java/" + System.getProperty("java.version");
+   public static final String USER_AGENT = String.format("jclouds/%s java/%s", JcloudsVersion.get(), System
+            .getProperty("java.version"));
+
    @Resource
    protected Logger logger = Logger.NULL;
    private final Supplier<SSLContext> untrustedSSLContextProvider;

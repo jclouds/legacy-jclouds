@@ -43,6 +43,7 @@ import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.params.CoreProtocolPNames;
+import org.jclouds.JcloudsVersion;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.io.Payload;
 import org.jclouds.io.payloads.BasePayload;
@@ -59,8 +60,8 @@ import com.google.common.base.Throwables;
  */
 @Singleton
 public class ApacheHCUtils {
-
-   public static final String USER_AGENT = "jclouds/1.0 httpclient/4.0.1";
+   //TODO: look up httpclient version
+   public static final String USER_AGENT = String.format("jclouds/%s httpclient/%s", JcloudsVersion.get(), "4.1.1");
 
    public static HttpUriRequest convertToApacheRequest(HttpRequest request) {
       HttpUriRequest apacheRequest;
