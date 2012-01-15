@@ -72,6 +72,7 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
       builder.ids(from.getHref().toASCIIString());
       builder.uri(from.getHref());
       builder.name(from.getName());
+      builder.hostname(from.getName());
       builder.location(findLocationForResourceInVDC.apply(from.getVDC()));
       builder.group(parseGroupFromName(from.getName()));
       builder.operatingSystem(toComputeOs(from, null));
