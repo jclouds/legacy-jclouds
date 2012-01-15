@@ -62,12 +62,12 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
 
    private class AddNode implements Callable<NodeMetadata> {
       private final String name;
-      private final String tag;
+      private final String group;
       private final Template template;
 
-      private AddNode(String name, String tag, Template template) {
+      private AddNode(String name, String group, Template template) {
          this.name = checkNotNull(name, "name");
-         this.tag = checkNotNull(tag, "tag");
+         this.group = checkNotNull(group, "group");
          this.template = checkNotNull(template, "template");
       }
 
@@ -77,13 +77,13 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
          logger.debug(">> adding node location(%s) name(%s) image(%s) hardware(%s)",
                   template.getLocation().getId(), name, template.getImage().getProviderId(), template.getHardware()
                            .getProviderId());
-         node = addNodeWithTagStrategy.createNodeWithGroupEncodedIntoName(tag, name, template);
+         node = addNodeWithGroupStrategy.createNodeWithGroupEncodedIntoName(group, name, template);
          logger.debug("<< %s node(%s)", node.getState(), node.getId());
          return node;
       }
 
       public String toString() {
-         return toStringHelper(this).add("name", name).add("tag", tag).add("template", template).toString();
+         return toStringHelper(this).add("name", name).add("group", group).add("template", template).toString();
       }
 
    }
@@ -91,7 +91,7 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   protected final CreateNodeWithGroupEncodedIntoName addNodeWithTagStrategy;
+   protected final CreateNodeWithGroupEncodedIntoName addNodeWithGroupStrategy;
    protected final ListNodesStrategy listNodesStrategy;
    protected final String nodeNamingConvention;
    protected final ExecutorService executor;
@@ -99,12 +99,12 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
 
    @Inject
    protected CreateNodesWithGroupEncodedIntoNameThenAddToSet(
-            CreateNodeWithGroupEncodedIntoName addNodeWithTagStrategy,
+            CreateNodeWithGroupEncodedIntoName addNodeWithGroupStrategy,
             ListNodesStrategy listNodesStrategy,
             @Named("NAMING_CONVENTION") String nodeNamingConvention,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
             CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory) {
-      this.addNodeWithTagStrategy = addNodeWithTagStrategy;
+      this.addNodeWithGroupStrategy = addNodeWithGroupStrategy;
       this.listNodesStrategy = listNodesStrategy;
       this.nodeNamingConvention = nodeNamingConvention;
       this.executor = executor;
@@ -112,15 +112,15 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
    }
 
    /**
-    * This implementation gets a list of acceptable node names to encode the tag into, then it
+    * This implementation gets a list of acceptable node names to encode the group into, then it
     * simultaneously runs the nodes and applies options to them.
     */
    @Override
-   public Map<?, Future<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> goodNodes,
+   public Map<?, Future<Void>> execute(String group, int count, Template template, Set<NodeMetadata> goodNodes,
             Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
       Map<String, Future<Void>> responses = newLinkedHashMap();
-      for (String name : getNextNames(tag, template, count)) {
-         responses.put(name, compose(executor.submit(new AddNode(name, tag, template)),
+      for (String name : getNextNames(group, template, count)) {
+         responses.put(name, compose(executor.submit(new AddNode(name, group, template)),
                   customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory.create(template.getOptions(),
                            goodNodes, badNodes, customizationResponses), executor));
       }
@@ -128,22 +128,22 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
    }
 
    /**
-    * Find the next node names that can be used. These will be derived from the tag and the
+    * Find the next node names that can be used. These will be derived from the group and the
     * template. We will pre-allocate a specified quantity, and attempt to verify that there is no
     * name conflict with the current service.
     * 
-    * @param tag
+    * @param group
     * @param count
     * @param template
     * @return
     */
-   protected Set<String> getNextNames(final String tag, final Template template, int count) {
+   protected Set<String> getNextNames(final String group, final Template template, int count) {
       Set<String> names = newLinkedHashSet();
       Iterable<? extends ComputeMetadata> currentNodes = listNodesStrategy.listNodes();
       int maxTries = 100;
       int currentTries = 0;
       while (names.size() < count && currentTries++ < maxTries) {
-         final String name = getNextName(tag, template);
+         final String name = getNextName(group, template);
          if (!any(currentNodes, new Predicate<ComputeMetadata>() {
 
             @Override
@@ -159,14 +159,14 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
    }
 
    /**
-    * Get a name using a random mechanism that still ties all nodes in a tag together.
+    * Get a name using a random mechanism that still ties all nodes in a group together.
     * 
-    * This implementation will pass the tag and a hex formatted random number to the configured
+    * This implementation will pass the group and a hex formatted random number to the configured
     * naming convention.
     * 
     */
-   protected String getNextName(final String tag, final Template template) {
-      return String.format(nodeNamingConvention, tag, Integer.toHexString(new SecureRandom().nextInt(4095)));
+   protected String getNextName(final String group, final Template template) {
+      return String.format(nodeNamingConvention, group, Integer.toHexString(new SecureRandom().nextInt(4095)));
    }
 
 }

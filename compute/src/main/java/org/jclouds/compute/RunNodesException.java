@@ -35,26 +35,26 @@ public class RunNodesException extends Exception {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -2272965726680821281L;
-   private final String tag;
+   private final String group;
    private final int count;
    private final Template template;
    private final Set<? extends NodeMetadata> successfulNodes;
    private final Map<? extends NodeMetadata, ? extends Throwable> failedNodes;
    private final Map<?, Exception> executionExceptions;
 
-   public RunNodesException(String tag, int count, Template template,
+   public RunNodesException(String group, int count, Template template,
             Set<? extends NodeMetadata> successfulNodes, Map<?, Exception> executionExceptions,
             Map<? extends NodeMetadata, ? extends Throwable> failedNodes) {
       super(
                String
                         .format(
-                                 "error running %d node%s tag(%s) location(%s) image(%s) size(%s) options(%s)%n%s%n%s",
-                                 count, count > 1 ? "s" : "", tag, template.getLocation().getId(),
+                                 "error running %d node%s group(%s) location(%s) image(%s) size(%s) options(%s)%n%s%n%s",
+                                 count, count > 1 ? "s" : "", group, template.getLocation().getId(),
                                  template.getImage().getProviderId(), template.getHardware()
                                           .getProviderId(), template.getOptions(),
                                  createExecutionErrorMessage(executionExceptions),
                                  createNodeErrorMessage(failedNodes)));
-      this.tag = tag;
+      this.group = group;
       this.count = count;
       this.template = template;
       this.successfulNodes = successfulNodes;
@@ -86,8 +86,8 @@ public class RunNodesException extends Exception {
       return failedNodes;
    }
 
-   public String getTag() {
-      return tag;
+   public String getGroup() {
+      return group;
    }
 
    public int getCount() {
