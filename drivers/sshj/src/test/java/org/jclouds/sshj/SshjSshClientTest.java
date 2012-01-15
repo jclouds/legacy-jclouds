@@ -19,11 +19,11 @@
 package org.jclouds.sshj;
 
 import static com.google.inject.name.Names.bindProperties;
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -34,6 +34,7 @@ import java.util.logging.Level;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.SSHException;
 import net.schmizz.sshj.connection.ConnectionException;
+import net.schmizz.sshj.sftp.SFTPException;
 import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.userauth.UserAuthException;
 
@@ -99,6 +100,7 @@ public class SshjSshClientTest {
    public void testExceptionClassesRetry() {
       assert ssh.shouldRetry(new ConnectionException("Read timed out", new SSHException("Read timed out",
             new SocketTimeoutException("Read timed out"))));
+      assert ssh.shouldRetry(new SFTPException("Failure!"));
       assert ssh.shouldRetry(new SocketTimeoutException("connect timed out"));
       assert ssh.shouldRetry(new TransportException("socket closed"));
       assert ssh.shouldRetry(new ConnectionException("problem"));
