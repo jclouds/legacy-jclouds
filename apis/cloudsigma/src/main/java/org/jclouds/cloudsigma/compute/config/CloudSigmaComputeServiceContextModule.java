@@ -26,12 +26,14 @@ import javax.inject.Singleton;
 import org.jclouds.cloudsigma.CloudSigmaAsyncClient;
 import org.jclouds.cloudsigma.CloudSigmaClient;
 import org.jclouds.cloudsigma.compute.CloudSigmaComputeServiceAdapter;
+import org.jclouds.cloudsigma.compute.CloudSigmaTemplateBuilderImpl;
 import org.jclouds.cloudsigma.compute.functions.ParseOsFamilyVersion64BitFromImageName;
 import org.jclouds.cloudsigma.compute.functions.PreinstalledDiskToImage;
 import org.jclouds.cloudsigma.compute.functions.ServerInfoToNodeMetadata;
 import org.jclouds.cloudsigma.compute.functions.ServerInfoToNodeMetadata.DeviceToVolume;
 import org.jclouds.cloudsigma.compute.functions.ServerInfoToNodeMetadata.FindImageForId;
 import org.jclouds.cloudsigma.compute.functions.ServerInfoToNodeMetadata.GetImageIdFromServer;
+import org.jclouds.cloudsigma.compute.options.CloudSigmaTemplateOptions;
 import org.jclouds.cloudsigma.domain.Device;
 import org.jclouds.cloudsigma.domain.DriveInfo;
 import org.jclouds.cloudsigma.domain.Server;
@@ -46,6 +48,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.Volume;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
@@ -104,6 +107,8 @@ public class CloudSigmaComputeServiceContextModule
       }).to(ParseOsFamilyVersion64BitFromImageName.class);
       bind(new TypeLiteral<Supplier<Location>>() {
       }).to(OnlyLocationOrFirstZone.class);
+      bind(TemplateBuilder.class)
+      .to(CloudSigmaTemplateBuilderImpl.class);
    }
 
    @Provides
@@ -133,5 +138,11 @@ public class CloudSigmaComputeServiceContextModule
          ComputeServiceConstants.Timeouts timeouts) {
       return new RetryablePredicate<DriveInfo>(Predicates.not(driveClaimed), timeouts.nodeRunning, 1000,
             TimeUnit.MILLISECONDS);
+   }
+
+   @Provides
+   @Singleton
+   protected TemplateOptions templateOptions() {
+      return new CloudSigmaTemplateOptions();
    }
 }
