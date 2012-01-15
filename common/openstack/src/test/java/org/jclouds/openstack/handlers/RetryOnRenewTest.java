@@ -62,8 +62,7 @@ public class RetryOnRenewTest {
       replay(response);
       replay(cache);
 
-      RetryOnRenew retry = new RetryOnRenew();
-      retry.authenticationResponseCache = cache;
+      RetryOnRenew retry = new RetryOnRenew(cache);
 
       assertTrue(retry.shouldRetryRequest(command, response));
 

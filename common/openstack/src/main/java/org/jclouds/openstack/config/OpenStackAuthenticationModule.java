@@ -18,6 +18,9 @@
  */
 package org.jclouds.openstack.config;
 
+import static com.google.common.base.Suppliers.memoizeWithExpiration;
+import static com.google.common.base.Throwables.propagate;
+
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -41,12 +44,9 @@ import org.jclouds.rest.AsyncClientFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.base.Throwables;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -102,8 +102,13 @@ public class OpenStackAuthenticationModule extends AbstractModule {
                            .authenticate(input.identity, input.credential);
                   return response.get(30, TimeUnit.SECONDS);
                } catch (Exception e) {
-                  throw Throwables.propagate(e);
+                  throw propagate(e);
                }
+            }
+
+            @Override
+            public String toString() {
+               return "authenticate()";
             }
          });
 
@@ -113,13 +118,9 @@ public class OpenStackAuthenticationModule extends AbstractModule {
    @Provides
    @Singleton
    public LoadingCache<Credentials, AuthenticationResponse> provideAuthenticationResponseCache2(
-            final Function<Credentials, AuthenticationResponse> getAuthenticationResponse,
-            @Provider final Credentials creds) {
-
-      LoadingCache<Credentials, AuthenticationResponse> cache = CacheBuilder.newBuilder().expireAfterWrite(23,
-               TimeUnit.HOURS).build(CacheLoader.from(getAuthenticationResponse));
-
-      return cache;
+            Function<Credentials, AuthenticationResponse> getAuthenticationResponse) {
+      return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS).build(
+               CacheLoader.from(getAuthenticationResponse));
    }
 
    @Provides
@@ -131,10 +132,8 @@ public class OpenStackAuthenticationModule extends AbstractModule {
          public AuthenticationResponse get() {
             try {
                return cache.get(creds);
-            } catch (UncheckedExecutionException e) {
-               throw Throwables.propagate(e.getCause());
             } catch (ExecutionException e) {
-               throw Throwables.propagate(e.getCause());
+               throw propagate(e.getCause());
             }
          }
       };
@@ -144,7 +143,7 @@ public class OpenStackAuthenticationModule extends AbstractModule {
    @Singleton
    @TimeStamp
    protected Supplier<Date> provideCacheBusterDate() {
-      return Suppliers.memoizeWithExpiration(new Supplier<Date>() {
+      return memoizeWithExpiration(new Supplier<Date>() {
          public Date get() {
             return new Date();
          }
