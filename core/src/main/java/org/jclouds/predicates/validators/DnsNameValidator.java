@@ -43,7 +43,7 @@ public class DnsNameValidator extends Validator<String> {
    private int max;
 
    @Inject
-   protected DnsNameValidator(@Named("jclouds.dns_name_length_min") int min,
+   public DnsNameValidator(@Named("jclouds.dns_name_length_min") int min,
             @Named("jclouds.dns_name_length_max") int max) {
       this.min = min;
       this.max = max;
