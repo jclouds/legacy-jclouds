@@ -30,7 +30,6 @@ import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.logging.Logger;
 import org.jclouds.ovf.Envelope;
 import org.jclouds.ovf.VirtualHardwareSection;
-import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
 import com.google.common.base.Function;
@@ -45,37 +44,25 @@ public class HardwareForVAppTemplate implements Function<VAppTemplate, Hardware>
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final VCloudClient client;
+   private final Function<VAppTemplate, Envelope> templateToEnvelope;
    private final FindLocationForResource findLocationForResource;
    private final VCloudHardwareBuilderFromResourceAllocations rasdToHardwareBuilder;
 
    @Inject
-   protected HardwareForVAppTemplate(VCloudClient client, FindLocationForResource findLocationForResource,
+   protected HardwareForVAppTemplate(Function<VAppTemplate, Envelope> templateToEnvelope,
+            FindLocationForResource findLocationForResource,
             VCloudHardwareBuilderFromResourceAllocations rasdToHardwareBuilder) {
-      this.client = checkNotNull(client, "client");
+      this.templateToEnvelope = checkNotNull(templateToEnvelope, "templateToEnvelope");
       this.findLocationForResource = checkNotNull(findLocationForResource, "findLocationForResource");
       this.rasdToHardwareBuilder = checkNotNull(rasdToHardwareBuilder, "rasdToHardwareBuilder");
    }
-
 
    @Override
    public Hardware apply(VAppTemplate from) {
       checkNotNull(from, "VAppTemplate");
 
-      if (!from.isOvfDescriptorUploaded()) {
-         logger.warn("cannot parse hardware as ovf descriptor for %s is not uploaded", from);
-         return null;
-      }
+      Envelope ovf = templateToEnvelope.apply(from);
 
-      Envelope ovf = client.getVAppTemplateClient().getOvfEnvelopeForVAppTemplate(from.getHref());
-      if (ovf == null) {
-         logger.warn("cannot parse hardware as no ovf envelope found for %s", from);
-         return null;
-      }
-      if (ovf.getVirtualSystem().getVirtualHardwareSections().size() == 0) {
-         logger.warn("cannot parse hardware for %s as no hardware sections exist in ovf %s", ovf);
-         return null;
-      }
       if (ovf.getVirtualSystem().getVirtualHardwareSections().size() > 1) {
          logger.warn("multiple hardware choices found. using first", ovf);
       }
@@ -89,6 +76,7 @@ public class HardwareForVAppTemplate implements Function<VAppTemplate, Hardware>
       builder.ids(from.getHref().toASCIIString()).name(from.getName()).supportsImage(
                ImagePredicates.idEquals(from.getHref().toASCIIString()));
       return builder.build();
+
    }
 
    protected String getName(String name) {

@@ -31,6 +31,8 @@ import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 import org.jclouds.vcloud.domain.VCloudError;
 
+import com.google.common.base.Objects;
+
 /**
  * 
  * @author Adrian Cole
@@ -88,10 +90,9 @@ public class TaskImpl extends ReferenceTypeImpl implements Task {
 
    @Override
    public String toString() {
-      return "TaskImpl [endTime=" + endTime + ", error=" + error + ", expiryTime=" + expiryTime + ", operation="
-               + operation + ", owner=" + owner + ", startTime=" + startTime + ", status=" + status + ", getHref()="
-               + getHref() + ", getName()=" + getName() + ", getType()=" + getType() + ", toString()="
-               + super.toString() + ", getClass()=" + getClass() + "]";
+      return Objects.toStringHelper("").add("href", getHref()).add("name", getName()).add("owner", owner).add(
+               "operation", operation).add("startTime", startTime).add("endTime", endTime)
+               .add("expiryTime", expiryTime).add("error", error).toString();
    }
 
    public Date getExpiryTime() {

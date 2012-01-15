@@ -77,10 +77,6 @@ public class VCloudComputeUtils {
 
    public static LoginCredentials getCredentialsFrom(Vm vm) {
       LoginCredentials.Builder builder = LoginCredentials.builder();
-      builder.user("root");
-      if (vm.getOperatingSystemSection() != null && vm.getOperatingSystemSection().getDescription() != null
-            && vm.getOperatingSystemSection().getDescription().indexOf("Windows") >= 0)
-         builder.user("Administrator");
       if (vm.getGuestCustomizationSection() != null)
          builder.password(vm.getGuestCustomizationSection().getAdminPassword());
       return builder.build();

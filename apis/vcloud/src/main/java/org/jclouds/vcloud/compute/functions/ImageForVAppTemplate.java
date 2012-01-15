@@ -20,14 +20,17 @@ package org.jclouds.vcloud.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.logging.Logger;
 import org.jclouds.ovf.Envelope;
-import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
 import com.google.common.base.Function;
@@ -37,18 +40,26 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
-   private final VCloudClient client;
+
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   public Logger logger = Logger.NULL;
+
+   private final Function<VAppTemplate, Envelope> templateToEnvelope;
    private final FindLocationForResource findLocationForResource;
 
    @Inject
-   protected ImageForVAppTemplate(VCloudClient client, FindLocationForResource findLocationForResource) {
-      this.client = checkNotNull(client, "client");
+   protected ImageForVAppTemplate(Function<VAppTemplate, Envelope> templateToEnvelope,
+            FindLocationForResource findLocationForResource) {
+      this.templateToEnvelope = checkNotNull(templateToEnvelope, "templateToEnvelope");
       this.findLocationForResource = checkNotNull(findLocationForResource, "findLocationForResource");
    }
 
-
    @Override
    public Image apply(VAppTemplate from) {
+      checkNotNull(from, "VAppTemplate");
+      Envelope ovf = templateToEnvelope.apply(from);
+
       ImageBuilder builder = new ImageBuilder();
       builder.ids(from.getHref().toASCIIString());
       builder.uri(from.getHref());
@@ -59,7 +70,6 @@ public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
          // otherwise, it could be in a public catalog, which is not assigned to a VDC
       }
       builder.description(from.getDescription() != null ? from.getDescription() : from.getName());
-      Envelope ovf = client.getVAppTemplateClient().getOvfEnvelopeForVAppTemplate(from.getHref());
       builder.operatingSystem(CIMOperatingSystem.toComputeOs(ovf));
       return builder.build();
    }

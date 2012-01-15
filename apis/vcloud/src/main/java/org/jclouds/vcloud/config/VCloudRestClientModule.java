@@ -20,20 +20,24 @@ package org.jclouds.vcloud.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Predicates.notNull;
+import static com.google.common.base.Suppliers.compose;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.getLast;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.SortedMap;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -50,6 +54,7 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.ovf.Envelope;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.AuthorizationException;
@@ -61,6 +66,7 @@ import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudToken;
 import org.jclouds.vcloud.VCloudVersionsAsyncClient;
 import org.jclouds.vcloud.compute.functions.FindLocationForResource;
+import org.jclouds.vcloud.compute.functions.ValidateVAppTemplateAndReturnEnvelopeOrThrowIllegalArgumentException;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.Org;
@@ -68,6 +74,8 @@ import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.domain.VDC;
+import org.jclouds.vcloud.domain.network.FenceMode;
+import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.endpoints.OrgList;
 import org.jclouds.vcloud.features.CatalogAsyncClient;
 import org.jclouds.vcloud.features.CatalogClient;
@@ -89,22 +97,25 @@ import org.jclouds.vcloud.functions.AllCatalogItemsInCatalog;
 import org.jclouds.vcloud.functions.AllCatalogItemsInOrg;
 import org.jclouds.vcloud.functions.AllCatalogsInOrg;
 import org.jclouds.vcloud.functions.AllVDCsInOrg;
+import org.jclouds.vcloud.functions.DefaultNetworkNameInTemplate;
 import org.jclouds.vcloud.functions.OrgsForLocations;
 import org.jclouds.vcloud.functions.OrgsForNames;
 import org.jclouds.vcloud.functions.VAppTemplatesForCatalogItems;
 import org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponse;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
+import org.jclouds.vcloud.loaders.OVFLoader;
+import org.jclouds.vcloud.loaders.VAppTemplateLoader;
 import org.jclouds.vcloud.predicates.TaskSuccess;
 import org.jclouds.vcloud.xml.ovf.VCloudResourceAllocationSettingDataHandler;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import static com.google.common.base.Predicates.*;
 import com.google.common.base.Supplier;
-import static com.google.common.base.Suppliers.*;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import static com.google.common.collect.Iterables.*;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -191,6 +202,27 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
       });
       bind(new TypeLiteral<Function<Org, Iterable<CatalogItem>>>() {
       }).to(new TypeLiteral<AllCatalogItemsInOrg>() {
+      });
+      
+      bindCacheLoaders();
+      
+      bind(new TypeLiteral<Function<VAppTemplate, String>>() {
+      }).annotatedWith(Network.class).to(new TypeLiteral<DefaultNetworkNameInTemplate>() {
+      });
+      
+      bind(new TypeLiteral<Function<VAppTemplate, Envelope>>() {
+      }).to(new TypeLiteral<ValidateVAppTemplateAndReturnEnvelopeOrThrowIllegalArgumentException>() {
+      });
+      
+   }
+
+   protected void bindCacheLoaders() {
+      bind(new TypeLiteral<CacheLoader<URI, VAppTemplate>>() {
+      }).to(new TypeLiteral<VAppTemplateLoader>() {
+      });
+      
+      bind(new TypeLiteral<CacheLoader<URI, Envelope>>() {
+      }).to(new TypeLiteral<OVFLoader>() {
       });
    }
 
@@ -486,7 +518,26 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, Map<String, org.jclouds.vcloud.domain.CatalogItem>>>>(
                authException, seconds, supplier);
    }
+   
+   
+   @Provides
+   @Singleton
+   protected FenceMode defaultFenceMode(@Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode){
+      return FenceMode.fromValue(fenceMode);
+   }
+   
+   @Provides
+   @Singleton
+   protected LoadingCache<URI, VAppTemplate> vAppTemplates(CacheLoader<URI, VAppTemplate> vAppTemplates) {
+      return CacheBuilder.newBuilder().build(vAppTemplates);
+   }
 
+   @Provides
+   @Singleton
+   protected LoadingCache<URI, Envelope> envelopes(CacheLoader<URI, Envelope> envelopes) {
+      return CacheBuilder.newBuilder().build(envelopes);
+   }
+   
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseVCloudErrorFromHttpResponse.class);

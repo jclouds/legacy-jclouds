@@ -18,22 +18,12 @@
  */
 package org.jclouds.vcloud.compute;
 
-import static org.testng.Assert.assertEquals;
-
 import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.domain.ComputeMetadata;
-import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
-import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.domain.VApp;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
 /**
@@ -46,47 +36,30 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public VCloudComputeServiceLiveTest() {
       provider = "vcloud";
-      // vcloud requires instantiate before deploy, which takes longer than 30 seconds
-      nonBlockDurationSeconds = 300;
+   }
+
+   @Override
+   public void setServiceDefaults() {
+      // extremely short names needed so that we don't get errors relating to
+      // guestCustomization.computerName being too long
+      group = "vcd";
+   }
+
+   @Override
+   public void testOptionToNotBlock() {
+      // start call has to block until deploy
    }
 
    @Override
    protected Module getSshModule() {
       return new SshjSshClientModule();
    }
-   
+
    // vcloud does not support metadata
    @Override
    protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
       assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
-            "node userMetadata did not match %s %s", userMetadata, node);
-   }
-   
-   @Override
-   public void testListNodes() throws Exception {
-      for (ComputeMetadata node : client.listNodes()) {
-         assert node.getProviderId() != null;
-         assert node.getLocation() != null;
-         assertEquals(node.getType(), ComputeType.NODE);
-         NodeMetadata allData = client.getNodeMetadata(node.getId());
-         System.out.println(allData.getHardware());
-         RestContext<VCloudClient, VCloudAsyncClient> tmContext = new ComputeServiceContextFactory(
-               setupRestProperties()).createContext(provider, identity, credential, ImmutableSet.<Module> of(),
-               setupProperties()).getProviderSpecificContext();
-         VApp vApp = tmContext.getApi().getVAppClient().findVAppInOrgVDCNamed(null, null, allData.getName());
-         assertEquals(vApp.getName(), allData.getName());
-      }
+               "node userMetadata did not match %s %s", userMetadata, node);
    }
 
-   @Test(enabled = true, dependsOnMethods = "testSuspendResume")
-   @Override
-   public void testGetNodesWithDetails() throws Exception {
-      super.testGetNodesWithDetails();
-   }
-
-   @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
-   @Override
-   public void testDestroyNodes() {
-      super.testDestroyNodes();
-   }
 }

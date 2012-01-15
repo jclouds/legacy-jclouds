@@ -35,6 +35,9 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
+import org.jclouds.ovf.Envelope;
+import org.jclouds.vcloud.TaskInErrorStateException;
+import org.jclouds.vcloud.TaskStillRunningException;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.compute.suppliers.OrgAndVDCToLocationSupplier;
@@ -47,9 +50,11 @@ import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.suppliers.VAppTemplatesSupplier;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableSet.Builder;
 
 /**
@@ -69,18 +74,20 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
    protected final InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn booter;
    protected final Supplier<Map<String, Org>> nameToOrg;
    protected final Supplier<Set<VAppTemplate>> templates;
+   protected final Function<VAppTemplate, Envelope> templateToEnvelope;
    protected final Supplier<Set<? extends Location>> locations;
 
    @Inject
    protected VCloudComputeServiceAdapter(VCloudClient client, Predicate<URI> successTester,
             InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn booter,
-            Supplier<Map<String, Org>> nameToOrg,  VAppTemplatesSupplier templates,
-            OrgAndVDCToLocationSupplier locations) {
+            Supplier<Map<String, Org>> nameToOrg, VAppTemplatesSupplier templates,
+            Function<VAppTemplate, Envelope> templateToEnvelope, OrgAndVDCToLocationSupplier locations) {
       this.client = checkNotNull(client, "client");
       this.successTester = checkNotNull(successTester, "successTester");
       this.booter = checkNotNull(booter, "booter");
       this.nameToOrg = checkNotNull(nameToOrg, "nameToOrg");
       this.templates = checkNotNull(templates, "templates");
+      this.templateToEnvelope = checkNotNull(templateToEnvelope, "templateToEnvelope");
       this.locations = checkNotNull(locations, "locations");
    }
 
@@ -114,7 +121,7 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
 
    @Override
    public Iterable<VAppTemplate> listImages() {
-      return templates.get();
+      return supportedTemplates();
    }
 
    @Override
@@ -157,70 +164,79 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
    public VApp getNode(String in) {
       URI id = URI.create(in);
       return client.getVAppClient().getVApp(id);
-
    }
 
    @Override
    public void destroyNode(String id) {
       URI vappId = URI.create(checkNotNull(id, "node.id"));
-      VApp vApp = client.getVAppClient().getVApp(vappId);
-
-      waitForPendingTasksToComplete(vApp);
-
-      vApp = undeployVAppIfDeployed(vApp);
-      deleteVApp(vApp);
-   }
-
-   void waitForPendingTasksToComplete(VApp vApp) {
-      for (Task task : vApp.getTasks())
-         waitForTask(task, vApp);
-   }
-
-   public void waitForTask(Task task, VApp vAppResponse) {
-      if (!successTester.apply(task.getHref())) {
-         throw new RuntimeException(String.format("failed to %s %s: %s", task.getName(), vAppResponse.getName(), task));
-      }
-   }
-
-   void deleteVApp(VApp vApp) {
-      logger.debug(">> deleting vApp(%s)", vApp.getHref());
-      waitForTask(client.getVAppClient().deleteVApp(vApp.getHref()), vApp);
-      logger.debug("<< deleted vApp(%s)", vApp.getHref());
-   }
-
-   VApp undeployVAppIfDeployed(VApp vApp) {
+      VApp vApp = cancelAnyRunningTasks(vappId);
       if (vApp.getStatus() != Status.OFF) {
+         logger.debug(">> powering off VApp vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
+         try {
+            waitForTask(client.getVAppClient().powerOffVApp(vApp.getHref()));
+            vApp = client.getVAppClient().getVApp(vApp.getHref());
+            logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
+         } catch (IllegalStateException e) {
+            logger.warn(e, "<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
+         }
          logger.debug(">> undeploying vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
          try {
-            waitForTask(client.getVAppClient().undeployVApp(vApp.getHref()), vApp);
+            waitForTask(client.getVAppClient().undeployVApp(vApp.getHref()));
             vApp = client.getVAppClient().getVApp(vApp.getHref());
             logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
          } catch (IllegalStateException e) {
             logger.warn(e, "<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
          }
       }
-      return vApp;
+      logger.debug(">> deleting vApp(%s)", vApp.getHref());
+      waitForTask(client.getVAppClient().deleteVApp(vApp.getHref()));
+      logger.debug("<< deleted vApp(%s)", vApp.getHref());
+   }
+
+   VApp waitForPendingTasksToComplete(URI vappId) {
+      VApp vApp = client.getVAppClient().getVApp(vappId);
+      if (vApp.getTasks().size() == 0)
+         return vApp;
+      for (Task task : vApp.getTasks())
+         waitForTask(task);
+      return client.getVAppClient().getVApp(vappId);
+   }
+
+   VApp cancelAnyRunningTasks(URI vappId) {
+      VApp vApp = client.getVAppClient().getVApp(vappId);
+      if (vApp.getTasks().size() == 0)
+         return vApp;
+      for (Task task : vApp.getTasks()) {
+         try {
+            client.getTaskClient().cancelTask(task.getHref());
+            waitForTask(task);
+         } catch (TaskInErrorStateException e) {
+         }
+      }
+      return client.getVAppClient().getVApp(vappId);
+
+   }
+
+   public void waitForTask(Task task) {
+      if (!successTester.apply(task.getHref())) 
+         throw new TaskStillRunningException(task);
    }
 
    @Override
    public void rebootNode(String in) {
       URI id = URI.create(checkNotNull(in, "node.id"));
-      Task task = client.getVAppClient().resetVApp(id);
-      successTester.apply(task.getHref());
-
+      waitForTask(client.getVAppClient().resetVApp(id));
    }
 
    @Override
    public void resumeNode(String in) {
       URI id = URI.create(checkNotNull(in, "node.id"));
-      Task task = client.getVAppClient().powerOnVApp(id);
-      successTester.apply(task.getHref());
+      waitForTask(client.getVAppClient().powerOnVApp(id));
    }
 
    @Override
    public void suspendNode(String in) {
       URI id = URI.create(checkNotNull(in, "node.id"));
-      Task task = client.getVAppClient().powerOffVApp(id);
-      successTester.apply(task.getHref());
+      waitForTask(client.getVAppClient().powerOffVApp(id));
    }
 }

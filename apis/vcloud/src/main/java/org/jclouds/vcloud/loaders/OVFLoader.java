@@ -16,52 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.predicates;
+package org.jclouds.vcloud.loaders;
 
 import java.net.URI;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.TaskInErrorStateException;
+import org.jclouds.ovf.Envelope;
 import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.domain.Task;
-import org.jclouds.vcloud.domain.TaskStatus;
 
-import com.google.common.base.Predicate;
-import com.google.inject.Inject;
+import com.google.common.cache.CacheLoader;
 
-/**
- * 
- * Tests to see if a task succeeds.
- * 
- * @author Adrian Cole
- */
 @Singleton
-public class TaskSuccess implements Predicate<URI> {
-
-   private final VCloudClient client;
-
+public class OVFLoader extends CacheLoader<URI, Envelope> {
    @Resource
    protected Logger logger = Logger.NULL;
 
+   private final VCloudClient client;
+
    @Inject
-   public TaskSuccess(VCloudClient client) {
+   OVFLoader(VCloudClient client) {
       this.client = client;
    }
 
-   public boolean apply(URI taskId) {
-      logger.trace("looking for status on task %s", taskId);
-
-      Task task = client.getTaskClient().getTask(taskId);
-      // perhaps task isn't available, yet
-      if (task == null)
-         return false;
-      logger.trace("%s: looking for status %s: currently: %s", task, TaskStatus.SUCCESS, task.getStatus());
-      if (task.getStatus() == TaskStatus.ERROR)
-         throw new TaskInErrorStateException(task);
-      return task.getStatus() == TaskStatus.SUCCESS;
+   @Override
+   public Envelope load(URI template) {
+      return client.getVAppTemplateClient().getOvfEnvelopeForVAppTemplate(template);
    }
-
 }

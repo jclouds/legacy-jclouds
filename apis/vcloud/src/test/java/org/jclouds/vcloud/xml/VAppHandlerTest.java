@@ -71,6 +71,7 @@ public class VAppHandlerTest {
                   .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439")));
       assertEquals(result.getTasks(), ImmutableList.of());
       assert result.isOvfDescriptorUploaded();
+      assert result.getNetworkSection() != null;
       Vm vm = Iterables.getOnlyElement(result.getChildren());
       VmHandlerTest.checkVm(vm);
    }

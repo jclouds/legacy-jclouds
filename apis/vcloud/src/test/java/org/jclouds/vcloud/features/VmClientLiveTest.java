@@ -98,7 +98,7 @@ public class VmClientLiveTest extends BaseVCloudClientLiveTest {
    public void testExtendedOptionsWithCustomizationScript() throws Exception {
       String PARSE_VMTOOLSD = "vmtoolsd --cmd=\"info-get guestinfo.ovfenv\" |grep vCloud_CustomizationInfo|sed 's/.*value=\"\\(.*\\)\".*/\\1/g'";
 
-      String group = prefix + "customize";
+      String group = prefix + "cus";
 
       NodeMetadata node = null;
       try {

@@ -21,7 +21,7 @@ package org.jclouds.vcloud.binders;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
+import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
 
@@ -30,8 +30,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
-import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.xml.parsers.FactoryConfigurationError;
@@ -39,11 +38,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.logging.Logger;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.Vm;
@@ -54,10 +52,8 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
-import com.google.inject.Inject;
 import com.jamesmurty.utils.XMLBuilder;
 
 /**
@@ -73,21 +69,21 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    protected final BindToStringPayload stringBinder;
    protected final ReferenceType defaultNetwork;
    protected final FenceMode defaultFenceMode;
-   protected final DefaultNetworkNameInTemplate defaultNetworkNameInTemplate;
-   protected final VCloudClient client;
+   protected final LoadingCache<URI, VAppTemplate> templateCache;
+   protected final Function<VAppTemplate, String> defaultNetworkNameInTemplate;
 
    @Inject
-   public BindInstantiateVAppTemplateParamsToXmlPayload(DefaultNetworkNameInTemplate defaultNetworkNameInTemplate,
-         BindToStringPayload stringBinder, @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
-         @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema, @Network ReferenceType network,
-         @Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode, VCloudClient client) {
+   public BindInstantiateVAppTemplateParamsToXmlPayload(LoadingCache<URI, VAppTemplate> templateCache,
+            @Network Function<VAppTemplate, String> defaultNetworkNameInTemplate, BindToStringPayload stringBinder,
+            @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns, @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema,
+            @Network ReferenceType network, FenceMode fenceMode) {
+      this.templateCache = templateCache;
       this.defaultNetworkNameInTemplate = defaultNetworkNameInTemplate;
       this.ns = ns;
       this.schema = schema;
       this.stringBinder = stringBinder;
       this.defaultNetwork = network;
-      this.defaultFenceMode = FenceMode.fromValue(fenceMode);
-      this.client = client;
+      this.defaultFenceMode = fenceMode;
    }
 
    @Override
@@ -97,33 +93,29 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
       String name = checkNotNull(postParams.remove("name"), "name");
-      final URI template = URI.create(checkNotNull(postParams.remove("template"), "template"));
-
-      boolean deploy = true;
-      boolean powerOn = true;
+      URI template = URI.create(checkNotNull(postParams.remove("template"), "template"));
 
       Set<NetworkConfig> networkConfig = null;
 
-      NetworkConfigDecorator networknetworkConfigDecorator = new NetworkConfigDecorator(template,
+      NetworkConfigDecorator networkConfigDecorator = new NetworkConfigDecorator(templateCache.getUnchecked(template),
             defaultNetwork.getHref(), defaultFenceMode, defaultNetworkNameInTemplate);
 
       InstantiateVAppTemplateOptions options = findOptionsInArgsOrNull(gRequest);
 
       if (options != null) {
          if (options.getNetworkConfig().size() > 0)
-            networkConfig = Sets.newLinkedHashSet(Iterables.transform(options.getNetworkConfig(),
-                  networknetworkConfigDecorator));
-         deploy = ifNullDefaultTo(options.shouldDeploy(), deploy);
-         powerOn = ifNullDefaultTo(options.shouldPowerOn(), powerOn);
+            networkConfig = ImmutableSet
+                     .copyOf(transform(options.getNetworkConfig(), networkConfigDecorator));
+      } else {
+         options = new InstantiateVAppTemplateOptions();
       }
 
       if (networkConfig == null)
-         networkConfig = ImmutableSet.of(networknetworkConfigDecorator.apply(null));
+         networkConfig = ImmutableSet.of(networkConfigDecorator.apply(null));
 
       try {
-         return stringBinder.bindToRequest(
-               request,
-               generateXml(name, options.getDescription(), deploy, powerOn, template, networkConfig));
+         return stringBinder.bindToRequest(request, generateXml(name, options.getDescription(), options.shouldDeploy(),
+                  options.shouldPowerOn(), template, networkConfig));
       } catch (ParserConfigurationException e) {
          throw new RuntimeException(e);
       } catch (FactoryConfigurationError e) {
@@ -136,9 +128,9 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
 
    @VisibleForTesting
    Set<Vm> ifCustomizationScriptIsSetGetVmsInTemplate(String customizationScript, final URI template) {
-      Set<Vm> vms = Sets.newLinkedHashSet();
+      Set<Vm> vms = ImmutableSet.of();
       if (customizationScript != null) {
-         VAppTemplate vAppTemplate = client.getVAppTemplateClient().getVAppTemplate(template);
+         VAppTemplate vAppTemplate = templateCache.getUnchecked(template);
          checkArgument(vAppTemplate != null, "vAppTemplate %s not found!", template);
          vms = vAppTemplate.getChildren();
          checkArgument(vms.size() > 0, "no vms found in vAppTemplate %s", vAppTemplate);
@@ -147,13 +139,13 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    }
 
    protected static final class NetworkConfigDecorator implements Function<NetworkConfig, NetworkConfig> {
-      private final URI template;
+      private final VAppTemplate template;
       private final URI defaultNetwork;
       private final FenceMode defaultFenceMode;
-      private final DefaultNetworkNameInTemplate defaultNetworkNameInTemplate;
+      private final Function<VAppTemplate, String> defaultNetworkNameInTemplate;
 
-      protected NetworkConfigDecorator(URI template, URI defaultNetwork, FenceMode defaultFenceMode,
-            DefaultNetworkNameInTemplate defaultNetworkNameInTemplate) {
+      protected NetworkConfigDecorator(VAppTemplate template, URI defaultNetwork, FenceMode defaultFenceMode,
+               Function<VAppTemplate, String> defaultNetworkNameInTemplate) {
          this.template = checkNotNull(template, "template");
          this.defaultNetwork = checkNotNull(defaultNetwork, "defaultNetwork");
          this.defaultFenceMode = checkNotNull(defaultFenceMode, "defaultFenceMode");
@@ -166,35 +158,11 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
             return new NetworkConfig(defaultNetworkNameInTemplate.apply(template), defaultNetwork, defaultFenceMode);
          URI network = ifNullDefaultTo(from.getParentNetwork(), defaultNetwork);
          FenceMode fenceMode = ifNullDefaultTo(from.getFenceMode(), defaultFenceMode);
+         // using conditional statement instead of ifNullDefaultTo so that we lazy invoke the
+         // function, as it is an expensive one.
          String networkName = from.getNetworkName() != null ? from.getNetworkName() : defaultNetworkNameInTemplate
-               .apply(template);
+                  .apply(template);
          return new NetworkConfig(networkName, network, fenceMode);
-      }
-   }
-
-   @Singleton
-   public static class DefaultNetworkNameInTemplate implements Function<URI, String> {
-      @Resource
-      protected Logger logger = Logger.NULL;
-
-      private final VCloudClient client;
-
-      @Inject
-      DefaultNetworkNameInTemplate(VCloudClient client) {
-         this.client = client;
-      }
-
-      @Override
-      public String apply(URI template) {
-         String networkName;
-         VAppTemplate vAppTemplate = client.getVAppTemplateClient().getVAppTemplate(template);
-         checkArgument(vAppTemplate != null, "vAppTemplate %s not found!", template);
-         Set<org.jclouds.ovf.Network> networks = vAppTemplate.getNetworkSection().getNetworks();
-         checkArgument(networks.size() > 0, "no networks found in vAppTemplate %s", vAppTemplate);
-         if (networks.size() > 1)
-            logger.warn("multiple networks found for %s, choosing first from: %s", vAppTemplate.getName(), networks);
-         networkName = Iterables.get(networks, 0).getName();
-         return networkName;
       }
    }
 

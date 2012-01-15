@@ -45,9 +45,13 @@ import org.jclouds.vcloud.compute.internal.VCloudTemplateBuilderImpl;
 import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
 import org.jclouds.vcloud.compute.strategy.VCloudComputeServiceAdapter;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.network.FenceMode;
+import org.jclouds.vcloud.domain.network.NetworkConfig;
+import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.functions.VAppTemplatesInOrg;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -110,6 +114,14 @@ public class VCloudComputeServiceDependenciesModule extends AbstractModule {
       }).to((Class) IdentityFunction.class);
    }
 
+
+   @Provides
+   @Singleton
+   public NetworkConfig networkConfig(@Network ReferenceType network, FenceMode defaultFenceMode) {
+      return new NetworkConfig(network.getName(), network.getHref(), defaultFenceMode);
+   }
+
+   
    @Singleton
    public static class DefaultVDC implements Supplier<Location> {
       private final Supplier<Set<? extends Location>> locationsSupplier;

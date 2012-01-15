@@ -76,3 +76,4 @@ public class ValidateVAppTemplateAndReturnEnvelopeOrThrowIllegalArgumentExceptio
       return ovf;
    }
 }
+
