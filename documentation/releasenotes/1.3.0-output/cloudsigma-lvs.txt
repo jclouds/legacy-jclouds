@@ -1,7 +1,7 @@
 [INFO] Scanning for projects...
 [WARNING] 
 [WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:cloudsigma-lvs:bundle:1.3.0-SNAPSHOT
-[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/workspace/git/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/workspace/git/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/git/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/git/jclouds/project/pom.xml, line 24, column 13
 [WARNING] 
 [WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
 [WARNING] 
@@ -13,7 +13,7 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ cloudsigma-lvs ---
-[INFO] Deleting /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-lvs/target
+[INFO] Deleting /Users/adriancole/git/jclouds/providers/cloudsigma-lvs/target
 [INFO] 
 [INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ cloudsigma-lvs ---
 [INFO] 
@@ -29,24 +29,24 @@
 [INFO] 
 [INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ cloudsigma-lvs ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-lvs/src/main/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/git/jclouds/providers/cloudsigma-lvs/src/main/clojure
 [INFO] Copying 1 resource
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ cloudsigma-lvs ---
-[INFO] Compiling 2 source files to /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-lvs/target/classes
+[INFO] Compiling 2 source files to /Users/adriancole/git/jclouds/providers/cloudsigma-lvs/target/classes
 [INFO] 
 [INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ cloudsigma-lvs ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-lvs/src/test/clojure
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-lvs/src/test/resources
+[INFO] skip non existing resourceDirectory /Users/adriancole/git/jclouds/providers/cloudsigma-lvs/src/test/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/git/jclouds/providers/cloudsigma-lvs/src/test/resources
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ cloudsigma-lvs ---
-[INFO] Compiling 4 source files to /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-lvs/target/test-classes
+[INFO] Compiling 4 source files to /Users/adriancole/git/jclouds/providers/cloudsigma-lvs/target/test-classes
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (default-test) @ cloudsigma-lvs ---
-[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-lvs/target/surefire-reports
+[INFO] Surefire report directory: /Users/adriancole/git/jclouds/providers/cloudsigma-lvs/target/surefire-reports
 [INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
 
 -------------------------------------------------------
@@ -55,17 +55,17 @@
 Running org.jclouds.cloudsigma.CloudSigmaLasVegasProviderTest
 Starting test testAllContains(org.jclouds.cloudsigma.CloudSigmaLasVegasProviderTest)
 Starting test testInRestProperties(org.jclouds.cloudsigma.CloudSigmaLasVegasProviderTest)
-Starting test testOfTypeContains(org.jclouds.cloudsigma.CloudSigmaLasVegasProviderTest)
 Starting test testWithId(org.jclouds.cloudsigma.CloudSigmaLasVegasProviderTest)
-[pool-2-thread-1] Test testAllContains(org.jclouds.cloudsigma.CloudSigmaLasVegasProviderTest) succeeded: 53ms
+Starting test testOfTypeContains(org.jclouds.cloudsigma.CloudSigmaLasVegasProviderTest)
+[pool-2-thread-1] Test testAllContains(org.jclouds.cloudsigma.CloudSigmaLasVegasProviderTest) succeeded: 28ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testWithId(org.jclouds.cloudsigma.CloudSigmaLasVegasProviderTest) succeeded: 54ms
+[pool-2-thread-3] Test testOfTypeContains(org.jclouds.cloudsigma.CloudSigmaLasVegasProviderTest) succeeded: 29ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-[pool-2-thread-3] Test testOfTypeContains(org.jclouds.cloudsigma.CloudSigmaLasVegasProviderTest) succeeded: 56ms
+[pool-2-thread-4] Test testWithId(org.jclouds.cloudsigma.CloudSigmaLasVegasProviderTest) succeeded: 31ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testInRestProperties(org.jclouds.cloudsigma.CloudSigmaLasVegasProviderTest) succeeded: 97ms
+[pool-2-thread-2] Test testInRestProperties(org.jclouds.cloudsigma.CloudSigmaLasVegasProviderTest) succeeded: 82ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.49 sec
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.437 sec
 
 Results :
 
@@ -87,16 +87,16 @@ Reference from     /Users/adriancole/.m2/repository/org/jclouds/api/cloudsigma/1
 Classpath          [Jar:., Jar:cloudsigma, Jar:jclouds-compute, Jar:oauth, Jar:aopalliance, Jar:jersey-core, Jar:guice-assistedinject, Jar:guice, Jar:javax.inject, Jar:jsr250-api, Jar:gson, Jar:guava, Jar:jsr305, Jar:jclouds-scriptbuilder, Jar:jclouds-core, Jar:clojure, Jar:tools.logging, Jar:core.incubator]
 [INFO] 
 [INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ cloudsigma-lvs ---
-[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-lvs/target/cloudsigma-lvs-1.3.0-SNAPSHOT-sources.jar
+[INFO] Building jar: /Users/adriancole/git/jclouds/providers/cloudsigma-lvs/target/cloudsigma-lvs-1.3.0-SNAPSHOT-sources.jar
 [INFO] 
 [INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ cloudsigma-lvs ---
 [INFO] Skipping javadoc generation
 [INFO] 
 [INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ cloudsigma-lvs ---
-[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-lvs/target/cloudsigma-lvs-1.3.0-SNAPSHOT-tests.jar
+[INFO] Building jar: /Users/adriancole/git/jclouds/providers/cloudsigma-lvs/target/cloudsigma-lvs-1.3.0-SNAPSHOT-tests.jar
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (integration) @ cloudsigma-lvs ---
-[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-lvs/target/surefire-reports
+[INFO] Surefire report directory: /Users/adriancole/git/jclouds/providers/cloudsigma-lvs/target/surefire-reports
 [INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
 
 -------------------------------------------------------
@@ -108,185 +108,168 @@ Starting test setServiceDefaults(org.jclouds.cloudsigma.compute.CloudSigmaLasVeg
 [TestNG] Test setServiceDefaults(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
 Starting test testCompareSizes(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest)
-[TestNG] Test testCompareSizes(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) failed.
-Test suite progress: tests succeeded: 1, failed: 1, skipped: 0.
-Starting test testCorrectAuthException(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest)
-Starting test testCreateAndDestroyVLAN(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
 [TestNG] Test testCompareSizes(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) failed.
-Test suite progress: tests succeeded: 1, failed: 2, skipped: 0.
+Test suite progress: tests succeeded: 1, failed: 1, skipped: 0.
 Starting test testFromTemplate(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testFromTemplate(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 8ms
-Test suite progress: tests succeeded: 2, failed: 2, skipped: 0.
+[TestNG] Test testFromTemplate(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 5ms
+Test suite progress: tests succeeded: 2, failed: 1, skipped: 0.
 Starting test testGetAssignableLocations(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 location [id=cloudsigma-lvs, scope=PROVIDER, description=https://api.lvs.cloudsigma.com, parent=null, iso3166Codes=[US-NV], metadata={}]
-[TestNG] Test testGetAssignableLocations(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 3, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 17ms
-Test suite progress: tests succeeded: 4, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 13ms
-Test suite progress: tests succeeded: 5, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 6ms
-Test suite progress: tests succeeded: 6, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 16ms
-Test suite progress: tests succeeded: 7, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 8, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 9, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 10, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 11, failed: 2, skipped: 0.
+[TestNG] Test testGetAssignableLocations(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 3, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 3ms
-Test suite progress: tests succeeded: 12, failed: 2, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 13, failed: 2, skipped: 0.
+Test suite progress: tests succeeded: 4, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 14, failed: 2, skipped: 0.
+Test suite progress: tests succeeded: 5, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 6, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 7, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 8, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 9, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 10, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 11, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 12, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 3ms
-Test suite progress: tests succeeded: 15, failed: 2, skipped: 0.
+Test suite progress: tests succeeded: 13, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 14, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 16, failed: 2, skipped: 0.
+Test suite progress: tests succeeded: 15, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 17, failed: 2, skipped: 0.
+Test suite progress: tests succeeded: 16, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 18, failed: 2, skipped: 0.
+Test suite progress: tests succeeded: 17, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 6ms
-Test suite progress: tests succeeded: 19, failed: 2, skipped: 0.
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 18, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 19, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanUseImageId(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-Exception in thread "user thread 0" java.lang.IllegalStateException: interrupted calling get() on [[method=CloudSigmaAsyncClient.listServerInfo, request=GET https://api.lvs.cloudsigma.com/servers/info HTTP/1.1]], so could not run listeners
-	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:66)
-[TestNG] Test testCorrectAuthException(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) succeeded: 370ms
-Test suite progress: tests succeeded: 20, failed: 2, skipped: 0.
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-Caused by: java.lang.InterruptedException
-	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:979)
-	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1281)
-	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:218)
-	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:237)
-	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:59)
-	... 3 more
-Caused by: java.util.concurrent.ExecutionException: task submitted from the following trace
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:270)
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:241)
-	... 4 more
-Starting test testCreateAndRunAService(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest)
+[TestNG] Test testCompareSizes(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 19, failed: 2, skipped: 0.
+Starting test testCorrectAuthException(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest)
+Starting test testCreateAndDestroyVLAN(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
 [TestNG] Test testCreateAndDestroyVLAN(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) failed.
+Test suite progress: tests succeeded: 19, failed: 3, skipped: 0.
+[TestNG] Test testCorrectAuthException(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) succeeded: 320ms
 Test suite progress: tests succeeded: 20, failed: 3, skipped: 0.
+Starting test testCreateAndRunAService(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest)
 Starting test testCreateDrive(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
-[TestNG] Test testCreateDrive(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 10508ms
+[TestNG] Test testCreateDrive(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 10286ms
 Test suite progress: tests succeeded: 21, failed: 3, skipped: 0.
 Starting test testGetDrive(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
-[TestNG] Test testTemplateBuilderCanUseImageId(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 11018ms
+[TestNG] Test testTemplateBuilderCanUseImageId(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 11995ms
 Test suite progress: tests succeeded: 22, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 4ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 23, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 24, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 25, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 12ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 26, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 27, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 28, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 29, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 30, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 31, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 32, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 33, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 34, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 35, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 36, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 4ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 37, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 38, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 39, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 40, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 41, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 42, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 43, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 44, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 3ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 5ms
 Test suite progress: tests succeeded: 45, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 46, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 3ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 47, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 48, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 49, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 50, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 51, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 52, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
@@ -295,58 +278,58 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.Cloud
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 54, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 55, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 56, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 57, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 58, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 59, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 60, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 61, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 62, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 63, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 64, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 4ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 65, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 66, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 67, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 68, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 69, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 70, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 71, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 72, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
@@ -355,40 +338,40 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.Cloud
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 74, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 6ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 75, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 3ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 76, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 77, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 78, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 79, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 80, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 81, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 82, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 83, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 84, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 85, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 86, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 0ms
@@ -422,55 +405,55 @@ Windows Server Standard 2008 R2 64bit English pub
 FreeBSD 8.1 Preinstalled Base System
 Centos 5.7 Linux 64bit Preinstalled System with automated SSH Access
 Centos 6.0 Linux 64bit Preinstalled System with automated SSH Access
-[TestNG] Test testGetDrive(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 10973ms
+[TestNG] Test testGetDrive(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 11752ms
 Test suite progress: tests succeeded: 91, failed: 3, skipped: 0.
 Starting test testGetProfileInfo(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
-[TestNG] Test testGetProfileInfo(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 197ms
+[TestNG] Test testGetProfileInfo(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 203ms
 Test suite progress: tests succeeded: 92, failed: 3, skipped: 0.
 Starting test testGetServer(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
-[TestNG] Test testGetServer(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 185ms
+[TestNG] Test testGetServer(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 196ms
 Test suite progress: tests succeeded: 93, failed: 3, skipped: 0.
 Starting test testGetStaticIP(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
-[TestNG] Test testGetStaticIP(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 614ms
+[TestNG] Test testGetStaticIP(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 628ms
 Test suite progress: tests succeeded: 94, failed: 3, skipped: 0.
 Starting test testGetVLAN(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
-[TestNG] Test testGetVLAN(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 232ms
+[TestNG] Test testGetVLAN(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 261ms
 Test suite progress: tests succeeded: 95, failed: 3, skipped: 0.
 Starting test testListDriveInfo(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
-[TestNG] Test testListDriveInfo(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 2908ms
+[TestNG] Test testListDriveInfo(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 533ms
 Test suite progress: tests succeeded: 96, failed: 3, skipped: 0.
 Starting test testListDrives(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
-[TestNG] Test testListDrives(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 171ms
+[TestNG] Test testListDrives(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 198ms
 Test suite progress: tests succeeded: 97, failed: 3, skipped: 0.
 Starting test testListServerInfo(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
-[TestNG] Test testListServerInfo(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 190ms
+[TestNG] Test testListServerInfo(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 203ms
 Test suite progress: tests succeeded: 98, failed: 3, skipped: 0.
 Starting test testListServers(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
-[TestNG] Test testListServers(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 182ms
+[TestNG] Test testListServers(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 208ms
 Test suite progress: tests succeeded: 99, failed: 3, skipped: 0.
 Starting test testListStandardCds(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
-[TestNG] Test testListStandardCds(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 187ms
+[TestNG] Test testListStandardCds(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 221ms
 Test suite progress: tests succeeded: 100, failed: 3, skipped: 0.
 Starting test testListStandardDrives(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
-[TestNG] Test testListStandardDrives(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 197ms
+[TestNG] Test testListStandardDrives(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 226ms
 Test suite progress: tests succeeded: 101, failed: 3, skipped: 0.
 Starting test testListStandardImages(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
-[TestNG] Test testListStandardImages(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 188ms
+[TestNG] Test testListStandardImages(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 196ms
 Test suite progress: tests succeeded: 102, failed: 3, skipped: 0.
 Starting test testListStaticIPInfo(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
-[TestNG] Test testListStaticIPInfo(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 246ms
+[TestNG] Test testListStaticIPInfo(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 228ms
 Test suite progress: tests succeeded: 103, failed: 3, skipped: 0.
 Starting test testListStaticIPs(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
-[TestNG] Test testListStaticIPs(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 209ms
+[TestNG] Test testListStaticIPs(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 201ms
 Test suite progress: tests succeeded: 104, failed: 3, skipped: 0.
 Starting test testListVLANInfo(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
-[TestNG] Test testListVLANInfo(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 252ms
+[TestNG] Test testListVLANInfo(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 271ms
 Test suite progress: tests succeeded: 105, failed: 3, skipped: 0.
 Starting test testListVLANs(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
-[TestNG] Test testListVLANs(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 215ms
+[TestNG] Test testListVLANs(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 239ms
 Test suite progress: tests succeeded: 106, failed: 3, skipped: 0.
 Starting test testSetDriveData(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
-[TestNG] Test testSetDriveData(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 545ms
+[TestNG] Test testSetDriveData(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) succeeded: 530ms
 Test suite progress: tests succeeded: 107, failed: 3, skipped: 0.
 Starting test testCreateAndDestroyStaticIP(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest)
 [TestNG] Test testCreateAndDestroyStaticIP(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) failed.
@@ -487,42 +470,46 @@ Test suite progress: tests succeeded: 107, failed: 4, skipped: 4.
 Test suite progress: tests succeeded: 107, failed: 4, skipped: 5.
 [TestNG] Test testDestroyDrive(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest) skipped.
 Test suite progress: tests succeeded: 107, failed: 4, skipped: 6.
-[TestNG] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 22032ms
+[TestNG] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 23485ms
 Test suite progress: tests succeeded: 108, failed: 4, skipped: 6.
 Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 22185ms
+[TestNG] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 32651ms
 Test suite progress: tests succeeded: 109, failed: 4, skipped: 6.
 Starting test testDefaultTemplateBuilder(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
 [TestNG] Test testDefaultTemplateBuilder(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 110, failed: 4, skipped: 6.
-Jan 15, 2012 5:52:50 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << available node(dc077154-69f0-45f7-ab7e-ccfb75fba4c5) os([name=Ubuntu 11.04 Linux Server Edition 64bit Preinstalled System with automated SSH Access, family=ubuntu, version=11.04, arch=null, is64Bit=true, description=This is a ready server system drive which offers automated SSH access using the VNC password for initial SSH access.]) in 176s
+Jan 15, 2012 1:11:44 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << available node(c0c6b135-9963-4a21-8fa9-0d328562bd53) os([name=Ubuntu 11.04 Linux Server Edition 64bit Preinstalled System with automated SSH Access, family=ubuntu, version=11.04, arch=null, is64Bit=true, description=This is a ready server system drive which offers automated SSH access using the VNC password for initial SSH access.]) in 161s
 SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
 SLF4J: Defaulting to no-operation (NOP) logger implementation
 SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
-Jan 15, 2012 5:53:54 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << configured node(dc077154-69f0-45f7-ab7e-ccfb75fba4c5) with java full version "1.7.0_02-b13" and JBoss 7.0.2.Final in 56s
-Jan 15, 2012 5:54:12 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
-WARNING: could not get info on ip 208.44.23.10; check freegeoip
-Jan 15, 2012 5:54:12 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of jdk7(download.oracle.com) from perpective of node(dc077154-69f0-45f7-ab7e-ccfb75fba4c5): 208.44.23.10
-Jan 15, 2012 5:54:19 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
-WARNING: could not get info on ip 69.194.139.193; check freegeoip
-Jan 15, 2012 5:54:19 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of node(dc077154-69f0-45f7-ab7e-ccfb75fba4c5) from perspective of amazonaws: 69.194.139.193
-Jan 15, 2012 5:54:25 AM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
-INFO: << initial start of jboss on node(dc077154-69f0-45f7-ab7e-ccfb75fba4c5) [backgroundProcessMilliseconds=2982, socketOpenMilliseconds=1442, reportedStartupTimeMilliseconds=3068]
-Jan 15, 2012 5:54:35 AM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
-INFO: << warm start of jboss on node(dc077154-69f0-45f7-ab7e-ccfb75fba4c5) [backgroundProcessMilliseconds=2228, socketOpenMilliseconds=1208, reportedStartupTimeMilliseconds=2777]
-[TestNG] Test testCreateAndRunAService(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) succeeded: 300113ms
+Jan 15, 2012 1:12:23 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << configured node(c0c6b135-9963-4a21-8fa9-0d328562bd53) with java full version "1.7.0_02-b13" and JBoss 7.0.2.Final in 36s
+Jan 15, 2012 1:12:25 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+WARNING: could not get info on ip 209.132.182.31; check freegeoip
+Jan 15, 2012 1:12:25 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jboss7(download.jboss.org) from perpective of node(c0c6b135-9963-4a21-8fa9-0d328562bd53): 209.132.182.31
+Jan 15, 2012 1:12:27 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+WARNING: could not get info on ip 65.125.72.59; check freegeoip
+Jan 15, 2012 1:12:27 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jdk7(download.oracle.com) from perpective of node(c0c6b135-9963-4a21-8fa9-0d328562bd53): 65.125.72.59
+Jan 15, 2012 1:12:28 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+WARNING: could not get info on ip 69.194.139.49; check freegeoip
+Jan 15, 2012 1:12:28 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of node(c0c6b135-9963-4a21-8fa9-0d328562bd53) from perspective of amazonaws: 69.194.139.49
+Jan 15, 2012 1:12:34 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << initial start of jboss on node(c0c6b135-9963-4a21-8fa9-0d328562bd53) [backgroundProcessMilliseconds=3099, socketOpenMilliseconds=1537, reportedStartupTimeMilliseconds=3138]
+Jan 15, 2012 1:12:40 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << warm start of jboss on node(c0c6b135-9963-4a21-8fa9-0d328562bd53) [backgroundProcessMilliseconds=2149, socketOpenMilliseconds=1421, reportedStartupTimeMilliseconds=2900]
+[TestNG] Test testCreateAndRunAService(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) succeeded: 234085ms
 Test suite progress: tests succeeded: 111, failed: 4, skipped: 6.
 Starting test testGetAssignableLocations(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest)
-Jan 15, 2012 5:54:53 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+Jan 15, 2012 1:12:56 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
 WARNING: location [id=cloudsigma-lvs, scope=PROVIDER, description=https://api.lvs.cloudsigma.com, parent=null, iso3166Codes=[US-NV], metadata={}]
 [TestNG] Test testGetAssignableLocations(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 112, failed: 4, skipped: 6.
 Starting test testImagesCache(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest)
-[TestNG] Test testImagesCache(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) succeeded: 232ms
+[TestNG] Test testImagesCache(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 113, failed: 4, skipped: 6.
 Starting test testListImages(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest)
 [TestNG] Test testListImages(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) succeeded: 0ms
@@ -534,14 +521,14 @@ Starting test testOptionToNotBlock(org.jclouds.cloudsigma.compute.CloudSigmaLasV
 [TestNG] Test testOptionToNotBlock(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 116, failed: 4, skipped: 6.
 Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest)
-[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) succeeded: 187ms
+[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) succeeded: 202ms
 Test suite progress: tests succeeded: 117, failed: 4, skipped: 6.
 [TestNG] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) skipped.
 Test suite progress: tests succeeded: 117, failed: 4, skipped: 7.
 [TestNG] Test testCreateTwoNodesWithRunScript(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) skipped.
 Test suite progress: tests succeeded: 117, failed: 4, skipped: 8.
 Starting test testTemplateMatch(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest)
-[TestNG] Test testTemplateMatch(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateMatch(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) succeeded: 6ms
 Test suite progress: tests succeeded: 118, failed: 4, skipped: 8.
 [TestNG] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) skipped.
 Test suite progress: tests succeeded: 118, failed: 4, skipped: 9.
@@ -559,12 +546,12 @@ Test suite progress: tests succeeded: 118, failed: 4, skipped: 14.
 Test suite progress: tests succeeded: 118, failed: 4, skipped: 15.
 [TestNG] Test testDestroyNodes(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest) skipped.
 Test suite progress: tests succeeded: 118, failed: 4, skipped: 16.
-Tests run: 138, Failures: 4, Errors: 0, Skipped: 16, Time elapsed: 315.415 sec <<< FAILURE!
+Tests run: 138, Failures: 4, Errors: 0, Skipped: 16, Time elapsed: 249.021 sec <<< FAILURE!
 
 Results :
 
-Failed tests:   testCompareSizes(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest)
-  testCompareSizes(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
+Failed tests:   testCompareSizes(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasTemplateBuilderLiveTest)
+  testCompareSizes(org.jclouds.cloudsigma.compute.CloudSigmaLasVegasComputeServiceLiveTest)
   testCreateAndDestroyVLAN(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest): errors:system VLAN could not be created as you do not have a current unused VLAN subscription. Please purchase an additional VLAN subscription then try again.
   testCreateAndDestroyStaticIP(org.jclouds.cloudsigma.CloudSigmaLasVegasLondonClientLiveTest): errors:system IP address could not be created as you do not have a current unused static IP address subscription. Please purchase an additional static IP address subscription then try again.
 
@@ -573,13 +560,13 @@ Tests run: 138, Failures: 4, Errors: 0, Skipped: 16
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 5:26.923s
-[INFO] Finished at: Sun Jan 15 05:54:54 PST 2012
-[INFO] Final Memory: 22M/265M
+[INFO] Total time: 4:18.383s
+[INFO] Finished at: Sun Jan 15 13:12:57 PST 2012
+[INFO] Final Memory: 21M/125M
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project cloudsigma-lvs: There are test failures.
 [ERROR] 
-[ERROR] Please refer to /Users/adriancole/workspace/git/jclouds/providers/cloudsigma-lvs/target/surefire-reports for the individual test results.
+[ERROR] Please refer to /Users/adriancole/git/jclouds/providers/cloudsigma-lvs/target/surefire-reports for the individual test results.
 [ERROR] -> [Help 1]
 [ERROR] 
 [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
