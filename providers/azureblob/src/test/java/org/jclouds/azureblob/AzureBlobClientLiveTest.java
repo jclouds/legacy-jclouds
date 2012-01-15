@@ -50,6 +50,7 @@ import org.jclouds.io.Payloads;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.BaseRestClientLiveTest;
 import org.jclouds.util.Strings2;
+import org.jclouds.util.Throwables2;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -320,8 +321,9 @@ public class AzureBlobClientLiveTest extends BaseRestClientLiveTest {
          client.getBlob(privateContainer, object.getProperties().getName(), GetOptions.Builder
                   .ifETagDoesntMatch(newEtag));
       } catch (Exception e) {
-         assertEquals(e.getCause().getClass(), HttpResponseException.class);
-         assertEquals(((HttpResponseException) e.getCause()).getResponse().getStatusCode(), 304);
+         HttpResponseException httpEx = Throwables2.getFirstThrowableOfType(e, HttpResponseException.class);
+         assert (httpEx != null) : "expected http exception, not " + e;
+         assertEquals(httpEx.getResponse().getStatusCode(), 304);
       }
 
       // Matching ETag TODO this shouldn't fail!!!
