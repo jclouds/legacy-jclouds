@@ -18,18 +18,13 @@
  */
 package org.jclouds.virtualbox.domain;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
+import com.google.common.base.Objects;
 import org.virtualbox_4_1.CleanupMode;
 
-import com.google.common.base.Objects;
+import java.util.*;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A description of a Virtual Machine in VirtualBox.
@@ -41,16 +36,14 @@ public class VmSpec {
    private final String vmId;
    private final long memory;
    private final boolean forceOverwrite;
-   private final Map<Long, NatAdapter> natNetworkAdapters;
    private final Set<StorageController> controllers;
    private final CleanupMode cleanupMode;
 
-   public VmSpec(String vmId, String vmName, String osTypeId, long memory, boolean forceOverwrite, Set<StorageController> controllers, Map<Long, NatAdapter> natNetworkAdapters, CleanupMode cleanupMode) {
+   public VmSpec(String vmId, String vmName, String osTypeId, long memory, boolean forceOverwrite, Set<StorageController> controllers, CleanupMode cleanupMode) {
       checkNotNull(vmId, "vmId");
       checkNotNull(vmName, "vmName");
       checkArgument(memory > 0, "memory must be > 0");
       checkNotNull(controllers, "controllers");
-      checkNotNull(natNetworkAdapters, "natNetworkAdapters");
       checkNotNull(cleanupMode, "cleanupMode");
       this.vmId = vmId;
       this.vmName = vmName;
@@ -58,7 +51,6 @@ public class VmSpec {
       this.memory = memory;
       this.controllers = controllers;
       this.forceOverwrite = forceOverwrite;
-      this.natNetworkAdapters = natNetworkAdapters;
       this.cleanupMode = cleanupMode;
    }
 
@@ -74,10 +66,9 @@ public class VmSpec {
       private String id;
       private String osTypeId = "";
       private boolean forceOverwrite;
-      private Map<Long, NatAdapter> natNetworkAdapters = new HashMap<Long, NatAdapter>();
       private long memory;
       private CleanupMode cleanUpMode;
-      
+
       public Builder controller(StorageController controller) {
          controllers.add(controller);
          return this;
@@ -103,30 +94,24 @@ public class VmSpec {
          return this;
       }
 
-      public Builder natNetworkAdapter(int slot, NatAdapter adapter) {
-         this.natNetworkAdapters.put((long) slot, adapter);
-         return this;
-      }
-
       public Builder memoryMB(int memorySize) {
          this.memory = (long) memorySize;
          return this;
       }
-      
+
       public Builder cleanUpMode(CleanupMode cleanupMode) {
          this.cleanUpMode = cleanupMode;
          return this;
-      }      
+      }
 
       public VmSpec build() {
          checkNotNull(name, "name");
          checkNotNull(id, "id");
          checkArgument(memory > 0, "Memory must be set");
-         return new VmSpec(id, name, osTypeId, memory, forceOverwrite, controllers, natNetworkAdapters, cleanUpMode);
+         return new VmSpec(id, name, osTypeId, memory, forceOverwrite, controllers, cleanUpMode);
       }
-
-
    }
+
    public String getVmId() {
       return vmId;
    }
@@ -151,10 +136,6 @@ public class VmSpec {
       return Collections.unmodifiableSet(controllers);
    }
 
-   public Map<Long, NatAdapter> getNatNetworkAdapters() {
-      return Collections.unmodifiableMap(natNetworkAdapters);
-   }
-
    public CleanupMode getCleanupMode() {
       return cleanupMode;
    }
@@ -169,7 +150,6 @@ public class VmSpec {
                  Objects.equal(osTypeId, other.osTypeId) &&
                  Objects.equal(memory, other.memory) &&
                  Objects.equal(forceOverwrite, other.forceOverwrite) &&
-                 Objects.equal(natNetworkAdapters, other.natNetworkAdapters) &&
                  Objects.equal(controllers, other.controllers) &&
                  Objects.equal(cleanupMode, other.cleanupMode);
       }
@@ -178,7 +158,7 @@ public class VmSpec {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(vmId, vmName, osTypeId, memory, forceOverwrite, natNetworkAdapters, controllers);
+      return Objects.hashCode(vmId, vmName, osTypeId, memory, forceOverwrite, controllers);
    }
 
    @Override
@@ -189,7 +169,6 @@ public class VmSpec {
               ", memory='" + memory + '\'' +
               ", vmId='" + vmId + '\'' +
               ", forceOverwrite=" + forceOverwrite +
-              ", natNetworkAdapters=" + natNetworkAdapters +
               ", controllers=" + controllers +
               ", cleanupMode=" + cleanupMode +
               '}';

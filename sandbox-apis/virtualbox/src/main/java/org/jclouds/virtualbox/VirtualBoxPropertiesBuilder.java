@@ -64,7 +64,8 @@ public class VirtualBoxPropertiesBuilder extends PropertiesBuilder {
       properties.put(VIRTUALBOX_ISO_URL, "http://releases.ubuntu.com/11.04/ubuntu-11.04-server-i386.iso");
       properties.put(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE, "<Esc><Esc><Enter> "
                + "/install/vmlinuz noapic preseed/url=PRECONFIGURATION_URL "
-               + "debian-installer=en_US auto locale=en_US kbd-chooser/method=us " + "hostname=" + "HOSTNAME "
+               + "debian-installer=en_US auto locale=en_US kbd-chooser/method=us "
+               + "hostname=" + "HOSTNAME "
                + "fb=false debconf/frontend=noninteractive "
                + "keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false "
                + "initrd=/install/initrd.gz -- <Enter>");

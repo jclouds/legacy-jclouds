@@ -22,10 +22,9 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import com.google.inject.Injector;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
-import org.jclouds.virtualbox.domain.HardDisk;
-import org.jclouds.virtualbox.domain.StorageController;
-import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.domain.*;
 import org.jclouds.virtualbox.functions.CloneAndRegisterMachineFromIMachineIfNotAlreadyExists;
 import org.jclouds.virtualbox.functions.CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
 import org.testng.annotations.AfterMethod;
@@ -53,7 +52,7 @@ public class IsLinkedClonesLiveTest extends BaseVirtualBoxClientLiveTest {
    private String cloneName;
    private String vmName;
    private StorageController masterStorageController;
-   private VmSpec masterSpec;
+   private IMachineSpec masterMachineSpec;
    private VmSpec cloneSpec;
 
    @Override
@@ -70,8 +69,15 @@ public class IsLinkedClonesLiveTest extends BaseVirtualBoxClientLiveTest {
                .build();
       masterStorageController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE).attachISO(0, 0,
                operatingSystemIso).attachHardDisk(hardDisk).attachISO(1, 1, guestAdditionsIso).build();
-      masterSpec = VmSpec.builder().id(vmId).name(vmName).memoryMB(512).osTypeId(osTypeId).controller(
+      VmSpec masterSpec = VmSpec.builder().id(vmId).name(vmName).memoryMB(512).osTypeId(osTypeId).controller(
                masterStorageController).forceOverwrite(true).cleanUpMode(CleanupMode.Full).build();
+      masterMachineSpec = IMachineSpec.builder()
+              .iso(IsoSpec.builder()
+                      .sourcePath(operatingSystemIso)
+                      .preConfiguration(preconfigurationUri)
+                      .installationScript("").build())
+              .vm(masterSpec)
+              .network(NetworkSpec.builder().build()).build();
       
       cloneSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(512).cleanUpMode(CleanupMode.Full)
             .forceOverwrite(true).build();
@@ -80,8 +86,9 @@ public class IsLinkedClonesLiveTest extends BaseVirtualBoxClientLiveTest {
    @Test
    public void testLinkedClone() {
 
-      IMachine master = context.utils().injector().getInstance(CreateAndRegisterMachineFromIsoIfNotAlreadyExists.class)
-               .apply(masterSpec);
+      Injector injector = context.utils().injector();
+      IMachine master = injector.getInstance(CreateAndRegisterMachineFromIsoIfNotAlreadyExists.class)
+               .apply(masterMachineSpec);
       IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, cloneSpec,
                IS_LINKED_CLONE).apply(master);
 
@@ -102,7 +109,7 @@ public class IsLinkedClonesLiveTest extends BaseVirtualBoxClientLiveTest {
    @BeforeMethod
    @AfterMethod
    void cleanUpVms() {
-      for (VmSpec spec : ImmutableSet.of(cloneSpec, masterSpec))
+      for (VmSpec spec : ImmutableSet.of(cloneSpec, masterMachineSpec.getVmSpec()))
          this.undoVm(spec);
    }
 }

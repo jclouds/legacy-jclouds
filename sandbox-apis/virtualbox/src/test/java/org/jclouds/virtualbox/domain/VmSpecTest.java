@@ -70,9 +70,6 @@ public class VmSpecTest {
               .osTypeId("Ubuntu")
               .memoryMB(1024)
               .cleanUpMode(CleanupMode.Full)
-              .natNetworkAdapter(
-                      0,
-                      NatAdapter.builder().tcpRedirectRule("localhost", 2222, "", 22).build())
               .forceOverwrite(true)
               .controller(
                       StorageController.builder().name("Controller")

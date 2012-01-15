@@ -18,30 +18,20 @@
  */
 package org.jclouds.virtualbox.functions;
 
-import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
-import static org.jclouds.virtualbox.util.MachineUtils.applyForMachine;
-import static org.jclouds.virtualbox.util.MachineUtils.lockSessionOnMachineAndApply;
-import static org.virtualbox_4_1.LockType.Shared;
-
-import java.net.URI;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
+import com.google.inject.Inject;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.callables.RunScriptOnNode.Factory;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.virtualbox.Preconfiguration;
 import org.jclouds.virtualbox.domain.ExecutionType;
+import org.jclouds.virtualbox.domain.IMachineSpec;
+import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.settings.KeyboardScancodes;
 import org.virtualbox_4_1.IMachine;
@@ -49,16 +39,19 @@ import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Splitter;
-import com.google.common.base.Supplier;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.inject.Inject;
+import javax.annotation.Resource;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.net.URI;
+
+import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
+import static org.jclouds.virtualbox.util.MachineUtils.applyForMachine;
+import static org.jclouds.virtualbox.util.MachineUtils.lockSessionOnMachineAndApply;
+import static org.virtualbox_4_1.LockType.Shared;
 
 @Singleton
-public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
+public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -66,9 +59,7 @@ public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
 
    private final Supplier<VirtualBoxManager> manager;
    private final CreateAndRegisterMachineFromIsoIfNotAlreadyExists createAndRegisterMachineFromIsoIfNotAlreadyExists;
-   private final ValueOfConfigurationKeyOrNull valueOfConfigurationKeyOrNull;
 
-   private final Supplier<URI> preconfiguration;
    private final Predicate<SshClient> sshResponds;
    private final ExecutionType executionType;
 
@@ -78,66 +69,53 @@ public class CreateAndInstallVm implements Function<VmSpec, IMachine> {
    private final Function<IMachine, SshClient> sshClientForIMachine;
 
    @Inject
-   public CreateAndInstallVm(
-         Supplier<VirtualBoxManager> manager,
-         CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
-         ValueOfConfigurationKeyOrNull valueOfConfigurationKeyOrNull,
-         Predicate<SshClient> sshResponds,
-         Function<IMachine, SshClient> sshClientForIMachine,
-         Supplier<NodeMetadata> host, RunScriptOnNode.Factory scriptRunner,
-         @Preconfiguration Supplier<URI> preconfiguration,
-         ExecutionType executionType) {
+   public CreateAndInstallVm(Supplier<VirtualBoxManager> manager,
+                             CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
+                             Predicate<SshClient> sshResponds, Function<IMachine, SshClient> sshClientForIMachine,
+                             Supplier<NodeMetadata> host, RunScriptOnNode.Factory scriptRunner, ExecutionType executionType) {
       this.manager = manager;
       this.createAndRegisterMachineFromIsoIfNotAlreadyExists = CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
-      this.valueOfConfigurationKeyOrNull = valueOfConfigurationKeyOrNull;
       this.sshResponds = sshResponds;
       this.sshClientForIMachine = sshClientForIMachine;
       this.scriptRunner = scriptRunner;
       this.host = host;
-      this.preconfiguration = preconfiguration;
       this.executionType = executionType;
    }
 
    @Override
-   public IMachine apply(VmSpec vmSpec) {
+   public IMachine apply(IMachineSpec machineSpec) {
+
+      VmSpec vmSpec = machineSpec.getVmSpec();
+      IsoSpec isoSpec = machineSpec.getIsoSpec();
+
       String vmName = vmSpec.getVmName();
 
-      // note this may not be reachable, as this likely uses the 10.2.2 address
-      URI preconfigurationUri = preconfiguration.get();
-      String keySequence = valueOfConfigurationKeyOrNull
-            .apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE)
-            .replace("PRECONFIGURATION_URL",
-                  preconfigurationUri.toASCIIString())
-            .replace("HOSTNAME", vmName);
-
-      final IMachine vm = createAndRegisterMachineFromIsoIfNotAlreadyExists
-            .apply(vmSpec);
+      final IMachine vm = createAndRegisterMachineFromIsoIfNotAlreadyExists.apply(machineSpec);
 
       // Launch machine and wait for it to come online
       ensureMachineIsLaunched(vmName);
 
-      sendKeyboardSequence(keySequence, vmName);
+      URI uri = isoSpec.getPreConfigurationUri().get();
+      String installationKeySequence = isoSpec.getInstallationKeySequence()
+              .replace("PRECONFIGURATION_URL", uri.toASCIIString());
+      sendKeyboardSequence(installationKeySequence, vmName);
 
       SshClient client = sshClientForIMachine.apply(vm);
 
       logger.debug(">> awaiting installation to finish node(%s)", vmName);
-      checkState(sshResponds.apply(client),
-            "timed out waiting for guest %s to be accessible via ssh", vmName);
+      checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh", vmName);
 
-      logger.debug("<< installation of image complete. Powering down node(%s)",
-            vmName);
-      lockSessionOnMachineAndApply(manager.get(), Shared, vmName,
-            new Function<ISession, Void>() {
+      logger.debug("<< installation of image complete. Powering down node(%s)", vmName);
+      lockSessionOnMachineAndApply(manager.get(), Shared, vmName, new Function<ISession, Void>() {
 
-               @Override
-               public Void apply(ISession session) {
-                  IProgress powerDownProgress = session.getConsole()
-                        .powerDown();
-                  powerDownProgress.waitForCompletion(-1);
-                  return null;
-               }
+         @Override
+         public Void apply(ISession session) {
+            IProgress powerDownProgress = session.getConsole().powerDown();
+            powerDownProgress.waitForCompletion(-1);
+            return null;
+         }
 
-            });
+      });
       return vm;
    }
 
