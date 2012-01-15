@@ -38,13 +38,27 @@ import com.google.inject.Injector;
 @Test(groups = "unit")
 public class EnvelopeHandlerTest {
    public void testVCloud1_0() {
-      InputStream is = getClass().getResourceAsStream("/ovf.xml");
-      Injector injector = Guice.createInjector(new SaxParserModule());
-      Factory factory = injector.getInstance(ParseSax.Factory.class);
-      Envelope result = factory.create(injector.getInstance(EnvelopeHandler.class)).parse(is);
+      Envelope result = parseEnvelope();
       checkOvfEnvelope(result);
    }
 
+   public static Envelope parseEnvelope() {
+      InputStream is = EnvelopeHandlerTest.class.getResourceAsStream("/ovf.xml");
+      Injector injector = Guice.createInjector(new SaxParserModule());
+      Factory factory = injector.getInstance(ParseSax.Factory.class);
+      Envelope result = factory.create(injector.getInstance(EnvelopeHandler.class)).parse(is);
+      return result;
+   }
+
+   //TODO: create a parser that can!
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testThrowIllegalArgumentAsWeDontYetSupportVirtualSystemCollections() {
+      InputStream is = getClass().getResourceAsStream("/ovf-vcd1.5.xml");
+      Injector injector = Guice.createInjector(new SaxParserModule());
+      Factory factory = injector.getInstance(ParseSax.Factory.class);
+      factory.create(injector.getInstance(EnvelopeHandler.class)).parse(is).getVirtualSystem();
+   }
+  
    static void checkOvfEnvelope(Envelope result) {
       VirtualSystemSettingDataHandlerTest.checkVirtualSystem(result.getVirtualSystem());
    }

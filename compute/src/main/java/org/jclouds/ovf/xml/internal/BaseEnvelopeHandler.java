@@ -131,6 +131,9 @@ public class BaseEnvelopeHandler<V extends BaseVirtualSystem<V>, B extends BaseV
          } else if (equalsOrSuffix(qName, "NetworkSection")) {
             inNetwork = false;
             builder.networkSection(networkHandler.getResult());
+         } else if (equalsOrSuffix(qName, "VirtualSystemCollection")) {
+            // http://code.google.com/p/jclouds/issues/detail?id=811
+            throw new IllegalArgumentException("this handler cannot currently create envelopes with multiple virtual systems");
          } else if (equalsOrSuffix(qName, "VirtualSystem")) {
             inVirtualSystem = false;
             builder.virtualSystem(virtualSystemHandler.getResult());
