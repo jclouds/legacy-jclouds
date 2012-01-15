@@ -1,7 +1,7 @@
 [INFO] Scanning for projects...
 [WARNING] 
 [WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:hpcloud-objectstorage-lvs:bundle:1.3.0-SNAPSHOT
-[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/workspace/git/1.3.x/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/workspace/git/1.3.x/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/workspace/git/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/workspace/git/jclouds/project/pom.xml, line 24, column 13
 [WARNING] 
 [WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
 [WARNING] 
@@ -13,7 +13,7 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ hpcloud-objectstorage-lvs ---
-[INFO] Deleting /Users/adriancole/workspace/git/1.3.x/jclouds/providers/hpcloud-objectstorage-lvs/target
+[INFO] Deleting /Users/adriancole/workspace/git/jclouds/providers/hpcloud-objectstorage-lvs/target
 [INFO] 
 [INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ hpcloud-objectstorage-lvs ---
 [INFO] 
@@ -29,24 +29,24 @@
 [INFO] 
 [INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ hpcloud-objectstorage-lvs ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.3.x/jclouds/providers/hpcloud-objectstorage-lvs/src/main/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/hpcloud-objectstorage-lvs/src/main/clojure
 [INFO] Copying 1 resource
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ hpcloud-objectstorage-lvs ---
-[INFO] Compiling 18 source files to /Users/adriancole/workspace/git/1.3.x/jclouds/providers/hpcloud-objectstorage-lvs/target/classes
+[INFO] Compiling 18 source files to /Users/adriancole/workspace/git/jclouds/providers/hpcloud-objectstorage-lvs/target/classes
 [INFO] 
 [INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ hpcloud-objectstorage-lvs ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.3.x/jclouds/providers/hpcloud-objectstorage-lvs/src/test/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/hpcloud-objectstorage-lvs/src/test/clojure
 [INFO] Copying 2 resources
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ hpcloud-objectstorage-lvs ---
-[INFO] Compiling 13 source files to /Users/adriancole/workspace/git/1.3.x/jclouds/providers/hpcloud-objectstorage-lvs/target/test-classes
+[INFO] Compiling 13 source files to /Users/adriancole/workspace/git/jclouds/providers/hpcloud-objectstorage-lvs/target/test-classes
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (default-test) @ hpcloud-objectstorage-lvs ---
-[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/hpcloud-objectstorage-lvs/target/surefire-reports
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/hpcloud-objectstorage-lvs/target/surefire-reports
 [INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
 
 -------------------------------------------------------
@@ -58,32 +58,32 @@ Starting test testMetadataAlreadyPrefixed(org.jclouds.hpcloud.objectstorage.lvs.
 Starting test testPublicAccess(org.jclouds.hpcloud.objectstorage.lvs.options.CreateContainerOptionsTest)
 Starting test testMetadataStatic(org.jclouds.hpcloud.objectstorage.lvs.options.CreateContainerOptionsTest)
 Starting test testPublicAccessStatic(org.jclouds.hpcloud.objectstorage.lvs.options.CreateContainerOptionsTest)
-[pool-2-thread-4] Test testMetadata(org.jclouds.hpcloud.objectstorage.lvs.options.CreateContainerOptionsTest) succeeded: 83ms
+[pool-2-thread-2] Test testMetadataAlreadyPrefixed(org.jclouds.hpcloud.objectstorage.lvs.options.CreateContainerOptionsTest) succeeded: 22ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-[pool-2-thread-3] Test testMetadataStatic(org.jclouds.hpcloud.objectstorage.lvs.options.CreateContainerOptionsTest) succeeded: 76ms
+[pool-2-thread-3] Test testMetadataStatic(org.jclouds.hpcloud.objectstorage.lvs.options.CreateContainerOptionsTest) succeeded: 18ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-Starting test testApplyInputStream(org.jclouds.hpcloud.objectstorage.lvs.functions.ParseContainerCDNMetadataListFromJsonResponseTest)
-[pool-2-thread-2] Test testMetadataAlreadyPrefixed(org.jclouds.hpcloud.objectstorage.lvs.options.CreateContainerOptionsTest) succeeded: 84ms
+[pool-2-thread-5] Test testPublicAccessStatic(org.jclouds.hpcloud.objectstorage.lvs.options.CreateContainerOptionsTest) succeeded: 17ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-[pool-2-thread-5] Test testPublicAccess(org.jclouds.hpcloud.objectstorage.lvs.options.CreateContainerOptionsTest) succeeded: 77ms
+[pool-2-thread-4] Test testPublicAccess(org.jclouds.hpcloud.objectstorage.lvs.options.CreateContainerOptionsTest) succeeded: 19ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-[pool-2-thread-1] Test testPublicAccessStatic(org.jclouds.hpcloud.objectstorage.lvs.options.CreateContainerOptionsTest) succeeded: 63ms
+Starting test testApplyInputStream(org.jclouds.hpcloud.objectstorage.lvs.functions.ParseContainerCDNMetadataListFromJsonResponseTest)
+[pool-2-thread-1] Test testMetadata(org.jclouds.hpcloud.objectstorage.lvs.options.CreateContainerOptionsTest) succeeded: 57ms
 Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testApplyInputStream(org.jclouds.hpcloud.objectstorage.lvs.functions.ParseContainerCDNMetadataListFromJsonResponseTest) succeeded: 258ms
+[pool-2-thread-2] Test testApplyInputStream(org.jclouds.hpcloud.objectstorage.lvs.functions.ParseContainerCDNMetadataListFromJsonResponseTest) succeeded: 154ms
 Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
-Starting test testInRestProperties(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasProviderTest)
-Starting test testWithId(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasProviderTest)
 Starting test testAllContains(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasProviderTest)
-Starting test testOfTypeContains(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasProviderTest)
-[pool-3-thread-2] Test testWithId(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasProviderTest) succeeded: 28ms
+Starting test testInRestProperties(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasProviderTest)
+[pool-3-thread-1] Test testAllContains(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasProviderTest) succeeded: 6ms
 Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
-[pool-3-thread-4] Test testOfTypeContains(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasProviderTest) succeeded: 35ms
+Starting test testOfTypeContains(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasProviderTest)
+Starting test testWithId(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasProviderTest)
+[pool-3-thread-3] Test testOfTypeContains(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasProviderTest) succeeded: 3ms
 Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
-[pool-3-thread-3] Test testAllContains(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasProviderTest) succeeded: 37ms
+[pool-3-thread-4] Test testWithId(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasProviderTest) succeeded: 17ms
 Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
-[pool-3-thread-1] Test testInRestProperties(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasProviderTest) succeeded: 130ms
+[pool-3-thread-2] Test testInRestProperties(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasProviderTest) succeeded: 54ms
 Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
-Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.392 sec
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.892 sec
 
 Results :
 
@@ -100,16 +100,16 @@ Ran 0 tests containing 0 assertions.
 [INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ hpcloud-objectstorage-lvs ---
 [INFO] 
 [INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ hpcloud-objectstorage-lvs ---
-[INFO] Building jar: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/hpcloud-objectstorage-lvs/target/hpcloud-objectstorage-lvs-1.3.0-SNAPSHOT-sources.jar
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/hpcloud-objectstorage-lvs/target/hpcloud-objectstorage-lvs-1.3.0-SNAPSHOT-sources.jar
 [INFO] 
 [INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ hpcloud-objectstorage-lvs ---
 [INFO] Skipping javadoc generation
 [INFO] 
 [INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ hpcloud-objectstorage-lvs ---
-[INFO] Building jar: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/hpcloud-objectstorage-lvs/target/hpcloud-objectstorage-lvs-1.3.0-SNAPSHOT-tests.jar
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/hpcloud-objectstorage-lvs/target/hpcloud-objectstorage-lvs-1.3.0-SNAPSHOT-tests.jar
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (integration) @ hpcloud-objectstorage-lvs ---
-[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/hpcloud-objectstorage-lvs/target/surefire-reports
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/hpcloud-objectstorage-lvs/target/surefire-reports
 [INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
 
 -------------------------------------------------------
@@ -119,295 +119,295 @@ Running TestSuite
 *** containers to test: [adriancole-blobstore0, adriancole-blobstore1, adriancole-blobstore2, adriancole-blobstore3, adriancole-blobstore4, adriancole-blobstore5, adriancole-blobstore6, adriancole-blobstore7, adriancole-blobstore8, adriancole-blobstore9]
 Starting test deleteContainerIfEmptyNotFound(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClientLiveTest)
 Starting test blobNotFound(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-2] Test deleteContainerIfEmptyNotFound(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClientLiveTest) succeeded: 200ms
+[TestNG] Test deleteContainerIfEmptyNotFound(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClientLiveTest) succeeded: 337ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
 Starting test testHeadAccountMetadata(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClientLiveTest)
-[pool-4-thread-1] Test blobNotFound(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 620ms
+[TestNG] Test blobNotFound(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 603ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-2] Test testHeadAccountMetadata(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClientLiveTest) succeeded: 1176ms
+[TestNG] Test testHeadAccountMetadata(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClientLiveTest) succeeded: 1076ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
 Starting test testListContainerPath(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClientLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 992ms
+[TestNG] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1027ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1074ms
+[TestNG] Test testListContainerPath(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClientLiveTest) succeeded: 1301ms
 Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
-Starting test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-2] Test testListContainerPath(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClientLiveTest) succeeded: 1489ms
-Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
 Starting test testListOwnedContainers(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClientLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1122ms
+[TestNG] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1031ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
+[TestNG] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 951ms
 Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1052ms
+[TestNG] Test testListOwnedContainers(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClientLiveTest) succeeded: 1841ms
 Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
-Starting test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-2] Test testListOwnedContainers(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClientLiveTest) succeeded: 2081ms
-Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
 Starting test testObjectOperations(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClientLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1567ms
+[TestNG] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1102ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
+[TestNG] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1684ms
 Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-2] Test testObjectOperations(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClientLiveTest) succeeded: 2408ms
+[TestNG] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 967ms
 Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
-Starting test testPutContainers(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClientLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 939ms
+Starting test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
+[TestNG] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 976ms
 Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1083ms
+[TestNG] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1048ms
 Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-2] Test testPutContainers(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClientLiveTest) succeeded: 1544ms
+[TestNG] Test testObjectOperations(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClientLiveTest) succeeded: 5839ms
 Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
-[pool-4-thread-1] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1020ms
+Starting test testPutContainers(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClientLiveTest)
+[TestNG] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1369ms
 Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
 Starting test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1395ms
+[TestNG] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 997ms
 Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
-Starting test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1105ms
-Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
 Starting test deleteObjectNoContainer(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObjectNoContainer(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 148ms
-Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+[TestNG] Test deleteObjectNoContainer(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 162ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
 Starting test deleteObjectNotFound(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-1] Test deleteObjectNotFound(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 632ms
-Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+[TestNG] Test deleteObjectNotFound(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 635ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
 Starting test testBigFileGets(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testBigFileGets(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 24964ms
+[TestNG] Test testPutContainers(org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClientLiveTest) succeeded: 2517ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+[TestNG] Test testBigFileGets(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 26636ms
 Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
 Starting test testGetIfMatch(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testGetIfMatch(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 2642ms
+[TestNG] Test testGetIfMatch(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 2781ms
 Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
 Starting test testGetIfModifiedSince(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testGetIfModifiedSince(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 2577ms
+[TestNG] Test testGetIfModifiedSince(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 2031ms
 Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
 Starting test testGetIfNoneMatch(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testGetIfNoneMatch(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 2032ms
+[TestNG] Test testGetIfNoneMatch(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1613ms
 Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
 Starting test testGetIfUnmodifiedSince(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testGetIfUnmodifiedSince(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1562ms
+[TestNG] Test testGetIfUnmodifiedSince(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1542ms
 Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
 Starting test testGetRange(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testGetRange(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1604ms
+[TestNG] Test testGetRange(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 2141ms
 Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
 Starting test testMetadata(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testMetadata(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1675ms
+[TestNG] Test testMetadata(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1916ms
 Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
 Starting test testPutFileParallel(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutFileParallel(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 30559ms
+[TestNG] Test testPutFileParallel(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 30542ms
 Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
 Starting test testPutObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1299ms
+[TestNG] Test testPutObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1406ms
 Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
 Starting test testPutObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1161ms
+[TestNG] Test testPutObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1371ms
 Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
 Starting test testPutObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1357ms
+[TestNG] Test testPutObject(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1708ms
 Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
 Starting test testPutObjectStream(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest)
-[pool-4-thread-1] Test testPutObjectStream(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1410ms
+[TestNG] Test testPutObjectStream(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobIntegrationLiveTest) succeeded: 1478ms
 Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
 Starting test testCopyUrl(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobLiveTest)
-[pool-4-thread-1] Test testCopyUrl(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobLiveTest) failed.
+[TestNG] Test testCopyUrl(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobLiveTest) failed.
 Test suite progress: tests succeeded: 31, failed: 1, skipped: 0.
 Starting test testContains(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContains(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 2623ms
+[TestNG] Test testContains(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 1421ms
 Test suite progress: tests succeeded: 32, failed: 1, skipped: 0.
 Starting test testEntrySet(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testEntrySet(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 4665ms
+[TestNG] Test testEntrySet(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 5094ms
 Test suite progress: tests succeeded: 33, failed: 1, skipped: 0.
 Starting test testPut(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPut(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 1955ms
+[TestNG] Test testPut(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 2332ms
 Test suite progress: tests succeeded: 34, failed: 1, skipped: 0.
 Starting test testPutAll(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAll(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 2093ms
+[TestNG] Test testPutAll(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 2579ms
 Test suite progress: tests succeeded: 35, failed: 1, skipped: 0.
 Starting test testPutMoreThanSingleListing(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutMoreThanSingleListing(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 5288ms
+[TestNG] Test testPutMoreThanSingleListing(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 5495ms
 Test suite progress: tests succeeded: 36, failed: 1, skipped: 0.
 Starting test testRemove(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testRemove(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 1734ms
+[TestNG] Test testRemove(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 1849ms
 Test suite progress: tests succeeded: 37, failed: 1, skipped: 0.
 Starting test testValues(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testValues(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 3568ms
+[TestNG] Test testValues(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 3434ms
 Test suite progress: tests succeeded: 38, failed: 1, skipped: 0.
 Starting test testClear(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testClear(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 3191ms
+[TestNG] Test testClear(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 2668ms
 Test suite progress: tests succeeded: 39, failed: 1, skipped: 0.
 Starting test testContainsKey(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsKey(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 2411ms
+[TestNG] Test testContainsKey(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 1666ms
 Test suite progress: tests succeeded: 40, failed: 1, skipped: 0.
 Starting test testDirectory(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testDirectory(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 18765ms
+[TestNG] Test testDirectory(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 19339ms
 Test suite progress: tests succeeded: 41, failed: 1, skipped: 0.
 Starting test testIsEmpty(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testIsEmpty(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 2413ms
+[TestNG] Test testIsEmpty(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 1304ms
 Test suite progress: tests succeeded: 42, failed: 1, skipped: 0.
 Starting test testKeySet(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testKeySet(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 1585ms
+[TestNG] Test testKeySet(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 1552ms
 Test suite progress: tests succeeded: 43, failed: 1, skipped: 0.
 Starting test testListContainer(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainer(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 886ms
+[TestNG] Test testListContainer(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest) succeeded: 888ms
 Test suite progress: tests succeeded: 44, failed: 1, skipped: 0.
 Starting test testSignGetUrl(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobSignerLiveTest)
-[pool-4-thread-1] Test testSignGetUrl(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobSignerLiveTest) succeeded: 1510ms
+[TestNG] Test testSignGetUrl(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobSignerLiveTest) succeeded: 1803ms
 Test suite progress: tests succeeded: 45, failed: 1, skipped: 0.
 Starting test testSignGetUrlOptions(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobSignerLiveTest)
-[pool-4-thread-1] Test testSignGetUrlOptions(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobSignerLiveTest) succeeded: 884ms
+[TestNG] Test testSignGetUrlOptions(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobSignerLiveTest) succeeded: 845ms
 Test suite progress: tests succeeded: 46, failed: 1, skipped: 0.
 Starting test testSignPutUrl(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobSignerLiveTest)
-[pool-4-thread-1] Test testSignPutUrl(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobSignerLiveTest) succeeded: 1363ms
+[TestNG] Test testSignPutUrl(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobSignerLiveTest) succeeded: 1441ms
 Test suite progress: tests succeeded: 47, failed: 1, skipped: 0.
 Starting test testSignRemoveUrl(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobSignerLiveTest)
-[pool-4-thread-1] Test testSignRemoveUrl(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobSignerLiveTest) succeeded: 3118ms
+[TestNG] Test testSignRemoveUrl(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobSignerLiveTest) succeeded: 2751ms
 Test suite progress: tests succeeded: 48, failed: 1, skipped: 0.
 Starting test containerDoesntExist(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest)
-[pool-4-thread-1] Test containerDoesntExist(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 291ms
+[TestNG] Test containerDoesntExist(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 326ms
 Test suite progress: tests succeeded: 49, failed: 1, skipped: 0.
 Starting test containerExists(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest)
-[pool-4-thread-1] Test containerExists(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 599ms
+[TestNG] Test containerExists(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 575ms
 Test suite progress: tests succeeded: 50, failed: 1, skipped: 0.
 Starting test deleteContainerIfEmpty(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest)
-*** allocated new container adriancole-blobstore6...
-[pool-4-thread-1] Test deleteContainerIfEmpty(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 2458ms
+*** allocated new container adriancole-blobstore7...
+[TestNG] Test deleteContainerIfEmpty(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 2282ms
 Test suite progress: tests succeeded: 51, failed: 1, skipped: 0.
 Starting test deleteContainerWithContents(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest)
-*** allocated new container adriancole-blobstore8...
-[pool-4-thread-1] Test deleteContainerWithContents(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 4739ms
+*** allocated new container adriancole-blobstore9...
+[TestNG] Test deleteContainerWithContents(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 4707ms
 Test suite progress: tests succeeded: 52, failed: 1, skipped: 0.
 Starting test testClearWhenContentsUnderPath(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testClearWhenContentsUnderPath(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 8909ms
+[TestNG] Test testClearWhenContentsUnderPath(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 6593ms
 Test suite progress: tests succeeded: 53, failed: 1, skipped: 0.
 Starting test testDirectory(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testDirectory(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 12100ms
+[TestNG] Test testDirectory(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 10753ms
 Test suite progress: tests succeeded: 54, failed: 1, skipped: 0.
 Starting test testListContainer(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainer(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 4263ms
+[TestNG] Test testListContainer(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 5669ms
 Test suite progress: tests succeeded: 55, failed: 1, skipped: 0.
 Starting test testListContainerMarker(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainerMarker(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 6700ms
+[TestNG] Test testListContainerMarker(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 7791ms
 Test suite progress: tests succeeded: 56, failed: 1, skipped: 0.
 Starting test testListContainerMaxResults(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainerMaxResults(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 7467ms
+[TestNG] Test testListContainerMaxResults(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 6757ms
 Test suite progress: tests succeeded: 57, failed: 1, skipped: 0.
 Starting test testListContainerPrefix(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainerPrefix(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 9669ms
+[TestNG] Test testListContainerPrefix(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 8589ms
 Test suite progress: tests succeeded: 58, failed: 1, skipped: 0.
 Starting test testListRootUsesDelimiter(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testListRootUsesDelimiter(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 8499ms
+[TestNG] Test testListRootUsesDelimiter(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 9577ms
 Test suite progress: tests succeeded: 59, failed: 1, skipped: 0.
 Starting test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 1136ms
+[TestNG] Test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 1159ms
 Test suite progress: tests succeeded: 60, failed: 1, skipped: 0.
 Starting test testWithDetails(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest)
-[pool-4-thread-1] Test testWithDetails(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 1271ms
+[TestNG] Test testWithDetails(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerIntegrationLiveTest) succeeded: 1269ms
 Test suite progress: tests succeeded: 61, failed: 1, skipped: 0.
 Starting test testContainsBytesValue(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsBytesValue(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 921ms
+[TestNG] Test testContainsBytesValue(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 959ms
 Test suite progress: tests succeeded: 62, failed: 1, skipped: 0.
 Starting test testContainsFileValue(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsFileValue(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 1305ms
+[TestNG] Test testContainsFileValue(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 11349ms
 Test suite progress: tests succeeded: 63, failed: 1, skipped: 0.
 Starting test testContainsInputStreamValue(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsInputStreamValue(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 1585ms
+[TestNG] Test testContainsInputStreamValue(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 1557ms
 Test suite progress: tests succeeded: 64, failed: 1, skipped: 0.
 Starting test testContainsStringValue(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsStringValue(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 1624ms
+[TestNG] Test testContainsStringValue(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 1672ms
 Test suite progress: tests succeeded: 65, failed: 1, skipped: 0.
 Starting test testEntrySet(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testEntrySet(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 7997ms
+[TestNG] Test testEntrySet(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 7144ms
 Test suite progress: tests succeeded: 66, failed: 1, skipped: 0.
 Starting test testPut(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPut(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 3595ms
+[TestNG] Test testPut(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 3304ms
 Test suite progress: tests succeeded: 67, failed: 1, skipped: 0.
 Starting test testPutAll(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAll(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 2280ms
+[TestNG] Test testPutAll(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 1992ms
 Test suite progress: tests succeeded: 68, failed: 1, skipped: 0.
 Starting test testPutAllBytes(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAllBytes(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 3671ms
+[TestNG] Test testPutAllBytes(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 1805ms
 Test suite progress: tests succeeded: 69, failed: 1, skipped: 0.
 Starting test testPutAllFiles(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAllFiles(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 1921ms
+[TestNG] Test testPutAllFiles(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 1884ms
 Test suite progress: tests succeeded: 70, failed: 1, skipped: 0.
 Starting test testPutAllStrings(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutAllStrings(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 1963ms
+[TestNG] Test testPutAllStrings(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 2087ms
 Test suite progress: tests succeeded: 71, failed: 1, skipped: 0.
 Starting test testPutBytes(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutBytes(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 2185ms
+[TestNG] Test testPutBytes(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 2113ms
 Test suite progress: tests succeeded: 72, failed: 1, skipped: 0.
 Starting test testPutFile(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutFile(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 2056ms
+[TestNG] Test testPutFile(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 2130ms
 Test suite progress: tests succeeded: 73, failed: 1, skipped: 0.
 Starting test testPutMoreThanSingleListing(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutMoreThanSingleListing(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 4741ms
+[TestNG] Test testPutMoreThanSingleListing(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 6583ms
 Test suite progress: tests succeeded: 74, failed: 1, skipped: 0.
 Starting test testPutString(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testPutString(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 2446ms
+[TestNG] Test testPutString(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 2248ms
 Test suite progress: tests succeeded: 75, failed: 1, skipped: 0.
 Starting test testRemove(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testRemove(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 2117ms
+[TestNG] Test testRemove(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 2091ms
 Test suite progress: tests succeeded: 76, failed: 1, skipped: 0.
 Starting test testValues(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testValues(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 2102ms
+[TestNG] Test testValues(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 1411ms
 Test suite progress: tests succeeded: 77, failed: 1, skipped: 0.
 Starting test testClear(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testClear(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 2229ms
+[TestNG] Test testClear(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 2186ms
 Test suite progress: tests succeeded: 78, failed: 1, skipped: 0.
 Starting test testContainsKey(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testContainsKey(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 1401ms
+[TestNG] Test testContainsKey(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 1809ms
 Test suite progress: tests succeeded: 79, failed: 1, skipped: 0.
 Starting test testDirectory(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testDirectory(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 15388ms
+[TestNG] Test testDirectory(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 15803ms
 Test suite progress: tests succeeded: 80, failed: 1, skipped: 0.
 Starting test testIsEmpty(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testIsEmpty(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 1339ms
+[TestNG] Test testIsEmpty(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 1297ms
 Test suite progress: tests succeeded: 81, failed: 1, skipped: 0.
 Starting test testKeySet(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testKeySet(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 1267ms
+[TestNG] Test testKeySet(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 1259ms
 Test suite progress: tests succeeded: 82, failed: 1, skipped: 0.
 Starting test testListContainer(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest)
-[pool-4-thread-1] Test testListContainer(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 996ms
+[TestNG] Test testListContainer(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasInputStreamMapIntegrationLiveTest) succeeded: 887ms
 Test suite progress: tests succeeded: 83, failed: 1, skipped: 0.
 Starting test containerDoesntExist(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasServiceIntegrationLiveTest)
-[pool-4-thread-1] Test containerDoesntExist(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasServiceIntegrationLiveTest) succeeded: 146ms
+[TestNG] Test containerDoesntExist(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasServiceIntegrationLiveTest) succeeded: 148ms
 Test suite progress: tests succeeded: 84, failed: 1, skipped: 0.
 Starting test testAllLocations(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasServiceIntegrationLiveTest)
-*** allocated new container adriancole-blobstore7...
+*** allocated new container adriancole-blobstore4...
  >> creating container in location [id=hpcloud-objectstorage-lvs, scope=PROVIDER, description=https://region-a.geo-1.objects.hpcloudsvc.com/auth, parent=null, iso3166Codes=[US-NV], metadata={}]
  << call complete.. checking
-*** allocated new container adriancole-blobstore713...
-[pool-4-thread-1] Test testAllLocations(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasServiceIntegrationLiveTest) succeeded: 1350ms
+*** allocated new container adriancole-blobstore413...
+[TestNG] Test testAllLocations(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasServiceIntegrationLiveTest) succeeded: 1310ms
 Test suite progress: tests succeeded: 85, failed: 1, skipped: 0.
 Starting test testGetAssignableLocations(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasServiceIntegrationLiveTest)
 location [id=hpcloud-objectstorage-lvs, scope=PROVIDER, description=https://region-a.geo-1.objects.hpcloudsvc.com/auth, parent=null, iso3166Codes=[US-NV], metadata={}]
-[pool-4-thread-1] Test testGetAssignableLocations(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasServiceIntegrationLiveTest) succeeded: 1ms
+[TestNG] Test testGetAssignableLocations(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasServiceIntegrationLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 86, failed: 1, skipped: 0.
 Starting test testPublicAccess(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerLiveTest)
-*** allocated new container adriancole-blobstore9...
-*** allocated new container adriancole-blobstore915...
-[pool-4-thread-1] Test testPublicAccess(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerLiveTest) succeeded: 2995ms
+*** allocated new container adriancole-blobstore0...
+*** allocated new container adriancole-blobstore015...
+[TestNG] Test testPublicAccess(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasContainerLiveTest) succeeded: 1482ms
 Test suite progress: tests succeeded: 87, failed: 1, skipped: 0.
-Tests run: 88, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 307.687 sec <<< FAILURE!
+Tests run: 88, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 306.985 sec <<< FAILURE!
 
 Results :
 
-Failed tests:   testCopyUrl(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobLiveTest): Server returned HTTP response code: 403 for URL: http://apache.opensourceresources.org/commons/logging/binaries/commons-logging-1.1.1-bin.tar.gz
+Failed tests:   testCopyUrl(org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasBlobLiveTest): Server returned HTTP response code: 403 for URL: http://apache.opensourceresources.org//commons/logging/binaries/commons-logging-1.1.1-bin.tar.gz
 
 Tests run: 88, Failures: 1, Errors: 0, Skipped: 0
 
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 5:29.857s
-[INFO] Finished at: Wed Jan 11 00:18:35 PST 2012
+[INFO] Total time: 5:19.126s
+[INFO] Finished at: Sun Jan 15 09:08:24 PST 2012
 [INFO] Final Memory: 20M/265M
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project hpcloud-objectstorage-lvs: There are test failures.
 [ERROR] 
-[ERROR] Please refer to /Users/adriancole/workspace/git/1.3.x/jclouds/providers/hpcloud-objectstorage-lvs/target/surefire-reports for the individual test results.
+[ERROR] Please refer to /Users/adriancole/workspace/git/jclouds/providers/hpcloud-objectstorage-lvs/target/surefire-reports for the individual test results.
 [ERROR] -> [Help 1]
 [ERROR] 
 [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.

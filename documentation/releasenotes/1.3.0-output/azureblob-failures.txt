@@ -1,42 +1,10 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 94, Failures: 3, Errors: 0, Skipped: 1, Time elapsed: 606.828 sec <<< FAILURE!
-testObjectOperations(org.jclouds.azureblob.AzureBlobClientLiveTest)  Time elapsed: 3.528 sec  <<< FAILURE!
-java.lang.NullPointerException
-	at org.jclouds.azureblob.AzureBlobClientLiveTest.testObjectOperations(AzureBlobClientLiveTest.java:323)
-testPutObject(org.jclouds.azureblob.blobstore.integration.AzureBlobIntegrationLiveTest)  Time elapsed: 7.552 sec  <<< FAILURE!
-java.lang.AssertionError: expected:<file> but was:<10>
-	at org.testng.Assert.fail(Assert.java:89)
-	at org.testng.Assert.failNotEquals(Assert.java:480)
-	at org.testng.Assert.assertEquals(Assert.java:118)
-	at org.testng.Assert.assertEquals(Assert.java:171)
-	at org.testng.Assert.assertEquals(Assert.java:181)
-	at org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.validateMetadata(BaseBlobStoreIntegrationTest.java:267)
-	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest.testPutObject(BaseBlobIntegrationTest.java:489)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:76)
-	at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
-	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
-	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
-	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
-	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
-	at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
-	at org.testng.TestRunner.privateRun(TestRunner.java:749)
-	at org.testng.TestRunner.run(TestRunner.java:600)
-	at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
-	at org.testng.SuiteRunner.access$000(SuiteRunner.java:34)
-	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:351)
-	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:147)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-testCopyUrl(org.jclouds.azureblob.blobstore.integration.AzureBlobLiveTest)  Time elapsed: 0.25 sec  <<< FAILURE!
-java.io.IOException: Server returned HTTP response code: 403 for URL: http://apache.opensourceresources.org/commons/logging/binaries/commons-logging-1.1.1-bin.tar.gz
-	at sun.reflect.GeneratedConstructorAccessor50.newInstance(Unknown Source)
+Tests run: 94, Failures: 2, Errors: 0, Skipped: 1, Time elapsed: 550.05 sec <<< FAILURE!
+testCopyUrl(org.jclouds.azureblob.blobstore.integration.AzureBlobLiveTest)  Time elapsed: 0.688 sec  <<< FAILURE!
+java.io.IOException: Server returned HTTP response code: 403 for URL: http://apache.opensourceresources.org//commons/logging/binaries/commons-logging-1.1.1-bin.tar.gz
+	at sun.reflect.GeneratedConstructorAccessor42.newInstance(Unknown Source)
 	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
 	at java.lang.reflect.Constructor.newInstance(Constructor.java:513)
 	at sun.net.www.protocol.http.HttpURLConnection$6.run(HttpURLConnection.java:1491)
@@ -48,33 +16,35 @@ java.io.IOException: Server returned HTTP response code: 403 for URL: http://apa
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
 	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:76)
-	at org.testng.internal.Invoker.invokeMethod(Invoker.java:673)
-	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:846)
-	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1170)
-	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:125)
-	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
-	at org.testng.TestRunner.runWorkers(TestRunner.java:1147)
-	at org.testng.TestRunner.privateRun(TestRunner.java:749)
-	at org.testng.TestRunner.run(TestRunner.java:600)
-	at org.testng.SuiteRunner.runTest(SuiteRunner.java:317)
-	at org.testng.SuiteRunner.access$000(SuiteRunner.java:34)
-	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:351)
-	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:147)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:758)
+	at org.testng.TestRunner.run(TestRunner.java:613)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
+	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-Caused by: java.io.IOException: Server returned HTTP response code: 403 for URL: http://apache.opensourceresources.org/commons/logging/binaries/commons-logging-1.1.1-bin.tar.gz
+Caused by: java.io.IOException: Server returned HTTP response code: 403 for URL: http://apache.opensourceresources.org//commons/logging/binaries/commons-logging-1.1.1-bin.tar.gz
 	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1436)
 	at sun.net.www.protocol.http.HttpURLConnection.getHeaderField(HttpURLConnection.java:2308)
 	at java.net.URLConnection.getHeaderFieldInt(URLConnection.java:579)
 	at java.net.URLConnection.getContentLength(URLConnection.java:474)
 	at org.jclouds.blobstore.integration.internal.BaseBlobLiveTest.testCopyUrl(BaseBlobLiveTest.java:60)
-	... 20 more
-Caused by: java.io.IOException: Server returned HTTP response code: 403 for URL: http://apache.opensourceresources.org/commons/logging/binaries/commons-logging-1.1.1-bin.tar.gz
+	... 19 more
+Caused by: java.io.IOException: Server returned HTTP response code: 403 for URL: http://apache.opensourceresources.org//commons/logging/binaries/commons-logging-1.1.1-bin.tar.gz
 	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1436)
 	at sun.net.www.protocol.http.HttpURLConnection.getHeaderField(HttpURLConnection.java:2308)
 	at java.net.URLConnection.getHeaderFieldInt(URLConnection.java:579)
 	at java.net.URLConnection.getContentLength(URLConnection.java:474)
 	at org.jclouds.blobstore.integration.internal.BaseBlobLiveTest.testCopyUrl(BaseBlobLiveTest.java:60)
-	... 20 more
+	... 19 more
+testObjectOperations(org.jclouds.azureblob.AzureBlobClientLiveTest)  Time elapsed: 3.043 sec  <<< FAILURE!
+java.lang.NullPointerException
+	at org.jclouds.azureblob.AzureBlobClientLiveTest.testObjectOperations(AzureBlobClientLiveTest.java:323)

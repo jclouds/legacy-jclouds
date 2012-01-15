@@ -1,7 +1,7 @@
 [INFO] Scanning for projects...
 [WARNING] 
 [WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:cloudloadbalancers-us:bundle:1.3.0-SNAPSHOT
-[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/workspace/git/1.3.x/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/workspace/git/1.3.x/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/workspace/git/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/workspace/git/jclouds/project/pom.xml, line 24, column 13
 [WARNING] 
 [WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
 [WARNING] 
@@ -13,7 +13,7 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ cloudloadbalancers-us ---
-[INFO] Deleting /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudloadbalancers-us/target
+[INFO] Deleting /Users/adriancole/workspace/git/jclouds/providers/cloudloadbalancers-us/target
 [INFO] 
 [INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ cloudloadbalancers-us ---
 [INFO] 
@@ -29,43 +29,43 @@
 [INFO] 
 [INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ cloudloadbalancers-us ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudloadbalancers-us/src/main/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/cloudloadbalancers-us/src/main/clojure
 [INFO] Copying 1 resource
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ cloudloadbalancers-us ---
-[INFO] Compiling 2 source files to /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudloadbalancers-us/target/classes
+[INFO] Compiling 2 source files to /Users/adriancole/workspace/git/jclouds/providers/cloudloadbalancers-us/target/classes
 [INFO] 
 [INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ cloudloadbalancers-us ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudloadbalancers-us/src/test/clojure
-[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudloadbalancers-us/src/test/resources
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/cloudloadbalancers-us/src/test/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/cloudloadbalancers-us/src/test/resources
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ cloudloadbalancers-us ---
-[INFO] Compiling 3 source files to /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudloadbalancers-us/target/test-classes
+[INFO] Compiling 3 source files to /Users/adriancole/workspace/git/jclouds/providers/cloudloadbalancers-us/target/test-classes
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (default-test) @ cloudloadbalancers-us ---
-[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudloadbalancers-us/target/surefire-reports
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/cloudloadbalancers-us/target/surefire-reports
 [INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
 
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
 Running org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSProviderTest
-Starting test testInRestProperties(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSProviderTest)
-Starting test testWithId(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSProviderTest)
-Starting test testAllContains(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSProviderTest)
 Starting test testOfTypeContains(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSProviderTest)
-[pool-2-thread-3] Test testAllContains(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSProviderTest) succeeded: 37ms
+Starting test testWithId(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSProviderTest)
+Starting test testInRestProperties(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSProviderTest)
+Starting test testAllContains(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSProviderTest)
+[pool-2-thread-4] Test testWithId(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSProviderTest) succeeded: 45ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testOfTypeContains(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSProviderTest) succeeded: 35ms
+[pool-2-thread-1] Test testAllContains(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSProviderTest) succeeded: 46ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testWithId(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSProviderTest) succeeded: 39ms
+[pool-2-thread-3] Test testOfTypeContains(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSProviderTest) succeeded: 54ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-[pool-2-thread-1] Test testInRestProperties(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSProviderTest) succeeded: 91ms
+[pool-2-thread-2] Test testInRestProperties(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSProviderTest) succeeded: 84ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.408 sec
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.429 sec
 
 Results :
 
@@ -82,59 +82,60 @@ Ran 0 tests containing 0 assertions.
 [INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ cloudloadbalancers-us ---
 [INFO] 
 [INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ cloudloadbalancers-us ---
-[INFO] Building jar: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudloadbalancers-us/target/cloudloadbalancers-us-1.3.0-SNAPSHOT-sources.jar
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/cloudloadbalancers-us/target/cloudloadbalancers-us-1.3.0-SNAPSHOT-sources.jar
 [INFO] 
 [INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ cloudloadbalancers-us ---
 [INFO] Skipping javadoc generation
 [INFO] 
 [INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ cloudloadbalancers-us ---
-[INFO] Building jar: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudloadbalancers-us/target/cloudloadbalancers-us-1.3.0-SNAPSHOT-tests.jar
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/cloudloadbalancers-us/target/cloudloadbalancers-us-1.3.0-SNAPSHOT-tests.jar
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (integration) @ cloudloadbalancers-us ---
-[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudloadbalancers-us/target/surefire-reports
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/cloudloadbalancers-us/target/surefire-reports
 [INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
 
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
 Running TestSuite
-Starting test testCreateLoadBalancers(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSNodeClientLiveTest)
-[pool-2-thread-1] Test testCreateLoadBalancers(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSNodeClientLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 1.
-[pool-2-thread-1] Test testAddNodes(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSNodeClientLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 2.
-[pool-2-thread-1] Test testModifyNode(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSNodeClientLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 3.
-[pool-2-thread-1] Test testListNodes(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSNodeClientLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 4.
 Starting test setupClient(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSLoadBalancerClientLiveTest)
-[pool-2-thread-1] Test setupClient(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSLoadBalancerClientLiveTest) skipped.
-Test suite progress: tests succeeded: 0, failed: 0, skipped: 5.
+[TestNG] Test setupClient(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSLoadBalancerClientLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 1.
 Starting test testCreateLoadBalancer(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSLoadBalancerClientLiveTest)
-[pool-2-thread-1] Test testCreateLoadBalancer(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSLoadBalancerClientLiveTest) skipped.
+[TestNG] Test testCreateLoadBalancer(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSLoadBalancerClientLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 2.
+Starting test testCreateLoadBalancers(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSNodeClientLiveTest)
+[TestNG] Test testCreateLoadBalancers(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSNodeClientLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 3.
+[TestNG] Test testUpdateLoadBalancer(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSLoadBalancerClientLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 4.
+[TestNG] Test testAddNodes(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSNodeClientLiveTest) skipped.
+Test suite progress: tests succeeded: 0, failed: 0, skipped: 5.
+[TestNG] Test testListLoadBalancers(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSLoadBalancerClientLiveTest) skipped.
 Test suite progress: tests succeeded: 0, failed: 0, skipped: 6.
-[pool-2-thread-1] Test testUpdateLoadBalancer(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSLoadBalancerClientLiveTest) skipped.
+[TestNG] Test testModifyNode(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSNodeClientLiveTest) skipped.
 Test suite progress: tests succeeded: 0, failed: 0, skipped: 7.
-[pool-2-thread-1] Test testListLoadBalancers(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSLoadBalancerClientLiveTest) skipped.
+[TestNG] Test testListNodes(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSNodeClientLiveTest) skipped.
 Test suite progress: tests succeeded: 0, failed: 0, skipped: 8.
-Tests run: 9, Failures: 1, Errors: 0, Skipped: 8, Time elapsed: 2.979 sec <<< FAILURE!
+Tests run: 10, Failures: 2, Errors: 0, Skipped: 8, Time elapsed: 2.726 sec <<< FAILURE!
 
 Results :
 
 Failed tests:   setupClient(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSNodeClientLiveTest): Guice creation errors:
+  setupClient(org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSNodeClientLiveTest): Guice creation errors:
 
-Tests run: 9, Failures: 1, Errors: 0, Skipped: 8
+Tests run: 10, Failures: 2, Errors: 0, Skipped: 8
 
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 16.129s
-[INFO] Finished at: Tue Jan 10 23:05:15 PST 2012
+[INFO] Total time: 13.099s
+[INFO] Finished at: Sun Jan 15 04:23:18 PST 2012
 [INFO] Final Memory: 20M/265M
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project cloudloadbalancers-us: There are test failures.
 [ERROR] 
-[ERROR] Please refer to /Users/adriancole/workspace/git/1.3.x/jclouds/providers/cloudloadbalancers-us/target/surefire-reports for the individual test results.
+[ERROR] Please refer to /Users/adriancole/workspace/git/jclouds/providers/cloudloadbalancers-us/target/surefire-reports for the individual test results.
 [ERROR] -> [Help 1]
 [ERROR] 
 [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
