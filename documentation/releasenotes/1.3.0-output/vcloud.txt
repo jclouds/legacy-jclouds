@@ -34,16 +34,16 @@
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ vcloud ---
-[INFO] Compiling 180 source files to /Users/adriancole/workspace/git/jclouds/apis/vcloud/target/classes
+[INFO] Compiling 186 source files to /Users/adriancole/workspace/git/jclouds/apis/vcloud/target/classes
 [INFO] 
 [INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ vcloud ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
 [INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/apis/vcloud/src/test/clojure
-[INFO] Copying 57 resources
+[INFO] Copying 65 resources
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ vcloud ---
-[INFO] Compiling 57 source files to /Users/adriancole/workspace/git/jclouds/apis/vcloud/target/test-classes
+[INFO] Compiling 60 source files to /Users/adriancole/workspace/git/jclouds/apis/vcloud/target/test-classes
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (default-test) @ vcloud ---
 [INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/apis/vcloud/target/surefire-reports
@@ -53,511 +53,511 @@
  T E S T S
 -------------------------------------------------------
 Running TestSuite
-Starting test testHosting(org.jclouds.vcloud.xml.OrgHandlerTest)
+Starting test testDefault(org.jclouds.vcloud.binders.BindCatalogItemToXmlPayloadTest)
+Starting test testWithDescriptionDeployOn(org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayloadTest)
+Starting test testDefault(org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayloadTest)
+Starting test testWithDescriptionDeployOnSourceDelete(org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayloadTest)
+Starting test testDefault(org.jclouds.vcloud.binders.BindCloneVAppTemplateParamsToXmlPayloadTest)
+[pool-2-thread-4] Test testWithDescriptionDeployOnSourceDelete(org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayloadTest) succeeded: 410ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testWithDescription(org.jclouds.vcloud.binders.BindCloneVAppTemplateParamsToXmlPayloadTest)
+[pool-2-thread-4] Test testWithDescription(org.jclouds.vcloud.binders.BindCloneVAppTemplateParamsToXmlPayloadTest) succeeded: 2ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test testWithDescriptionSourceDelete(org.jclouds.vcloud.binders.BindCloneVAppTemplateParamsToXmlPayloadTest)
+[pool-2-thread-2] Test testDefault(org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayloadTest) succeeded: 424ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test testDefault(org.jclouds.vcloud.binders.BindDeployVAppParamsToXmlPayloadTest)
+[pool-2-thread-3] Test testWithDescriptionDeployOn(org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayloadTest) succeeded: 426ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Starting test testPowerOnTrue(org.jclouds.vcloud.binders.BindDeployVAppParamsToXmlPayloadTest)
+[pool-2-thread-4] Test testWithDescriptionSourceDelete(org.jclouds.vcloud.binders.BindCloneVAppTemplateParamsToXmlPayloadTest) succeeded: 18ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test testDefault(org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayloadTest)
+[pool-2-thread-3] Test testPowerOnTrue(org.jclouds.vcloud.binders.BindDeployVAppParamsToXmlPayloadTest) succeeded: 11ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+Starting test testDescription(org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayloadTest)
+[pool-2-thread-1] Test testDefault(org.jclouds.vcloud.binders.BindCatalogItemToXmlPayloadTest) succeeded: 445ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+Starting test testWhenTemplateDoesntExist(org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayloadTest)
+[pool-2-thread-5] Test testDefault(org.jclouds.vcloud.binders.BindCloneVAppTemplateParamsToXmlPayloadTest) succeeded: 440ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+Starting test testWithNetworkNameFenceMode(org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayloadTest)
+[pool-2-thread-2] Test testDefault(org.jclouds.vcloud.binders.BindDeployVAppParamsToXmlPayloadTest) succeeded: 47ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+Starting test testWithIpAllocationModeNONE(org.jclouds.vcloud.binders.BindNetworkConnectionSectionToXmlPayloadTest)
+[pool-2-thread-2] Test testWithIpAllocationModeNONE(org.jclouds.vcloud.binders.BindNetworkConnectionSectionToXmlPayloadTest) succeeded: 71ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+Starting test testDefault(org.jclouds.vcloud.binders.BindUndeployVAppParamsToXmlPayloadTest)
+[pool-2-thread-5] Test testWithNetworkNameFenceMode(org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayloadTest) succeeded: 77ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testDescription(org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayloadTest) succeeded: 108ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+Starting test testSaveStateTrue(org.jclouds.vcloud.binders.BindUndeployVAppParamsToXmlPayloadTest)
+Starting test testTerremark(org.jclouds.vcloud.xml.CatalogHandlerTest)
+[pool-2-thread-1] Test testWhenTemplateDoesntExist(org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayloadTest) succeeded: 116ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+Starting test testVCloud1_0(org.jclouds.vcloud.xml.CatalogHandlerTest)
+[pool-2-thread-4] Test testDefault(org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayloadTest) succeeded: 122ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+Starting test testApplyInputStream(org.jclouds.vcloud.xml.CatalogItemHandlerTest)
+[pool-2-thread-3] Test testSaveStateTrue(org.jclouds.vcloud.binders.BindUndeployVAppParamsToXmlPayloadTest) succeeded: 17ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+Starting test testGracefulWhenHrefIsntLocationId(org.jclouds.vcloud.compute.functions.FindLocationForResourceTest)
+[pool-2-thread-2] Test testDefault(org.jclouds.vcloud.binders.BindUndeployVAppParamsToXmlPayloadTest) succeeded: 28ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
+Starting test testGracefulWhenLocationIdIsntURI(org.jclouds.vcloud.compute.functions.FindLocationForResourceTest)
+[pool-2-thread-3] Test testGracefulWhenHrefIsntLocationId(org.jclouds.vcloud.compute.functions.FindLocationForResourceTest) succeeded: 5ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
+Starting test testMatchWhenIdIsHref(org.jclouds.vcloud.compute.functions.FindLocationForResourceTest)
+[pool-2-thread-3] Test testMatchWhenIdIsHref(org.jclouds.vcloud.compute.functions.FindLocationForResourceTest) succeeded: 1ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+Starting test testAddNetworkConfig(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest)
+[pool-2-thread-3] Test testAddNetworkConfig(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+Starting test testAddNetworkConfigStatic(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest)
+[pool-2-thread-3] Test testAddNetworkConfigStatic(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+Starting test testDescription(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest)
+[pool-2-thread-3] Test testDescription(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
+Starting test testDescriptionStatic(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest)
+[pool-2-thread-3] Test testDescriptionStatic(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
+Starting test testVCloud1_0(org.jclouds.vcloud.xml.NetworkConnectionSectionHandlerTest)
+[pool-2-thread-2] Test testGracefulWhenLocationIdIsntURI(org.jclouds.vcloud.compute.functions.FindLocationForResourceTest) succeeded: 11ms
+Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
 Starting test testApplyInputStream(org.jclouds.vcloud.xml.OrgHandlerTest)
+[pool-2-thread-3] Test testVCloud1_0(org.jclouds.vcloud.xml.NetworkConnectionSectionHandlerTest) succeeded: 58ms
+Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
+Starting test testHosting(org.jclouds.vcloud.xml.OrgHandlerTest)
+[pool-2-thread-4] Test testApplyInputStream(org.jclouds.vcloud.xml.CatalogItemHandlerTest) succeeded: 90ms
+Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testApplyInputStream(org.jclouds.vcloud.xml.OrgHandlerTest) succeeded: 84ms
+Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
 Starting test testSavvis(org.jclouds.vcloud.xml.OrgHandlerTest)
 Starting test testTerremark(org.jclouds.vcloud.xml.OrgHandlerTest)
-Starting test testSaveStateTrue(org.jclouds.vcloud.binders.BindUndeployVAppParamsToXmlPayloadTest)
-[pool-2-thread-2] Test testApplyInputStream(org.jclouds.vcloud.xml.OrgHandlerTest) succeeded: 159ms
-Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-Starting test testDefault(org.jclouds.vcloud.binders.BindUndeployVAppParamsToXmlPayloadTest)
-[pool-2-thread-4] Test testTerremark(org.jclouds.vcloud.xml.OrgHandlerTest) succeeded: 147ms
-Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-Starting test testVCloud1_0(org.jclouds.vcloud.xml.VmHandlerTest)
-[pool-2-thread-1] Test testHosting(org.jclouds.vcloud.xml.OrgHandlerTest) succeeded: 191ms
-Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-Starting test testHostingDotCom(org.jclouds.vcloud.xml.VDCHandlerTest)
-[pool-2-thread-3] Test testSavvis(org.jclouds.vcloud.xml.OrgHandlerTest) succeeded: 165ms
-Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-Starting test testTerremark(org.jclouds.vcloud.xml.VDCHandlerTest)
-[pool-2-thread-1] Test testHostingDotCom(org.jclouds.vcloud.xml.VDCHandlerTest) succeeded: 93ms
-Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
-Starting test testVCloud1_0(org.jclouds.vcloud.xml.VDCHandlerTest)
-[pool-2-thread-3] Test testTerremark(org.jclouds.vcloud.xml.VDCHandlerTest) succeeded: 107ms
-Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
-Starting test testVCloud1_0(org.jclouds.vcloud.xml.CatalogHandlerTest)
-[pool-2-thread-3] Test testVCloud1_0(org.jclouds.vcloud.xml.CatalogHandlerTest) succeeded: 28ms
-Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
-Starting test testTerremark(org.jclouds.vcloud.xml.CatalogHandlerTest)
-[pool-2-thread-3] Test testTerremark(org.jclouds.vcloud.xml.CatalogHandlerTest) succeeded: 17ms
-Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
-Starting test testDescription(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest)
-[pool-2-thread-3] Test testDescription(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest) succeeded: 4ms
-Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
-Starting test testCustomizeOnInstantiateStatic(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest)
-[pool-2-thread-1] Test testVCloud1_0(org.jclouds.vcloud.xml.VDCHandlerTest) succeeded: 56ms
-Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
-Starting test testAddNetworkConfigStatic(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest)
-[pool-2-thread-3] Test testCustomizeOnInstantiateStatic(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest) succeeded: 3ms
-Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
-Starting test testAddNetworkConfig(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest)
-[pool-2-thread-1] Test testAddNetworkConfigStatic(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest) succeeded: 2ms
-Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
-Starting test testDescriptionStatic(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest)
-[pool-2-thread-1] Test testDescriptionStatic(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
-Starting test testCustomizeOnInstantiate(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest)
-[pool-2-thread-1] Test testCustomizeOnInstantiate(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
-Starting test testinstallPrivateKey(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testinstallPrivateKey(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 2ms
-Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
-Starting test testblockOnPortStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testblockOnPortStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 1ms
-Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
-Starting test testNullinstallPrivateKey(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testNullinstallPrivateKey(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
-Starting test testcustomizationScriptStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testcustomizationScriptStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 2ms
-Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
-Starting test testNullblockOnPort(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testNullblockOnPort(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
-Starting test testcustomizationScriptBadFormat(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testcustomizationScriptBadFormat(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
-Starting test testipAddressAllocationMode(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testipAddressAllocationMode(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 2ms
-Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
-Starting test testipAddressAllocationModeStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testipAddressAllocationModeStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
-Starting test testblockOnPort(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testblockOnPort(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
-Starting test testdescription(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testdescription(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
-Starting test testcustomizationScriptNPE(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testcustomizationScriptNPE(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
-Starting test testNullauthorizePublicKey(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testNullauthorizePublicKey(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
-Starting test testinboundPortsBadFormat(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testinboundPortsBadFormat(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
+[pool-2-thread-5] Test testTerremark(org.jclouds.vcloud.xml.CatalogHandlerTest) succeeded: 123ms
 Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
-Starting test testblockOnPortBadFormat(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testblockOnPortBadFormat(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
-Starting test testNullcustomizationScript(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testNullcustomizationScript(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
-Starting test testcustomizationScript(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testcustomizationScript(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
-Starting test testdescriptionStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testdescriptionStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
-Starting test testDefaultOpen22(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testDefaultOpen22(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
-Starting test testauthorizePublicKey(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testauthorizePublicKey(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
-Starting test testinboundPorts(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testinboundPorts(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 1ms
-Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
-Starting test testinboundPortsStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
-[pool-2-thread-1] Test testinboundPortsStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
-Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
-Starting test testWithNetworkNameFenceMode(org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayloadTest)
-[pool-2-thread-3] Test testAddNetworkConfig(org.jclouds.vcloud.options.InstantiateVAppTemplateOptionsTest) succeeded: 56ms
-Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
-Starting test testDescription(org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayloadTest)
-[pool-2-thread-5] Test testSaveStateTrue(org.jclouds.vcloud.binders.BindUndeployVAppParamsToXmlPayloadTest) succeeded: 408ms
-Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
-Starting test testWhenTemplateDoesntExist(org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayloadTest)
-[pool-2-thread-2] Test testDefault(org.jclouds.vcloud.binders.BindUndeployVAppParamsToXmlPayloadTest) succeeded: 266ms
-Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
-Starting test testDefault(org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayloadTest)
-[pool-2-thread-5] Test testWhenTemplateDoesntExist(org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayloadTest) succeeded: 75ms
-Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
-Starting test testWithCustomization(org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayloadTest)
-[pool-2-thread-1] Test testWithNetworkNameFenceMode(org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayloadTest) succeeded: 115ms
-Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
-Starting test testUbuntuTemplate(org.jclouds.vcloud.xml.VAppTemplateHandlerTest)
-[pool-2-thread-2] Test testDefault(org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayloadTest) succeeded: 117ms
-Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
-Starting test testCopyingTemplate(org.jclouds.vcloud.xml.VAppTemplateHandlerTest)
-[pool-2-thread-5] Test testWithCustomization(org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayloadTest) succeeded: 80ms
-Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
-Starting test testDefault(org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayloadTest)
-[pool-2-thread-5] Test testDefault(org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayloadTest) succeeded: 8ms
-Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
-Starting test testWithDescriptionDeployOn(org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayloadTest)
-[pool-2-thread-5] Test testWithDescriptionDeployOn(org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayloadTest) succeeded: 3ms
-Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
-Starting test testWithDescriptionDeployOnSourceDelete(org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayloadTest)
-[pool-2-thread-5] Test testWithDescriptionDeployOnSourceDelete(org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayloadTest) succeeded: 23ms
-Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
-Starting test testDefault(org.jclouds.vcloud.binders.BindCloneVAppTemplateParamsToXmlPayloadTest)
-[pool-2-thread-4] Test testVCloud1_0(org.jclouds.vcloud.xml.VmHandlerTest) succeeded: 469ms
-Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
-Starting test testWithDescription(org.jclouds.vcloud.binders.BindCloneVAppTemplateParamsToXmlPayloadTest)
-[pool-2-thread-3] Test testDescription(org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayloadTest) succeeded: 228ms
-Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
-Starting test testWithDescriptionSourceDelete(org.jclouds.vcloud.binders.BindCloneVAppTemplateParamsToXmlPayloadTest)
-[pool-2-thread-4] Test testWithDescription(org.jclouds.vcloud.binders.BindCloneVAppTemplateParamsToXmlPayloadTest) succeeded: 6ms
-Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
-Starting test testGracefulWhenVDCIsNotLocation(org.jclouds.vcloud.compute.functions.VAppToNodeMetadataTest)
-[pool-2-thread-5] Test testDefault(org.jclouds.vcloud.binders.BindCloneVAppTemplateParamsToXmlPayloadTest) succeeded: 33ms
-Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
-Starting test testWhenVDCIsLocation(org.jclouds.vcloud.compute.functions.VAppToNodeMetadataTest)
-[pool-2-thread-3] Test testWithDescriptionSourceDelete(org.jclouds.vcloud.binders.BindCloneVAppTemplateParamsToXmlPayloadTest) succeeded: 33ms
-Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
-Starting test testGracefulWhenNoIPs(org.jclouds.vcloud.compute.functions.VAppToNodeMetadataTest)
-[pool-2-thread-1] Test testUbuntuTemplate(org.jclouds.vcloud.xml.VAppTemplateHandlerTest) succeeded: 184ms
-Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
-Starting test testDefault(org.jclouds.vcloud.binders.BindCatalogItemToXmlPayloadTest)
-[pool-2-thread-2] Test testCopyingTemplate(org.jclouds.vcloud.xml.VAppTemplateHandlerTest) succeeded: 151ms
-Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
-Starting test testGracefulWhenHrefIsntLocationId(org.jclouds.vcloud.compute.functions.FindLocationForResourceTest)
-[pool-2-thread-2] Test testGracefulWhenHrefIsntLocationId(org.jclouds.vcloud.compute.functions.FindLocationForResourceTest) succeeded: 1ms
-Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
-Starting test testMatchWhenIdIsHref(org.jclouds.vcloud.compute.functions.FindLocationForResourceTest)
-[pool-2-thread-2] Test testMatchWhenIdIsHref(org.jclouds.vcloud.compute.functions.FindLocationForResourceTest) succeeded: 0ms
-Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
-Starting test testGracefulWhenLocationIdIsntURI(org.jclouds.vcloud.compute.functions.FindLocationForResourceTest)
-[pool-2-thread-2] Test testGracefulWhenLocationIdIsntURI(org.jclouds.vcloud.compute.functions.FindLocationForResourceTest) succeeded: 1ms
-Test suite progress: tests succeeded: 55, failed: 0, skipped: 0.
-Starting test testWithIpAllocationModeNONE(org.jclouds.vcloud.binders.BindNetworkConnectionSectionToXmlPayloadTest)
-[pool-2-thread-1] Test testDefault(org.jclouds.vcloud.binders.BindCatalogItemToXmlPayloadTest) succeeded: 20ms
-Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
-Starting test testApply(org.jclouds.vcloud.filters.SetVCloudTokenCookieTest)
-[pool-2-thread-2] Test testWithIpAllocationModeNONE(org.jclouds.vcloud.binders.BindNetworkConnectionSectionToXmlPayloadTest) succeeded: 31ms
-Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
-Starting test testVCloud1_0(org.jclouds.vcloud.xml.NetworkConnectionSectionHandlerTest)
-[pool-2-thread-2] Test testVCloud1_0(org.jclouds.vcloud.xml.NetworkConnectionSectionHandlerTest) succeeded: 4ms
-Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
-Starting test testSupportedComputeServiceProviders(org.jclouds.vcloud.ProvidersInPropertiesTest)
-[pool-2-thread-1] Test testApply(org.jclouds.vcloud.filters.SetVCloudTokenCookieTest) succeeded: 27ms
-Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
-Starting test testSupportedProviders(org.jclouds.vcloud.ProvidersInPropertiesTest)
-[pool-2-thread-1] Test testSupportedProviders(org.jclouds.vcloud.ProvidersInPropertiesTest) succeeded: 26ms
-Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
-Starting test testDefault(org.jclouds.vcloud.binders.BindDeployVAppParamsToXmlPayloadTest)
-[pool-2-thread-1] Test testDefault(org.jclouds.vcloud.binders.BindDeployVAppParamsToXmlPayloadTest) succeeded: 5ms
-Test suite progress: tests succeeded: 61, failed: 0, skipped: 0.
-Starting test testPowerOnTrue(org.jclouds.vcloud.binders.BindDeployVAppParamsToXmlPayloadTest)
-[pool-2-thread-1] Test testPowerOnTrue(org.jclouds.vcloud.binders.BindDeployVAppParamsToXmlPayloadTest) succeeded: 2ms
-Test suite progress: tests succeeded: 62, failed: 0, skipped: 0.
-Starting test testApplyInputStream(org.jclouds.vcloud.xml.CatalogItemHandlerTest)
-[pool-2-thread-2] Test testSupportedComputeServiceProviders(org.jclouds.vcloud.ProvidersInPropertiesTest) succeeded: 59ms
-Test suite progress: tests succeeded: 63, failed: 0, skipped: 0.
 Starting test testBridged(org.jclouds.vcloud.xml.OrgNetworkHandlerTest)
-[pool-2-thread-4] Test testGracefulWhenVDCIsNotLocation(org.jclouds.vcloud.compute.functions.VAppToNodeMetadataTest) succeeded: 180ms
-Test suite progress: tests succeeded: 64, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testTerremark(org.jclouds.vcloud.xml.OrgHandlerTest) succeeded: 6ms
+Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
 Starting test testIsolated(org.jclouds.vcloud.xml.OrgNetworkHandlerTest)
-[pool-2-thread-1] Test testApplyInputStream(org.jclouds.vcloud.xml.CatalogItemHandlerTest) succeeded: 80ms
-Test suite progress: tests succeeded: 65, failed: 0, skipped: 0.
-Starting test testGet404SetsResourceNotFoundException(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest)
-[pool-2-thread-3] Test testGracefulWhenNoIPs(org.jclouds.vcloud.compute.functions.VAppToNodeMetadataTest) succeeded: 203ms
-Test suite progress: tests succeeded: 66, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testVCloud1_0(org.jclouds.vcloud.xml.CatalogHandlerTest) succeeded: 121ms
+Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
 Starting test test401SetsAuthorizationException(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest)
-[pool-2-thread-5] Test testWhenVDCIsLocation(org.jclouds.vcloud.compute.functions.VAppToNodeMetadataTest) succeeded: 230ms
-Test suite progress: tests succeeded: 67, failed: 0, skipped: 0.
-Starting test testPOSTNotRunningSetsIllegalStateException(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest)
-[pool-2-thread-3] Test test401SetsAuthorizationException(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest) succeeded: 21ms
-Test suite progress: tests succeeded: 68, failed: 0, skipped: 0.
-Starting test testGet403NoAcessToEntitySetsResourceNotFoundException(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest)
-[pool-2-thread-2] Test testBridged(org.jclouds.vcloud.xml.OrgNetworkHandlerTest) succeeded: 107ms
-Test suite progress: tests succeeded: 69, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testHosting(org.jclouds.vcloud.xml.OrgHandlerTest) succeeded: 46ms
+Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
 Starting test testDelete404SetsHttpResponseException(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest)
-[pool-2-thread-2] Test testDelete404SetsHttpResponseException(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest) succeeded: 15ms
-Test suite progress: tests succeeded: 70, failed: 0, skipped: 0.
-Starting test testRhelOffStatic(org.jclouds.vcloud.xml.VAppHandlerTest)
-[pool-2-thread-4] Test testIsolated(org.jclouds.vcloud.xml.OrgNetworkHandlerTest) succeeded: 99ms
-Test suite progress: tests succeeded: 71, failed: 0, skipped: 0.
+[pool-2-thread-5] Test testBridged(org.jclouds.vcloud.xml.OrgNetworkHandlerTest) succeeded: 119ms
+Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
+Starting test testGet403NoAcessToEntitySetsResourceNotFoundException(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest)
+[pool-2-thread-1] Test test401SetsAuthorizationException(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest) succeeded: 154ms
+Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
+Starting test testGet403NoAcessToEntitySetsResourceNotFoundExceptionOnAPI1_0AgainstVCD1_5(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest)
+[pool-2-thread-4] Test testSavvis(org.jclouds.vcloud.xml.OrgHandlerTest) succeeded: 181ms
+Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
+Starting test testGet404SetsResourceNotFoundException(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest)
+[pool-2-thread-4] Test testGet404SetsResourceNotFoundException(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest) succeeded: 33ms
+Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
+Starting test testPOSTNotRunningSetsIllegalStateException(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest)
+[pool-2-thread-3] Test testDelete404SetsHttpResponseException(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest) succeeded: 208ms
+Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
+Starting test testSupportedComputeServiceProviders(org.jclouds.vcloud.ProvidersInPropertiesTest)
+[pool-2-thread-4] Test testPOSTNotRunningSetsIllegalStateException(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest) succeeded: 16ms
+Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
+Starting test testSupportedProviders(org.jclouds.vcloud.ProvidersInPropertiesTest)
+[pool-2-thread-5] Test testGet403NoAcessToEntitySetsResourceNotFoundException(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest) succeeded: 122ms
+Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testIsolated(org.jclouds.vcloud.xml.OrgNetworkHandlerTest) succeeded: 247ms
+Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
+Starting test testApply(org.jclouds.vcloud.filters.SetVCloudTokenCookieTest)
 Starting test testApplyInputStream(org.jclouds.vcloud.xml.SupportedVersionsHandlerTest)
-[pool-2-thread-3] Test testGet403NoAcessToEntitySetsResourceNotFoundException(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest) succeeded: 37ms
+[pool-2-thread-1] Test testGet403NoAcessToEntitySetsResourceNotFoundExceptionOnAPI1_0AgainstVCD1_5(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest) succeeded: 105ms
+Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
+Starting test testRhelOffStatic(org.jclouds.vcloud.xml.VAppHandlerTest)
+[pool-2-thread-4] Test testSupportedProviders(org.jclouds.vcloud.ProvidersInPropertiesTest) succeeded: 68ms
+Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
+Starting test testCopyingTemplate(org.jclouds.vcloud.xml.VAppTemplateHandlerTest)
+[pool-2-thread-3] Test testSupportedComputeServiceProviders(org.jclouds.vcloud.ProvidersInPropertiesTest) succeeded: 90ms
+Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
+Starting test testUbuntuTemplate(org.jclouds.vcloud.xml.VAppTemplateHandlerTest)
+[pool-2-thread-2] Test testApply(org.jclouds.vcloud.filters.SetVCloudTokenCookieTest) succeeded: 57ms
+Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
+Starting test testVAppTemplateWithNewlinesAndNamespacedElements(org.jclouds.vcloud.xml.VAppTemplateHandlerTest)
+[pool-2-thread-5] Test testApplyInputStream(org.jclouds.vcloud.xml.SupportedVersionsHandlerTest) succeeded: 75ms
+Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
+Starting test testGracefulWhenNoIPs(org.jclouds.vcloud.compute.functions.VAppToNodeMetadataTest)
+[pool-2-thread-4] Test testCopyingTemplate(org.jclouds.vcloud.xml.VAppTemplateHandlerTest) succeeded: 201ms
+Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
+Starting test testGracefulWhenVDCIsNotLocation(org.jclouds.vcloud.compute.functions.VAppToNodeMetadataTest)
+[pool-2-thread-2] Test testVAppTemplateWithNewlinesAndNamespacedElements(org.jclouds.vcloud.xml.VAppTemplateHandlerTest) succeeded: 186ms
+Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
+Starting test testWhenVDCIsLocation(org.jclouds.vcloud.compute.functions.VAppToNodeMetadataTest)
+[pool-2-thread-3] Test testUbuntuTemplate(org.jclouds.vcloud.xml.VAppTemplateHandlerTest) succeeded: 251ms
+Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
+Starting test testDefaultOpen22(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testDefaultOpen22(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 9ms
+Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
+Starting test testNullauthorizePublicKey(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testNullauthorizePublicKey(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
+Starting test testNullblockOnPort(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testNullblockOnPort(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 1ms
+Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
+Starting test testNullcustomizationScript(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testNullcustomizationScript(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
+Starting test testNullinstallPrivateKey(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testNullinstallPrivateKey(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
+Starting test testauthorizePublicKey(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testauthorizePublicKey(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
+Starting test testblockOnPort(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testblockOnPort(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
+Starting test testblockOnPortBadFormat(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testblockOnPortBadFormat(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
+Starting test testblockOnPortStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testblockOnPortStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 55, failed: 0, skipped: 0.
+Starting test testcustomizationScript(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testcustomizationScript(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
+Starting test testcustomizationScriptBadFormat(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testcustomizationScriptBadFormat(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
+Starting test testcustomizationScriptNPE(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testcustomizationScriptNPE(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
+Starting test testcustomizationScriptStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testcustomizationScriptStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
+Starting test testdescription(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testdescription(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
+Starting test testdescriptionStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testdescriptionStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 61, failed: 0, skipped: 0.
+Starting test testinboundPorts(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testinboundPorts(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 2ms
+Test suite progress: tests succeeded: 62, failed: 0, skipped: 0.
+Starting test testinboundPortsBadFormat(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testinboundPortsBadFormat(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 63, failed: 0, skipped: 0.
+Starting test testinboundPortsStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testinboundPortsStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 64, failed: 0, skipped: 0.
+Starting test testinstallPrivateKey(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testinstallPrivateKey(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 65, failed: 0, skipped: 0.
+Starting test testipAddressAllocationMode(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testipAddressAllocationMode(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 66, failed: 0, skipped: 0.
+Starting test testipAddressAllocationModeStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest)
+[pool-2-thread-3] Test testipAddressAllocationModeStatic(org.jclouds.vcloud.compute.options.VCloudTemplateOptionsTest) succeeded: 0ms
+Test suite progress: tests succeeded: 67, failed: 0, skipped: 0.
+Starting test testHostingDotCom(org.jclouds.vcloud.xml.VDCHandlerTest)
+[pool-2-thread-1] Test testRhelOffStatic(org.jclouds.vcloud.xml.VAppHandlerTest) succeeded: 326ms
+Test suite progress: tests succeeded: 68, failed: 0, skipped: 0.
+Starting test testTerremark(org.jclouds.vcloud.xml.VDCHandlerTest)
+[pool-2-thread-3] Test testHostingDotCom(org.jclouds.vcloud.xml.VDCHandlerTest) succeeded: 43ms
+Test suite progress: tests succeeded: 69, failed: 0, skipped: 0.
+Starting test testVCloud1_0(org.jclouds.vcloud.xml.VDCHandlerTest)
+[pool-2-thread-3] Test testVCloud1_0(org.jclouds.vcloud.xml.VDCHandlerTest) succeeded: 19ms
+Test suite progress: tests succeeded: 70, failed: 0, skipped: 0.
+Starting test testVCloud1_0(org.jclouds.vcloud.xml.VmHandlerTest)
+[pool-2-thread-4] Test testGracefulWhenVDCIsNotLocation(org.jclouds.vcloud.compute.functions.VAppToNodeMetadataTest) succeeded: 161ms
+Test suite progress: tests succeeded: 71, failed: 0, skipped: 0.
+[pool-2-thread-5] Test testGracefulWhenNoIPs(org.jclouds.vcloud.compute.functions.VAppToNodeMetadataTest) succeeded: 339ms
 Test suite progress: tests succeeded: 72, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testApplyInputStream(org.jclouds.vcloud.xml.SupportedVersionsHandlerTest) succeeded: 14ms
+[pool-2-thread-1] Test testTerremark(org.jclouds.vcloud.xml.VDCHandlerTest) succeeded: 87ms
 Test suite progress: tests succeeded: 73, failed: 0, skipped: 0.
-[pool-2-thread-5] Test testPOSTNotRunningSetsIllegalStateException(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest) succeeded: 59ms
+[pool-2-thread-2] Test testWhenVDCIsLocation(org.jclouds.vcloud.compute.functions.VAppToNodeMetadataTest) succeeded: 191ms
 Test suite progress: tests succeeded: 74, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testRhelOffStatic(org.jclouds.vcloud.xml.VAppHandlerTest) succeeded: 39ms
+[pool-2-thread-3] Test testVCloud1_0(org.jclouds.vcloud.xml.VmHandlerTest) succeeded: 46ms
 Test suite progress: tests succeeded: 75, failed: 0, skipped: 0.
-[pool-2-thread-1] Test testGet404SetsResourceNotFoundException(org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponseTest) succeeded: 105ms
+Starting test testListImagesUsingVCloud1_0ApiOnServerRunningVCloudDirector1_5ReturnsImageWithLocationForVAppTemplateInVDC(org.jclouds.vcloud.compute.functions.ListImagesInVCloudExpectTest)
+[pool-3-thread-1] Test testListImagesUsingVCloud1_0ApiOnServerRunningVCloudDirector1_5ReturnsImageWithLocationForVAppTemplateInVDC(org.jclouds.vcloud.compute.functions.ListImagesInVCloudExpectTest) succeeded: 1536ms
 Test suite progress: tests succeeded: 76, failed: 0, skipped: 0.
-Starting test testCatalog(org.jclouds.vcloud.features.CatalogAsyncClientTest)
-Starting test testFindCatalogItemInOrgCatalogNamed(org.jclouds.vcloud.features.CatalogAsyncClientTest)
 Starting test testCatalogInOrg(org.jclouds.vcloud.features.CatalogAsyncClientTest)
+Starting test testFindCatalogItemInOrgCatalogNamed(org.jclouds.vcloud.features.CatalogAsyncClientTest)
 Starting test testCatalogItemURI(org.jclouds.vcloud.features.CatalogAsyncClientTest)
-[pool-3-thread-2] Test testCatalogItemURI(org.jclouds.vcloud.features.CatalogAsyncClientTest) succeeded: 19ms
-Test suite progress: tests succeeded: 77, failed: 0, skipped: 0.
-[pool-3-thread-3] Test testCatalogInOrg(org.jclouds.vcloud.features.CatalogAsyncClientTest) succeeded: 36ms
-Test suite progress: tests succeeded: 78, failed: 0, skipped: 0.
-[pool-3-thread-4] Test testFindCatalogItemInOrgCatalogNamed(org.jclouds.vcloud.features.CatalogAsyncClientTest) succeeded: 48ms
-Test suite progress: tests succeeded: 79, failed: 0, skipped: 0.
-[pool-3-thread-5] Test testCatalog(org.jclouds.vcloud.features.CatalogAsyncClientTest) succeeded: 50ms
-Test suite progress: tests succeeded: 80, failed: 0, skipped: 0.
+Starting test testCatalog(org.jclouds.vcloud.features.CatalogAsyncClientTest)
 Starting test testAddVAppTemplateOrMediaImageToCatalogAndNameItem(org.jclouds.vcloud.features.CatalogAsyncClientTest)
-[pool-3-thread-1] Test testAddVAppTemplateOrMediaImageToCatalogAndNameItem(org.jclouds.vcloud.features.CatalogAsyncClientTest) succeeded: 32ms
+[pool-4-thread-1] Test testAddVAppTemplateOrMediaImageToCatalogAndNameItem(org.jclouds.vcloud.features.CatalogAsyncClientTest) succeeded: 10ms
+Test suite progress: tests succeeded: 77, failed: 0, skipped: 0.
+[pool-4-thread-4] Test testCatalogItemURI(org.jclouds.vcloud.features.CatalogAsyncClientTest) succeeded: 14ms
+Test suite progress: tests succeeded: 78, failed: 0, skipped: 0.
+[pool-4-thread-2] Test testCatalog(org.jclouds.vcloud.features.CatalogAsyncClientTest) succeeded: 14ms
+Test suite progress: tests succeeded: 79, failed: 0, skipped: 0.
+[pool-4-thread-5] Test testFindCatalogItemInOrgCatalogNamed(org.jclouds.vcloud.features.CatalogAsyncClientTest) succeeded: 16ms
+Test suite progress: tests succeeded: 80, failed: 0, skipped: 0.
+[pool-4-thread-3] Test testCatalogInOrg(org.jclouds.vcloud.features.CatalogAsyncClientTest) succeeded: 16ms
 Test suite progress: tests succeeded: 81, failed: 0, skipped: 0.
-Starting test testFindNetworkInOrgVDCNamed(org.jclouds.vcloud.features.NetworkAsyncClientTest)
 Starting test testNetwork(org.jclouds.vcloud.features.NetworkAsyncClientTest)
-[pool-4-thread-2] Test testNetwork(org.jclouds.vcloud.features.NetworkAsyncClientTest) succeeded: 15ms
+Starting test testFindNetworkInOrgVDCNamed(org.jclouds.vcloud.features.NetworkAsyncClientTest)
+[pool-5-thread-1] Test testFindNetworkInOrgVDCNamed(org.jclouds.vcloud.features.NetworkAsyncClientTest) succeeded: 12ms
 Test suite progress: tests succeeded: 82, failed: 0, skipped: 0.
-[pool-4-thread-1] Test testFindNetworkInOrgVDCNamed(org.jclouds.vcloud.features.NetworkAsyncClientTest) succeeded: 15ms
+[pool-5-thread-2] Test testNetwork(org.jclouds.vcloud.features.NetworkAsyncClientTest) succeeded: 17ms
 Test suite progress: tests succeeded: 83, failed: 0, skipped: 0.
-Starting test testlistOrgs(org.jclouds.vcloud.features.OrgAsyncClientTest)
-Starting test testFindOrgNamed(org.jclouds.vcloud.features.OrgAsyncClientTest)
-[pool-5-thread-2] Test testlistOrgs(org.jclouds.vcloud.features.OrgAsyncClientTest) succeeded: 83ms
-Test suite progress: tests succeeded: 84, failed: 0, skipped: 0.
-[pool-5-thread-1] Test testFindOrgNamed(org.jclouds.vcloud.features.OrgAsyncClientTest) succeeded: 85ms
-Test suite progress: tests succeeded: 85, failed: 0, skipped: 0.
 Starting test testOrg(org.jclouds.vcloud.features.OrgAsyncClientTest)
-[pool-5-thread-3] Test testOrg(org.jclouds.vcloud.features.OrgAsyncClientTest) succeeded: 3ms
+[pool-6-thread-2] Test testOrg(org.jclouds.vcloud.features.OrgAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 84, failed: 0, skipped: 0.
+Starting test testFindOrgNamed(org.jclouds.vcloud.features.OrgAsyncClientTest)
+Starting test testlistOrgs(org.jclouds.vcloud.features.OrgAsyncClientTest)
+[pool-6-thread-3] Test testlistOrgs(org.jclouds.vcloud.features.OrgAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 85, failed: 0, skipped: 0.
+[pool-6-thread-1] Test testFindOrgNamed(org.jclouds.vcloud.features.OrgAsyncClientTest) succeeded: 14ms
 Test suite progress: tests succeeded: 86, failed: 0, skipped: 0.
-Starting test testFindTasksListInOrgNamed(org.jclouds.vcloud.features.TaskAsyncClientTest)
 Starting test testGetTasksList(org.jclouds.vcloud.features.TaskAsyncClientTest)
-Starting test testGetTask(org.jclouds.vcloud.features.TaskAsyncClientTest)
 Starting test testCancelTask(org.jclouds.vcloud.features.TaskAsyncClientTest)
-[pool-6-thread-3] Test testCancelTask(org.jclouds.vcloud.features.TaskAsyncClientTest) succeeded: 12ms
+Starting test testFindTasksListInOrgNamed(org.jclouds.vcloud.features.TaskAsyncClientTest)
+Starting test testGetTask(org.jclouds.vcloud.features.TaskAsyncClientTest)
+[pool-7-thread-3] Test testGetTask(org.jclouds.vcloud.features.TaskAsyncClientTest) succeeded: 7ms
 Test suite progress: tests succeeded: 87, failed: 0, skipped: 0.
-[pool-6-thread-2] Test testFindTasksListInOrgNamed(org.jclouds.vcloud.features.TaskAsyncClientTest) succeeded: 25ms
+[pool-7-thread-4] Test testGetTasksList(org.jclouds.vcloud.features.TaskAsyncClientTest) succeeded: 11ms
 Test suite progress: tests succeeded: 88, failed: 0, skipped: 0.
-[pool-6-thread-4] Test testGetTask(org.jclouds.vcloud.features.TaskAsyncClientTest) succeeded: 16ms
+[pool-7-thread-2] Test testFindTasksListInOrgNamed(org.jclouds.vcloud.features.TaskAsyncClientTest) succeeded: 10ms
 Test suite progress: tests succeeded: 89, failed: 0, skipped: 0.
-[pool-6-thread-1] Test testGetTasksList(org.jclouds.vcloud.features.TaskAsyncClientTest) succeeded: 25ms
+[pool-7-thread-1] Test testCancelTask(org.jclouds.vcloud.features.TaskAsyncClientTest) succeeded: 14ms
 Test suite progress: tests succeeded: 90, failed: 0, skipped: 0.
-Starting test testDeployVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
-Starting test testResetVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
-Starting test testDeleteVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
-Starting test testCopyVAppToVDCAndNameOptions(org.jclouds.vcloud.features.VAppAsyncClientTest)
-Starting test testPowerOnVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
-[pool-7-thread-2] Test testDeleteVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 8ms
-Test suite progress: tests succeeded: 91, failed: 0, skipped: 0.
-Starting test testDeployAndPowerOnVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
-[pool-7-thread-4] Test testPowerOnVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 11ms
-Test suite progress: tests succeeded: 92, failed: 0, skipped: 0.
-[pool-7-thread-5] Test testResetVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 11ms
-Test suite progress: tests succeeded: 93, failed: 0, skipped: 0.
-Starting test testRebootVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
-Starting test testopyVAppToVDCAndName(org.jclouds.vcloud.features.VAppAsyncClientTest)
-[pool-7-thread-3] Test testCopyVAppToVDCAndNameOptions(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 14ms
-Test suite progress: tests succeeded: 94, failed: 0, skipped: 0.
 Starting test testGetVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
-[pool-7-thread-3] Test testGetVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 4ms
-Test suite progress: tests succeeded: 95, failed: 0, skipped: 0.
-[pool-7-thread-4] Test testRebootVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 7ms
-Test suite progress: tests succeeded: 96, failed: 0, skipped: 0.
-Starting test testPowerOffVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
-[pool-7-thread-3] Test testPowerOffVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 2ms
-Test suite progress: tests succeeded: 97, failed: 0, skipped: 0.
-Starting test testShutdownVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
-Starting test testSuspendVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
-[pool-7-thread-4] Test testShutdownVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 1ms
-Test suite progress: tests succeeded: 98, failed: 0, skipped: 0.
+Starting test testCopyVAppToVDCAndNameOptions(org.jclouds.vcloud.features.VAppAsyncClientTest)
+Starting test testDeployVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
+Starting test testDeployAndPowerOnVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
+Starting test testDeleteVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
+[pool-8-thread-5] Test testGetVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 32ms
+Test suite progress: tests succeeded: 91, failed: 0, skipped: 0.
 Starting test testMoveVAppToVDCAndRenameOptions(org.jclouds.vcloud.features.VAppAsyncClientTest)
-[pool-7-thread-3] Test testSuspendVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 1ms
+[pool-8-thread-3] Test testDeployAndPowerOnVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 28ms
+Test suite progress: tests succeeded: 92, failed: 0, skipped: 0.
+[pool-8-thread-5] Test testMoveVAppToVDCAndRenameOptions(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 5ms
+Test suite progress: tests succeeded: 93, failed: 0, skipped: 0.
+Starting test testPowerOnVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
+[pool-8-thread-5] Test testPowerOnVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 94, failed: 0, skipped: 0.
+Starting test testRebootVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
+Starting test testPowerOffVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
+[pool-8-thread-3] Test testPowerOffVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 95, failed: 0, skipped: 0.
+Starting test testResetVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
+[pool-8-thread-2] Test testDeleteVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 37ms
+Test suite progress: tests succeeded: 96, failed: 0, skipped: 0.
+Starting test testShutdownVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
+[pool-8-thread-5] Test testRebootVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 8ms
+Test suite progress: tests succeeded: 97, failed: 0, skipped: 0.
+Starting test testSuspendVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
+[pool-8-thread-5] Test testSuspendVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 1ms
+Test suite progress: tests succeeded: 98, failed: 0, skipped: 0.
+Starting test testUndeployAndSaveStateOfVAppSaveState(org.jclouds.vcloud.features.VAppAsyncClientTest)
+[pool-8-thread-3] Test testResetVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 7ms
 Test suite progress: tests succeeded: 99, failed: 0, skipped: 0.
 Starting test testUndeployVApp(org.jclouds.vcloud.features.VAppAsyncClientTest)
-[pool-7-thread-5] Test testopyVAppToVDCAndName(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 35ms
+[pool-8-thread-4] Test testDeployVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 47ms
 Test suite progress: tests succeeded: 100, failed: 0, skipped: 0.
-Starting test testUndeployAndSaveStateOfVAppSaveState(org.jclouds.vcloud.features.VAppAsyncClientTest)
-[pool-7-thread-5] Test testUndeployAndSaveStateOfVAppSaveState(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 10ms
+Starting test testopyVAppToVDCAndName(org.jclouds.vcloud.features.VAppAsyncClientTest)
+[pool-8-thread-5] Test testUndeployAndSaveStateOfVAppSaveState(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 3ms
 Test suite progress: tests succeeded: 101, failed: 0, skipped: 0.
-[pool-7-thread-2] Test testDeployAndPowerOnVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 52ms
+[pool-8-thread-2] Test testShutdownVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 10ms
 Test suite progress: tests succeeded: 102, failed: 0, skipped: 0.
-[pool-7-thread-3] Test testUndeployVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 41ms
+[pool-8-thread-4] Test testopyVAppToVDCAndName(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 5ms
 Test suite progress: tests succeeded: 103, failed: 0, skipped: 0.
-[pool-7-thread-1] Test testDeployVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 66ms
+[pool-8-thread-1] Test testCopyVAppToVDCAndNameOptions(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 55ms
 Test suite progress: tests succeeded: 104, failed: 0, skipped: 0.
-[pool-7-thread-4] Test testMoveVAppToVDCAndRenameOptions(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 65ms
+[pool-8-thread-3] Test testUndeployVApp(org.jclouds.vcloud.features.VAppAsyncClientTest) succeeded: 8ms
 Test suite progress: tests succeeded: 105, failed: 0, skipped: 0.
-Starting test testmoveVAppTemplateToVDCAndRenameOptions(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest)
-Starting test testcopyVAppTemplateToVDCAndName(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest)
 Starting test testCreateVAppInVDCByInstantiatingTemplateOptionsIllegalName(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest)
-[pool-8-thread-3] Test testcopyVAppTemplateToVDCAndName(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 8ms
-Test suite progress: tests succeeded: 106, failed: 0, skipped: 0.
-[pool-8-thread-4] Test testmoveVAppTemplateToVDCAndRenameOptions(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 12ms
-Test suite progress: tests succeeded: 107, failed: 0, skipped: 0.
-Starting test testFindVAppTemplate(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest)
-Starting test testcopyVAppTemplateToVDCAndNameOptions(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest)
-Starting test testcaptureVAppAsTemplateInVDC(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest)
-[pool-8-thread-2] Test testCreateVAppInVDCByInstantiatingTemplateOptionsIllegalName(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 7ms
-Test suite progress: tests succeeded: 108, failed: 0, skipped: 0.
-Starting test testCreateVAppInVDCByInstantiatingTemplate(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest)
-Starting test testGetOvfEnvelopeForVAppTemplate(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest)
-[pool-8-thread-2] Test testCreateVAppInVDCByInstantiatingTemplate(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 11ms
-Test suite progress: tests succeeded: 109, failed: 0, skipped: 0.
-Starting test testcaptureVAppAsTemplateInVDCOptions(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest)
-[pool-8-thread-5] Test testGetOvfEnvelopeForVAppTemplate(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 89ms
-Test suite progress: tests succeeded: 110, failed: 0, skipped: 0.
-[pool-8-thread-3] Test testcopyVAppTemplateToVDCAndNameOptions(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 96ms
-Test suite progress: tests succeeded: 111, failed: 0, skipped: 0.
 Starting test testVAppTemplateURI(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest)
-[pool-8-thread-5] Test testVAppTemplateURI(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 2ms
+Starting test testCreateVAppInVDCByInstantiatingTemplate(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest)
+[pool-9-thread-2] Test testCreateVAppInVDCByInstantiatingTemplateOptionsIllegalName(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 106, failed: 0, skipped: 0.
+Starting test testFindVAppTemplate(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest)
+Starting test testGetOvfEnvelopeForVAppTemplate(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest)
+Starting test testcaptureVAppAsTemplateInVDC(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest)
+[pool-9-thread-2] Test testcaptureVAppAsTemplateInVDC(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 10ms
+Test suite progress: tests succeeded: 107, failed: 0, skipped: 0.
+Starting test testcaptureVAppAsTemplateInVDCOptions(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest)
+[pool-9-thread-4] Test testGetOvfEnvelopeForVAppTemplate(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 15ms
+Test suite progress: tests succeeded: 108, failed: 0, skipped: 0.
+Starting test testcopyVAppTemplateToVDCAndName(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest)
+[pool-9-thread-4] Test testcopyVAppTemplateToVDCAndName(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 109, failed: 0, skipped: 0.
+Starting test testcopyVAppTemplateToVDCAndNameOptions(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest)
+[pool-9-thread-4] Test testcopyVAppTemplateToVDCAndNameOptions(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 5ms
+Test suite progress: tests succeeded: 110, failed: 0, skipped: 0.
+Starting test testmoveVAppTemplateToVDCAndRenameOptions(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest)
+[pool-9-thread-4] Test testmoveVAppTemplateToVDCAndRenameOptions(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 111, failed: 0, skipped: 0.
+[pool-9-thread-3] Test testFindVAppTemplate(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 62ms
 Test suite progress: tests succeeded: 112, failed: 0, skipped: 0.
-[pool-8-thread-2] Test testcaptureVAppAsTemplateInVDCOptions(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 86ms
+[pool-9-thread-5] Test testVAppTemplateURI(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 68ms
 Test suite progress: tests succeeded: 113, failed: 0, skipped: 0.
-[pool-8-thread-4] Test testcaptureVAppAsTemplateInVDC(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 98ms
+[pool-9-thread-2] Test testcaptureVAppAsTemplateInVDCOptions(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 47ms
 Test suite progress: tests succeeded: 114, failed: 0, skipped: 0.
-[pool-8-thread-1] Test testFindVAppTemplate(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 100ms
+[pool-9-thread-1] Test testCreateVAppInVDCByInstantiatingTemplate(org.jclouds.vcloud.features.VAppTemplateAsyncClientTest) succeeded: 68ms
 Test suite progress: tests succeeded: 115, failed: 0, skipped: 0.
-Starting test testFindVDCInOrgNamedBadVDC(org.jclouds.vcloud.features.VDCAsyncClientTest)
-Starting test testFindVDCInOrgNamedNullOrgAndVDC(org.jclouds.vcloud.features.VDCAsyncClientTest)
-[pool-9-thread-5] Test testFindVDCInOrgNamedBadVDC(org.jclouds.vcloud.features.VDCAsyncClientTest) succeeded: 3ms
-Test suite progress: tests succeeded: 116, failed: 0, skipped: 0.
 Starting test testFindVDCInOrgNamedBadOrg(org.jclouds.vcloud.features.VDCAsyncClientTest)
-Starting test testFindVDCInOrgNamedNullOrg(org.jclouds.vcloud.features.VDCAsyncClientTest)
-[pool-9-thread-2] Test testFindVDCInOrgNamedBadOrg(org.jclouds.vcloud.features.VDCAsyncClientTest) succeeded: 0ms
-Test suite progress: tests succeeded: 117, failed: 0, skipped: 0.
 Starting test testGetVDC(org.jclouds.vcloud.features.VDCAsyncClientTest)
-[pool-9-thread-4] Test testFindVDCInOrgNamedNullOrgAndVDC(org.jclouds.vcloud.features.VDCAsyncClientTest) succeeded: 9ms
+Starting test testFindVDCInOrgNamedNullOrgAndVDC(org.jclouds.vcloud.features.VDCAsyncClientTest)
+Starting test testFindVDCInOrgNamedBadVDC(org.jclouds.vcloud.features.VDCAsyncClientTest)
+[pool-10-thread-1] Test testFindVDCInOrgNamedBadOrg(org.jclouds.vcloud.features.VDCAsyncClientTest) succeeded: 5ms
+Starting test testFindVDCInOrgNamedNullOrg(org.jclouds.vcloud.features.VDCAsyncClientTest)
+Test suite progress: tests succeeded: 116, failed: 0, skipped: 0.
+[pool-10-thread-2] Test testFindVDCInOrgNamedBadVDC(org.jclouds.vcloud.features.VDCAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 117, failed: 0, skipped: 0.
+[pool-10-thread-4] Test testFindVDCInOrgNamedNullOrgAndVDC(org.jclouds.vcloud.features.VDCAsyncClientTest) succeeded: 8ms
 Test suite progress: tests succeeded: 118, failed: 0, skipped: 0.
-[pool-9-thread-3] Test testGetVDC(org.jclouds.vcloud.features.VDCAsyncClientTest) succeeded: 4ms
+[pool-10-thread-3] Test testFindVDCInOrgNamedNullOrg(org.jclouds.vcloud.features.VDCAsyncClientTest) succeeded: 5ms
 Test suite progress: tests succeeded: 119, failed: 0, skipped: 0.
-[pool-9-thread-1] Test testFindVDCInOrgNamedNullOrg(org.jclouds.vcloud.features.VDCAsyncClientTest) succeeded: 16ms
+[pool-10-thread-5] Test testGetVDC(org.jclouds.vcloud.features.VDCAsyncClientTest) succeeded: 14ms
 Test suite progress: tests succeeded: 120, failed: 0, skipped: 0.
-Starting test testPowerOnVm(org.jclouds.vcloud.features.VmAsyncClientTest)
-Starting test testResetVm(org.jclouds.vcloud.features.VmAsyncClientTest)
-Starting test testGetThumbnailOfVm(org.jclouds.vcloud.features.VmAsyncClientTest)
-[pool-10-thread-5] Test testGetThumbnailOfVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 6ms
-Test suite progress: tests succeeded: 121, failed: 0, skipped: 0.
-Starting test testRebootVm(org.jclouds.vcloud.features.VmAsyncClientTest)
-[pool-10-thread-1] Test testRebootVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 1ms
-Test suite progress: tests succeeded: 122, failed: 0, skipped: 0.
-Starting test testUpdateCPUCountOfVm(org.jclouds.vcloud.features.VmAsyncClientTest)
 Starting test testDeployVm(org.jclouds.vcloud.features.VmAsyncClientTest)
+Starting test testGetThumbnailOfVm(org.jclouds.vcloud.features.VmAsyncClientTest)
 Starting test testDeployAndPowerOnVm(org.jclouds.vcloud.features.VmAsyncClientTest)
-[pool-10-thread-2] Test testResetVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 15ms
-Test suite progress: tests succeeded: 123, failed: 0, skipped: 0.
-Starting test testSuspendVm(org.jclouds.vcloud.features.VmAsyncClientTest)
-[pool-10-thread-2] Test testSuspendVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 1ms
-Test suite progress: tests succeeded: 124, failed: 0, skipped: 0.
-[pool-10-thread-3] Test testDeployVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 3ms
-Test suite progress: tests succeeded: 125, failed: 0, skipped: 0.
-Starting test testShutdownVm(org.jclouds.vcloud.features.VmAsyncClientTest)
 Starting test testGetVm(org.jclouds.vcloud.features.VmAsyncClientTest)
-[pool-10-thread-3] Test testGetVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 22ms
-Test suite progress: tests succeeded: 126, failed: 0, skipped: 0.
 Starting test testPowerOffVm(org.jclouds.vcloud.features.VmAsyncClientTest)
-[pool-10-thread-3] Test testPowerOffVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 1ms
+[pool-11-thread-3] Test testGetThumbnailOfVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 11ms
+Test suite progress: tests succeeded: 121, failed: 0, skipped: 0.
+Starting test testPowerOnVm(org.jclouds.vcloud.features.VmAsyncClientTest)
+[pool-11-thread-5] Test testPowerOffVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 11ms
+Test suite progress: tests succeeded: 122, failed: 0, skipped: 0.
+Starting test testRebootVm(org.jclouds.vcloud.features.VmAsyncClientTest)
+[pool-11-thread-5] Test testRebootVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 1ms
+Test suite progress: tests succeeded: 123, failed: 0, skipped: 0.
+[pool-11-thread-2] Test testDeployVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 14ms
+Test suite progress: tests succeeded: 124, failed: 0, skipped: 0.
+Starting test testResetVm(org.jclouds.vcloud.features.VmAsyncClientTest)
+Starting test testShutdownVm(org.jclouds.vcloud.features.VmAsyncClientTest)
+[pool-11-thread-2] Test testShutdownVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 1ms
+Test suite progress: tests succeeded: 125, failed: 0, skipped: 0.
+Starting test testSuspendVm(org.jclouds.vcloud.features.VmAsyncClientTest)
+[pool-11-thread-5] Test testResetVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 2ms
+Test suite progress: tests succeeded: 126, failed: 0, skipped: 0.
+Starting test testUndeployAndSaveStateOfVmSaveState(org.jclouds.vcloud.features.VmAsyncClientTest)
+[pool-11-thread-1] Test testDeployAndPowerOnVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 14ms
 Test suite progress: tests succeeded: 127, failed: 0, skipped: 0.
-[pool-10-thread-5] Test testDeployAndPowerOnVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 27ms
+[pool-11-thread-5] Test testUndeployAndSaveStateOfVmSaveState(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 3ms
 Test suite progress: tests succeeded: 128, failed: 0, skipped: 0.
 Starting test testUndeployVm(org.jclouds.vcloud.features.VmAsyncClientTest)
-Starting test testUpdateGuestConfiguration(org.jclouds.vcloud.features.VmAsyncClientTest)
-[pool-10-thread-4] Test testPowerOnVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 46ms
+[pool-11-thread-3] Test testPowerOnVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 9ms
 Test suite progress: tests succeeded: 129, failed: 0, skipped: 0.
-Starting test testUndeployAndSaveStateOfVmSaveState(org.jclouds.vcloud.features.VmAsyncClientTest)
-[pool-10-thread-4] Test testUndeployAndSaveStateOfVmSaveState(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 3ms
+Starting test testUpdateCPUCountOfVm(org.jclouds.vcloud.features.VmAsyncClientTest)
+[pool-11-thread-3] Test testUpdateCPUCountOfVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 5ms
 Test suite progress: tests succeeded: 130, failed: 0, skipped: 0.
-Starting test testUpdateMemoryMBOfVm(org.jclouds.vcloud.features.VmAsyncClientTest)
-[pool-10-thread-5] Test testUpdateGuestConfiguration(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 12ms
+Starting test testUpdateGuestConfiguration(org.jclouds.vcloud.features.VmAsyncClientTest)
+[pool-11-thread-4] Test testGetVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 33ms
 Test suite progress: tests succeeded: 131, failed: 0, skipped: 0.
-[pool-10-thread-4] Test testUpdateMemoryMBOfVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 7ms
+[pool-11-thread-2] Test testSuspendVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 21ms
 Test suite progress: tests succeeded: 132, failed: 0, skipped: 0.
-[pool-10-thread-2] Test testShutdownVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 68ms
+[pool-11-thread-5] Test testUndeployVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 16ms
 Test suite progress: tests succeeded: 133, failed: 0, skipped: 0.
-[pool-10-thread-3] Test testUndeployVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 45ms
+[pool-11-thread-3] Test testUpdateGuestConfiguration(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 8ms
 Test suite progress: tests succeeded: 134, failed: 0, skipped: 0.
-[pool-10-thread-1] Test testUpdateCPUCountOfVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 78ms
+Starting test testUpdateMemoryMBOfVm(org.jclouds.vcloud.features.VmAsyncClientTest)
+[pool-11-thread-4] Test testUpdateMemoryMBOfVm(org.jclouds.vcloud.features.VmAsyncClientTest) succeeded: 6ms
 Test suite progress: tests succeeded: 135, failed: 0, skipped: 0.
-Starting test testNoThrowsHttpResponseException(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest)
-[pool-11-thread-1] Test testNoThrowsHttpResponseException(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest) succeeded: 1ms
-Test suite progress: tests succeeded: 136, failed: 0, skipped: 0.
-Starting test testApplyVirtacore(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest)
-Starting test testApplyBlueLock(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest)
-Starting test testApplyTerremark(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest)
 Starting test testApply(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest)
-Starting test testApplyTerremarkMultipleCookies(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest)
-[pool-11-thread-4] Test testApplyTerremark(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest) succeeded: 5ms
+Starting test testApplyBlueLock(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest)
+[pool-12-thread-2] Test testApplyBlueLock(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest) succeeded: 5ms
+Test suite progress: tests succeeded: 136, failed: 0, skipped: 0.
+Starting test testNoThrowsHttpResponseException(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest)
+Starting test testApplyTerremark(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest)
+[pool-12-thread-2] Test testNoThrowsHttpResponseException(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest) succeeded: 1ms
 Test suite progress: tests succeeded: 137, failed: 0, skipped: 0.
-Starting test testUnmatchedCookieThrowsHttpResponseException(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest)
-[pool-11-thread-4] Test testUnmatchedCookieThrowsHttpResponseException(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest) succeeded: 1ms
+[pool-12-thread-1] Test testApply(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest) succeeded: 9ms
 Test suite progress: tests succeeded: 138, failed: 0, skipped: 0.
-[pool-11-thread-3] Test testApplyBlueLock(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest) succeeded: 8ms
+Starting test testUnmatchedCookieThrowsHttpResponseException(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest)
+Starting test testApplyTerremarkMultipleCookies(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest)
+[pool-12-thread-2] Test testUnmatchedCookieThrowsHttpResponseException(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest) succeeded: 0ms
 Test suite progress: tests succeeded: 139, failed: 0, skipped: 0.
-[pool-11-thread-5] Test testApplyTerremarkMultipleCookies(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest) succeeded: 4ms
+[pool-12-thread-4] Test testApplyTerremarkMultipleCookies(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest) succeeded: 1ms
 Test suite progress: tests succeeded: 140, failed: 0, skipped: 0.
-[pool-11-thread-2] Test testApplyVirtacore(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest) succeeded: 13ms
+Starting test testApplyVirtacore(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest)
+[pool-12-thread-3] Test testApplyTerremark(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest) succeeded: 3ms
 Test suite progress: tests succeeded: 141, failed: 0, skipped: 0.
-[pool-11-thread-1] Test testApply(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest) succeeded: 9ms
+[pool-12-thread-5] Test testApplyVirtacore(org.jclouds.vcloud.functions.ParseLoginResponseFromHeadersTest) succeeded: 1ms
 Test suite progress: tests succeeded: 142, failed: 0, skipped: 0.
 Starting test testLogin(org.jclouds.vcloud.internal.VCloudLoginAsyncClientTest)
-[pool-12-thread-1] Test testLogin(org.jclouds.vcloud.internal.VCloudLoginAsyncClientTest) succeeded: 103ms
+[pool-13-thread-1] Test testLogin(org.jclouds.vcloud.internal.VCloudLoginAsyncClientTest) succeeded: 4ms
 Test suite progress: tests succeeded: 143, failed: 0, skipped: 0.
-Starting test testThrowsNoSuchElementWhenNoneMatchConfigurationKey(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest)
-[pool-13-thread-1] Test testThrowsNoSuchElementWhenNoneMatchConfigurationKey(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest) succeeded: 7ms
+Starting test testIllegalArgumentWhenResourcesEmpty(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest)
+[pool-14-thread-1] Test testIllegalArgumentWhenResourcesEmpty(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest) succeeded: 0ms
 Test suite progress: tests succeeded: 144, failed: 0, skipped: 0.
 Starting test testReturnsFirstResourceWhenConfigurationUnspecified(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest)
-[pool-13-thread-2] Test testReturnsFirstResourceWhenConfigurationUnspecified(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest) succeeded: 1ms
+Starting test testReturnsOnlyResource(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest)
+[pool-14-thread-2] Test testReturnsFirstResourceWhenConfigurationUnspecified(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest) succeeded: 1ms
 Test suite progress: tests succeeded: 145, failed: 0, skipped: 0.
-Starting test testReturnsResourceMatchingDefaultPredicateWhenConfigurationUnspecified(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest)
-[pool-13-thread-1] Test testReturnsResourceMatchingDefaultPredicateWhenConfigurationUnspecified(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest) succeeded: 0ms
+[pool-14-thread-3] Test testReturnsOnlyResource(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest) succeeded: 0ms
 Test suite progress: tests succeeded: 146, failed: 0, skipped: 0.
 Starting test testReturnsResourceWithNameMatchingConfigurationKey(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest)
-Starting test testReturnsOnlyResource(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest)
-[pool-13-thread-5] Test testReturnsOnlyResource(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest) succeeded: 0ms
-Starting test testIllegalArgumentWhenResourcesEmpty(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest)
+Starting test testThrowsNoSuchElementWhenNoneMatchConfigurationKey(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest)
+Starting test testReturnsResourceMatchingDefaultPredicateWhenConfigurationUnspecified(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest)
+[pool-14-thread-4] Test testReturnsResourceMatchingDefaultPredicateWhenConfigurationUnspecified(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest) succeeded: 1ms
 Test suite progress: tests succeeded: 147, failed: 0, skipped: 0.
-[pool-13-thread-4] Test testIllegalArgumentWhenResourcesEmpty(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest) succeeded: 0ms
+[pool-14-thread-5] Test testReturnsResourceWithNameMatchingConfigurationKey(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest) succeeded: 57ms
 Test suite progress: tests succeeded: 148, failed: 0, skipped: 0.
-[pool-13-thread-3] Test testReturnsResourceWithNameMatchingConfigurationKey(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest) succeeded: 1ms
+[pool-14-thread-3] Test testThrowsNoSuchElementWhenNoneMatchConfigurationKey(org.jclouds.vcloud.suppliers.OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefaultTest) succeeded: 57ms
 Test suite progress: tests succeeded: 149, failed: 0, skipped: 0.
-Starting test testAsync(org.jclouds.vcloud.VCloudAsyncClientTest)
 Starting test testSync(org.jclouds.vcloud.VCloudAsyncClientTest)
-[pool-14-thread-2] Test testAsync(org.jclouds.vcloud.VCloudAsyncClientTest) succeeded: 36ms
+Starting test testAsync(org.jclouds.vcloud.VCloudAsyncClientTest)
+[pool-15-thread-1] Test testAsync(org.jclouds.vcloud.VCloudAsyncClientTest) succeeded: 37ms
 Test suite progress: tests succeeded: 150, failed: 0, skipped: 0.
-[pool-14-thread-1] Test testSync(org.jclouds.vcloud.VCloudAsyncClientTest) succeeded: 66ms
+[pool-15-thread-2] Test testSync(org.jclouds.vcloud.VCloudAsyncClientTest) succeeded: 38ms
 Test suite progress: tests succeeded: 151, failed: 0, skipped: 0.
 Starting test testVersions(org.jclouds.vcloud.VCloudVersionsAsyncClientTest)
-[pool-15-thread-1] Test testVersions(org.jclouds.vcloud.VCloudVersionsAsyncClientTest) succeeded: 2ms
+[pool-16-thread-1] Test testVersions(org.jclouds.vcloud.VCloudVersionsAsyncClientTest) succeeded: 1ms
 Test suite progress: tests succeeded: 152, failed: 0, skipped: 0.
 Starting test testDefault(org.jclouds.vcloud.xml.GuestCustomizationSectionHandlerTest)
-[pool-16-thread-1] Test testDefault(org.jclouds.vcloud.xml.GuestCustomizationSectionHandlerTest) succeeded: 2ms
+[pool-17-thread-1] Test testDefault(org.jclouds.vcloud.xml.GuestCustomizationSectionHandlerTest) succeeded: 2ms
 Test suite progress: tests succeeded: 153, failed: 0, skipped: 0.
 Starting test testDefault(org.jclouds.vcloud.xml.NetworkConnectionHandlerTest)
-[pool-17-thread-1] Test testDefault(org.jclouds.vcloud.xml.NetworkConnectionHandlerTest) succeeded: 1ms
+[pool-18-thread-1] Test testDefault(org.jclouds.vcloud.xml.NetworkConnectionHandlerTest) succeeded: 2ms
 Test suite progress: tests succeeded: 154, failed: 0, skipped: 0.
 Starting test testApplyInputStream(org.jclouds.vcloud.xml.OrgListHandlerTest)
 Starting test testSavvis(org.jclouds.vcloud.xml.OrgListHandlerTest)
-[pool-18-thread-1] Test testApplyInputStream(org.jclouds.vcloud.xml.OrgListHandlerTest) succeeded: 3ms
+[pool-19-thread-1] Test testApplyInputStream(org.jclouds.vcloud.xml.OrgListHandlerTest) succeeded: 4ms
 Test suite progress: tests succeeded: 155, failed: 0, skipped: 0.
-[pool-18-thread-2] Test testSavvis(org.jclouds.vcloud.xml.OrgListHandlerTest) succeeded: 1ms
+[pool-19-thread-2] Test testSavvis(org.jclouds.vcloud.xml.OrgListHandlerTest) succeeded: 2ms
 Test suite progress: tests succeeded: 156, failed: 0, skipped: 0.
 Starting test testDefault(org.jclouds.vcloud.xml.ovf.VCloudOperatingSystemSectionHandlerTest)
-[pool-19-thread-1] Test testDefault(org.jclouds.vcloud.xml.ovf.VCloudOperatingSystemSectionHandlerTest) succeeded: 2ms
+[pool-20-thread-1] Test testDefault(org.jclouds.vcloud.xml.ovf.VCloudOperatingSystemSectionHandlerTest) succeeded: 2ms
 Test suite progress: tests succeeded: 157, failed: 0, skipped: 0.
 Starting test testDefault(org.jclouds.vcloud.xml.ovf.VCloudVirtualHardwareSectionHandlerTest)
-[pool-20-thread-1] Test testDefault(org.jclouds.vcloud.xml.ovf.VCloudVirtualHardwareSectionHandlerTest) succeeded: 6ms
+[pool-21-thread-1] Test testDefault(org.jclouds.vcloud.xml.ovf.VCloudVirtualHardwareSectionHandlerTest) succeeded: 5ms
 Test suite progress: tests succeeded: 158, failed: 0, skipped: 0.
-Starting test testSelf(org.jclouds.vcloud.xml.TaskHandlerTest)
 Starting test test(org.jclouds.vcloud.xml.TaskHandlerTest)
-[pool-21-thread-1] Test testSelf(org.jclouds.vcloud.xml.TaskHandlerTest) succeeded: 35ms
-Test suite progress: tests succeeded: 159, failed: 0, skipped: 0.
-[pool-21-thread-2] Test test(org.jclouds.vcloud.xml.TaskHandlerTest) succeeded: 5ms
-Test suite progress: tests succeeded: 160, failed: 0, skipped: 0.
-Starting test testTerremark(org.jclouds.vcloud.xml.TaskHandlerTest)
-Starting test testError(org.jclouds.vcloud.xml.TaskHandlerTest)
-[pool-21-thread-3] Test testTerremark(org.jclouds.vcloud.xml.TaskHandlerTest) succeeded: 3ms
-Test suite progress: tests succeeded: 161, failed: 0, skipped: 0.
-[pool-21-thread-4] Test testError(org.jclouds.vcloud.xml.TaskHandlerTest) succeeded: 2ms
-Test suite progress: tests succeeded: 162, failed: 0, skipped: 0.
 Starting test testApplyInputStream2(org.jclouds.vcloud.xml.TaskHandlerTest)
-[pool-21-thread-5] Test testApplyInputStream2(org.jclouds.vcloud.xml.TaskHandlerTest) succeeded: 4ms
+Starting test testError(org.jclouds.vcloud.xml.TaskHandlerTest)
+Starting test testTerremark(org.jclouds.vcloud.xml.TaskHandlerTest)
+Starting test testSelf(org.jclouds.vcloud.xml.TaskHandlerTest)
+[pool-22-thread-4] Test testSelf(org.jclouds.vcloud.xml.TaskHandlerTest) succeeded: 1ms
+Test suite progress: tests succeeded: 159, failed: 0, skipped: 0.
+[pool-22-thread-1] Test test(org.jclouds.vcloud.xml.TaskHandlerTest) succeeded: 14ms
+Test suite progress: tests succeeded: 160, failed: 0, skipped: 0.
+[pool-22-thread-2] Test testApplyInputStream2(org.jclouds.vcloud.xml.TaskHandlerTest) succeeded: 21ms
+Test suite progress: tests succeeded: 161, failed: 0, skipped: 0.
+[pool-22-thread-5] Test testTerremark(org.jclouds.vcloud.xml.TaskHandlerTest) succeeded: 16ms
+Test suite progress: tests succeeded: 162, failed: 0, skipped: 0.
+[pool-22-thread-3] Test testError(org.jclouds.vcloud.xml.TaskHandlerTest) succeeded: 20ms
 Test suite progress: tests succeeded: 163, failed: 0, skipped: 0.
-Starting test testApplyInputStreamHosting(org.jclouds.vcloud.xml.TasksListHandlerTest)
 Starting test testApplyInputStream(org.jclouds.vcloud.xml.TasksListHandlerTest)
-[pool-22-thread-1] Test testApplyInputStreamHosting(org.jclouds.vcloud.xml.TasksListHandlerTest) succeeded: 4ms
+Starting test testApplyInputStreamHosting(org.jclouds.vcloud.xml.TasksListHandlerTest)
+[pool-23-thread-2] Test testApplyInputStreamHosting(org.jclouds.vcloud.xml.TasksListHandlerTest) succeeded: 3ms
 Test suite progress: tests succeeded: 164, failed: 0, skipped: 0.
-[pool-22-thread-2] Test testApplyInputStream(org.jclouds.vcloud.xml.TasksListHandlerTest) succeeded: 8ms
+[pool-23-thread-1] Test testApplyInputStream(org.jclouds.vcloud.xml.TasksListHandlerTest) succeeded: 10ms
 Test suite progress: tests succeeded: 165, failed: 0, skipped: 0.
-Tests run: 165, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.973 sec
+Tests run: 165, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 19.326 sec
 
 Results :
 
 Tests run: 165, Failures: 0, Errors: 0, Skipped: 0
 
 [INFO] 
-[INFO] --- clojure-maven-plugin:1.3.3:test (test-clojure) @ vcloud ---
+[INFO] --- clojure-maven-plugin:1.3.8:test (test-clojure) @ vcloud ---
 
-Testing user
+Testing com.theoryinpractise.clojure.testrunner
 
 Ran 0 tests containing 0 assertions.
 0 failures, 0 errors.
@@ -581,174 +581,178 @@ Ran 0 tests containing 0 assertions.
  T E S T S
 -------------------------------------------------------
 Running TestSuite
+Starting test testCaptureVApp(org.jclouds.vcloud.features.VAppTemplateClientLiveTest)
+Starting test testGetVApp(org.jclouds.vcloud.features.VAppClientLiveTest)
+[TestNG] Test testGetVApp(org.jclouds.vcloud.features.VAppClientLiveTest) succeeded: 1719ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testExtendedOptionsWithCustomizationScript(org.jclouds.vcloud.features.VmClientLiveTest)
 Starting test testFindCatalogIsWriteable(org.jclouds.vcloud.features.CatalogClientLiveTest)
 Starting test testListOrgs(org.jclouds.vcloud.features.OrgClientLiveTest)
-Starting test testGetVApp(org.jclouds.vcloud.features.VAppClientLiveTest)
-Starting test testCaptureVApp(org.jclouds.vcloud.features.VAppTemplateClientLiveTest)
-Starting test setServiceDefaults(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-[pool-2-thread-1] Test setServiceDefaults(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-Starting test testCompareSizes(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-[pool-2-thread-2] Test testFindCatalogIsWriteable(org.jclouds.vcloud.features.CatalogClientLiveTest) succeeded: 13365ms
+[TestNG] Test testListOrgs(org.jclouds.vcloud.features.OrgClientLiveTest) succeeded: 2157ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-Starting test testGetCatalog(org.jclouds.vcloud.features.CatalogClientLiveTest)
-[pool-2-thread-5] Test testGetVApp(org.jclouds.vcloud.features.VAppClientLiveTest) succeeded: 14492ms
+[TestNG] Test testFindCatalogIsWriteable(org.jclouds.vcloud.features.CatalogClientLiveTest) succeeded: 2305ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-Starting test testExtendedOptionsWithCustomizationScript(org.jclouds.vcloud.features.VmClientLiveTest)
-[pool-2-thread-2] Test testGetCatalog(org.jclouds.vcloud.features.CatalogClientLiveTest) succeeded: 2163ms
+Starting test testGetCatalog(org.jclouds.vcloud.features.CatalogClientLiveTest)
+[TestNG] Test testGetCatalog(org.jclouds.vcloud.features.CatalogClientLiveTest) succeeded: 2214ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testListOrgs(org.jclouds.vcloud.features.OrgClientLiveTest) succeeded: 18709ms
+Starting test testCompareSizes(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
+Jan 15, 2012 5:40:59 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: smallest [id=https://zone01.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1884497273, providerId=https://zone01.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1884497273, name=OS-Ubuntu10.04_x64, processors=[[cores=1.0, speed=1.0]], ram=512, volumes=[[id=0, type=LOCAL, size=30.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://zone01.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1884497273), tags=[]]
+Jan 15, 2012 5:40:59 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: fastest [id=https://zone01.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1884497273, providerId=https://zone01.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1884497273, name=OS-Ubuntu10.04_x64, processors=[[cores=1.0, speed=1.0]], ram=512, volumes=[[id=0, type=LOCAL, size=30.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://zone01.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1884497273), tags=[]]
+Jan 15, 2012 5:40:59 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: biggest [id=https://zone01.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1884497273, providerId=https://zone01.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1884497273, name=OS-Ubuntu10.04_x64, processors=[[cores=1.0, speed=1.0]], ram=512, volumes=[[id=0, type=LOCAL, size=30.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://zone01.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1884497273), tags=[]]
+[TestNG] Test testCompareSizes(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 7267ms
 Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
-Dec 22, 2011 3:01:39 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
-INFO: smallest [id=https://zone01.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-15202766, providerId=https://zone01.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-15202766, name=OS-Ubuntu10.04_x64, processors=[[cores=1.0, speed=1.0]], ram=512, volumes=[[id=0, type=LOCAL, size=30.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://zone01.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-15202766), tags=[]]
-Dec 22, 2011 3:01:39 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
-INFO: fastest [id=https://zone01.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-15202766, providerId=https://zone01.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-15202766, name=OS-Ubuntu10.04_x64, processors=[[cores=1.0, speed=1.0]], ram=512, volumes=[[id=0, type=LOCAL, size=30.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://zone01.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-15202766), tags=[]]
-Dec 22, 2011 3:01:39 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
-INFO: biggest [id=https://zone01.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-15202766, providerId=https://zone01.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-15202766, name=OS-Ubuntu10.04_x64, processors=[[cores=1.0, speed=1.0]], ram=512, volumes=[[id=0, type=LOCAL, size=30.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://zone01.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-15202766), tags=[]]
-[pool-2-thread-1] Test testCompareSizes(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 13610ms
+Starting test testCorrectAuthException(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
+[TestNG] Test testCorrectAuthException(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 2946ms
 Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
-Starting test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-[pool-2-thread-5] Test testExtendedOptionsWithCustomizationScript(org.jclouds.vcloud.features.VmClientLiveTest) failed.
-Test suite progress: tests succeeded: 6, failed: 1, skipped: 0.
-Starting test testGetThumbnailOfVm(org.jclouds.vcloud.features.VmClientLiveTest)
-[pool-2-thread-5] Test testGetThumbnailOfVm(org.jclouds.vcloud.features.VmClientLiveTest) succeeded: 6222ms
-Test suite progress: tests succeeded: 7, failed: 1, skipped: 0.
-Starting test testGetVm(org.jclouds.vcloud.features.VmClientLiveTest)
-[pool-2-thread-5] Test testGetVm(org.jclouds.vcloud.features.VmClientLiveTest) succeeded: 6974ms
-Test suite progress: tests succeeded: 8, failed: 1, skipped: 0.
+Starting test testCreateAndRunAService(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
+Jan 15, 2012 5:44:32 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << available node(https://zone01.bluelock.com/api/v1.0/vApp/vapp-1362701165) os([name=Ubuntu 64-Bit, family=ubuntu, version=, arch=null, is64Bit=true, description=Ubuntu Linux (64-bit), osType=UBUNTU_64]) in 207s
 SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
 SLF4J: Defaulting to no-operation (NOP) logger implementation
 SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
-[pool-2-thread-3] Test testCaptureVApp(org.jclouds.vcloud.features.VAppTemplateClientLiveTest) succeeded: 311544ms
+[TestNG] Test testExtendedOptionsWithCustomizationScript(org.jclouds.vcloud.features.VmClientLiveTest) failed.
+Test suite progress: tests succeeded: 6, failed: 1, skipped: 0.
+Starting test testGetThumbnailOfVm(org.jclouds.vcloud.features.VmClientLiveTest)
+[TestNG] Test testGetThumbnailOfVm(org.jclouds.vcloud.features.VmClientLiveTest) succeeded: 4753ms
+Test suite progress: tests succeeded: 7, failed: 1, skipped: 0.
+Starting test testGetVm(org.jclouds.vcloud.features.VmClientLiveTest)
+[TestNG] Test testGetVm(org.jclouds.vcloud.features.VmClientLiveTest) succeeded: 5164ms
+Test suite progress: tests succeeded: 8, failed: 1, skipped: 0.
+[TestNG] Test testCaptureVApp(org.jclouds.vcloud.features.VAppTemplateClientLiveTest) succeeded: 300211ms
 Test suite progress: tests succeeded: 9, failed: 1, skipped: 0.
 Starting test testFindVAppTemplate(org.jclouds.vcloud.features.VAppTemplateClientLiveTest)
-[pool-2-thread-1] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) failed.
-Test suite progress: tests succeeded: 9, failed: 2, skipped: 0.
-Starting test testCorrectAuthException(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-[pool-2-thread-1] Test testCorrectAuthException(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 1576ms
-Test suite progress: tests succeeded: 10, failed: 2, skipped: 0.
-Starting test testCreateAndRunAService(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-Exception in thread "user thread 1" java.lang.IllegalStateException: interrupted calling get() on [[method=VCloudLoginAsyncClient.login, request=POST https://zone01.bluelock.com/api/v1.0/login HTTP/1.1]], so could not run listeners
-	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:66)
+[TestNG] Test testFindVAppTemplate(org.jclouds.vcloud.features.VAppTemplateClientLiveTest) succeeded: 38419ms
+Test suite progress: tests succeeded: 10, failed: 1, skipped: 0.
+Starting test testGetOvfEnvelopeForVAppTemplate(org.jclouds.vcloud.features.VAppTemplateClientLiveTest)
+[TestNG] Test testGetOvfEnvelopeForVAppTemplate(org.jclouds.vcloud.features.VAppTemplateClientLiveTest) succeeded: 19498ms
+Test suite progress: tests succeeded: 11, failed: 1, skipped: 0.
+Starting test testGetVAppTemplate(org.jclouds.vcloud.features.VAppTemplateClientLiveTest)
+[TestNG] Test testGetVAppTemplate(org.jclouds.vcloud.features.VAppTemplateClientLiveTest) succeeded: 19053ms
+Test suite progress: tests succeeded: 12, failed: 1, skipped: 0.
+Jan 15, 2012 5:53:10 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << configured node(https://zone01.bluelock.com/api/v1.0/vApp/vapp-1362701165) with java full version "1.7.0_02-b13" and JBoss 7.0.2.Final in 511s
+Jan 15, 2012 5:53:13 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+WARNING: could not get info on ip 209.132.182.31; check freegeoip
+Jan 15, 2012 5:53:13 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jboss7(download.jboss.org) from perpective of node(https://zone01.bluelock.com/api/v1.0/vApp/vapp-1362701165): 209.132.182.31
+Jan 15, 2012 5:53:16 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+WARNING: could not get info on ip 81.52.205.160; check freegeoip
+Jan 15, 2012 5:53:16 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jdk7(download.oracle.com) from perpective of node(https://zone01.bluelock.com/api/v1.0/vApp/vapp-1362701165): 81.52.205.160
+Jan 15, 2012 5:53:19 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+WARNING: could not get info on ip 173.240.109.121; check freegeoip
+Jan 15, 2012 5:53:19 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of node(https://zone01.bluelock.com/api/v1.0/vApp/vapp-1362701165) from perspective of amazonaws: 173.240.109.121
+Jan 15, 2012 5:53:30 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << initial start of jboss on node(https://zone01.bluelock.com/api/v1.0/vApp/vapp-1362701165) [backgroundProcessMilliseconds=5458, socketOpenMilliseconds=2117, reportedStartupTimeMilliseconds=3851]
+Jan 15, 2012 5:53:41 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << warm start of jboss on node(https://zone01.bluelock.com/api/v1.0/vApp/vapp-1362701165) [backgroundProcessMilliseconds=3424, socketOpenMilliseconds=1781, reportedStartupTimeMilliseconds=3342]
+[TestNG] Test testCreateAndRunAService(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 795568ms
+Test suite progress: tests succeeded: 13, failed: 1, skipped: 0.
+Starting test testGetAssignableLocations(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
+Jan 15, 2012 5:54:18 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+WARNING: location [id=https://zone01.bluelock.com/api/v1.0/vdc/480447969, scope=ZONE, description=Cluster01-Jclouds, parent=https://zone01.bluelock.com/api/v1.0/org/1484502809, iso3166Codes=[], metadata={}]
+[TestNG] Test testGetAssignableLocations(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 14, failed: 1, skipped: 0.
+Starting test testImagesCache(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
+[TestNG] Test testImagesCache(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 4345ms
+Test suite progress: tests succeeded: 15, failed: 1, skipped: 0.
+Starting test testListImages(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
+[TestNG] Test testListImages(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 16, failed: 1, skipped: 0.
+Starting test testListSizes(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
+[TestNG] Test testListSizes(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 3261ms
+Test suite progress: tests succeeded: 17, failed: 1, skipped: 0.
+Starting test setServiceDefaults(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
+[TestNG] Test setServiceDefaults(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 18, failed: 1, skipped: 0.
+Starting test testOptionToNotBlock(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
+[TestNG] Test testOptionToNotBlock(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 19, failed: 1, skipped: 0.
+Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
+[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 749ms
+Test suite progress: tests succeeded: 20, failed: 1, skipped: 0.
+Starting test testSessionRefresh(org.jclouds.vcloud.VCloudSessionRefreshLiveTest)
+[TestNG] Test testSessionRefresh(org.jclouds.vcloud.VCloudSessionRefreshLiveTest) succeeded: 42602ms
+Test suite progress: tests succeeded: 21, failed: 1, skipped: 0.
+Starting test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
+<< problem applying options to node(https://zone01.bluelock.com/api/v1.0/vApp/vapp-476692225): 
+org.jclouds.rest.AuthorizationException: (root:pw[5d907853a9617cfd55fb62eae803595b]@173.240.109.68:22) (root:pw[5d907853a9617cfd55fb62eae803595b]@173.240.109.68:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
+	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:414)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:245)
+	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:255)
+	at org.jclouds.compute.callables.RunScriptOnNodeUsingSsh.call(RunScriptOnNodeUsingSsh.java:73)
+	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:69)
+	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:44)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-Caused by: java.lang.InterruptedException
-	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:979)
-	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1281)
-	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:218)
-	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:237)
-	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:59)
-	... 3 more
-Caused by: java.util.concurrent.ExecutionException: task submitted from the following trace
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:270)
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:241)
-	... 4 more
-[pool-2-thread-3] Test testFindVAppTemplate(org.jclouds.vcloud.features.VAppTemplateClientLiveTest) succeeded: 36984ms
-Test suite progress: tests succeeded: 11, failed: 2, skipped: 0.
-Starting test testGetOvfEnvelopeForVAppTemplate(org.jclouds.vcloud.features.VAppTemplateClientLiveTest)
-[pool-2-thread-3] Test testGetOvfEnvelopeForVAppTemplate(org.jclouds.vcloud.features.VAppTemplateClientLiveTest) succeeded: 19671ms
-Test suite progress: tests succeeded: 12, failed: 2, skipped: 0.
-Starting test testGetVAppTemplate(org.jclouds.vcloud.features.VAppTemplateClientLiveTest)
-[pool-2-thread-3] Test testGetVAppTemplate(org.jclouds.vcloud.features.VAppTemplateClientLiveTest) succeeded: 19489ms
-Test suite progress: tests succeeded: 13, failed: 2, skipped: 0.
-Dec 22, 2011 3:09:43 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << available node(https://zone01.bluelock.com/api/v1.0/vApp/vapp-924752272) os([osType=UBUNTU_64, arch=null, description=Ubuntu Linux (64-bit), family=ubuntu, is64Bit=true, name=Ubuntu 64-Bit, version=]) in 168s
-Dec 22, 2011 3:12:38 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << configured node(https://zone01.bluelock.com/api/v1.0/vApp/vapp-924752272) with java full version "1.7.0_02-b13" and JBoss 7.0.2.Final in 170s
-Dec 22, 2011 3:12:42 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
-WARNING: could not get info on ip 209.132.182.31; check freegeoip
-Dec 22, 2011 3:12:42 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of jboss7(download.jboss.org) from perpective of node(https://zone01.bluelock.com/api/v1.0/vApp/vapp-924752272): 209.132.182.31
-Dec 22, 2011 3:12:44 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
-WARNING: could not get info on ip 208.44.23.82; check freegeoip
-Dec 22, 2011 3:12:44 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of jdk7(download.oracle.com) from perpective of node(https://zone01.bluelock.com/api/v1.0/vApp/vapp-924752272): 208.44.23.82
-Dec 22, 2011 3:12:47 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
-WARNING: could not get info on ip 173.240.109.43; check freegeoip
-Dec 22, 2011 3:12:47 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of node(https://zone01.bluelock.com/api/v1.0/vApp/vapp-924752272) from perspective of amazonaws: 173.240.109.43
-Dec 22, 2011 3:12:57 AM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
-INFO: << initial start of jboss on node(https://zone01.bluelock.com/api/v1.0/vApp/vapp-924752272) [backgroundProcessMilliseconds=5302, socketOpenMilliseconds=1575, reportedStartupTimeMilliseconds=3182]
-Dec 22, 2011 3:13:06 AM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
-INFO: << warm start of jboss on node(https://zone01.bluelock.com/api/v1.0/vApp/vapp-924752272) [backgroundProcessMilliseconds=3562, socketOpenMilliseconds=1468, reportedStartupTimeMilliseconds=2941]
-[pool-2-thread-1] Test testCreateAndRunAService(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 399589ms
-Test suite progress: tests succeeded: 14, failed: 2, skipped: 0.
+Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available authentication methods
+	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:114)
+	at net.schmizz.sshj.SSHClient.auth(SSHClient.java:204)
+	at net.schmizz.sshj.SSHClient.auth(SSHClient.java:189)
+	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:265)
+	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:235)
+	at net.schmizz.sshj.SSHClient.authPassword(SSHClient.java:219)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:201)
+	at org.jclouds.sshj.SshjSshClient$1.create(SshjSshClient.java:177)
+	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:226)
+	... 9 more
+Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
+	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
+	... 17 more
+[TestNG] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 803121ms
+Test suite progress: tests succeeded: 22, failed: 1, skipped: 0.
 Starting test testCreateTwoNodesWithRunScript(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-[pool-2-thread-1] Test testCreateTwoNodesWithRunScript(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 271340ms
-Test suite progress: tests succeeded: 15, failed: 2, skipped: 0.
-Starting test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-Dec 22, 2011 3:18:07 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired
-INFO: creating another node based on existing nodes' location: [id=https://zone01.bluelock.com/api/v1.0/vdc/480447969, scope=ZONE, description=Cluster01-Jclouds, parent=https://zone01.bluelock.com/api/v1.0/org/1484502809, iso3166Codes=[], metadata={}]
-[pool-2-thread-1] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 219051ms
-Test suite progress: tests succeeded: 16, failed: 2, skipped: 0.
-Starting test testCredentialsCache(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-[pool-2-thread-1] Test testCredentialsCache(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 79ms
-Test suite progress: tests succeeded: 17, failed: 2, skipped: 0.
-Starting test testGet(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-[pool-2-thread-1] Test testGet(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 9155ms
-Test suite progress: tests succeeded: 18, failed: 2, skipped: 0.
-Starting test testGetAssignableLocations(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-Dec 22, 2011 3:21:51 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
-WARNING: location [id=https://zone01.bluelock.com/api/v1.0/vdc/480447969, scope=ZONE, description=Cluster01-Jclouds, parent=https://zone01.bluelock.com/api/v1.0/org/1484502809, iso3166Codes=[], metadata={}]
-[pool-2-thread-1] Test testGetAssignableLocations(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 19, failed: 2, skipped: 0.
-Starting test testImagesCache(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-[pool-2-thread-1] Test testImagesCache(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 4591ms
-Test suite progress: tests succeeded: 20, failed: 2, skipped: 0.
-Starting test testListImages(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-[pool-2-thread-1] Test testListImages(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 21, failed: 2, skipped: 0.
-Starting test testListSizes(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-[pool-2-thread-1] Test testListSizes(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 4049ms
-Test suite progress: tests succeeded: 22, failed: 2, skipped: 0.
-Starting test testOptionToNotBlock(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-[pool-2-thread-1] Test testOptionToNotBlock(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) failed.
-Test suite progress: tests succeeded: 22, failed: 3, skipped: 0.
-Starting test testReboot(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-[pool-2-thread-1] Test testReboot(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 48582ms
-Test suite progress: tests succeeded: 23, failed: 3, skipped: 0.
-Starting test testSuspendResume(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-[pool-2-thread-1] Test testSuspendResume(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 141727ms
-Test suite progress: tests succeeded: 24, failed: 3, skipped: 0.
+[TestNG] Test testCreateTwoNodesWithRunScript(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 839669ms
+Test suite progress: tests succeeded: 23, failed: 1, skipped: 0.
 Starting test testTemplateMatch(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-[pool-2-thread-1] Test testTemplateMatch(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 25, failed: 3, skipped: 0.
+[TestNG] Test testTemplateMatch(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 11715ms
+Test suite progress: tests succeeded: 24, failed: 1, skipped: 0.
+Starting test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
+Jan 15, 2012 6:22:52 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired
+INFO: creating another node based on existing nodes' location: [id=https://zone01.bluelock.com/api/v1.0/vdc/480447969, scope=ZONE, description=Cluster01-Jclouds, parent=https://zone01.bluelock.com/api/v1.0/org/1484502809, iso3166Codes=[], metadata={}]
+[TestNG] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 248478ms
+Test suite progress: tests succeeded: 25, failed: 1, skipped: 0.
+Starting test testCredentialsCache(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
+[TestNG] Test testCredentialsCache(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 5003ms
+Test suite progress: tests succeeded: 26, failed: 1, skipped: 0.
+Starting test testGet(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
+[TestNG] Test testGet(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 6022ms
+Test suite progress: tests succeeded: 27, failed: 1, skipped: 0.
+Starting test testReboot(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
+[TestNG] Test testReboot(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 45709ms
+Test suite progress: tests succeeded: 28, failed: 1, skipped: 0.
+Starting test testSuspendResume(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
+[TestNG] Test testSuspendResume(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 130394ms
+Test suite progress: tests succeeded: 29, failed: 1, skipped: 0.
 Starting test testGetNodesWithDetails(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-[pool-2-thread-1] Test testGetNodesWithDetails(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 4324ms
-Test suite progress: tests succeeded: 26, failed: 3, skipped: 0.
+[TestNG] Test testGetNodesWithDetails(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 3428ms
+Test suite progress: tests succeeded: 30, failed: 1, skipped: 0.
 Starting test testListNodes(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-[id=https://zone01.bluelock.com/api/v1.0/vApp/vapp-1905520769, providerId=https://zone01.bluelock.com/api/v1.0/vApp/vapp-1905520769, name=vcloud--6d8, processors=[[cores=1.0, speed=1.0]], ram=512, volumes=[[id=0, type=LOCAL, size=30.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://zone01.bluelock.com/api/v1.0/vApp/vapp-1905520769), tags=[]]
-[id=https://zone01.bluelock.com/api/v1.0/vApp/vapp-1804941944, providerId=https://zone01.bluelock.com/api/v1.0/vApp/vapp-1804941944, name=directorr-124, processors=[[cores=1.0, speed=1.0]], ram=512, volumes=[[id=0, type=LOCAL, size=30.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://zone01.bluelock.com/api/v1.0/vApp/vapp-1804941944), tags=[]]
-[id=https://zone01.bluelock.com/api/v1.0/vApp/vapp-1426557766, providerId=https://zone01.bluelock.com/api/v1.0/vApp/vapp-1426557766, name=vcloud--423, processors=[[cores=1.0, speed=1.0]], ram=512, volumes=[[id=0, type=LOCAL, size=30.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://zone01.bluelock.com/api/v1.0/vApp/vapp-1426557766), tags=[]]
-[id=https://zone01.bluelock.com/api/v1.0/vApp/vapp-145130039, providerId=https://zone01.bluelock.com/api/v1.0/vApp/vapp-145130039, name=vcloud--575, processors=[[cores=1.0, speed=1.0]], ram=512, volumes=[[id=0, type=LOCAL, size=30.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://zone01.bluelock.com/api/v1.0/vApp/vapp-145130039), tags=[]]
-[pool-2-thread-1] Test testListNodes(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 26191ms
-Test suite progress: tests succeeded: 27, failed: 3, skipped: 0.
+[TestNG] Test testListNodes(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 3374ms
+Test suite progress: tests succeeded: 31, failed: 1, skipped: 0.
 Starting test testDestroyNodes(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-[pool-2-thread-1] Test testDestroyNodes(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 43130ms
-Test suite progress: tests succeeded: 28, failed: 3, skipped: 0.
-Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest)
-[pool-2-thread-1] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 1855ms
-Test suite progress: tests succeeded: 29, failed: 3, skipped: 0.
-Starting test testSessionRefresh(org.jclouds.vcloud.VCloudSessionRefreshLiveTest)
-[pool-2-thread-1] Test testSessionRefresh(org.jclouds.vcloud.VCloudSessionRefreshLiveTest) succeeded: 43434ms
-Test suite progress: tests succeeded: 30, failed: 3, skipped: 0.
-Tests run: 33, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 1,706.098 sec <<< FAILURE!
+[TestNG] Test testDestroyNodes(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest) succeeded: 34987ms
+Test suite progress: tests succeeded: 32, failed: 1, skipped: 0.
+Tests run: 33, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 3,039.003 sec <<< FAILURE!
 
 Results :
 
 Failed tests:   testExtendedOptionsWithCustomizationScript(org.jclouds.vcloud.features.VmClientLiveTest): expected:<cat > /root/foo.txt<<EOF
-  testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest): [id=https://zone01.bluelock.com/api/v1.0/vApp/vapp-1366158491, providerId=https://zone01.bluelock.com/api/v1.0/vApp/vapp-1366158491, group=vcloud-r, name=vcloud-r-492, location=[id=https://zone01.bluelock.com/api/v1.0/vdc/480447969, scope=ZONE, description=Cluster01-Jclouds, parent=https://zone01.bluelock.com/api/v1.0/org/1484502809, iso3166Codes=[], metadata={}], uri=https://zone01.bluelock.com/api/v1.0/vApp/vapp-1366158491, imageId=null, os=[osType=UBUNTU_64, arch=null, description=Ubuntu Linux (64-bit), family=ubuntu, is64Bit=true, name=Ubuntu 64-Bit, version=], state=RUNNING, loginPort=22, hostname=null, privateAddresses=[], publicAddresses=[173.240.109.144], hardware=[id=https://zone01.bluelock.com/api/v1.0/vApp/vapp-1366158491, providerId=https://zone01.bluelock.com/api/v1.0/vApp/vapp-1366158491, name=vcloud-r-492, processors=[[cores=1.0, speed=1.0]], ram=512, volumes=[[id=0, type=LOCAL, size=30.0, device=null, durable=true, isBootDevice=true]], supportsImage=idEquals(https://zone01.bluelock.com/api/v1.0/vApp/vapp-1366158491), tags=[]], loginUser=root, userMetadata={}, tags=[]]: [output=Ubuntu1004
-  testOptionToNotBlock(org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest): duration(88) longer than expected(30) seconds! 
 
-Tests run: 33, Failures: 3, Errors: 0, Skipped: 0
+Tests run: 33, Failures: 1, Errors: 0, Skipped: 0
 
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 28:56.058s
-[INFO] Finished at: Thu Dec 22 03:29:37 PST 2011
+[INFO] Total time: 51:28.993s
+[INFO] Finished at: Sun Jan 15 18:30:46 PST 2012
 [INFO] Final Memory: 22M/265M
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project vcloud: There are test failures.

@@ -1,7 +1,7 @@
 [INFO] Scanning for projects...
 [WARNING] 
 [WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:cloudservers-us:bundle:1.3.0-SNAPSHOT
-[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/git/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/git/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.3.0-SNAPSHOT (/Users/adriancole/workspace/git/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.3.0-SNAPSHOT, /Users/adriancole/workspace/git/jclouds/project/pom.xml, line 24, column 13
 [WARNING] 
 [WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
 [WARNING] 
@@ -13,7 +13,7 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ cloudservers-us ---
-[INFO] Deleting /Users/adriancole/git/jclouds/providers/cloudservers-us/target
+[INFO] Deleting /Users/adriancole/workspace/git/jclouds/providers/cloudservers-us/target
 [INFO] 
 [INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ cloudservers-us ---
 [INFO] 
@@ -29,43 +29,43 @@
 [INFO] 
 [INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ cloudservers-us ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/adriancole/git/jclouds/providers/cloudservers-us/src/main/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/cloudservers-us/src/main/clojure
 [INFO] Copying 1 resource
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ cloudservers-us ---
-[INFO] Compiling 2 source files to /Users/adriancole/git/jclouds/providers/cloudservers-us/target/classes
+[INFO] Compiling 2 source files to /Users/adriancole/workspace/git/jclouds/providers/cloudservers-us/target/classes
 [INFO] 
 [INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ cloudservers-us ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/adriancole/git/jclouds/providers/cloudservers-us/src/test/clojure
-[INFO] skip non existing resourceDirectory /Users/adriancole/git/jclouds/providers/cloudservers-us/src/test/resources
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/cloudservers-us/src/test/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/jclouds/providers/cloudservers-us/src/test/resources
 [INFO] Copying 2 resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ cloudservers-us ---
-[INFO] Compiling 4 source files to /Users/adriancole/git/jclouds/providers/cloudservers-us/target/test-classes
+[INFO] Compiling 4 source files to /Users/adriancole/workspace/git/jclouds/providers/cloudservers-us/target/test-classes
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (default-test) @ cloudservers-us ---
-[INFO] Surefire report directory: /Users/adriancole/git/jclouds/providers/cloudservers-us/target/surefire-reports
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/cloudservers-us/target/surefire-reports
 [INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
 
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
 Running org.jclouds.rackspace.cloudservers.CloudServersUSProviderTest
-Starting test testWithId(org.jclouds.rackspace.cloudservers.CloudServersUSProviderTest)
-Starting test testInRestProperties(org.jclouds.rackspace.cloudservers.CloudServersUSProviderTest)
 Starting test testAllContains(org.jclouds.rackspace.cloudservers.CloudServersUSProviderTest)
+Starting test testInRestProperties(org.jclouds.rackspace.cloudservers.CloudServersUSProviderTest)
+Starting test testWithId(org.jclouds.rackspace.cloudservers.CloudServersUSProviderTest)
 Starting test testOfTypeContains(org.jclouds.rackspace.cloudservers.CloudServersUSProviderTest)
-[pool-2-thread-3] Test testOfTypeContains(org.jclouds.rackspace.cloudservers.CloudServersUSProviderTest) succeeded: 31ms
+[pool-2-thread-4] Test testWithId(org.jclouds.rackspace.cloudservers.CloudServersUSProviderTest) succeeded: 38ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-[pool-2-thread-1] Test testAllContains(org.jclouds.rackspace.cloudservers.CloudServersUSProviderTest) succeeded: 32ms
+[pool-2-thread-1] Test testAllContains(org.jclouds.rackspace.cloudservers.CloudServersUSProviderTest) succeeded: 44ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testWithId(org.jclouds.rackspace.cloudservers.CloudServersUSProviderTest) succeeded: 32ms
+[pool-2-thread-3] Test testOfTypeContains(org.jclouds.rackspace.cloudservers.CloudServersUSProviderTest) succeeded: 41ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testInRestProperties(org.jclouds.rackspace.cloudservers.CloudServersUSProviderTest) succeeded: 73ms
+[pool-2-thread-2] Test testInRestProperties(org.jclouds.rackspace.cloudservers.CloudServersUSProviderTest) succeeded: 81ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.339 sec
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.46 sec
 
 Results :
 
@@ -82,16 +82,16 @@ Ran 0 tests containing 0 assertions.
 [INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ cloudservers-us ---
 [INFO] 
 [INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ cloudservers-us ---
-[INFO] Building jar: /Users/adriancole/git/jclouds/providers/cloudservers-us/target/cloudservers-us-1.3.0-SNAPSHOT-sources.jar
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/cloudservers-us/target/cloudservers-us-1.3.0-SNAPSHOT-sources.jar
 [INFO] 
 [INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ cloudservers-us ---
 [INFO] Skipping javadoc generation
 [INFO] 
 [INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ cloudservers-us ---
-[INFO] Building jar: /Users/adriancole/git/jclouds/providers/cloudservers-us/target/cloudservers-us-1.3.0-SNAPSHOT-tests.jar
+[INFO] Building jar: /Users/adriancole/workspace/git/jclouds/providers/cloudservers-us/target/cloudservers-us-1.3.0-SNAPSHOT-tests.jar
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (integration) @ cloudservers-us ---
-[INFO] Surefire report directory: /Users/adriancole/git/jclouds/providers/cloudservers-us/target/surefire-reports
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/jclouds/providers/cloudservers-us/target/surefire-reports
 [INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
 
 -------------------------------------------------------
@@ -100,82 +100,82 @@ Ran 0 tests containing 0 assertions.
 Running TestSuite
 Starting test testCreateServer(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229, sharedIpGroupId=null]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731, sharedIpGroupId=null]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229, sharedIpGroupId=null]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731, sharedIpGroupId=null]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229, sharedIpGroupId=null]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731, sharedIpGroupId=null]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229, sharedIpGroupId=null]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731, sharedIpGroupId=null]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229, sharedIpGroupId=null]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731, sharedIpGroupId=null]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229, sharedIpGroupId=null]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731, sharedIpGroupId=null]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229, sharedIpGroupId=null]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731, sharedIpGroupId=null]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229, sharedIpGroupId=null]
-[TestNG] Test testCreateServer(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 57115ms
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731, sharedIpGroupId=null]
+[TestNG] Test testCreateServer(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 55557ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
 Starting test testGetFlavorDetailsNotFound(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testGetFlavorDetailsNotFound(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 415ms
+[TestNG] Test testGetFlavorDetailsNotFound(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 452ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
 Starting test testGetFlavorsDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testGetFlavorsDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 4774ms
+[TestNG] Test testGetFlavorsDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 4215ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
 Starting test testGetImageDetailsNotFound(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testGetImageDetailsNotFound(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 449ms
+[TestNG] Test testGetImageDetailsNotFound(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 468ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
 Starting test testGetImagesDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testGetImagesDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 13098ms
+[TestNG] Test testGetImagesDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 13142ms
 Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
 Starting test testGetServerDetailsNotFound(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testGetServerDetailsNotFound(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 393ms
+[TestNG] Test testGetServerDetailsNotFound(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 763ms
 Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
 Starting test testGetServersDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testGetServersDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 5137ms
+[TestNG] Test testGetServersDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 5972ms
 Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
 Starting test testGetSharedIpGroupDetailsNotFound(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testGetSharedIpGroupDetailsNotFound(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 427ms
+[TestNG] Test testGetSharedIpGroupDetailsNotFound(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 551ms
 Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
 Starting test testGetSharedIpGroupsDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testGetSharedIpGroupsDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 9720ms
+[TestNG] Test testGetSharedIpGroupsDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 9758ms
 Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
 Starting test testLimits(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testLimits(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 484ms
+[TestNG] Test testLimits(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 507ms
 Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
 Starting test testListFlavors(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testListFlavors(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 631ms
+[TestNG] Test testListFlavors(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 653ms
 Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
 Starting test testListFlavorsDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testListFlavorsDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 540ms
+[TestNG] Test testListFlavorsDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 659ms
 Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
 Starting test testListImages(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testListImages(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 962ms
+[TestNG] Test testListImages(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 935ms
 Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
 Starting test testListImagesDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testListImagesDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 1012ms
+[TestNG] Test testListImagesDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 847ms
 Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
 Starting test testListServers(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testListServers(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 1375ms
+[TestNG] Test testListServers(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 1128ms
 Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
 Starting test testListServersDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testListServersDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 1746ms
+[TestNG] Test testListServersDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 1722ms
 Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
 Starting test testListSharedIpGroups(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testListSharedIpGroups(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 825ms
+[TestNG] Test testListSharedIpGroups(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 1559ms
 Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
 Starting test testListSharedIpGroupsDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testListSharedIpGroupsDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 1217ms
+[TestNG] Test testListSharedIpGroupsDetail(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 908ms
 Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
 Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 5092ms
+[TestNG] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 5387ms
 Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
 Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 3530ms
+[TestNG] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 3666ms
 Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
@@ -184,46 +184,46 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.c
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 8ms
 Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
@@ -232,13 +232,13 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.c
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
@@ -253,28 +253,28 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.c
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
@@ -286,13 +286,13 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.c
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 16ms
 Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
@@ -304,34 +304,34 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.c
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 63, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 64, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 65, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 66, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 67, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 68, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 69, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 70, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 71, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 72, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 73, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
@@ -340,49 +340,49 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.c
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 75, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 76, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 77, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 78, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 79, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 80, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 81, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 82, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 83, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 84, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 85, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 86, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 87, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 88, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 89, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 90, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
@@ -391,7 +391,7 @@ Starting test testCompareSizes(org.jclouds.rackspace.cloudservers.compute.CloudS
 smallest [id=1, providerId=1, name=256 server, processors=[[cores=1.0, speed=1.0]], ram=256, volumes=[[id=null, type=LOCAL, size=10.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
 fastest [id=8, providerId=8, name=30GB server, processors=[[cores=120.0, speed=1.0]], ram=30720, volumes=[[id=null, type=LOCAL, size=1200.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
 biggest [id=8, providerId=8, name=30GB server, processors=[[cores=120.0, speed=1.0]], ram=30720, volumes=[[id=null, type=LOCAL, size=1200.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
-[TestNG] Test testCompareSizes(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 4ms
+[TestNG] Test testCompareSizes(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 5ms
 Test suite progress: tests succeeded: 92, failed: 0, skipped: 0.
 Starting test testGetAssignableLocations(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 location [id=cloudservers-us, scope=PROVIDER, description=https://auth.api.rackspacecloud.com, parent=null, iso3166Codes=[US-IL, US-TX], metadata={}]
@@ -401,16 +401,16 @@ Starting test testTemplateBuilder(org.jclouds.rackspace.cloudservers.compute.Clo
 [TestNG] Test testTemplateBuilder(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 94, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanUseImageId(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanUseImageId(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1984ms
+[TestNG] Test testTemplateBuilderCanUseImageId(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1686ms
 Test suite progress: tests succeeded: 95, failed: 0, skipped: 0.
 Starting test testFromTemplate(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testFromTemplate(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 3ms
+[TestNG] Test testFromTemplate(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 4ms
 Test suite progress: tests succeeded: 96, failed: 0, skipped: 0.
 Starting test testDefaultTemplateBuilder(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testDefaultTemplateBuilder(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testDefaultTemplateBuilder(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 4ms
 Test suite progress: tests succeeded: 97, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 98, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 2ms
@@ -425,22 +425,22 @@ Starting test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.comp
 [TestNG] Test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 102, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 103, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 104, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 105, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 5ms
 Test suite progress: tests succeeded: 106, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 107, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 108, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.compute.CloudServersUSTemplateBuilderLiveTest) succeeded: 1ms
@@ -450,63 +450,63 @@ Starting test testTemplateBuilderCanFind(org.jclouds.rackspace.cloudservers.comp
 Test suite progress: tests succeeded: 110, failed: 0, skipped: 0.
 Starting test testChangePassword(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229, sharedIpGroupId=null]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731, sharedIpGroupId=null]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229, sharedIpGroupId=null]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731, sharedIpGroupId=null]
 SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
 SLF4J: Defaulting to no-operation (NOP) logger implementation
 SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
-[TestNG] Test testChangePassword(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 18089ms
+[TestNG] Test testChangePassword(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 18699ms
 Test suite progress: tests succeeded: 111, failed: 0, skipped: 0.
 Starting test testCreateSharedIpGroup(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testCreateSharedIpGroup(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 1648ms
+[TestNG] Test testCreateSharedIpGroup(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 1292ms
 Test suite progress: tests succeeded: 112, failed: 0, skipped: 0.
 Starting test testRenameServer(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testRenameServer(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 5734ms
+[TestNG] Test testRenameServer(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 5956ms
 Test suite progress: tests succeeded: 113, failed: 0, skipped: 0.
 Starting test testServerDetails(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testServerDetails(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 5478ms
+[TestNG] Test testServerDetails(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 8275ms
 Test suite progress: tests succeeded: 114, failed: 0, skipped: 0.
 Starting test testCreateServerIp(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49, 184.106.136.137]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217, 108.166.127.218]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49, 184.106.136.137]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217, 108.166.127.218]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49, 184.106.136.137]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217, 108.166.127.218]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49, 184.106.136.137]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217, 108.166.127.218]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49, 184.106.136.137]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217, 108.166.127.218]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49, 184.106.136.137]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217, 108.166.127.218]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49, 184.106.136.137]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217, 108.166.127.218]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49, 184.106.136.137]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217, 108.166.127.218]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49, 184.106.136.137]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217, 108.166.127.218]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49, 184.106.136.137]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
-java.lang.AssertionError: server Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49, 184.106.136.137]], adminPass=adriancole.cscreateserver1909521709o0eEK4J3v, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355] didn't get ip 184.106.136.137
-[output=eth0      Link encap:Ethernet  HWaddr 40:40:7d:52:8d:46  
-          inet addr:184.106.240.49  Bcast:184.106.240.255  Mask:255.255.255.0
-          inet6 addr: fe80::4240:7dff:fe52:8d46/64 Scope:Link
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217, 108.166.127.218]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
+java.lang.AssertionError: server Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217, 108.166.127.218]], adminPass=adriancole.cscreateserver-10497410643h4sP5fRN, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356] didn't get ip 108.166.127.218
+[output=eth0      Link encap:Ethernet  HWaddr 40:40:3a:99:17:a0  
+          inet addr:108.166.127.217  Bcast:108.166.127.255  Mask:255.255.255.0
+          inet6 addr: fe80::4240:3aff:fe99:17a0/64 Scope:Link
           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
-          RX packets:46 errors:0 dropped:0 overruns:0 frame:0
+          RX packets:44 errors:0 dropped:0 overruns:0 frame:0
           TX packets:43 errors:0 dropped:0 overruns:0 carrier:0
           collisions:0 txqueuelen:1000 
-          RX bytes:5189 (5.1 KB)  TX bytes:5217 (5.2 KB)
+          RX bytes:5083 (5.0 KB)  TX bytes:5219 (5.2 KB)
           Interrupt:24 
 
-eth1      Link encap:Ethernet  HWaddr 40:40:18:e7:e4:b0  
-          inet addr:10.179.231.241  Bcast:10.179.255.255  Mask:255.255.224.0
-          inet6 addr: fe80::4240:18ff:fee7:e4b0/64 Scope:Link
+eth1      Link encap:Ethernet  HWaddr 40:40:36:04:ef:af  
+          inet addr:10.182.15.203  Bcast:10.182.31.255  Mask:255.255.224.0
+          inet6 addr: fe80::4240:36ff:fe04:efaf/64 Scope:Link
           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
-          RX packets:4 errors:0 dropped:0 overruns:0 frame:0
+          RX packets:3 errors:0 dropped:0 overruns:0 frame:0
           TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
           collisions:0 txqueuelen:1000 
-          RX bytes:244 (244.0 B)  TX bytes:468 (468.0 B)
+          RX bytes:188 (188.0 B)  TX bytes:468 (468.0 B)
           Interrupt:25 
 
 lo        Link encap:Local Loopback  
@@ -544,36 +544,32 @@ lo        Link encap:Local Loopback
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-[TestNG] Test testCreateServerIp(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 70113ms
+[TestNG] Test testCreateServerIp(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 69411ms
 Test suite progress: tests succeeded: 115, failed: 0, skipped: 0.
 Starting test testUnshare(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
-blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
-blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
-[TestNG] Test testUnshare(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 37521ms
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
+[TestNG] Test testUnshare(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 28622ms
 Test suite progress: tests succeeded: 116, failed: 0, skipped: 0.
 Starting test testShareConfig(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-java.lang.AssertionError: server Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49, 184.106.136.137]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355] didn't get ip 184.106.136.137
-[output=eth0      Link encap:Ethernet  HWaddr 40:40:7d:52:8d:46  
-          inet addr:184.106.240.49  Bcast:184.106.240.255  Mask:255.255.255.0
-          inet6 addr: fe80::4240:7dff:fe52:8d46/64 Scope:Link
+java.lang.AssertionError: server Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217, 108.166.127.218]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356] didn't get ip 108.166.127.218
+[output=eth0      Link encap:Ethernet  HWaddr 40:40:3a:99:17:a0  
+          inet addr:108.166.127.217  Bcast:108.166.127.255  Mask:255.255.255.0
+          inet6 addr: fe80::4240:3aff:fe99:17a0/64 Scope:Link
           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
-          RX packets:46 errors:0 dropped:0 overruns:0 frame:0
-          TX packets:43 errors:0 dropped:0 overruns:0 carrier:0
+          RX packets:49 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:42 errors:0 dropped:0 overruns:0 carrier:0
           collisions:0 txqueuelen:1000 
-          RX bytes:5201 (5.2 KB)  TX bytes:5201 (5.2 KB)
+          RX bytes:5371 (5.3 KB)  TX bytes:5113 (5.1 KB)
           Interrupt:24 
 
-eth1      Link encap:Ethernet  HWaddr 40:40:18:e7:e4:b0  
-          inet addr:10.179.231.241  Bcast:10.179.255.255  Mask:255.255.224.0
-          inet6 addr: fe80::4240:18ff:fee7:e4b0/64 Scope:Link
+eth1      Link encap:Ethernet  HWaddr 40:40:36:04:ef:af  
+          inet addr:10.182.15.203  Bcast:10.182.31.255  Mask:255.255.224.0
+          inet6 addr: fe80::4240:36ff:fe04:efaf/64 Scope:Link
           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
           RX packets:4 errors:0 dropped:0 overruns:0 frame:0
           TX packets:5 errors:0 dropped:0 overruns:0 carrier:0
@@ -617,256 +613,642 @@ lo        Link encap:Local Loopback
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
-[TestNG] Test testShareConfig(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 72960ms
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
+[TestNG] Test testShareConfig(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 69680ms
 Test suite progress: tests succeeded: 117, failed: 0, skipped: 0.
 Starting test testShareNoConfig(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
-[TestNG] Test testShareNoConfig(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 39357ms
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
+[TestNG] Test testShareNoConfig(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 45961ms
 Test suite progress: tests succeeded: 118, failed: 0, skipped: 0.
 Starting test testBackup(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testBackup(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 6091ms
+[TestNG] Test testBackup(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 5914ms
 Test suite progress: tests succeeded: 119, failed: 0, skipped: 0.
 Starting test testCreateImage(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
 blocking on status active
-Image [created=Sun Jan 15 06:12:26 PST 2012, id=17738789, name=hoofie, serverId=null]
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
 blocking on status active
-Image [created=Sun Jan 15 06:12:26 PST 2012, id=17738789, name=hoofie, serverId=null]
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
 blocking on status active
-Image [created=Sun Jan 15 06:12:26 PST 2012, id=17738789, name=hoofie, serverId=null]
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
 blocking on status active
-Image [created=Sun Jan 15 06:12:26 PST 2012, id=17738789, name=hoofie, serverId=null]
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
 blocking on status active
-Image [created=Sun Jan 15 06:12:26 PST 2012, id=17738789, name=hoofie, serverId=null]
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
 blocking on status active
-Image [created=Sun Jan 15 06:12:26 PST 2012, id=17738789, name=hoofie, serverId=null]
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
 blocking on status active
-Image [created=Sun Jan 15 06:12:26 PST 2012, id=17738789, name=hoofie, serverId=null]
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
 blocking on status active
-Image [created=Sun Jan 15 06:12:26 PST 2012, id=17738789, name=hoofie, serverId=null]
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
 blocking on status active
-Image [created=Sun Jan 15 06:12:26 PST 2012, id=17738789, name=hoofie, serverId=null]
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
 blocking on status active
-Image [created=Sun Jan 15 06:12:26 PST 2012, id=17738789, name=hoofie, serverId=null]
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
 blocking on status active
-Image [created=Sun Jan 15 06:12:26 PST 2012, id=17738789, name=hoofie, serverId=null]
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
 blocking on status active
-Image [created=Sun Jan 15 06:12:26 PST 2012, id=17738789, name=hoofie, serverId=null]
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
 blocking on status active
-Image [created=Sun Jan 15 06:12:26 PST 2012, id=17738789, name=hoofie, serverId=null]
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
 blocking on status active
-Image [created=Sun Jan 15 06:12:26 PST 2012, id=17738789, name=hoofie, serverId=null]
-[TestNG] Test testCreateImage(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 80862ms
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+blocking on status active
+Image [created=Sun Jan 15 11:14:29 PST 2012, id=17748558, name=hoofie, serverId=null]
+[TestNG] Test testCreateImage(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 1178318ms
 Test suite progress: tests succeeded: 120, failed: 0, skipped: 0.
 Starting test testRebuildServer(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=17738789, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=17748558, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=17738789, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=17748558, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=17738789, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=17748558, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=17738789, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=17748558, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=17738789, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=17748558, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=17738789, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=17748558, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=17738789, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=17748558, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=17738789, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
-blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
-[TestNG] Test testRebuildServer(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 63692ms
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=17748558, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
+[TestNG] Test testRebuildServer(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 56946ms
 Test suite progress: tests succeeded: 121, failed: 0, skipped: 0.
 Starting test testRebootHard(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
-[TestNG] Test testRebootHard(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 12491ms
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
+blocking on status active
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
+[TestNG] Test testRebootHard(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 15707ms
 Test suite progress: tests succeeded: 122, failed: 0, skipped: 0.
 Starting test testRebootSoft(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testRebootSoft(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 4424ms
+[TestNG] Test testRebootSoft(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 3672ms
 Test suite progress: tests succeeded: 123, failed: 0, skipped: 0.
 Starting test testConfirmResize(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
-blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
-blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
-blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
-blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
-blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
-blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
-blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
-blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
-blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
-blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=1, hostId=266e4e256f81bf288da9fdb19ebe08db, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
-blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=2, hostId=103cccb0005053c5d20e3d0b6a40956d, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=1, hostId=4e9dfa8ed0f90981cc6a14e5eb18fa42, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.231.241], publicAddresses=[184.106.240.49]], adminPass=null, flavorId=2, hostId=103cccb0005053c5d20e3d0b6a40956d, id=20509367, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1909521709, sharedIpGroupId=12355]
-[TestNG] Test testConfirmResize(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 200312ms
+Server [addresses=Addresses [privateAddresses=[10.182.15.203], publicAddresses=[108.166.127.217]], adminPass=null, flavorId=2, hostId=ba63494e6d4e2e5723ab7c1d5abb21a5, id=20509926, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-1049741064, sharedIpGroupId=12356]
+[TestNG] Test testConfirmResize(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 149991ms
 Test suite progress: tests succeeded: 124, failed: 0, skipped: 0.
 Starting test testRevertResize(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status verify resize
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
+blocking on status verify resize
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
+blocking on status verify resize
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
+blocking on status verify resize
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
+blocking on status verify resize
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
+blocking on status verify resize
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
+blocking on status verify resize
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
+blocking on status verify resize
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
+blocking on status verify resize
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
+blocking on status verify resize
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
+blocking on status verify resize
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
+blocking on status verify resize
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
+blocking on status verify resize
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
 blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
-blocking on status active
-Server [addresses=Addresses [privateAddresses=[10.179.224.102], publicAddresses=[184.106.136.137]], adminPass=null, flavorId=1, hostId=df95d00d609b0156afd93d7468acf015, id=20509365, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver1149207229new, sharedIpGroupId=12355]
-[TestNG] Test testRevertResize(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 145170ms
+Server [addresses=Addresses [privateAddresses=[10.182.15.201], publicAddresses=[108.166.127.218]], adminPass=null, flavorId=1, hostId=266dd8233c49aa47879d9f48ce7c4ffc, id=20509923, imageId=14362, metadata={jclouds=rackspace}, name=adriancole.cscreateserver-998560731new, sharedIpGroupId=12356]
+[TestNG] Test testRevertResize(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 222626ms
 Test suite progress: tests succeeded: 125, failed: 0, skipped: 0.
 Starting test deleteServer2(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test deleteServer2(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 3229ms
+[TestNG] Test deleteServer2(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 2666ms
 Test suite progress: tests succeeded: 126, failed: 0, skipped: 0.
 Starting test testDeleteImage(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testDeleteImage(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 3783ms
+[TestNG] Test testDeleteImage(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 3407ms
 Test suite progress: tests succeeded: 127, failed: 0, skipped: 0.
 Starting test deleteServer1(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test deleteServer1(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 2734ms
+[TestNG] Test deleteServer1(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 2798ms
 Test suite progress: tests succeeded: 128, failed: 0, skipped: 0.
 Starting test testDeleteSharedIpGroup(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest)
-[TestNG] Test testDeleteSharedIpGroup(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 1536ms
+[TestNG] Test testDeleteSharedIpGroup(org.jclouds.rackspace.cloudservers.CloudServersUSClientLiveTest) succeeded: 1417ms
 Test suite progress: tests succeeded: 129, failed: 0, skipped: 0.
 Starting test setServiceDefaults(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
 [TestNG] Test setServiceDefaults(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 130, failed: 0, skipped: 0.
 Starting test testCompareSizes(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
-Jan 15, 2012 12:21:18 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+Jan 15, 2012 5:41:49 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
 INFO: smallest [id=1, providerId=1, name=256 server, processors=[[cores=1.0, speed=1.0]], ram=256, volumes=[[id=null, type=LOCAL, size=10.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
-Jan 15, 2012 12:21:18 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+Jan 15, 2012 5:41:49 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
 INFO: fastest [id=8, providerId=8, name=30GB server, processors=[[cores=120.0, speed=1.0]], ram=30720, volumes=[[id=null, type=LOCAL, size=1200.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
-Jan 15, 2012 12:21:18 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+Jan 15, 2012 5:41:49 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
 INFO: biggest [id=8, providerId=8, name=30GB server, processors=[[cores=120.0, speed=1.0]], ram=30720, volumes=[[id=null, type=LOCAL, size=1200.0, device=null, durable=true, isBootDevice=true]], supportsImage=ALWAYS_TRUE, tags=[]]
-[TestNG] Test testCompareSizes(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 1436ms
+[TestNG] Test testCompareSizes(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 1574ms
 Test suite progress: tests succeeded: 131, failed: 0, skipped: 0.
 Starting test testCorrectAuthException(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
-[TestNG] Test testCorrectAuthException(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 640ms
+[TestNG] Test testCorrectAuthException(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 773ms
 Test suite progress: tests succeeded: 132, failed: 0, skipped: 0.
 Starting test testCreateAndRunAService(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
-Jan 15, 2012 12:24:42 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << available node(20509381) os([name=null, family=ubuntu, version=11.10, arch=null, is64Bit=true, description=Ubuntu 11.10]) in 202s
-Jan 15, 2012 12:28:24 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << configured node(20509381) with java full version "1.7.0_02-b13" and JBoss 7.0.2.Final in 212s
-Jan 15, 2012 12:28:27 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+Jan 15, 2012 5:45:49 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << available node(20509946) os([name=null, family=ubuntu, version=11.10, arch=null, is64Bit=true, description=Ubuntu 11.10]) in 238s
+Jan 15, 2012 5:49:56 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << configured node(20509946) with java full version "1.7.0_02-b13" and JBoss 7.0.2.Final in 234s
+Jan 15, 2012 5:49:59 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
 WARNING: could not get info on ip 209.132.182.31; check freegeoip
-Jan 15, 2012 12:28:27 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of jboss7(download.jboss.org) from perpective of node(20509381): 209.132.182.31
-Jan 15, 2012 12:28:30 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
-WARNING: could not get info on ip 128.242.186.201; check freegeoip
-Jan 15, 2012 12:28:30 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of jdk7(download.oracle.com) from perpective of node(20509381): 128.242.186.201
-Jan 15, 2012 12:28:33 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
-WARNING: could not get info on ip 50.57.120.197; check freegeoip
-Jan 15, 2012 12:28:33 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of node(20509381) from perspective of amazonaws: 50.57.120.197
-Jan 15, 2012 12:28:43 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
-INFO: << initial start of jboss on node(20509381) [backgroundProcessMilliseconds=5133, socketOpenMilliseconds=2584, reportedStartupTimeMilliseconds=3301]
-Jan 15, 2012 12:28:52 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
-INFO: << warm start of jboss on node(20509381) [backgroundProcessMilliseconds=3294, socketOpenMilliseconds=592, reportedStartupTimeMilliseconds=1664]
-[TestNG] Test testCreateAndRunAService(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 458728ms
+Jan 15, 2012 5:49:59 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jboss7(download.jboss.org) from perpective of node(20509946): 209.132.182.31
+Jan 15, 2012 5:50:01 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+WARNING: could not get info on ip 64.208.126.35; check freegeoip
+Jan 15, 2012 5:50:01 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jdk7(download.oracle.com) from perpective of node(20509946): 64.208.126.35
+Jan 15, 2012 5:50:04 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+WARNING: could not get info on ip 108.166.126.44; check freegeoip
+Jan 15, 2012 5:50:04 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of node(20509946) from perspective of amazonaws: 108.166.126.44
+Jan 15, 2012 5:50:16 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << initial start of jboss on node(20509946) [backgroundProcessMilliseconds=5537, socketOpenMilliseconds=2799, reportedStartupTimeMilliseconds=4206]
+Jan 15, 2012 5:50:25 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << warm start of jboss on node(20509946) [backgroundProcessMilliseconds=3527, socketOpenMilliseconds=743, reportedStartupTimeMilliseconds=1907]
+[TestNG] Test testCreateAndRunAService(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 521167ms
 Test suite progress: tests succeeded: 133, failed: 0, skipped: 0.
 Starting test testGetAssignableLocations(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
-Jan 15, 2012 12:28:57 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+Jan 15, 2012 5:50:31 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
 WARNING: location [id=cloudservers-us, scope=PROVIDER, description=https://auth.api.rackspacecloud.com, parent=null, iso3166Codes=[US-IL, US-TX], metadata={}]
-[TestNG] Test testGetAssignableLocations(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 0ms
+[TestNG] Test testGetAssignableLocations(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 134, failed: 0, skipped: 0.
 Starting test testImagesCache(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
-[TestNG] Test testImagesCache(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 0ms
+[TestNG] Test testImagesCache(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 135, failed: 0, skipped: 0.
 Starting test testListImages(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
 [TestNG] Test testListImages(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 0ms
@@ -875,17 +1257,17 @@ Starting test testListSizes(org.jclouds.rackspace.cloudservers.compute.CloudServ
 [TestNG] Test testListSizes(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 137, failed: 0, skipped: 0.
 Starting test testOptionToNotBlock(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
-[TestNG] Test testOptionToNotBlock(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 208707ms
+[TestNG] Test testOptionToNotBlock(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 224087ms
 Test suite progress: tests succeeded: 138, failed: 0, skipped: 0.
 Starting test testAssignability(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
-[TestNG] Test testAssignability(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 1264ms
+[TestNG] Test testAssignability(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 1323ms
 Test suite progress: tests succeeded: 139, failed: 0, skipped: 0.
 Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
-[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 1192ms
+[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 1146ms
 Test suite progress: tests succeeded: 140, failed: 0, skipped: 0.
 Starting test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
-<< problem applying options to node(20509386): 
-org.jclouds.rest.AuthorizationException: (root:pw[5d907853a9617cfd55fb62eae803595b]@50.57.110.199:22) (root:pw[5d907853a9617cfd55fb62eae803595b]@50.57.110.199:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
+<< problem applying options to node(20509959): 
+org.jclouds.rest.AuthorizationException: (root:pw[5d907853a9617cfd55fb62eae803595b]@108.166.126.198:22) (root:pw[5d907853a9617cfd55fb62eae803595b]@108.166.126.198:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
 	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:414)
 	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:245)
 	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:255)
@@ -911,60 +1293,58 @@ Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available auth
 Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
 	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
 	... 17 more
-[TestNG] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 338084ms
+[TestNG] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 345505ms
 Test suite progress: tests succeeded: 141, failed: 0, skipped: 0.
 Starting test testCreateTwoNodesWithRunScript(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
-[TestNG] Test testCreateTwoNodesWithRunScript(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 303410ms
+[TestNG] Test testCreateTwoNodesWithRunScript(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 328884ms
 Test suite progress: tests succeeded: 142, failed: 0, skipped: 0.
 Starting test testTemplateMatch(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
-[TestNG] Test testTemplateMatch(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 1642ms
+[TestNG] Test testTemplateMatch(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 1636ms
 Test suite progress: tests succeeded: 143, failed: 0, skipped: 0.
 Starting test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
-Jan 15, 2012 12:43:13 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired
-INFO: [id=0ba6c5f3a454ff4fa890f52bcca8155f, scope=HOST, description=0ba6c5f3a454ff4fa890f52bcca8155f, parent=cloudservers-us, iso3166Codes=[], metadata={}] is not assignable; using template's location [id=cloudservers-us, scope=PROVIDER, description=https://auth.api.rackspacecloud.com, parent=null, iso3166Codes=[US-IL, US-TX], metadata={}] as  
-[TestNG] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 299428ms
+Jan 15, 2012 6:05:35 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired
+INFO: [id=c55ea54e8461b630bc78ca0aa9cf69df, scope=HOST, description=c55ea54e8461b630bc78ca0aa9cf69df, parent=cloudservers-us, iso3166Codes=[], metadata={}] is not assignable; using template's location [id=cloudservers-us, scope=PROVIDER, description=https://auth.api.rackspacecloud.com, parent=null, iso3166Codes=[US-IL, US-TX], metadata={}] as  
+[TestNG] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 299464ms
 Test suite progress: tests succeeded: 144, failed: 0, skipped: 0.
 Starting test testCredentialsCache(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
-[TestNG] Test testCredentialsCache(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 380ms
+[TestNG] Test testCredentialsCache(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 394ms
 Test suite progress: tests succeeded: 145, failed: 0, skipped: 0.
 Starting test testGet(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
-[TestNG] Test testGet(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 6608ms
+[TestNG] Test testGet(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 6603ms
 Test suite progress: tests succeeded: 146, failed: 0, skipped: 0.
 Starting test testReboot(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
-[TestNG] Test testReboot(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 106129ms
-Test suite progress: tests succeeded: 147, failed: 0, skipped: 0.
-Starting test testSuspendResume(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
-[TestNG] Test testSuspendResume(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 2534ms
-Test suite progress: tests succeeded: 148, failed: 0, skipped: 0.
-Starting test testGetNodesWithDetails(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
-[TestNG] Test testGetNodesWithDetails(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 1637ms
-Test suite progress: tests succeeded: 149, failed: 0, skipped: 0.
-Starting test testListNodes(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
-[TestNG] Test testListNodes(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 1419ms
-Test suite progress: tests succeeded: 150, failed: 0, skipped: 0.
-Starting test testDestroyNodes(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest)
-[TestNG] Test testDestroyNodes(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) succeeded: 10421ms
-Test suite progress: tests succeeded: 151, failed: 0, skipped: 0.
-Tests run: 151, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2,637.969 sec
+[TestNG] Test testReboot(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 146, failed: 1, skipped: 0.
+[TestNG] Test testSuspendResume(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 146, failed: 1, skipped: 1.
+[TestNG] Test testGetNodesWithDetails(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 146, failed: 1, skipped: 2.
+[TestNG] Test testListNodes(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 146, failed: 1, skipped: 3.
+[TestNG] Test testDestroyNodes(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 146, failed: 1, skipped: 4.
+Tests run: 151, Failures: 1, Errors: 0, Skipped: 4, Time elapsed: 3,811.166 sec <<< FAILURE!
 
 Results :
 
-Tests run: 151, Failures: 0, Errors: 0, Skipped: 0
+Failed tests:   testReboot(org.jclouds.rackspace.cloudservers.compute.CloudServersUSComputeServiceLiveTest): command: POST https://servers.api.rackspacecloud.com/v1.0/413274/servers/20509980/action?format=json HTTP/1.1 failed with response: HTTP/1.1 413 Request Entity Too Large; content: [{"overLimit":{"message":"Too many requests...","code":413,"retryAfter":"2012-01-16T07:10:50.779-06:00"}}]
 
-[INFO] 
-[INFO] --- maven-install-plugin:2.3:install (default-install) @ cloudservers-us ---
-[INFO] Installing /Users/adriancole/git/jclouds/providers/cloudservers-us/target/cloudservers-us-1.3.0-SNAPSHOT.jar to /Users/adriancole/.m2/repository/org/jclouds/provider/cloudservers-us/1.3.0-SNAPSHOT/cloudservers-us-1.3.0-SNAPSHOT.jar
-[INFO] Installing /Users/adriancole/git/jclouds/providers/cloudservers-us/pom.xml to /Users/adriancole/.m2/repository/org/jclouds/provider/cloudservers-us/1.3.0-SNAPSHOT/cloudservers-us-1.3.0-SNAPSHOT.pom
-[INFO] Installing /Users/adriancole/git/jclouds/providers/cloudservers-us/target/cloudservers-us-1.3.0-SNAPSHOT-sources.jar to /Users/adriancole/.m2/repository/org/jclouds/provider/cloudservers-us/1.3.0-SNAPSHOT/cloudservers-us-1.3.0-SNAPSHOT-sources.jar
-[INFO] Installing /Users/adriancole/git/jclouds/providers/cloudservers-us/target/cloudservers-us-1.3.0-SNAPSHOT-tests.jar to /Users/adriancole/.m2/repository/org/jclouds/provider/cloudservers-us/1.3.0-SNAPSHOT/cloudservers-us-1.3.0-SNAPSHOT-tests.jar
-[INFO] 
-[INFO] --- maven-bundle-plugin:2.3.4:install (default-install) @ cloudservers-us ---
-[INFO] Installing org/jclouds/provider/cloudservers-us/1.3.0-SNAPSHOT/cloudservers-us-1.3.0-SNAPSHOT.jar
-[INFO] Writing OBR metadata
+Tests run: 151, Failures: 1, Errors: 0, Skipped: 4
+
 [INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
+[INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 44:21.145s
-[INFO] Finished at: Sun Jan 15 12:50:29 PST 2012
-[INFO] Final Memory: 20M/125M
+[INFO] Total time: 1:03:43.816s
+[INFO] Finished at: Sun Jan 15 18:11:53 PST 2012
+[INFO] Final Memory: 21M/265M
 [INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project cloudservers-us: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/adriancole/workspace/git/jclouds/providers/cloudservers-us/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

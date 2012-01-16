@@ -1,9 +1,9 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 115, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 1,712.394 sec <<< FAILURE!
-testResizeRam(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)  Time elapsed: 224.874 sec  <<< FAILURE!
-org.jclouds.rest.AuthorizationException: command [method=GridServerAsyncClient.editServerRam, request=GET https://api.gogrid.com/api/grid/server/edit?v=1.6&id=280981&server.ram=1GB HTTP/1.1] failed with code 400. Error [IllegalArgumentException]: Cannot invoke com.servepath.gogrid.core.model.ServerOsAppTemplate.setImageDatacenterStates - argument type mismatch. 
+Tests run: 115, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 1,701.549 sec <<< FAILURE!
+testResizeRam(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)  Time elapsed: 234.479 sec  <<< FAILURE!
+org.jclouds.rest.AuthorizationException: command [method=GridServerAsyncClient.editServerRam, request=GET https://api.gogrid.com/api/grid/server/edit?v=1.6&id=281093&server.ram=1GB HTTP/1.1] failed with code 400. Error [IllegalArgumentException]: Cannot invoke com.servepath.gogrid.core.model.ServerOsAppTemplate.setImageDatacenterStates - argument type mismatch. 
 	at org.jclouds.gogrid.handlers.GoGridErrorHandler.handleError(GoGridErrorHandler.java:64)
 	at org.jclouds.http.handlers.DelegatingErrorHandler.handleError(DelegatingErrorHandler.java:69)
 	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.shouldContinue(BaseHttpCommandExecutorService.java:200)
@@ -61,7 +61,7 @@ org.jclouds.rest.AuthorizationException: command [method=GridServerAsyncClient.e
 	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
 	at $Proxy75.editServerRam(Unknown Source)
 	at org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest.testResizeRam(GoGridComputeServiceLiveTest.java:86)
-Caused by: org.jclouds.gogrid.GoGridResponseException: command [method=GridServerAsyncClient.editServerRam, request=GET https://api.gogrid.com/api/grid/server/edit?v=1.6&id=280981&server.ram=1GB HTTP/1.1] failed with code 400. Error [IllegalArgumentException]: Cannot invoke com.servepath.gogrid.core.model.ServerOsAppTemplate.setImageDatacenterStates - argument type mismatch. 
+Caused by: org.jclouds.gogrid.GoGridResponseException: command [method=GridServerAsyncClient.editServerRam, request=GET https://api.gogrid.com/api/grid/server/edit?v=1.6&id=281093&server.ram=1GB HTTP/1.1] failed with code 400. Error [IllegalArgumentException]: Cannot invoke com.servepath.gogrid.core.model.ServerOsAppTemplate.setImageDatacenterStates - argument type mismatch. 
 	at org.jclouds.gogrid.handlers.GoGridErrorHandler.handleError(GoGridErrorHandler.java:56)
 	at org.jclouds.http.handlers.DelegatingErrorHandler.handleError(DelegatingErrorHandler.java:69)
 	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.shouldContinue(BaseHttpCommandExecutorService.java:200)
