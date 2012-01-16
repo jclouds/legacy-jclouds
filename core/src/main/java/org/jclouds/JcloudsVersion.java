@@ -49,13 +49,13 @@ public class JcloudsVersion {
     public final int minorVersion;
     public final int patchVersion;
     public final boolean releaseCandidate;
-    private final String version;
 
     /**
      * Non-null iff {@link #releaseCandidate} is {@code true}
      */
     public final @Nullable Integer releaseCandidateVersion;
     public final boolean snapshot;
+    private final String version;
 
     @VisibleForTesting
     JcloudsVersion() {
