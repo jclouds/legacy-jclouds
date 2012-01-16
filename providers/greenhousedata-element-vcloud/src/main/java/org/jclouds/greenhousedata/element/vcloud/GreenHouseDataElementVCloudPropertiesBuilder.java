@@ -18,6 +18,7 @@
  */
 package org.jclouds.greenhousedata.element.vcloud;
 
+import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
@@ -36,6 +37,7 @@ public class GreenHouseDataElementVCloudPropertiesBuilder extends VCloudProperti
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-WY");
       properties.setProperty(PROPERTY_ENDPOINT, "https://mycloud.greenhousedata.com/api");
+      properties.setProperty(PROPERTY_BUILD_VERSION, "1.5.0.464915");
       properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "orgNet-.*-External");
       return properties;
    }

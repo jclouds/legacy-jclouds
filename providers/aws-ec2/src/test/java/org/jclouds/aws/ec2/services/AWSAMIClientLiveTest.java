@@ -190,14 +190,14 @@ public class AWSAMIClientLiveTest extends BaseVersionedServiceLiveTest {
       // TODO client.resetLaunchPermissionsOnImageInRegion(null, imageId);
    }
 
-   @Test(expectedExceptions = AuthorizationException.class)
+   @Test(enabled = false)
    public void testGetLaunchPermissionForImage() {
-      System.out.println(client.getLaunchPermissionForImageInRegion(null, imageId));
+      // TODO System.out.println(client.getLaunchPermissionForImageInRegion(null, imageId));
    }
 
-   @Test(expectedExceptions = AuthorizationException.class)
+   @Test(enabled = false)
    public void testGetProductCodesForImage() {
-      System.out.println(client.getProductCodesForImageInRegion(null, imageId));
+      // TODO System.out.println(client.getProductCodesForImageInRegion(null, imageId));
    }
 
    @Test(enabled = false)

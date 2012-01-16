@@ -54,7 +54,10 @@ public class VCloudUtils {
       // HEAD has no content
       if (response.getPayload() == null)
          return null;
-      if (VCloudMediaType.ERROR_XML.equals(response.getPayload().getContentMetadata().getContentType())) {
+      // NOTE in vCloud Datacenter 1.5, if you make vCloud 1.0 requests, the content type 
+      // header is suffixed with ;1.0
+      String contentType = response.getPayload().getContentMetadata().getContentType();
+      if (contentType != null && contentType.startsWith(VCloudMediaType.ERROR_XML)) {
          try {
             return (VCloudError) factory.create(errorHandlerProvider.get()).setContext(request).apply(response);
          } catch (RuntimeException e) {

@@ -21,7 +21,6 @@ package org.jclouds.cloudsigma.compute.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -102,7 +101,7 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
       }
       builder.hardware(new HardwareBuilder().ids(from.getUuid())
             .processors(ImmutableList.of(new Processor(1, from.getCpu()))).ram(from.getMem())
-            .volumes((List) ImmutableList.of(Iterables.transform(from.getDevices().values(), deviceToVolume))).build());
+            .volumes(Iterables.transform(from.getDevices().values(), deviceToVolume)).build());
       builder.state(serverStatusToNodeState.get(from.getStatus()));
       builder.publicAddresses(ImmutableSet.<String> of(from.getVnc().getIp()));
       builder.privateAddresses(ImmutableSet.<String> of());
@@ -133,7 +132,7 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
          } catch (UncheckedExecutionException e) {
             logger.warn(e, "error finding drive %s: %s", input.getDriveUuid(), e.getMessage());
          }
-         return new VolumeBuilder().durable(true).type(Volume.Type.NAS).build();
+         return builder.durable(true).type(Volume.Type.NAS).build();
       }
    }
 

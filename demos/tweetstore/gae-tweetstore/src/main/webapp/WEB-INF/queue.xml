@@ -22,6 +22,8 @@
 <queue-entries>
   <queue>
     <name>twitter</name>
-    <rate>1/m</rate>
+    <!-- poll every 30s, but only allow one request at a time to save CPU -->
+    <rate>2/m</rate>
+    <max-concurrent-requests>1</max-concurrent-requests>
   </queue>
 </queue-entries>

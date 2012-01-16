@@ -42,7 +42,8 @@ import com.google.inject.Module;
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
 public abstract class BaseVCloudClientLiveTest extends BaseVersionedServiceLiveTest {
-   protected String prefix = System.getProperty("user.name");
+   // username is too long for name constraints
+   protected String prefix = "vcd";
 
    protected ComputeService client;
 

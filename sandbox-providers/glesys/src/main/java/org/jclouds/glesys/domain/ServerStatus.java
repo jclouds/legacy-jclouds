@@ -150,7 +150,7 @@ public class ServerStatus {
                && Objects.equal(memory, other.memory)
                && Objects.equal(disk, other.disk)
                && Objects.equal(bandwidth, other.bandwidth)
-               && uptime == other.uptime;
+               && Objects.equal(uptime, other.uptime);
       } else {
          return false;
       }

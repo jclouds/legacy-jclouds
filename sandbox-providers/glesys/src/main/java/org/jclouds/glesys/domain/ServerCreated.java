@@ -30,8 +30,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Connection information to connect to a server with VNC.
- * 
+ * Information about a new server
+ *
  * @author Adam Lowe
  * @see <a href="https://customer.glesys.com/api.php?a=doc#server_create" />
  */
@@ -44,11 +44,12 @@ public class ServerCreated {
       private String id;
       private String hostname;
       private List<ServerCreatedIp> ips;
-      
+
       public Builder id(String id) {
          this.id = id;
          return this;
       }
+
       public Builder ips(List<ServerCreatedIp> ips) {
          this.ips = ips;
          return this;
@@ -57,16 +58,16 @@ public class ServerCreated {
       public Builder ips(ServerCreatedIp... ips) {
          return ips(Arrays.asList(ips));
       }
-      
+
       public Builder hostname(String hostname) {
          this.hostname = hostname;
          return this;
       }
-      
+
       public ServerCreated build() {
          return new ServerCreated(id, hostname, ips);
       }
-      
+
       public Builder fromServerCreated(ServerCreated in) {
          return id(in.getId()).hostname(in.getHostname()).ips(in.getIps());
       }
@@ -85,14 +86,20 @@ public class ServerCreated {
       this.ips = ips;
    }
 
+   /**
+    * @return the id of the server (used for other calls to identify the server.
+    * @see org.jclouds.glesys.features.ServerClient
+    */
    public String getId() {
       return id;
    }
 
+   /** @return the hostname of the server */
    public String getHostname() {
       return hostname;
    }
 
+   /** @return the IP addresses assigned to the server */
    public List<ServerCreatedIp> getIps() {
       return ips == null ? ImmutableList.<ServerCreatedIp>of() : ips;
    }

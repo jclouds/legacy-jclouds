@@ -18,19 +18,18 @@
  */
 package org.jclouds.openstack.handlers;
 
+import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 import static org.jclouds.http.HttpUtils.releasePayload;
-
-import java.io.IOException;
 
 import javax.annotation.Resource;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.logging.Logger;
 import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
 import org.jclouds.openstack.reference.AuthHeaders;
-import org.jclouds.util.Strings2;
 
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Multimap;
@@ -48,12 +47,12 @@ public class RetryOnRenew implements HttpRetryHandler {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   // This doesn't work yet
-//   @Inject
-//   Supplier<AuthenticationResponse> providedAuthenticationResponseCache;
+   private final LoadingCache<Credentials, AuthenticationResponse> authenticationResponseCache;
 
    @Inject
-   LoadingCache<String,AuthenticationResponse> authenticationResponseCache;
+   protected RetryOnRenew(LoadingCache<Credentials, AuthenticationResponse> authenticationResponseCache) {
+      this.authenticationResponseCache = authenticationResponseCache;
+   }
 
    @Override
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
@@ -63,13 +62,13 @@ public class RetryOnRenew implements HttpRetryHandler {
             case 401:
                // Do not retry on 401 from authentication request
                Multimap<String, String> headers = command.getCurrentRequest().getHeaders();
-               if (headers != null && headers.containsKey(AuthHeaders.AUTH_USER) && headers.containsKey(AuthHeaders.AUTH_KEY) &&
-                     !headers.containsKey(AuthHeaders.AUTH_TOKEN)) {
+               if (headers != null && headers.containsKey(AuthHeaders.AUTH_USER)
+                        && headers.containsKey(AuthHeaders.AUTH_KEY) && !headers.containsKey(AuthHeaders.AUTH_TOKEN)) {
                   retry = false;
                } else {
-                  String content = parsePayloadOrNull(response);
-                  if (content != null && content.contains("lease renew")) {
-                     // Otherwise invalidate the token cache, to force reauthentication
+                  byte[] content = closeClientButKeepContentStream(response);
+                  if (content != null && new String(content).contains("lease renew")) {
+                     logger.debug("invalidating authentication token");
                      authenticationResponseCache.invalidateAll();
                      retry = true;
                   } else {
@@ -79,20 +78,10 @@ public class RetryOnRenew implements HttpRetryHandler {
                break;
          }
          return retry;
-         
+
       } finally {
          releasePayload(response);
       }
    }
-   
-   String parsePayloadOrNull(HttpResponse response) {
-      if (response.getPayload() != null) {
-         try {
-            return Strings2.toStringAndClose(response.getPayload().getInput());
-         } catch (IOException e) {
-            logger.warn(e, "exception reading error from response", response);
-         }
-      }
-      return null;
-   }
+
 }

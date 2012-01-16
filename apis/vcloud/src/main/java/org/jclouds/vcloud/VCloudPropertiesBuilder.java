@@ -49,7 +49,8 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, FenceMode.BRIDGED.toString());
       // TODO integrate this with the {@link ComputeTimeouts} instead of having a single timeout for
       // everything.
-      properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, 600l * 1000l + "");
+      properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, 1200l * 1000l + "");
+      properties.setProperty(PROPERTY_SESSION_INTERVAL, 300 + "");
       return properties;
    }
 

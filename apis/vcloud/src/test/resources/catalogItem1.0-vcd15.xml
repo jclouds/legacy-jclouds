@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CatalogItem xmlns="http://www.vmware.com/vcloud/v1" name="UbuntuServer-x64-2GB" type="application/vnd.vmware.vcloud.catalogItem+xml" href="https://zone.myvcloud.com/api/v1.0/catalogItem/ceb369f7-1d07-4e32-9dbd-ebb5aa6ca55c" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1 https://zone.myvcloud.com/api/v1.0/schema/master.xsd">
+    <Link rel="up" type="application/vnd.vmware.vcloud.catalog+xml" href="https://zone.myvcloud.com/api/v1.0/catalog/3155f393-1e1d-4572-8c9c-d76f72ddb658"/>
+    <Link rel="edit" type="application/vnd.vmware.vcloud.catalogItem+xml" href="https://zone.myvcloud.com/api/v1.0/catalogItem/ceb369f7-1d07-4e32-9dbd-ebb5aa6ca55c"/>
+    <Link rel="remove" href="https://zone.myvcloud.com/api/v1.0/catalogItem/ceb369f7-1d07-4e32-9dbd-ebb5aa6ca55c"/>
+    <Description> </Description>
+    <Entity type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="UbuntuServer-x64-2GB" href="https://zone.myvcloud.com/api/v1.0/vAppTemplate/vappTemplate-51891b97-c5dd-47dc-a687-aabae354f728"/>
+</CatalogItem>

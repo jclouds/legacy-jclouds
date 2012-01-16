@@ -46,6 +46,7 @@ import net.schmizz.sshj.connection.ConnectionException;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.connection.channel.direct.Session.Command;
 import net.schmizz.sshj.sftp.SFTPClient;
+import net.schmizz.sshj.sftp.SFTPException;
 import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 import net.schmizz.sshj.userauth.UserAuthException;
@@ -122,7 +123,9 @@ public class SshjSshClient implements SshClient {
    // NOTE cannot retry io exceptions, as SSHException is a part of the chain
    private Predicate<Throwable> retryPredicate = or(instanceOf(ConnectionException.class),
          instanceOf(ConnectException.class), instanceOf(SocketTimeoutException.class),
-         instanceOf(TransportException.class));
+         instanceOf(TransportException.class), 
+         // safe to retry sftp exceptions as they are idempotent
+         instanceOf(SFTPException.class));
 
    @Resource
    @Named("jclouds.ssh")

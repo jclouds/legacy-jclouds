@@ -18,8 +18,8 @@
  */
 package org.jclouds.util;
 
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
 import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
 import static org.jclouds.util.Throwables2.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause;
 import static org.testng.Assert.assertEquals;
@@ -37,6 +37,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.CreationException;
 import com.google.inject.ProvisionException;
 import com.google.inject.spi.Message;
 
@@ -46,12 +47,6 @@ import com.google.inject.spi.Message;
 @Test
 public class Throwables2Test {
 
-   public void testGetCause() {
-      AuthorizationException aex = createMock(AuthorizationException.class);
-      Message message = new Message(ImmutableList.of(), "test", aex);
-      ProvisionException pex = new ProvisionException(ImmutableSet.of(message));
-      assertEquals(getFirstThrowableOfType(pex, AuthorizationException.class), aex);
-   }
 
    public void testGetFirstThrowableOfTypeSubclass() {
       SocketException aex = createMock(SocketException.class);
@@ -61,6 +56,13 @@ public class Throwables2Test {
    public void testGetFirstThrowableOfTypeOuter() {
       AuthorizationException aex = createMock(AuthorizationException.class);
       assertEquals(getFirstThrowableOfType(aex, AuthorizationException.class), aex);
+   }
+   
+   public void testGetCause() {
+      AuthorizationException aex = createMock(AuthorizationException.class);
+      Message message = new Message(ImmutableList.of(), "test", aex);
+      ProvisionException pex = new ProvisionException(ImmutableSet.of(message));
+      assertEquals(getFirstThrowableOfType(pex, AuthorizationException.class), aex);
    }
 
    public void testGetFirstThrowableOfTypeInner() {
@@ -80,6 +82,34 @@ public class Throwables2Test {
    public void testGetFirstThrowableOfTypeWhenCauseIsNull() {
       Message message = new Message(ImmutableList.of(), "test", null);
       ProvisionException pex = new ProvisionException(ImmutableSet.of(message));
+      assertEquals(getFirstThrowableOfType(pex, AuthorizationException.class), null);
+   }
+
+
+   public void testGetCauseCreation() {
+      AuthorizationException aex = createMock(AuthorizationException.class);
+      Message message = new Message(ImmutableList.of(), "test", aex);
+      CreationException pex = new CreationException(ImmutableSet.of(message));
+      assertEquals(getFirstThrowableOfType(pex, AuthorizationException.class), aex);
+   }
+
+   public void testGetFirstThrowableOfTypeInnerCreation() {
+      AuthorizationException aex = createMock(AuthorizationException.class);
+      Message message = new Message(ImmutableList.of(), "test", aex);
+      CreationException pex = new CreationException(ImmutableSet.of(message));
+      assertEquals(getFirstThrowableOfType(pex, AuthorizationException.class), aex);
+   }
+
+   public void testGetFirstThrowableOfTypeFailCreation() {
+      TimeoutException aex = createMock(TimeoutException.class);
+      Message message = new Message(ImmutableList.of(), "test", aex);
+      CreationException pex = new CreationException(ImmutableSet.of(message));
+      assertEquals(getFirstThrowableOfType(pex, AuthorizationException.class), null);
+   }
+
+   public void testGetFirstThrowableOfTypeWhenCauseIsNullCreation() {
+      Message message = new Message(ImmutableList.of(), "test", null);
+      CreationException pex = new CreationException(ImmutableSet.of(message));
       assertEquals(getFirstThrowableOfType(pex, AuthorizationException.class), null);
    }
 
@@ -132,6 +162,13 @@ public class Throwables2Test {
    public void testPropagateProvisionExceptionAuthorizationException() throws Exception {
       Exception e = new AuthorizationException();
       returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new ProvisionException(ImmutableSet.of(new Message(
+               ImmutableList.of(), "Error in custom provider",e))));
+   }
+
+   @Test(expectedExceptions = AuthorizationException.class)
+   public void testPropagateCreationExceptionAuthorizationException() throws Exception {
+      Exception e = new AuthorizationException();
+      returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new CreationException(ImmutableSet.of(new Message(
                ImmutableList.of(), "Error in custom provider",e))));
    }
 

@@ -41,9 +41,22 @@
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>/tweets/*</url-pattern>
     </servlet-mapping>
-      
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>/stores/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- limit submission of storage tasks to the cron job -->
+    <security-constraint>
+        <web-resource-collection>
+            <url-pattern>/stores/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
-
 </web-app>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ovf:Envelope xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:vcloud="http://www.vmware.com/vcloud/v1" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2.22.0/CIM_VirtualSystemSettingData.xsd http://schemas.dmtf.org/ovf/envelope/1 http://schemas.dmtf.org/ovf/envelope/1/dsp8023_1.1.0.xsd http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2.22.0/CIM_ResourceAllocationSettingData.xsd http://www.vmware.com/vcloud/v1 https://zone.myvcloud.com/api/v1.0/schema/master.xsd">
+    <ovf:References/>
+    <ovf:NetworkSection>
+        <ovf:Info>The list of logical networks</ovf:Info>
+        <ovf:Network ovf:name="none">
+            <ovf:Description>This is a special place-holder used for disconnected network interfaces.</ovf:Description>
+        </ovf:Network>
+    </ovf:NetworkSection>
+    <vcloud:NetworkConfigSection ovf:required="false">
+        <ovf:Info>The configuration parameters for logical networks</ovf:Info>
+        <vcloud:NetworkConfig networkName="none">
+            <vcloud:Description>This is a special place-holder used for disconnected network interfaces.</vcloud:Description>
+            <vcloud:Configuration>
+                <vcloud:IpScope>
+                    <vcloud:IsInherited>false</vcloud:IsInherited>
+                    <vcloud:Gateway>196.254.254.254</vcloud:Gateway>
+                    <vcloud:Netmask>255.255.0.0</vcloud:Netmask>
+                    <vcloud:Dns1>196.254.254.254</vcloud:Dns1>
+                </vcloud:IpScope>
+                <vcloud:FenceMode>isolated</vcloud:FenceMode>
+            </vcloud:Configuration>
+            <vcloud:IsDeployed>false</vcloud:IsDeployed>
+        </vcloud:NetworkConfig>
+    </vcloud:NetworkConfigSection>
+    <vcloud:LeaseSettingsSection ovf:required="false">
+        <ovf:Info>Lease settings section</ovf:Info>
+        <vcloud:DeploymentLeaseInSeconds>0</vcloud:DeploymentLeaseInSeconds>
+        <vcloud:StorageLeaseInSeconds>5184000</vcloud:StorageLeaseInSeconds>
+        <vcloud:StorageLeaseExpiration>2012-03-12T17:40:44.491-06:00</vcloud:StorageLeaseExpiration>
+    </vcloud:LeaseSettingsSection>
+    <vcloud:CustomizationSection ovf:required="false">
+        <ovf:Info>VApp template customization section</ovf:Info>
+        <vcloud:CustomizeOnInstantiate>true</vcloud:CustomizeOnInstantiate>
+    </vcloud:CustomizationSection>
+    <ovf:VirtualSystem ovf:id="UbuntuServer-x64-2GB">
+        <ovf:Info>A virtual machine: </ovf:Info>
+        <ovf:Name>UbuntuServer-x64-2GB</ovf:Name>
+        <ovf:OperatingSystemSection xmlns:vmw="http://www.vmware.com/schema/ovf" ovf:id="94" vmw:osType="ubuntu64Guest">
+            <ovf:Info>Specifies the operating system installed</ovf:Info>
+            <ovf:Description>Ubuntu Linux (64-bit)</ovf:Description>
+        </ovf:OperatingSystemSection>
+        <ovf:VirtualHardwareSection>
+            <ovf:Info>Virtual hardware requirements</ovf:Info>
+            <ovf:System>
+                <vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+                <vssd:InstanceID>0</vssd:InstanceID>
+                <vssd:VirtualSystemIdentifier>UbuntuServer-x64-2GB</vssd:VirtualSystemIdentifier>
+                <vssd:VirtualSystemType>vmx-07</vssd:VirtualSystemType>
+            </ovf:System>
+            <ovf:Item>
+                <rasd:Address>00:50:56:01:02:9f</rasd:Address>
+                <rasd:AddressOnParent>0</rasd:AddressOnParent>
+                <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
+                <rasd:Connection vcloud:primaryNetworkConnection="true" vcloud:ipAddressingMode="NONE">none</rasd:Connection>
+                <rasd:Description>PCNet32 ethernet adapter</rasd:Description>
+                <rasd:ElementName>Network adapter 0</rasd:ElementName>
+                <rasd:InstanceID>1</rasd:InstanceID>
+                <rasd:ResourceSubType>PCNet32</rasd:ResourceSubType>
+                <rasd:ResourceType>10</rasd:ResourceType>
+            </ovf:Item>
+            <ovf:Item>
+                <rasd:Address>0</rasd:Address>
+                <rasd:Description>SCSI Controller</rasd:Description>
+                <rasd:ElementName>SCSI Controller 0</rasd:ElementName>
+                <rasd:InstanceID>2</rasd:InstanceID>
+                <rasd:ResourceSubType>lsilogic</rasd:ResourceSubType>
+                <rasd:ResourceType>6</rasd:ResourceType>
+            </ovf:Item>
+            <ovf:Item>
+                <rasd:AddressOnParent>0</rasd:AddressOnParent>
+                <rasd:Description>Hard disk</rasd:Description>
+                <rasd:ElementName>Hard disk 1</rasd:ElementName>
+                <rasd:HostResource vcloud:capacity="2048" vcloud:busType="6" vcloud:busSubType="lsilogic"/>
+                <rasd:InstanceID>2000</rasd:InstanceID>
+                <rasd:Parent>2</rasd:Parent>
+                <rasd:ResourceType>17</rasd:ResourceType>
+            </ovf:Item>
+            <ovf:Item>
+                <rasd:Address>0</rasd:Address>
+                <rasd:Description>IDE Controller</rasd:Description>
+                <rasd:ElementName>IDE Controller 0</rasd:ElementName>
+                <rasd:InstanceID>3</rasd:InstanceID>
+                <rasd:ResourceType>5</rasd:ResourceType>
+            </ovf:Item>
+            <ovf:Item>
+                <rasd:AddressOnParent>0</rasd:AddressOnParent>
+                <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
+                <rasd:Description>CD/DVD Drive</rasd:Description>
+                <rasd:ElementName>CD/DVD Drive 1</rasd:ElementName>
+                <rasd:HostResource/>
+                <rasd:InstanceID>3000</rasd:InstanceID>
+                <rasd:Parent>3</rasd:Parent>
+                <rasd:ResourceType>15</rasd:ResourceType>
+            </ovf:Item>
+            <ovf:Item>
+                <rasd:AddressOnParent>0</rasd:AddressOnParent>
+                <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
+                <rasd:Description>Floppy Drive</rasd:Description>
+                <rasd:ElementName>Floppy Drive 1</rasd:ElementName>
+                <rasd:HostResource/>
+                <rasd:InstanceID>8000</rasd:InstanceID>
+                <rasd:ResourceType>14</rasd:ResourceType>
+            </ovf:Item>
+            <ovf:Item>
+                <rasd:AllocationUnits>hertz * 10^6</rasd:AllocationUnits>
+                <rasd:Description>Number of Virtual CPUs</rasd:Description>
+                <rasd:ElementName>1 virtual CPU(s)</rasd:ElementName>
+                <rasd:InstanceID>4</rasd:InstanceID>
+                <rasd:Reservation>0</rasd:Reservation>
+                <rasd:ResourceType>3</rasd:ResourceType>
+                <rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+                <rasd:Weight>0</rasd:Weight>
+            </ovf:Item>
+            <ovf:Item>
+                <rasd:AllocationUnits>byte * 2^20</rasd:AllocationUnits>
+                <rasd:Description>Memory Size</rasd:Description>
+                <rasd:ElementName>256 MB of memory</rasd:ElementName>
+                <rasd:InstanceID>5</rasd:InstanceID>
+                <rasd:Reservation>0</rasd:Reservation>
+                <rasd:ResourceType>4</rasd:ResourceType>
+                <rasd:VirtualQuantity>256</rasd:VirtualQuantity>
+                <rasd:Weight>0</rasd:Weight>
+            </ovf:Item>
+        </ovf:VirtualHardwareSection>
+        <vcloud:NetworkConnectionSection ovf:required="false">
+            <ovf:Info>Specifies the available VM network connections</ovf:Info>
+            <vcloud:PrimaryNetworkConnectionIndex>0</vcloud:PrimaryNetworkConnectionIndex>
+            <vcloud:NetworkConnection network="none">
+                <vcloud:NetworkConnectionIndex>0</vcloud:NetworkConnectionIndex>
+                <vcloud:IsConnected>false</vcloud:IsConnected>
+                <vcloud:MACAddress>00:50:56:01:02:9f</vcloud:MACAddress>
+                <vcloud:IpAddressAllocationMode>NONE</vcloud:IpAddressAllocationMode>
+            </vcloud:NetworkConnection>
+        </vcloud:NetworkConnectionSection>
+        <vcloud:GuestCustomizationSection ovf:required="false">
+            <ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+            <vcloud:Enabled>true</vcloud:Enabled>
+            <vcloud:ChangeSid>false</vcloud:ChangeSid>
+            <vcloud:JoinDomainEnabled>false</vcloud:JoinDomainEnabled>
+            <vcloud:UseOrgSettings>false</vcloud:UseOrgSettings>
+            <vcloud:AdminPasswordEnabled>true</vcloud:AdminPasswordEnabled>
+            <vcloud:AdminPasswordAuto>true</vcloud:AdminPasswordAuto>
+            <vcloud:ResetPasswordRequired>false</vcloud:ResetPasswordRequired>
+            <vcloud:ComputerName>UbuntuServer</vcloud:ComputerName>
+        </vcloud:GuestCustomizationSection>
+    </ovf:VirtualSystem>
+</ovf:Envelope>

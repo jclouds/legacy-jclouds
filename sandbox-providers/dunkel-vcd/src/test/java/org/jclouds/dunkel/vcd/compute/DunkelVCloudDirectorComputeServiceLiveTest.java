@@ -32,9 +32,4 @@ public class DunkelVCloudDirectorComputeServiceLiveTest extends VCloudComputeSer
       provider = "dunkel-vcd";
    }
 
-   @Override
-   public void setServiceDefaults() {
-      group = "director";
-   }
-
 }

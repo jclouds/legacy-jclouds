@@ -27,7 +27,14 @@ import static org.easymock.classextension.EasyMock.createNiceMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import com.google.common.base.Supplier;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import org.easymock.EasyMock;
+import org.jclouds.virtualbox.Preconfiguration;
+import org.jclouds.virtualbox.domain.IMachineSpec;
+import org.jclouds.virtualbox.domain.IsoSpec;
+import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
@@ -40,6 +47,8 @@ import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Suppliers;
 
+import java.net.URI;
+
 /**
  * @author Mattias Holmqvist
  */
@@ -51,11 +60,14 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       VirtualBoxManager manager = createMock(VirtualBoxManager.class);
       IVirtualBox vBox = createMock(IVirtualBox.class);
+      Supplier<URI> preconfiguration = createNiceMock(Supplier.class);
       String vmName = "jclouds-image-my-ubuntu-image";
-
-      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName).osTypeId("").memoryMB(1024).cleanUpMode(
-               CleanupMode.Full).build();
-
+      VmSpec vmSpec = VmSpec.builder().id(vmName).name(vmName).osTypeId("").memoryMB(1024).cleanUpMode(
+              CleanupMode.Full).build();
+      IMachineSpec machineSpec = IMachineSpec.builder()
+              .iso(IsoSpec.builder().sourcePath("some.iso").installationScript("").preConfiguration(preconfiguration).build())
+              .vm(vmSpec)
+              .network(NetworkSpec.builder().build()).build();
       IMachine createdMachine = createMock(IMachine.class);
       ISession session = createMock(ISession.class);
 
@@ -71,9 +83,9 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       expect(vBox.findMachine(vmName)).andThrow(vBoxException);
 
       expect(vBox.createMachine(anyString(), eq(vmName), anyString(), anyString(), anyBoolean())).andReturn(
-               createdMachine).anyTimes();
+              createdMachine).anyTimes();
       vBox.registerMachine(createdMachine);
-      
+
       expect(vBox.findMachine(vmName)).andReturn(createdMachine).anyTimes();
       expect(manager.getSessionObject()).andReturn(session);
       expect(session.getMachine()).andReturn(createdMachine);
@@ -81,13 +93,13 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       createdMachine.setMemorySize(1024l);
       createdMachine.saveSettings();
       session.unlockMachine();
-      
-      
+
+
       //TODO: this mock test is not finished.
-      
+
       replay(manager, createdMachine, vBox, session);
 
-      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Suppliers.ofInstance(manager), "/tmp/workingDir").apply(launchSpecification);
+      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Suppliers.ofInstance(manager), "/tmp/workingDir").apply(machineSpec);
 
       verify(manager, createdMachine, vBox, session);
    }
@@ -97,6 +109,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
       IVirtualBox vBox = createNiceMock(IVirtualBox.class);
+      Supplier<URI> preconfiguration = createNiceMock(Supplier.class);
       String vmName = "jclouds-image-my-ubuntu-image";
 
       IMachine registeredMachine = createMock(IMachine.class);
@@ -107,8 +120,16 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       replay(manager, vBox);
 
       VmSpec launchSpecification = VmSpec.builder().id("").name(vmName).osTypeId("").memoryMB(1024).cleanUpMode(
-               CleanupMode.Full).build();
-      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Suppliers.ofInstance(manager), "/tmp/workingDir").apply(launchSpecification);
+              CleanupMode.Full).build();
+
+      IMachineSpec machineSpec = IMachineSpec.builder()
+              .iso(IsoSpec.builder()
+                      .sourcePath("some.iso")
+                      .installationScript("dostuff")
+                      .preConfiguration(preconfiguration).build())
+              .vm(launchSpecification)
+              .network(NetworkSpec.builder().build()).build();
+      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Suppliers.ofInstance(manager), "/tmp/workingDir").apply(machineSpec);
    }
 
    @Test(expectedExceptions = VBoxException.class)
@@ -116,6 +137,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
       IVirtualBox vBox = createNiceMock(IVirtualBox.class);
+      Supplier<URI> preconfiguration = createNiceMock(Supplier.class);
       String vmName = "jclouds-image-my-ubuntu-image";
 
       String errorMessage = "VirtualBox error: Soem other VBox error";
@@ -129,12 +151,20 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       replay(manager, vBox);
 
       VmSpec launchSpecification = VmSpec.builder().id("").name(vmName).osTypeId("").cleanUpMode(CleanupMode.Full)
-               .memoryMB(1024).build();
-      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Suppliers.ofInstance(manager), "/tmp/workingDir").apply(launchSpecification);
+              .memoryMB(1024).build();
+      IMachineSpec machineSpec = IMachineSpec.builder()
+              .iso(IsoSpec.builder()
+                      .sourcePath("some.iso")
+                      .installationScript("dostuff")
+                      .preConfiguration(preconfiguration).build())
+              .vm(launchSpecification)
+              .network(NetworkSpec.builder().build()).build();
+
+      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Suppliers.ofInstance(manager), "/tmp/workingDir").apply(machineSpec);
 
    }
 
    private String anyString() {
-      return EasyMock.<String> anyObject();
+      return EasyMock.<String>anyObject();
    }
 }

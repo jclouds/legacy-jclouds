@@ -36,14 +36,14 @@
   <properties>
     <test.nova.endpoint>http://localhost:8773/services/Cloud</test.nova.endpoint>
     <test.nova.api-version>1.1</test.nova.api-version>
-    <test.nova.build-version />
+    <test.nova.build-version></test.nova.build-version>
     <test.nova.identity>FIXME_IDENTITY</test.nova.identity>
     <test.nova.credential>FIXME_CREDENTIALS</test.nova.credential>
-    <test.nova.image-id />
-    <test.nova.image.login-user />
-    <test.nova.image.authenticate-sudo />
-    <test.ssh.keyfile.public />
-    <test.ssh.keyfile.private />
+    <test.nova.image-id></test.nova.image-id>
+    <test.nova.image.login-user></test.nova.image.login-user>
+    <test.nova.image.authenticate-sudo></test.nova.image.authenticate-sudo>
+    <test.ssh.keyfile.public></test.ssh.keyfile.public>
+    <test.ssh.keyfile.private></test.ssh.keyfile.private>
   </properties>
 
   <dependencies>
@@ -100,12 +100,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <dependencies>
-              <dependency>
-                <groupId>org.apache.maven.surefire</groupId>
-                <artifactId>surefire-testng</artifactId>
-              </dependency>
-            </dependencies>
             <executions>
               <execution>
                 <id>integration</id>

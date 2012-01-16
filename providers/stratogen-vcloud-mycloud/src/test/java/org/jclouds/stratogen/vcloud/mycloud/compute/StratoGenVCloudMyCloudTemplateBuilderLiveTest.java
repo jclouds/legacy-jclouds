@@ -31,6 +31,7 @@ import org.jclouds.compute.domain.Template;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -46,24 +47,31 @@ public class StratoGenVCloudMyCloudTemplateBuilderLiveTest extends BaseTemplateB
 
    @Override
    protected Predicate<OsFamilyVersion64Bit> defineUnsupportedOperatingSystems() {
-      return new Predicate<OsFamilyVersion64Bit>() {
+      return Predicates.not(new Predicate<OsFamilyVersion64Bit>() {
 
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
                case UBUNTU:
-                  return !input.version.equals("") || !input.is64Bit;
+                  return input.version.equals("");
+               case DEBIAN:
+                  return input.version.equals("") && !input.is64Bit;
+               case RHEL:
+                  return input.version.equals("") && input.is64Bit;
+               case WINDOWS:
+                  return input.version.equals("") && input.is64Bit;
                default:
-                  return true;
+                  return false;
             }
          }
 
-      };
+      });
    }
 
    @Override
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
+      assertEquals(defaultTemplate.getImage().getName(), "Ubuntu server 11.04 64bit no GUI (base)");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);

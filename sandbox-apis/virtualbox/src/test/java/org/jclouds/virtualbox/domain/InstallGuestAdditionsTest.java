@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
+import org.jclouds.virtualbox.statements.InstallGuestAdditions;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;

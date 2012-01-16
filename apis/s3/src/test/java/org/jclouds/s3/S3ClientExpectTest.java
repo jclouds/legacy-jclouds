@@ -34,7 +34,8 @@ import com.google.common.collect.ImmutableMultimap;
 @Test(groups = "unit", testName = "S3ClientExpectTest")
 public class S3ClientExpectTest extends BaseS3ClientExpectTest {
 
-   public void bucketExistsReturnsTrueOn200AndFalseOn404() {
+   @Test
+   public void testBucketExistsReturnsTrueOn200AndFalseOn404() {
       
       HttpRequest bucketFooExists = HttpRequest.builder().method("HEAD").endpoint(
                URI.create("https://foo.s3.amazonaws.com/?max-keys=0")).headers(

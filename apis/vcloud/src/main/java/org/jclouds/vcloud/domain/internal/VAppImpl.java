@@ -31,6 +31,7 @@ import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.Vm;
+import org.jclouds.vcloud.domain.ovf.VCloudNetworkSection;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -51,9 +52,12 @@ public class VAppImpl extends ReferenceTypeImpl implements VApp {
    private final List<Task> tasks = Lists.newArrayList();
    private final boolean ovfDescriptorUploaded;
    private final Set<Vm> children = Sets.newLinkedHashSet();
-
+   @Nullable
+   private final VCloudNetworkSection networkSection;
+   
    public VAppImpl(String name, String type, URI id, Status status, ReferenceType vdc, @Nullable String description,
-            Iterable<Task> tasks, boolean ovfDescriptorUploaded, Iterable<Vm> children) {
+            Iterable<Task> tasks, boolean ovfDescriptorUploaded, Iterable<Vm> children,
+            @Nullable VCloudNetworkSection networkSection) {
       super(name, type, id);
       this.status = checkNotNull(status, "status");
       this.vdc = vdc;// TODO: once <1.0 is killed check not null
@@ -61,6 +65,7 @@ public class VAppImpl extends ReferenceTypeImpl implements VApp {
       Iterables.addAll(this.tasks, checkNotNull(tasks, "tasks"));
       this.ovfDescriptorUploaded = ovfDescriptorUploaded;
       Iterables.addAll(this.children, checkNotNull(children, "children"));
+      this.networkSection = networkSection; // can be null when copying
    }
 
    /**
@@ -110,7 +115,15 @@ public class VAppImpl extends ReferenceTypeImpl implements VApp {
    public Set<Vm> getChildren() {
       return children;
    }
-
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public VCloudNetworkSection getNetworkSection() {
+      return networkSection;
+   }
+   
    @Override
    public int hashCode() {
       final int prime = 31;

@@ -177,7 +177,7 @@ public class CIMOperatingSystem extends OperatingSystem {
 
    @Override
    public String toString() {
-      return String.format("[osType=%s, arch=%s, description=%s, family=%s, is64Bit=%s, name=%s, version=%s]", osType,
-               arch, description, family, is64Bit, name, version);
+      return "[name=" + name + ", family=" + family + ", version=" + version + ", arch=" + arch + ", is64Bit="
+               + is64Bit + ", description=" + description + ", osType=" + osType+ "]";
    }
 }

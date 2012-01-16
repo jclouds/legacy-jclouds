@@ -281,12 +281,12 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
          assertEquals(context.getComputeService().templateBuilder().build().getImage().getDefaultCredentials(),
                LoginCredentials.builder().user(user).password(pass).authenticateSudo(auth).build());
       } finally {
-         if (context != null)
+         if (context != null){
+            // Need to clear persisted credentials; otherwise next time a ComputeServiceContext is created  
+            // then it will have these "foo" credentials!
+            context.credentialStore().clear();
             context.close();
-         
-         // Need to clear persisted credentials; otherwise next time a ComputeServiceContext is created  
-         // then it will have these "foo" credentials!
-         context.credentialStore().clear();
+         }
       }
    }
 

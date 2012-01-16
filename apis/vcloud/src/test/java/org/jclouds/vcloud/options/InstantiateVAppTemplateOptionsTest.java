@@ -19,7 +19,6 @@
 package org.jclouds.vcloud.options;
 
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.addNetworkConfig;
-import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.customizeOnInstantiate;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.description;
 import static org.testng.Assert.assertEquals;
 
@@ -60,19 +59,6 @@ public class InstantiateVAppTemplateOptionsTest {
       assertEquals(Iterables.get(options.getNetworkConfig(), 0).getNetworkName(), "default");
       assertEquals(Iterables.get(options.getNetworkConfig(), 0).getParentNetwork(), URI.create("http://localhost"));
       assertEquals(Iterables.get(options.getNetworkConfig(), 0).getFenceMode(), FenceMode.BRIDGED);
-   }
-
-   @Test
-   public void testCustomizeOnInstantiate() {
-      InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-      options.customizeOnInstantiate(true);
-      assertEquals(options.shouldCustomizeOnInstantiate(), new Boolean(true));
-   }
-
-   @Test
-   public void testCustomizeOnInstantiateStatic() {
-      InstantiateVAppTemplateOptions options = customizeOnInstantiate(true);
-      assertEquals(options.shouldCustomizeOnInstantiate(), new Boolean(true));
    }
 
    @Test

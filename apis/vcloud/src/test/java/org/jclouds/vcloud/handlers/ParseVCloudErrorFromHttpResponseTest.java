@@ -54,6 +54,19 @@ public class ParseVCloudErrorFromHttpResponseTest extends BaseHttpErrorHandlerTe
    }
 
    @Test
+   public void testGet403NoAcessToEntitySetsResourceNotFoundExceptionOnAPI1_0AgainstVCD1_5() {
+      assertCodeMakes(
+               "GET",
+               URI.create("https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-d3a1f2cd-d07b-4ddc-bf7b-fb7468b4d95a"),
+               403,
+               "HTTP/1.1 403",
+               // NOTE VCD 1.5 appends the api version to the media type
+               VCloudMediaType.ERROR_XML + ";1.0",
+               "<Error xmlns=\"http://www.vmware.com/vcloud/v1\" minorErrorCode=\"ACCESS_TO_RESOURCE_IS_FORBIDDEN\" message=\"No access to entity &quot;(com.vmware.vcloud.entity.vapp:d3a1f2cd-d07b-4ddc-bf7b-fb7468b4d95a)&quot;.\" majorErrorCode=\"403\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.vmware.com/vcloud/v1 http://mycloud.greenhousedata.com/api/v1.0/schema/master.xsd\"></Error>",
+               ResourceNotFoundException.class);
+   }
+
+   @Test
    public void testDelete404SetsHttpResponseException() {
       assertCodeMakes("DELETE", URI.create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"),
                404, "", "", HttpResponseException.class);

@@ -30,6 +30,7 @@ import org.jclouds.cloudloadbalancers.CloudLoadBalancersClient;
 import org.jclouds.cloudloadbalancers.config.CloudLoadBalancersRestClientModule;
 import org.jclouds.cloudloadbalancers.functions.ConvertLB;
 import org.jclouds.cloudloadbalancers.reference.Region;
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.internal.ClassMethodArgs;
@@ -78,7 +79,7 @@ public abstract class BaseCloudLoadBalancersAsyncClientTest<T> extends RestClien
          install(new OpenStackAuthenticationModule() {
             @Override
             protected Supplier<AuthenticationResponse> provideAuthenticationResponseSupplier(
-                     final LoadingCache<String,AuthenticationResponse> cache) {
+                     LoadingCache<Credentials, AuthenticationResponse> cache, Credentials in) {
                return Suppliers.ofInstance(new AuthenticationResponse("token", ImmutableMap.<String, URI> of()));
             }
          });

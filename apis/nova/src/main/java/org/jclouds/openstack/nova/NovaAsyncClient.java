@@ -317,5 +317,28 @@ public interface NovaAsyncClient {
    @Path("/servers/{id}/ips/private")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<String>> listPrivateAddresses(@PathParam("id") int serverId);
+   
+   @POST
+   @Path("/servers/{id}/action")
+   @Consumes
+   @Produces(MediaType.APPLICATION_JSON)
+   @Payload("%7B\"addFloatingIp\":%7B\"address\":\"{address}\"%7D%7D")
+   ListenableFuture<Void> addFloatingIP(@PathParam("id") int serverId, @PayloadParam("address") String ip);
+
+   @GET
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   @QueryParams(keys = "format", values = "json")
+   @Path("/os-floating-ips")
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<? extends Set<FloatingIP>> listFloatingIPs();
+   
+   @GET
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   @QueryParams(keys = "format", values = "json")
+   @Path("/os-floating-ips/{id}")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<FloatingIP> getFloatingIP(@PathParam("id") int id);
 
 }

@@ -26,6 +26,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.JcloudsVersion;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
@@ -50,8 +51,9 @@ import com.google.common.annotations.VisibleForTesting;
 @SingleThreaded
 @Singleton
 public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorService<HTTPRequest> {
-   public static final String USER_AGENT = "jclouds/1.0 urlfetch/1.3.5";
-
+   //TODO: look up gae version
+   public static final String USER_AGENT = String.format("jclouds/%s urlfetch/%s", JcloudsVersion.get(), "1.4.3");
+   
    private final URLFetchService urlFetchService;
    private final ConvertToGaeRequest convertToGaeRequest;
    private final ConvertToJcloudsResponse convertToJcloudsResponse;

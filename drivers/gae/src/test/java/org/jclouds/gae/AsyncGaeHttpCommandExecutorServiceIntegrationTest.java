@@ -63,6 +63,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
+@Test
 public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpCommandExecutorServiceIntegrationTest {
    Logger logger = Logger.CONSOLE;
 

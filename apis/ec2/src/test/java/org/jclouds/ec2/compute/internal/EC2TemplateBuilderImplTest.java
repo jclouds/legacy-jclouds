@@ -93,7 +93,14 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
       return new EC2TemplateBuilderImpl(locations, images, sizes, Suppliers.ofInstance(defaultLocation),
             optionsProvider, templateBuilderProvider, Suppliers.<LoadingCache<RegionAndName, ? extends Image>>ofInstance(imageMap));
    }
+   
 
+   @Override
+   @Test
+   public void testHardwareWithImageIdPredicateOnlyAcceptsImageWhenLocationNull() {
+      // not possible to have null region in ec2
+   }
+   
    @SuppressWarnings("unchecked")
    @Test
    public void testParseOnDemand() {

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vcloud:VAppTemplate xmlns:vcloud="http://www.vmware.com/vcloud/v1" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" ovfDescriptorUploaded="true" status="8" name="Windows 2008 R2 Standard (base) with SP1" type="application/vnd.vmware.vcloud.vAppTempla
+te+xml" href="https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-f8ca27ba-c6ee-44bd-91a9-416f464cba80" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.dmtf.org/ovf/envelope/1 http://schemas.dmtf.org/ovf
+/envelope/1/dsp8023_1.1.0.xsd http://www.vmware.com/vcloud/v1 http://109.233.49.135/api/v1.0/schema/master.xsd">
+    <vcloud:Link rel="catalogItem" type="application/vnd.vmware.vcloud.catalogItem+xml" href="https://vcd.stratogen.net/api/v1.0/catalogItem/16bdea08-f176-48ce-9fe8-fc2265fc1068"/>
+    <vcloud:Link rel="enable" href="https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-f8ca27ba-c6ee-44bd-91a9-416f464cba80/action/enableDownload"/>
+    <vcloud:Link rel="disable" href="https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-f8ca27ba-c6ee-44bd-91a9-416f464cba80/action/disableDownload"/>
+    <vcloud:Link rel="ovf" type="text/xml" href="https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-f8ca27ba-c6ee-44bd-91a9-416f464cba80/ovf"/>
+    <vcloud:Link rel="down" type="application/vnd.vmware.vcloud.owner+xml" href="https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-f8ca27ba-c6ee-44bd-91a9-416f464cba80/owner"/>
+    <vcloud:Description>Windows 2008 R2 Standard Edition
+Service Pack 1
+Internet Explorer 9</vcloud:Description>
+    <vcloud:Children>
+        <vcloud:Vm name="Windows 2008 R2 Standard (Base) with SP1" type="application/vnd.vmware.vcloud.vm+xml" href="https://vcd.stratogen.net/api/v1.0/vAppTemplate/vm-2ac49c8b-5cd9-428d-86da-24cfe9144b94">
+            <vcloud:Link rel="up" type="application/vnd.vmware.vcloud.vAppTemplate+xml" href="https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-f8ca27ba-c6ee-44bd-91a9-416f464cba80"/>
+            <vcloud:Description>Windows 2008 R2 Standard Edition
+Service Pack 1
+Internet Explorer 9</vcloud:Description>
+            <vcloud:NetworkConnectionSection type="application/vnd.vmware.vcloud.networkConnectionSection+xml" href="https://vcd.stratogen.net/api/v1.0/vAppTemplate/vm-2ac49c8b-5cd9-428d-86da-24cfe9144b94/networkConnectionSection/" ovf:required="false">
+                <ovf:Info>Specifies the available VM network connections</ovf:Info>
+                <vcloud:PrimaryNetworkConnectionIndex>0</vcloud:PrimaryNetworkConnectionIndex>
+                <vcloud:NetworkConnection network="StratoGen Ext Net">
+                    <vcloud:NetworkConnectionIndex>0</vcloud:NetworkConnectionIndex>
+                    <vcloud:IpAddress>212.54.128.56</vcloud:IpAddress>
+                    <vcloud:IsConnected>true</vcloud:IsConnected>
+                    <vcloud:MACAddress>00:50:56:01:0d:3c</vcloud:MACAddress>
+                    <vcloud:IpAddressAllocationMode>POOL</vcloud:IpAddressAllocationMode>
+                </vcloud:NetworkConnection>
+            </vcloud:NetworkConnectionSection>
+            <vcloud:GuestCustomizationSection type="application/vnd.vmware.vcloud.guestCustomizationSection+xml" href="https://vcd.stratogen.net/api/v1.0/vAppTemplate/vm-2ac49c8b-5cd9-428d-86da-24cfe9144b94/guestCustomizationSection/" ovf:required="false">
+                <ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+                <vcloud:Enabled>true</vcloud:Enabled>
+                <vcloud:ChangeSid>true</vcloud:ChangeSid>
+                <vcloud:JoinDomainEnabled>false</vcloud:JoinDomainEnabled>
+                <vcloud:UseOrgSettings>false</vcloud:UseOrgSettings>
+                <vcloud:AdminPasswordEnabled>true</vcloud:AdminPasswordEnabled>
+                <vcloud:AdminPasswordAuto>true</vcloud:AdminPasswordAuto>
+                <vcloud:AdminPassword>$6fEPL93</vcloud:AdminPassword>
+                <vcloud:ResetPasswordRequired>false</vcloud:ResetPasswordRequired>
+                <vcloud:ComputerName>Win2008r2Stand</vcloud:ComputerName>
+            </vcloud:GuestCustomizationSection>
+            <vcloud:VAppScopedLocalId>ac2ce03d-0491-46f7-afc6-37ffe5b30f74</vcloud:VAppScopedLocalId>
+        </vcloud:Vm>
+    </vcloud:Children>
+    <ovf:NetworkSection vcloud:href="https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-f8ca27ba-c6ee-44bd-91a9-416f464cba80/networkSection/" vcloud:type="application/vnd.vmware.vcloud.networkSection+xml">
+        <ovf:Info>The list of logical networks</ovf:Info>
+        <ovf:Network ovf:name="StratoGen Ext Net">
+            <ovf:Description/>
+        </ovf:Network>
+    </ovf:NetworkSection>
+    <vcloud:NetworkConfigSection type="application/vnd.vmware.vcloud.networkConfigSection+xml" href="https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-f8ca27ba-c6ee-44bd-91a9-416f464cba80/networkConfigSection/" ovf:required="false">
+        <ovf:Info>The configuration parameters for logical networks</ovf:Info>
+        <vcloud:NetworkConfig networkName="StratoGen Ext Net">
+            <vcloud:Description/>
+            <vcloud:Configuration>
+                <vcloud:IpScope>
+                    <vcloud:IsInherited>true</vcloud:IsInherited>
+                    <vcloud:Gateway>212.54.128.1</vcloud:Gateway>
+                    <vcloud:Netmask>255.255.255.0</vcloud:Netmask>
+                    <vcloud:Dns1>109.233.48.141</vcloud:Dns1>
+                    <vcloud:Dns2>109.233.48.142</vcloud:Dns2>
+                    <vcloud:IpRanges>
+                        <vcloud:IpRange>
+                            <vcloud:StartAddress>212.54.128.4</vcloud:StartAddress>
+                            <vcloud:EndAddress>212.54.128.220</vcloud:EndAddress>
+                        </vcloud:IpRange>
+                    </vcloud:IpRanges>
+                </vcloud:IpScope>
+                <vcloud:FenceMode>bridged</vcloud:FenceMode>
+                <vcloud:Features>
+                    <vcloud:DhcpService>
+                        <vcloud:IsEnabled>false</vcloud:IsEnabled>
+                        <vcloud:DefaultLeaseTime>3600</vcloud:DefaultLeaseTime>
+                        <vcloud:MaxLeaseTime>7200</vcloud:MaxLeaseTime>
+                        <vcloud:IpRange>
+                            <vcloud:StartAddress>212.54.128.201</vcloud:StartAddress>
+                            <vcloud:EndAddress>212.54.128.254</vcloud:EndAddress>
+                        </vcloud:IpRange>
+                    </vcloud:DhcpService>
+                    <vcloud:FirewallService>
+                        <vcloud:IsEnabled>true</vcloud:IsEnabled>
+                    </vcloud:FirewallService>
+                    <vcloud:NatService>
+                        <vcloud:IsEnabled>true</vcloud:IsEnabled>
+                        <vcloud:NatType>ipTranslation</vcloud:NatType>
+                        <vcloud:Policy>allowTraffic</vcloud:Policy>
+                        <vcloud:NatRule>
+                            <vcloud:OneToOneVmRule>
+                                <vcloud:MappingMode>automatic</vcloud:MappingMode>
+                                <vcloud:VAppScopedVmId>ac2ce03d-0491-46f7-afc6-37ffe5b30f74</vcloud:VAppScopedVmId>
+                                <vcloud:VmNicId>0</vcloud:VmNicId>
+                            </vcloud:OneToOneVmRule>
+                        </vcloud:NatRule>
+                    </vcloud:NatService>
+                </vcloud:Features>
+            </vcloud:Configuration>
+            <vcloud:IsDeployed>false</vcloud:IsDeployed>
+        </vcloud:NetworkConfig>
+    </vcloud:NetworkConfigSection>
+    <vcloud:LeaseSettingsSection type="application/vnd.vmware.vcloud.leaseSettingsSection+xml" href="https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-f8ca27ba-c6ee-44bd-91a9-416f464cba80/leaseSettingsSection/" ovf:required="false">
+        <ovf:Info>Lease settings section</ovf:Info>
+        <vcloud:Link rel="edit" type="application/vnd.vmware.vcloud.leaseSettingsSection+xml" href="https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-f8ca27ba-c6ee-44bd-91a9-416f464cba80/leaseSettingsSection/"/>
+        <vcloud:StorageLeaseInSeconds>0</vcloud:StorageLeaseInSeconds>
+    </vcloud:LeaseSettingsSection>
+    <vcloud:CustomizationSection type="application/vnd.vmware.vcloud.customizationSection+xml" href="https://vcd.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-f8ca27ba-c6ee-44bd-91a9-416f464cba80/customizationSection/" ovf:required="false">
+        <ovf:Info>VApp template customization section</ovf:Info>
+        <vcloud:CustomizeOnInstantiate>true</vcloud:CustomizeOnInstantiate>
+    </vcloud:CustomizationSection>
+</vcloud:VAppTemplate>

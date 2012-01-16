@@ -19,6 +19,7 @@
 package org.jclouds.openstack.nova.domain;
 
 import com.google.common.collect.Maps;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 import java.util.Map;
@@ -44,6 +45,9 @@ public class Server extends Resource {
    private String uuid;
    private Flavor flavor;
    private Image image;
+
+   @SerializedName(value="key_name")
+   private String keyName;
 
    private Date created;
    private Date updated;
@@ -191,6 +195,14 @@ public class Server extends Resource {
    public void setImage(Image image) {
        this.image = image;
    }
+   
+   public String getKeyName() {
+	   return keyName;
+   }
+   
+   public void setKeyName(String keyName) {
+	   this.keyName = keyName;
+   }
 
    @Override
    public int hashCode() {
@@ -204,6 +216,7 @@ public class Server extends Resource {
       result = prime * result + ((imageRef == null) ? 0 : imageRef.hashCode());
       result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
       result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+      result = prime * result + ((keyName == null) ? 0 : keyName.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((flavor == null) ? 0 : flavor.hashCode());
       result = prime * result + ((image == null) ? 0 : image.hashCode());
@@ -256,6 +269,11 @@ public class Server extends Resource {
             return false;
       } else if (!uuid.equals(other.uuid))
          return false;
+      if (keyName == null) {
+          if (other.keyName != null)
+             return false;
+       } else if (!keyName.equals(other.keyName))
+          return false;
       if (name == null) {
          if (other.name != null)
             return false;
@@ -282,7 +300,7 @@ public class Server extends Resource {
    public String toString() {
       return "Server [addresses=" + addresses + ", adminPass=" + adminPass + ", flavorRef="
             + flavorRef + ", hostId=" + hostId + ", id=" + id + ", imageRef=" + imageRef
-            + ", metadata=" + metadata + ", uuid=" + uuid + ", name=" + name + "]";
+            + ", metadata=" + metadata + ", uuid=" + uuid + ", name=" + name + ", keyName=" + keyName + "]";
    }
 
 }

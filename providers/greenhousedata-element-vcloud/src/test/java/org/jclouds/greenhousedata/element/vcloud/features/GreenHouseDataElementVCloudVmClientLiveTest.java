@@ -18,7 +18,6 @@
  */
 package org.jclouds.greenhousedata.element.vcloud.features;
 
-import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.vcloud.features.VmClientLiveTest;
 import org.testng.annotations.Test;
 
@@ -33,15 +32,5 @@ public class GreenHouseDataElementVCloudVmClientLiveTest extends VmClientLiveTes
    public GreenHouseDataElementVCloudVmClientLiveTest() {
       provider = "greenhousedata-element-vcloud";
    }
-
-   @Override
-   protected void checkApiOutput(String apiOutput) {
-      checkApiOutput1_0_0(apiOutput);
-   }
    
-   @Override
-   protected void checkCustomizationOccurred(ExecResponse exec) {
-      // for some reason customization doesn't actually occur
-      assert exec.getOutput().equals("") : exec;
-   }
 }

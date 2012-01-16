@@ -54,10 +54,7 @@ import com.google.inject.Injector;
 public class VAppTemplateHandlerTest {
 
    public void testUbuntuTemplate() {
-      InputStream is = getClass().getResourceAsStream("/vAppTemplate.xml");
-      Injector injector = Guice.createInjector(new SaxParserModule());
-      Factory factory = injector.getInstance(ParseSax.Factory.class);
-      VAppTemplate result = factory.create(injector.getInstance(VAppTemplateHandler.class)).parse(is);
+      VAppTemplate result = parseTemplate();
       assertEquals(result.getName(), "Ubuntu Template");
       assertEquals(result.getHref(), URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921"));
@@ -118,6 +115,14 @@ public class VAppTemplateHandlerTest {
 
    }
 
+   public static VAppTemplate parseTemplate() {
+      InputStream is = VAppTemplateHandlerTest.class.getResourceAsStream("/vAppTemplate.xml");
+      Injector injector = Guice.createInjector(new SaxParserModule());
+      Factory factory = injector.getInstance(ParseSax.Factory.class);
+      VAppTemplate result = factory.create(injector.getInstance(VAppTemplateHandler.class)).parse(is);
+      return result;
+   }
+
    public void testCopyingTemplate() {
       InputStream is = getClass().getResourceAsStream("/vAppTemplate-copying.xml");
       Injector injector = Guice.createInjector(new SaxParserModule());
@@ -148,4 +153,14 @@ public class VAppTemplateHandlerTest {
       assertEquals(result.getNetworkSection(), null);
 
    }
+   
+   public void testVAppTemplateWithNewlinesAndNamespacedElements() {
+      InputStream is = getClass().getResourceAsStream("/vAppTemplate1.0-vcd15_withNewlines.xml");
+      Injector injector = Guice.createInjector(new SaxParserModule());
+      Factory factory = injector.getInstance(ParseSax.Factory.class);
+
+      factory.create(injector.getInstance(VAppTemplateHandler.class)).parse(is);
+   }
+   
+   
 }

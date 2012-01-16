@@ -23,12 +23,51 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.ovf.NetworkSection;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class NetworkConfig {
+
+   public Builder toBuilder() {
+      return builder().fromNetworkConfig(this);
+   }
+
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+      private String networkName;
+      private URI parentNetwork;
+      private FenceMode fenceMode;
+
+      public Builder networkName(String networkName) {
+         this.networkName = networkName;
+         return this;
+      }
+
+      public Builder parentNetwork(URI parentNetwork) {
+         this.parentNetwork = parentNetwork;
+         return this;
+      }
+
+      public Builder fenceMode(FenceMode fenceMode) {
+         this.fenceMode = fenceMode;
+         return this;
+      }
+
+      public Builder fromNetworkConfig(NetworkConfig in) {
+         return networkName(in.getNetworkName()).parentNetwork(in.getParentNetwork()).fenceMode(in.getFenceMode());
+      }
+
+      public NetworkConfig build() {
+         return new NetworkConfig(networkName, parentNetwork, fenceMode);
+      }
+   }
+
    @Nullable
    private final String networkName;
    private final URI parentNetwork;
@@ -86,7 +125,6 @@ public class NetworkConfig {
    public FenceMode getFenceMode() {
       return fenceMode;
    }
-
 
    @Override
    public int hashCode() {

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VAppTemplate xmlns="http://www.vmware.com/vcloud/v1" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" ovfDescriptorUploaded="true" status="8" name="UbuntuServer-x64-2GB" type="application/vnd.vmware.vcloud.vAppTemplate+xml" href="https://zone.myvcloud.com/api/v1.0/vAppTemplate/vappTemplate-51891b97-c5dd-47dc-a687-aabae354f728" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.dmtf.org/ovf/envelope/1 http://schemas.dmtf.org/ovf/envelope/1/dsp8023_1.1.0.xsd http://www.vmware.com/vcloud/v1 https://zone.myvcloud.com/api/v1.0/schema/master.xsd">
+    <Link rel="up" type="application/vnd.vmware.vcloud.vdc+xml" href="https://zone.myvcloud.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f"/>
+    <Link rel="catalogItem" type="application/vnd.vmware.vcloud.catalogItem+xml" href="https://zone.myvcloud.com/api/v1.0/catalogItem/ceb369f7-1d07-4e32-9dbd-ebb5aa6ca55c"/>
+    <Link rel="remove" href="https://zone.myvcloud.com/api/v1.0/vAppTemplate/vappTemplate-51891b97-c5dd-47dc-a687-aabae354f728"/>
+    <Link rel="edit" type="application/vnd.vmware.vcloud.vAppTemplate+xml" href="https://zone.myvcloud.com/api/v1.0/vAppTemplate/vappTemplate-51891b97-c5dd-47dc-a687-aabae354f728"/>
+    <Link rel="enable" href="https://zone.myvcloud.com/api/v1.0/vAppTemplate/vappTemplate-51891b97-c5dd-47dc-a687-aabae354f728/action/enableDownload"/>
+    <Link rel="disable" href="https://zone.myvcloud.com/api/v1.0/vAppTemplate/vappTemplate-51891b97-c5dd-47dc-a687-aabae354f728/action/disableDownload"/>
+    <Link rel="ovf" type="text/xml" href="https://zone.myvcloud.com/api/v1.0/vAppTemplate/vappTemplate-51891b97-c5dd-47dc-a687-aabae354f728/ovf"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.owner+xml" href="https://zone.myvcloud.com/api/v1.0/vAppTemplate/vappTemplate-51891b97-c5dd-47dc-a687-aabae354f728/owner"/>
+    <Description/>
+    <Children>
+        <Vm name="UbuntuServer-x64-2GB" type="application/vnd.vmware.vcloud.vm+xml" href="https://zone.myvcloud.com/api/v1.0/vAppTemplate/vm-3aee3d0d-106a-4c63-8529-1edde335b212">
+            <Link rel="up" type="application/vnd.vmware.vcloud.vAppTemplate+xml" href="https://zone.myvcloud.com/api/v1.0/vAppTemplate/vappTemplate-51891b97-c5dd-47dc-a687-aabae354f728"/>
+            <Description/>
+            <NetworkConnectionSection type="application/vnd.vmware.vcloud.networkConnectionSection+xml" href="https://zone.myvcloud.com/api/v1.0/vAppTemplate/vm-3aee3d0d-106a-4c63-8529-1edde335b212/networkConnectionSection/" ovf:required="false">
+                <ovf:Info>Specifies the available VM network connections</ovf:Info>
+                <PrimaryNetworkConnectionIndex>0</PrimaryNetworkConnectionIndex>
+                <NetworkConnection network="none">
+                    <NetworkConnectionIndex>0</NetworkConnectionIndex>
+                    <IsConnected>false</IsConnected>
+                    <MACAddress>00:50:56:01:02:9f</MACAddress>
+                    <IpAddressAllocationMode>NONE</IpAddressAllocationMode>
+                </NetworkConnection>
+            </NetworkConnectionSection>
+            <GuestCustomizationSection type="application/vnd.vmware.vcloud.guestCustomizationSection+xml" href="https://zone.myvcloud.com/api/v1.0/vAppTemplate/vm-3aee3d0d-106a-4c63-8529-1edde335b212/guestCustomizationSection/" ovf:required="false">
+                <ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+                <Enabled>true</Enabled>
+                <ChangeSid>false</ChangeSid>
+                <JoinDomainEnabled>false</JoinDomainEnabled>
+                <UseOrgSettings>false</UseOrgSettings>
+                <AdminPasswordEnabled>true</AdminPasswordEnabled>
+                <AdminPasswordAuto>true</AdminPasswordAuto>
+                <ResetPasswordRequired>false</ResetPasswordRequired>
+                <ComputerName>UbuntuServer</ComputerName>
+            </GuestCustomizationSection>
+            <VAppScopedLocalId>f114ade7-a63f-4f8b-b30b-44e9ff77e068</VAppScopedLocalId>
+        </Vm>
+    </Children>
+    <ovf:NetworkSection xmlns:vcloud="http://www.vmware.com/vcloud/v1" vcloud:href="https://zone.myvcloud.com/api/v1.0/vAppTemplate/vappTemplate-51891b97-c5dd-47dc-a687-aabae354f728/networkSection/" vcloud:type="application/vnd.vmware.vcloud.networkSection+xml">
+        <ovf:Info>The list of logical networks</ovf:Info>
+        <ovf:Network ovf:name="none">
+            <ovf:Description>This is a special place-holder used for disconnected network interfaces.</ovf:Description>
+        </ovf:Network>
+    </ovf:NetworkSection>
+    <NetworkConfigSection type="application/vnd.vmware.vcloud.networkConfigSection+xml" href="https://zone.myvcloud.com/api/v1.0/vAppTemplate/vappTemplate-51891b97-c5dd-47dc-a687-aabae354f728/networkConfigSection/" ovf:required="false">
+        <ovf:Info>The configuration parameters for logical networks</ovf:Info>
+        <NetworkConfig networkName="none">
+            <Description>This is a special place-holder used for disconnected network interfaces.</Description>
+            <Configuration>
+                <IpScope>
+                    <IsInherited>false</IsInherited>
+                    <Gateway>196.254.254.254</Gateway>
+                    <Netmask>255.255.0.0</Netmask>
+                    <Dns1>196.254.254.254</Dns1>
+                </IpScope>
+                <FenceMode>isolated</FenceMode>
+            </Configuration>
+            <IsDeployed>false</IsDeployed>
+        </NetworkConfig>
+    </NetworkConfigSection>
+    <LeaseSettingsSection type="application/vnd.vmware.vcloud.leaseSettingsSection+xml" href="https://zone.myvcloud.com/api/v1.0/vAppTemplate/vappTemplate-51891b97-c5dd-47dc-a687-aabae354f728/leaseSettingsSection/" ovf:required="false">
+        <ovf:Info>Lease settings section</ovf:Info>
+        <Link rel="edit" type="application/vnd.vmware.vcloud.leaseSettingsSection+xml" href="https://zone.myvcloud.com/api/v1.0/vAppTemplate/vappTemplate-51891b97-c5dd-47dc-a687-aabae354f728/leaseSettingsSection/"/>
+        <StorageLeaseInSeconds>5184000</StorageLeaseInSeconds>
+        <StorageLeaseExpiration>2012-03-12T17:40:44.491-06:00</StorageLeaseExpiration>
+    </LeaseSettingsSection>
+    <CustomizationSection type="application/vnd.vmware.vcloud.customizationSection+xml" href="https://zone.myvcloud.com/api/v1.0/vAppTemplate/vappTemplate-51891b97-c5dd-47dc-a687-aabae354f728/customizationSection/" ovf:required="false">
+        <ovf:Info>VApp template customization section</ovf:Info>
+        <CustomizeOnInstantiate>true</CustomizeOnInstantiate>
+    </CustomizationSection>
+</VAppTemplate>

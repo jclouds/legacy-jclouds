@@ -325,10 +325,12 @@ Here's an example of creating and running a small linux node in the group webser
       kw-memfn-0arg [:smallest :fastest :biggest :any])
     (make-option-map
       kw-memfn-1arg
-      [:os-family :location-id :architecture :image-id :hardware-id
-       :os-name-matches :os-version-matches :os-description-matches
-       :os-64-bit :image-version-matches :image-name-matches
-       :image-description-matches :min-cores :min-ram])))
+      [:from-hardware :from-image :from-template
+       :os-family :location-id :image-id :hardware-id
+       :os-name-matches :os-description-matches :os-version-matches
+       :os-arch-matches :os-64-bit :image-name-matches
+       :image-version-matches :image-description-matches :image-matches
+       :min-cores :min-ram])))
 
 (def
   ^{:doc "TemplateOptions functions" :private true}
@@ -336,23 +338,56 @@ Here's an example of creating and running a small linux node in the group webser
   (merge
     (make-option-map
       kw-memfn-0arg
-      [:destroy-on-error :enable-monitoring :no-placement-group :no-key-pair
-       :with-details])
+      [;; ec2 trmk-ecloud trmk-vcloudexpress
+         :no-key-pair
+       ;; aws-ec2
+         :enable-monitoring :no-placement-group])
     (make-option-map
       kw-memfn-1arg
-      [:run-script :install-private-key :authorize-public-key
-       :override-credentials-with :override-login-user-with
-       :override-login-credential-with
-       ;; aws ec2 options
-       :spot-price :spot-options :placement-group :subnet-id
-       :block-device-mappings :unmapDeviceNamed :security-groups
-       :key-pair :user-data])
-    (make-option-map kw-memfn-varargs [:inbound-ports])
+      [;; RunScriptOptions
+         ;; deprecated
+         :override-credentials-with
+         :override-login-credentials
+         ;; deprecated
+         :override-login-user-with
+         :override-login-user
+         ;; deprecated
+         :override-login-credential-with
+         :override-login-password :override-login-privateKey
+         :override-authenticate-sudo
+         
+         :name-task :run-as-root :wrap-in-init-script :block-on-complete
+         :block-on-port
+       ;; TemplateOptions
+         :run-script :install-private-key :authorize-public-key :tags
+       ;; cloudstack
+         :security-group-id :network-id :network-ids :setup-static-nat
+         :ip-on-default-network :ips-to-networks
+       ;; ec2
+         :security-groups :user-data :block-device-mappings
+         :unmap-device-named
+       ;; cloudstack ec2
+         :key-pair
+       ;; aws-ec2
+         :placement-group :subnet-id :spot-price :spot-options
+       ;; cloudstack aws-ec2
+         :security-group-ids
+       ;; softlayer
+         :domain-name
+       ;; trmk-ecloud trmk-vcloudexpress
+         :ssh-key-fingerprint
+       ;; vcloud
+         :description :customization-script :ip-address-allocation-mode])
+    (make-option-map
+      kw-memfn-varargs
+      [;; from TemplateOptions
+         :inbound-ports])
     (make-option-map
       kw-memfn-2arg
-      [:block-on-port
-       ;; aws ec2 options
-       :map-ephemeral-device-to-device-name])
+      [;; from TemplateOptions
+         :block-on-port
+       ;; ec2 options
+         :map-ephemeral-device-to-device-name])
     {:map-ebs-snapshot-to-device-name
      (kw-memfn-apply :map-ebs-snapshot-to-device-name
        device-name snapshot-id size-in-gib delete-on-termination)
@@ -384,17 +419,17 @@ Here's an example of creating and running a small linux node in the group webser
 The :os-family key expects a keyword version of OsFamily,
   eg. :os-family :ubuntu.
 
-The :smallest, :fastest, :biggest, :any, and :destroy-on-error keys expect a
+The :smallest, :fastest, :biggest, and :any keys expect a
 boolean value.
 
 Options correspond to TemplateBuilder methods."
   [#^ComputeService compute
-   {:keys [os-family location-id architecture image-id hardware-id
-           os-name-matches os-version-matches os-description-matches
-           os-64-bit image-version-matches image-name-matches
-           image-description-matches min-cores min-ram
-           run-script install-private-key authorize-public-key
-           inbound-ports smallest fastest biggest any destroy-on-error]
+   {:keys [from-hardware from-image from-template
+       os-family location-id image-id hardware-id
+       os-name-matches os-description-matches os-version-matches
+       os-arch-matches os-64-bit mage-name-matches
+       image-version-matches image-description-matches image-matches
+       min-cores min-ram smallest fastest biggest any]
     :as options}]
   (let [builder (.. compute (templateBuilder))]
     (doseq [[option value] options]

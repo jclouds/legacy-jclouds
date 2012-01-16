@@ -37,6 +37,7 @@ import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 /**
  * Provides asynchronous access to E-Mail data via the Glesys REST API.
@@ -50,13 +51,13 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface EmailAsyncClient {
 
    /**
-    * @see org.jclouds.glesys.features.EmailClient#emailOverview
+    * @see org.jclouds.glesys.features.EmailClient#getEmailOverview
     */
    @POST
    @Path("/email/overview/format/json")
    @SelectJson("response")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<EmailOverview> getEmailOverview();
 
    /**

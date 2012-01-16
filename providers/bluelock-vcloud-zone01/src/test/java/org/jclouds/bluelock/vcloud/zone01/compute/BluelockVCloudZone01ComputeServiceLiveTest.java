@@ -18,8 +18,6 @@
  */
 package org.jclouds.bluelock.vcloud.zone01.compute;
 
-import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
 import org.testng.annotations.Test;
 
@@ -32,16 +30,6 @@ import org.testng.annotations.Test;
 public class BluelockVCloudZone01ComputeServiceLiveTest extends VCloudComputeServiceLiveTest {
    public BluelockVCloudZone01ComputeServiceLiveTest() {
       provider = "bluelock-vcloud-zone01";
-   }
-
-   @Override
-   public void setServiceDefaults() {
-      group = "director";
-   }
-   
-   protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
-      // hostname is not completely predictable based on node metadata
-      assert execResponse.getOutput().trim().equals("Ubuntu1004") : execResponse + ": " + node1;
    }
 
 }

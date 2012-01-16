@@ -98,26 +98,19 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
    
    @Test
    public void testListTemplates() throws Exception {
-      Map<String,Set<ServerTemplate>> templates = client.getTemplates();
+      Set<ServerTemplate> templates = client.getTemplates();
 
-      assertTrue(templates.containsKey("OpenVZ"));
-      assertTrue(templates.containsKey("Xen"));
-
-      for(ServerTemplate template : templates.get("OpenVZ")) {
-         checkTemplate(template, "OpenVZ");
-      }
-
-      for(ServerTemplate template : templates.get("Xen")) {
-         checkTemplate(template, "Xen");
+      for(ServerTemplate template : templates) {
+         checkTemplate(template);
       }
    }
    
-   private void checkTemplate(ServerTemplate t, String platform) {
+   private void checkTemplate(ServerTemplate t) {
       assertNotNull(t);
       assertNotNull(t.getName());
       assertNotNull(t.getOs());
 
-      assertEquals(t.getPlatform(), platform);
+      assertNotNull(t.getPlatform());
       assert t.getMinDiskSize() > 0 : t;
       assert t.getMinMemSize() > 0 : t;
     }

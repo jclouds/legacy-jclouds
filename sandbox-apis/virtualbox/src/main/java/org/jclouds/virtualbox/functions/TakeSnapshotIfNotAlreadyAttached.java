@@ -68,18 +68,13 @@ public class TakeSnapshotIfNotAlreadyAttached implements Function<IMachine, ISna
                logger.debug("Snapshot %s (description: %s) taken from %s", snapshotName, snapshotDesc, machine.getName());
          } catch (Exception e) {
             logger.error(e, "Problem creating snapshot %s (descripton: %s) from machine %s", snapshotName, snapshotDesc, machine.getName());
-            propogate(e);
+            Throwables.propagate(e);
+            assert false;
          } finally {
             session.unlockMachine();
          }
       }
       return machine.getCurrentSnapshot();
-   }
-   
-   protected <T> T propogate(Exception e) {
-      Throwables.propagate(e);
-      assert false;
-      return null;
    }
 
 }

@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.xml.ovf;
 
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
+
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -51,7 +53,7 @@ public class VCloudNetworkSectionHandler extends ParseSax.HandlerWithResult<VClo
 
    public void startElement(String uri, String localName, String qName, Attributes attrs) {
       Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
-      if (qName.endsWith("NetworkSection")) {
+      if (equalsOrSuffix(qName, "NetworkSection")) {
          this.net = Utils.newReferenceType(attributes);
       }
       networkSectionHandler.startElement(uri, localName, qName, attrs);

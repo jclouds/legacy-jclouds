@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.xml;
 
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 import static org.jclouds.vcloud.util.Utils.newReferenceType;
 
 import java.util.List;
@@ -83,11 +84,11 @@ public class VAppTemplateHandler extends ParseSax.HandlerWithResult<VAppTemplate
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
-      if (qName.endsWith("Children")) {
+      if (equalsOrSuffix(qName, "Children")) {
          inChildren = true;
-      } else if (qName.endsWith("Tasks")) {
+      } else if (equalsOrSuffix(qName, "Tasks")) {
          inTasks = true;
-      } else if (qName.endsWith("NetworkSection")) {
+      } else if (equalsOrSuffix(qName, "NetworkSection")) {
          inNetworkSection = true;
       }
       if (inChildren) {
@@ -96,26 +97,26 @@ public class VAppTemplateHandler extends ParseSax.HandlerWithResult<VAppTemplate
          taskHandler.startElement(uri, localName, qName, attrs);
       } else if (inNetworkSection) {
          networkSectionHandler.startElement(uri, localName, qName, attrs);
-      } else if (qName.equals("VAppTemplate")) {
+      } else if (equalsOrSuffix(qName, "VAppTemplate")) {
          template = newReferenceType(attributes);
          if (attributes.containsKey("status"))
             this.status = Status.fromValue(Integer.parseInt(attributes.get("status")));
-      } else if (qName.equals("Link") && "up".equals(attributes.get("rel"))) {
+      } else if (equalsOrSuffix(qName, "Link") && "up".equals(attributes.get("rel"))) {
          vdc = newReferenceType(attributes);
       }
 
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.endsWith("Children")) {
+      if (equalsOrSuffix(qName, "Children")) {
          inChildren = false;
          Vm vm = vmHandler.getResult();
          if (vm != null)
             this.children.add(vmHandler.getResult());
-      } else if (qName.endsWith("Tasks")) {
+      } else if (equalsOrSuffix(qName, "Tasks")) {
          inTasks = false;
          this.tasks.add(taskHandler.getResult());
-      } else if (qName.endsWith("NetworkSection")) {
+      } else if (equalsOrSuffix(qName, "NetworkSection")) {
          inNetworkSection = false;
          this.networkSection = networkSectionHandler.getResult();
       }
@@ -125,11 +126,11 @@ public class VAppTemplateHandler extends ParseSax.HandlerWithResult<VAppTemplate
          taskHandler.endElement(uri, name, qName);
       } else if (inNetworkSection) {
          networkSectionHandler.endElement(uri, name, qName);
-      } else if (qName.equals("Description")) {
+      } else if (equalsOrSuffix(qName, "Description")) {
          description = currentOrNull();
-      } else if (qName.equals("VAppScopedLocalId")) {
+      } else if (equalsOrSuffix(qName, "VAppScopedLocalId")) {
          vAppScopedLocalId = currentOrNull();
-      } else if (qName.equals("ovfDescriptorUploaded")) {
+      } else if (equalsOrSuffix(qName, "ovfDescriptorUploaded")) {
          ovfDescriptorUploaded = Boolean.parseBoolean(currentOrNull());
       }
       currentText = new StringBuilder();

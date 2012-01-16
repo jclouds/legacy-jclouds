@@ -21,6 +21,7 @@ package org.jclouds.cloudstack;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudstack.features.DomainAccountClient;
+import org.jclouds.cloudstack.features.DomainDomainClient;
 import org.jclouds.cloudstack.features.DomainLimitClient;
 import org.jclouds.cloudstack.features.DomainUserClient;
 import org.jclouds.concurrent.Timeout;
@@ -58,4 +59,10 @@ public interface CloudStackDomainClient extends CloudStackClient {
     */
    @Delegate
    DomainUserClient getUserClient();
+
+   /**
+    * Provides synchronous access to Domains
+    */
+   @Delegate
+   DomainDomainClient getDomainClient();
 }

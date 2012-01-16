@@ -120,7 +120,13 @@
         <priority value="DEBUG" />
         <appender-ref ref="ASYNC" />
     </category>
-
+    
+    <!--  set to trace to get more info when parser fail -->
+    <category name="org.jclouds.http.functions.ParseSax">
+        <priority value="TRACE" />
+        <appender-ref ref="ASYNC" />
+    </category>
+    
     <category name="jclouds.headers">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
@@ -132,7 +138,7 @@
     </category>
     
     <category name="jclouds.wire">
-        <priority value="DEBUG" />
+        <priority value="TRACE" />
         <appender-ref ref="ASYNCWIRE" />
     </category>
 

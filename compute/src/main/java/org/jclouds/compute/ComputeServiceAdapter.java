@@ -58,7 +58,7 @@ public interface ComputeServiceAdapter<N, H, I, L> {
     *           includes {@code imageId}, {@code locationId}, and
     *           {@code hardwareId} used to resume the instance.
     * @return library-native representation of a node.
-    * 
+    * TODO: return typed exception on createNodeFailure
     * @see ComputeService#createNodesInGroup(String, int, Template)
     */
    NodeAndInitialCredentials<N> createNodeWithGroupEncodedIntoName(String tag, String name, Template template);

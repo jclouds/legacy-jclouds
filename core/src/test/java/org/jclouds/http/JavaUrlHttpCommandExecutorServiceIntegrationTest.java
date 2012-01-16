@@ -27,6 +27,7 @@ import java.util.Properties;
 
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.internal.JavaUrlHttpCommandExecutorService;
+import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 
@@ -35,6 +36,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
+@Test
 public class JavaUrlHttpCommandExecutorServiceIntegrationTest extends BaseHttpCommandExecutorServiceIntegrationTest {
 
    protected Module createConnectionModule() {

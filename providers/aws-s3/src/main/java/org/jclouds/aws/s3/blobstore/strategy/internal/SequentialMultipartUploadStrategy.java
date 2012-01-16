@@ -31,6 +31,7 @@ import org.jclouds.aws.s3.blobstore.AWSS3BlobStore;
 import org.jclouds.aws.s3.blobstore.strategy.MultipartUploadStrategy;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadSlicer;
@@ -88,7 +89,7 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
    }
 
    @Override
-   public String execute(String container, Blob blob) {
+   public String execute(String container, Blob blob, PutOptions options) {
       String key = blob.getMetadata().getName();
       Payload payload = blob.getPayload();
       MultipartUploadSlicingAlgorithm algorithm = new MultipartUploadSlicingAlgorithm();
@@ -125,7 +126,8 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
             throw rtex;
          }
       } else {
-         return ablobstore.putBlob(container, blob);
+         // TODO: find a way to disable multipart.  if we pass the original options, it goes into a stack overflow
+         return ablobstore.putBlob(container, blob, PutOptions.NONE);
       }
    }
 }

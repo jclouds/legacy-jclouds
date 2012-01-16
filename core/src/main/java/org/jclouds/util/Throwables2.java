@@ -31,6 +31,7 @@ import org.jclouds.rest.InsufficientResourcesException;
 import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.base.Throwables;
+import com.google.inject.CreationException;
 import com.google.inject.ProvisionException;
 import com.google.inject.spi.Message;
 
@@ -45,6 +46,8 @@ public class Throwables2 {
    public static <T extends Throwable> T getFirstThrowableOfType(Throwable from, Class<T> clazz) {
       if (from instanceof ProvisionException)
          return getFirstThrowableOfType(ProvisionException.class.cast(from), clazz);
+      else if (from instanceof CreationException)
+         return getFirstThrowableOfType(CreationException.class.cast(from), clazz);
       try {
          return (T) find(getCausalChain(from), instanceOf(clazz));
       } catch (NoSuchElementException e) {
@@ -58,6 +61,22 @@ public class Throwables2 {
             T cause = getFirstThrowableOfType(message.getCause(), clazz);
             if (cause instanceof ProvisionException)
                return getFirstThrowableOfType(ProvisionException.class.cast(cause), clazz);
+            else if (cause instanceof CreationException)
+               return getFirstThrowableOfType(CreationException.class.cast(cause), clazz);
+            return cause;
+         }
+      }
+      return null;
+   }
+
+   public static <T extends Throwable> T getFirstThrowableOfType(CreationException e, Class<T> clazz) {
+      for (Message message : e.getErrorMessages()) {
+         if (message.getCause() != null) {
+            T cause = getFirstThrowableOfType(message.getCause(), clazz);
+            if (cause instanceof ProvisionException)
+               return getFirstThrowableOfType(ProvisionException.class.cast(cause), clazz);
+            else if (cause instanceof CreationException)
+               return getFirstThrowableOfType(CreationException.class.cast(cause), clazz);
             return cause;
          }
       }

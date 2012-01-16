@@ -43,6 +43,7 @@ public class CatalogClientLiveTest extends BaseVCloudClientLiveTest {
 
    @Test
    public void testFindCatalogIsWriteable() throws Exception {
-      assertEquals(getVCloudApi().getCatalogClient().findCatalogInOrgNamed(null, null).isReadOnly(), false);
+      // default catalog should be the public one, unless we are in vCloud 1.0.0 where public catalogs don't work
+      assertEquals(getVCloudApi().getCatalogClient().findCatalogInOrgNamed(null, null).isReadOnly(), buildVersion.startsWith("1.5"));
    }
 }

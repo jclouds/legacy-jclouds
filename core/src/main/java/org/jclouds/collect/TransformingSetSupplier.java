@@ -19,13 +19,15 @@
 package org.jclouds.collect;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.notNull;
+import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
-import static com.google.common.collect.Sets.newLinkedHashSet;
 
 import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -42,7 +44,7 @@ public class TransformingSetSupplier<F, T> implements Supplier<Set<? extends T>>
 
    @Override
    public Set<? extends T> get() {
-      return newLinkedHashSet(transform(backingSupplier.get(), converter));
+      return ImmutableSet.copyOf(filter(transform(filter(backingSupplier.get(), notNull()), converter), notNull()));
    }
 
 }

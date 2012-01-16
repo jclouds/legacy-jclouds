@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
+import org.jclouds.vcloud.TaskInErrorStateException;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
@@ -59,7 +60,7 @@ public class TaskSuccess implements Predicate<URI> {
          return false;
       logger.trace("%s: looking for status %s: currently: %s", task, TaskStatus.SUCCESS, task.getStatus());
       if (task.getStatus() == TaskStatus.ERROR)
-         throw new RuntimeException("error on task: " + task.getHref() + " error: " + task.getError());
+         throw new TaskInErrorStateException(task);
       return task.getStatus() == TaskStatus.SUCCESS;
    }
 

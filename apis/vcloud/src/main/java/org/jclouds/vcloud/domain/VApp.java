@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.vcloud.domain.ovf.VCloudNetworkSection;
 
 /**
  * A VApp is the result of instantiation of a {@link VAppTemplate}. <h2>note</h2>
@@ -77,4 +78,12 @@ public interface VApp extends ReferenceType {
     */
    Set<Vm> getChildren();
 
+   /**
+    * description of the predefined vApp internal networks in this template
+    * 
+    * @return null if the vApp is not yet instantiated
+    * @since vcloud api 1.0
+    */
+   @Nullable
+   VCloudNetworkSection getNetworkSection();
 }

@@ -25,10 +25,11 @@ import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
+import static java.lang.String.format;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCoresAndSpeed;
 import static org.jclouds.compute.util.ComputeServiceUtils.getSpace;
-import static java.lang.String.format;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -59,6 +60,7 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.google.common.primitives.Doubles;
@@ -67,7 +69,6 @@ import com.google.common.primitives.Doubles;
  * 
  * @author Adrian Cole
  */
-@SuppressWarnings("unchecked")
 public class TemplateBuilderImpl implements TemplateBuilder {
 
    @Resource
@@ -138,7 +139,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     * 
     * If the input location is a parent of the specified location, then we are ok.
     */
-   private final Predicate<ComputeMetadata> locationPredicate = new Predicate<ComputeMetadata>() {
+   final Predicate<ComputeMetadata> locationPredicate = new Predicate<ComputeMetadata>() {
       @Override
       public boolean apply(ComputeMetadata input) {
          boolean returnVal = true;
@@ -314,7 +315,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             if (input.getName() == null)
                returnVal = false;
             else
-               returnVal = input.getName().contains(imageName) || input.getName().matches(imageName);
+               returnVal = input.getName().equals(imageName) || input.getName().contains(imageName)
+                        || input.getName().matches(imageName);
          }
          return returnVal;
       }
@@ -324,6 +326,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          return "imageName(" + imageName + ")";
       }
    };
+   
    private final Predicate<Image> imageDescriptionPredicate = new Predicate<Image>() {
       @Override
       public boolean apply(Image input) {
@@ -350,10 +353,6 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          boolean returnVal = true;
          if (hardwareId != null) {
             returnVal = hardwareId.equals(input.getId());
-            // match our input params so that the later predicates pass.
-            if (returnVal) {
-               fromHardware(input);
-            }
          }
          return returnVal;
       }
@@ -388,9 +387,36 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          return "minRam(" + minRam + ")";
       }
    };
-   private final Predicate<Hardware> hardwarePredicate = and(hardwareIdPredicate, locationPredicate,
-         hardwareCoresPredicate, hardwareRamPredicate);
 
+   private Predicate<Hardware> buildHardwarePredicate() {
+      List<Predicate<Hardware>> predicates = newArrayList();
+      if (hardwareId != null) {
+         predicates.add(hardwareIdPredicate);
+      } else {
+         if (location != null)
+            predicates.add(new Predicate<Hardware>() {
+
+               @Override
+               public boolean apply(Hardware input) {
+                  return locationPredicate.apply(input);
+               }
+
+               @Override
+               public String toString() {
+                  return locationPredicate.toString();
+               }
+            });
+         predicates.add(hardwareCoresPredicate);
+         predicates.add(hardwareRamPredicate);
+      }
+
+      // looks verbose, but explicit <Hardware> type needed for this to compile
+      // properly
+      Predicate<Hardware> hardwarePredicate = predicates.size() == 1 ? Iterables.<Predicate<Hardware>> get(predicates, 0)
+            : Predicates.<Hardware> and(predicates);
+      return hardwarePredicate;
+   }
+   
    static final Ordering<Hardware> DEFAULT_SIZE_ORDERING = new Ordering<Hardware>() {
       public int compare(Hardware left, Hardware right) {
          return ComparisonChain.start().compare(getCores(left), getCores(right)).compare(left.getRam(), right.getRam())
@@ -407,13 +433,15 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          return ComparisonChain.start()
                .compare(left.getName(), right.getName(), Ordering.<String> natural().nullsLast())
                .compare(left.getVersion(), right.getVersion(), Ordering.<String> natural().nullsLast())
+               .compare(left.getDescription(), right.getDescription(), Ordering.<String> natural().nullsLast())
                .compare(left.getOperatingSystem().getName(), right.getOperatingSystem().getName(),//
                      Ordering.<String> natural().nullsLast())
                .compare(left.getOperatingSystem().getVersion(), right.getOperatingSystem().getVersion(),//
                      Ordering.<String> natural().nullsLast())
                .compare(left.getOperatingSystem().getDescription(), right.getOperatingSystem().getDescription(),//
                      Ordering.<String> natural().nullsLast())
-               .compare(left.getOperatingSystem().getArch(), right.getOperatingSystem().getArch()).result();
+               .compare(left.getOperatingSystem().getArch(), right.getOperatingSystem().getArch(),//
+                     Ordering.<String> natural().nullsLast()).result();
       }
    };
 
@@ -543,6 +571,15 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       
    };
    
+
+   private static final Function<Hardware, String> hardwareToId = new Function<Hardware, String>() {
+
+      @Override
+      public String apply(Hardware arg0) {
+         return arg0.getId();
+      }
+      
+   };
    /**
     * {@inheritDoc}
     */
@@ -554,12 +591,14 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             defaultTemplate.options(options);
          return defaultTemplate.build();
       }
-      if (location == null)
-         location = defaultLocation.get();
+
       if (options == null)
          options = optionsProvider.get();
       logger.debug(">> searching params(%s)", this);
       Set<? extends Image> images = getImages();
+      if (location == null)
+         location = defaultLocation.get();
+      
       Predicate<Image> imagePredicate = buildImagePredicate();
       Iterable<? extends Image> supportedImages = filter(images, buildImagePredicate());
       if (size(supportedImages) == 0) {
@@ -570,10 +609,10 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                      images);
          }
       }
-      Hardware hardware = resolveSize(hardwareSorter(), supportedImages);
+
+      Hardware hardware = resolveHardware(hardwareSorter(), supportedImages);
       Image image = resolveImage(hardware, supportedImages);
       logger.debug("<<   matched image(%s)", image.getId());
-
       return new TemplateImpl(image, hardware, location, options);
    }
 
@@ -584,36 +623,50 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       throw exception;
    }
 
-   protected Hardware resolveSize(Ordering<Hardware> hardwareOrdering, final Iterable<? extends Image> images) {
+   protected Hardware resolveHardware(Ordering<Hardware> hardwareOrdering, final Iterable<? extends Image> images) {
       Set<? extends Hardware> hardwarel = hardwares.get();
+      Iterable<? extends Hardware> hardwaresThatAreCompatibleWithOurImages = ImmutableSet.of();
+      try {
+         hardwaresThatAreCompatibleWithOurImages = filter(hardwarel, new Predicate<Hardware>() {
+            @Override
+            public boolean apply(final Hardware hardware) {
+               return Iterables.any(images, new Predicate<Image>() {
+
+                  @Override
+                  public boolean apply(Image input) {
+                     return hardware.supportsImage().apply(input);
+                  }
+
+                  @Override
+                  public String toString() {
+                     return "hardware(" + hardware + ").supportsImage()";
+                  }
+
+               });
+
+            }
+         });
+      } catch (NoSuchElementException exception) {
+
+      }
+      if (size(hardwaresThatAreCompatibleWithOurImages) == 0) {
+         String message = format("no hardware profiles support images matching params: %s", toString());
+         NoSuchElementException exception = new NoSuchElementException(message);
+         if (logger.isTraceEnabled())
+            logger.warn(exception, "hardware profiles %s\nimage ids %s", transform(hardwarel, hardwareToId), transform(
+                     images, imageToId));
+         throw exception;
+      }
+      Predicate<Hardware> hardwarePredicate = buildHardwarePredicate();
       Hardware hardware;
       try {
-         Iterable<? extends Hardware> hardwaresThatAreCompatibleWithOurImages = filter(hardwarel,
-               new Predicate<Hardware>() {
-                  @Override
-                  public boolean apply(final Hardware hardware) {
-                     return Iterables.any(images, new Predicate<Image>() {
-
-                        @Override
-                        public boolean apply(Image input) {
-                           return hardware.supportsImage().apply(input);
-                        }
-
-                        @Override
-                        public String toString() {
-                           return "hardware(" + hardware + ").supportsImage()";
-                        }
-
-                     });
-
-                  }
-               });
          hardware = hardwareOrdering.max(filter(hardwaresThatAreCompatibleWithOurImages, hardwarePredicate));
       } catch (NoSuchElementException exception) {
-         String message = format("no hardware profiles support images matching params: %s", toString());
+         String message = format("no hardware profiles match params: %s", hardwarePredicate);
          exception = new NoSuchElementException(message);
          if (logger.isTraceEnabled())
-            logger.warn(exception, "hardware profiles %s\nimage ids %s", hardwarel, transform(images, imageToId));
+            logger.warn(exception, "hardware profiles %s", transform(hardwaresThatAreCompatibleWithOurImages,
+                     hardwareToId));
          throw exception;
       }
       logger.debug("<<   matched hardware(%s)", hardware.getId());
@@ -649,6 +702,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             return "hardware(" + hardware + ").supportsImage()";
          }
       };
+
       try {
          Iterable<? extends Image> matchingImages = filter(supportedImages, imagePredicate);
          if (logger.isTraceEnabled())

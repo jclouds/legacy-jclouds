@@ -18,11 +18,9 @@
  */
 package org.jclouds.vcloud.functions;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.Org;
@@ -35,9 +33,6 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class AllCatalogItemsInOrg implements Function<Org, Iterable<CatalogItem>> {
-
-   @Resource
-   public Logger logger = Logger.NULL;
 
    private final Function<Org, Iterable<Catalog>> allCatalogsInOrg;
 

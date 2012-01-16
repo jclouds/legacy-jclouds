@@ -18,7 +18,6 @@
  */
 package org.jclouds.demo.tweetstore.config;
 
-import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Predicates.in;
@@ -43,6 +42,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.demo.tweetstore.config.util.CredentialsCollector;
 import org.jclouds.demo.tweetstore.controller.AddTweetsController;
+import org.jclouds.demo.tweetstore.controller.EnqueueStoresController;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
 
@@ -53,7 +53,6 @@ import twitter4j.conf.ConfigurationBuilder;
 
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskOptions.Method;
 import com.google.appengine.repackaged.com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -112,10 +111,6 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
       // get a queue for submitting store tweet requests
       queue = QueueFactory.getQueue("twitter");
-      // submit a job to store tweets for each configured blobstore
-      for (String name : providerTypeToBlobStoreMap.keySet()) {
-          queue.add(withUrl("/store/do").header("context", name).method(Method.GET));
-      }
 
       super.contextInitialized(servletContextEvent);
    }
@@ -151,9 +146,11 @@ public class GuiceServletConfig extends GuiceServletContextListener {
             bind(new TypeLiteral<Map<String, BlobStoreContext>>() {
             }).toInstance(providerTypeToBlobStoreMap);
             bind(Twitter.class).toInstance(twitterClient);
+            bind(Queue.class).toInstance(queue);
             bindConstant().annotatedWith(Names.named(PROPERTY_TWEETSTORE_CONTAINER)).to(container);
             serve("/store/*").with(StoreTweetsController.class);
             serve("/tweets/*").with(AddTweetsController.class);
+            serve("/stores/*").with(EnqueueStoresController.class);
          }
       });
    }

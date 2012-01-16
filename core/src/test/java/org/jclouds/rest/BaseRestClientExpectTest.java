@@ -23,14 +23,15 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContext;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -60,8 +61,8 @@ import org.testng.annotations.Test;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -146,6 +147,18 @@ public abstract class BaseRestClientExpectTest<S> {
       return Payloads.newInputStreamPayload(getClass().getResourceAsStream(resource));
    }
 
+   public Payload payloadFromResourceWithContentType(String resource, String contentType) {
+      try {
+         Payload payload = Payloads.newStringPayload(Strings2
+                  .toStringAndClose(getClass().getResourceAsStream(resource)));
+         payload.getContentMetadata().setContentType(contentType);
+         return payload;
+      } catch (IOException e) {
+         throw Throwables.propagate(e);
+      }
+
+   }
+
    /**
     * Mock executor service which uses the supplied function to return http responses.
     */
@@ -214,11 +227,11 @@ public abstract class BaseRestClientExpectTest<S> {
    public S requestSendsResponse(HttpRequest request, HttpResponse response) {
       return requestSendsResponse(request, response, createModule());
    }
-   
+
    public S requestSendsResponse(HttpRequest request, HttpResponse response, Module module) {
       return requestsSendResponses(ImmutableMap.of(request, response), module);
    }
-   
+
    /**
     * creates a client for a mock server which only responds to two types of requests
     * 
@@ -263,14 +276,11 @@ public abstract class BaseRestClientExpectTest<S> {
             HttpResponse responseB, HttpRequest requestC, HttpResponse responseC) {
       return requestsSendResponses(requestA, responseA, requestB, responseB, requestC, responseC, createModule());
    }
-   
+
    public S requestsSendResponses(HttpRequest requestA, HttpResponse responseA, HttpRequest requestB,
             HttpResponse responseB, HttpRequest requestC, HttpResponse responseC, Module module) {
-      return requestsSendResponses(ImmutableMap.of(requestA, responseA, requestB, responseB, requestC, responseC), module);
-   }
-
-   public S orderedRequestsSendResponses(HttpRequest requestA, HttpResponse responseA) {
-      return orderedRequestsSendResponses(ImmutableList.of(requestA), ImmutableList.of(responseA));
+      return requestsSendResponses(ImmutableMap.of(requestA, responseA, requestB, responseB, requestC, responseC),
+               module);
    }
 
    public S orderedRequestsSendResponses(HttpRequest requestA, HttpResponse responseA, HttpRequest requestB,
@@ -280,25 +290,29 @@ public abstract class BaseRestClientExpectTest<S> {
 
    public S orderedRequestsSendResponses(HttpRequest requestA, HttpResponse responseA, HttpRequest requestB,
             HttpResponse responseB, HttpRequest requestC, HttpResponse responseC) {
-      return orderedRequestsSendResponses(ImmutableList.of(requestA, requestB, requestC), ImmutableList.of(responseA, responseB, responseC));
+      return orderedRequestsSendResponses(ImmutableList.of(requestA, requestB, requestC), ImmutableList.of(responseA,
+               responseB, responseC));
    }
 
    public S orderedRequestsSendResponses(HttpRequest requestA, HttpResponse responseA, HttpRequest requestB,
-            HttpResponse responseB, HttpRequest requestC, HttpResponse responseC, HttpRequest requestD, HttpResponse responseD) {
-      return orderedRequestsSendResponses(ImmutableList.of(requestA, requestB, requestC, requestD), ImmutableList.of(responseA, responseB, responseC, responseD));
+            HttpResponse responseB, HttpRequest requestC, HttpResponse responseC, HttpRequest requestD,
+            HttpResponse responseD) {
+      return orderedRequestsSendResponses(ImmutableList.of(requestA, requestB, requestC, requestD), ImmutableList.of(
+               responseA, responseB, responseC, responseD));
    }
 
    public S orderedRequestsSendResponses(final List<HttpRequest> requests, final List<HttpResponse> responses) {
       final AtomicInteger counter = new AtomicInteger(0);
-      
-      return createClient(new Function<HttpRequest,HttpResponse>() {
+
+      return createClient(new Function<HttpRequest, HttpResponse>() {
          @Override
          public HttpResponse apply(HttpRequest input) {
             int index = counter.getAndIncrement();
-            if (index >= requests.size()) {
-               throw new IndexOutOfBoundsException("request index "+index+", but only "+requests.size()+" request/response pairs");
-            }
-            assert input.equals(requests.get(index)) : "expected="+requests.get(index)+"; actual="+input;
+            if (index >= requests.size())
+               return HttpResponse.builder().statusCode(500).message(
+                        String.format("request %s is out of range (%s)", index, requests.size())).payload(
+                        Payloads.newStringPayload(renderRequest(input))).build();
+            assertEquals(renderRequest(input), renderRequest(requests.get(index)));
             return responses.get(index);
          }
       });
@@ -316,8 +330,21 @@ public abstract class BaseRestClientExpectTest<S> {
       return requestsSendResponses(requestToResponse, createModule());
    }
 
-   public S requestsSendResponses(Map<HttpRequest, HttpResponse> requestToResponse, Module module) {
-      return createClient(Functions.forMap(requestToResponse), module);
+   public S requestsSendResponses(final Map<HttpRequest, HttpResponse> requestToResponse, Module module) {
+      return createClient(new Function<HttpRequest, HttpResponse>() {
+         ImmutableBiMap<HttpRequest, HttpResponse> bimap = ImmutableBiMap.copyOf(requestToResponse);
+
+         @Override
+         public HttpResponse apply(HttpRequest input) {
+            if (!(requestToResponse.containsKey(input)))
+               return HttpResponse.builder().statusCode(500).message("no response configured for request").payload(
+                        Payloads.newStringPayload(renderRequest(input))).build();
+            HttpResponse response = requestToResponse.get(input);
+            // in case hashCode/equals doesn't do a full content check
+            assertEquals(renderRequest(input), renderRequest(bimap.inverse().get(response)));
+            return response;
+         }
+      }, module);
    }
 
    public String renderRequest(HttpRequest request) {

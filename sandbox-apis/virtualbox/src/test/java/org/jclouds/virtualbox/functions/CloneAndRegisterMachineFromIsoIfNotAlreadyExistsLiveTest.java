@@ -22,10 +22,9 @@ package org.jclouds.virtualbox.functions;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.testng.Assert.assertEquals;
 
+import com.google.inject.Injector;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
-import org.jclouds.virtualbox.domain.HardDisk;
-import org.jclouds.virtualbox.domain.StorageController;
-import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.domain.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
@@ -45,7 +44,8 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends Ba
    private static final boolean IS_LINKED_CLONE = true;
 
    private VmSpec clonedVmSpec;
-   private VmSpec sourceVmSpec;
+   private IMachineSpec sourceMachineSpec;
+
 
    private CleanupMode mode = CleanupMode.Full;
 
@@ -53,22 +53,25 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends Ba
    @BeforeClass(groups = "live")
    public void setupClient() {
       super.setupClient();
-      String sourceName = VIRTUALBOX_IMAGE_PREFIX 
-               + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
-      String cloneName = VIRTUALBOX_IMAGE_PREFIX 
-            + "Clone#" + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName()
-            );
+      String sourceName = VIRTUALBOX_IMAGE_PREFIX
+              + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
+      String cloneName = VIRTUALBOX_IMAGE_PREFIX
+              + "Clone#" + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName()
+      );
 
       StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
-               .attachISO(0, 0, operatingSystemIso).attachHardDisk(
-                        HardDisk.builder().diskpath(adminDisk).controllerPort(0).deviceSlot(1).autoDelete(true).build()).attachISO(1, 1,
-                        guestAdditionsIso).build();
+              .attachISO(0, 0, operatingSystemIso).attachHardDisk(
+                      HardDisk.builder().diskpath(adminDisk).controllerPort(0).deviceSlot(1).autoDelete(true).build()).attachISO(1, 1,
+                      guestAdditionsIso).build();
 
-      sourceVmSpec = VmSpec.builder().id(sourceName).name(sourceName).osTypeId("").memoryMB(512).cleanUpMode(
-               CleanupMode.Full).controller(ideController).forceOverwrite(true).build();
+      VmSpec sourceVmSpec = VmSpec.builder().id(sourceName).name(sourceName).osTypeId("").memoryMB(512).cleanUpMode(
+              CleanupMode.Full).controller(ideController).forceOverwrite(true).build();
+      IsoSpec isoSpec = IsoSpec.builder().build();
+      NetworkSpec networkSpec = NetworkSpec.builder().build();
+      sourceMachineSpec = IMachineSpec.builder().iso(isoSpec).vm(sourceVmSpec).network(networkSpec).build();
 
       clonedVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(512).cleanUpMode(mode)
-               .forceOverwrite(true).build();
+              .forceOverwrite(true).build();
    }
 
    @Test
@@ -83,10 +86,10 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends Ba
          }
 
          IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, clonedVmSpec,
-                  IS_LINKED_CLONE).apply(source);
+                 IS_LINKED_CLONE).apply(source);
          assertEquals(clone.getName(), clonedVmSpec.getVmName());
       } finally {
-         for (VmSpec spec : ImmutableSet.of(clonedVmSpec, sourceVmSpec))
+         for (VmSpec spec : ImmutableSet.of(clonedVmSpec, sourceMachineSpec.getVmSpec()))
             undoVm(spec);
       }
 
@@ -94,11 +97,12 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends Ba
 
    private IMachine getSourceNode() {
       try {
-         return context.utils().injector().getInstance(CreateAndRegisterMachineFromIsoIfNotAlreadyExists.class).apply(
-                  sourceVmSpec);
+         Injector injector = context.utils().injector();
+         return injector.getInstance(CreateAndRegisterMachineFromIsoIfNotAlreadyExists.class).apply(
+                 sourceMachineSpec);
       } catch (IllegalStateException e) {
          // already created
-         return manager.get().getVBox().findMachine(sourceVmSpec.getVmId());
+         return manager.get().getVBox().findMachine(sourceMachineSpec.getVmSpec().getVmId());
       }
    }
 }

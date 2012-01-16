@@ -18,20 +18,21 @@
  */
 package org.jclouds.vcloud.functions;
 
-import java.util.Map;
+import static com.google.common.base.Predicates.and;
+import static com.google.common.base.Predicates.notNull;
+import static com.google.common.collect.Iterables.filter;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VAppTemplate;
-import org.jclouds.vcloud.functions.AllCatalogItemsInOrg;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Adrian Cole
@@ -39,13 +40,12 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class VAppTemplatesInOrg implements Function<Org, Iterable<VAppTemplate>> {
 
-   private final AllCatalogItemsInOrg allCatalogItemsInOrg;
+   private final Function<Org, Iterable<CatalogItem>> allCatalogItemsInOrg;
    private final Function<Iterable<CatalogItem>, Iterable<VAppTemplate>> vAppTemplatesForCatalogItems;
 
    @Inject
-   VAppTemplatesInOrg(AllCatalogItemsInOrg allCatalogItemsInOrg,
-            Function<Iterable<CatalogItem>, Iterable<VAppTemplate>> vAppTemplatesForCatalogItems,
-            Map<String, Credentials> credentialStore) {
+   VAppTemplatesInOrg(Function<Org, Iterable<CatalogItem>> allCatalogItemsInOrg,
+            Function<Iterable<CatalogItem>, Iterable<VAppTemplate>> vAppTemplatesForCatalogItems) {
       this.allCatalogItemsInOrg = allCatalogItemsInOrg;
       this.vAppTemplatesForCatalogItems = vAppTemplatesForCatalogItems;
    }
@@ -54,7 +54,17 @@ public class VAppTemplatesInOrg implements Function<Org, Iterable<VAppTemplate>>
    public Iterable<VAppTemplate> apply(Org from) {
       Iterable<CatalogItem> catalogs = allCatalogItemsInOrg.apply(from);
       Iterable<VAppTemplate> vAppTemplates = vAppTemplatesForCatalogItems.apply(catalogs);
-      return Iterables.filter(vAppTemplates, Predicates.notNull());
+      return filter(vAppTemplates, and(notNull(), new Predicate<VAppTemplate>(){
+
+         //TODO: test this
+         @Override
+         public boolean apply(VAppTemplate input) {
+            if (input == null)
+               return false;
+            return ImmutableSet.of(Status.RESOLVED, Status.OFF).contains(input.getStatus());
+         }
+         
+      }));
    }
 
 }

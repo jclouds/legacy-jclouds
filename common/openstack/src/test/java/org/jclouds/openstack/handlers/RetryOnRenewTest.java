@@ -18,13 +18,14 @@
  */
 package org.jclouds.openstack.handlers;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertTrue;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -47,23 +48,22 @@ public class RetryOnRenewTest {
       HttpRequest request = createMock(HttpRequest.class);
       HttpResponse response = createMock(HttpResponse.class);
       @SuppressWarnings("unchecked")
-      LoadingCache<String,AuthenticationResponse> cache = createMock(LoadingCache.class);
+      LoadingCache<Credentials, AuthenticationResponse> cache = createMock(LoadingCache.class);
 
       expect(command.getCurrentRequest()).andReturn(request);
 
       cache.invalidateAll();
       expectLastCall();
-      
+
       expect(response.getPayload()).andReturn(Payloads.newStringPayload("token expired, please renew")).anyTimes();
       expect(response.getStatusCode()).andReturn(401).atLeastOnce();
 
       replay(command);
       replay(response);
       replay(cache);
-      
-      RetryOnRenew retry = new RetryOnRenew();
-      retry.authenticationResponseCache = cache;
-      
+
+      RetryOnRenew retry = new RetryOnRenew(cache);
+
       assertTrue(retry.shouldRetryRequest(command, response));
 
       verify(command);

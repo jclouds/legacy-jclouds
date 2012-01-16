@@ -99,10 +99,10 @@ PermitRootLogin no
 /etc/init.d/sshd reload||/etc/init.d/ssh reload
 awk -v user=^${SUDO_USER:=${USER}}: -v password='crypt(randompassword)' 'BEGIN { FS=OFS=":" } $0 ~ user { $2 = password } 1' /etc/shadow >/etc/shadow.${SUDO_USER:=${USER}}
 test -f /etc/shadow.${SUDO_USER:=${USER}} && mv /etc/shadow.${SUDO_USER:=${USER}} /etc/shadow
+which nslookup >&- 2>&-|| apt-get install -f -y -qq --force-yes dnsutils|| (apt-get update -qq&&apt-get upgrade -y -qq)&&apt-get install -f -y -qq --force-yes dnsutils
 grep `hostname` /etc/hosts >/dev/null || awk -v hostname=`hostname` 'END { print $1" "hostname }' /proc/net/arp >> /etc/hosts
 nslookup yahoo.com >/dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf
-which curl >&- 2>&-|| apt-get install -f -y -qq --force-yes curl
-which nslookup >&- 2>&-|| apt-get install -f -y -qq --force-yes dnsutils
+which curl >&- 2>&-|| apt-get install -f -y -qq --force-yes curl|| (apt-get update -qq&&apt-get upgrade -y -qq)&&apt-get install -f -y -qq --force-yes curl
 mkdir -p /usr/local/jdk
 curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://download.oracle.com/otn-pub/java/jdk/7u2-b13/jdk-7u2-linux-x64.tar.gz |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
 mv /usr/local/jdk1.7*/* /usr/local/jdk/

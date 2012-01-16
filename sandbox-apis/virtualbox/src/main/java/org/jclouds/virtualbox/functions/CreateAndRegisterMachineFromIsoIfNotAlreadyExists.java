@@ -36,12 +36,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
-import org.jclouds.virtualbox.domain.DeviceDetails;
-import org.jclouds.virtualbox.domain.HardDisk;
-import org.jclouds.virtualbox.domain.IsoImage;
-import org.jclouds.virtualbox.domain.NatAdapter;
-import org.jclouds.virtualbox.domain.StorageController;
-import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.domain.*;
 import org.virtualbox_4_1.AccessMode;
 import org.virtualbox_4_1.DeviceType;
 import org.virtualbox_4_1.IMachine;
@@ -57,7 +52,7 @@ import com.google.common.base.Supplier;
  * @author Mattias Holmqvist
  */
 @Singleton
-public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Function<VmSpec, IMachine> {
+public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Function<IMachineSpec, IMachine> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -74,9 +69,9 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
    }
 
    @Override
-   public IMachine apply(@Nullable VmSpec launchSpecification) {
+   public IMachine apply(@Nullable IMachineSpec launchSpecification) {
       final IVirtualBox vBox = manager.get().getVBox();
-      String vmName = launchSpecification.getVmName();
+      String vmName = launchSpecification.getVmSpec().getVmName();
       try {
          vBox.findMachine(vmName);
          throw new IllegalStateException("Machine " + vmName + " is already registered.");
@@ -92,17 +87,20 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
       return e.getMessage().contains("VirtualBox error: Could not find a registered machine named ");
    }
 
-   private IMachine createMachine(IVirtualBox vBox, VmSpec vmSpec) {
+   private IMachine createMachine(IVirtualBox vBox, IMachineSpec machineSpec) {
+      VmSpec vmSpec = machineSpec.getVmSpec();
       String settingsFile = vBox.composeMachineFilename(vmSpec.getVmName(), workingDir);
 
       IMachine newMachine = vBox.createMachine(settingsFile, vmSpec.getVmName(), vmSpec.getOsTypeId(),
                vmSpec.getVmId(), vmSpec.isForceOverwrite());
       manager.get().getVBox().registerMachine(newMachine);
-      ensureConfiguration(vmSpec);
+      ensureConfiguration(machineSpec);
       return newMachine;
    }
 
-   private void ensureConfiguration(VmSpec vmSpec) {
+   private void ensureConfiguration(IMachineSpec machineSpec) {
+      VmSpec vmSpec = machineSpec.getVmSpec();
+      NetworkSpec networkSpec = machineSpec.getNetworkSpec();
       String vmName = vmSpec.getVmName();
 
       // Change RAM
@@ -118,7 +116,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
       setupDvdsForController(vmSpec, vmName, controller);
 
       // NAT
-      Map<Long, NatAdapter> natNetworkAdapters = vmSpec.getNatNetworkAdapters();
+      Map<Long, NatAdapter> natNetworkAdapters = networkSpec.getNatNetworkAdapters();
       for (Map.Entry<Long, NatAdapter> natAdapterAndSlot : natNetworkAdapters.entrySet()) {
          long slotId = natAdapterAndSlot.getKey();
          NatAdapter natAdapter = natAdapterAndSlot.getValue();

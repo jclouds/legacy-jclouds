@@ -32,6 +32,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.ovf.Envelope;
+import org.jclouds.ovf.xml.EnvelopeHandlerTest;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
@@ -44,6 +46,7 @@ import org.jclouds.vcloud.domain.AllocationModel;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
+import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.VDCStatus;
@@ -53,15 +56,19 @@ import org.jclouds.vcloud.domain.internal.OrgImpl;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.xml.VAppTemplateHandlerTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code VCloudAsyncClient}
@@ -181,6 +188,16 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
          bind(OrgMapSupplier.class).to(TestOrgMapSupplier.class);
          bind(OrgCatalogSupplier.class).to(TestOrgCatalogSupplier.class);
          bind(OrgCatalogItemSupplier.class).to(TestOrgCatalogItemSupplier.class);
+      }
+      
+      @SuppressWarnings("unchecked")
+      @Override
+      protected void bindCacheLoaders() {
+         bind(new TypeLiteral<CacheLoader<URI, VAppTemplate>>() {
+         }).toInstance((CacheLoader) CacheLoader.from(Functions.constant(VAppTemplateHandlerTest.parseTemplate())));
+
+         bind(new TypeLiteral<CacheLoader<URI, Envelope>>() {
+         }).toInstance((CacheLoader) CacheLoader.from(Functions.constant(EnvelopeHandlerTest.parseEnvelope())));
       }
 
       @Override

@@ -36,18 +36,13 @@ public class InstantiateVAppTemplateOptions {
 
    private Boolean customizeOnInstantiate;
    private String description = null;
-   private boolean block = true;
    private boolean deploy = true;
    private boolean powerOn = true;
 
    public String getDescription() {
       return description;
    }
-
-   public boolean shouldBlock() {
-      return block;
-   }
-
+   
    public boolean shouldDeploy() {
       return deploy;
    }
@@ -80,24 +75,7 @@ public class InstantiateVAppTemplateOptions {
       this.powerOn = powerOn;
       return this;
    }
-
-   /**
-    * block until instantiate or deployment operations complete?
-    */
-   public InstantiateVAppTemplateOptions block(boolean block) {
-      this.block = block;
-      return this;
-   }
-
-   /**
-    * If true, then customization is executed for all children that include a
-    * GuestCustomizationSection.
-    */
-   public InstantiateVAppTemplateOptions customizeOnInstantiate(boolean customizeOnInstantiate) {
-      this.customizeOnInstantiate = customizeOnInstantiate;
-      return this;
-   }
-
+   
    /**
     * {@networkConfig VAppTemplate}s have internal networks that can be
     * connected in order to access the internet or other external networks.
@@ -123,19 +101,7 @@ public class InstantiateVAppTemplateOptions {
       return networkConfig;
    }
 
-   public Boolean shouldCustomizeOnInstantiate() {
-      return customizeOnInstantiate;
-   }
-
    public static class Builder {
-
-      /**
-       * @see InstantiateVAppTemplateOptions#block
-       */
-      public static InstantiateVAppTemplateOptions block(boolean block) {
-         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-         return options.block(block);
-      }
 
       /**
        * @see InstantiateVAppTemplateOptions#description
@@ -162,14 +128,6 @@ public class InstantiateVAppTemplateOptions {
       }
 
       /**
-       * @see InstantiateVAppTemplateOptions#customizeOnInstantiate
-       */
-      public static InstantiateVAppTemplateOptions customizeOnInstantiate(Boolean customizeOnInstantiate) {
-         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-         return options.customizeOnInstantiate(customizeOnInstantiate);
-      }
-
-      /**
        * @see InstantiateVAppTemplateOptions#addNetworkConfig
        */
       public static InstantiateVAppTemplateOptions addNetworkConfig(NetworkConfig networkConfig) {
@@ -182,14 +140,13 @@ public class InstantiateVAppTemplateOptions {
    @Override
    public String toString() {
       return "[networkConfig=" + networkConfig + ", customizeOnInstantiate=" + customizeOnInstantiate
-            + ", description=" + description + ", block=" + block + ", deploy=" + deploy + ", powerOn=" + powerOn + "]";
+            + ", description=" + description  + ", deploy=" + deploy + ", powerOn=" + powerOn + "]";
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + (block ? 1231 : 1237);
       result = prime * result + ((customizeOnInstantiate == null) ? 0 : customizeOnInstantiate.hashCode());
       result = prime * result + (deploy ? 1231 : 1237);
       result = prime * result + ((description == null) ? 0 : description.hashCode());
@@ -207,8 +164,6 @@ public class InstantiateVAppTemplateOptions {
       if (getClass() != obj.getClass())
          return false;
       InstantiateVAppTemplateOptions other = (InstantiateVAppTemplateOptions) obj;
-      if (block != other.block)
-         return false;
       if (customizeOnInstantiate == null) {
          if (other.customizeOnInstantiate != null)
             return false;

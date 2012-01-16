@@ -21,12 +21,12 @@ package org.jclouds.blobstore.integration.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.URI;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.crypto.CryptoStreams;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -42,25 +42,24 @@ import org.testng.annotations.Test;
 public class BaseBlobLiveTest extends BaseBlobStoreIntegrationTest {
 
    private static final String sysHttpStreamUrl = System.getProperty("jclouds.blobstore.httpstream.url");
-   private static final String sysHttpStreamETag = System.getProperty("jclouds.blobstore.httpstream.md5");
+   private static final String sysHttpStreamMD5 = System.getProperty("jclouds.blobstore.httpstream.md5");
 
    @Test
-   @Parameters({ "jclouds.blobstore.httpstream.url", "jclouds.blobstore.httpstream.md5" })
-   public void testCopyUrl(@Optional String httpStreamUrl, @Optional String httpStreamETag) throws Exception {
+   @Parameters( { "jclouds.blobstore.httpstream.url", "jclouds.blobstore.httpstream.md5" })
+   public void testCopyUrl(@Optional String httpStreamUrl, @Optional String httpStreamMD5) throws Exception {
       httpStreamUrl = checkNotNull(httpStreamUrl != null ? httpStreamUrl : sysHttpStreamUrl, "httpStreamUrl");
 
-      httpStreamETag = checkNotNull(httpStreamETag != null ? httpStreamETag : sysHttpStreamETag, "httpStreamMd5");
+      httpStreamMD5 = checkNotNull(httpStreamMD5 != null ? httpStreamMD5 : sysHttpStreamMD5, "httpStreamMd5");
+
+      HttpResponse response = context.utils().http().invoke(
+               HttpRequest.builder().method("GET").endpoint(URI.create(httpStreamUrl)).build());
+      long length = response.getPayload().getContentMetadata().getContentLength();
 
       String name = "hello";
+      byte[] md5 = CryptoStreams.hex(httpStreamMD5);
 
-      URL url = new URL(httpStreamUrl);
-      byte[] md5 = CryptoStreams.hex(httpStreamETag);
-
-      URLConnection connection = url.openConnection();
-      long length = connection.getContentLength();
-      InputStream input = connection.getInputStream();
-
-      Blob blob = context.getBlobStore().blobBuilder(name).payload(input).contentLength(length).contentMD5(md5).build();
+      Blob blob = context.getBlobStore().blobBuilder(name).payload(response.getPayload()).contentLength(length)
+               .contentMD5(md5).build();
       String container = getContainerName();
       try {
          context.getBlobStore().putBlob(container, blob);
