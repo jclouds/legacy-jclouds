@@ -57,7 +57,7 @@ public class Go2CloudJohannesburg1TemplateBuilderLiveTest extends BaseTemplateBu
                case DEBIAN:
                   return (input.version.equals("") || input.version.equals("6.0")) && input.is64Bit;
                case WINDOWS:
-                  return (input.version.equals("") || input.version.equals("2008 R2")) && input.is64Bit;
+                  return input.version.equals("") && input.is64Bit;
                default:
                   return false;
             }
