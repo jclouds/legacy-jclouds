@@ -22,10 +22,11 @@ package org.jclouds.glesys.domain;
 import com.google.common.base.Objects;
 
 /**
- * Represents detailed information about an available ip address of a new server.
+ * Represents an ip address used by a server.
  *
  * @author Adam Lowe
  * @see ServerCreated
+ * @see ServerDetails
  */
 public class ServerIp {
 
