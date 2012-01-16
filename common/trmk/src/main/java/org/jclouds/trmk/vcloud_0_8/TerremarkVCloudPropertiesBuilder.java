@@ -30,6 +30,7 @@ import static org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants.PROPERTY_VCL
 import static org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
 
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.trmk.vcloud_0_8.domain.FenceMode;
@@ -49,8 +50,8 @@ public class TerremarkVCloudPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA, "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
       properties.setProperty("jclouds.dns_name_length_min", "1");
       properties.setProperty("jclouds.dns_name_length_max", "15");
-      // with ssh key injection comes another reboot. allowing more time
-      properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, 420l * 1000l + "");
+      // terremark can sometimes block extremely long times
+      properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, TimeUnit.MINUTES.toMillis(20) + "");
       return properties;
    }
 
