@@ -65,7 +65,7 @@ public class JcloudsVersion {
     private static String readVersionPropertyFromClasspath() {
         Properties versionProperties = new Properties();
         try {
-            versionProperties.load(checkNotNull(Thread.currentThread().getContextClassLoader().getResourceAsStream(VERSION_RESOURCE_FILE), VERSION_RESOURCE_FILE));
+            versionProperties.load(checkNotNull(JcloudsVersion.class.getClassLoader().getResourceAsStream(VERSION_RESOURCE_FILE), VERSION_RESOURCE_FILE));
         } catch (IOException exception) {
             throw new IllegalStateException(format("Unable to load version resource file '%s'", VERSION_RESOURCE_FILE), exception);
         }
