@@ -29,6 +29,7 @@ import org.jclouds.cloudstack.features.GlobalOfferingAsyncClient;
 import org.jclouds.cloudstack.features.GlobalStoragePoolAsyncClient;
 import org.jclouds.cloudstack.features.GlobalUsageAsyncClient;
 import org.jclouds.cloudstack.features.GlobalUserAsyncClient;
+import org.jclouds.cloudstack.features.GlobalZoneAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -107,4 +108,11 @@ public interface CloudStackGlobalAsyncClient extends CloudStackDomainAsyncClient
    @Delegate
    @Override
    GlobalDomainAsyncClient getDomainClient();
+
+   /**
+    * Provides asynchronous access to Zone
+    */
+   @Delegate
+   @Override
+   GlobalZoneAsyncClient getZoneClient();
 }
