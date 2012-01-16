@@ -440,7 +440,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                      Ordering.<String> natural().nullsLast())
                .compare(left.getOperatingSystem().getDescription(), right.getOperatingSystem().getDescription(),//
                      Ordering.<String> natural().nullsLast())
-               .compare(left.getOperatingSystem().getArch(), right.getOperatingSystem().getArch()).result();
+               .compare(left.getOperatingSystem().getArch(), right.getOperatingSystem().getArch(),//
+                     Ordering.<String> natural().nullsLast()).result();
       }
    };
 
