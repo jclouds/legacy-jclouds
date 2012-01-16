@@ -23,8 +23,8 @@ import com.google.common.collect.ImmutableSet;
 import org.jclouds.glesys.GleSYSClient;
 import org.jclouds.glesys.domain.Server;
 import org.jclouds.glesys.domain.ServerCreated;
-import org.jclouds.glesys.domain.ServerCreatedIp;
 import org.jclouds.glesys.domain.ServerDetails;
+import org.jclouds.glesys.domain.Ip;
 import org.jclouds.glesys.options.*;
 import org.jclouds.glesys.parse.*;
 import org.jclouds.http.HttpRequest;
@@ -128,7 +128,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("template", "Ubuntu 32-bit")
                         .put("disksize", "5").build())).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_created.json")).build()).getServerClient();
-      ServerCreated expected = ServerCreated.builder().hostname("jclouds-test").id("xm3630641").ips(ServerCreatedIp.builder().ip("109.74.10.27").build()).build();
+      ServerCreated expected = ServerCreated.builder().hostname("jclouds-test").id("xm3630641").ips(Ip.builder().ip("109.74.10.27").build()).build();
 
       assertEquals(client.createServer("Falkenberg", "OpenVZ", "jclouds-test", "Ubuntu 32-bit", 5, 512, 1, "password", 50), expected);
    }
@@ -152,7 +152,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("ip", "10.0.0.1").build())).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_created.json")).build()).getServerClient();
       ServerCreateOptions options = ServerCreateOptions.Builder.description("Description-of-server").ip("10.0.0.1");
-      ServerCreated expected = ServerCreated.builder().hostname("jclouds-test").id("xm3630641").ips(ServerCreatedIp.builder().ip("109.74.10.27").build()).build();
+      ServerCreated expected = ServerCreated.builder().hostname("jclouds-test").id("xm3630641").ips(Ip.builder().ip("109.74.10.27").build()).build();
 
       assertEquals(client.createServer("Falkenberg", "OpenVZ", "jclouds-test", "Ubuntu 32-bit", 5, 512, 1, "password", 50, options), expected);
    }
@@ -203,7 +203,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("serverid", "server111")
                         .put("hostname", "hostname1").build())).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_created.json")).build()).getServerClient();
-      ServerCreated expected = ServerCreated.builder().hostname("jclouds-test").id("xm3630641").ips(ServerCreatedIp.builder().ip("109.74.10.27").build()).build();
+      ServerCreated expected = ServerCreated.builder().hostname("jclouds-test").id("xm3630641").ips(Ip.builder().ip("109.74.10.27").build()).build();
 
       assertEquals(client.cloneServer("server111", "hostname1"), expected);
    }
@@ -224,7 +224,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("cpucores", "1").build())).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_created.json")).build()).getServerClient();
       ServerCloneOptions options = (ServerCloneOptions) ServerCloneOptions.Builder.description("Description-of-server").disksize(1).memorysize(512).cpucores(1);
-      ServerCreated expected = ServerCreated.builder().hostname("jclouds-test").id("xm3630641").ips(ServerCreatedIp.builder().ip("109.74.10.27").build()).build();
+      ServerCreated expected = ServerCreated.builder().hostname("jclouds-test").id("xm3630641").ips(Ip.builder().ip("109.74.10.27").build()).build();
 
       assertEquals(client.cloneServer("server111", "hostname1", options), expected);
    }
