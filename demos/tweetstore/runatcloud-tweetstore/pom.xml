@@ -103,7 +103,8 @@
                                         <bees.address>${test.bees.address}</bees.address>
                                         <bees.port>${test.bees.port}</bees.port>
                                         <jclouds.tweetstore.blobstores>${jclouds.tweetstore.blobstores}</jclouds.tweetstore.blobstores>
-                                        <jclouds.tweetstore.container>test.${jclouds.tweetstore.container}</jclouds.tweetstore.container>
+                                        <!-- test.jclouds-runatcloud-tweetstore giving 500 errors in cloudonestorage -->
+                                        <jclouds.tweetstore.container>test.${jclouds.tweetstore.container}2</jclouds.tweetstore.container>
                                         <bees.basedir>${project.build.directory}/bees</bees.basedir>
                                         <warfile>${project.build.directory}/${project.artifactId}</warfile>
                                     </systemPropertyVariables>
