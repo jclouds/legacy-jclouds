@@ -52,17 +52,18 @@ public class CloudSigmaZurichTemplateBuilderLiveTest extends BaseTemplateBuilder
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
             case UBUNTU:
-               return (input.version.equals("") || input.version.matches("1[01].04") || input.version.equals("10.10"))
-                     && input.is64Bit;
+               return input.version.equals("") || input.version.equals("10.04")
+                     || ((input.version.equals("11.04") || input.version.equals("10.10")) && input.is64Bit);
             case SOLARIS:
                return input.version.equals("") && input.is64Bit;
             case DEBIAN:
-               return (input.version.equals("") || input.version.equals("5.0")) && input.is64Bit;
+               return input.version.equals("") || input.version.equals("5.0");
             case CENTOS:
                return input.version.equals("") || (input.version.equals("5.7") && input.is64Bit);
             case WINDOWS:
-               return input.version.equals("")
-                     || ((input.version.equals("2008") || input.version.equals("2003")) && !input.is64Bit);
+               return input.version.equals("") || input.version.equals("2003")
+                     || (input.version.equals("2008 R2") && input.is64Bit)
+                     || (input.version.equals("2008") && !input.is64Bit);
             default:
                return false;
             }

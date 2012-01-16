@@ -30,6 +30,7 @@ import org.jclouds.cloudstack.features.GlobalOfferingClient;
 import org.jclouds.cloudstack.features.GlobalStoragePoolClient;
 import org.jclouds.cloudstack.features.GlobalUsageClient;
 import org.jclouds.cloudstack.features.GlobalUserClient;
+import org.jclouds.cloudstack.features.GlobalZoneClient;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 
@@ -110,4 +111,11 @@ public interface CloudStackGlobalClient extends CloudStackDomainClient {
    @Delegate
    @Override
    GlobalDomainClient getDomainClient();
+
+   /**
+    * Provides synchronous access to Zone
+    */
+   @Delegate
+   @Override
+   GlobalZoneClient getZoneClient();
 }

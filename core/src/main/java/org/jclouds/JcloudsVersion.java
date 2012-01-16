@@ -39,10 +39,9 @@ public class JcloudsVersion {
     static final String VERSION_RESOURCE_FILE = "META-INF/maven/org.jclouds/jclouds-core/pom.properties";
     private static final String VERSION_PROPERTY_NAME = "version";
 
-    // TODO: stop supporting x.y.z-rc-n after the 1.3.0 release
-    // x.y.z or x.y.z-rc.n or x.y.z-rc-n, optionally with -SNAPSHOT suffix - see http://semver.org
+    // x.y.z or x.y.z-rc.n, optionally with -SNAPSHOT suffix - see http://semver.org
     private static final Pattern SEMANTIC_VERSION_PATTERN =
-        Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(?:-rc[-\\.](\\d+))?(?:-SNAPSHOT)?");
+        Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(?:-rc\\.(\\d+))?(?:-SNAPSHOT)?");
 
     private static final JcloudsVersion INSTANCE = new JcloudsVersion();
 

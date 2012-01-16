@@ -54,6 +54,12 @@ public class JcloudsVersionTest {
         new JcloudsVersion("${project.version}");
     }
 
+    @Test(expectedExceptions = { IllegalArgumentException.class })
+    public void testFailsIfNonSemverReleaseCandidate() {
+        // no longer supported after the 1.3.0 RC cycle
+        new JcloudsVersion("1.2.3-rc-4");
+    }
+
     @Test
     public void testExtractsVersionFromResourceFile() {
         JcloudsVersion version = new JcloudsVersion();
@@ -93,29 +99,15 @@ public class JcloudsVersionTest {
         assertTrue(version.releaseCandidate, "Expected release candidate");
     }
 
-    // TODO: remove once x.y.z-rc-n support is dropped after 1.3.0
-    @Test
-    public void testRecognisesNonSemverReleaseCandidate() {
-        JcloudsVersion version = new JcloudsVersion("1.2.3-rc-4");
-        assertTrue(version.releaseCandidate, "Expected release candidate");
-    }
-
     @Test
     public void testExtractsReleaseCandidateVersion() {
         JcloudsVersion version = new JcloudsVersion("1.2.3-rc.4");
         assertEquals(Integer.valueOf(4), version.releaseCandidateVersion);
     }
 
-    // TODO: remove once x.y.z-rc-n support is dropped after 1.3.0
-    @Test
-    public void testExtractsNonSemverReleaseCandidateVersion() {
-        JcloudsVersion version = new JcloudsVersion("1.2.3-rc-4");
-        assertEquals(Integer.valueOf(4), version.releaseCandidateVersion);
-    }
-
     @Test
     public void testRecognisesReleaseCandidateSnapshot() {
-        JcloudsVersion version = new JcloudsVersion("1.2.3-rc-4-SNAPSHOT");
+        JcloudsVersion version = new JcloudsVersion("1.2.3-rc.4-SNAPSHOT");
         assertTrue(version.releaseCandidate, "Expected release candidate");
         assertTrue(version.snapshot, "Expected snapshot");
     }

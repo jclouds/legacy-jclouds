@@ -61,8 +61,8 @@ public class ZoneClientLiveTest extends BaseCloudStackClientLiveTest {
             break;
          case BASIC:
             assert zone.getVLAN() == null : zone;
-            assert zone.getDNS().size() == 0 : zone;
-            assert zone.getInternalDNS().size() == 0 : zone;
+            assert zone.getDNS().size() >= 0 : zone;
+            assert zone.getInternalDNS().size() >= 0 : zone;
             assert zone.getDomain() == null : zone;
             assert zone.getDomainId() <= 0 : zone;
             assert zone.getGuestCIDRAddress() == null : zone;
