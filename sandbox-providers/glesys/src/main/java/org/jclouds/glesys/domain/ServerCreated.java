@@ -43,19 +43,19 @@ public class ServerCreated {
    public static class Builder {
       private String id;
       private String hostname;
-      private List<ServerIp> ips;
+      private List<Ip> ips;
 
       public Builder id(String id) {
          this.id = id;
          return this;
       }
 
-      public Builder ips(List<ServerIp> ips) {
+      public Builder ips(List<Ip> ips) {
          this.ips = ips;
          return this;
       }
 
-      public Builder ips(ServerIp... ips) {
+      public Builder ips(Ip... ips) {
          return ips(Arrays.asList(ips));
       }
 
@@ -77,9 +77,9 @@ public class ServerCreated {
    private final String id;
    private final String hostname;
    @SerializedName("iplist")
-   private final List<ServerIp> ips;
+   private final List<Ip> ips;
 
-   public ServerCreated(String id, @Nullable String hostname, List<ServerIp> ips) {
+   public ServerCreated(String id, @Nullable String hostname, List<Ip> ips) {
       checkNotNull(id, "id");
       this.id = id;
       this.hostname = hostname;
@@ -100,8 +100,8 @@ public class ServerCreated {
    }
 
    /** @return the IP addresses assigned to the server */
-   public List<ServerIp> getIps() {
-      return ips == null ? ImmutableList.<ServerIp>of() : ips;
+   public List<Ip> getIps() {
+      return ips == null ? ImmutableList.<Ip>of() : ips;
    }
 
    @Override

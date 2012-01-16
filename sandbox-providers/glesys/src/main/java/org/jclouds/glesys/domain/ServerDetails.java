@@ -46,7 +46,7 @@ public class ServerDetails extends Server {
       private int disk;
       private int transfer;
       private Cost cost;
-      private List<ServerIp> ips;
+      private List<Ip> ips;
 
       public Builder description(String description) {
          this.description = description;
@@ -83,11 +83,11 @@ public class ServerDetails extends Server {
          return this;
       }
 
-      public Builder ips(ServerIp... ips) {
+      public Builder ips(Ip... ips) {
          return ips(Arrays.asList(ips));
       }
 
-      public Builder ips(List<ServerIp> ips) {
+      public Builder ips(List<Ip> ips) {
          this.ips = ips;
          return this;
       }
@@ -136,10 +136,10 @@ public class ServerDetails extends Server {
    private final int transfer;
    private final Cost cost;
    @SerializedName("iplist")
-   private final List<ServerIp> ips;
+   private final List<Ip> ips;
 
    public ServerDetails(String id, String hostname, String datacenter, String platform, String template,
-                        String description, int cpuCores, int memory, int disk, int transfer, Cost cost, List<ServerIp> ips) {
+                        String description, int cpuCores, int memory, int disk, int transfer, Cost cost, List<Ip> ips) {
       super(id, hostname, datacenter, platform);
       this.template = checkNotNull(template, "template");
       this.description = description;
@@ -148,7 +148,7 @@ public class ServerDetails extends Server {
       this.disk = disk;
       this.transfer = transfer;
       this.cost = checkNotNull(cost, "cost");
-      this.ips = ips == null ? ImmutableList.<ServerIp>of() : ips;
+      this.ips = ips == null ? ImmutableList.<Ip>of() : ips;
    }
 
    /**
@@ -196,7 +196,7 @@ public class ServerDetails extends Server {
    /**
     * @return the ip addresses assigned to the server
     */
-   public List<ServerIp> getIps() {
+   public List<Ip> getIps() {
       return ips;
    }
 
