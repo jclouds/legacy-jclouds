@@ -60,7 +60,7 @@ public class NovaComputeServiceAdapter implements ComputeServiceAdapter<Server, 
    public NodeAndInitialCredentials<Server> createNodeWithGroupEncodedIntoName(String group, String name,
             Template template) {
       Server server = client.createServer(name, template.getImage().getId(), template.getHardware().getId(),
-               withMetadata(template.getOptions().getUserMetadata()));
+               withMetadata(template.getOptions().getUserMetadata()).withSecurityGroup(group));
 
       return new NodeAndInitialCredentials<Server>(server, server.getId() + "", LoginCredentials.builder().password(
                server.getAdminPass()).build());

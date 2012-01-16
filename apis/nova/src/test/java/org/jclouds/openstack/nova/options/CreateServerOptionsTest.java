@@ -29,6 +29,7 @@ import javax.ws.rs.HttpMethod;
 import java.net.URI;
 
 import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
+import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withSecurityGroup;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -68,6 +69,24 @@ public class CreateServerOptionsTest {
       CreateServerOptions options = withFile("/tmp/rhubarb", "foo".getBytes());
       HttpRequest request = buildRequest(options);
       assertFile(request);
+   }
+   
+   @Test
+   public void testWithSecurityGroup() {
+	   CreateServerOptions options =  withSecurityGroup("mygroup");
+	   HttpRequest request = buildRequest(options);
+		assertEquals(
+				request.getPayload().getRawContent(),
+				"{\"server\":{\"name\":\"foo\",\"imageRef\":\"1\",\"flavorRef\":\"2\",\"security_groups\":[{\"id\":0,\"name\":\"mygroup\"}]}}");
+   }
+
+   @Test
+   public void testWithSecurityGroups() {
+	   CreateServerOptions options =  withSecurityGroup("mygroup").withSecurityGroup("myothergroup");
+	   HttpRequest request = buildRequest(options);
+		assertEquals(
+				request.getPayload().getRawContent(),
+				"{\"server\":{\"name\":\"foo\",\"imageRef\":\"1\",\"flavorRef\":\"2\",\"security_groups\":[{\"id\":0,\"name\":\"mygroup\"},{\"id\":0,\"name\":\"myothergroup\"}]}}");
    }
 
    private void assertFile(HttpRequest request) {

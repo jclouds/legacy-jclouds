@@ -30,12 +30,14 @@ import javax.inject.Inject;
 
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.openstack.nova.domain.SecurityGroup;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * 
@@ -77,6 +79,8 @@ public class CreateServerOptions implements MapBinder {
       Map<String, String> metadata;
       List<File> personality;
       String key_name;
+      @SerializedName(value="security_groups")
+      List<SecurityGroup> securityGroups;
 
       private ServerRequest(String name, String imageRef, String flavorRef) {
          this.name = name;
@@ -88,6 +92,7 @@ public class CreateServerOptions implements MapBinder {
 
    private Map<String, String> metadata = Maps.newHashMap();
    private List<File> files = Lists.newArrayList();
+   private List<String> securityGroups = Lists.newArrayList();
    private String keyName;
 
    @Override
@@ -101,6 +106,14 @@ public class CreateServerOptions implements MapBinder {
          server.personality = files;
       if (keyName != null)
     	  server.key_name = keyName;
+      if (securityGroups.size() > 0) {
+    	  server.securityGroups = Lists.newArrayList();
+    	  for (String groupName : securityGroups) {
+    		  SecurityGroup group = new SecurityGroup();
+        	  group.setName(groupName);
+        	  server.securityGroups.add(group);
+    	  }
+      }
 
       return bindToRequest(request, ImmutableMap.of("server", server));
    }
@@ -161,6 +174,18 @@ public class CreateServerOptions implements MapBinder {
        return this;
     }
    
+   /**
+    * Defines the security group name to be used when creating a server.
+    * 
+    * @param groupName
+    * @return
+    */
+   public CreateServerOptions withSecurityGroup(String groupName) {
+	   checkNotNull(groupName, "groupName");
+	   this.securityGroups.add(groupName);
+       return this;
+    }
+   
    public static class Builder {
 
       /**
@@ -185,6 +210,14 @@ public class CreateServerOptions implements MapBinder {
       public static CreateServerOptions withKeyName(String keyName) {
           CreateServerOptions options = new CreateServerOptions();
           return options.withKeyName(keyName);
+       }
+      
+      /**
+       * @see CreateServerOptions#withGroupName(String)
+       */
+      public static CreateServerOptions withSecurityGroup(String name) {
+          CreateServerOptions options = new CreateServerOptions();
+          return options.withSecurityGroup(name);
        }
    }
 
