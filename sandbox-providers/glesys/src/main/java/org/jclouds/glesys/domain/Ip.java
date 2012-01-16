@@ -22,12 +22,13 @@ package org.jclouds.glesys.domain;
 import com.google.common.base.Objects;
 
 /**
- * Represents detailed information about an available ip address of a new server.
+ * Represents an ip address used by a server.
  *
  * @author Adam Lowe
  * @see ServerCreated
+ * @see ServerDetails
  */
-public class ServerCreatedIp {
+public class Ip {
 
    public static Builder builder() {
       return new Builder();
@@ -61,11 +62,11 @@ public class ServerCreatedIp {
          return this;
       }
 
-      public ServerCreatedIp build() {
-         return new ServerCreatedIp(ip, version, cost);
+      public Ip build() {
+         return new Ip(ip, version, cost);
       }
 
-      public Builder fromIpCreated(ServerCreatedIp from) {
+      public Builder fromIpCreated(Ip from) {
          return ip(from.getIp()).version(from.getVersion()).cost(from.getCost());
       }
    }
@@ -74,7 +75,7 @@ public class ServerCreatedIp {
    protected final int version;
    protected final double cost;
 
-   public ServerCreatedIp(String ip, int version, double cost) {
+   public Ip(String ip, int version, double cost) {
       this.ip = ip;
       this.version = version;
       this.cost = cost;
@@ -106,8 +107,8 @@ public class ServerCreatedIp {
       if (this == object) {
          return true;
       }
-      if (object instanceof ServerCreatedIp) {
-         final ServerCreatedIp other = (ServerCreatedIp) object;
+      if (object instanceof Ip) {
+         final Ip other = (Ip) object;
          return Objects.equal(ip, other.ip)
                && Objects.equal(version, other.version)
                && Objects.equal(cost, other.cost);

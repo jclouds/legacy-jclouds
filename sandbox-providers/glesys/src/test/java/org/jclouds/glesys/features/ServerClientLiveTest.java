@@ -133,6 +133,19 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
 
    @Test
    public void testServerDetails() throws Exception {
+      ServerDetails details = client.getServerDetails(testServerId);
+      checkServer(details);
+      assertEquals("Ubuntu 10.04 LTS 32-bit", details.getTemplate());
+      assertEquals("Falkenberg", details.getDatacenter());
+      assertEquals("OpenVZ", details.getPlatform());
+      assertEquals(5, details.getDisk());
+      assertEquals(512, details.getMemory());
+      assertEquals(1, details.getCpuCores());
+      assertEquals(50, details.getTransfer());
+   }
+
+   @Test
+   public void testServerStatus() throws Exception {
       ServerStatus newStatus = client.getServerStatus(testServerId);
       checkStatus(newStatus);
    }
@@ -238,6 +251,10 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       assert server.getDisk() > 0 : server;
       assert server.getMemory() > 0 : server;
       assert server.getCost() != null;
+      assert server.getTransfer() > 0 : server;
+
+      assertNotNull(server.getTemplate());
+      assertNotNull(server.getIps());
    }
 
    private void checkStatus(ServerStatus status) {

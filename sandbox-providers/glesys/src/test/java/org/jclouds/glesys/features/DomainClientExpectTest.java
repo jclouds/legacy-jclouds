@@ -49,8 +49,6 @@ public class DomainClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
    }
 
    public void testListDomainsWhenResponseIs2xx() throws Exception {
-      //DomainClient client = createMock("list", "POST", 200, "/domain_list.json");
-
       DomainClient client = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/domain/list/format/json"))
                   .headers(ImmutableMultimap.<String, String>builder()
@@ -59,7 +57,7 @@ public class DomainClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                   .build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/domain_list.json")).build()).getDomainClient();
 
-      Set<Domain> expected = ImmutableSet.<Domain>of(
+      Set<Domain> expected = ImmutableSet.of(
             Domain.builder().domain("adamlowe.net").createTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2011-12-20 10:58:51")).build());
       
       assertEquals(client.listDomains(), expected);
