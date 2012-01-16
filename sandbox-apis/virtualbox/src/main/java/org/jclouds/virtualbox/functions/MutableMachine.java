@@ -36,7 +36,7 @@ import com.google.common.base.Supplier;
 import com.google.inject.Inject;
 
 @Singleton
-public class MutableMachine implements Function<String, IMachine> {
+public class MutableMachine implements Function<String, ISession> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -54,7 +54,7 @@ public class MutableMachine implements Function<String, IMachine> {
    }
 
 	@Override
-	public IMachine apply(String machineId) {
+	public ISession apply(String machineId) {
 	 return	lockSessionOnMachineAndReturn(manager.get(), lockType, machineId);
 	}
 
@@ -67,14 +67,15 @@ public class MutableMachine implements Function<String, IMachine> {
     * @param manager   the VirtualBoxManager
     * @param type      the kind of lock to use when initially locking the machine.
     * @param machineId the id of the machine
-    * @return the result from applying the function to the session.
+    * @return the ISession bounded to the machine locked.
     */
-   public static IMachine lockSessionOnMachineAndReturn(VirtualBoxManager manager, LockType type, String machineId) {
+   public static ISession lockSessionOnMachineAndReturn(VirtualBoxManager manager, LockType type, String machineId) {
       try {
          ISession session = manager.getSessionObject();
          IMachine immutableMachine = manager.getVBox().findMachine(machineId);
+         System.out.println(immutableMachine.getSessionState());
          immutableMachine.lockMachine(session, type);
-         return immutableMachine;
+         return session;
       } catch (VBoxException e) {
          throw new RuntimeException(String.format("error locking %s with %s lock: %s", machineId,
                  type, e.getMessage()), e);

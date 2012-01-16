@@ -66,9 +66,10 @@ public class LaunchMachineIfNotAlreadyRunning implements Function<IMachine, Void
 
    @Override
    public Void apply(@Nullable IMachine machine) {
+      ISession session = manager.getSessionObject();
       try {
          final IProgress progress = machine
-                 .launchVMProcess(manager.getSessionObject(), type.stringValue(), environment);
+                 .launchVMProcess(session, type.stringValue(), environment);
          progress.waitForCompletion(-1);
          Thread.sleep(5000);
       } catch (InterruptedException e) {
@@ -84,10 +85,12 @@ public class LaunchMachineIfNotAlreadyRunning implements Function<IMachine, Void
                propagate(e);
          }
       } finally {
-         if (manager.getSessionObject().getState() == SessionState.Locked) {
+        // if (session.getState() == SessionState.Locked) {
             // Remove session lock taken by launchVmProcess()
-            manager.getSessionObject().unlockMachine();
-         }
+            session.unlockMachine();
+            System.out.println(machine.getSessionState());
+
+        // }
       }
       return null;
    }

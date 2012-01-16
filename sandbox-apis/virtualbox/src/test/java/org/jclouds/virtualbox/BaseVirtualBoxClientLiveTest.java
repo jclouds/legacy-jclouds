@@ -129,7 +129,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    }
 
    protected void undoVm(VmSpec vmSpecification) {
-      machineUtils.mutateMachine(vmSpecification.getVmId(), new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
+      machineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered(vmSpecification.getVmId(), new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
    }
 
    @AfterClass(groups = "live")

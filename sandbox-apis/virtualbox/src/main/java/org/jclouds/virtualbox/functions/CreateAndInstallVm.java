@@ -42,11 +42,13 @@ import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.domain.IMachineSpec;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
 import org.jclouds.virtualbox.settings.KeyboardScancodes;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
@@ -73,6 +75,8 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
    private final Function<IMachine, SshClient> sshClientForIMachine;
    
    private final MachineUtils machineUtils;
+
+   private LockType lockType;
 
 
    @Inject
@@ -124,7 +128,14 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
       logger.debug("<< installation of image complete. Powering down node(%s)",
             vmName);
       
-      lockSessionOnMachineAndApply(manager.get(), Shared, vmName,
+      
+      ensureMachineHasPowerDown(vmName);
+      
+      return vm;
+   }
+
+   private void ensureMachineHasPowerDown(String vmName) {
+      machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Write,
             new Function<ISession, Void>() {
 
                @Override
@@ -136,17 +147,10 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
                }
 
             });
-      
-      return vm;
    }
 
    private void ensureMachineIsLaunched(String vmName) {
-      machineUtils.mutateMachine(vmName, new LaunchMachineIfNotAlreadyRunning(manager.get(), executionType, ""));
-      /*
-      applyForMachine(manager.get(), vmName,
-            new LaunchMachineIfNotAlreadyRunning(manager.get(), executionType,
-                  ""));
-      */
+      machineUtils.applyForMachine(vmName, new LaunchMachineIfNotAlreadyRunning(manager.get(), executionType, ""));
    }
 
    private void sendKeyboardSequence(String keyboardSequence, String vmName) {

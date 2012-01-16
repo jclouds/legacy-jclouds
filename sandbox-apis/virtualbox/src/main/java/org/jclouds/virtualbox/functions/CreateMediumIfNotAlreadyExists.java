@@ -96,13 +96,8 @@ public class CreateMediumIfNotAlreadyExists implements Function<HardDisk, IMediu
                         return in.getMedium().getId().equals(medium.getId());
                      }
                   });
-         machineUtils.mutateMachine(immutableMachine.getName(), new DetachDistroMediumFromMachine(
+         machineUtils.writeLockMachineAndApply(immutableMachine.getName(), new DetachDistroMediumFromMachine(
                mediumAttachment.getController(), mediumAttachment.getPort(), mediumAttachment.getDevice()));
-   /*
-         
-         lockMachineAndApply(manager.get(), Write, immutableMachine.getName(), new DetachDistroMediumFromMachine(
-                  mediumAttachment.getController(), mediumAttachment.getPort(), mediumAttachment.getDevice()));
-                  */
          deleteMediumAndBlockUntilComplete(medium);
       } else {
          throw e;
