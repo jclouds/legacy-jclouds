@@ -27,7 +27,7 @@ import com.google.common.base.Objects;
  * @author Adam Lowe
  * @see ServerCreated
  */
-public class ServerCreatedIp {
+public class ServerIp {
 
    public static Builder builder() {
       return new Builder();
@@ -61,11 +61,11 @@ public class ServerCreatedIp {
          return this;
       }
 
-      public ServerCreatedIp build() {
-         return new ServerCreatedIp(ip, version, cost);
+      public ServerIp build() {
+         return new ServerIp(ip, version, cost);
       }
 
-      public Builder fromIpCreated(ServerCreatedIp from) {
+      public Builder fromIpCreated(ServerIp from) {
          return ip(from.getIp()).version(from.getVersion()).cost(from.getCost());
       }
    }
@@ -74,7 +74,7 @@ public class ServerCreatedIp {
    protected final int version;
    protected final double cost;
 
-   public ServerCreatedIp(String ip, int version, double cost) {
+   public ServerIp(String ip, int version, double cost) {
       this.ip = ip;
       this.version = version;
       this.cost = cost;
@@ -106,8 +106,8 @@ public class ServerCreatedIp {
       if (this == object) {
          return true;
       }
-      if (object instanceof ServerCreatedIp) {
-         final ServerCreatedIp other = (ServerCreatedIp) object;
+      if (object instanceof ServerIp) {
+         final ServerIp other = (ServerIp) object;
          return Objects.equal(ip, other.ip)
                && Objects.equal(version, other.version)
                && Objects.equal(cost, other.cost);

@@ -23,9 +23,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.jclouds.glesys.config.GleSYSParserModule;
 import org.jclouds.glesys.domain.Cost;
-import org.jclouds.glesys.domain.ServerCreated;
-import org.jclouds.glesys.domain.ServerCreatedIp;
 import org.jclouds.glesys.domain.ServerDetails;
+import org.jclouds.glesys.domain.ServerIp;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;
@@ -49,10 +48,11 @@ public class ParseServerDetailsTest extends BaseItemParserTest<ServerDetails> {
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
    public ServerDetails expected() {
+      ServerIp ip = ServerIp.builder().version4().ip("31.192.226.45").cost(2.0).build();
       Cost cost = Cost.builder().amount(6.38).currency("EUR").timePeriod("month").build();
-      return ServerDetails.builder().id("vz1908384").hostname("jclouds-unit").cpuCores(1).
-            memory(128).disk(5).
-            description("unit test server").datacenter("Falkenberg").platform("OpenVZ").cost(cost).build();
+      return ServerDetails.builder().id("vz1375882").transfer(50).hostname("jclouds-unit").cpuCores(1).memory(128).disk(5)
+            .description("unit test server").datacenter("Falkenberg").platform("OpenVZ").template("Debian 6.0 64-bit")
+            .cost(cost).ips(ip).build();
    }
    
    protected Injector injector() {

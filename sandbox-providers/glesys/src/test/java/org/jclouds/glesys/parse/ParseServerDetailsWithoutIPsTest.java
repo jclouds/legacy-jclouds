@@ -52,7 +52,7 @@ public class ParseServerDetailsWithoutIPsTest extends BaseItemParserTest<ServerD
    public ServerDetails expected() {
       Cost cost = Cost.builder().amount(6.38).currency("EUR").timePeriod("month").build();
       return ServerDetails.builder().id("vz1541880").hostname("mammamia").datacenter("Falkenberg").platform("OpenVZ")
-            .description("description").cpuCores(1).memory(128).disk(5).cost(cost).build();
+            .template("Ubuntu 11.04 64-bit").description("description").cpuCores(1).memory(128).disk(5).transfer(50).cost(cost).build();
    }
 
    protected Injector injector() {
