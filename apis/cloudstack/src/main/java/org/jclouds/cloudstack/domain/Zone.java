@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.annotation.Nullable;
@@ -27,9 +29,29 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * @author Adrian Cole
+ * @author Adrian Cole, Andrei Savu
  */
 public class Zone implements Comparable<Zone> {
+
+   public static enum AllocationState {
+      DISABLED,
+      ENABLED,
+      UNKNOWN;
+
+      public static AllocationState fromValue(String value) {
+         try{
+            return valueOf(value.toUpperCase());
+         } catch (IllegalArgumentException e) {
+            return UNKNOWN;
+         }
+      }
+
+      @Override
+      public String toString() {
+         return UPPER_UNDERSCORE.to(UPPER_CAMEL, name());
+      }
+   }
+
    public static Builder builder() {
       return new Builder();
    }
@@ -47,7 +69,7 @@ public class Zone implements Comparable<Zone> {
       private NetworkType networkType;
       private String VLAN;
       private boolean securityGroupsEnabled;
-      private String allocationState;
+      private AllocationState allocationState;
       private String dhcpProvider;
       private String zoneToken;
 
@@ -112,7 +134,7 @@ public class Zone implements Comparable<Zone> {
       }
 
 
-      public Builder allocationState(String allocationState) {
+      public Builder allocationState(AllocationState allocationState) {
          this.allocationState = allocationState;
          return this;
       }
@@ -159,8 +181,7 @@ public class Zone implements Comparable<Zone> {
    @SerializedName("securitygroupsenabled")
    private boolean securityGroupsEnabled;
    @SerializedName("allocationstate")
-   //TODO Change to enum?
-   private String allocationState;
+   private AllocationState allocationState;
    @SerializedName("dhcpprovider")
    private String dhcpProvider;
    @SerializedName("zonetoken")
@@ -175,7 +196,7 @@ public class Zone implements Comparable<Zone> {
 
    public Zone(long id, String description, String displayText, List<String> DNS, String domain, long domainId,
                String guestCIDRAddress, List<String> internalDNS, String name, NetworkType networkType,
-               String vLAN, boolean securityGroupsEnabled, String allocationState, String dhcpProvider, String zoneToken) {
+               String vLAN, boolean securityGroupsEnabled, AllocationState allocationState, String dhcpProvider, String zoneToken) {
       this.id = id;
       this.description = description;
       this.displayText = displayText;
@@ -293,7 +314,7 @@ public class Zone implements Comparable<Zone> {
    /**
     * @return the allocation state of the cluster
     */
-   public String getAllocationState() {
+   public AllocationState getAllocationState() {
       return allocationState;
    }
 
