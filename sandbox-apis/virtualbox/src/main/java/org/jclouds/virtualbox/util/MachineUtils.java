@@ -50,15 +50,6 @@ import com.google.inject.Inject;
 /**
  * Utilities for executing functions on a VirtualBox machine.
  * 
- * MachineUtils looks to me like a locking system
-writeLockMachineAndApply()
-
-then the thing that wipes out machines ...
-writeLockOrKillMachineAndApply
-^^ that's the tricky one, where you can't delete a vm as it has a stale lock
-similarly, if helpful
-readMachineAndApply(String, fn)
-since in the api it is a bit confusing whether a vm is readable/writeable,etc
  * 
  * @author Adrian Cole, Mattias Holmqvist, Andrea Turli
  */
@@ -94,8 +85,6 @@ public class MachineUtils {
     * <p/>
     * Unlocks the machine before returning.
     * 
-    * @param manager
-    *           the VirtualBoxManager
     * @param type
     *           the kind of lock to use when initially locking the machine.
     * @param machineId
@@ -131,8 +120,6 @@ public class MachineUtils {
     * <p/>
     * Unlocks the machine before returning.
     * 
-    * @param manager
-    *           the VirtualBoxManager
     * @param type
     *           the kind of lock to use when initially locking the machine.
     * @param machineId
@@ -181,8 +168,6 @@ public class MachineUtils {
     * <h3>Note!</h3> Currently, this can only unlock the machine, if the lock
     * was created in the current session.
     * 
-    * @param manager
-    *           the VirtualBoxManager
     * @param machineId
     *           the id of the machine
     * @param function
@@ -210,8 +195,6 @@ public class MachineUtils {
     * machine.
     * <p/>
     * 
-    * @param manager
-    *           the VirtualBoxManager
     * @param machineId
     *           the id of the machine
     * @param function
@@ -232,40 +215,6 @@ public class MachineUtils {
          return null;
       }
    }
-
-   /**
-    * Locks the machine and executes the given function using the current
-    * session, if the machine is registered. Since the machine is locked it is
-    * possible to perform some modifications to the IMachine.
-    * <p/>
-    * Unlocks the machine before returning.
-    * 
-    * @param manager
-    *           the VirtualBoxManager
-    * @param type
-    *           the kind of lock to use when initially locking the machine.
-    * @param machineId
-    *           the id of the machine
-    * @param function
-    *           the function to execute
-    * @return the result from applying the function to the session.
-    */
-   /*
-   public static <T> T lockMachineAndApplyOrReturnNullIfNotRegistered(
-         VirtualBoxManager manager, LockType type, String machineId,
-         Function<IMachine, T> function) {
-      try {
-         return lockMachineAndApply(manager, type, machineId, function);
-      } catch (RuntimeException e) {
-         VBoxException vbex = Throwables2.getFirstThrowableOfType(e,
-               VBoxException.class);
-         if (vbex != null
-               && vbex.getMessage().indexOf("not find a registered") == -1)
-            throw e;
-         return null;
-      }
-   }
-   */
    
    /**
     * 

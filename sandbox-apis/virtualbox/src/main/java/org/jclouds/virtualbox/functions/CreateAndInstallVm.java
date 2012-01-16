@@ -18,10 +18,8 @@
  */
 package org.jclouds.virtualbox.functions;
 
-
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
-import static org.virtualbox_4_1.LockType.Shared;
 
 import java.net.URI;
 
@@ -42,7 +40,6 @@ import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.domain.IMachineSpec;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
-import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
 import org.jclouds.virtualbox.settings.KeyboardScancodes;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.IMachine;
@@ -73,11 +70,10 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
    private final Supplier<NodeMetadata> host;
 
    private final Function<IMachine, SshClient> sshClientForIMachine;
-   
+
    private final MachineUtils machineUtils;
 
    private LockType lockType;
-
 
    @Inject
    public CreateAndInstallVm(
@@ -88,8 +84,7 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
          Function<IMachine, SshClient> sshClientForIMachine,
          Supplier<NodeMetadata> host, RunScriptOnNode.Factory scriptRunner,
          @Preconfiguration Supplier<URI> preconfiguration,
-         ExecutionType executionType,
-         MachineUtils machineUtils) {
+         ExecutionType executionType, MachineUtils machineUtils) {
       this.manager = manager;
       this.createAndRegisterMachineFromIsoIfNotAlreadyExists = CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
       this.sshResponds = sshResponds;
@@ -108,14 +103,15 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
 
       String vmName = vmSpec.getVmName();
 
-      final IMachine vm = createAndRegisterMachineFromIsoIfNotAlreadyExists.apply(machineSpec);
+      final IMachine vm = createAndRegisterMachineFromIsoIfNotAlreadyExists
+            .apply(machineSpec);
 
       // Launch machine and wait for it to come online
       ensureMachineIsLaunched(vmName);
 
       URI uri = isoSpec.getPreConfigurationUri().get();
       String installationKeySequence = isoSpec.getInstallationKeySequence()
-              .replace("PRECONFIGURATION_URL", uri.toASCIIString());
+            .replace("PRECONFIGURATION_URL", uri.toASCIIString());
       sendKeyboardSequence(installationKeySequence, vmName);
 
       SshClient client = sshClientForIMachine.apply(vm);
@@ -127,15 +123,15 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
 
       logger.debug("<< installation of image complete. Powering down node(%s)",
             vmName);
-      
-      
+
       ensureMachineHasPowerDown(vmName);
-      
+
       return vm;
    }
 
    private void ensureMachineHasPowerDown(String vmName) {
-      machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Write,
+
+      machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared,
             new Function<ISession, Void>() {
 
                @Override
@@ -147,10 +143,13 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
                }
 
             });
+
    }
 
    private void ensureMachineIsLaunched(String vmName) {
-      machineUtils.applyForMachine(vmName, new LaunchMachineIfNotAlreadyRunning(manager.get(), executionType, ""));
+      machineUtils.applyForMachine(vmName,
+            new LaunchMachineIfNotAlreadyRunning(manager.get(), executionType,
+                  ""));
    }
 
    private void sendKeyboardSequence(String keyboardSequence, String vmName) {

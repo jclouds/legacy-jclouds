@@ -70,10 +70,10 @@ public class MutableMachine implements Function<String, ISession> {
     * @return the ISession bounded to the machine locked.
     */
    public static ISession lockSessionOnMachineAndReturn(VirtualBoxManager manager, LockType type, String machineId) {
+      ISession session = null;
       try {
-         ISession session = manager.getSessionObject();
+         session = manager.getSessionObject();
          IMachine immutableMachine = manager.getVBox().findMachine(machineId);
-         System.out.println(immutableMachine.getSessionState());
          immutableMachine.lockMachine(session, type);
          return session;
       } catch (VBoxException e) {

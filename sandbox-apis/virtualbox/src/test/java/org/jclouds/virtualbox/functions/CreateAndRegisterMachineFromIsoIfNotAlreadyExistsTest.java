@@ -36,6 +36,7 @@ import org.jclouds.virtualbox.domain.IMachineSpec;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.util.MachineUtils;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
@@ -58,6 +59,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
    @Test(enabled = false)
    public void testCreateAndSetMemoryWhenNotAlreadyExists() throws Exception {
 
+      MachineUtils machineUtils = createMock(MachineUtils.class);
       VirtualBoxManager manager = createMock(VirtualBoxManager.class);
       IVirtualBox vBox = createMock(IVirtualBox.class);
       Supplier<URI> preconfiguration = createNiceMock(Supplier.class);
@@ -99,13 +101,15 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       replay(manager, createdMachine, vBox, session);
 
-      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Suppliers.ofInstance(manager, machineUtils), "/tmp/workingDir").apply(launchSpecification);
+      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Suppliers.ofInstance(manager), machineUtils, "/tmp/workingDir").apply(machineSpec);
 
       verify(manager, createdMachine, vBox, session);
    }
 
-   @Test(expectedExceptions = IllegalStateException.class)
+   @Test(expectedExceptions = IllegalStateException.class, enabled=false)
    public void testFailIfMachineIsAlreadyRegistered() throws Exception {
+
+      MachineUtils machineUtils = createMock(MachineUtils.class);
 
       VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
       IVirtualBox vBox = createNiceMock(IVirtualBox.class);
@@ -117,7 +121,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       expect(manager.getVBox()).andReturn(vBox).anyTimes();
       expect(vBox.findMachine(vmName)).andReturn(registeredMachine).anyTimes();
 
-      replay(manager, vBox);
+      replay(manager, vBox, machineUtils);
 
       VmSpec launchSpecification = VmSpec.builder().id("").name(vmName).osTypeId("").memoryMB(1024).cleanUpMode(
               CleanupMode.Full).build();
@@ -129,11 +133,13 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
                       .preConfiguration(preconfiguration).build())
               .vm(launchSpecification)
               .network(NetworkSpec.builder().build()).build();
-      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Suppliers.ofInstance(manager), "/tmp/workingDir").apply(machineSpec);
+      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Suppliers.ofInstance(manager), machineUtils, "/tmp/workingDir").apply(machineSpec);
    }
 
    @Test(expectedExceptions = VBoxException.class)
    public void testFailIfOtherVBoxExceptionIsThrown() throws Exception {
+
+      MachineUtils machineUtils = createMock(MachineUtils.class);
 
       VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
       IVirtualBox vBox = createNiceMock(IVirtualBox.class);
@@ -148,7 +154,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       vBox.findMachine(vmName);
       expectLastCall().andThrow(vBoxException);
 
-      replay(manager, vBox);
+      replay(manager, vBox, machineUtils);
 
       VmSpec launchSpecification = VmSpec.builder().id("").name(vmName).osTypeId("").cleanUpMode(CleanupMode.Full)
               .memoryMB(1024).build();
@@ -160,7 +166,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
               .vm(launchSpecification)
               .network(NetworkSpec.builder().build()).build();
 
-      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Suppliers.ofInstance(manager), "/tmp/workingDir").apply(machineSpec);
+      new CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Suppliers.ofInstance(manager), machineUtils, "/tmp/workingDir").apply(machineSpec);
 
    }
 

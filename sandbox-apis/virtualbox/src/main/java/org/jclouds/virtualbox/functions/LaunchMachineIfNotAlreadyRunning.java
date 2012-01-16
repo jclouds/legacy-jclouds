@@ -28,7 +28,11 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.domain.ErrorCode;
 import org.jclouds.virtualbox.domain.ExecutionType;
-import org.virtualbox_4_1.*;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 
@@ -85,12 +89,7 @@ public class LaunchMachineIfNotAlreadyRunning implements Function<IMachine, Void
                propagate(e);
          }
       } finally {
-        // if (session.getState() == SessionState.Locked) {
-            // Remove session lock taken by launchVmProcess()
             session.unlockMachine();
-            System.out.println(machine.getSessionState());
-
-        // }
       }
       return null;
    }
