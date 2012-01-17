@@ -29,6 +29,7 @@ import org.jclouds.openstack.nova.domain.Flavor;
 import org.jclouds.openstack.nova.domain.FloatingIP;
 import org.jclouds.openstack.nova.domain.Image;
 import org.jclouds.openstack.nova.domain.RebootType;
+import org.jclouds.openstack.nova.domain.SecurityGroup;
 import org.jclouds.openstack.nova.domain.Server;
 import org.jclouds.openstack.nova.options.CreateServerOptions;
 import org.jclouds.openstack.nova.options.ListOptions;
@@ -313,4 +314,24 @@ public interface NovaClient {
     * @return the floating IP or null if not found
     */
    FloatingIP getFloatingIP(int id);
+   
+   /**
+    * Get all the security groups
+    * 
+    * @see <a href="http://wiki.openstack.org/os-security-groups">http://wiki.openstack.org/os-security-groups</a>
+    * @since OpenStack API v1.1
+    * @return all the security groups for the current tenant
+    */
+   Set<SecurityGroup> listSecurityGroups();
+   
+   /**
+    * Get a security group from its ID
+    * 
+    * @see <a href="http://wiki.openstack.org/os-security-groups">http://wiki.openstack.org/os-security-groups</a>
+    * @since OpenStack API v1.1
+    * @param id the ID of the security group to get details from
+    * @return the security group or null if not found
+    */
+   SecurityGroup getSecurityGroup(int id);
+   
 }

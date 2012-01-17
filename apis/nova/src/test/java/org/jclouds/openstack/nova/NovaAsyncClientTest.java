@@ -18,9 +18,22 @@
  */
 package org.jclouds.openstack.nova;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
+import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withMetadata;
+import static org.jclouds.openstack.nova.options.ListOptions.Builder.changesSince;
+import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
+import static org.jclouds.openstack.nova.options.RebuildServerOptions.Builder.withImage;
+import static org.testng.Assert.assertEquals;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.util.Date;
+import java.util.Properties;
+
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
@@ -45,21 +58,9 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.Date;
-import java.util.Properties;
-
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
-import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withMetadata;
-import static org.jclouds.openstack.nova.options.ListOptions.Builder.changesSince;
-import static org.jclouds.openstack.nova.options.ListOptions.Builder.withDetails;
-import static org.jclouds.openstack.nova.options.RebuildServerOptions.Builder.withImage;
-//import static org.junit.Assert.*;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code NovaAsyncClient}
@@ -154,7 +155,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
 
 	      checkFilters(request);
    }
-
+   
    public void testDeleteImage() throws IOException, SecurityException, NoSuchMethodException {
       Method method = NovaAsyncClient.class.getMethod("deleteImage", int.class);
       HttpRequest request = processor.createRequest(method, 2);
@@ -684,6 +685,42 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
 
 	      assertRequestLineEquals(request,
 	            "GET http://endpoint/vapi-version/os-floating-ips?format=json HTTP/1.1");
+	      assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
+	      assertPayloadEquals(request, null, null, false);
+
+	      assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
+	      assertSaxResponseParserClassEquals(method, null);
+	      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+
+	      checkFilters(request);	
+	}
+	
+	public void testGetSecurityGroup() throws SecurityException,
+			NoSuchMethodException {
+		Method method = NovaAsyncClient.class.getMethod("getSecurityGroup",
+				int.class);
+		HttpRequest request = processor.createRequest(method, 2);
+
+		assertRequestLineEquals(request,
+				"GET http://endpoint/vapi-version/os-security-groups/2?format=json HTTP/1.1");
+		assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
+		assertPayloadEquals(request, null, null, false);
+
+		assertResponseParserClassEquals(method, request,
+				UnwrapOnlyJsonValue.class);
+		assertSaxResponseParserClassEquals(method, null);
+		assertExceptionParserClassEquals(method,
+				ReturnNullOnNotFoundOr404.class);
+
+		checkFilters(request);
+	}
+	
+	public void testListSecurityGroups() throws SecurityException, NoSuchMethodException {
+	      Method method = NovaAsyncClient.class.getMethod("listSecurityGroups");
+	      HttpRequest request = processor.createRequest(method);
+
+	      assertRequestLineEquals(request,
+	            "GET http://endpoint/vapi-version/os-security-groups?format=json HTTP/1.1");
 	      assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
 	      assertPayloadEquals(request, null, null, false);
 

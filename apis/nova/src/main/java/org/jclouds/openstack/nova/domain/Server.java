@@ -18,11 +18,13 @@
  */
 package org.jclouds.openstack.nova.domain;
 
-import com.google.common.collect.Maps;
-import com.google.gson.annotations.SerializedName;
-
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
+
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * A server is a virtual machine instance in the OpenStack Nova system. Flavor and image are
@@ -48,6 +50,13 @@ public class Server extends Resource {
 
    @SerializedName(value="key_name")
    private String keyName;
+
+	/**
+	 * Actually, security groups are not returned by nova on server query but is
+	 * needed when creating a server to specify a set of groups
+	 */
+   @SerializedName(value="security_groups")
+   private Set<SecurityGroup> securityGroups = Sets.newHashSet();
 
    private Date created;
    private Date updated;
@@ -203,6 +212,14 @@ public class Server extends Resource {
    public void setKeyName(String keyName) {
 	   this.keyName = keyName;
    }
+   
+   public Set<SecurityGroup> getSecurityGroups() {
+	   return securityGroups;
+   }
+   
+   public void setSecurityGroups(Set<SecurityGroup> securityGroups) {
+	   this.securityGroups = securityGroups;
+   }
 
    @Override
    public int hashCode() {
@@ -264,6 +281,11 @@ public class Server extends Resource {
             return false;
       } else if (!metadata.equals(other.metadata))
          return false;
+      if (securityGroups == null) {
+          if (other.securityGroups != null)
+             return false;
+       } else if (!securityGroups.equals(other.securityGroups))
+          return false;
       if (uuid == null) {
          if (other.uuid != null)
             return false;
@@ -300,7 +322,7 @@ public class Server extends Resource {
    public String toString() {
       return "Server [addresses=" + addresses + ", adminPass=" + adminPass + ", flavorRef="
             + flavorRef + ", hostId=" + hostId + ", id=" + id + ", imageRef=" + imageRef
-            + ", metadata=" + metadata + ", uuid=" + uuid + ", name=" + name + ", keyName=" + keyName + "]";
+            + ", metadata=" + metadata + ", uuid=" + uuid + ", name=" + name + ", keyName=" + keyName + " , securityGroups=" + securityGroups + "]";
    }
 
 }
