@@ -59,13 +59,18 @@ public class JcloudsVersion {
 
     @VisibleForTesting
     JcloudsVersion() {
-        this(readVersionPropertyFromClasspath());
+        this(JcloudsVersion.class.getClassLoader());
     }
 
-    private static String readVersionPropertyFromClasspath() {
+    @VisibleForTesting
+    JcloudsVersion(ClassLoader resourceLoader) {
+        this(readVersionPropertyFromClasspath(resourceLoader));
+    }
+
+    private static String readVersionPropertyFromClasspath(ClassLoader resourceLoader) {
         Properties versionProperties = new Properties();
         try {
-            versionProperties.load(checkNotNull(JcloudsVersion.class.getClassLoader().getResourceAsStream(VERSION_RESOURCE_FILE), VERSION_RESOURCE_FILE));
+            versionProperties.load(checkNotNull(resourceLoader.getResourceAsStream(VERSION_RESOURCE_FILE), VERSION_RESOURCE_FILE));
         } catch (IOException exception) {
             throw new IllegalStateException(format("Unable to load version resource file '%s'", VERSION_RESOURCE_FILE), exception);
         }
