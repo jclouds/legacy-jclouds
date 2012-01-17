@@ -1,0 +1,34 @@
+{
+    "security_group":
+        {
+          "rules": [
+              {
+                "from_port": 22,
+                "group": {},
+                "ip_protocol": "tcp",
+                "to_port": 22,
+                "parent_group_id": 28,
+                "ip_range": {
+                    "cidr": "10.2.6.0/24"
+                 },
+                 "id": 108
+              },
+              {
+                 "from_port": 22,
+                 "group": {
+                     "tenant_id": "admin",
+                     "name": "11111"
+                  },
+                  "ip_protocol": "tcp",
+                  "to_port": 22,
+                  "parent_group_id": 28,
+                  "ip_range": {},
+                  "id": 109
+               }
+          ],
+          "tenant_id": "tenant0",
+          "id": 0,
+          "name": "name0",
+          "description": "description0"
+        }
+}

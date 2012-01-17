@@ -341,4 +341,20 @@ public interface NovaAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<FloatingIP> getFloatingIP(@PathParam("id") int id);
 
+   @GET
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   @QueryParams(keys = "format", values = "json")
+   @Path("/os-security-groups")
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<? extends Set<SecurityGroup>> listSecurityGroups();
+   
+   @GET
+   @Unwrap
+   @Consumes(MediaType.APPLICATION_JSON)
+   @QueryParams(keys = "format", values = "json")
+   @Path("/os-security-groups/{id}")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<SecurityGroup> getSecurityGroup(@PathParam("id") int id);
+
 }
