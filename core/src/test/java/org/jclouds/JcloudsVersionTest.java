@@ -19,7 +19,10 @@
 package org.jclouds;
 
 import static org.jclouds.JcloudsVersion.VERSION_RESOURCE_FILE;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.util.List;
@@ -35,18 +38,10 @@ import com.google.common.collect.Iterables;
 @Test(singleThreaded = true)
 public class JcloudsVersionTest {
 
-    @Test
+    @Test(expectedExceptions = { NullPointerException.class })
     public void testFailsIfResourceFileMissing() {
-        ClassLoader original = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(
-                new ResourceHidingClassLoader(original, VERSION_RESOURCE_FILE));
-        try {
-            new JcloudsVersion();
-            fail("Expected NullPointerException");
-        } catch (NullPointerException expected) {
-        } finally {
-            Thread.currentThread().setContextClassLoader(original);
-        }
+        new JcloudsVersion(new ResourceHidingClassLoader(JcloudsVersion.class.getClassLoader(), 
+                VERSION_RESOURCE_FILE));
     }
 
     @Test(expectedExceptions = { IllegalArgumentException.class })
