@@ -19,11 +19,11 @@
 package org.jclouds.openstack.nova.domain;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -56,7 +56,7 @@ public class Server extends Resource {
 	 * needed when creating a server to specify a set of groups
 	 */
    @SerializedName(value="security_groups")
-   private List<SecurityGroup> securityGroups = Lists.newArrayList();
+   private Set<SecurityGroup> securityGroups = Sets.newHashSet();
 
    private Date created;
    private Date updated;
@@ -213,11 +213,11 @@ public class Server extends Resource {
 	   this.keyName = keyName;
    }
    
-   public List<SecurityGroup> getSecurityGroups() {
+   public Set<SecurityGroup> getSecurityGroups() {
 	   return securityGroups;
    }
    
-   public void setSecurityGroups(List<SecurityGroup> securityGroups) {
+   public void setSecurityGroups(Set<SecurityGroup> securityGroups) {
 	   this.securityGroups = securityGroups;
    }
 

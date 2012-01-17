@@ -25,6 +25,7 @@ import static com.google.common.base.Preconditions.checkState;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -37,6 +38,7 @@ import org.jclouds.rest.binders.BindToJsonPayload;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -80,7 +82,7 @@ public class CreateServerOptions implements MapBinder {
       List<File> personality;
       String key_name;
       @SerializedName(value="security_groups")
-      List<SecurityGroup> securityGroups;
+      Set<SecurityGroup> securityGroups;
 
       private ServerRequest(String name, String imageRef, String flavorRef) {
          this.name = name;
@@ -92,7 +94,7 @@ public class CreateServerOptions implements MapBinder {
 
    private Map<String, String> metadata = Maps.newHashMap();
    private List<File> files = Lists.newArrayList();
-   private List<String> securityGroups = Lists.newArrayList();
+   private Set<String> securityGroups = Sets.newHashSet();
    private String keyName;
 
    @Override
@@ -107,7 +109,7 @@ public class CreateServerOptions implements MapBinder {
       if (keyName != null)
     	  server.key_name = keyName;
       if (securityGroups.size() > 0) {
-    	  server.securityGroups = Lists.newArrayList();
+    	  server.securityGroups = Sets.newHashSet();
     	  for (String groupName : securityGroups) {
     		  SecurityGroup group = new SecurityGroup();
         	  group.setName(groupName);

@@ -86,7 +86,7 @@ public class CreateServerOptionsTest {
 	   HttpRequest request = buildRequest(options);
 		assertEquals(
 				request.getPayload().getRawContent(),
-				"{\"server\":{\"name\":\"foo\",\"imageRef\":\"1\",\"flavorRef\":\"2\",\"security_groups\":[{\"id\":0,\"name\":\"mygroup\"},{\"id\":0,\"name\":\"myothergroup\"}]}}");
+				"{\"server\":{\"name\":\"foo\",\"imageRef\":\"1\",\"flavorRef\":\"2\",\"security_groups\":[{\"id\":0,\"name\":\"myothergroup\"},{\"id\":0,\"name\":\"mygroup\"}]}}");
    }
 
    private void assertFile(HttpRequest request) {
