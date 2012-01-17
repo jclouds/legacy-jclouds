@@ -59,7 +59,7 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
    Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() {
    }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
            .getInstance(Json.class));
-
+   
    private VmSpec vmSpecification;
 
    @Override
