@@ -24,6 +24,7 @@ import static org.testng.Assert.assertTrue;
 import java.util.Set;
 
 import com.google.common.base.Strings;
+import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
 import org.testng.annotations.Test;
@@ -79,7 +80,7 @@ public class GlobalHostClientLiveTest extends BaseCloudStackClientLiveTest {
    private void checkCluster(Cluster cluster) {
       assertTrue(cluster.getId() > 0);
       assertFalse(Strings.isNullOrEmpty(cluster.getName()));
-      assertTrue(cluster.getAllocationState() != Host.AllocationState.UNKNOWN);
+      assertTrue(cluster.getAllocationState() != AllocationState.UNKNOWN);
       assertTrue(cluster.getClusterType() != Host.ClusterType.UNKNOWN);
       assertFalse(Strings.isNullOrEmpty(cluster.getHypervisor()));
       assertTrue(cluster.getManagedState() != Cluster.ManagedState.UNRECOGNIZED);

@@ -20,7 +20,7 @@ package org.jclouds.cloudstack.options;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
-import org.jclouds.cloudstack.domain.Host;
+import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
 import java.util.Set;
@@ -37,7 +37,7 @@ public class AddHostOptions extends BaseHttpRequestOptions {
    /**
     * @param allocationState Allocation state of this Host for allocation of new resources
     */
-   public AddHostOptions allocationState(Host.AllocationState allocationState) {
+   public AddHostOptions allocationState(AllocationState allocationState) {
       this.queryParameters.replaceValues("allocationstate", ImmutableSet.of(allocationState.toString()));
       return this;
    }
@@ -79,7 +79,7 @@ public class AddHostOptions extends BaseHttpRequestOptions {
       /**
        * @param allocationState Allocation state of this Host for allocation of new resources
        */
-      public static AddHostOptions allocationState(Host.AllocationState allocationState) {
+      public static AddHostOptions allocationState(AllocationState allocationState) {
          return new AddHostOptions().allocationState(allocationState);
       }
 

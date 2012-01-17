@@ -19,14 +19,10 @@
 package org.jclouds.cloudstack.parse;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import org.jclouds.cloudstack.config.CloudStackParserModule;
+import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
-import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseSetParserTest;
-import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
@@ -53,7 +49,7 @@ public class ListClustersResponseTest extends BaseSetParserTest<Cluster> {
          .zoneId(1).zoneName("Dev Zone 1")
          .hypervisor("XenServer")
          .clusterType(Host.ClusterType.CLOUD_MANAGED)
-         .allocationState(Host.AllocationState.ENABLED)
+         .allocationState(AllocationState.ENABLED)
          .managedState(Cluster.ManagedState.MANAGED)
          .build();
       Cluster cluster2 = Cluster.builder()
@@ -63,7 +59,7 @@ public class ListClustersResponseTest extends BaseSetParserTest<Cluster> {
          .zoneId(2).zoneName("Dev Zone 2")
          .hypervisor("XenServer")
          .clusterType(Host.ClusterType.CLOUD_MANAGED)
-         .allocationState(Host.AllocationState.ENABLED)
+         .allocationState(AllocationState.ENABLED)
          .managedState(Cluster.ManagedState.MANAGED)
          .build();
 

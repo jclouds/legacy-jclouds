@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.features;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import org.jclouds.cloudstack.CloudStackContext;
+import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.http.HttpRequest;
@@ -68,7 +69,7 @@ public class GlobalZoneClientExpectTest extends BaseCloudStackRestClientExpectTe
             .internalDNS(ImmutableList.of("10.10.10.10"))
             .networkType(NetworkType.BASIC)
             .securityGroupsEnabled(true)
-            .allocationState(Zone.AllocationState.ENABLED)
+            .allocationState(AllocationState.ENABLED)
             .zoneToken("7b6e27df-30a6-3024-9d8b-7971a3127f64")
             .dhcpProvider("DhcpServer").build());
 
@@ -102,7 +103,7 @@ public class GlobalZoneClientExpectTest extends BaseCloudStackRestClientExpectTe
             .internalDNS(ImmutableList.of("10.10.10.10"))
             .networkType(NetworkType.BASIC)
             .securityGroupsEnabled(true)
-            .allocationState(Zone.AllocationState.ENABLED)
+            .allocationState(AllocationState.ENABLED)
             .zoneToken("7b6e27df-30a6-3024-9d8b-7971a3127f64")
             .dhcpProvider("DhcpServer").build());
 

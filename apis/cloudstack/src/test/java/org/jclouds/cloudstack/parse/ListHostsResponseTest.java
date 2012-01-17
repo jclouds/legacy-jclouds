@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.jclouds.cloudstack.config.CloudStackParserModule;
+import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.Host;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseSetParserTest;
@@ -95,7 +96,7 @@ public class ListHostsResponseTest extends BaseSetParserTest<Host> {
                "AgentDisconnected; MaintenanceRequested; HostDown; AgentConnected; StartAgentRebalance; ShutdownRequested; Ping")
             .hostTags("")
             .hasEnoughCapacity(false)
-            .allocationState(Host.AllocationState.ENABLED).build(),
+            .allocationState(AllocationState.ENABLED).build(),
 
          Host.builder()
             .id(2)
@@ -113,7 +114,7 @@ public class ListHostsResponseTest extends BaseSetParserTest<Host> {
             .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-11-26T23:33:38+0200"))
             .events("ManagementServerDown; AgentDisconnected; Remove; MaintenanceRequested; AgentConnected; Ping")
             .hasEnoughCapacity(false)
-            .allocationState(Host.AllocationState.ENABLED).build(),
+            .allocationState(AllocationState.ENABLED).build(),
 
          Host.builder()
             .id(3)
@@ -133,7 +134,7 @@ public class ListHostsResponseTest extends BaseSetParserTest<Host> {
             .events("PrepareUnmanaged; HypervisorVersionChanged; ManagementServerDown; PingTimeout; " +
                "AgentDisconnected; MaintenanceRequested; HostDown; AgentConnected; StartAgentRebalance; ShutdownRequested; Ping")
             .hasEnoughCapacity(false)
-            .allocationState(Host.AllocationState.ENABLED).build(),
+            .allocationState(AllocationState.ENABLED).build(),
 
          Host.builder()
             .id(4)
@@ -153,7 +154,7 @@ public class ListHostsResponseTest extends BaseSetParserTest<Host> {
             .events("PrepareUnmanaged; HypervisorVersionChanged; ManagementServerDown; PingTimeout; " +
                "AgentDisconnected; MaintenanceRequested; HostDown; AgentConnected; StartAgentRebalance; ShutdownRequested; Ping")
             .hasEnoughCapacity(false)
-            .allocationState(Host.AllocationState.ENABLED).build()
+            .allocationState(AllocationState.ENABLED).build()
       );
    }
 

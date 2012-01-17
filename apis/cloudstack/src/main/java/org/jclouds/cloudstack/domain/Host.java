@@ -32,25 +32,6 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Host implements Comparable<Host> {
 
-   public static enum AllocationState {
-      DISABLED,
-      ENABLED,
-      UNKNOWN;
-
-      public static AllocationState fromValue(String value) {
-         try{
-            return valueOf(value.toUpperCase());
-         } catch (IllegalArgumentException e) {
-            return UNKNOWN;
-         }
-      }
-
-      @Override
-      public String toString() {
-         return UPPER_UNDERSCORE.to(UPPER_CAMEL, name());
-      }
-   }
-
    public static enum ClusterType {
       CLOUD_MANAGED,
       EXTERNAL_MANAGED,

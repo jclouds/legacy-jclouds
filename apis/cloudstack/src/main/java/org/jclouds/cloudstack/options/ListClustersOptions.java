@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.options;
 
 import com.google.common.collect.ImmutableSet;
+import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
 import org.jclouds.http.options.BaseHttpRequestOptions;
@@ -35,7 +36,7 @@ public class ListClustersOptions extends BaseHttpRequestOptions {
 
    public static final ListHostsOptions NONE = new ListHostsOptions();
 
-   public ListClustersOptions allocationState(Host.AllocationState allocationState) {
+   public ListClustersOptions allocationState(AllocationState allocationState) {
       this.queryParameters.replaceValues("allocationstate", ImmutableSet.of(allocationState.toString()));
       return this;
    }
@@ -82,7 +83,7 @@ public class ListClustersOptions extends BaseHttpRequestOptions {
 
    public static class Builder {
 
-      public static ListClustersOptions allocationState(Host.AllocationState allocationState) {
+      public static ListClustersOptions allocationState(AllocationState allocationState) {
          return new ListClustersOptions().allocationState(allocationState);
       }
 
