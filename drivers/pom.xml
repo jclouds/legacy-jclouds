@@ -41,5 +41,6 @@
         <module>jsch</module>
         <module>netty</module>
         <module>enterprise</module>
+        <module>overthere</module>
     </modules>
 </project>
