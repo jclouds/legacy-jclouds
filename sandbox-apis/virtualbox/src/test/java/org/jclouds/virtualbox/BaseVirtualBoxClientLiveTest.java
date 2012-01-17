@@ -19,8 +19,6 @@
 
 package org.jclouds.virtualbox;
 
-import static org.jclouds.virtualbox.util.MachineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered;
-
 import java.net.URI;
 import java.util.Properties;
 
@@ -38,8 +36,6 @@ import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.domain.VmSpec;
-import org.jclouds.virtualbox.functions.CreateAndInstallVm;
-import org.jclouds.virtualbox.functions.CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.testng.annotations.AfterClass;
@@ -70,6 +66,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
 
    protected ComputeServiceContext context;
    protected Supplier<VirtualBoxManager> manager;
+   protected MachineUtils machineUtils;
    protected Supplier<URI> preconfigurationUri;
    protected String hostVersion;
    protected String operatingSystemIso;
@@ -123,6 +120,8 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
       // this will eagerly startup vbox
       manager.get();
 
+      machineUtils = context.utils().injector().getInstance(MachineUtils.class);
+
       hostVersion = Iterables.get(Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
       adminDisk = workingDir + "/testadmin.vdi";
       operatingSystemIso = String.format("%s/%s.iso", workingDir, imageId);
@@ -130,8 +129,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    }
 
    protected void undoVm(VmSpec vmSpecification) {
-      MachineUtils machineUtils = context.utils().injector().getInstance(MachineUtils.class);
-      machineUtils.mutateMachine(vmSpecification.getVmId(), new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
+      machineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered(vmSpecification.getVmId(), new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
    }
 
    @AfterClass(groups = "live")

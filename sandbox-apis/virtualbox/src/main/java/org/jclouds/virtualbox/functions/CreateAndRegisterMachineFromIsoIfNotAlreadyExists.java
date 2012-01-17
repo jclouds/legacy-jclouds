@@ -20,8 +20,6 @@
 package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.virtualbox.util.MachineUtils.lockMachineAndApply;
-import static org.virtualbox_4_1.LockType.Write;
 
 import java.io.File;
 import java.util.Map;
@@ -36,7 +34,15 @@ import javax.inject.Singleton;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
-import org.jclouds.virtualbox.domain.*;
+import org.jclouds.virtualbox.domain.DeviceDetails;
+import org.jclouds.virtualbox.domain.HardDisk;
+import org.jclouds.virtualbox.domain.IMachineSpec;
+import org.jclouds.virtualbox.domain.IsoImage;
+import org.jclouds.virtualbox.domain.NatAdapter;
+import org.jclouds.virtualbox.domain.NetworkSpec;
+import org.jclouds.virtualbox.domain.StorageController;
+import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.AccessMode;
 import org.virtualbox_4_1.DeviceType;
 import org.virtualbox_4_1.IMachine;
@@ -59,12 +65,15 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
    protected Logger logger = Logger.NULL;
 
    private final Supplier<VirtualBoxManager> manager;
+   private final MachineUtils machineUtils;
+
    private final String workingDir;
 
    @Inject
-   public CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Supplier<VirtualBoxManager> manager,
+   public CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Supplier<VirtualBoxManager> manager, MachineUtils machineUtils,
             @Named(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR) String workingDir) {
       this.manager = manager;
+      this.machineUtils = machineUtils;
       this.workingDir = workingDir;
    }
 
@@ -73,8 +82,8 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
       final IVirtualBox vBox = manager.get().getVBox();
       String vmName = launchSpecification.getVmSpec().getVmName();
       try {
-         vBox.findMachine(vmName);
-         throw new IllegalStateException("Machine " + vmName + " is already registered.");
+         return vBox.findMachine(vmName);
+         //throw new IllegalStateException("Machine " + vmName + " is already registered.");
       } catch (VBoxException e) {
          if (machineNotFoundException(e))
             return createMachine(vBox, launchSpecification);
@@ -136,8 +145,8 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
 
    private void ensureMachineDevicesAttached(String vmName, IMedium medium, DeviceDetails deviceDetails,
             String controllerName) {
-      lockMachineAndApply(manager.get(), Write, vmName, new AttachMediumToMachineIfNotAlreadyAttached(deviceDetails, medium,
-               controllerName));
+      machineUtils.writeLockMachineAndApply(vmName, new AttachMediumToMachineIfNotAlreadyAttached(deviceDetails, medium,
+            controllerName));
    }
 
    private String missingIDEControllersMessage(VmSpec vmSpecification) {
@@ -157,22 +166,22 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
                logger.error(String.format("File %s could not be deleted.", sourcePath));
             }
          }
-         IMedium medium = new CreateMediumIfNotAlreadyExists(manager, true).apply(hardDisk);
+         IMedium medium = new CreateMediumIfNotAlreadyExists(manager, machineUtils, true).apply(hardDisk);
          ensureMachineDevicesAttached(vmName, medium, hardDisk.getDeviceDetails(), controller.getName());
       }
    }
 
    private void ensureMachineHasMemory(String vmName, final long memorySize) {
-      lockMachineAndApply(manager.get(), Write, vmName, new ApplyMemoryToMachine(memorySize));
+      machineUtils.writeLockMachineAndApply(vmName, new ApplyMemoryToMachine(memorySize));
    }
 
    private void ensureNATNetworkingIsAppliedToMachine(String vmName, long slotId,
             NatAdapter natAdapter) {
-      lockMachineAndApply(manager.get(), Write, vmName, new AttachNATAdapterToMachineIfNotAlreadyExists(slotId, natAdapter));
+      machineUtils.writeLockMachineAndApply(vmName, new AttachNATAdapterToMachineIfNotAlreadyExists(slotId, natAdapter));
    }
 
    public void ensureMachineHasStorageControllerNamed(String vmName, StorageController storageController) {
-      lockMachineAndApply(manager.get(), Write, checkNotNull(vmName, "vmName"), new AddIDEControllerIfNotExists(checkNotNull(
-               storageController, "storageController")));
+      machineUtils.writeLockMachineAndApply(vmName, new AddIDEControllerIfNotExists(checkNotNull(
+            storageController, "storageController")));
    }
 }
