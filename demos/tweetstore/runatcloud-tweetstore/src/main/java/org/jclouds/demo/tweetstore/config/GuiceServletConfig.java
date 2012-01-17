@@ -43,12 +43,12 @@ import javax.servlet.ServletContextEvent;
 
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
+import org.jclouds.demo.paas.service.taskqueue.HttpRequestTask;
+import org.jclouds.demo.paas.service.taskqueue.TaskQueue;
+import org.jclouds.demo.paas.service.taskqueue.HttpRequestTask.Factory;
 import org.jclouds.demo.tweetstore.config.util.CredentialsCollector;
 import org.jclouds.demo.tweetstore.controller.AddTweetsController;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
-import org.jclouds.demo.tweetstore.taskqueue.HttpRequestTask;
-import org.jclouds.demo.tweetstore.taskqueue.TaskQueue;
-import org.jclouds.demo.tweetstore.taskqueue.HttpRequestTask.Factory;
 import org.jclouds.http.HttpRequest;
 
 import twitter4j.Twitter;

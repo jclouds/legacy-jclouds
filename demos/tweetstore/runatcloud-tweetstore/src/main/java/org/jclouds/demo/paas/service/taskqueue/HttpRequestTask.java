@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.demo.tweetstore.taskqueue;
+package org.jclouds.demo.paas.service.taskqueue;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.inject.name.Names.bindProperties;
