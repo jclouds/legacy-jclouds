@@ -19,8 +19,6 @@
 package org.jclouds.ninefold.compute.compute;
 
 import org.jclouds.cloudstack.compute.CloudStackComputeServiceLiveTest;
-import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.compute.domain.NodeMetadata;
 import org.testng.annotations.Test;
 
 /**
@@ -32,10 +30,5 @@ public class NinefoldComputeServiceLiveTest extends CloudStackComputeServiceLive
 
    public NinefoldComputeServiceLiveTest() {
       provider = "ninefold-compute";
-   }
-
-   protected void checkResponseEqualsHostname(ExecResponse execResponse, NodeMetadata node1) {
-      // hostname is not predictable based on node metadata
-      assert execResponse.getOutput().trim().equals("ubuntu");
    }
 }
