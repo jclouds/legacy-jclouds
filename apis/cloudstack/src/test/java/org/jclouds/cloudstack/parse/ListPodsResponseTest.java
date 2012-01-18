@@ -20,8 +20,10 @@ package org.jclouds.cloudstack.parse;
 
 import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.domain.AllocationState;
-import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
+import org.jclouds.cloudstack.domain.NetworkType;
+import org.jclouds.cloudstack.domain.Pod;
+import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
@@ -29,41 +31,42 @@ import org.testng.annotations.Test;
 import java.util.Set;
 
 /**
+ * 
  * @author Richard Downer
  */
 @Test(groups = "unit")
-public class ListClustersResponseTest extends BaseSetParserTest<Cluster> {
+public class ListPodsResponseTest extends BaseSetParserTest<Pod> {
 
    @Override
    public String resource() {
-      return "/listclustersresponse.json";
+      return "/listpodsresponse.json";
    }
 
    @Override
-   @SelectJson("cluster")
-   public Set<Cluster> expected() {
-      Cluster cluster1 = Cluster.builder()
+   @SelectJson("pod")
+   public Set<Pod> expected() {
+      Pod pod1 = Pod.builder()
          .id(1)
-         .name("Xen Clust 1")
-         .podId(1).podName("Dev Pod 1")
-         .zoneId(1).zoneName("Dev Zone 1")
-         .hypervisor("XenServer")
-         .clusterType(Host.ClusterType.CLOUD_MANAGED)
+         .name("Dev Pod 1")
+         .zoneId(1)
+         .zoneName("Dev Zone 1")
+         .gateway("10.26.26.254")
+         .netmask("255.255.255.0")
+         .startIp("10.26.26.50")
+         .endIp("10.26.26.100")
          .allocationState(AllocationState.ENABLED)
-         .managedState(Cluster.ManagedState.MANAGED)
          .build();
-      Cluster cluster2 = Cluster.builder()
+      Pod pod2 = Pod.builder()
          .id(2)
-         .name("Xen Clust 1")
-         .podId(2).podName("Dev Pod 2")
-         .zoneId(2).zoneName("Dev Zone 2")
-         .hypervisor("XenServer")
-         .clusterType(Host.ClusterType.CLOUD_MANAGED)
+         .name("Dev Pod 2")
+         .zoneId(2)
+         .zoneName("Dev Zone 2")
+         .gateway("10.22.22.254")
+         .netmask("255.255.255.0")
+         .startIp("10.22.22.25")
+         .endIp("10.22.22.50")
          .allocationState(AllocationState.ENABLED)
-         .managedState(Cluster.ManagedState.MANAGED)
          .build();
-
-      return ImmutableSet.of(cluster1, cluster2);
+      return ImmutableSet.of(pod1, pod2);
    }
-
 }

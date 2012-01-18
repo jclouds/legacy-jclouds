@@ -1,0 +1,1 @@
+{ "updatepodresponse" :  { "pod" : {"id":7,"name":"richard-updatedpod","zoneid":11,"zonename":"richard-zone","gateway":"172.21.0.254","netmask":"255.255.255.128","startip":"172.21.0.129","endip":"172.21.0.250","allocationstate":"Disabled"} }  }

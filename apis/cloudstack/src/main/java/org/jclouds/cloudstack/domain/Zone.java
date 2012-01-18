@@ -18,8 +18,6 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import static com.google.common.base.CaseFormat.UPPER_CAMEL;
-import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.annotation.Nullable;
@@ -32,25 +30,6 @@ import com.google.gson.annotations.SerializedName;
  * @author Adrian Cole, Andrei Savu
  */
 public class Zone implements Comparable<Zone> {
-
-   public static enum AllocationState {
-      DISABLED,
-      ENABLED,
-      UNKNOWN;
-
-      public static AllocationState fromValue(String value) {
-         try{
-            return valueOf(value.toUpperCase());
-         } catch (IllegalArgumentException e) {
-            return UNKNOWN;
-         }
-      }
-
-      @Override
-      public String toString() {
-         return UPPER_UNDERSCORE.to(UPPER_CAMEL, name());
-      }
-   }
 
    public static Builder builder() {
       return new Builder();
