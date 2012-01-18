@@ -1,0 +1,32 @@
+{
+    "servers": [
+        {
+            "id": "52415800-8b69-11e0-9b19-734f6af67565",
+            "name": "sample-server",
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "http://servers.api.openstack.org/v1.1/1234/servers/52415800-8b69-11e0-9b19-734f6af67565"
+                },
+                {
+                    "rel": "bookmark",
+                    "href": "http://servers.api.openstack.org/1234/servers/52415800-8b69-11e0-9b19-734f6af67565"
+                }
+            ]
+        },
+        {
+            "id": "52415800-8b69-11e0-9b19-734f1f1350e5",
+            "name": "sample-server2",
+            "links": [
+                {
+                    "rel": "self",
+                    "href": "http://servers.api.openstack.org/v1.1/1234/servers/52415800-8b69-11e0-9b19-734f1f1350e5"
+                },
+                {
+                    "rel": "bookmark",
+                    "href": "http://servers.api.openstack.org/1234/servers/52415800-8b69-11e0-9b19-734f1f1350e5"
+                }
+            ]
+        }
+    ]
+}

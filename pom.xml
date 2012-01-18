@@ -40,6 +40,7 @@
         <module>compute</module>
         <module>loadbalancer</module>
         <module>apis</module>
+        <module>labs</module>
         <module>providers</module>
         <module>blobstore</module>
         <module>skeletons</module>
