@@ -24,6 +24,7 @@ import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.Pod;
 import org.jclouds.cloudstack.options.CreatePodOptions;
+import org.jclouds.cloudstack.options.UpdatePodOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
@@ -132,6 +133,46 @@ public class GlobalPodClientExpectTest extends BaseCloudStackRestClientExpectTes
 
       Pod actual = client.createPod("richard-pod", 10, "172.20.0.1", "172.20.0.250", "172.20.0.254", "255.255.255.0",
          CreatePodOptions.Builder.allocationState(AllocationState.ENABLED));
+
+      assertEquals(actual, expected);
+   }
+
+   public void testUpdatePodWhenResponseIs2xx() {
+      GlobalPodClient client = requestSendsResponse(
+         HttpRequest.builder()
+            .method("GET")
+            .endpoint(
+               URI.create("http://localhost:8080/client/api?response=json&command=updatePod&id=7&netmask=255.255.255.128&name=richard-updatepod&startip=172.21.0.129&endip=172.21.0.250&gateway=172.21.0.254&allocationstate=Disabled&apiKey=identity&signature=QpdbRyyF%2FxJ78ioJWhPKXEWhthY%3D"))
+            .headers(
+               ImmutableMultimap.<String, String>builder()
+                  .put("Accept", "application/json")
+                  .build())
+            .build(),
+         HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResource("/updatepodresponse.json"))
+            .build());
+
+      Pod expected = Pod.builder()
+         .id(7)
+         .name("richard-updatedpod")
+         .zoneId(11)
+         .zoneName("richard-zone")
+         .gateway("172.21.0.254")
+         .netmask("255.255.255.128")
+         .startIp("172.21.0.129")
+         .endIp("172.21.0.250")
+         .allocationState(AllocationState.DISABLED)
+         .build();
+
+      Pod actual = client.updatePod(7, UpdatePodOptions.Builder
+         .netmask("255.255.255.128")
+         .name("richard-updatepod")
+         .startIp("172.21.0.129")
+         .endIp("172.21.0.250")
+         .gateway("172.21.0.254")
+         .allocationState(AllocationState.DISABLED)
+      );
 
       assertEquals(actual, expected);
    }

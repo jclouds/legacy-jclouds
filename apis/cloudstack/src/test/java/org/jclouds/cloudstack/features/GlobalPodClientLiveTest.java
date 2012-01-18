@@ -27,6 +27,7 @@ import org.jclouds.cloudstack.domain.Pod;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.options.CreatePodOptions;
 import org.jclouds.cloudstack.options.ListPodsOptions;
+import org.jclouds.cloudstack.options.UpdatePodOptions;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
@@ -85,6 +86,28 @@ public class GlobalPodClientLiveTest extends BaseCloudStackClientLiveTest {
       assertEquals(pod.getGateway(), "172.20.0.254");
       assertEquals(pod.getNetmask(), "255.255.255.0");
       assertEquals(pod.getAllocationState(), AllocationState.ENABLED);
+   }
+
+   @Test(dependsOnMethods = "testCreatePod")
+   public void testUpdatePod() {
+      Pod updated = globalAdminClient.getPodClient().updatePod(pod.getId(), UpdatePodOptions.Builder
+         .name(prefix + "-updatedpod")
+         .startIp("172.21.0.129")
+         .endIp("172.21.0.250")
+         .gateway("172.21.0.254")
+         .netmask("255.255.255.128")
+         .allocationState(AllocationState.DISABLED)
+      );
+
+      assertNotNull(updated);
+      assertEquals(updated.getName(), prefix + "-updatedpod");
+      assertEquals(updated.getZoneId(), zone.getId());
+      assertEquals(updated.getZoneName(), prefix + "-zone");
+      assertEquals(updated.getStartIp(), "172.21.0.129");
+      assertEquals(updated.getEndIp(), "172.21.0.250");
+      assertEquals(updated.getGateway(), "172.21.0.254");
+      assertEquals(updated.getNetmask(), "255.255.255.128");
+      assertEquals(updated.getAllocationState(), AllocationState.DISABLED);
    }
 
    @AfterClass

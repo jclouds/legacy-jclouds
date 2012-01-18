@@ -23,6 +23,7 @@ import org.jclouds.cloudstack.domain.Pod;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.CreatePodOptions;
 import org.jclouds.cloudstack.options.ListPodsOptions;
+import org.jclouds.cloudstack.options.UpdatePodOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
@@ -118,5 +119,18 @@ public interface GlobalPodAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> deletePod(@QueryParam("id") long id);
+
+   /**
+    * Updates a Pod.
+    * @param id the ID of the Pod
+    * @param updatePodOptions optional arguments
+    * @return the updated pod
+    */
+   @GET
+   @QueryParams(keys = "command", values = "updatePod")
+   @SelectJson("pod")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Pod> updatePod(@QueryParam("id") long id, UpdatePodOptions... updatePodOptions);
 
 }

@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.features;
 import org.jclouds.cloudstack.domain.Pod;
 import org.jclouds.cloudstack.options.CreatePodOptions;
 import org.jclouds.cloudstack.options.ListPodsOptions;
+import org.jclouds.cloudstack.options.UpdatePodOptions;
 import org.jclouds.concurrent.Timeout;
 
 import java.util.Set;
@@ -88,4 +89,13 @@ public interface GlobalPodClient {
     * @param id the ID of the Pod
     */
    void deletePod(long id);
+
+   /**
+    * Updates a Pod.
+    * @param id the ID of the Pod
+    * @param updatePodOptions optional arguments
+    * @return the updated pod
+    */
+   Pod updatePod(long id, UpdatePodOptions... updatePodOptions);
+
 }
