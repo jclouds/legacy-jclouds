@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.options;
 
 import com.google.common.collect.ImmutableList;
+import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
 import org.testng.annotations.Test;
@@ -35,12 +36,12 @@ import static org.testng.Assert.assertEquals;
 public class ListClustersOptionsTest {
 
    public void testAllocationState() {
-      ListClustersOptions options = new ListClustersOptions().allocationState(Host.AllocationState.ENABLED);
+      ListClustersOptions options = new ListClustersOptions().allocationState(AllocationState.ENABLED);
       assertEquals(ImmutableList.of("Enabled"), options.buildQueryParameters().get("allocationstate"));
    }
 
    public void testAllocationStateStatic() {
-      ListClustersOptions options = allocationState(Host.AllocationState.ENABLED);
+      ListClustersOptions options = allocationState(AllocationState.ENABLED);
       assertEquals(ImmutableList.of("Enabled"), options.buildQueryParameters().get("allocationstate"));
    }
 

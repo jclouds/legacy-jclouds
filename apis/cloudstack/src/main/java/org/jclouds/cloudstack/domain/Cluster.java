@@ -57,7 +57,7 @@ public class Cluster implements Comparable<Cluster> {
 
    public static class Builder {
       private long id;
-      private Host.AllocationState allocationState;
+      private AllocationState allocationState;
       private Host.ClusterType clusterType;
       private String hypervisor;
       private ManagedState managedState;
@@ -72,7 +72,7 @@ public class Cluster implements Comparable<Cluster> {
          return this;
       }
 
-      public Builder allocationState(Host.AllocationState allocationState) {
+      public Builder allocationState(AllocationState allocationState) {
          this.allocationState = allocationState;
          return this;
       }
@@ -123,7 +123,7 @@ public class Cluster implements Comparable<Cluster> {
    }
 
    private long id;
-   @SerializedName("allocationstate") private Host.AllocationState allocationState;
+   @SerializedName("allocationstate") private AllocationState allocationState;
    @SerializedName("clustertype") private Host.ClusterType clusterType;
    @SerializedName("hypervisortype") private String hypervisor;
    @SerializedName("managedstate") private ManagedState managedState;
@@ -136,7 +136,7 @@ public class Cluster implements Comparable<Cluster> {
    // Just for the serializer
    Cluster() {}
 
-   public Cluster(long id, Host.AllocationState allocationState, Host.ClusterType clusterType, String hypervisor, ManagedState managedState, String name, long podId, String podName, long zoneId, String zoneName) {
+   public Cluster(long id, AllocationState allocationState, Host.ClusterType clusterType, String hypervisor, ManagedState managedState, String name, long podId, String podName, long zoneId, String zoneName) {
       this.id = id;
       this.allocationState = allocationState;
       this.clusterType = clusterType;
@@ -153,7 +153,7 @@ public class Cluster implements Comparable<Cluster> {
       return id;
    }
 
-   public Host.AllocationState getAllocationState() {
+   public AllocationState getAllocationState() {
       return allocationState;
    }
 

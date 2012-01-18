@@ -19,7 +19,7 @@
 package org.jclouds.cloudstack.options;
 
 import com.google.common.collect.ImmutableSet;
-import org.jclouds.cloudstack.domain.Zone;
+import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
 import java.util.List;
@@ -42,7 +42,7 @@ public class UpdateZoneOptions extends BaseHttpRequestOptions {
     * @param allocationState
     *    allocation state of this Zone for allocation of new resources
     */
-   public UpdateZoneOptions allocationState(Zone.AllocationState allocationState) {
+   public UpdateZoneOptions allocationState(AllocationState allocationState) {
       this.queryParameters.replaceValues("allocationstate", ImmutableSet.of(allocationState.toString()));
       return this;
    }
@@ -164,7 +164,7 @@ public class UpdateZoneOptions extends BaseHttpRequestOptions {
       /**
        * @see UpdateZoneOptions#allocationState
        */
-      public static UpdateZoneOptions allocationState(Zone.AllocationState allocationState) {
+      public static UpdateZoneOptions allocationState(AllocationState allocationState) {
          UpdateZoneOptions options = new UpdateZoneOptions();
          return options.allocationState(allocationState);
       }

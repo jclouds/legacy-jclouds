@@ -19,11 +19,8 @@
 package org.jclouds.cloudstack.options;
 
 import com.google.common.collect.ImmutableSet;
-import org.jclouds.cloudstack.domain.Host;
-import org.jclouds.functions.JoinOnComma;
+import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.http.options.BaseHttpRequestOptions;
-
-import java.util.Set;
 
 /**
  * Options to the GlobalHostClient.addHost() API call
@@ -37,7 +34,7 @@ public class AddClusterOptions extends BaseHttpRequestOptions {
    /**
     * @param allocationState Allocation state of this Host for allocation of new resources
     */
-   public AddClusterOptions allocationState(Host.AllocationState allocationState) {
+   public AddClusterOptions allocationState(AllocationState allocationState) {
       this.queryParameters.replaceValues("allocationstate", ImmutableSet.of(allocationState.toString()));
       return this;
    }
@@ -79,7 +76,7 @@ public class AddClusterOptions extends BaseHttpRequestOptions {
       /**
        * @param allocationState Allocation state of this Host for allocation of new resources
        */
-      public static AddClusterOptions allocationState(Host.AllocationState allocationState) {
+      public static AddClusterOptions allocationState(AllocationState allocationState) {
          return new AddClusterOptions().allocationState(allocationState);
       }
 

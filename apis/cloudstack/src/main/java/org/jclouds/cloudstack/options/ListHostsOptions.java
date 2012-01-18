@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudstack.options;
 
+import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.Host;
 
 import com.google.common.collect.ImmutableSet;
@@ -45,7 +46,7 @@ public class ListHostsOptions extends AccountInDomainOptions {
    /**
     * @param allocationState list hosts by allocation state
     */
-   public ListHostsOptions allocationState(Host.AllocationState allocationState) {
+   public ListHostsOptions allocationState(AllocationState allocationState) {
       this.queryParameters.replaceValues("allocationstate", ImmutableSet.of(allocationState.toString()));
       return this;
    }
@@ -159,7 +160,7 @@ public class ListHostsOptions extends AccountInDomainOptions {
       /**
        * @see ListHostsOptions#allocationState
        */
-      public static ListHostsOptions allocationState(Host.AllocationState allocationState) {
+      public static ListHostsOptions allocationState(AllocationState allocationState) {
          ListHostsOptions options = new ListHostsOptions();
          return options.allocationState(allocationState);
       }

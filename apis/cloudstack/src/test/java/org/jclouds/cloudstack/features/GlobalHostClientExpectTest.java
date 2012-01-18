@@ -18,12 +18,11 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.CloudStackContext;
+import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.Cluster;
-import org.jclouds.cloudstack.domain.ConfigurationEntry;
 import org.jclouds.cloudstack.domain.Host;
 import org.jclouds.cloudstack.options.AddClusterOptions;
 import org.jclouds.cloudstack.options.AddHostOptions;
@@ -68,20 +67,20 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
 
       Date lastPinged = makeDate(1970, Calendar.JANUARY, 16, 0, 54, 43, "UTC");
       Date created = makeDate(2011, Calendar.NOVEMBER, 26, 23, 28, 36, "UTC");
-      Host host1 = Host.builder().id(1).name("cs2-xevsrv.alucloud.local").state(Host.State.UP).type(Host.Type.ROUTING).ipAddress("10.26.26.107").zoneId(1).zoneName("Dev Zone 1").podId(1).podName("Dev Pod 1").version("2.2.12.20110928142833").hypervisor("XenServer").cpuNumber(24).cpuSpeed(2266).cpuAllocated("2.76%").cpuUsed("0.1%").cpuWithOverProvisioning(54384.0F).networkKbsRead(4443).networkKbsWrite(15048).memoryTotal(100549733760L).memoryAllocated(3623878656L).memoryUsed(3623878656L).capabilities("xen-3.0-x86_64 , xen-3.0-x86_32p , hvm-3.0-x86_32 , hvm-3.0-x86_32p , hvm-3.0-x86_64").lastPinged(lastPinged).managementServerId(223098941760041L).clusterId(1).clusterName("Xen Clust 1").clusterType(Host.ClusterType.CLOUD_MANAGED).localStorageActive(false).created(created).events("PrepareUnmanaged; HypervisorVersionChanged; ManagementServerDown; PingTimeout; AgentDisconnected; MaintenanceRequested; HostDown; AgentConnected; StartAgentRebalance; ShutdownRequested; Ping").hostTags("").hasEnoughCapacity(false).allocationState(Host.AllocationState.ENABLED).build();
+      Host host1 = Host.builder().id(1).name("cs2-xevsrv.alucloud.local").state(Host.State.UP).type(Host.Type.ROUTING).ipAddress("10.26.26.107").zoneId(1).zoneName("Dev Zone 1").podId(1).podName("Dev Pod 1").version("2.2.12.20110928142833").hypervisor("XenServer").cpuNumber(24).cpuSpeed(2266).cpuAllocated("2.76%").cpuUsed("0.1%").cpuWithOverProvisioning(54384.0F).networkKbsRead(4443).networkKbsWrite(15048).memoryTotal(100549733760L).memoryAllocated(3623878656L).memoryUsed(3623878656L).capabilities("xen-3.0-x86_64 , xen-3.0-x86_32p , hvm-3.0-x86_32 , hvm-3.0-x86_32p , hvm-3.0-x86_64").lastPinged(lastPinged).managementServerId(223098941760041L).clusterId(1).clusterName("Xen Clust 1").clusterType(Host.ClusterType.CLOUD_MANAGED).localStorageActive(false).created(created).events("PrepareUnmanaged; HypervisorVersionChanged; ManagementServerDown; PingTimeout; AgentDisconnected; MaintenanceRequested; HostDown; AgentConnected; StartAgentRebalance; ShutdownRequested; Ping").hostTags("").hasEnoughCapacity(false).allocationState(AllocationState.ENABLED).build();
 
       Date disconnected = makeDate(2011, Calendar.NOVEMBER, 26, 23, 33, 38, "UTC");
       lastPinged = makeDate(1970, Calendar.JANUARY, 16, 0, 42, 30, "UTC");
       created = makeDate(2011, Calendar.NOVEMBER, 26, 23, 33, 38, "UTC");
-      Host host2 = Host.builder().id(2).name("nfs://10.26.26.165/mnt/nfs/cs_sec").state(Host.State.ALERT).disconnected(disconnected).type(Host.Type.SECONDARY_STORAGE).ipAddress("nfs").zoneId(1).zoneName("Dev Zone 1").version("2.2.12.20110928142833").hypervisor("None").lastPinged(lastPinged).localStorageActive(false).created(created).events("ManagementServerDown; AgentDisconnected; Remove; MaintenanceRequested; AgentConnected; Ping").hasEnoughCapacity(false).allocationState(Host.AllocationState.ENABLED).build();
+      Host host2 = Host.builder().id(2).name("nfs://10.26.26.165/mnt/nfs/cs_sec").state(Host.State.ALERT).disconnected(disconnected).type(Host.Type.SECONDARY_STORAGE).ipAddress("nfs").zoneId(1).zoneName("Dev Zone 1").version("2.2.12.20110928142833").hypervisor("None").lastPinged(lastPinged).localStorageActive(false).created(created).events("ManagementServerDown; AgentDisconnected; Remove; MaintenanceRequested; AgentConnected; Ping").hasEnoughCapacity(false).allocationState(AllocationState.ENABLED).build();
 
       lastPinged = makeDate(1970, Calendar.JANUARY, 16, 0, 54, 43, "UTC");
       created = makeDate(2011, Calendar.NOVEMBER, 26, 23, 35, 51, "UTC");
-      Host host3 = Host.builder().id(3).name("s-1-VM").state(Host.State.UP).type(Host.Type.SECONDARY_STORAGE_VM).ipAddress("10.26.26.81").zoneId(1).zoneName("Dev Zone 1").podId(1).podName("Dev Pod 1").version("2.2.12.20110928142833").lastPinged(lastPinged).managementServerId(223098941760041L).localStorageActive(false).created(created).events("PrepareUnmanaged; HypervisorVersionChanged; ManagementServerDown; PingTimeout; AgentDisconnected; MaintenanceRequested; HostDown; AgentConnected; StartAgentRebalance; ShutdownRequested; Ping").hasEnoughCapacity(false).allocationState(Host.AllocationState.ENABLED).build();
+      Host host3 = Host.builder().id(3).name("s-1-VM").state(Host.State.UP).type(Host.Type.SECONDARY_STORAGE_VM).ipAddress("10.26.26.81").zoneId(1).zoneName("Dev Zone 1").podId(1).podName("Dev Pod 1").version("2.2.12.20110928142833").lastPinged(lastPinged).managementServerId(223098941760041L).localStorageActive(false).created(created).events("PrepareUnmanaged; HypervisorVersionChanged; ManagementServerDown; PingTimeout; AgentDisconnected; MaintenanceRequested; HostDown; AgentConnected; StartAgentRebalance; ShutdownRequested; Ping").hasEnoughCapacity(false).allocationState(AllocationState.ENABLED).build();
 
       lastPinged = makeDate(1970, Calendar.JANUARY, 16, 0, 54, 43, "UTC");
       created = makeDate(2011, Calendar.NOVEMBER, 26, 23, 36, 46, "UTC");
-      Host host4 = Host.builder().id(4).name("v-2-VM").state(Host.State.UP).type(Host.Type.CONSOLE_PROXY).ipAddress("10.26.26.96").zoneId(1).zoneName("Dev Zone 1").podId(1).podName("Dev Pod 1").version("2.2.12.20110928142833").lastPinged(lastPinged).managementServerId(223098941760041L).localStorageActive(false).created(created).events("PrepareUnmanaged; HypervisorVersionChanged; ManagementServerDown; PingTimeout; AgentDisconnected; MaintenanceRequested; HostDown; AgentConnected; StartAgentRebalance; ShutdownRequested; Ping").hasEnoughCapacity(false).allocationState(Host.AllocationState.ENABLED).build();
+      Host host4 = Host.builder().id(4).name("v-2-VM").state(Host.State.UP).type(Host.Type.CONSOLE_PROXY).ipAddress("10.26.26.96").zoneId(1).zoneName("Dev Zone 1").podId(1).podName("Dev Pod 1").version("2.2.12.20110928142833").lastPinged(lastPinged).managementServerId(223098941760041L).localStorageActive(false).created(created).events("PrepareUnmanaged; HypervisorVersionChanged; ManagementServerDown; PingTimeout; AgentDisconnected; MaintenanceRequested; HostDown; AgentConnected; StartAgentRebalance; ShutdownRequested; Ping").hasEnoughCapacity(false).allocationState(AllocationState.ENABLED).build();
 
       Set<Host> expected = ImmutableSet.of(host1, host2, host3, host4);
 
@@ -114,10 +113,10 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
 
       Date lastPinged = makeDate(1970, Calendar.JANUARY, 16, 0, 54, 43, "UTC");
       Date created = makeDate(2011, Calendar.NOVEMBER, 26, 23, 28, 36, "UTC");
-      Host expected = Host.builder().id(1).name("cs2-xevsrv.alucloud.local").state(Host.State.UP).type(Host.Type.ROUTING).ipAddress("10.26.26.107").zoneId(1).zoneName("Dev Zone 1").podId(1).podName("Dev Pod 1").version("2.2.12.20110928142833").hypervisor("XenServer").cpuNumber(24).cpuSpeed(2266).cpuAllocated("2.76%").cpuUsed("0.1%").cpuWithOverProvisioning(54384.0F).networkKbsRead(4443).networkKbsWrite(15048).memoryTotal(100549733760L).memoryAllocated(3623878656L).memoryUsed(3623878656L).capabilities("xen-3.0-x86_64 , xen-3.0-x86_32p , hvm-3.0-x86_32 , hvm-3.0-x86_32p , hvm-3.0-x86_64").lastPinged(lastPinged).managementServerId(223098941760041L).clusterId(1).clusterName("Xen Clust 1").clusterType(Host.ClusterType.CLOUD_MANAGED).localStorageActive(false).created(created).events("PrepareUnmanaged; HypervisorVersionChanged; ManagementServerDown; PingTimeout; AgentDisconnected; MaintenanceRequested; HostDown; AgentConnected; StartAgentRebalance; ShutdownRequested; Ping").hostTags("").hasEnoughCapacity(false).allocationState(Host.AllocationState.ENABLED).build();
+      Host expected = Host.builder().id(1).name("cs2-xevsrv.alucloud.local").state(Host.State.UP).type(Host.Type.ROUTING).ipAddress("10.26.26.107").zoneId(1).zoneName("Dev Zone 1").podId(1).podName("Dev Pod 1").version("2.2.12.20110928142833").hypervisor("XenServer").cpuNumber(24).cpuSpeed(2266).cpuAllocated("2.76%").cpuUsed("0.1%").cpuWithOverProvisioning(54384.0F).networkKbsRead(4443).networkKbsWrite(15048).memoryTotal(100549733760L).memoryAllocated(3623878656L).memoryUsed(3623878656L).capabilities("xen-3.0-x86_64 , xen-3.0-x86_32p , hvm-3.0-x86_32 , hvm-3.0-x86_32p , hvm-3.0-x86_64").lastPinged(lastPinged).managementServerId(223098941760041L).clusterId(1).clusterName("Xen Clust 1").clusterType(Host.ClusterType.CLOUD_MANAGED).localStorageActive(false).created(created).events("PrepareUnmanaged; HypervisorVersionChanged; ManagementServerDown; PingTimeout; AgentDisconnected; MaintenanceRequested; HostDown; AgentConnected; StartAgentRebalance; ShutdownRequested; Ping").hostTags("").hasEnoughCapacity(false).allocationState(AllocationState.ENABLED).build();
 
       Host actual = requestSendsResponse(request, response).addHost(1, "http://example.com", "XenServer", "fred", "sekrit",
-         AddHostOptions.Builder.hostTags(Collections.<String>emptySet()).allocationState(Host.AllocationState.ENABLED).clusterId(1).clusterName("Xen Clust 1").podId(1));
+         AddHostOptions.Builder.hostTags(Collections.<String>emptySet()).allocationState(AllocationState.ENABLED).clusterId(1).clusterName("Xen Clust 1").podId(1));
 
       assertEquals(actual, expected);
    }
@@ -135,9 +134,9 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
 
       Date lastPinged = makeDate(1970, Calendar.JANUARY, 16, 0, 54, 43, "UTC");
       Date created = makeDate(2011, Calendar.NOVEMBER, 26, 23, 28, 36, "UTC");
-      Host expected = Host.builder().id(1).name("cs2-xevsrv.alucloud.local").state(Host.State.UP).type(Host.Type.ROUTING).ipAddress("10.26.26.107").zoneId(1).zoneName("Dev Zone 1").podId(1).podName("Dev Pod 1").version("2.2.12.20110928142833").hypervisor("XenServer").cpuNumber(24).cpuSpeed(2266).cpuAllocated("2.76%").cpuUsed("0.1%").cpuWithOverProvisioning(54384.0F).networkKbsRead(4443).networkKbsWrite(15048).memoryTotal(100549733760L).memoryAllocated(3623878656L).memoryUsed(3623878656L).capabilities("xen-3.0-x86_64 , xen-3.0-x86_32p , hvm-3.0-x86_32 , hvm-3.0-x86_32p , hvm-3.0-x86_64").lastPinged(lastPinged).managementServerId(223098941760041L).clusterId(1).clusterName("Xen Clust 1").clusterType(Host.ClusterType.CLOUD_MANAGED).localStorageActive(false).created(created).events("PrepareUnmanaged; HypervisorVersionChanged; ManagementServerDown; PingTimeout; AgentDisconnected; MaintenanceRequested; HostDown; AgentConnected; StartAgentRebalance; ShutdownRequested; Ping").hostTags("").hasEnoughCapacity(false).allocationState(Host.AllocationState.ENABLED).build();
+      Host expected = Host.builder().id(1).name("cs2-xevsrv.alucloud.local").state(Host.State.UP).type(Host.Type.ROUTING).ipAddress("10.26.26.107").zoneId(1).zoneName("Dev Zone 1").podId(1).podName("Dev Pod 1").version("2.2.12.20110928142833").hypervisor("XenServer").cpuNumber(24).cpuSpeed(2266).cpuAllocated("2.76%").cpuUsed("0.1%").cpuWithOverProvisioning(54384.0F).networkKbsRead(4443).networkKbsWrite(15048).memoryTotal(100549733760L).memoryAllocated(3623878656L).memoryUsed(3623878656L).capabilities("xen-3.0-x86_64 , xen-3.0-x86_32p , hvm-3.0-x86_32 , hvm-3.0-x86_32p , hvm-3.0-x86_64").lastPinged(lastPinged).managementServerId(223098941760041L).clusterId(1).clusterName("Xen Clust 1").clusterType(Host.ClusterType.CLOUD_MANAGED).localStorageActive(false).created(created).events("PrepareUnmanaged; HypervisorVersionChanged; ManagementServerDown; PingTimeout; AgentDisconnected; MaintenanceRequested; HostDown; AgentConnected; StartAgentRebalance; ShutdownRequested; Ping").hostTags("").hasEnoughCapacity(false).allocationState(AllocationState.ENABLED).build();
 
-      Host actual = requestSendsResponse(request, response).updateHost(1, UpdateHostOptions.Builder.allocationState(Host.AllocationState.ENABLED).hostTags(Collections.<String>emptySet()).osCategoryId(5));
+      Host actual = requestSendsResponse(request, response).updateHost(1, UpdateHostOptions.Builder.allocationState(AllocationState.ENABLED).hostTags(Collections.<String>emptySet()).osCategoryId(5));
 
       assertEquals(actual, expected);
    }
@@ -227,7 +226,7 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
       Date disconnected = makeDate(2011, Calendar.NOVEMBER, 26, 23, 33, 38, "UTC");
       Date lastPinged = makeDate(1970, Calendar.JANUARY, 16, 0, 42, 30, "UTC");
       Date created = makeDate(2011, Calendar.NOVEMBER, 26, 23, 33, 38, "UTC");
-      Host expected = Host.builder().id(2).name("nfs://10.26.26.165/mnt/nfs/cs_sec").state(Host.State.ALERT).disconnected(disconnected).type(Host.Type.SECONDARY_STORAGE).ipAddress("nfs").zoneId(1).zoneName("Dev Zone 1").version("2.2.12.20110928142833").hypervisor("None").lastPinged(lastPinged).localStorageActive(false).created(created).events("ManagementServerDown; AgentDisconnected; Remove; MaintenanceRequested; AgentConnected; Ping").hasEnoughCapacity(false).allocationState(Host.AllocationState.ENABLED).build();
+      Host expected = Host.builder().id(2).name("nfs://10.26.26.165/mnt/nfs/cs_sec").state(Host.State.ALERT).disconnected(disconnected).type(Host.Type.SECONDARY_STORAGE).ipAddress("nfs").zoneId(1).zoneName("Dev Zone 1").version("2.2.12.20110928142833").hypervisor("None").lastPinged(lastPinged).localStorageActive(false).created(created).events("ManagementServerDown; AgentDisconnected; Remove; MaintenanceRequested; AgentConnected; Ping").hasEnoughCapacity(false).allocationState(AllocationState.ENABLED).build();
 
       Host actual = requestSendsResponse(request, response).addSecondaryStorage("nfs://10.26.26.165/mnt/nfs/cs_sec", AddSecondaryStorageOptions.Builder.zoneId(1));
 
@@ -247,8 +246,8 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
 
       Set<Cluster> actual = requestSendsResponse(request, response).listClusters();
 
-      Cluster cluster1 = Cluster.builder().id(1).name("Xen Clust 1").podId(1).podName("Dev Pod 1").zoneId(1).zoneName("Dev Zone 1").hypervisor("XenServer").clusterType(Host.ClusterType.CLOUD_MANAGED).allocationState(Host.AllocationState.ENABLED).managedState(Cluster.ManagedState.MANAGED).build();
-      Cluster cluster2 = Cluster.builder().id(2).name("Xen Clust 1").podId(2).podName("Dev Pod 2").zoneId(2).zoneName("Dev Zone 2").hypervisor("XenServer").clusterType(Host.ClusterType.CLOUD_MANAGED).allocationState(Host.AllocationState.ENABLED).managedState(Cluster.ManagedState.MANAGED).build();
+      Cluster cluster1 = Cluster.builder().id(1).name("Xen Clust 1").podId(1).podName("Dev Pod 1").zoneId(1).zoneName("Dev Zone 1").hypervisor("XenServer").clusterType(Host.ClusterType.CLOUD_MANAGED).allocationState(AllocationState.ENABLED).managedState(Cluster.ManagedState.MANAGED).build();
+      Cluster cluster2 = Cluster.builder().id(2).name("Xen Clust 1").podId(2).podName("Dev Pod 2").zoneId(2).zoneName("Dev Zone 2").hypervisor("XenServer").clusterType(Host.ClusterType.CLOUD_MANAGED).allocationState(AllocationState.ENABLED).managedState(Cluster.ManagedState.MANAGED).build();
       ImmutableSet<Cluster> expected = ImmutableSet.of(cluster1, cluster2);
 
       assertEquals(actual, expected);
@@ -278,9 +277,9 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
          .payload(payloadFromResource("/addclusterresponse.json"))
          .statusCode(200).build();
 
-      Cluster expected = Cluster.builder().id(1).name("Xen Clust 1").podId(1).podName("Dev Pod 1").zoneId(1).zoneName("Dev Zone 1").hypervisor("XenServer").clusterType(Host.ClusterType.CLOUD_MANAGED).allocationState(Host.AllocationState.ENABLED).managedState(Cluster.ManagedState.MANAGED).build();
+      Cluster expected = Cluster.builder().id(1).name("Xen Clust 1").podId(1).podName("Dev Pod 1").zoneId(1).zoneName("Dev Zone 1").hypervisor("XenServer").clusterType(Host.ClusterType.CLOUD_MANAGED).allocationState(AllocationState.ENABLED).managedState(Cluster.ManagedState.MANAGED).build();
 
-      Cluster actual = requestSendsResponse(request, response).addCluster(1, "Xen Clust 1", Host.ClusterType.CLOUD_MANAGED, "XenServer", AddClusterOptions.Builder.allocationState(Host.AllocationState.ENABLED).podId(1).url("http://example.com/cluster").username("fred").password("sekrit"));
+      Cluster actual = requestSendsResponse(request, response).addCluster(1, "Xen Clust 1", Host.ClusterType.CLOUD_MANAGED, "XenServer", AddClusterOptions.Builder.allocationState(AllocationState.ENABLED).podId(1).url("http://example.com/cluster").username("fred").password("sekrit"));
 
       assertEquals(actual, expected);
    }
@@ -296,9 +295,9 @@ public class GlobalHostClientExpectTest extends BaseCloudStackRestClientExpectTe
          .payload(payloadFromResource("/updateclusterresponse.json"))
          .statusCode(200).build();
 
-      Cluster expected = Cluster.builder().id(1).name("Xen Clust 1").podId(1).podName("Dev Pod 1").zoneId(1).zoneName("Dev Zone 1").hypervisor("XenServer").clusterType(Host.ClusterType.CLOUD_MANAGED).allocationState(Host.AllocationState.ENABLED).managedState(Cluster.ManagedState.MANAGED).build();
+      Cluster expected = Cluster.builder().id(1).name("Xen Clust 1").podId(1).podName("Dev Pod 1").zoneId(1).zoneName("Dev Zone 1").hypervisor("XenServer").clusterType(Host.ClusterType.CLOUD_MANAGED).allocationState(AllocationState.ENABLED).managedState(Cluster.ManagedState.MANAGED).build();
 
-      Cluster actual = requestSendsResponse(request, response).updateCluster(1, UpdateClusterOptions.Builder.allocationState(Host.AllocationState.ENABLED).clusterName("Xen Clust 1").clusterType(Host.ClusterType.CLOUD_MANAGED).hypervisor("XenServer").managedState(Cluster.ManagedState.MANAGED));
+      Cluster actual = requestSendsResponse(request, response).updateCluster(1, UpdateClusterOptions.Builder.allocationState(AllocationState.ENABLED).clusterName("Xen Clust 1").clusterType(Host.ClusterType.CLOUD_MANAGED).hypervisor("XenServer").managedState(Cluster.ManagedState.MANAGED));
 
       assertEquals(actual, expected);
    }

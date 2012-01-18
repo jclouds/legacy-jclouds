@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.options;
 
 import com.google.common.collect.ImmutableList;
+import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.Host;
 import org.testng.annotations.Test;
 
@@ -55,12 +56,12 @@ public class ListHostsOptionsTest {
    }
 
    public void testAllocationState() {
-      ListHostsOptions options = new ListHostsOptions().allocationState(Host.AllocationState.ENABLED);
+      ListHostsOptions options = new ListHostsOptions().allocationState(AllocationState.ENABLED);
       assertEquals(ImmutableList.of("Enabled"), options.buildQueryParameters().get("allocationstate"));
    }
 
    public void testAllocationStateStatic() {
-      ListHostsOptions options = allocationState(Host.AllocationState.ENABLED);
+      ListHostsOptions options = allocationState(AllocationState.ENABLED);
       assertEquals(ImmutableList.of("Enabled"), options.buildQueryParameters().get("allocationstate"));
    }
 

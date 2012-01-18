@@ -19,49 +19,28 @@
 package org.jclouds.cloudstack.options;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.testng.annotations.Test;
 
-import static org.jclouds.cloudstack.options.UpdateHostOptions.Builder.*;
+import static org.jclouds.cloudstack.options.CreatePodOptions.Builder.*;
 import static org.testng.Assert.assertEquals;
 
 /**
- * Tests behavior of {@code UpdateHostOptions}
- *
+ * Tests behavior of {@code CreatePodOptions}
+ * 
  * @author Richard Downer
  */
 @Test(groups = "unit")
-public class UpdateHostOptionsTest {
+public class CreatePodOptionsTest {
 
    public void testAllocationState() {
-      UpdateHostOptions options = new UpdateHostOptions().allocationState(AllocationState.ENABLED);
+      CreatePodOptions options = new CreatePodOptions().allocationState(AllocationState.ENABLED);
       assertEquals(ImmutableList.of("Enabled"), options.buildQueryParameters().get("allocationstate"));
    }
 
    public void testAllocationStateStatic() {
-      UpdateHostOptions options = allocationState(AllocationState.ENABLED);
+      CreatePodOptions options = allocationState(AllocationState.ENABLED);
       assertEquals(ImmutableList.of("Enabled"), options.buildQueryParameters().get("allocationstate"));
-   }
-
-   public void testHostTags() {
-      UpdateHostOptions options = new UpdateHostOptions().hostTags(ImmutableSet.<String>of("foo", "bar", "baz"));
-      assertEquals(ImmutableList.of("foo,bar,baz"), options.buildQueryParameters().get("hosttags"));
-   }
-
-   public void testHostTagsStatic() {
-      UpdateHostOptions options = hostTags(ImmutableSet.<String>of("foo", "bar", "baz"));
-      assertEquals(ImmutableList.of("foo,bar,baz"), options.buildQueryParameters().get("hosttags"));
-   }
-
-   public void testOsCategoryId() {
-      UpdateHostOptions options = new UpdateHostOptions().osCategoryId(42L);
-      assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("oscategoryid"));
-   }
-
-   public void testOsCategoryIdStatic() {
-      UpdateHostOptions options = osCategoryId(42L);
-      assertEquals(ImmutableList.of("42"), options.buildQueryParameters().get("oscategoryid"));
    }
 
 }
