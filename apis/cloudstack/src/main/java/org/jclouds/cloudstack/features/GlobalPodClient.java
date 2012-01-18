@@ -18,8 +18,11 @@
  */
 package org.jclouds.cloudstack.features;
 
+import org.jclouds.cloudstack.domain.Pod;
+import org.jclouds.cloudstack.options.ListPodsOptions;
 import org.jclouds.concurrent.Timeout;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -33,5 +36,23 @@ import java.util.concurrent.TimeUnit;
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface GlobalPodClient {
+
+   /**
+    * Lists pods
+    *
+    * @param options
+    *           if present, how to constrain the list.
+    * @return pods matching query, or empty set, if no pods are found
+    */
+   Set<Pod> listPods(ListPodsOptions... options);
+
+   /**
+    * get a specific pod by id
+    *
+    * @param id
+    *           pod to get
+    * @return pod or null if not found
+    */
+   Pod getPod(long id);
 
 }

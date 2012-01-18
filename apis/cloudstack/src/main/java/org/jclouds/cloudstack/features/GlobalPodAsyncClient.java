@@ -18,15 +18,29 @@
  */
 package org.jclouds.cloudstack.features;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.cloudstack.domain.Pod;
 import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.options.ListPodsOptions;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import java.util.Set;
 
 /**
- * Provides asynchronous access to CloudStack Account features available to Global
+ * Provides asynchronous access to CloudStack Pod features available to Global
  * Admin users.
  *
- * @author Adrian Cole, Andrei Savu
+ * @author Richard Downer
  * @see <a href=
  *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Global_Admin.html"
  *      />
@@ -34,5 +48,26 @@ import org.jclouds.rest.annotations.RequestFilters;
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
 public interface GlobalPodAsyncClient {
+
+   /**
+    * @see PodClient#listPods
+    */
+   @GET
+   @QueryParams(keys = "command", values = "listPods")
+   @SelectJson("pod")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<Set<Pod>> listPods(ListPodsOptions... options);
+
+   /**
+    * @see PodClient#getPod
+    */
+   @GET
+   @QueryParams(keys = "command", values = "listPods")
+   @SelectJson("pod")
+   @OnlyElement
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Pod> getPod(@QueryParam("id") long id);
 
 }

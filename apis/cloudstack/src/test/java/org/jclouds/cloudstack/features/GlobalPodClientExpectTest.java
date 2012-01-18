@@ -18,8 +18,18 @@
  */
 package org.jclouds.cloudstack.features;
 
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.CloudStackContext;
+import org.jclouds.cloudstack.domain.AllocationState;
+import org.jclouds.cloudstack.domain.Pod;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
+
+import java.net.URI;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * Test the CloudStack PodClient
@@ -28,6 +38,68 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", testName = "GlobalPodClientExpectTest")
 public class GlobalPodClientExpectTest extends BaseCloudStackRestClientExpectTest<GlobalPodClient> {
+
+   public void testListPodsWhenResponseIs2xx() {
+      GlobalPodClient client = requestSendsResponse(
+         HttpRequest.builder()
+            .method("GET")
+            .endpoint(
+               URI.create("http://localhost:8080/client/api?response=json&" +
+                  "command=listPods&apiKey=identity&signature=asx1px2NQkW4R44%2FDgdozuu9wQg%3D"))
+            .headers(
+               ImmutableMultimap.<String, String>builder()
+                  .put("Accept", "application/json")
+                  .build())
+            .build(),
+         HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResource("/listpodsresponse.json"))
+            .build());
+
+      Pod pod1 = Pod.builder()
+         .id(1)
+         .name("Dev Pod 1")
+         .zoneId(1)
+         .zoneName("Dev Zone 1")
+         .gateway("10.26.26.254")
+         .netmask("255.255.255.0")
+         .startIp("10.26.26.50")
+         .endIp("10.26.26.100")
+         .allocationState(AllocationState.ENABLED)
+         .build();
+      Pod pod2 = Pod.builder()
+         .id(2)
+         .name("Dev Pod 2")
+         .zoneId(2)
+         .zoneName("Dev Zone 2")
+         .gateway("10.22.22.254")
+         .netmask("255.255.255.0")
+         .startIp("10.22.22.25")
+         .endIp("10.22.22.50")
+         .allocationState(AllocationState.ENABLED)
+         .build();
+
+      assertEquals(client.listPods(), ImmutableSet.of(pod1, pod2));
+   }
+
+   public void testListPodsWhenResponseIs404() {
+      GlobalPodClient client = requestSendsResponse(
+         HttpRequest.builder()
+            .method("GET")
+            .endpoint(
+               URI.create("http://localhost:8080/client/api?response=json&" +
+                  "command=listPods&apiKey=identity&signature=asx1px2NQkW4R44%2FDgdozuu9wQg%3D"))
+            .headers(
+               ImmutableMultimap.<String, String>builder()
+                  .put("Accept", "application/json")
+                  .build())
+            .build(),
+         HttpResponse.builder()
+            .statusCode(404)
+            .build());
+
+      assertEquals(client.listPods(), ImmutableSet.of());
+   }
 
    @Override
    protected GlobalPodClient clientFrom(CloudStackContext context) {
