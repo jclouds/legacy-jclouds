@@ -129,7 +129,12 @@
           <instructions>
             <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
             <Export-Package>org.jclouds.eucalyptus.*;version="${project.version}"</Export-Package>
-            <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+            <Import-Package>
+              org.jclouds.compute.internal;version="${project.version}",
+              org.jclouds.rest.internal;version="${project.version}",
+              org.jclouds.*;version="${project.version}",
+              *
+            </Import-Package>
           </instructions>
         </configuration>
       </plugin>
