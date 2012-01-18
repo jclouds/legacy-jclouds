@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.features;
 
 import org.jclouds.cloudstack.domain.Pod;
+import org.jclouds.cloudstack.options.CreatePodOptions;
 import org.jclouds.cloudstack.options.ListPodsOptions;
 import org.jclouds.concurrent.Timeout;
 
@@ -55,4 +56,36 @@ public interface GlobalPodClient {
     */
    Pod getPod(long id);
 
+   /**
+    * Creates a new Pod.
+    *
+    * @param name the name of the Pod
+    * @param zoneId the Zone ID in which the Pod will be created
+    * @param startIp the starting IP address for the Pod
+    * @param endIp the ending IP address for the Pod
+    * @param gateway the gateway for the Pod
+    * @param netmask the netmask for the Pod
+    * @param createPodOptions optional arguments
+    * @return the new Pod
+    */
+   Pod createPod(String name, long zoneId, String startIp, String endIp, String gateway, String netmask, CreatePodOptions... createPodOptions);
+
+   /**
+    * Creates a new Pod.
+    *
+    * @param name the name of the Pod
+    * @param zoneId the Zone ID in which the Pod will be created
+    * @param startIp the starting IP address for the Pod
+    * @param gateway the gateway for the Pod
+    * @param netmask the netmask for the Pod
+    * @param createPodOptions optional arguments
+    * @return the new Pod
+    */
+   Pod createPod(String name, long zoneId, String startIp, String gateway, String netmask, CreatePodOptions... createPodOptions);
+
+   /**
+    * Deletes a Pod.
+    * @param id the ID of the Pod
+    */
+   void deletePod(long id);
 }

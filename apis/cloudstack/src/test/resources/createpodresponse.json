@@ -1,0 +1,1 @@
+{ "createpodresponse" :  { "pod" : {"id":6,"name":"richard-pod","zoneid":10,"zonename":"richard-zone","gateway":"172.20.0.254","netmask":"255.255.255.0","startip":"172.20.0.1","endip":"172.20.0.250","allocationstate":"Enabled"} }  }

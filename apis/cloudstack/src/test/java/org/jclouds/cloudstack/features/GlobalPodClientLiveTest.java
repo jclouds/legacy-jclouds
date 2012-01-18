@@ -19,14 +19,20 @@
 package org.jclouds.cloudstack.features;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import org.jclouds.cloudstack.domain.AllocationState;
+import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.Pod;
+import org.jclouds.cloudstack.domain.Zone;
+import org.jclouds.cloudstack.options.CreatePodOptions;
 import org.jclouds.cloudstack.options.ListPodsOptions;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import java.util.Set;
 
+import static org.jclouds.cloudstack.options.UpdateZoneOptions.Builder.name;
 import static org.testng.Assert.*;
 
 /**
@@ -36,6 +42,9 @@ import static org.testng.Assert.*;
  */
 @Test(groups = "live", singleThreaded = true, testName = "GlobalPodClientLiveTest")
 public class GlobalPodClientLiveTest extends BaseCloudStackClientLiveTest {
+
+   private Zone zone;
+   private Pod pod;
 
    public void testListPods() throws Exception {
       Set<Pod> response = globalAdminClient.getPodClient().listPods();
@@ -59,4 +68,34 @@ public class GlobalPodClientLiveTest extends BaseCloudStackClientLiveTest {
       }
    }
 
+   @Test
+   public void testCreatePod() {
+      assertTrue(globalAdminEnabled, "Global admin credentials must be given");
+
+      zone = globalAdminClient.getZoneClient().createZone(prefix + "-zone", NetworkType.BASIC, "8.8.8.8", "10.10.10.10");
+      pod = globalAdminClient.getPodClient().createPod(prefix + "-pod", zone.getId(), "172.20.0.1", "172.20.0.250", "172.20.0.254", "255.255.255.0",
+      CreatePodOptions.Builder.allocationState(AllocationState.ENABLED));
+
+      assertNotNull(pod);
+      assertEquals(pod.getName(), prefix + "-pod");
+      assertEquals(pod.getZoneId(), zone.getId());
+      assertEquals(pod.getZoneName(), prefix + "-zone");
+      assertEquals(pod.getStartIp(), "172.20.0.1");
+      assertEquals(pod.getEndIp(), "172.20.0.250");
+      assertEquals(pod.getGateway(), "172.20.0.254");
+      assertEquals(pod.getNetmask(), "255.255.255.0");
+      assertEquals(pod.getAllocationState(), AllocationState.ENABLED);
+   }
+
+   @AfterClass
+   public void testFixtureTearDown() {
+      if (pod != null) {
+         globalAdminClient.getPodClient().deletePod(pod.getId());
+         pod = null;
+      }
+      if (zone != null) {
+         globalAdminClient.getZoneClient().deleteZone(zone.getId());
+         zone = null;
+      }
+   }
 }

@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.Pod;
+import org.jclouds.cloudstack.options.CreatePodOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
@@ -99,6 +100,58 @@ public class GlobalPodClientExpectTest extends BaseCloudStackRestClientExpectTes
             .build());
 
       assertEquals(client.listPods(), ImmutableSet.of());
+   }
+
+   public void testCreatePodWhenResponseIs2xx() {
+      GlobalPodClient client = requestSendsResponse(
+         HttpRequest.builder()
+            .method("GET")
+            .endpoint(
+               URI.create("http://localhost:8080/client/api?response=json&command=createPod&netmask=255.255.255.0&name=richard-pod&startip=172.20.0.1&zoneid=10&endip=172.20.0.250&gateway=172.20.0.254&allocationstate=Enabled&apiKey=identity&signature=fwsoQ77BmNQWfuqv4nVlPcKvKbU%3D"))
+            .headers(
+               ImmutableMultimap.<String, String>builder()
+                  .put("Accept", "application/json")
+                  .build())
+            .build(),
+         HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResource("/createpodresponse.json"))
+            .build());
+
+      Pod expected = Pod.builder()
+         .id(6)
+         .name("richard-pod")
+         .zoneId(10)
+         .zoneName("richard-zone")
+         .gateway("172.20.0.254")
+         .netmask("255.255.255.0")
+         .startIp("172.20.0.1")
+         .endIp("172.20.0.250")
+         .allocationState(AllocationState.ENABLED)
+         .build();
+
+      Pod actual = client.createPod("richard-pod", 10, "172.20.0.1", "172.20.0.250", "172.20.0.254", "255.255.255.0",
+         CreatePodOptions.Builder.allocationState(AllocationState.ENABLED));
+
+      assertEquals(actual, expected);
+   }
+
+   public void testDeletePodWhenResponseIs2xx() {
+      GlobalPodClient client = requestSendsResponse(
+         HttpRequest.builder()
+            .method("GET")
+            .endpoint(
+               URI.create("http://localhost:8080/client/api?response=json&command=deletePod&id=3&apiKey=identity&signature=rm4ItuAL1Ztnj%2BHFFvBFzvHAIog%3D"))
+            .headers(
+               ImmutableMultimap.<String, String>builder()
+                  .put("Accept", "application/json")
+                  .build())
+            .build(),
+         HttpResponse.builder()
+            .statusCode(200)
+            .build());
+
+      client.deletePod(3);
    }
 
    @Override

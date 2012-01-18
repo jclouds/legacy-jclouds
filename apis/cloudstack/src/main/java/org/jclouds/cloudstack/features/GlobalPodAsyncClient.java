@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.features;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.cloudstack.domain.Pod;
 import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.options.CreatePodOptions;
 import org.jclouds.cloudstack.options.ListPodsOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.OnlyElement;
@@ -29,6 +30,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -69,5 +71,52 @@ public interface GlobalPodAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Pod> getPod(@QueryParam("id") long id);
+
+   /**
+    * Creates a new Pod.
+    *
+    * @param name the name of the Pod
+    * @param zoneId the Zone ID in which the Pod will be created
+    * @param startIp the starting IP address for the Pod
+    * @param endIp the ending IP address for the Pod
+    * @param gateway the gateway for the Pod
+    * @param netmask the netmask for the Pod
+    * @param createPodOptions optional arguments
+    * @return the new Pod
+    */
+   @GET
+   @QueryParams(keys = "command", values = "createPod")
+   @SelectJson("pod")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Pod> createPod(@QueryParam("name") String name, @QueryParam("zoneid") long zoneId, @QueryParam("startip") String startIp, @QueryParam("endip") String endIp, @QueryParam("gateway") String gateway, @QueryParam("netmask") String netmask, CreatePodOptions... createPodOptions);
+
+   /**
+    * Creates a new Pod.
+    *
+    * @param name the name of the Pod
+    * @param zoneId the Zone ID in which the Pod will be created
+    * @param startIp the starting IP address for the Pod
+    * @param gateway the gateway for the Pod
+    * @param netmask the netmask for the Pod
+    * @param createPodOptions optional arguments
+    * @return the new Pod
+    */
+   @GET
+   @QueryParams(keys = "command", values = "createPod")
+   @SelectJson("pod")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Pod> createPod(@QueryParam("name") String name, @QueryParam("zoneid") long zoneId, @QueryParam("startip") String startIp, @QueryParam("gateway") String gateway, @QueryParam("netmask") String netmask, CreatePodOptions... createPodOptions);
+
+   /**
+    * Deletes a Pod.
+    * @param id the ID of the Pod
+    */
+   @GET
+   @QueryParams(keys = "command", values = "deletePod")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> deletePod(@QueryParam("id") long id);
 
 }
