@@ -19,8 +19,6 @@
 
 package org.jclouds.virtualbox;
 
-import static org.jclouds.virtualbox.util.MachineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered;
-
 import java.net.URI;
 import java.util.Properties;
 
@@ -38,8 +36,6 @@ import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.domain.VmSpec;
-import org.jclouds.virtualbox.functions.CreateAndInstallVm;
-import org.jclouds.virtualbox.functions.CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.testng.annotations.AfterClass;
@@ -70,6 +66,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
 
    protected ComputeServiceContext context;
    protected Supplier<VirtualBoxManager> manager;
+   protected MachineUtils machineUtils;
    protected Supplier<URI> preconfigurationUri;
    protected String hostVersion;
    protected String operatingSystemIso;
@@ -80,17 +77,19 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
 
    @Override
    protected void setupCredentials() {
-      // default behavior is to bomb when no user is configured, but we know the default user of
+      // default behavior is to bomb when no user is configured, but we know the
+      // default user of
       // vbox
       ensureIdentityPropertyIsSpecifiedOrTakeFromDefaults();
       super.setupCredentials();
    }
 
    protected void ensureIdentityPropertyIsSpecifiedOrTakeFromDefaults() {
-      Properties defaultVBoxProperties = new VirtualBoxPropertiesBuilder().build();
+      Properties defaultVBoxProperties = new VirtualBoxPropertiesBuilder()
+            .build();
       if (!System.getProperties().containsKey("test." + provider + ".identity"))
-         System.setProperty("test." + provider + ".identity", defaultVBoxProperties
-                  .getProperty(Constants.PROPERTY_IDENTITY));
+         System.setProperty("test." + provider + ".identity",
+               defaultVBoxProperties.getProperty(Constants.PROPERTY_IDENTITY));
    }
 
    @BeforeClass(groups = "live")
@@ -98,40 +97,68 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
 
-      CacheNodeStoreModule hostModule = new CacheNodeStoreModule(ImmutableMap.of("host", Node.builder().id("host")
-               .name("host installing virtualbox").hostname("localhost").osFamily(OsFamily.LINUX.toString())
-               .osDescription(System.getProperty("os.name")).osVersion(System.getProperty("os.version")).group("ssh")
-               .username(System.getProperty("user.name")).credentialUrl(
-                        URI.create("file://" + System.getProperty("user.home") + "/.ssh/id_rsa")).build()));
+      CacheNodeStoreModule hostModule = new CacheNodeStoreModule(
+            ImmutableMap.of(
+                  "host",
+                  Node.builder()
+                        .id("host")
+                        .name("host installing virtualbox")
+                        .hostname("localhost")
+                        .osFamily(OsFamily.LINUX.toString())
+                        .osDescription(System.getProperty("os.name"))
+                        .osVersion(System.getProperty("os.version"))
+                        .group("ssh")
+                        .username(System.getProperty("user.name"))
+                        .credentialUrl(
+                              URI.create("file://"
+                                    + System.getProperty("user.home")
+                                    + "/.ssh/id_rsa")).build()));
 
-      context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet
-               .<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule(), hostModule), overrides);
-      Function<String, String> configProperties = context.utils().injector().getInstance(
-               ValueOfConfigurationKeyOrNull.class);
-      imageId = configProperties.apply(ComputeServiceConstants.PROPERTY_IMAGE_ID);
-      workingDir = configProperties.apply(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR);
-      host = context.utils().injector().getInstance(Key.get(new TypeLiteral<Supplier<NodeMetadata>>(){}));
+      context = new ComputeServiceContextFactory().createContext(provider,
+            identity, credential, ImmutableSet.<Module> of(
+                  new SLF4JLoggingModule(), new SshjSshClientModule(),
+                  hostModule), overrides);
+      Function<String, String> configProperties = context.utils().injector()
+            .getInstance(ValueOfConfigurationKeyOrNull.class);
+      imageId = configProperties
+            .apply(ComputeServiceConstants.PROPERTY_IMAGE_ID);
+      workingDir = configProperties
+            .apply(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR);
+      host = context.utils().injector()
+            .getInstance(Key.get(new TypeLiteral<Supplier<NodeMetadata>>() {
+            }));
 
       // this will eagerly startup Jetty, note the impl will shut itself down
-      preconfigurationUri = context.utils().injector().getInstance(Key.get(new TypeLiteral<Supplier<URI>>() {
-      }, Preconfiguration.class));
+      preconfigurationUri = context.utils().injector()
+            .getInstance(Key.get(new TypeLiteral<Supplier<URI>>() {
+            }, Preconfiguration.class));
       // this will eagerly startup Jetty, note the impl will shut itself down
       preconfigurationUri.get();
-      
-      manager = context.utils().injector().getInstance(Key.get(new TypeLiteral<Supplier<VirtualBoxManager>>() {
-      }));
+
+      manager = context
+            .utils()
+            .injector()
+            .getInstance(
+                  Key.get(new TypeLiteral<Supplier<VirtualBoxManager>>() {
+                  }));
       // this will eagerly startup vbox
       manager.get();
 
-      hostVersion = Iterables.get(Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
+      machineUtils = context.utils().injector().getInstance(MachineUtils.class);
+
+      hostVersion = Iterables.get(
+            Splitter.on('r').split(
+                  context.getProviderSpecificContext().getBuildVersion()), 0);
       adminDisk = workingDir + "/testadmin.vdi";
       operatingSystemIso = String.format("%s/%s.iso", workingDir, imageId);
-      guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", workingDir, hostVersion);
+      guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso",
+            workingDir, hostVersion);
    }
 
    protected void undoVm(VmSpec vmSpecification) {
-      MachineUtils machineUtils = context.utils().injector().getInstance(MachineUtils.class);
-      machineUtils.mutateMachine(vmSpecification.getVmId(), new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
+      machineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered(
+            vmSpecification.getVmId(),
+            new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
    }
 
    @AfterClass(groups = "live")

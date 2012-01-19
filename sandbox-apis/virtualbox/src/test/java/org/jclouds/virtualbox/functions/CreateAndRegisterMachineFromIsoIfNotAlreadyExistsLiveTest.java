@@ -50,7 +50,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends B
               .attachHardDisk(HardDisk.builder().diskpath(adminDisk).controllerPort(0).deviceSlot(1).build()).attachISO(1, 1,
               guestAdditionsIso).build();
    }
-
+   
    @Test
    public void testCreateNewMachine() throws Exception {
       String vmName = "jclouds-test-create-1-node";
