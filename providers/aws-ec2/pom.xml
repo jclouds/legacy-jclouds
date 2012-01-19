@@ -143,6 +143,8 @@
             <Import-Package>
               org.jclouds.compute.internal;version="${project.version}",
               org.jclouds.rest.internal;version="${project.version}",
+              org.jclouds.aws;version="${project.version}",
+              org.jclouds.aws.*;version="${project.version}",
               org.jclouds.*;version="${project.version}",
               *
             </Import-Package>
