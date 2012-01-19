@@ -46,6 +46,7 @@ public class IMachineToVmSpecTest {
    private static final String PATH_TO_HD = "/path/to/hd";
    private static final StorageBus CONTROLLER_BUS = StorageBus.IDE;
    private static final long MEMORY_SIZE = 512L;
+   private static final String OS_TYPE_ID = "ubuntu";
    private static final String VM_NAME = "test";
    private static final String CONTROLLER_NAME = "IDE Controller";
    private static final String VM_ID = "test";
@@ -54,12 +55,10 @@ public class IMachineToVmSpecTest {
    public void testConvert() throws Exception {
 
       VirtualBoxManager vbm = createNiceMock(VirtualBoxManager.class);
-      IStorageController iStorageController = createNiceMock(IStorageController.class); 
-      
-      IMediumAttachment iMediumAttachment = createNiceMock(IMediumAttachment.class); 
+      IStorageController iStorageController = createNiceMock(IStorageController.class);
+      IMediumAttachment iMediumAttachment = createNiceMock(IMediumAttachment.class);
       IMedium hd = createNiceMock(IMedium.class);
       IMedium dvd = createNiceMock(IMedium.class);
-
       IMachine vm = createNiceMock(IMachine.class);
 
       expect(vm.getStorageControllers()).andReturn(Lists.newArrayList(iStorageController)).anyTimes();
@@ -68,23 +67,24 @@ public class IMachineToVmSpecTest {
       expect(vm.getMediumAttachmentsOfController(CONTROLLER_NAME)).andReturn(Lists.newArrayList(iMediumAttachment)).anyTimes();
       expect(iMediumAttachment.getPort()).andReturn(0).once();
       expect(iMediumAttachment.getDevice()).andReturn(0).once();
-      
+
       expect(iMediumAttachment.getMedium()).andReturn(hd);
       expect(hd.getDeviceType()).andReturn(DeviceType.HardDisk).once();
       expect(hd.getLocation()).andReturn(PATH_TO_HD).once();
-      
+
       expect(iMediumAttachment.getMedium()).andReturn(dvd);
       expect(dvd.getDeviceType()).andReturn(DeviceType.DVD).once();
       expect(dvd.getLocation()).andReturn(PATH_TO_DVD).once();
 
       expect(vm.getName()).andReturn(VM_NAME).anyTimes();
       expect(vm.getId()).andReturn(VM_ID).anyTimes();
+      expect(vm.getOSTypeId()).andReturn(OS_TYPE_ID).anyTimes();
       expect(vm.getMemorySize()).andReturn(MEMORY_SIZE).anyTimes();
-      
+
       replay(vbm, iStorageController, iMediumAttachment, hd, dvd, vm);
 
       VmSpec vmSpec = new IMachineToVmSpec().apply(vm);
-      
+
       assertEquals(vmSpec.getVmName(), VM_NAME);
       assertEquals(vmSpec.getVmId(), VM_ID);
       assertEquals(vmSpec.getMemory(), MEMORY_SIZE);
@@ -92,10 +92,10 @@ public class IMachineToVmSpecTest {
          assertEquals(controller.getName(), CONTROLLER_NAME);
          assertEquals(controller.getBus(), CONTROLLER_BUS);
          for (HardDisk hardDisk : controller.getHardDisks()) {
-            assertEquals(hardDisk.getDiskPath(), PATH_TO_HD);           
+            assertEquals(hardDisk.getDiskPath(), PATH_TO_HD);
          }
          for (IsoImage iso : controller.getIsoImages()) {
-            assertEquals(iso.getSourcePath(), PATH_TO_DVD);           
+            assertEquals(iso.getSourcePath(), PATH_TO_DVD);
          }
       }
    }

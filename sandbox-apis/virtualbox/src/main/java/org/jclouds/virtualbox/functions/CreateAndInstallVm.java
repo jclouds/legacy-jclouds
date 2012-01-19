@@ -21,15 +21,20 @@ package org.jclouds.virtualbox.functions;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.inject.Inject;
+import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.callables.RunScriptOnNode.Factory;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.virtualbox.Preconfiguration;
 import org.jclouds.virtualbox.domain.ExecutionType;
-import org.jclouds.virtualbox.domain.IMachineSpec;
+import org.jclouds.virtualbox.domain.MasterSpec;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.settings.KeyboardScancodes;
@@ -45,7 +50,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 
 @Singleton
-public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
+public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -56,6 +61,7 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
 
    private final Predicate<SshClient> sshResponds;
    private final ExecutionType executionType;
+   private LoadingCache<IsoSpec, URI> preconfiguration;
 
    private final Factory scriptRunner;
    private final Supplier<NodeMetadata> host;
@@ -65,13 +71,11 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
    private final MachineUtils machineUtils;
 
    @Inject
-   public CreateAndInstallVm(
-           Supplier<VirtualBoxManager> manager,
-           CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
-           Predicate<SshClient> sshResponds,
-           Function<IMachine, SshClient> sshClientForIMachine,
-           Supplier<NodeMetadata> host, Factory scriptRunner,
-           ExecutionType executionType, MachineUtils machineUtils) {
+   public CreateAndInstallVm(Supplier<VirtualBoxManager> manager,
+                             CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
+                             Predicate<SshClient> sshResponds, Function<IMachine, SshClient> sshClientForIMachine,
+                             Supplier<NodeMetadata> host, RunScriptOnNode.Factory scriptRunner, ExecutionType executionType,
+                             MachineUtils machineUtils, @Preconfiguration LoadingCache<IsoSpec, URI> preconfiguration) {
       this.manager = manager;
       this.createAndRegisterMachineFromIsoIfNotAlreadyExists = CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
       this.sshResponds = sshResponds;
@@ -80,10 +84,12 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
       this.host = host;
       this.executionType = executionType;
       this.machineUtils = machineUtils;
+      this.preconfiguration = preconfiguration;
+
    }
 
    @Override
-   public IMachine apply(IMachineSpec machineSpec) {
+   public IMachine apply(MasterSpec machineSpec) {
 
       VmSpec vmSpec = machineSpec.getVmSpec();
       IsoSpec isoSpec = machineSpec.getIsoSpec();
@@ -96,7 +102,14 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
       // Launch machine and wait for it to come online
       ensureMachineIsLaunched(vmName);
 
-      URI uri = isoSpec.getPreConfigurationUri().get();
+      URI uri = null;
+      try {
+         uri = preconfiguration.get(isoSpec);
+      } catch (Exception e) {
+         logger.error("Could not connect to host providing ISO", e);
+         Throwables.propagate(e);
+      }
+
       String installationKeySequence = isoSpec.getInstallationKeySequence()
             .replace("PRECONFIGURATION_URL", uri.toASCIIString());
       sendKeyboardSequence(installationKeySequence, vmName);
@@ -130,8 +143,7 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
    private void ensureMachineIsLaunched(String vmName) {
       machineUtils.applyForMachine(vmName,
             new LaunchMachineIfNotAlreadyRunning(manager.get(), executionType,
-                  ""));
-   }
+                  ""));   }
 
    private void sendKeyboardSequence(String keyboardSequence, String vmName) {
       String[] splitSequence = keyboardSequence.split(" ");
@@ -147,12 +159,11 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
       }
    }
 
-   private void runScriptIfWordEndsWith(StringBuilder sb, String word,
-         String key) {
+   private void runScriptIfWordEndsWith(StringBuilder sb, String word, String key) {
       if (word.endsWith(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get(key))) {
          scriptRunner
-               .create(host.get(), Statements.exec(sb.toString()),
-                     runAsRoot(false).wrapInInitScript(false)).init().call();
+                 .create(host.get(), Statements.exec(sb.toString()),
+                         runAsRoot(false).wrapInInitScript(false)).init().call();
          sb.delete(0, sb.length() - 1);
       }
    }
@@ -162,9 +173,7 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
       if (s.startsWith("<")) {
          String[] specials = s.split("<");
          for (int i = 1; i < specials.length; i++) {
-            keycodes.append(
-                  KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<"
-                        + specials[i])).append("  ");
+            keycodes.append(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<" + specials[i])).append("  ");
          }
          return keycodes.toString();
       }
@@ -179,8 +188,8 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
          i++;
       }
       keycodes.append(
-            KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<Spacebar>"))
-            .append(" ");
+              KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<Spacebar>"))
+              .append(" ");
 
       return keycodes.toString();
    }

@@ -52,7 +52,7 @@ public class IsLinkedClonesLiveTest extends BaseVirtualBoxClientLiveTest {
    private String cloneName;
    private String vmName;
    private StorageController masterStorageController;
-   private IMachineSpec masterMachineSpec;
+   private MasterSpec masterMachineSpec;
    private VmSpec cloneSpec;
 
    @Override
@@ -71,10 +71,9 @@ public class IsLinkedClonesLiveTest extends BaseVirtualBoxClientLiveTest {
                operatingSystemIso).attachHardDisk(hardDisk).attachISO(1, 1, guestAdditionsIso).build();
       VmSpec masterSpec = VmSpec.builder().id(vmName).name(vmName).memoryMB(512).osTypeId(osTypeId).controller(
                masterStorageController).forceOverwrite(true).cleanUpMode(CleanupMode.Full).build();
-      masterMachineSpec = IMachineSpec.builder()
+      masterMachineSpec = MasterSpec.builder()
               .iso(IsoSpec.builder()
                       .sourcePath(operatingSystemIso)
-                      .preConfiguration(preconfigurationUri)
                       .installationScript("").build())
               .vm(masterSpec)
               .network(NetworkSpec.builder().build()).build();

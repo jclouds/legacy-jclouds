@@ -19,24 +19,22 @@
 
 package org.jclouds.virtualbox.config;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
-import javax.inject.Singleton;
-
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.*;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Injector;
+import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
+import org.eclipse.jetty.server.Server;
 import org.jclouds.byon.Node;
 import org.jclouds.byon.functions.NodeToNodeMetadata;
 import org.jclouds.byon.suppliers.SupplyFromProviderURIOrNodesProperty;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
-import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.domain.*;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
@@ -46,6 +44,7 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.Preconfiguration;
 import org.jclouds.virtualbox.compute.VirtualBoxComputeServiceAdapter;
 import org.jclouds.virtualbox.domain.ExecutionType;
+import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.functions.IMachineToHardware;
 import org.jclouds.virtualbox.functions.IMachineToImage;
 import org.jclouds.virtualbox.functions.IMachineToNodeMetadata;
@@ -58,17 +57,12 @@ import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author Mattias Holmqvist, Andrea Turli
@@ -114,21 +108,28 @@ public class VirtualBoxComputeServiceContextModule extends
 
    @Provides
    @Singleton
-   @Preconfiguration
-   protected Supplier<URI> preconfiguration(javax.inject.Provider<StartJettyIfNotAlreadyRunning> lazyGet) {
+   protected CacheLoader<IsoSpec, URI> preconfiguration(Provider<StartJettyIfNotAlreadyRunning> lazyGet) {
       return lazyGet.get();
    }
 
    @Provides
    @Singleton
+   @Preconfiguration
+   protected LoadingCache<IsoSpec, URI> preconfiguration(Provider<CacheLoader<IsoSpec, URI>> lazyGet) {
+      return CacheBuilder.newBuilder().build(lazyGet.get());
+   }
+
+
+   @Provides
+   @Singleton
    protected Function<Supplier<NodeMetadata>, VirtualBoxManager> provideVBox(Supplier<NodeMetadata> host) {
-      return new Function<Supplier<NodeMetadata>, VirtualBoxManager>(){
+      return new Function<Supplier<NodeMetadata>, VirtualBoxManager>() {
 
          @Override
          public VirtualBoxManager apply(Supplier<NodeMetadata> arg0) {
             return VirtualBoxManager.createInstance(arg0.get().getId());
          }
-         
+
       };
    }
 
@@ -140,7 +141,7 @@ public class VirtualBoxComputeServiceContextModule extends
 
    @Provides
    @Singleton
-   protected Supplier<VirtualBoxManager> vbox(javax.inject.Provider<StartVBoxIfNotAlreadyRunning> lazyGet) {
+   protected Supplier<VirtualBoxManager> vbox(Provider<StartVBoxIfNotAlreadyRunning> lazyGet) {
       return lazyGet.get();
    }
 
@@ -166,6 +167,12 @@ public class VirtualBoxComputeServiceContextModule extends
             return arg0.apply("host");
          }
       }), nodes);
+   }
+
+   @Provides
+   @Singleton
+   protected Supplier<Server> server() throws ExecutionException {
+      return Suppliers.ofInstance(new Server());
    }
 
    @VisibleForTesting
