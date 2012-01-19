@@ -3,7 +3,7 @@
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
+ * to you under the Apache License, Name 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
@@ -16,32 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-
-import java.util.Properties;
-
-import org.jclouds.PropertiesBuilder;
+package org.jclouds.openstack.services;
 
 /**
- * Builds properties used in Nova Clients
+ * An OpenStack service, such as Compute (Nova), Object Storage (Swift), or Image Service (Glance).
+ * A service provides one or more endpoints through which users can access resources and perform
+ * (presumably useful) operations.
  * 
  * @author Adrian Cole
+ * @see <a href="http://docs.openstack.org/api/openstack-typeentity-service/2.0/content/Identity-Service-Concepts-e1362.html"
+ *      />
  */
-public class NovaPropertiesBuilder extends PropertiesBuilder {
-   @Override
-   protected Properties defaultProperties() {
-      Properties properties = super.defaultProperties();
-      // TODO: keystone
-      properties.setProperty(PROPERTY_ENDPOINT, "http://localhost:5000");
-      properties.setProperty(PROPERTY_API_VERSION, "2.0");
-      return properties;
-   }
-
-   public NovaPropertiesBuilder(Properties properties) {
-      super(properties);
-   }
-
+public interface ServiceType {
+   /**
+    * Object Storage (Swift)
+    */
+   public static final String OBJECT_STORE = "object-store";
+   /**
+    * Compute (Nova)
+    */
+   public static final String COMPUTE = "compute";
+   /**
+    * Image Service (Glance)
+    */
+   public static final String IMAGE = "image";
 }

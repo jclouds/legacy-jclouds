@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jclouds.openstack.nova.v1_1.domain;
+package org.jclouds.openstack.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;

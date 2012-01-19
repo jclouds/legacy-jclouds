@@ -16,48 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.features;
+package org.jclouds.openstack.keystone.v2_0;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.domain.Resource;
-import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.keystone.v2_0.domain.Access;
+import org.jclouds.openstack.keystone.v2_0.domain.ApiAccessKeyCredentials;
+import org.jclouds.openstack.keystone.v2_0.domain.PasswordCredentials;
 
 /**
- * Provides synchronous access to Server.
+ * Provides synchronous access to the KeyStone Service API.
  * <p/>
  * 
- * @see ServerAsyncClient
- * @see <a href="http://docs.openstack.org/api/openstack-compute/1.1/content/Servers-d1e2073.html"
+ * @see ServiceAsyncClient
+ * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Client_Operations.html"
  *      />
  * @author Adrian Cole
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface ServerClient {
+public interface ServiceClient {
 
    /**
-    * List all servers (IDs, names, links)
+    * Authenticate to generate a token.
     * 
-    * @return all servers (IDs, names, links)
+    * @return access with token
     */
-   Set<Resource> listServers();
+   Access authenticateTenantWithCredentials(String tenantId, PasswordCredentials passwordCredentials);
 
    /**
-    * List all servers (all details)
+    * Authenticate to generate a token.
     * 
-    * @return all servers (all details)
+    * @return access with token
     */
-   Set<Server> listServersInDetail();
-
-   /**
-    * List details of the specified server
-    * 
-    * @param id
-    *           id of the server
-    * @return server or null if not found
-    */
-   Server getServer(String id);
-
+   Access authenticateTenantWithCredentials(String tenantId, ApiAccessKeyCredentials passwordCredentials);
 }

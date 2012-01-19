@@ -159,6 +159,16 @@ public abstract class BaseRestClientExpectTest<S> {
 
    }
 
+   public Payload payloadFromString(String payload) {
+      return Payloads.newStringPayload(payload);
+   }
+
+   public Payload payloadFromStringWithContentType(String payload, String contentType) {
+      Payload p = Payloads.newStringPayload(payload);
+      p.getContentMetadata().setContentType(contentType);
+      return p;
+   }
+
    /**
     * Mock executor service which uses the supplied function to return http responses.
     */
@@ -390,6 +400,9 @@ public abstract class BaseRestClientExpectTest<S> {
                ImmutableSet.<Module> of(new ExpectModule(fn), new NullLoggingModule(), module), props).getApi();
    }
 
+   protected String identity = "identity";
+   protected String credential = "credential";
+
    @SuppressWarnings("unchecked")
    private RestContextSpec<S, ?> makeContextSpec() {
       if (getClass().isAnnotationPresent(RegisterContext.class))
@@ -397,7 +410,7 @@ public abstract class BaseRestClientExpectTest<S> {
                   .getAnnotation(RegisterContext.class).sync(),
                   getClass().getAnnotation(RegisterContext.class).async(), ImmutableSet.<Module> of());
       else
-         return new RestContextFactory(setupRestProperties()).createContextSpec(provider, "identity", "credential",
+         return new RestContextFactory(setupRestProperties()).createContextSpec(provider, identity, credential,
                   new Properties());
    }
 

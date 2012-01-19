@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jclouds.openstack.nova.v1_1.domain;
+package org.jclouds.openstack.keystone.v2_0.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
@@ -29,30 +29,33 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Resource found in a paginated collection
+ * A digital representation of a person, system, or service who uses OpenStack cloud services.
+ * Keystone authentication services will validate that incoming request are being made by the user
+ * who claims to be making the call. Users have a login and may be assigned tokens to access users.
+ * Users may be directly assigned to a particular tenant and behave as if they are contained in that
+ * tenant.
  * 
- * @author AdrianCole
- * @see <a href=
- *      "http://docs.openstack.org/api/openstack-compute/1.1/content/Paginated_Collections-d1e664.html"
+ * @author Adrian Cole
+ * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Identity-Service-Concepts-e1362.html"
  *      />
  */
-public class Resource implements Comparable<Resource> {
+public class User implements Comparable<User> {
 
    public static Builder builder() {
       return new Builder();
    }
 
    public Builder toBuilder() {
-      return builder().fromResource(this);
+      return builder().fromUser(this);
    }
 
    public static class Builder {
       protected String id;
       protected String name;
-      protected Set<Link> links = ImmutableSet.of();
+      protected Set<Role> roles = ImmutableSet.of();
 
       /**
-       * @see Resource#getId()
+       * @see User#getId()
        */
       public Builder id(String id) {
          this.id = checkNotNull(id, "id");
@@ -60,7 +63,7 @@ public class Resource implements Comparable<Resource> {
       }
 
       /**
-       * @see Resource#getName()
+       * @see User#getName()
        */
       public Builder name(String name) {
          this.name = checkNotNull(name, "name");
@@ -68,61 +71,60 @@ public class Resource implements Comparable<Resource> {
       }
 
       /**
-       * @see Resource#getLinks()
+       * @see User#getRoles()
        */
-      public Builder links(Link... links) {
-         return links(ImmutableSet.copyOf(checkNotNull(links, "links")));
+      public Builder roles(Role... roles) {
+         return roles(ImmutableSet.copyOf(checkNotNull(roles, "roles")));
       }
 
       /**
-       * @see Resource#getLinks()
+       * @see User#getRoles()
        */
-      public Builder links(Set<Link> links) {
-         this.links = ImmutableSet.copyOf(checkNotNull(links, "links"));
+      public Builder roles(Set<Role> roles) {
+         this.roles = ImmutableSet.copyOf(checkNotNull(roles, "roles"));
          return this;
       }
 
-      public Resource build() {
-         return new Resource(id, name, links);
+      public User build() {
+         return new User(id, name, roles);
       }
 
-      public Builder fromResource(Resource from) {
-         return id(from.getId()).name(from.getName()).links(from.getLinks());
+      public Builder fromUser(User from) {
+         return id(from.getId()).name(from.getName()).roles(from.getRoles());
       }
    }
 
    protected final String id;
    protected final String name;
-   protected final Set<Link> links;
+   protected final Set<Role> roles;
 
-   public Resource(String id, String name, Set<Link> links) {
+   public User(String id, String name, Set<Role> roles) {
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name");
-      this.links = ImmutableSet.copyOf(checkNotNull(links, "links"));
+      this.roles = ImmutableSet.copyOf(checkNotNull(roles, "roles"));
    }
 
    /**
-    * When providing an ID, it is assumed that the resource exists in the current OpenStack
-    * deployment
+    * When providing an ID, it is assumed that the user exists in the current OpenStack deployment
     * 
-    * @return the id of the resource in the current OpenStack deployment
+    * @return the id of the user in the current OpenStack deployment
     */
    public String getId() {
       return id;
    }
 
    /**
-    * @return the name of the resource
+    * @return the name of the user
     */
    public String getName() {
       return name;
    }
 
    /**
-    * @return the links of the id address allocated to the new server
+    * @return the roles assigned to the user
     */
-   public Set<Link> getLinks() {
-      return links;
+   public Set<Role> getRoles() {
+      return roles;
    }
 
    @Override
@@ -130,9 +132,9 @@ public class Resource implements Comparable<Resource> {
       if (this == object) {
          return true;
       }
-      if (object instanceof Resource) {
-         final Resource other = Resource.class.cast(object);
-         return equal(id, other.id) && equal(name, other.name) && equal(links, other.links);
+      if (object instanceof User) {
+         final User other = User.class.cast(object);
+         return equal(id, other.id) && equal(name, other.name) && equal(roles, other.roles);
       } else {
          return false;
       }
@@ -140,16 +142,16 @@ public class Resource implements Comparable<Resource> {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(id, name, links);
+      return Objects.hashCode(id, name, roles);
    }
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", id).add("name", name).add("links", links).toString();
+      return toStringHelper("").add("id", id).add("name", name).add("roles", roles).toString();
    }
 
    @Override
-   public int compareTo(Resource that) {
+   public int compareTo(User that) {
       if (that == null)
          return 1;
       if (this == that)

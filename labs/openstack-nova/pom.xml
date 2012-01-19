@@ -37,7 +37,7 @@
     <!-- keystone endpoint -->
     <test.openstack-nova.endpoint>http://localhost:5000</test.openstack-nova.endpoint>
     <!-- keystone version -->
-    <test.openstack-nova.api-version>1.1</test.openstack-nova.api-version>
+    <test.openstack-nova.api-version>2.0</test.openstack-nova.api-version>
     <test.openstack-nova.build-version></test.openstack-nova.build-version>
     <test.openstack-nova.identity>FIXME_IDENTITY</test.openstack-nova.identity>
     <test.openstack-nova.credential>FIXME_CREDENTIALS</test.openstack-nova.credential>

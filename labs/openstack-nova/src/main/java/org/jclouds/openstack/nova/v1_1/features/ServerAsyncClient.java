@@ -26,10 +26,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.openstack.nova.v1_1.Compute;
-import org.jclouds.openstack.nova.v1_1.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.services.Compute;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;

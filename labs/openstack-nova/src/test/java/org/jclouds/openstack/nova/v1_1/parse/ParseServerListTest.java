@@ -26,10 +26,10 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
+import org.jclouds.openstack.domain.Link;
+import org.jclouds.openstack.domain.Resource;
+import org.jclouds.openstack.domain.Link.Relation;
 import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
-import org.jclouds.openstack.nova.v1_1.domain.Link;
-import org.jclouds.openstack.nova.v1_1.domain.Resource;
-import org.jclouds.openstack.nova.v1_1.domain.Link.Relation;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 

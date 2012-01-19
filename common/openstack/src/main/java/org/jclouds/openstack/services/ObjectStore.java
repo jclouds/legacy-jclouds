@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1;
+package org.jclouds.openstack.services;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,13 +26,16 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * @see <a href="http://docs.openstack.org/incubation/identity-dev-guide/content/Authenticate-Service-API-d1e1166.html"
- *      />
+ * Object Storage (Swift)
  * 
+ * @author Adrian Cole
+ * @see <a href="http://docs.openstack.org/api/openstack-typeentity-service/2.0/content/Identity-Service-Concepts-e1362.html"
+ *      />
+ * @see ServiceType#OBJECT_STORE
  */
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
 @Qualifier
-public @interface Compute {
+public @interface ObjectStore {
 
 }

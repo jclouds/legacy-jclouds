@@ -30,19 +30,22 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
-import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
-import org.jclouds.openstack.config.OpenStackAuthenticationModule;
-import org.jclouds.openstack.nova.v1_1.Compute;
+import org.jclouds.openstack.keystone.v2_0.config.KeyStoneAuthenticationModule;
+import org.jclouds.openstack.keystone.v2_0.domain.Access;
+import org.jclouds.openstack.keystone.v2_0.domain.Service;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerClient;
 import org.jclouds.openstack.nova.v1_1.handlers.NovaErrorHandler;
-import org.jclouds.openstack.reference.AuthHeaders;
+import org.jclouds.openstack.services.Compute;
+import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.inject.Provides;
 
 /**
@@ -58,13 +61,13 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
             .put(ServerClient.class, ServerAsyncClient.class)//
             .build();
 
-   private final OpenStackAuthenticationModule authModule;
+   private final KeyStoneAuthenticationModule authModule;
 
    public NovaRestClientModule() {
-      this(new OpenStackAuthenticationModule());
+      this(new KeyStoneAuthenticationModule());
    }
 
-   public NovaRestClientModule(OpenStackAuthenticationModule authModule) {
+   public NovaRestClientModule(KeyStoneAuthenticationModule authModule) {
       super(NovaClient.class, NovaAsyncClient.class, DELEGATE_MAP);
       this.authModule = authModule;
    }
@@ -88,13 +91,18 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(BackoffLimitedRetryHandler.class);
    }
 
-   // TODO: get this from Keystone!!
-   // http://docs.openstack.org/incubation/identity-dev-guide/content/Authenticate-Service-API-d1e1166.html
    @Provides
    @Singleton
    @Compute
-   protected URI provideServerUrl(AuthenticationResponse response) {
-      return response.getServices().get(AuthHeaders.SERVER_MANAGEMENT_URL);
+   protected URI provideServerUrl(Access response) {
+      return Iterables.getOnlyElement(Iterables.find(response.getServiceCatalog(), new Predicate<Service>(){
+
+         @Override
+         public boolean apply(Service input) {
+            return input.getId().equals(ServiceType.COMPUTE);
+         }
+         
+      }).getEndpoints()).getPublicURL();
    }
 
 }

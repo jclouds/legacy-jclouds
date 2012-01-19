@@ -24,6 +24,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 import java.util.Set;
 
+import org.jclouds.openstack.domain.Link;
+import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.domain.Address.Type;
 import org.jclouds.openstack.nova.v1_1.util.NovaUtils;
 

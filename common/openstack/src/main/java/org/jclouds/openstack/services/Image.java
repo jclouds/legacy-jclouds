@@ -16,32 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1;
+package org.jclouds.openstack.services;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.Properties;
-
-import org.jclouds.PropertiesBuilder;
+import javax.inject.Qualifier;
 
 /**
- * Builds properties used in Nova Clients
+ * Image Service (Glance)
  * 
  * @author Adrian Cole
+ * @see <a href="http://docs.openstack.org/api/openstack-typeentity-service/2.0/content/Identity-Service-Concepts-e1362.html"
+ *      />
+ * @see ServiceType#IMAGE
  */
-public class NovaPropertiesBuilder extends PropertiesBuilder {
-   @Override
-   protected Properties defaultProperties() {
-      Properties properties = super.defaultProperties();
-      // TODO: keystone
-      properties.setProperty(PROPERTY_ENDPOINT, "http://localhost:5000");
-      properties.setProperty(PROPERTY_API_VERSION, "2.0");
-      return properties;
-   }
-
-   public NovaPropertiesBuilder(Properties properties) {
-      super(properties);
-   }
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface Image {
 
 }
