@@ -19,46 +19,31 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.io.File;
-import java.util.Map;
-import java.util.Set;
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.logging.Logger;
+import org.jclouds.virtualbox.config.VirtualBoxConstants;
+import org.jclouds.virtualbox.domain.*;
+import org.jclouds.virtualbox.util.MachineUtils;
+import org.virtualbox_4_1.*;
 
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.io.File;
+import java.util.Map;
+import java.util.Set;
 
-import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.logging.Logger;
-import org.jclouds.virtualbox.config.VirtualBoxConstants;
-import org.jclouds.virtualbox.domain.DeviceDetails;
-import org.jclouds.virtualbox.domain.HardDisk;
-import org.jclouds.virtualbox.domain.IMachineSpec;
-import org.jclouds.virtualbox.domain.IsoImage;
-import org.jclouds.virtualbox.domain.NatAdapter;
-import org.jclouds.virtualbox.domain.NetworkSpec;
-import org.jclouds.virtualbox.domain.StorageController;
-import org.jclouds.virtualbox.domain.VmSpec;
-import org.jclouds.virtualbox.util.MachineUtils;
-import org.virtualbox_4_1.AccessMode;
-import org.virtualbox_4_1.DeviceType;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IMedium;
-import org.virtualbox_4_1.IVirtualBox;
-import org.virtualbox_4_1.VBoxException;
-import org.virtualbox_4_1.VirtualBoxManager;
-
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Mattias Holmqvist
  */
 @Singleton
-public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Function<IMachineSpec, IMachine> {
+public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Function<MasterSpec, IMachine> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -78,7 +63,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
    }
 
    @Override
-   public IMachine apply(@Nullable IMachineSpec launchSpecification) {
+   public IMachine apply(@Nullable MasterSpec launchSpecification) {
       final IVirtualBox vBox = manager.get().getVBox();
       String vmName = launchSpecification.getVmSpec().getVmName();
       String vmId = launchSpecification.getVmSpec().getVmId();
@@ -99,7 +84,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
             e.getMessage().contains("Could not find a registered machine with UUID {");
    }
 
-   private IMachine createMachine(IVirtualBox vBox, IMachineSpec machineSpec) {
+   private IMachine createMachine(IVirtualBox vBox, MasterSpec machineSpec) {
       VmSpec vmSpec = machineSpec.getVmSpec();
       String settingsFile = vBox.composeMachineFilename(vmSpec.getVmName(), workingDir);
 
@@ -110,7 +95,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
       return newMachine;
    }
 
-   private void ensureConfiguration(IMachineSpec machineSpec) {
+   private void ensureConfiguration(MasterSpec machineSpec) {
       VmSpec vmSpec = machineSpec.getVmSpec();
       NetworkSpec networkSpec = machineSpec.getNetworkSpec();
       String vmName = vmSpec.getVmName();
@@ -149,7 +134,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
    private void ensureMachineDevicesAttached(String vmName, IMedium medium, DeviceDetails deviceDetails,
             String controllerName) {
       machineUtils.writeLockMachineAndApply(vmName, new AttachMediumToMachineIfNotAlreadyAttached(deviceDetails, medium,
-            controllerName));
+              controllerName));
    }
 
    private String missingIDEControllersMessage(VmSpec vmSpecification) {
@@ -178,13 +163,12 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
       machineUtils.writeLockMachineAndApply(vmName, new ApplyMemoryToMachine(memorySize));
    }
 
-   private void ensureNATNetworkingIsAppliedToMachine(String vmName, long slotId,
-            NatAdapter natAdapter) {
+   private void ensureNATNetworkingIsAppliedToMachine(String vmName, long slotId, NatAdapter natAdapter) {
       machineUtils.writeLockMachineAndApply(vmName, new AttachNATAdapterToMachineIfNotAlreadyExists(slotId, natAdapter));
    }
 
    public void ensureMachineHasStorageControllerNamed(String vmName, StorageController storageController) {
       machineUtils.writeLockMachineAndApply(vmName, new AddIDEControllerIfNotExists(checkNotNull(
-            storageController, "storageController")));
+              storageController, "storageController")));
    }
 }

@@ -19,16 +19,8 @@
 
 package org.jclouds.virtualbox.functions.admin;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.net.URI;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import com.google.common.cache.CacheLoader;
+import com.google.inject.Singleton;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
@@ -36,52 +28,59 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.virtualbox.Preconfiguration;
-import org.jclouds.virtualbox.config.VirtualBoxConstants;
+import org.jclouds.virtualbox.domain.IsoSpec;
 
-import com.google.common.base.Supplier;
-import com.google.inject.Singleton;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.net.URI;
+
+import static com.google.common.base.Throwables.propagate;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
 
 /**
  * @author Andrea Turli
  */
-@Preconfiguration
 @Singleton
-public class StartJettyIfNotAlreadyRunning implements Supplier<URI> {
+public class StartJettyIfNotAlreadyRunning extends CacheLoader<IsoSpec, URI> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-
-   private final URI preconfigurationUrl;
-   private final Server jetty;
+   private Server jetty;
+   private final String preconfigurationUrl;
 
    @Inject
-   public StartJettyIfNotAlreadyRunning(
-            @Named(VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL) String preconfigurationUrl) {
-      this(new Server(URI.create(preconfigurationUrl).getPort()), preconfigurationUrl);
-   }
-
-   public StartJettyIfNotAlreadyRunning(Server jetty,
-            @Named(VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL) String preconfigurationUrl) {
-      this.preconfigurationUrl = URI.create(checkNotNull(preconfigurationUrl, "preconfigurationUrl"));
+   public StartJettyIfNotAlreadyRunning(@Named(VIRTUALBOX_PRECONFIGURATION_URL) String preconfigurationUrl, Server jetty) {
+      this.preconfigurationUrl = preconfigurationUrl;
       this.jetty = jetty;
    }
 
-   @PostConstruct
-   public void start() {
+   @Override
+      public URI load(IsoSpec isoSpec) throws Exception {
+      try {
+         start();
+      } catch (Exception e) {
+         logger.error("Could not connect to host providing ISO " + isoSpec, e);
+         propagate(e);
+      }
+      return URI.create(preconfigurationUrl);
+   }
 
+   private void start() {
       if (jetty.getState().equals(Server.STARTED)) {
          logger.debug("not starting jetty, as existing host is serving %s", preconfigurationUrl);
       } else {
          logger.debug(">> starting jetty to serve %s", preconfigurationUrl);
-         ResourceHandler resource_handler = new ResourceHandler();
-         resource_handler.setDirectoriesListed(true);
-         resource_handler.setWelcomeFiles(new String[] { "index.html" });
+         ResourceHandler resourceHandler = new ResourceHandler();
+         resourceHandler.setDirectoriesListed(true);
+         resourceHandler.setWelcomeFiles(new String[]{"index.html"});
 
-         resource_handler.setResourceBase("");
+         resourceHandler.setResourceBase("");
          HandlerList handlers = new HandlerList();
-         handlers.setHandlers(new Handler[] { resource_handler, new DefaultHandler() });
+         handlers.setHandlers(new Handler[]{resourceHandler, new DefaultHandler()});
          jetty.setHandler(handlers);
 
          try {
@@ -89,7 +88,7 @@ public class StartJettyIfNotAlreadyRunning implements Supplier<URI> {
          } catch (Exception e) {
             logger.error(e, "Server jetty could not be started for %s", preconfigurationUrl);
          }
-         logger.debug("<< serving %s", resource_handler.getBaseResource());
+         logger.debug("<< serving %s", resourceHandler.getBaseResource());
       }
 
    }
@@ -99,11 +98,8 @@ public class StartJettyIfNotAlreadyRunning implements Supplier<URI> {
       try {
          jetty.stop();
       } catch (Exception e) {
+         logger.error("Could not stop jetty.", e);
       }
    }
 
-   @Override
-   public URI get() {
-      return preconfigurationUrl;
-   }
 }

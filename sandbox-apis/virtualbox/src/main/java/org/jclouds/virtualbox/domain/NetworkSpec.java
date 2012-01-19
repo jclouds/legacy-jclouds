@@ -35,8 +35,7 @@ public class NetworkSpec {
    private final Map<Long, NatAdapter> natNetworkAdapters;
 
    public NetworkSpec(final Map<Long, NatAdapter> natNetworkAdapters) {
-      checkNotNull(natNetworkAdapters, "natNetworkAdapters");
-      this.natNetworkAdapters = natNetworkAdapters;
+      this.natNetworkAdapters = checkNotNull(natNetworkAdapters, "natNetworkAdapters");
    }
 
    public static Builder builder() {
