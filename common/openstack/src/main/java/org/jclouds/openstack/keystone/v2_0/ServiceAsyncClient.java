@@ -50,7 +50,7 @@ public interface ServiceAsyncClient {
     * @see ServiceClient#authenticateTenantWithCredentials(String,PasswordCredentials)
     */
    @POST
-   @SelectJson("auth")
+   @SelectJson("access")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/tokens")
    @MapBinder(BindAuthToJsonPayload.class)
@@ -61,7 +61,7 @@ public interface ServiceAsyncClient {
     * @see ServiceClient#authenticateTenantWithCredentials(String,ApiAccessKeyCredentials)
     */
    @POST
-   @SelectJson("auth")
+   @SelectJson("access")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/tokens")
    @MapBinder(BindAuthToJsonPayload.class)
