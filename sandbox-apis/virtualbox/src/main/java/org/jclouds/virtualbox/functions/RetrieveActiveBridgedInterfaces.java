@@ -66,7 +66,7 @@ public class RetrieveActiveBridgedInterfaces implements Function<NodeMetadata, L
    @Override
    public List<String> apply(NodeMetadata host) {
       // Bridged Network
-      Statement command = Statements.exec("vboxmanage list bridgedifs");
+      Statement command = Statements.exec("VBoxManage list bridgedifs");
       String bridgedIfBlocks = runScriptOnNodeFactory.create(host, command, runAsRoot(false).wrapInInitScript(false))
                .init().call().getOutput();
 
