@@ -83,6 +83,8 @@ public class ParseServerFromJsonResponseDiabloTest {
       assertEquals(response.getAddresses(), addresses1);
       assertEquals(response.getMetadata(), ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"));
       assertEquals(response.getAddresses(), addresses1);
+      assertEquals(response.getAccessIPv4(), "67.23.10.132");
+      assertEquals(response.getAccessIPv6(), "::babe:67.23.10.132");
    }
 
 

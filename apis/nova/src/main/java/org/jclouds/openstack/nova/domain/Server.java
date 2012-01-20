@@ -39,6 +39,8 @@ public class Server extends Resource {
    private Map<String, String> metadata = Maps.newHashMap();
 
    private Addresses addresses;
+   private String accessIPv4;
+   private String accessIPv6;
    private String adminPass;
    private String flavorRef;
    private String hostId;
@@ -220,6 +222,36 @@ public class Server extends Resource {
    public void setSecurityGroups(Set<SecurityGroup> securityGroups) {
 	   this.securityGroups = securityGroups;
    }
+   
+   /**
+    * @return the accessIPv4
+	*/
+   public String getAccessIPv4() {
+	   return accessIPv4;
+   }
+
+   /**
+    * @param accessIPv4
+    *            the accessIPv4 to set
+    */
+   public void setAccessIPv4(String accessIPv4) {
+	   this.accessIPv4 = accessIPv4;
+   }
+
+   /**
+    * @return the accessIPv6
+    */
+   public String getAccessIPv6() {
+	   return accessIPv6;
+   }
+
+   /**
+    * @param accessIPv6
+    *            the accessIPv6 to set
+    */
+   public void setAccessIPv6(String accessIPv6) {
+	   this.accessIPv6 = accessIPv6;
+   }
 
    @Override
    public int hashCode() {
@@ -237,6 +269,8 @@ public class Server extends Resource {
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((flavor == null) ? 0 : flavor.hashCode());
       result = prime * result + ((image == null) ? 0 : image.hashCode());
+      result = prime * result + ((accessIPv4 == null) ? 0 : accessIPv4.hashCode());
+      result = prime * result + ((accessIPv6 == null) ? 0 : accessIPv6.hashCode());
       return result;
    }
 
@@ -311,6 +345,16 @@ public class Server extends Resource {
             return false;
       } else if (!image.equals(other.image))
          return false;
+      if (accessIPv4 == null) {
+          if (other.accessIPv4 != null)
+             return false;
+       } else if (!accessIPv4.equals(other.accessIPv4))
+          return false;
+      if (accessIPv6 == null) {
+          if (other.accessIPv6 != null)
+             return false;
+       } else if (!accessIPv6.equals(other.accessIPv6))
+          return false;
       return true;
    }
 
@@ -318,11 +362,14 @@ public class Server extends Resource {
       this.name = name;
    }
 
-   @Override
-   public String toString() {
-      return "Server [addresses=" + addresses + ", adminPass=" + adminPass + ", flavorRef="
-            + flavorRef + ", hostId=" + hostId + ", id=" + id + ", imageRef=" + imageRef
-            + ", metadata=" + metadata + ", uuid=" + uuid + ", name=" + name + ", keyName=" + keyName + " , securityGroups=" + securityGroups + "]";
-   }
+	@Override
+	public String toString() {
+		return "Server [addresses=" + addresses + ", accessIPv4=" + accessIPv4
+				+ ", accessIPv6=" + accessIPv6 + ", adminPass=" + adminPass
+				+ ", flavorRef=" + flavorRef + ", hostId=" + hostId + ", id="
+				+ id + ", imageRef=" + imageRef + ", metadata=" + metadata
+				+ ", uuid=" + uuid + ", name=" + name + ", keyName=" + keyName
+				+ " , securityGroups=" + securityGroups + "]";
+	}
 
 }
