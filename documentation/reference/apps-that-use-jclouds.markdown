@@ -31,9 +31,6 @@ title: A List of applications that use jclouds
   * [Omixon](http://www.omixon.com/)
     * uses jclouds blobstore for big data transfer and  made whirr to provision hadoop
 
-  * [android integration](http://code.google.com/p/jclouds-android)
-    * enables jclouds framework to android developers
-
   * [Dasein Cloud](http://sourceforge.net/projects/dasein-cloud)
     * uses jclouds for rackspace, gogrid, azure, and terremark integration
 
@@ -43,7 +40,7 @@ title: A List of applications that use jclouds
   * [Pallet](http://palletops.com/)
     * uses jclouds clojure to manage node counts and provision instances
 
-  * [Whirr!](http://whirr.apache.org/)
+  * [Apache Whirr](http://whirr.apache.org/)
     * uses jclouds to as a substrate for cloud cluster provisioning
 
   * [docuharvest](https://docuharvest.com/)
@@ -87,3 +84,30 @@ title: A List of applications that use jclouds
 
   * [Meteorite Hosting](http://www.meteoriteconsulting.com/hosting.html)
     * allows users to spawn BI environments across a range of cloud providers in a hassle-free way.
+
+  * [GigaSpaces Cloudify](http://www.gigaspaces.com/cloudify)
+    * uses jclouds to provision nodes across multiple cloud providers
+
+  * [Apache ACE](http://ace.apache.org/)
+    * uses jclouds to launch nodes in Amazon EC2
+
+  * [Amdatu Storage](http://www.amdatu.org/confluence/display/Amdatu/BlobStorage)
+    * exposes multi-cloud blob services to Amdatu tenants
+
+  * [Karaf Integration](https://github.com/jclouds/jclouds-karaf)
+    * provides managed service factories and command line support for easily creating and managing blobstore & compute as osgi services
+
+  * [Apache Karaf Cellar](http://karaf.apache.org/index/subprojects/cellar.html)
+    * uses jclouds in order to provide a node discovery mechanism, it currently uses a blobostore whiteboard / blackboard pattern and it will switch to a compute based solution soon
+
+  * [Fuse Fabric](http://fabric.fusesource.org/)
+    * uses jclouds for creatting/provisioning the agents that run in the cloud
+
+  * [ElasticInbox](http://www.elasticinbox.com/)
+    * Uses jclouds to store email messages on blobstores such as AWS S3 and whirr to deploy ElasticInbox and Cassandra instances
+
+  * [Apache Camel](http://camel.apache.org/jclouds.html)
+    * allows interaction with cloud provider key-value engines (blobstores) and compute services
+
+  * [Abiquo 2.0](http://www.abiquo.com/products/abiquo-2.0.php)
+    * uses jclouds for OpsCode Chef integration
