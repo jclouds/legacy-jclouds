@@ -85,6 +85,9 @@ title: A List of applications that use jclouds
   * [Meteorite Hosting](http://www.meteoriteconsulting.com/hosting.html)
     * allows users to spawn BI environments across a range of cloud providers in a hassle-free way.
 
+  * [SeatYourself](http://seatyourself.biz/)
+    * uses JClouds BlobStore to persist dataO
+
   * [GigaSpaces Cloudify](http://www.gigaspaces.com/cloudify)
     * uses jclouds to provision nodes across multiple cloud providers
 
