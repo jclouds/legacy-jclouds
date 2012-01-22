@@ -20,9 +20,12 @@
 package org.jclouds.virtualbox.functions;
 
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.testng.Assert.assertEquals;
 
 import com.google.inject.Injector;
+
+import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.*;
 import org.testng.annotations.BeforeClass;
@@ -33,6 +36,7 @@ import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.StorageBus;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -66,7 +70,18 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends Ba
 
       VmSpec sourceVmSpec = VmSpec.builder().id(sourceName).name(sourceName).osTypeId("").memoryMB(512).cleanUpMode(
               CleanupMode.Full).controller(ideController).forceOverwrite(true).build();
-      IsoSpec isoSpec = IsoSpec.builder().build();
+      
+      Injector injector = context.utils().injector();
+      Function<String, String> configProperties = injector.getInstance(ValueOfConfigurationKeyOrNull.class);
+      IsoSpec isoSpec = IsoSpec.builder()
+      .sourcePath(operatingSystemIso)
+      .installationScript(configProperties
+              .apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE)
+              .replace("HOSTNAME", sourceVmSpec.getVmName()))
+      .preConfiguration(preconfigurationUri)
+      .build();
+      //IsoSpec isoSpec = IsoSpec.builder().build();
+      
       NetworkSpec networkSpec = NetworkSpec.builder().build();
       sourceMachineSpec = IMachineSpec.builder().iso(isoSpec).vm(sourceVmSpec).network(networkSpec).build();
 

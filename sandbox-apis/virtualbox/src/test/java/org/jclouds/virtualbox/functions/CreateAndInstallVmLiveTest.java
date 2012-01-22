@@ -75,7 +75,7 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
               .attachISO(0, 0, operatingSystemIso)
               .attachHardDisk(hardDisk)
               .attachISO(1, 1, guestAdditionsIso).build();
-      vmSpecification = VmSpec.builder().id("jclouds-image-iso-1").name(vmName).memoryMB(512).osTypeId("")
+      vmSpecification = VmSpec.builder().id(vmName).name(vmName).memoryMB(512).osTypeId("")
               .controller(ideController)
               .forceOverwrite(true)
               .cleanUpMode(CleanupMode.Full).build();
