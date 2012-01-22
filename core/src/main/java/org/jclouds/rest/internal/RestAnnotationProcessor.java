@@ -184,6 +184,17 @@ public class RestAnnotationProcessor<T> {
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToPostParamAnnotations = createMethodToIndexOfParamToAnnotation(PayloadParam.class);
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToPartParamAnnotations = createMethodToIndexOfParamToAnnotation(PartParam.class);
    static final LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> methodToIndexOfParamToParamParserAnnotations = createMethodToIndexOfParamToAnnotation(ParamParser.class);
+   
+   /**
+    * Shared for all types of rest clients. this is read-only in this class, and
+    * currently populated only by {@link SeedAnnotationCache}
+    * 
+    * @see SeedAnnotationCache
+    */
+   // TODO: change this to a private final LoadingCache<MethodKey, Method>
+   // supplied by guice. The CacheLoader<MethodKey, Method> can be refactored
+   // out from SeedAnnotationCache. Potentially, preseed the cache, but only if
+   // this is uncomplicated.
    static final Map<MethodKey, Method> delegationMap = newHashMap();
 
    static LoadingCache<Method, LoadingCache<Integer, Set<Annotation>>> createMethodToIndexOfParamToAnnotation(
@@ -681,6 +692,7 @@ public class RestAnnotationProcessor<T> {
       }
    }
 
+   //TODO: change to LoadingCache<Method, List<HttpRequestFilter>> and move this logic to the CacheLoader.
    @VisibleForTesting
    List<HttpRequestFilter> getFiltersIfAnnotated(Method method) {
       List<HttpRequestFilter> filters = Lists.newArrayList();
@@ -703,6 +715,7 @@ public class RestAnnotationProcessor<T> {
       return filters;
    }
 
+   //TODO: change to LoadingCache<ClassMethodArgs, Optional<URI>> and move this logic to the CacheLoader.
    @VisibleForTesting
    public static URI getEndpointInParametersOrNull(Method method, final Object[] args, Injector injector)
          throws ExecutionException {
@@ -746,6 +759,7 @@ public class RestAnnotationProcessor<T> {
       return null;
    }
 
+   //TODO: change to LoadingCache<ClassMethodArgs, URI> and move this logic to the CacheLoader.
    public static URI getEndpointFor(Method method, Object[] args, Injector injector) throws ExecutionException {
       URI endpoint = getEndpointInParametersOrNull(method, args, injector);
       if (endpoint == null) {
@@ -784,6 +798,7 @@ public class RestAnnotationProcessor<T> {
    public static final TypeLiteral<ListenableFuture<HttpResponse>> futureHttpResponseLiteral = new TypeLiteral<ListenableFuture<HttpResponse>>() {
    };
 
+   //TODO: change to LoadingCache<Method, Key<? extends Function<HttpResponse, ?>>> and move this logic to the CacheLoader.
    @SuppressWarnings({ "unchecked", "rawtypes" })
    public static Key<? extends Function<HttpResponse, ?>> getParserOrThrowException(Method method) {
       ResponseParser annotation = method.getAnnotation(ResponseParser.class);
@@ -864,6 +879,7 @@ public class RestAnnotationProcessor<T> {
       return null;
    }
 
+   //TODO: change to LoadingCache<ClassMethodArgs, Optional<MapBinder>> and move this logic to the CacheLoader.
    public org.jclouds.rest.MapBinder getMapPayloadBinderOrNull(Method method, Object... args) {
       if (args != null) {
          for (Object arg : args) {
@@ -1020,7 +1036,8 @@ public class RestAnnotationProcessor<T> {
       return indexToPayloadAnnotation;
    }
 
-   private HttpRequestOptions findOptionsIn(Method method, Object... args) throws ExecutionException {
+  //TODO: change to LoadingCache<ClassMethodArgs, HttpRequestOptions and move this logic to the CacheLoader.
+  private HttpRequestOptions findOptionsIn(Method method, Object... args) throws ExecutionException {
       for (int index : methodToIndexesOfOptions.get(method)) {
          if (args.length >= index + 1) {// accomodate varargs
             if (args[index] instanceof Object[]) {
@@ -1155,6 +1172,7 @@ public class RestAnnotationProcessor<T> {
       return null;
    }
 
+   //TODO: change to LoadingCache<ClassMethodArgs, Multimap<String,String> and move this logic to the CacheLoader.
    private Multimap<String, String> getPathParamKeyValues(Method method, Object... args) throws ExecutionException {
       Multimap<String, String> pathParamValues = LinkedHashMultimap.create();
       LoadingCache<Integer, Set<Annotation>> indexToPathParam = methodToIndexOfParamToPathParamAnnotations.get(method);
@@ -1192,6 +1210,7 @@ public class RestAnnotationProcessor<T> {
       return encoded;
    }
 
+   //TODO: change to LoadingCache<ClassMethodArgs, Multimap<String,String> and move this logic to the CacheLoader.
    private Multimap<String, String> getMatrixParamKeyValues(Method method, Object... args) throws ExecutionException {
       Multimap<String, String> matrixParamValues = LinkedHashMultimap.create();
       LoadingCache<Integer, Set<Annotation>> indexToMatrixParam = methodToIndexOfParamToMatrixParamAnnotations.get(method);
@@ -1221,6 +1240,8 @@ public class RestAnnotationProcessor<T> {
       return matrixParamValues;
    }
 
+   //TODO: change to LoadingCache<ClassMethodArgs, Multimap<String,String> and move this logic to the CacheLoader.
+   //take care to manage size of this cache
    private Multimap<String, String> getFormParamKeyValues(Method method, Object... args) throws ExecutionException {
       Multimap<String, String> formParamValues = LinkedHashMultimap.create();
       LoadingCache<Integer, Set<Annotation>> indexToFormParam = methodToIndexOfParamToFormParamAnnotations.get(method);
@@ -1252,6 +1273,7 @@ public class RestAnnotationProcessor<T> {
       return formParamValues;
    }
 
+   //TODO: change to LoadingCache<ClassMethodArgs, Multimap<String,String> and move this logic to the CacheLoader.
    private Multimap<String, String> getQueryParamKeyValues(Method method, Object... args) throws ExecutionException {
       Multimap<String, String> queryParamValues = LinkedHashMultimap.create();
       LoadingCache<Integer, Set<Annotation>> indexToQueryParam = methodToIndexOfParamToQueryParamAnnotations.get(method);
@@ -1281,6 +1303,8 @@ public class RestAnnotationProcessor<T> {
       return queryParamValues;
    }
 
+   //TODO: change to LoadingCache<ClassMethodArgs, Map<String,String> and move this logic to the CacheLoader.
+   //take care to manage size of this cache
    private Map<String, String> buildPostParams(Method method, Object... args) throws ExecutionException {
       Map<String, String> postParams = newHashMap();
       LoadingCache<Integer, Set<Annotation>> indexToPathParam = methodToIndexOfParamToPostParamAnnotations.get(method);

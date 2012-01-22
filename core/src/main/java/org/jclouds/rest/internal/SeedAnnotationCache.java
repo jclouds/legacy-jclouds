@@ -58,11 +58,13 @@ import com.google.inject.Key;
 import com.google.inject.Provides;
 
 /**
- * seeds the annotation cache
+ * seeds the annotation cache located at
+ * {@link RestAnnotationProcessor#delegationMap}. Note this call is only
+ * intended to be called once per {@link RestContext} and avoids expensive
+ * lookups on each call.
  * 
  * @author Adrian Cole
  */
-
 @Singleton
 public class SeedAnnotationCache extends CacheLoader<Class<?>, Boolean> {
    @Resource

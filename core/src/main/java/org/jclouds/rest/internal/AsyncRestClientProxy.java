@@ -18,11 +18,7 @@
  */
 package org.jclouds.rest.internal;
 
-/**
- * Generates RESTful clients from appropriately annotated interfaces.
- * 
- * @author Adrian Cole
- */
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -60,6 +56,30 @@ import com.google.inject.Provides;
 import com.google.inject.ProvisionException;
 import com.google.inject.TypeLiteral;
 
+/**
+ * Generates RESTful clients from appropriately annotated interfaces.
+ * <p/>
+ * Particularly, this code delegates calls to other things.
+ * <ol>
+ * <li>if the method has a {@link Provides} annotation, it responds via a
+ * {@link Injector} lookup</li>
+ * <li>if the method has a {@link Delegate} annotation, it responds with an
+ * instance of interface set in returnVal, adding the current JAXrs annotations
+ * to whatever are on that class.</li>
+ * <ul>
+ * <li>ex. if the method with {@link Delegate} has a {@link Path} annotation,
+ * and the returnval interface also has {@link Path}, these values are combined.
+ * </li>
+ * </ul>
+ * <li>if {@link RestAnnotationProcessor#delegationMap} contains a mapping for
+ * this, and the returnVal is properly assigned as a {@link ListenableFuture},
+ * it responds with an http implementation.</li>
+ * <li>otherwise a RuntimeException is thrown with a message including:
+ * {@code method is intended solely to set constants}</li>
+ * </ol>
+ * 
+ * @author Adrian Cole
+ */
 @Singleton
 public class AsyncRestClientProxy<T> implements InvocationHandler {
    private final Injector injector;
@@ -106,31 +126,43 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
       } else if (method.getName().equals("hashCode")) {
          return this.hashCode();
       } else if (method.isAnnotationPresent(Provides.class)) {
-         try {
-            try {
-               Annotation qualifier = Iterables.find(ImmutableList.copyOf(method.getAnnotations()), isQualifierPresent);
-               return injector.getInstance(Key.get(method.getGenericReturnType(), qualifier));
-            } catch (NoSuchElementException e) {
-               return injector.getInstance(Key.get(method.getGenericReturnType()));
-            }
-         } catch (ProvisionException e) {
-            AuthorizationException aex = Throwables2.getFirstThrowableOfType(e, AuthorizationException.class);
-            if (aex != null)
-               throw aex;
-            throw e;
-         }
+         return lookupValueFromGuice(method);
       } else if (method.isAnnotationPresent(Delegate.class)) {
-         return delegateMap.get(new ClassMethodArgs(method.getReturnType(), method, args));
-      } else if (annotationProcessor.getDelegateOrNull(method) != null
-               && ListenableFuture.class.isAssignableFrom(method.getReturnType())) {
-         return createListenableFuture(method, args);
+         return propagateContextToDelegate(method, args);
+      } else if (isRestCall(method)) {
+         return createListenableFutureForHttpRequestMappedToMethodAndArgs(method, args);
       } else {
          throw new RuntimeException("method is intended solely to set constants: " + method);
       }
    }
 
+   public boolean isRestCall(Method method) {
+      return annotationProcessor.getDelegateOrNull(method) != null
+               && ListenableFuture.class.isAssignableFrom(method.getReturnType());
+   }
+
+   public Object propagateContextToDelegate(Method method, Object[] args) throws ExecutionException {
+      return delegateMap.get(new ClassMethodArgs(method.getReturnType(), method, args));
+   }
+
+   public Object lookupValueFromGuice(Method method) {
+      try {
+         try {
+            Annotation qualifier = Iterables.find(ImmutableList.copyOf(method.getAnnotations()), isQualifierPresent);
+            return injector.getInstance(Key.get(method.getGenericReturnType(), qualifier));
+         } catch (NoSuchElementException e) {
+            return injector.getInstance(Key.get(method.getGenericReturnType()));
+         }
+      } catch (ProvisionException e) {
+         AuthorizationException aex = Throwables2.getFirstThrowableOfType(e, AuthorizationException.class);
+         if (aex != null)
+            throw aex;
+         throw e;
+      }
+   }
+
    @SuppressWarnings( { "unchecked", "rawtypes" })
-   private ListenableFuture<?> createListenableFuture(Method method, Object[] args) throws ExecutionException {
+   private ListenableFuture<?> createListenableFutureForHttpRequestMappedToMethodAndArgs(Method method, Object[] args) throws ExecutionException {
       method = annotationProcessor.getDelegateOrNull(method);
       logger.trace("Converting %s.%s", declaring.getSimpleName(), method.getName());
       Function<Exception, ?> exceptionParser = annotationProcessor
