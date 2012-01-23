@@ -30,6 +30,7 @@ import org.jclouds.cloudstack.features.GlobalPodAsyncClient;
 import org.jclouds.cloudstack.features.GlobalStoragePoolAsyncClient;
 import org.jclouds.cloudstack.features.GlobalUsageAsyncClient;
 import org.jclouds.cloudstack.features.GlobalUserAsyncClient;
+import org.jclouds.cloudstack.features.GlobalVlanAsyncClient;
 import org.jclouds.cloudstack.features.GlobalZoneAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 
@@ -122,4 +123,10 @@ public interface CloudStackGlobalAsyncClient extends CloudStackDomainAsyncClient
     */
    @Delegate
    GlobalPodAsyncClient getPodClient();
+
+   /**
+    * Provides asynchronous access to Vlan
+    */
+   @Delegate
+   GlobalVlanAsyncClient getVlanClient();
 }
