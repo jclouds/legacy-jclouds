@@ -1,4 +1,4 @@
-package com.gravitant.cloud.adapters.provision.util;
+package org.jclouds.cloudstack.predicates;
 
 /**
  * Licensed to jclouds, Inc. (jclouds) under one or more
