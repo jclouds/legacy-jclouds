@@ -78,6 +78,7 @@ public class CreateServerOptions implements MapBinder {
       final String name;
       final String imageRef;
       final String flavorRef;
+      String adminPass;
       Map<String, String> metadata;
       List<File> personality;
       String key_name;
@@ -96,6 +97,7 @@ public class CreateServerOptions implements MapBinder {
    private List<File> files = Lists.newArrayList();
    private Set<String> securityGroups = Sets.newHashSet();
    private String keyName;
+   private String adminPass;
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
@@ -115,6 +117,9 @@ public class CreateServerOptions implements MapBinder {
         	  group.setName(groupName);
         	  server.securityGroups.add(group);
     	  }
+      }
+      if (adminPass != null) {
+    	  server.adminPass = adminPass;
       }
 
       return bindToRequest(request, ImmutableMap.of("server", server));
@@ -139,6 +144,12 @@ public class CreateServerOptions implements MapBinder {
       checkState(files.size() < 5, "maximum number of files allowed is 5");
       files.add(new File(path, contents));
       return this;
+   }
+   
+   public CreateServerOptions withAdminPass(String adminPass) {
+	   checkNotNull(adminPass, "adminPass");
+	   this.adminPass = adminPass;
+	   return this;
    }
 
    /**
@@ -197,6 +208,11 @@ public class CreateServerOptions implements MapBinder {
          CreateServerOptions options = new CreateServerOptions();
          return options.withFile(path, contents);
       }
+      
+      public static CreateServerOptions withAdminPass(String adminPass) {
+          CreateServerOptions options = new CreateServerOptions();
+          return options.withAdminPass(adminPass);
+       }
 
       /**
        * @see CreateServerOptions#withMetadata(Map<String, String>)
