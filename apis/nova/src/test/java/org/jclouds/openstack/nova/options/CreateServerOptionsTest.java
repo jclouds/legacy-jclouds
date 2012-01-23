@@ -30,6 +30,7 @@ import java.net.URI;
 
 import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
 import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withSecurityGroup;
+import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withAdminPass;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -87,6 +88,15 @@ public class CreateServerOptionsTest {
 		assertEquals(
 				request.getPayload().getRawContent(),
 				"{\"server\":{\"name\":\"foo\",\"imageRef\":\"1\",\"flavorRef\":\"2\",\"security_groups\":[{\"id\":0,\"name\":\"myothergroup\"},{\"id\":0,\"name\":\"mygroup\"}]}}");
+   }
+   
+   @Test
+   public void testWithAdminPass() {
+	   CreateServerOptions options =  withAdminPass("mypassword");
+	   HttpRequest request = buildRequest(options);
+		assertEquals(
+				request.getPayload().getRawContent(),
+				"{\"server\":{\"name\":\"foo\",\"imageRef\":\"1\",\"flavorRef\":\"2\",\"adminPass\":\"mypassword\"}}");
    }
 
    private void assertFile(HttpRequest request) {

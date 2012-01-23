@@ -156,6 +156,26 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
 	      checkFilters(request);
    }
    
+   @Test
+   public void testCreateServerWithAdminPass() throws Exception {
+	   Method method = NovaAsyncClient.class.getMethod("createServer", String.class, String.class, String.class,
+	            createServerOptionsVarargsClass);
+	      HttpRequest request = processor.createRequest(method, "ralphie", 2, 1,
+	            withMetadata(ImmutableMap.of("foo", "bar")).withAdminPass("mypass"));
+
+	      assertRequestLineEquals(request, "POST http://endpoint/vapi-version/servers?format=json HTTP/1.1");
+	      assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
+	      assertPayloadEquals(request,
+	            "{\"server\":{\"name\":\"ralphie\",\"imageRef\":\"2\",\"flavorRef\":\"1\",\"adminPass\":\"mypass\",\"metadata\":{\"foo\":\"bar\"}}}",
+	            "application/json", false);
+
+	      assertResponseParserClassEquals(method, request, UnwrapOnlyJsonValue.class);
+	      assertSaxResponseParserClassEquals(method, null);
+	      assertExceptionParserClassEquals(method, null);
+
+	      checkFilters(request);
+   }
+   
    public void testDeleteImage() throws IOException, SecurityException, NoSuchMethodException {
       Method method = NovaAsyncClient.class.getMethod("deleteImage", int.class);
       HttpRequest request = processor.createRequest(method, 2);
