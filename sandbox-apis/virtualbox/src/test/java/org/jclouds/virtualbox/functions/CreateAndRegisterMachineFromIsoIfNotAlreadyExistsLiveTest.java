@@ -21,6 +21,8 @@ package org.jclouds.virtualbox.functions;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
+import java.util.UUID;
+
 import com.google.inject.Injector;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.*;
@@ -54,8 +56,10 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends B
    @Test
    public void testCreateNewMachine() throws Exception {
       String vmName = "jclouds-test-create-1-node";
+      String vmId = UUID.randomUUID().toString();
+
       VmSpec vmSpec = VmSpec.builder()
-              .id(vmName)
+              .id(vmId)
               .name(vmName)
               .memoryMB(512)
               .controller(ideController)
@@ -84,7 +88,11 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends B
    @Test
    public void testCreateNewMachineWithBadOsType() throws Exception {
       String vmName = "jclouds-test-create-2-node";
-      VmSpec vmSpec = VmSpec.builder().id(vmName).name(vmName).memoryMB(512).controller(ideController)
+      String vmId = UUID.randomUUID().toString();
+
+      VmSpec vmSpec = VmSpec.builder()
+            .id(vmId)
+            .name(vmName).memoryMB(512).controller(ideController)
               .cleanUpMode(mode).osTypeId("SomeWeirdUnknownOs").forceOverwrite(true).build();
       IsoSpec isoSpec = IsoSpec.builder()
               .sourcePath(operatingSystemIso)

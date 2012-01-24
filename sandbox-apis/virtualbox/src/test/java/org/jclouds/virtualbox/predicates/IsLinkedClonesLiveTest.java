@@ -69,7 +69,7 @@ public class IsLinkedClonesLiveTest extends BaseVirtualBoxClientLiveTest {
                .build();
       masterStorageController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE).attachISO(0, 0,
                operatingSystemIso).attachHardDisk(hardDisk).attachISO(1, 1, guestAdditionsIso).build();
-      VmSpec masterSpec = VmSpec.builder().id(vmId).name(vmName).memoryMB(512).osTypeId(osTypeId).controller(
+      VmSpec masterSpec = VmSpec.builder().id(vmName).name(vmName).memoryMB(512).osTypeId(osTypeId).controller(
                masterStorageController).forceOverwrite(true).cleanUpMode(CleanupMode.Full).build();
       masterMachineSpec = IMachineSpec.builder()
               .iso(IsoSpec.builder()
