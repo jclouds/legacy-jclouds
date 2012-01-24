@@ -82,7 +82,8 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
    }
 
    private boolean machineNotFoundException(VBoxException e) {
-      return e.getMessage().contains("VirtualBox error: Could not find a registered machine named ");
+      return e.getMessage().contains("VirtualBox error: Could not find a registered machine named ") ||
+            e.getMessage().contains("Could not find a registered machine with UUID {");
    }
 
    private IMachine cloneMachine(VmSpec vmSpec, IMachine master) {

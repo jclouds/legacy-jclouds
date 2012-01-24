@@ -30,9 +30,11 @@ import static org.easymock.classextension.EasyMock.verify;
 import java.net.URI;
 
 import org.easymock.EasyMock;
+import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.IMachineSpec;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.NetworkSpec;
+import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.testng.annotations.Test;
@@ -41,6 +43,7 @@ import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.LockType;
+import org.virtualbox_4_1.StorageBus;
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
@@ -53,7 +56,7 @@ import com.google.common.base.Suppliers;
 @Test(groups = "unit", testName = "CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest")
 public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
-   @Test(enabled = false)
+   @Test(enabled=false)
    public void testCreateAndSetMemoryWhenNotAlreadyExists() throws Exception {
 
       MachineUtils machineUtils = createMock(MachineUtils.class);
@@ -61,7 +64,8 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       IVirtualBox vBox = createMock(IVirtualBox.class);
       Supplier<URI> preconfiguration = createNiceMock(Supplier.class);
       String vmName = "jclouds-image-my-ubuntu-image";
-      VmSpec vmSpec = VmSpec.builder().id(vmName).name(vmName).osTypeId("").memoryMB(1024).cleanUpMode(
+      StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE).build();
+      VmSpec vmSpec = VmSpec.builder().id(vmName).name(vmName).osTypeId("").memoryMB(1024).controller(ideController).cleanUpMode(
               CleanupMode.Full).build();
       IMachineSpec machineSpec = IMachineSpec.builder()
               .iso(IsoSpec.builder().sourcePath("some.iso").installationScript("").preConfiguration(preconfiguration).build())
@@ -74,8 +78,8 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       expect(vBox.composeMachineFilename(vmName, "/tmp/workingDir")).andReturn("settingsFile");
 
       StringBuilder errorMessageBuilder = new StringBuilder();
-      errorMessageBuilder.append("VirtualBox error: Could not find a registered machine named ");
-      errorMessageBuilder.append("'jclouds-image-virtualbox-iso-to-machine-test' (0x80BB0001)");
+      errorMessageBuilder.append("VirtualBox error: Could not find a registered machine with UUID {");
+      errorMessageBuilder.append("'jclouds-image-virtualbox-iso-to-machine-test'} (0x80BB0001)");
       String errorMessage = errorMessageBuilder.toString();
       VBoxException vBoxException = new VBoxException(createNiceMock(Throwable.class), errorMessage);
 
@@ -102,7 +106,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
       verify(manager, createdMachine, vBox, session);
    }
 
-   @Test(expectedExceptions = IllegalStateException.class, enabled=false)
+   @Test(expectedExceptions = IllegalStateException.class)
    public void testFailIfMachineIsAlreadyRegistered() throws Exception {
 
       MachineUtils machineUtils = createMock(MachineUtils.class);
@@ -119,7 +123,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       replay(manager, vBox, machineUtils);
 
-      VmSpec launchSpecification = VmSpec.builder().id("").name(vmName).osTypeId("").memoryMB(1024).cleanUpMode(
+      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName).osTypeId("").memoryMB(1024).cleanUpMode(
               CleanupMode.Full).build();
 
       IMachineSpec machineSpec = IMachineSpec.builder()
@@ -152,7 +156,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
       replay(manager, vBox, machineUtils);
 
-      VmSpec launchSpecification = VmSpec.builder().id("").name(vmName).osTypeId("").cleanUpMode(CleanupMode.Full)
+      VmSpec launchSpecification = VmSpec.builder().id(vmName).name(vmName).osTypeId("").cleanUpMode(CleanupMode.Full)
               .memoryMB(1024).build();
       IMachineSpec machineSpec = IMachineSpec.builder()
               .iso(IsoSpec.builder()

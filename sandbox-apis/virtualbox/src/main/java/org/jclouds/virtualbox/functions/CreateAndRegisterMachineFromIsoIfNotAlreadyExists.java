@@ -81,8 +81,10 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
    public IMachine apply(@Nullable IMachineSpec launchSpecification) {
       final IVirtualBox vBox = manager.get().getVBox();
       String vmName = launchSpecification.getVmSpec().getVmName();
+      String vmId = launchSpecification.getVmSpec().getVmId();
+
       try {
-         vBox.findMachine(vmName);
+         vBox.findMachine(vmId);
          throw new IllegalStateException("Machine " + vmName + " is already registered.");
       } catch (VBoxException e) {
          if (machineNotFoundException(e))
@@ -93,7 +95,8 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
    }
 
    private boolean machineNotFoundException(VBoxException e) {
-      return e.getMessage().contains("VirtualBox error: Could not find a registered machine named ");
+      return e.getMessage().contains("VirtualBox error: Could not find a registered machine named ") ||
+            e.getMessage().contains("Could not find a registered machine with UUID {");
    }
 
    private IMachine createMachine(IVirtualBox vBox, IMachineSpec machineSpec) {

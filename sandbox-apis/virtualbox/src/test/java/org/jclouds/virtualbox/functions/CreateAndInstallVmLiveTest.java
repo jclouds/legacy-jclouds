@@ -57,8 +57,8 @@ import static org.testng.Assert.assertTrue;
 public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
 
    Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() {
-   }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
-           .getInstance(Json.class));
+   }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice
+         .createInjector(new GsonModule()).getInstance(Json.class));
 
    private VmSpec vmSpecification;
 
@@ -67,37 +67,47 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
    public void setupClient() {
       super.setupClient();
       String vmName = VIRTUALBOX_IMAGE_PREFIX
-              + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
+            + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass()
+                  .getSimpleName());
 
-      HardDisk hardDisk = HardDisk.builder().diskpath(adminDisk).autoDelete(true)
-              .controllerPort(0).deviceSlot(1).build();
-      StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
-              .attachISO(0, 0, operatingSystemIso)
-              .attachHardDisk(hardDisk)
-              .attachISO(1, 1, guestAdditionsIso).build();
-      vmSpecification = VmSpec.builder().id("jclouds-image-iso-1").name(vmName).memoryMB(512).osTypeId("")
-              .controller(ideController)
-              .forceOverwrite(true)
-              .cleanUpMode(CleanupMode.Full).build();
+      HardDisk hardDisk = HardDisk.builder().diskpath(adminDisk)
+            .autoDelete(true).controllerPort(0).deviceSlot(1).build();
+      StorageController ideController = StorageController.builder()
+            .name("IDE Controller").bus(StorageBus.IDE)
+            .attachISO(0, 0, operatingSystemIso).attachHardDisk(hardDisk)
+            .attachISO(1, 1, guestAdditionsIso).build();
+      vmSpecification = VmSpec.builder().id(vmName).name(vmName).memoryMB(512)
+            .osTypeId("").controller(ideController).forceOverwrite(true)
+            .cleanUpMode(CleanupMode.Full).build();
       undoVm(vmSpecification);
    }
 
    public void testCreateImageMachineFromIso() throws Exception {
       Injector injector = context.utils().injector();
-      Function<String, String> configProperties = injector.getInstance(ValueOfConfigurationKeyOrNull.class);
+      Function<String, String> configProperties = injector
+            .getInstance(ValueOfConfigurationKeyOrNull.class);
 
-      IMachineSpec machineSpec = IMachineSpec.builder().vm(vmSpecification)
-              .iso(IsoSpec.builder()
-                      .sourcePath(operatingSystemIso)
-                      .installationScript(configProperties
-                              .apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE)
-                              .replace("HOSTNAME", vmSpecification.getVmName()))
-                      .preConfiguration(preconfigurationUri)
-                      .build())
-              .network(NetworkSpec.builder()
-                      .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build())
-                      .build()).build();
-      IMachine imageMachine = injector.getInstance(CreateAndInstallVm.class).apply(machineSpec);
+      IMachineSpec machineSpec = IMachineSpec
+            .builder()
+            .vm(vmSpecification)
+            .iso(IsoSpec
+                  .builder()
+                  .sourcePath(operatingSystemIso)
+                  .installationScript(
+                        configProperties.apply(
+                              VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace(
+                              "HOSTNAME", vmSpecification.getVmName()))
+                  .preConfiguration(preconfigurationUri).build())
+            .network(
+                  NetworkSpec
+                        .builder()
+                        .natNetworkAdapter(
+                              0,
+                              NatAdapter.builder()
+                                    .tcpRedirectRule("127.0.0.1", 2222, "", 22)
+                                    .build()).build()).build();
+      IMachine imageMachine = injector.getInstance(CreateAndInstallVm.class)
+            .apply(machineSpec);
 
       IMachineToImage iMachineToImage = new IMachineToImage(manager, map);
       Image newImage = iMachineToImage.apply(imageMachine);
