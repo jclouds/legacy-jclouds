@@ -18,23 +18,22 @@
  */
 package org.jclouds.ec2.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.CaseFormat;
+import com.google.common.collect.ImmutableSet;
+import org.jclouds.javax.annotation.Nullable;
 
 import java.util.Date;
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
-
-import com.google.common.base.CaseFormat;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Sets.newHashSet;
 
 /**
  * 
  * @see <a href=
  *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateVolume.html"
  *      />
- * @author Adrian Cole
+ * @author Adrian Cole, Andrei Savu
  */
 public class Volume implements Comparable<Volume> {
 
@@ -83,6 +82,71 @@ public class Volume implements Comparable<Volume> {
          }
       }
    }
+   
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+      private String region;
+      private String id;
+      private int size;
+      @Nullable
+      private String snapshotId;
+      private String availabilityZone;
+      private Status status;
+      private Date createTime;
+      private Set<Attachment> attachments;
+
+      public Builder region(String region) {
+         this.region = region;
+         return this;
+      }
+      
+      public Builder id(String id) {
+         this.id = id;
+         return this;
+      }
+      
+      public Builder size(int size) {
+         this.size = size;
+         return this;
+      }
+      
+      public Builder snapshotId(String snapshotId) {
+         this.snapshotId = snapshotId;
+         return this;
+      }
+      
+      public Builder availabilityZone(String availabilityZone) {
+         this.availabilityZone = availabilityZone;
+         return this;
+      }
+      
+      public Builder status(Status status) {
+         this.status = status;
+         return this;
+      }
+
+      public Builder createTime(Date createTime) {
+         this.createTime = createTime;
+         return this;
+      }
+      
+      public Builder attachments(Attachment... attachments) {
+         this.attachments = newHashSet(attachments);
+         return this;
+      }
+      
+      public Builder attachments(Set<Attachment> attachments) {
+         this.attachments = ImmutableSet.copyOf(attachments);
+         return this;
+      }
+      
+      public Volume build() {
+         return new Volume(region, id, size, snapshotId, availabilityZone, status, createTime, attachments);
+      }      
+   }
 
    private final String region;
    private final String id;
@@ -92,7 +156,7 @@ public class Volume implements Comparable<Volume> {
    private final String availabilityZone;
    private final Status status;
    private final Date createTime;
-   private final Set<Attachment> attachments = Sets.newLinkedHashSet();
+   private final Set<Attachment> attachments;
 
    public Volume(String region, String id, int size, String snapshotId, String availabilityZone, Volume.Status status,
             Date createTime, Iterable<Attachment> attachments) {
@@ -103,7 +167,7 @@ public class Volume implements Comparable<Volume> {
       this.availabilityZone = availabilityZone;
       this.status = status;
       this.createTime = createTime;
-      Iterables.addAll(this.attachments, attachments);
+      this.attachments = ImmutableSet.copyOf(attachments);
    }
 
    /**

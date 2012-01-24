@@ -18,20 +18,20 @@
  */
 package org.jclouds.ec2.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
- * 
+ * @author Adrian Cole
  * @see <a href=
  *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateVolume.html"
  *      />
- * @author Adrian Cole
  */
 public class Attachment implements Comparable<Attachment> {
    public static enum Status {
       ATTACHING, ATTACHED, DETACHING, DETACHED, BUSY, UNRECOGNIZED;
+
       public String value() {
          return name().toLowerCase();
       }
@@ -47,6 +47,53 @@ public class Attachment implements Comparable<Attachment> {
          } catch (IllegalArgumentException e) {
             return UNRECOGNIZED;
          }
+      }
+   }
+
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+      private String region;
+      private String volumeId;
+      private String instanceId;
+      private String device;
+      private Status status;
+      private Date attachTime;
+      
+      public Builder region(String region) {
+         this.region = region;
+         return this;
+      }
+      
+      public Builder volumeId(String volumeId) {
+         this.volumeId = volumeId;
+         return this;
+      }
+      
+      public Builder instanceId(String instanceId) {
+         this.instanceId = instanceId;
+         return this;
+      }
+      
+      public Builder device(String device) {
+         this.device = device;
+         return this;
+      }
+      
+      public Builder status(Status status) {
+         this.status = status;
+         return this;
+      }
+      
+      public Builder attachTime(Date attachTime)  {
+         this.attachTime = attachTime;
+         return this;
+      }
+
+      public Attachment build() {
+         return new Attachment(region, volumeId, instanceId, device, status, attachTime);
       }
    }
 
@@ -68,7 +115,6 @@ public class Attachment implements Comparable<Attachment> {
 
    /**
     * Snapshots are tied to Regions and can only be used for volumes within the same Region.
-    * 
     */
    public String getRegion() {
       return region;
@@ -167,7 +213,7 @@ public class Attachment implements Comparable<Attachment> {
    @Override
    public String toString() {
       return "Attachment [region=" + region + ", volumeId=" + volumeId + ", instanceId=" + instanceId + ", device="
-               + device + ", attachTime=" + attachTime + ", status=" + status + "]";
+              + device + ", attachTime=" + attachTime + ", status=" + status + "]";
    }
 
    @Override
