@@ -35,8 +35,6 @@ import org.jclouds.ec2.domain.Volume;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -57,9 +55,9 @@ import com.google.inject.Module;
  * 		- Note down the region in which this volume is present (Example: us-east-1)
  * 	- Fill in the attributes that needs to be customized for testing below.
  *  	These include your AWS access credentials, the region in which your volume is present and the id of the volume.
- *  - Now run the junit test case.
- *  	- If the volume is detached the the test case should pass
- *  	- If the volume is not detached the test case should fail
+ *  - Now run the junit test case. At the end of the test, 
+ *  	- If the volume is detached the the test should pass.
+ *  	- If the volume is not detached the test should fail.
  * 
  */
 
@@ -67,7 +65,7 @@ public class VolumeDetachedTest {
 
 	private AWSEC2Client client;
 	private ComputeServiceContext computeServicecontext;
-	RetryablePredicate<Attachment> detachmentPredicate;
+	private RetryablePredicate<Attachment> detachmentPredicate;
 
 	/*Attributes that needs to be customized for testing*/
 	String accessKeyId = "<AWS access key id>"; 							
@@ -132,7 +130,7 @@ public class VolumeDetachedTest {
 	}
 
 	/**
-	 * Test case to see if the volume gets detached as expected or not
+	 * Test case to see if the volume gets detached as expected or not.
 	 */
 	@Test
 	public void testVolumeDetached() {	
@@ -145,7 +143,7 @@ public class VolumeDetachedTest {
 		//Issue the detach command for the volume
 		client.getElasticBlockStoreServices().detachVolumeInRegion(volumeRegion, volumeId, false);
 
-		//preciate blocks (until time out value) until detachment
+		//preciate blocks until detachment or until timeout
 		boolean volumeDetached = detachmentPredicate.apply(attachment);
 		
 		//Get the attachment after the predicate is done
