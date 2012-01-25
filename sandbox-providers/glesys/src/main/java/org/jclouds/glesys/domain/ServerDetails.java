@@ -18,13 +18,13 @@
  */
 package org.jclouds.glesys.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.collect.ImmutableList;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Detailed information about a server such as cpuCores, hardware configuration
@@ -40,10 +40,10 @@ public class ServerDetails extends Server {
 
    public static class Builder extends Server.Builder {
       private String description;
-      private String template;
+      private String templateName;
       private int cpuCores;
-      private int memory;
-      private int disk;
+      private int memorySize;
+      private int diskSize;
       private int transfer;
       private Cost cost;
       private List<Ip> ips;
@@ -53,8 +53,8 @@ public class ServerDetails extends Server {
          return this;
       }
 
-      public Builder template(String template) {
-         this.template = template;
+      public Builder templateName(String templateName) {
+         this.templateName = templateName;
          return this;
       }
       
@@ -63,13 +63,13 @@ public class ServerDetails extends Server {
          return this;
       }
 
-      public Builder memory(int memory) {
-         this.memory = memory;
+      public Builder memorySize(int memorySize) {
+         this.memorySize = memorySize;
          return this;
       }
 
-      public Builder disk(int disk) {
-         this.disk = disk;
+      public Builder diskSize(int diskSize) {
+         this.diskSize = diskSize;
          return this;
       }
 
@@ -93,11 +93,11 @@ public class ServerDetails extends Server {
       }
 
       public ServerDetails build() {
-         return new ServerDetails(id, hostname, datacenter, platform, template, description, cpuCores, memory, disk, transfer, cost, ips);
+         return new ServerDetails(id, hostname, datacenter, platform, templateName, description, cpuCores, memorySize, diskSize, transfer, cost, ips);
       }
 
       public Builder fromServerDetails(ServerDetails in) {
-         return fromServer(in).template(in.getTemplate()).memory(in.getMemory()).disk(in.getDisk()).cpuCores(in.getCpuCores()).cost(in.getCost())
+         return fromServer(in).templateName(in.getTemplateName()).memorySize(in.getMemorySize()).diskSize(in.getDiskSize()).cpuCores(in.getCpuCores()).cost(in.getCost())
                .description(in.getDescription()).ips(in.getIps());
       }
 
@@ -128,24 +128,27 @@ public class ServerDetails extends Server {
    }
 
    private final String description;
-   private final String template;
+   @SerializedName("templatename")
+   private final String templateName;
    @SerializedName("cpucores")
    private final int cpuCores;
-   private final int memory;
-   private final int disk;
+   @SerializedName("memorysize")
+   private final int memorySize;
+   @SerializedName("disksize")
+   private final int diskSize;
    private final int transfer;
    private final Cost cost;
    @SerializedName("iplist")
    private final List<Ip> ips;
 
-   public ServerDetails(String id, String hostname, String datacenter, String platform, String template,
-                        String description, int cpuCores, int memory, int disk, int transfer, Cost cost, List<Ip> ips) {
+   public ServerDetails(String id, String hostname, String datacenter, String platform, String templateName,
+                        String description, int cpuCores, int memorySize, int diskSize, int transfer, Cost cost, List<Ip> ips) {
       super(id, hostname, datacenter, platform);
-      this.template = checkNotNull(template, "template");
+      this.templateName = checkNotNull(templateName, "template");
       this.description = description;
       this.cpuCores = cpuCores;
-      this.memory = memory;
-      this.disk = disk;
+      this.memorySize = memorySize;
+      this.diskSize = diskSize;
       this.transfer = transfer;
       this.cost = checkNotNull(cost, "cost");
       this.ips = ips == null ? ImmutableList.<Ip>of() : ips;
@@ -168,15 +171,15 @@ public class ServerDetails extends Server {
    /**
     * @return the disk of the server in GB
     */
-   public int getDisk() {
-      return disk;
+   public int getDiskSize() {
+      return diskSize;
    }
 
    /**
     * @return the memory of the server in MB
     */
-   public int getMemory() {
-      return memory;
+   public int getMemorySize() {
+      return memorySize;
    }
 
    /**
@@ -203,15 +206,15 @@ public class ServerDetails extends Server {
    /**
     * @return the name of the template used to create the server
     */
-   public String getTemplate() {
-      return template;
+   public String getTemplateName() {
+      return templateName;
    }
 
    @Override
    public String toString() {
       return String.format(
-            "[id=%s, hostname=%s, datacenter=%s, platform=%s, template=%s, description=%s, cpuCores=%d, memory=%d, disk=%d, transfer=%d, cost=%s, ips=%s]", id,
-            hostname, datacenter, platform, template, description, cpuCores, memory, disk, transfer, cost, ips);
+            "[id=%s, hostname=%s, datacenter=%s, platform=%s, templateName=%s, description=%s, cpuCores=%d, memorySize=%d, diskSize=%d, transfer=%d, cost=%s, ips=%s]", id,
+            hostname, datacenter, platform, templateName, description, cpuCores, memorySize, diskSize, transfer, cost, ips);
    }
 
 }

@@ -35,65 +35,57 @@ public class ServerStatus {
 
    public static class Builder {
       private ServerState state;
-      private Cpu cpu;
-      private Memory memory;
-      private Disk disk;
-      private Bandwidth bandwidth;
-      private long uptime;
+      private ResourceUsage cpu;
+      private ResourceUsage memory;
+      private ResourceUsage disk;
+      private ServerUptime uptime;
 
       public Builder state(ServerState state) {
          this.state = state;
          return this;
       }
 
-      public Builder cpu(Cpu cpu) {
+      public Builder cpu(ResourceUsage cpu) {
          this.cpu = cpu;
          return this;
       }
 
-      public Builder memory(Memory memory) {
+      public Builder memory(ResourceUsage memory) {
          this.memory = memory;
          return this;
       }
 
-      public Builder disk(Disk disk) {
+      public Builder disk(ResourceUsage disk) {
          this.disk = disk;
          return this;
       }
 
-      public Builder bandwidth(Bandwidth bandwidth) {
-         this.bandwidth = bandwidth;
-         return this;
-      }
-
-      public Builder uptime(long uptime) {
+      public Builder uptime(ServerUptime uptime) {
          this.uptime = uptime;
          return this;
       }
 
       public ServerStatus build() {
-         return new ServerStatus(state, cpu, memory, disk, bandwidth, uptime);
+         return new ServerStatus(state, cpu, memory, disk, uptime);
       }
 
       public Builder fromServerStatus(ServerStatus in) {
-         return state(in.getState()).cpu(in.getCpu()).memory(in.getMemory()).disk(in.getDisk()).bandwidth(in.getBandwidth()).uptime(in.getUptime());
+         return state(in.getState()).cpu(in.getCpu()).memory(in.getMemory()).disk(in.getDisk()).uptime(in.getUptime());
       }
    }
 
    private final ServerState state;
-   private final Cpu cpu;
-   private final Memory memory;
-   private final Disk disk;
-   private final Bandwidth bandwidth;
+   private final ResourceUsage cpu;
+   private final ResourceUsage memory;
+   private final ResourceUsage disk;
    private final ServerUptime uptime;
 
-   public ServerStatus(ServerState state, Cpu cpu, Memory memory, Disk disk, Bandwidth bandwidth, long uptime) {
+   public ServerStatus(ServerState state, ResourceUsage cpu, ResourceUsage memory, ResourceUsage disk,  ServerUptime uptime) {
       this.state = state;
       this.cpu = cpu;
       this.memory = memory;
       this.disk = disk;
-      this.bandwidth = bandwidth;
-      this.uptime = ServerUptime.fromValue(uptime);
+      this.uptime = uptime;
    }
 
    /**
@@ -106,36 +98,29 @@ public class ServerStatus {
    /**
     * @return CPU usage information
     */
-   public Cpu getCpu() {
+   public ResourceUsage getCpu() {
       return cpu;
    }
 
    /**
     * @return details of memory usage and limits
     */
-   public Memory getMemory() {
+   public ResourceUsage getMemory() {
       return memory;
    }
 
    /**
     * @return details of disk usage and limits
     */
-   public Disk getDisk() {
+   public ResourceUsage getDisk() {
       return disk;
-   }
-
-   /**
-    * @return details of bandwidth usage and limits
-    */
-   public Bandwidth getBandwidth() {
-      return bandwidth;
    }
 
    /**
     * @return the uptime of the server
     */
-   public long getUptime() {
-      return uptime.getTime();
+   public ServerUptime getUptime() {
+      return uptime;
    }
 
    @Override
@@ -149,7 +134,6 @@ public class ServerStatus {
                && Objects.equal(cpu, other.cpu)
                && Objects.equal(memory, other.memory)
                && Objects.equal(disk, other.disk)
-               && Objects.equal(bandwidth, other.bandwidth)
                && Objects.equal(uptime, other.uptime);
       } else {
          return false;
@@ -158,13 +142,13 @@ public class ServerStatus {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(state, cpu, memory, disk, bandwidth, uptime);
+      return Objects.hashCode(state, cpu, memory, disk, uptime);
    }
    
    @Override
    public String toString() {
-      return String.format("[state=%s, cpu=%s, memory=%s, disk=%s, bandwidth=%s, uptime=%s]",
-            state, cpu, memory, disk, bandwidth, uptime);
+      return String.format("[state=%s, cpu=%s, memory=%s, disk=%s, uptime=%s]",
+            state, cpu, memory, disk, uptime);
    }
 
 }

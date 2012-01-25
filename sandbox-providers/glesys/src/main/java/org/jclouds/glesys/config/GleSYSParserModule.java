@@ -41,8 +41,7 @@ public class GleSYSParserModule extends AbstractModule {
    @Provides
    @Singleton
    public Map<Type, Object> provideCustomAdapterBindings() {
-      return ImmutableMap.<Type, Object> of(ServerState.class, new GleSYSTypeAdapters.ServerStateAdapter(),
-               ServerUptime.class, new GleSYSTypeAdapters.ServerUptimeAdapter());
+      return ImmutableMap.<Type, Object> of(ServerState.class, new GleSYSTypeAdapters.ServerStateAdapter());
    }
 
    @Override

@@ -34,6 +34,7 @@ public class ServerConsole {
    public static class Builder {
       private String host;
       private int port;
+      private String protocol;
       private String password;
 
       public Builder host(String host) {
@@ -51,23 +52,30 @@ public class ServerConsole {
          return this;
       }
 
+      public Builder protocol(String protocol) {
+         this.protocol = protocol;
+         return this;
+      }
+
       public ServerConsole build() {
-         return new ServerConsole(host, port, password);
+         return new ServerConsole(host, port, protocol, password);
       }
       
       public Builder fromServerConsole(ServerConsole in) {
-         return host(in.getHost()).port(in.getPort()).password(in.getPassword());
+         return host(in.getHost()).port(in.getPort()).password(in.getPassword()).protocol(in.getProtocol());
       }
 
    }
 
    private final String host;
    private final int port;
+   private final String protocol;
    private final String password;
 
-   public ServerConsole(String host, int port, String password) {
+   public ServerConsole(String host, int port, String protocol, String password) {
       this.host = host;
       this.port = port;
+      this.protocol = protocol;
       this.password = password;
    }
 
@@ -86,6 +94,13 @@ public class ServerConsole {
    }
 
    /**
+    * @return the protocol to use to connect to the server
+    */
+   public String getProtocol() {
+      return protocol;
+   }
+   
+   /**
     * @return the password to use to connect to the server
     */
    public String getPassword() {
@@ -100,7 +115,8 @@ public class ServerConsole {
       if (object instanceof ServerConsole) {
          final ServerConsole other = (ServerConsole) object;
          return Objects.equal(host, other.host)
-               && Objects.equal(port, other.port);
+               && Objects.equal(port, other.port)
+               && Objects.equal(protocol, other.protocol);
       } else {
          return false;
       }
@@ -108,12 +124,12 @@ public class ServerConsole {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(host, port);
+      return Objects.hashCode(host, port, protocol);
    }
 
    @Override
    public String toString() {
-      return String.format("[host=%s, port=%s, password=%s]", host, port, password);
+      return String.format("[host=%s, port=%s, protocol=%s, password=%s]", host, port, protocol, password);
    }
 
 }

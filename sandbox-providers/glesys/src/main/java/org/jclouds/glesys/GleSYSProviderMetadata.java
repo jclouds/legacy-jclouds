@@ -105,11 +105,11 @@ public class GleSYSProviderMetadata extends BaseProviderMetadata {
    }
 
    /**
-    * {@inheritDoc}
-    */
+   * {@inheritDoc}
+   */
    @Override
    public Set<String> getIso3166Codes() {
-      return ImmutableSet.of();
+      return ImmutableSet.of("NL-NH","SE-N","US-NY","SE-AB");
    }
 
 }

@@ -24,7 +24,7 @@ import static org.testng.Assert.*;
 import com.google.common.base.Predicate;
 import org.jclouds.glesys.GleSYSAsyncClient;
 import org.jclouds.glesys.GleSYSClient;
-import org.jclouds.glesys.domain.ServerCreated;
+import org.jclouds.glesys.domain.ServerDetails;
 import org.jclouds.glesys.domain.ServerState;
 import org.jclouds.glesys.domain.ServerStatus;
 import org.jclouds.glesys.options.ServerStatusOptions;
@@ -88,7 +88,7 @@ public class BaseGleSYSClientLiveTest {
 
    protected ServerStatusChecker createServer(String hostName) {
       ServerClient client = context.getApi().getServerClient();
-      ServerCreated testServer = client.createServer("Falkenberg", "OpenVZ", hostName, "Ubuntu 10.04 LTS 32-bit", 5, 512, 1, "password", 50);
+      ServerDetails testServer = client.createServer("Falkenberg", "OpenVZ", hostName, "Ubuntu 10.04 LTS 32-bit", 5, 512, 1, "password", 50);
 
       assertNotNull(testServer.getId());
       assertEquals(testServer.getHostname(), hostName);

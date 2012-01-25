@@ -135,11 +135,11 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
    public void testServerDetails() throws Exception {
       ServerDetails details = client.getServerDetails(testServerId);
       checkServer(details);
-      assertEquals("Ubuntu 10.04 LTS 32-bit", details.getTemplate());
+      assertEquals("Ubuntu 10.04 LTS 32-bit", details.getTemplateName());
       assertEquals("Falkenberg", details.getDatacenter());
       assertEquals("OpenVZ", details.getPlatform());
-      assertEquals(5, details.getDisk());
-      assertEquals(512, details.getMemory());
+      assertEquals(5, details.getDiskSize());
+      assertEquals(512, details.getMemorySize());
       assertEquals(1, details.getCpuCores());
       assertEquals(50, details.getTransfer());
    }
@@ -155,7 +155,7 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       long uptime = 0;
       
       while(uptime < 20) {
-         uptime = client.getServerStatus(testServerId).getUptime();
+         uptime = client.getServerStatus(testServerId).getUptime().getCurrent();
       }
       
       assertTrue(uptime > 19);
@@ -164,7 +164,7 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       
       Thread.sleep(1000);
 
-      uptime = client.getServerStatus(testServerId).getUptime();
+      uptime = client.getServerStatus(testServerId).getUptime().getCurrent();
       
       assertTrue(uptime < 20);
 
@@ -211,7 +211,7 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
    // takes a few minutes and requires an extra server (using 2 already)
    @Test(enabled=false)
    public void testCloneServer() throws Exception {
-      ServerCreated testServer2 = client.cloneServer(testServerId, testHostName2, ServerCloneOptions.Builder.cpucores(1));
+      ServerDetails testServer2 = client.cloneServer(testServerId, testHostName2, ServerCloneOptions.Builder.cpucores(1));
 
       assertNotNull(testServer2.getId());
       assertEquals(testServer2.getHostname(), "jclouds-test2");
@@ -248,12 +248,12 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
    private void checkServer(ServerDetails server) {
       // description can be null
       assert server.getCpuCores() > 0 : server;
-      assert server.getDisk() > 0 : server;
-      assert server.getMemory() > 0 : server;
+      assert server.getDiskSize() > 0 : server;
+      assert server.getMemorySize() > 0 : server;
       assert server.getCost() != null;
       assert server.getTransfer() > 0 : server;
 
-      assertNotNull(server.getTemplate());
+      assertNotNull(server.getTemplateName());
       assertNotNull(server.getIps());
    }
 
@@ -261,28 +261,18 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       assertNotNull(status.getState());
       assertNotNull(status.getUptime());
 
-      assertNotNull(status.getBandwidth());
-      assert status.getBandwidth().getToday() >= 0 : status;
-      assert status.getBandwidth().getLast30Days() >= 0 : status;
-      assert status.getBandwidth().getMax() >= 0 : status;
-
-      assertNotNull(status.getCpu());
-      assert status.getCpu().getSystem() >= 0.0 : status;
-      assert status.getCpu().getUser() >= 0.0 : status;
-      if (status.getCpu().getNice() != null) {
-         assert status.getCpu().getNice() >= 0.0 : status;
+      
+      for (ResourceUsage usage : new ResourceUsage[] { status.getCpu(), status.getDisk(), status.getMemory() }) {
+         assertNotNull(usage);
+         assert usage.getMax() >= 0.0 : status;
+         if (usage.getUsage() != null) {
+            assert usage.getUsage() >= 0.0 : status;
+         }
+         assertNotNull(usage.getUnit());
       }
-      assert status.getCpu().getIdle() >= 0.0 : status;
-      assertNotNull(status.getCpu().getUnit());
-
-      assertNotNull(status.getDisk());
-      assert status.getDisk().getSize() >= 0 : status;
-      assert status.getDisk().getUsed() >= 0 : status;
-      assertNotNull(status.getDisk().getUnit());
-
-      assertNotNull(status.getMemory());
-      assert status.getMemory().getSize() > 0 : status;
-      assert status.getMemory().getUsage() >= 0 : status;
-      assertNotNull(status.getMemory().getUnit());
+      
+      assertNotNull(status.getUptime());
+      assert status.getUptime().getCurrent() > 0 : status;
+      assertNotNull(status.getUptime().getUnit());
    }
 }
