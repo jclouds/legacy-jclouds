@@ -30,7 +30,8 @@ import org.testng.annotations.Test;
 @Test(groups = { "live" })
 public class HPCloudObjectStorageLasVegasContainerLiveTest extends BaseContainerLiveTest {
 
-   @Test(expectedExceptions=UnsupportedOperationException.class)
+	@Test(enabled = false)
+   //@Test(expectedExceptions=UnsupportedOperationException.class)
    public void testPublicAccess() throws MalformedURLException, InterruptedException, IOException {
       super.testPublicAccess();
    }

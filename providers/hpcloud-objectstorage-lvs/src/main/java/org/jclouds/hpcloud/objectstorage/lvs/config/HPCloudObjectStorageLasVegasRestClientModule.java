@@ -18,11 +18,19 @@
  */
 package org.jclouds.hpcloud.objectstorage.lvs.config;
 
+import static org.jclouds.hpcloud.objectstorage.lvs.reference.HPCloudObjectStorageLasVegasConstants.PROPERTY_CDN_ENDPOINT;
+
+import java.net.URI;
+
+import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.hpcloud.objectstorage.lvs.CDNManagement;
 import org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasAsyncClient;
 import org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClient;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
+import org.jclouds.openstack.reference.AuthHeaders;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.config.BaseSwiftRestClientModule;
@@ -55,4 +63,15 @@ public class HPCloudObjectStorageLasVegasRestClientModule extends
       return in;
    }
 
+   @Provides
+   @Singleton
+   @CDNManagement
+   protected URI provideCDNUrl(AuthenticationResponse response, @Named(PROPERTY_CDN_ENDPOINT) String cdnEndpoint) {
+	 
+	  if (response.getServices().get(AuthHeaders.CDN_MANAGEMENT_URL) == null) {
+	     return URI.create(cdnEndpoint + response.getServices().get(AuthHeaders.STORAGE_URL).getPath());
+	  }
+	  // Placeholder for when the Object Storage service returns the CDN Management URL in the headers 
+      return response.getServices().get(AuthHeaders.CDN_MANAGEMENT_URL);
+   }
 }
