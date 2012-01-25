@@ -18,8 +18,11 @@
  */
 package org.jclouds.cloudstack.features;
 
+import org.jclouds.cloudstack.domain.VlanIPRange;
+import org.jclouds.cloudstack.options.ListVlanIPRangesOptions;
 import org.jclouds.concurrent.Timeout;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -32,5 +35,20 @@ import java.util.concurrent.TimeUnit;
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface GlobalVlanClient {
+
+   /**
+    * Get the details of an IP range by its id.
+    * @param id the required IP range.
+    * @return the requested IP range.
+    */
+   VlanIPRange getVlanIPRange(long id);
+
+   /**
+    * Lists all VLAN IP ranges.
+    *
+    * @param options optional arguments.
+    * @return the list of IP ranges that match the criteria.
+    */
+   Set<VlanIPRange> listVlanIPRanges(ListVlanIPRangesOptions... options);
 
 }

@@ -18,9 +18,23 @@
  */
 package org.jclouds.cloudstack.features;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.cloudstack.domain.VlanIPRange;
 import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.options.ListVlanIPRangesOptions;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import java.util.Set;
 
 /**
  * Provides asynchronous access to cloudstack via their REST API.
@@ -33,5 +47,31 @@ import org.jclouds.rest.annotations.RequestFilters;
 @RequestFilters(QuerySigner.class)
 @QueryParams(keys = "response", values = "json")
 public interface GlobalVlanAsyncClient {
+
+   /**
+    * Get the details of an IP range by its id.
+    * @param id the required IP range.
+    * @return the requested IP range.
+    */
+   @GET
+   @QueryParams(keys = "command", values = "listVlanIpRanges")
+   @SelectJson("vlaniprange")
+   @OnlyElement
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<VlanIPRange> getVlanIPRange(@QueryParam("id") long id);
+
+   /**
+    * Lists all VLAN IP ranges.
+    *
+    * @param options optional arguments.
+    * @return the list of IP ranges that match the criteria.
+    */
+   @GET
+   @QueryParams(keys = "command", values = "listVlanIpRanges")
+   @SelectJson("vlaniprange")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<Set<VlanIPRange>> listVlanIPRanges(ListVlanIPRangesOptions... options);
 
 }

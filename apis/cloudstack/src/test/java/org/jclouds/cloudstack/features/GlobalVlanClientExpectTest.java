@@ -18,8 +18,17 @@
  */
 package org.jclouds.cloudstack.features;
 
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.CloudStackContext;
+import org.jclouds.cloudstack.domain.VlanIPRange;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
+
+import java.net.URI;
+
+import static junit.framework.Assert.assertEquals;
 
 /**
  * Test the CloudStack VlanClient
@@ -29,6 +38,76 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "GlobalVlanClientExpectTest")
 public class GlobalVlanClientExpectTest extends BaseCloudStackRestClientExpectTest<GlobalVlanClient> {
 
+   public void testListVlanIpRangesWhenResponseIs2xx() {
+      GlobalVlanClient client = requestSendsResponse(
+         HttpRequest.builder()
+            .method("GET")
+            .endpoint(
+               URI.create("http://localhost:8080/client/api?response=json&" +
+                  "command=listVlanIpRanges&apiKey=identity&signature=mS38BVfJjz1Y8bk0EdjJTeusJ0w%3D"))
+            .headers(
+               ImmutableMultimap.<String, String>builder()
+                  .put("Accept", "application/json")
+                  .build())
+            .build(),
+         HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResource("/listvlaniprangesresponse.json"))
+            .build());
+
+      VlanIPRange range1 = VlanIPRange.builder()
+         .id(1)
+         .forVirtualNetwork(true)
+         .zoneId(1)
+         .vlan(127)
+         .account("system")
+         .domainId(1)
+         .domain("ROOT")
+         .gateway("10.27.27.254")
+         .netmask("255.255.255.0")
+         .startIP("10.27.27.50")
+         .endIP("10.27.27.100")
+         .networkId(200)
+         .build();
+
+      VlanIPRange range2 = VlanIPRange.builder()
+         .id(2)
+         .forVirtualNetwork(false)
+         .zoneId(2)
+         .vlan("untagged")
+         .account("system")
+         .domainId(1)
+         .domain("ROOT")
+         .podId(2)
+         .podName("Dev Pod 2")
+         .gateway("10.22.22.254")
+         .netmask("255.255.255.0")
+         .startIP("10.22.22.51")
+         .endIP("10.22.22.100")
+         .networkId(209)
+         .build();
+
+      assertEquals(client.listVlanIPRanges(), ImmutableSet.of(range1, range2));
+   }
+
+   public void testListVlanIpRangesWhenResponseIs404() {
+      GlobalVlanClient client = requestSendsResponse(
+         HttpRequest.builder()
+            .method("GET")
+            .endpoint(
+               URI.create("http://localhost:8080/client/api?response=json&" +
+                  "command=listVlanIpRanges&apiKey=identity&signature=mS38BVfJjz1Y8bk0EdjJTeusJ0w%3D"))
+            .headers(
+               ImmutableMultimap.<String, String>builder()
+                  .put("Accept", "application/json")
+                  .build())
+            .build(),
+         HttpResponse.builder()
+            .statusCode(404)
+            .build());
+
+      assertEquals(client.listVlanIPRanges(), ImmutableSet.of());
+   }
 
    @Override
    protected GlobalVlanClient clientFrom(CloudStackContext context) {

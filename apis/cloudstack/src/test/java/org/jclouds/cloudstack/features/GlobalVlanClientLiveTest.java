@@ -18,8 +18,18 @@
  */
 package org.jclouds.cloudstack.features;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
+import org.jclouds.cloudstack.domain.VlanIPRange;
+import org.jclouds.cloudstack.options.ListVlanIPRangesOptions;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
+
+import java.util.Set;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tests behavior of {@code GlobalVlanClient}
@@ -28,6 +38,30 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", singleThreaded = true, testName = "GlobalVlanClientLiveTest")
 public class GlobalVlanClientLiveTest extends BaseCloudStackClientLiveTest {
+
+   public void testListVlanIPRanges() throws Exception {
+      Set<VlanIPRange> response = globalAdminClient.getVlanClient().listVlanIPRanges();
+      assert null != response;
+      long rangeCount = response.size();
+      assertTrue(rangeCount >= 0);
+      for (VlanIPRange range : response) {
+         VlanIPRange newDetails = Iterables.getOnlyElement(globalAdminClient.getVlanClient().listVlanIPRanges(
+            ListVlanIPRangesOptions.Builder.id(range.getId())));
+         assertEquals(range, newDetails);
+         assertEquals(range, globalAdminClient.getVlanClient().getVlanIPRange(range.getId()));
+         assertFalse(range.getId() <= 0);
+         assertFalse(range.getZoneId() <= 0);
+         assertFalse(Strings.isNullOrEmpty(range.getVlan()));
+         assertFalse(Strings.isNullOrEmpty(range.getAccount()));
+         assertFalse(range.getDomainId() <= 0);
+         assertFalse(Strings.isNullOrEmpty(range.getDomain()));
+         assertFalse(Strings.isNullOrEmpty(range.getGateway()));
+         assertFalse(Strings.isNullOrEmpty(range.getNetmask()));
+         assertFalse(Strings.isNullOrEmpty(range.getStartIP()));
+         assertFalse(Strings.isNullOrEmpty(range.getEndIP()));
+         assertFalse(range.getNetworkId() <= 0);
+      }
+   }
 
    @AfterClass
    public void testFixtureTearDown() {
