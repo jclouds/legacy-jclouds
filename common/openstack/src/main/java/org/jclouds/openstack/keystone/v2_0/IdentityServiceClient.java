@@ -29,13 +29,13 @@ import org.jclouds.openstack.keystone.v2_0.domain.PasswordCredentials;
  * Provides synchronous access to the KeyStone Service API.
  * <p/>
  * 
- * @see ServiceAsyncClient
+ * @see IdentityServiceAsyncClient
  * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Client_Operations.html"
  *      />
  * @author Adrian Cole
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface ServiceClient {
+public interface IdentityServiceClient {
 
    /**
     * Authenticate to generate a token.

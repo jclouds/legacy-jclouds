@@ -55,10 +55,10 @@ public class BindAuthToJsonPayload extends BindToJsonPayload implements MapBinde
       throw new IllegalStateException("BindAuthToJsonPayload needs parameters");
    }
 
-   protected void addCredentialsInArgsOrNull(GeneratedHttpRequest<?> gRequest, Builder<String, Object> builder) {
+   protected void addCredentialsInArgsOrNull(GeneratedHttpRequest<?> gRequest, Builder<String, Object> builder, String tenantId) {
       for (Object arg : gRequest.getArgs()) {
          if (arg instanceof PasswordCredentials) {
-            builder.put("auth", ImmutableMap.of("passwordCredentials", PasswordCredentials.class.cast(arg)));
+            builder.put("auth", ImmutableMap.of("passwordCredentials", PasswordCredentials.class.cast(arg), "tenantId", tenantId));
          } else if (arg instanceof ApiAccessKeyCredentials) {
             builder.put("auth", ImmutableMap.of("apiAccessKeyCredentials", ApiAccessKeyCredentials.class.cast(arg)));
          }
@@ -73,8 +73,9 @@ public class BindAuthToJsonPayload extends BindToJsonPayload implements MapBinde
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
 
       Builder<String, Object> builder = ImmutableMap.<String, Object> builder();
-      builder.put("tenantId", postParams.get("tenantId"));
-      addCredentialsInArgsOrNull(gRequest, builder);
+      //builder.put("tenantId", postParams.get("tenantId"));
+      
+      addCredentialsInArgsOrNull(gRequest, builder, postParams.get("tenantId"));
       return super.bindToRequest(request, builder.build());
    }
 

@@ -18,18 +18,24 @@
  */
 package org.jclouds.openstack.keystone.v2_0;
 
+import java.util.Set;
+
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.Constants;
+import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.keystone.v2_0.binders.BindAuthToJsonPayload;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiAccessKeyCredentials;
 import org.jclouds.openstack.keystone.v2_0.domain.PasswordCredentials;
+import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.PayloadParam;
+import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -38,16 +44,16 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides asynchronous access to Service via their REST API.
  * <p/>
  * 
- * @see ServiceClient
+ * @see IdentityServiceClient
  * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Client_Operations.html"
  *      />
  * @author Adrian Cole
  */
 @Path("/v{" + Constants.PROPERTY_API_VERSION + "}")
-public interface ServiceAsyncClient {
+public interface IdentityServiceAsyncClient {
 
    /**
-    * @see ServiceClient#authenticateTenantWithCredentials(String,PasswordCredentials)
+    * @see IdentityServiceClient#authenticateTenantWithCredentials(String,PasswordCredentials)
     */
    @POST
    @SelectJson("access")
@@ -58,7 +64,7 @@ public interface ServiceAsyncClient {
             PasswordCredentials passwordCredentials);
 
    /**
-    * @see ServiceClient#authenticateTenantWithCredentials(String,ApiAccessKeyCredentials)
+    * @see IdentityServiceClient#authenticateTenantWithCredentials(String,ApiAccessKeyCredentials)
     */
    @POST
    @SelectJson("access")
@@ -67,4 +73,16 @@ public interface ServiceAsyncClient {
    @MapBinder(BindAuthToJsonPayload.class)
    ListenableFuture<Access> authenticateTenantWithCredentials(@PayloadParam("tenantId") String tenantId,
             ApiAccessKeyCredentials apiAccessKeyCredentials);
+
+   /**
+    * @see IdentityServiceClient#getTenants()
+    */
+   @GET
+   @SelectJson("tenants")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/tenants")
+   @RequestFilters(AuthenticateRequest.class)
+   ListenableFuture<? extends Set<Tenant>> getTenants();
+
+
 }

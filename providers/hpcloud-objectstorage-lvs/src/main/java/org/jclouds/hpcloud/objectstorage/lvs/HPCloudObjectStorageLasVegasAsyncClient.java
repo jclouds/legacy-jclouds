@@ -40,7 +40,9 @@ import org.jclouds.hpcloud.objectstorage.lvs.functions.ParseContainerMetadataFro
 import org.jclouds.hpcloud.objectstorage.lvs.options.CreateContainerOptions;
 import org.jclouds.hpcloud.objectstorage.lvs.options.ListCDNContainerOptions;
 import org.jclouds.hpcloud.objectstorage.lvs.reference.HPCloudObjectStorageLasVegasHeaders;
+import org.jclouds.hpcloud.services.HPExtensionCDN;
 import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.openstack.services.ObjectStore;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.Storage;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
@@ -68,7 +70,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @SkipEncoding('/')
 @RequestFilters(AuthenticateRequest.class)
-@Endpoint(Storage.class)
+@Endpoint(ObjectStore.class)
 public interface HPCloudObjectStorageLasVegasAsyncClient extends CommonSwiftAsyncClient {
 
    /**
@@ -97,7 +99,7 @@ public interface HPCloudObjectStorageLasVegasAsyncClient extends CommonSwiftAsyn
    @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/")
-   @Endpoint(CDNManagement.class)
+   @Endpoint(HPExtensionCDN.class)
    ListenableFuture<? extends Set<ContainerCDNMetadata>> listCDNContainers(ListCDNContainerOptions... options);
    
    /**
@@ -108,7 +110,7 @@ public interface HPCloudObjectStorageLasVegasAsyncClient extends CommonSwiftAsyn
    @ResponseParser(ParseContainerCDNMetadataFromHeaders.class)
    @ExceptionParser(ReturnNullOnContainerNotFound.class)
    @Path("/{container}")
-   @Endpoint(CDNManagement.class)
+   @Endpoint(HPExtensionCDN.class)
    ListenableFuture<ContainerCDNMetadata> getCDNMetadata(@PathParam("container") String container);
 
    /**
@@ -119,7 +121,7 @@ public interface HPCloudObjectStorageLasVegasAsyncClient extends CommonSwiftAsyn
    @Path("/{container}")
    @Headers(keys = HPCloudObjectStorageLasVegasHeaders.CDN_ENABLED, values = "True")
    @ResponseParser(ParseCDNUriFromHeaders.class)
-   @Endpoint(CDNManagement.class)
+   @Endpoint(HPExtensionCDN.class)
    ListenableFuture<URI> enableCDN(@PathParam("container") String container,
             @HeaderParam(HPCloudObjectStorageLasVegasHeaders.CDN_TTL) long ttl);
 
@@ -131,7 +133,7 @@ public interface HPCloudObjectStorageLasVegasAsyncClient extends CommonSwiftAsyn
    @Path("/{container}")
    @Headers(keys = HPCloudObjectStorageLasVegasHeaders.CDN_ENABLED, values = "True")
    @ResponseParser(ParseCDNUriFromHeaders.class)
-   @Endpoint(CDNManagement.class)
+   @Endpoint(HPExtensionCDN.class)
    ListenableFuture<URI> enableCDN(@PathParam("container") String container);
 
    /**
@@ -141,7 +143,7 @@ public interface HPCloudObjectStorageLasVegasAsyncClient extends CommonSwiftAsyn
    @POST
    @Path("/{container}")
    @ResponseParser(ParseCDNUriFromHeaders.class)
-   @Endpoint(CDNManagement.class)
+   @Endpoint(HPExtensionCDN.class)
    ListenableFuture<URI> updateCDN(@PathParam("container") String container,
             @HeaderParam(HPCloudObjectStorageLasVegasHeaders.CDN_TTL) long ttl);
 
@@ -152,7 +154,7 @@ public interface HPCloudObjectStorageLasVegasAsyncClient extends CommonSwiftAsyn
    @PUT
    @Path("/{container}")
    @Headers(keys = HPCloudObjectStorageLasVegasHeaders.CDN_ENABLED, values = "False")
-   @Endpoint(CDNManagement.class)
+   @Endpoint(HPExtensionCDN.class)
    ListenableFuture<Boolean> disableCDN(@PathParam("container") String container);
 
 }
