@@ -18,15 +18,20 @@
  */
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
-import com.google.inject.Inject;
+import static com.google.common.base.Preconditions.checkState;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.jclouds.compute.callables.RunScriptOnNode.Factory;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.domain.IMachineSpec;
@@ -34,15 +39,18 @@ import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.settings.KeyboardScancodes;
 import org.jclouds.virtualbox.util.MachineUtils;
-import org.virtualbox_4_1.*;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.LockType;
+import org.virtualbox_4_1.VirtualBoxManager;
 
-import javax.annotation.Resource;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import java.net.URI;
-
-import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
+import com.google.common.base.Supplier;
+import com.google.common.collect.Iterables;
+import com.google.inject.Inject;
 
 @Singleton
 public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
@@ -99,7 +107,9 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
       URI uri = isoSpec.getPreConfigurationUri().get();
       String installationKeySequence = isoSpec.getInstallationKeySequence()
             .replace("PRECONFIGURATION_URL", uri.toASCIIString());
-      sendKeyboardSequence(installationKeySequence, vmName);
+
+      configureOsInstallationWithKeyboardSequence(vmName,
+            installationKeySequence);
 
       SshClient client = sshClientForIMachine.apply(vm);
 
@@ -113,6 +123,27 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
       ensureMachineHasPowerDown(vmName);
       return vm;
    }
+   
+   private void configureOsInstallationWithKeyboardSequence(String vmName,
+         String installationKeySequence) {
+
+     Iterable<List<Integer>> scancodelist = Iterables.transform(
+             Splitter.on(" ").split(installationKeySequence),
+             new StringToKeyCode());
+
+     for (List<Integer> scancodes : scancodelist) {
+
+         machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared,
+                 new SendScancode(scancodes));
+
+         // this is needed to avoid to miss any scancode
+         try {
+             Thread.sleep(300);
+         } catch (InterruptedException e) {
+             logger.error("Problem in sleeping the current thread.", e);
+         }
+     }
+ }
 
    private void ensureMachineHasPowerDown(String vmName) {
       machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared,
@@ -133,56 +164,68 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
                   ""));
    }
 
-   private void sendKeyboardSequence(String keyboardSequence, String vmName) {
-      String[] splitSequence = keyboardSequence.split(" ");
-      StringBuilder sb = new StringBuilder();
-      for (String line : splitSequence) {
-         String converted = stringToKeycode(line);
-         for (String word : converted.split("  ")) {
-            sb.append("VBoxManage controlvm ").append(vmName)
-                  .append(" keyboardputscancode ").append(word).append("; ");
-            runScriptIfWordEndsWith(sb, word, "<Enter>");
-            runScriptIfWordEndsWith(sb, word, "<Return>");
-         }
+
+   private List<Integer> stringToKeycode(String s) {
+      if(containsSpecialCharacter(s)) {
+          return transforSpecialCharIntoKeycodes(s);
+      } else {
+          return transformStandardCharacterIntoKeycodes(s);
       }
-   }
+  }
 
-   private void runScriptIfWordEndsWith(StringBuilder sb, String word,
-         String key) {
-      if (word.endsWith(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get(key))) {
-         scriptRunner
-               .create(host.get(), Statements.exec(sb.toString()),
-                     runAsRoot(false).wrapInInitScript(false)).init().call();
-         sb.delete(0, sb.length() - 1);
+  private List<Integer> transformStandardCharacterIntoKeycodes(String s) {
+      List<Integer> values = new ArrayList<Integer>();
+      for (String digit : Splitter.fixedLength(1).split(s)) {
+          List<Integer> hex = KeyboardScancodes.NORMAL_KEYBOARD_BUTTON_MAP_LIST
+                  .get(digit);
+          if (hex != null)
+              values.addAll(hex);
       }
-   }
+      values.addAll(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP_LIST
+              .get("<Spacebar>"));
+      return values;
+  }
 
-   private String stringToKeycode(String s) {
-      StringBuilder keycodes = new StringBuilder();
-      if (s.startsWith("<")) {
-         String[] specials = s.split("<");
-         for (int i = 1; i < specials.length; i++) {
-            keycodes.append(
-                  KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<"
-                        + specials[i])).append("  ");
-         }
-         return keycodes.toString();
+  private List<Integer> transforSpecialCharIntoKeycodes(String s) {
+      List<Integer> values = new ArrayList<Integer>();
+      for (String special : s.split("<")) {
+          List<Integer> value = KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP_LIST
+                  .get("<" + special);
+          if (value != null)
+              values.addAll(value);
+      }
+      return values;
+
+  }
+
+  private boolean containsSpecialCharacter(String s) {
+      return s.startsWith("<");
+  }
+
+  class SendScancode implements Function<ISession, Void> {
+
+      private List<Integer> scancodes;
+
+      public SendScancode(List<Integer> scancodes) {
+          super();
+          this.scancodes = scancodes;
       }
 
-      int i = 0;
-      while (i < s.length()) {
-         String digit = s.substring(i, i + 1);
-         String hex = KeyboardScancodes.NORMAL_KEYBOARD_BUTTON_MAP.get(digit);
-         keycodes.append(hex).append(" ");
-         if (i != 0 && i % 14 == 0)
-            keycodes.append(" ");
-         i++;
+      @Override
+      public Void apply(ISession iSession) {
+          for (Integer scancode : scancodes) {
+              iSession.getConsole().getKeyboard().putScancode(scancode);
+          }
+          return null;
       }
-      keycodes.append(
-            KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP.get("<Spacebar>"))
-            .append(" ");
+  }
 
-      return keycodes.toString();
-   }
+  class StringToKeyCode implements Function<String, List<Integer>> {
 
+      @Override
+      public List<Integer> apply(String subsequence) {
+          return stringToKeycode(subsequence);
+      }
+  }
+  
 }
