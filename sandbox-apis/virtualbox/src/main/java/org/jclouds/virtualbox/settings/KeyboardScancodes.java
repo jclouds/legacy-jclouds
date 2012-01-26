@@ -19,145 +19,127 @@
 
 package org.jclouds.virtualbox.settings;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class KeyboardScancodes {
+    
+    // http://www.win.tue.nl/~aeb/linux/kbd/scancodes-1.html
+    public static final Map<String, List<Integer>> SPECIAL_KEYBOARD_BUTTON_MAP_LIST = createSpecialCodeMap();
+    public static final Map<String, List<Integer>> NORMAL_KEYBOARD_BUTTON_MAP_LIST = createNormalCodeMap();
 
-   // http://www.win.tue.nl/~aeb/linux/kbd/scancodes-1.html
+    public static AlphaBuilder builder() {
+        return new AlphaBuilder();
+    }
 
-   public static final Map<String, String> NORMAL_KEYBOARD_BUTTON_MAP = createMap();
-   public static final Map<String, String> SPECIAL_KEYBOARD_BUTTON_MAP = createSpecialMap();
+    private static Map<String, List<Integer>> createNormalCodeMap() {
+        Map<String, List<Integer>> alphaToHex = KeyboardScancodes.builder()
+                .put("1", 0x02, 0x82).put("2", 0x03, 0x83).put("3", 0x04, 0x84)
+                .put("4", 0x05, 0x85).put("5", 0x06, 0x86).put("6", 0x07, 0x87)
+                .put("7", 0x08, 0x88).put("8", 0x09, 0x89).put("9", 0x0a, 0x8a)
+                .put("0", 0x0b, 0x8b)
 
-   private static Map<String, String> createMap() {
-      Map<String, String> alphaToHex = new HashMap<String, String>();
-      alphaToHex.put("1", "02 82");
-      alphaToHex.put("2", "03 83");
-      alphaToHex.put("3", "04 84");
-      alphaToHex.put("4", "05 85");
-      alphaToHex.put("5", "06 86");
-      alphaToHex.put("6", "07 87");
-      alphaToHex.put("7", "08 88");
-      alphaToHex.put("8", "09 89");
-      alphaToHex.put("9", "0a 8a");
-      alphaToHex.put("0", "0b 8b");
-      alphaToHex.put("-", "0c 8c");
-      alphaToHex.put("=", "0d 8d");
-      alphaToHex.put("Tab", "0f 8f");
-      alphaToHex.put("q", "10 90");
-      alphaToHex.put("w", "11 91");
-      alphaToHex.put("e", "12 92");
-      alphaToHex.put("r", "13 93");
-      alphaToHex.put("t", "14 94");
-      alphaToHex.put("y", "15 95");
-      alphaToHex.put("u", "16 96");
-      alphaToHex.put("i", "17 97");
-      alphaToHex.put("o", "18 98");
-      alphaToHex.put("p", "19 99");
+                .put("-", 0x0c, 0x8c).put("=", 0x0d, 0x8d)
+                .put("Tab", 0x0f, 0x8f).put("q", 0x10, 0x90)
+                .put("w", 0x11, 0x91).put("e", 0x12, 0x92).put("r", 0x13, 0x93)
+                .put("t", 0x14, 0x94).put("y", 0x15, 0x95).put("u", 0x16, 0x96)
+                .put("i", 0x17, 0x97).put("o", 0x18, 0x98).put("p", 0x19, 0x99)
 
-      alphaToHex.put("Q", "2a 10 aa");
-      alphaToHex.put("W", "2a 11 aa");
-      alphaToHex.put("E", "2a 12 aa");
-      alphaToHex.put("R", "2a 13 aa");
-      alphaToHex.put("T", "2a 14 aa");
-      alphaToHex.put("Y", "2a 15 aa");
-      alphaToHex.put("U", "2a 16 aa");
-      alphaToHex.put("I", "2a 17 aa");
-      alphaToHex.put("O", "2a 18 aa");
-      alphaToHex.put("P", "2a 19 aa");
+                .put("Q", 0x2a, 0x10, 0xaa).put("W", 0x2a, 0x11, 0xaa)
+                .put("E", 0x2a, 0x12, 0xaa).put("R", 0x2a, 0x13, 0xaa)
+                .put("T", 0x2a, 0x14, 0xaa).put("Y", 0x2a, 0x15, 0xaa)
+                .put("U", 0x2a, 0x16, 0xaa).put("I", 0x2a, 0x17, 0xaa)
+                .put("O", 0x2a, 0x18, 0xaa).put("P", 0x2a, 0x19, 0xaa)
 
-      alphaToHex.put("a", "1e 9e");
-      alphaToHex.put("s", "1f 9f");
-      alphaToHex.put("d", "20 a0");
-      alphaToHex.put("f", "21 a1");
-      alphaToHex.put("g", "22 a2");
-      alphaToHex.put("h", "23 a3");
-      alphaToHex.put("j", "24 a4");
-      alphaToHex.put("k", "25 a5");
-      alphaToHex.put("l", "26 a6");
+                .put("a", 0x1e, 0x9e).put("s", 0x1f, 0x9f).put("d", 0x20, 0xa0)
+                .put("f", 0x21, 0xa1).put("g", 0x22, 0xa2).put("h", 0x23, 0xa3)
+                .put("j", 0x24, 0xa4).put("k", 0x25, 0xa5).put("l", 0x26, 0xa6)
 
-      alphaToHex.put("A", "2a 1e aa 9e");
-      alphaToHex.put("S", "2a 1f aa 9f");
-      alphaToHex.put("D", "2a 20 aa a0");
-      alphaToHex.put("F", "2a 21 aa a1");
-      alphaToHex.put("G", "2a 22 aa a2");
-      alphaToHex.put("H", "2a 23 aa a3");
-      alphaToHex.put("J", "2a 24 aa a4");
-      alphaToHex.put("K", "2a 25 aa a5");
-      alphaToHex.put("L", "2a 26 aa a6");
+                .put("A", 0x2a, 0x1e, 0xaa, 0x9e)
+                .put("S", 0x2a, 0x1f, 0xaa, 0x9f)
+                .put("D", 0x2a, 0x20, 0xaa, 0xa0)
+                .put("F", 0x2a, 0x21, 0xaa, 0xa1)
+                .put("G", 0x2a, 0x22, 0xaa, 0xa2)
+                .put("H", 0x2a, 0x23, 0xaa, 0xa3)
+                .put("J", 0x2a, 0x24, 0xaa, 0xa4)
+                .put("K", 0x2a, 0x25, 0xaa, 0xa5)
+                .put("L", 0x2a, 0x26, 0xaa, 0xa6)
 
-      alphaToHex.put(");", "27 a7");
-      alphaToHex.put("\"", "2a 28 aa a8");
-      alphaToHex.put("\"", "28 a8");
-      alphaToHex.put("\\", "2b ab");
-      alphaToHex.put("|", "2a 2b aa 8b");
-      alphaToHex.put("[", "1a 9a");
-      alphaToHex.put("", "1b 9b");
-      alphaToHex.put("<", "2a 33 aa b3");
-      alphaToHex.put(">", "2a 34 aa b4");
-      alphaToHex.put("$", "2a 05 aa 85");
-      alphaToHex.put("+", "2a 0d aa 8d");
+                .put(") ", 0x27, 0xa7).put("\"", 0x2a, 0x28, 0xaa, 0xa8)
+                .put("\"", 0x28, 0xa8).put("\\", 0x2b, 0xab)
+                .put("|", 0x2a, 0x2b, 0xaa, 0x8b).put("[", 0x1a, 0x9a)
+                .put("", 0x1b, 0x9b).put("<", 0x2a, 0x33, 0xaa, 0xb3)
+                .put(">", 0x2a, 0x34, 0xaa, 0xb4)
+                .put("$", 0x2a, 0x05, 0xaa, 0x85)
+                .put("+", 0x2a, 0x0d, 0xaa, 0x8d)
 
-      alphaToHex.put("z", "2c ac");
-      alphaToHex.put("x", "2d ad");
-      alphaToHex.put("c", "2e ae");
-      alphaToHex.put("v", "2f af");
-      alphaToHex.put("b", "30 b0");
-      alphaToHex.put("n", "31 b1");
-      alphaToHex.put("m", "32 b2");
-      alphaToHex.put("Z", "2a 2c aa ac");
-      alphaToHex.put("X", "2a 2d aa ad");
-      alphaToHex.put("C", "2a 2e aa ae");
-      alphaToHex.put("V", "2a 2f aa af");
-      alphaToHex.put("B", "2a 30 aa b0");
-      alphaToHex.put("N", "2a 31 aa b1");
-      alphaToHex.put("M", "2a 32 aa b2");
+                .put("z", 0x2c, 0xac).put("x", 0x2d, 0xad).put("c", 0x2e, 0xae)
+                .put("v", 0x2f, 0xaf).put("b", 0x30, 0xb0).put("n", 0x31, 0xb1)
+                .put("m", 0x32, 0xb2).put("Z", 0x2a, 0x2c, 0xaa, 0xac)
+                .put("X", 0x2a, 0x2d, 0xaa, 0xad)
+                .put("C", 0x2a, 0x2e, 0xaa, 0xae)
+                .put("V", 0x2a, 0x2f, 0xaa, 0xaf)
+                .put("B", 0x2a, 0x30, 0xaa, 0xb0)
+                .put("N", 0x2a, 0x31, 0xaa, 0xb1)
+                .put("M", 0x2a, 0x32, 0xaa, 0xb2)
 
-      alphaToHex.put(",", "33 b3");
-      alphaToHex.put(".", "34 b4");
-      alphaToHex.put("/", "35 b5");
-      alphaToHex.put(":", "2a 27 aa a7");
-      alphaToHex.put("%", "2a 06 aa 86");
-      alphaToHex.put("_", "2a 0c aa 8c");
-      alphaToHex.put("&", "2a 08 aa 88");
-      alphaToHex.put("(", "2a 0a aa 8a");
-      alphaToHex.put(")", "2a 0b aa 8b");
-      return Collections.unmodifiableMap(alphaToHex);
-   }
+                .put(",", 0x33, 0xb3).put(".", 0x34, 0xb4).put("/", 0x35, 0xb5)
+                .put(":", 0x2a, 0x27, 0xaa, 0xa7)
+                .put("%", 0x2a, 0x06, 0xaa, 0x86)
+                .put("_", 0x2a, 0x0c, 0xaa, 0x8c)
+                .put("&", 0x2a, 0x08, 0xaa, 0x88)
+                .put("(", 0x2a, 0x0a, 0xaa, 0x8a)
+                .put(")", 0x2a, 0x0b, 0xaa, 0x8b)
 
-   private static Map<String, String> createSpecialMap() {
-      Map<String, String> special = new HashMap<String, String>();
-      special.put("<Enter>", "1c 9c");
-      special.put("<Backspace>", "0e 8e");
-      special.put("<Spacebar>", "39 b9");
-      special.put("<Return>", "1c 9c");
-      special.put("<Esc>", "01 81");
-      special.put("<Tab>", "0f 8f");
-      special.put("<KillX>", "1d 38 0e");
-      special.put("<Wait>", "wait");
+                .build();
 
-      special.put("<Up>", "48 c8");
-      special.put("<Down>", "50 d0");
-      special.put("<PageUp>", "49 c9");
-      special.put("<PageDown>", "51 d1");
-      special.put("<End>", "4f cf");
-      special.put("<Insert>", "52 d2");
-      special.put("<Delete>", "53 d3");
-      special.put("<Left>", "4b cb");
-      special.put("<Right>", "4d cd");
-      special.put("<Home>", "47 c7");
+        return Collections.unmodifiableMap(alphaToHex);
+    }
 
-      special.put("<F1>", "3b");
-      special.put("<F2>", "3c");
-      special.put("<F3>", "3d");
-      special.put("<F4>", "3e");
-      special.put("<F5>", "3f");
-      special.put("<F6>", "40");
-      special.put("<F7>", "41");
-      special.put("<F8>", "42");
-      special.put("<F9>", "43");
-      special.put("<F10>", "44");
-      return Collections.unmodifiableMap(special);
-   }
+    private static Map<String, List<Integer>> createSpecialCodeMap() {
+        Map<String, List<Integer>> special = KeyboardScancodes
+                .builder()
+                .put("<Enter>", 0x1c, 0x9c)
+                .put("<Backspace>", 0x0e, 0x8e)
+                .put("<Spacebar>", 0x39, 0xb9)
+                .put("<Return>", 0x1c, 0x9c)
+                .put("<Esc>", 0x01, 0x81)
+                .put("<Tab>", 0x0f, 0x8f)
+                .put("<KillX>", 0x1d, 0x38, 0x0e)
+                // .put("<Wait>", 0xwait)
+
+                .put("<Up>", 0x48, 0xc8).put("<Down>", 0x50, 0xd0)
+                .put("<PageUp>", 0x49, 0xc9).put("<PageDown>", 0x51, 0xd1)
+                .put("<End>", 0x4f, 0xcf).put("<Insert>", 0x52, 0xd2)
+                .put("<Delete>", 0x53, 0xd3).put("<Left>", 0x4b, 0xcb)
+                .put("<Right>", 0x4d, 0xcd).put("<Home>", 0x47, 0xc7)
+
+                .put("<F1>", 0x3b).put("<F2>", 0x3c).put("<F3>", 0x3d)
+                .put("<F4>", 0x3e).put("<F5>", 0x3f).put("<F6>", 0x40)
+                .put("<F7>", 0x41).put("<F8>", 0x42).put("<F9>", 0x43)
+                .put("<F10>", 0x44).build();
+        return Collections.unmodifiableMap(special);
+    }
+
+    public static class AlphaBuilder {
+
+        private Map<String, List<Integer>> mappings = new HashMap<String, List<Integer>>();
+
+        public AlphaBuilder put(String str, int... mapping) {
+            List<Integer> arrayList = new ArrayList<Integer>();
+            for (int i : mapping) {
+                arrayList.add(i);
+            }
+            mappings.put(str, arrayList);
+            return this;
+        }
+
+        public Map<String, List<Integer>> build() {
+            return mappings;
+        }
+
+    }
 }
