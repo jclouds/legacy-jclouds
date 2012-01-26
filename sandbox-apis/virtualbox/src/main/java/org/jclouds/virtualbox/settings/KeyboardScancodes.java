@@ -31,8 +31,8 @@ public class KeyboardScancodes {
    public static final Map<String, List<Integer>> SPECIAL_KEYBOARD_BUTTON_MAP_LIST = createSpecialCodeMap();
    public static final Map<String, List<Integer>> NORMAL_KEYBOARD_BUTTON_MAP_LIST = createNormalCodeMap();
 
-   public static AlphaBuilder builder() {
-      return new AlphaBuilder();
+   public static CharToIntegersMapBuilder builder() {
+      return new CharToIntegersMapBuilder();
    }
 
    private static Map<String, List<Integer>> createNormalCodeMap() {
@@ -171,11 +171,11 @@ public class KeyboardScancodes {
       return Collections.unmodifiableMap(special);
    }
 
-   public static class AlphaBuilder {
+   public static class CharToIntegersMapBuilder {
 
       private Map<String, List<Integer>> mappings = new HashMap<String, List<Integer>>();
 
-      public AlphaBuilder put(String str, int... mapping) {
+      public CharToIntegersMapBuilder put(String str, int... mapping) {
          List<Integer> arrayList = new ArrayList<Integer>();
          for (int i : mapping) {
             arrayList.add(i);
