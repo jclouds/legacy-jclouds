@@ -81,7 +81,7 @@ public class KeyStoneAuthenticationModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected IdentityServiceAsyncClient provideServiceClient(AsyncClientFactory factory) {
+   protected IdentityServiceAsyncClient provideIdentityServiceClient(AsyncClientFactory factory) {
       return factory.create(IdentityServiceAsyncClient.class);
    }
 

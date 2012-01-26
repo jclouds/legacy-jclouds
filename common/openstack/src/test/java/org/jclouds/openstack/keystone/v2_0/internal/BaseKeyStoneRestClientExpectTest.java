@@ -37,7 +37,7 @@ public class BaseKeyStoneRestClientExpectTest<S> extends BaseRestClientExpectTes
 
    public BaseKeyStoneRestClientExpectTest() {
       // username:tenantId
-      identity = "user@jclouds.org:12346637803162";
+      identity = "user@jclouds.org:40806637803162";
       credential = "Password1234";
    }
 
@@ -48,7 +48,7 @@ public class BaseKeyStoneRestClientExpectTest<S> extends BaseRestClientExpectTes
             .headers(ImmutableMultimap.of(HttpHeaders.ACCEPT, "application/json"))
             .payload(
                      payloadFromStringWithContentType(
-                              "{\"tenantId\":\"12346637803162\",\"auth\":{\"passwordCredentials\":{\"username\":\"user@jclouds.org\",\"password\":\"Password1234\"}}}",
+                              "{\"auth\":{\"passwordCredentials\":{\"username\":\"user@jclouds.org\",\"password\":\"Password1234\"},\"tenantId\":\"40806637803162\"}}",
                               "application/json")).build();
 
    protected String authToken = "Auth_4f173437e4b013bee56d1007";
