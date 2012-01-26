@@ -20,16 +20,21 @@ package org.jclouds.cloudstack.features;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
+import org.jclouds.cloudstack.domain.Network;
+import org.jclouds.cloudstack.domain.NetworkOffering;
 import org.jclouds.cloudstack.domain.VlanIPRange;
+import org.jclouds.cloudstack.domain.Zone;
+import org.jclouds.cloudstack.options.CreateVlanIPRangeOptions;
 import org.jclouds.cloudstack.options.ListVlanIPRangesOptions;
+import org.jclouds.cloudstack.predicates.NetworkOfferingPredicates;
+import org.jclouds.cloudstack.predicates.ZonePredicates;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import java.util.Set;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static com.google.common.collect.Iterables.find;
+import static org.testng.Assert.*;
 
 /**
  * Tests behavior of {@code GlobalVlanClient}
@@ -38,6 +43,9 @@ import static org.testng.Assert.assertTrue;
  */
 @Test(groups = "live", singleThreaded = true, testName = "GlobalVlanClientLiveTest")
 public class GlobalVlanClientLiveTest extends BaseCloudStackClientLiveTest {
+
+   private Network network;
+   private VlanIPRange range;
 
    public void testListVlanIPRanges() throws Exception {
       Set<VlanIPRange> response = globalAdminClient.getVlanClient().listVlanIPRanges();
@@ -63,8 +71,30 @@ public class GlobalVlanClientLiveTest extends BaseCloudStackClientLiveTest {
       }
    }
 
+   public void testCreateVlanIPRange() {
+      Zone zone = Iterables.find(client.getZoneClient().listZones(), ZonePredicates.supportsAdvancedNetworks());
+      NetworkOffering offering = find(client.getOfferingClient().listNetworkOfferings(), NetworkOfferingPredicates.supportsGuestVirtualNetworks());
+
+      network = client.getNetworkClient().createNetworkInZone(zone.getId(), offering.getId(), "net-"+prefix, "jclouds test "+prefix);
+
+      range = globalAdminClient.getVlanClient().createVlanIPRange("172.19.1.1", "172.19.1.199", CreateVlanIPRangeOptions.Builder
+         .accountInDomain(user.getAccount(), user.getDomainId())
+         .forVirtualNetwork(true)
+         .vlan(1001)
+         .networkId(network.getId())
+      );
+   }
+
    @AfterClass
    public void testFixtureTearDown() {
+      if (range != null) {
+         globalAdminClient.getVlanClient().deleteVlanIPRange(range.getId());
+         range = null;
+      }
+      if (network != null) {
+         client.getNetworkClient().deleteNetwork(network.getId());
+         network = null;
+      }
    }
 
 }

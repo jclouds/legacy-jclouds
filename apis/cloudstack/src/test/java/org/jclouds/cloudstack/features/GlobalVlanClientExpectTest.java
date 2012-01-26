@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.VlanIPRange;
+import org.jclouds.cloudstack.options.CreateVlanIPRangeOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
@@ -107,6 +108,73 @@ public class GlobalVlanClientExpectTest extends BaseCloudStackRestClientExpectTe
             .build());
 
       assertEquals(client.listVlanIPRanges(), ImmutableSet.of());
+   }
+
+   public void testCreateVlanIpRangeWhenResponseIs2xx() {
+      GlobalVlanClient client = requestSendsResponse(
+         HttpRequest.builder()
+            .method("GET")
+            .endpoint(
+               URI.create("http://localhost:8080/client/api?response=json&" +
+                  "command=createVlanIpRange&startip=10.22.22.51&endip=10.22.22.100&forvirtualnetwork=false&zoneid=2&vlan=untagged&account=system&domainid=1&podid=2&gateway=10.22.22.254&netmask=255.255.255.0&networkid=209&apiKey=identity&signature=XgDjPYAQNLMVCuSMGRA6QjV8mOY%3D"))
+            .headers(
+               ImmutableMultimap.<String, String>builder()
+                  .put("Accept", "application/json")
+                  .build())
+            .build(),
+         HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResource("/createvlaniprangeresponse.json"))
+            .build());
+
+      VlanIPRange actual = client.createVlanIPRange("10.22.22.51", "10.22.22.100", new CreateVlanIPRangeOptions()
+         .forVirtualNetwork(false)
+         .zoneId(2)
+         .vlan("untagged")
+         .accountInDomain("system", 1)
+         .podId(2)
+         .gateway("10.22.22.254")
+         .netmask("255.255.255.0")
+         .networkId(209));
+
+      VlanIPRange expected = VlanIPRange.builder()
+         .id(2)
+         .forVirtualNetwork(false)
+         .zoneId(2)
+         .vlan("untagged")
+         .account("system")
+         .domainId(1)
+         .domain("ROOT")
+         .podId(2)
+         .podName("Dev Pod 2")
+         .gateway("10.22.22.254")
+         .netmask("255.255.255.0")
+         .startIP("10.22.22.51")
+         .endIP("10.22.22.100")
+         .networkId(209)
+         .build();
+
+      assertEquals(actual, expected);
+   }
+
+   public void testDeleteVlanIpRangeWhenResponseIs2xx() {
+      GlobalVlanClient client = requestSendsResponse(
+         HttpRequest.builder()
+            .method("GET")
+            .endpoint(
+               URI.create("http://localhost:8080/client/api?response=json&" +
+                  "command=deleteVlanIpRange&id=1&apiKey=identity&signature=tTBbpdCndgHXdR397fbbJaN1RZU%3D"))
+            .headers(
+               ImmutableMultimap.<String, String>builder()
+                  .put("Accept", "application/json")
+                  .build())
+            .build(),
+         HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResource("/createvlaniprangeresponse.json"))
+            .build());
+
+      client.deleteVlanIPRange(1);
    }
 
    @Override

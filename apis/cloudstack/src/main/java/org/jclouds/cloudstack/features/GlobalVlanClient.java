@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.features;
 
 import org.jclouds.cloudstack.domain.VlanIPRange;
+import org.jclouds.cloudstack.options.CreateVlanIPRangeOptions;
 import org.jclouds.cloudstack.options.ListVlanIPRangesOptions;
 import org.jclouds.concurrent.Timeout;
 
@@ -51,4 +52,19 @@ public interface GlobalVlanClient {
     */
    Set<VlanIPRange> listVlanIPRanges(ListVlanIPRangesOptions... options);
 
+   /**
+    * Creates a VLAN IP range.
+    *
+    * @param startIP the beginning IP address in the VLAN IP range
+    * @param endIP the ending IP address in the VLAN IP range
+    * @param options optional arguments
+    * @return the newly-create IP range.
+    */
+   VlanIPRange createVlanIPRange(String startIP, String endIP, CreateVlanIPRangeOptions... options);
+
+   /**
+    * Deletes a VLAN IP range.
+    * @param rangeId the id of the VLAN IP range
+    */
+   void deleteVlanIPRange(long rangeId);
 }
