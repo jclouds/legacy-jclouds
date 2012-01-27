@@ -20,8 +20,10 @@ package org.jclouds.glesys.features;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
 import org.jclouds.glesys.GleSYSClient;
 import org.jclouds.glesys.domain.Domain;
+import org.jclouds.glesys.domain.DomainRecord;
 import org.jclouds.glesys.options.DomainAddOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -59,11 +61,48 @@ public class DomainClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
 
       Set<Domain> expected = ImmutableSet.of(
             Domain.builder().domain("adamlowe.net").createTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2011-12-20 10:58:51")).build());
-      
+
       assertEquals(client.listDomains(), expected);
    }
 
    public void testListDomainsWhenResponseIs4xxReturnsEmpty() throws Exception {
+      DomainClient client = requestSendsResponse(
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/domain/list/format/json"))
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .build(),
+            HttpResponse.builder().statusCode(404).build()).getDomainClient();
+
+      assertTrue(client.listDomains().isEmpty());
+   }
+
+   public void testListDomainRecordsWhenResponseIs2xx() throws Exception {
+      DomainClient client = requestSendsResponse(
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/domain/list_records/format/json"))
+                  .headers(ImmutableMultimap.<String, String>builder()
+                        .put("Accept", "application/json")
+                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+                  .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
+                        .put("domain", "adamlowe.net").build())).build(),
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/domain_list_records.json")).build()).getDomainClient();
+
+      Set<DomainRecord> expected = ImmutableSortedSet.of(
+            DomainRecord.builder().id("213227").zone("adamlowe.net").host("@").type("NS").data("ns1.namesystem.se.").ttl(3600).build(),
+            DomainRecord.builder().id("213228").zone("adamlowe.net").host("@").type("NS").data("ns2.namesystem.se.").ttl(3600).build(),
+            DomainRecord.builder().id("213229").zone("adamlowe.net").host("@").type("NS").data("ns3.namesystem.se.").ttl(3600).build(),
+            DomainRecord.builder().id("213230").zone("adamlowe.net").host("@").type("A").data("127.0.0.1").ttl(3600).build(),
+            DomainRecord.builder().id("213231").zone("adamlowe.net").host("www").type("A").data("127.0.0.1").ttl(3600).build(),
+            DomainRecord.builder().id("213232").zone("adamlowe.net").host("mail").type("A").data("79.99.4.40").ttl(3600).build(),
+            DomainRecord.builder().id("213233").zone("adamlowe.net").host("@").type("MX").data("mx01.glesys.se.").ttl(3600).build(),
+            DomainRecord.builder().id("213234").zone("adamlowe.net").host("@").type("MX").data("mx02.glesys.se.").ttl(3600).build(),
+            DomainRecord.builder().id("213235").zone("adamlowe.net").host("@").type("TXT").data("v=spf1 include:spf.glesys.se -all").ttl(3600).build()
+      );
+      assertEquals(client.listRecords("adamlowe.net"), expected);
+   }
+
+
+   public void testListDomainRecordsWhenResponseIs4xxReturnsEmpty() throws Exception {
       DomainClient client = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/domain/list/format/json"))
                   .headers(ImmutableMultimap.<String, String>builder()
