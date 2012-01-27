@@ -265,9 +265,8 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       for (ResourceUsage usage : new ResourceUsage[] { status.getCpu(), status.getDisk(), status.getMemory() }) {
          assertNotNull(usage);
          assert usage.getMax() >= 0.0 : status;
-         if (usage.getUsage() != null) {
-            assert usage.getUsage() >= 0.0 : status;
-         }
+         assert usage.getUsage() >= 0.0 : status;
+         
          assertNotNull(usage.getUnit());
       }
       

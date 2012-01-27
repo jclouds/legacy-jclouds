@@ -33,11 +33,11 @@ public class ResourceUsage {
    }
 
    public static class Builder {
-      private Double usage;
+      private double usage;
       private double max;
       private String unit;
 
-      public Builder usage(Double usage) {
+      public Builder usage(double usage) {
          this.usage = usage;
          return this;
       }
@@ -61,11 +61,11 @@ public class ResourceUsage {
       }
    }
 
-   private final Double usage;
+   private final double usage;
    private final double max;
    private final String unit;
 
-   public ResourceUsage(Double usage, double max, String unit) {
+   public ResourceUsage(double usage, double max, String unit) {
       this.usage = usage;
       this.max = max;
       this.unit = unit;
@@ -74,7 +74,7 @@ public class ResourceUsage {
    /**
     * @return the usage in #unit
     */
-   public Double getUsage() {
+   public double getUsage() {
       return usage;
    }
 

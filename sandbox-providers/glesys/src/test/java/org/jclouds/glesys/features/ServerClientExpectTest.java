@@ -528,10 +528,10 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
 
 
    private ServerStatus expectedServerStatus() {
-      ResourceUsage cpu = ResourceUsage.builder().unit("cores").max(1.0).usage(null).build();
-      ResourceUsage disk = ResourceUsage.builder().unit("MB").usage(372.0).max(5120).build();
+      ResourceUsage cpu = ResourceUsage.builder().unit("cores").max(1.0).usage(0.0).build();
+      ResourceUsage disk = ResourceUsage.builder().unit("MB").usage(371.0).max(5120).build();
       ResourceUsage memory = ResourceUsage.builder().unit("MB").usage(3.0).max(128).build();
-      ServerUptime uptime = ServerUptime.builder().current(108).unit("seconds").build();
+      ServerUptime uptime = ServerUptime.builder().current(23).unit("seconds").build();
       return ServerStatus.builder().state(ServerState.RUNNING).uptime(uptime).
             cpu(cpu).disk(disk).memory(memory).build();
    }
