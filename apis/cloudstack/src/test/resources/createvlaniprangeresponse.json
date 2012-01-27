@@ -1,0 +1,1 @@
+{ "createvlaniprangeresponse" : { "vlaniprange" : {"id":2,"forvirtualnetwork":false,"zoneid":2,"vlan":"untagged","account":"system","domainid":1,"domain":"ROOT","podid":2,"podname":"Dev Pod 2","gateway":"10.22.22.254","netmask":"255.255.255.0","startip":"10.22.22.51","endip":"10.22.22.100","networkid":209} } }
