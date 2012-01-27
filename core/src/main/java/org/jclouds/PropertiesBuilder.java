@@ -181,10 +181,10 @@ public class PropertiesBuilder {
    }
 
    /**
-    * @see org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS
+    * @see org.jclouds.Constants.PROPERTY_USER_THREADS
     */
-   public PropertiesBuilder limitUserThreadsTo(int poolIoWorkerThreads) {
-      properties.setProperty(PROPERTY_USER_THREADS, Integer.toString(poolIoWorkerThreads));
+   public PropertiesBuilder limitUserThreadsTo(int poolUserThreads) {
+      properties.setProperty(PROPERTY_USER_THREADS, Integer.toString(poolUserThreads));
       return this;
    }
 
