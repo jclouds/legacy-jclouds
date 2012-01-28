@@ -77,10 +77,11 @@ public class ServerTemplate implements Comparable<ServerTemplate>{
    }
 
    private final String name;
-   @SerializedName("min_disk_size")
+   @SerializedName("minimumdisksize")
    private final int minDiskSize;
-   @SerializedName("min_mem_size")
+   @SerializedName("minimummemorysize")
    private final int minMemSize;
+   @SerializedName("operatingsystem")
    private final String os;
    private final String platform;
 

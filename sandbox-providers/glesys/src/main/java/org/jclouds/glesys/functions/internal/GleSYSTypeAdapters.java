@@ -44,15 +44,4 @@ public class GleSYSTypeAdapters {
       }
    }
 
-   public static class ServerUptimeAdapter extends TypeAdapter<ServerUptime> {
-      @Override
-      public void write(JsonWriter writer, ServerUptime value) throws IOException {
-         writer.value(value.toString());
-      }
-
-      @Override
-      public ServerUptime read(JsonReader reader) throws IOException {
-         return ServerUptime.fromValue(reader.nextString());
-      }
-   }
 }

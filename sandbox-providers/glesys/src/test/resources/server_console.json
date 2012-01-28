@@ -1,1 +1,1 @@
-{"response":{"status":{"code":"200","text":"OK"},"remote":{"host":"79.99.2.147","port":"59478","password":"1476897311"},"debug":{"input":{"serverid":"vz1842554"}}}}
+{"response":{"status":{"code":"200","text":"OK"},"console":{"host":"79.99.2.147","port":"59478","protocol":"vnc","password":"1476897311"},"debug":{"input":{"serverid":"vz1842554"}}}}
