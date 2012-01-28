@@ -42,7 +42,7 @@ public class GleSYSPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_ENDPOINT, "https://api.glesys.com");
       properties.setProperty(PROPERTY_API_VERSION, "1");
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-CA,US-VA,BR-SP");
-      properties.setProperty(PROPERTY_ZONE + ".Amsterdam.." + ISO3166_CODES, "NL-NH");
+      properties.setProperty(PROPERTY_ZONE + ".Amsterdam." + ISO3166_CODES, "NL-NH");
       properties.setProperty(PROPERTY_ZONE + ".Falkenberg." + ISO3166_CODES, "SE-N");
       properties.setProperty(PROPERTY_ZONE + ".New York City." + ISO3166_CODES, "US-NY");
       properties.setProperty(PROPERTY_ZONE + ".Stockholm." + ISO3166_CODES, "SE-AB");
