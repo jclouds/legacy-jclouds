@@ -20,6 +20,7 @@ package org.jclouds.glesys.features;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.FormParam;
@@ -28,7 +29,6 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.glesys.domain.Server;
 import org.jclouds.glesys.domain.ServerAllowedArguments;
 import org.jclouds.glesys.domain.ServerConsole;
-import org.jclouds.glesys.domain.ServerCreated;
 import org.jclouds.glesys.domain.ServerDetails;
 import org.jclouds.glesys.domain.ServerLimit;
 import org.jclouds.glesys.domain.ServerStatus;
@@ -117,22 +117,21 @@ public interface ServerClient {
     * @param id   id of the server
     * @param type the type of limit to reset
     */
-
-   void resetServerLimit(String id, String type);
+   Map<String, ServerLimit> resetServerLimit(String id, String type);
 
    /**
     * Reboot a server
     *
     * @param id id of the server
     */
-   void rebootServer(String id);
+   ServerDetails rebootServer(String id);
 
    /**
     * Start a server
     *
     * @param id id of the server
     */
-   void startServer(String id);
+   ServerDetails startServer(String id);
 
    /**
     * Stop a server
@@ -145,20 +144,20 @@ public interface ServerClient {
    /**
     * Create a new server
     *
-    * @param datacenter the data center to create the new server in
-    * @param platform   the platform to use (i.e. "Xen" or "OpenVZ")
-    * @param hostname   the host name of the new server
-    * @param template   the template to use to create the new server
-    * @param disksize   the amount of disk space, in GB, to allocate
-    * @param memorysize the memory, in MB, to allocate
-    * @param cpucores   the number of CPU cores to allocate
-    * @param rootpw     the root password to use
-    * @param transfer   the transfer size
-    * @param options    optional settings ex. description
+    * @param datacenter   the data center to create the new server in
+    * @param platform     the platform to use (i.e. "Xen" or "OpenVZ")
+    * @param hostname     the host name of the new server
+    * @param templateName the template to use to create the new server
+    * @param diskSize     the amount of disk space, in GB, to allocate
+    * @param memorySize   the memory, in MB, to allocate
+    * @param cpuCores     the number of CPU cores to allocate
+    * @param rootPassword the root password to use
+    * @param transfer     the transfer size
+    * @param options      optional settings ex. description
     */
-   ServerCreated createServer(String datacenter, String platform,
-                              String hostname, String template, int disksize, int memorysize,
-                              int cpucores, String rootpw, int transfer, ServerCreateOptions... options);
+   ServerDetails createServer(String datacenter,String platform,String hostname,
+                              String templateName, int diskSize, int memorySize, int cpuCores,
+                              String rootPassword, int transfer, ServerCreateOptions... options);
 
    /**
     * Edit the configuration of a server
@@ -166,7 +165,7 @@ public interface ServerClient {
     * @param serverid the serverId of the server to edit
     * @param options  the settings to change
     */
-   void editServer(String serverid, ServerEditOptions... options);
+   ServerDetails editServer(String serverid, ServerEditOptions... options);
 
    /**
     * Clone a server
@@ -175,7 +174,7 @@ public interface ServerClient {
     * @param hostname the new host name of the cloned server
     * @param options  the settings to change
     */
-   ServerCreated cloneServer(String serverid, String hostname, ServerCloneOptions... options);
+   ServerDetails cloneServer(String serverid, String hostname, ServerCloneOptions... options);
 
    /**
     * Destroy a server
@@ -183,7 +182,7 @@ public interface ServerClient {
     * @param id     the id of the server
     * @param keepIp if ServerDestroyOptions.keepIp(true) the servers ip will be retained for use in your GleSYS account
     */
-   void destroyServer(String id, ServerDestroyOptions keepIp);
+   ServerDetails destroyServer(String id, ServerDestroyOptions keepIp);
 
    /**
     * Reset the root password of a server
@@ -191,7 +190,16 @@ public interface ServerClient {
     * @param id       the id of the server
     * @param password the new password to use
     */
-   void resetPassword(@FormParam("serverid") String id, @FormParam("newpassword") String password);
+   void resetPassword(String id, String password);
+
+
+   /**
+    * Return resource usage over time for server
+    *
+    * @param id       the id of the server
+    * @param resource the name of the resource to retrieve usage information for
+    */
+   void resourceUsage(String id, String resource, String resolution);
 
 
 }

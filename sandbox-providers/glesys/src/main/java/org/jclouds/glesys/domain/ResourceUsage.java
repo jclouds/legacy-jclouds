@@ -21,28 +21,29 @@ package org.jclouds.glesys.domain;
 import com.google.common.base.Objects;
 
 /**
- * Detailed information on Server disk usage
+ * Detailed information on usage
  *
  * @author Adam Lowe
  * @see ServerStatus
  */
-public class Disk {
+
+public class ResourceUsage {
    public static Builder builder() {
       return new Builder();
    }
 
    public static class Builder {
-      private long used;
-      private long size;
+      private double usage;
+      private double max;
       private String unit;
 
-      public Builder used(long used) {
-         this.used = used;
+      public Builder usage(double usage) {
+         this.usage = usage;
          return this;
       }
 
-      public Builder size(long size) {
-         this.size = size;
+      public Builder max(double max) {
+         this.max = max;
          return this;
       }
 
@@ -51,37 +52,37 @@ public class Disk {
          return this;
       }
 
-      public Disk build() {
-         return new Disk(used, size, unit);
+      public ResourceUsage build() {
+         return new ResourceUsage(usage, max, unit);
       }
 
-      public Builder fromDisk(Disk in) {
-         return used(in.getUsed()).size(in.getSize()).unit(in.getUnit());
+      public Builder fromCpu(ResourceUsage in) {
+         return usage(in.getUsage()).max(in.getMax()).unit(in.getUnit());
       }
    }
 
-   private final long used;
-   private final long size;
+   private final double usage;
+   private final double max;
    private final String unit;
 
-   public Disk(long used, long size, String unit) {
-      this.used = used;
-      this.size = size;
+   public ResourceUsage(double usage, double max, String unit) {
+      this.usage = usage;
+      this.max = max;
       this.unit = unit;
    }
 
    /**
-    * @return the disk used in #unit
+    * @return the usage in #unit
     */
-   public long getUsed() {
-      return used;
+   public double getUsage() {
+      return usage;
    }
 
    /**
-    * @return the disk size allocated in #unit
+    * @return the max usage in #unit
     */
-   public long getSize() {
-      return size;
+   public double getMax() {
+      return max;
    }
 
    /**
@@ -96,10 +97,10 @@ public class Disk {
       if (this == object) {
          return true;
       }
-      if (object instanceof Disk) {
-         Disk other = (Disk) object;
-         return Objects.equal(used, other.used)
-               && Objects.equal(size, other.size)
+      if (object instanceof ResourceUsage) {
+         ResourceUsage other = (ResourceUsage) object;
+         return Objects.equal(usage, other.usage)
+               && Objects.equal(max, other.max)
                && Objects.equal(unit, other.unit);
       } else {
          return false;
@@ -108,12 +109,12 @@ public class Disk {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(used, size, unit);
+      return Objects.hashCode(usage, max, unit);
    }
    
    @Override
    public String toString() {
-      return String.format("[used=%d, size=%d, unit=%s]", used, size, unit);
+      return String.format("[usage=%f, max=%f, unit=%s]",
+            usage, max, unit);
    }
-
 }

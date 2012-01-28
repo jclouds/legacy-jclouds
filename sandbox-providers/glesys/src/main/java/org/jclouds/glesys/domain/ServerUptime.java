@@ -22,6 +22,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,59 +35,55 @@ import java.util.concurrent.TimeUnit;
  * @see ServerStatus
  */
 public class ServerUptime {
-   private final long time;
-   private final String timeString;
-
-   private ServerUptime(long time) {
-      this.time = time;
-      long days = TimeUnit.SECONDS.toDays(time);
-      long hours = TimeUnit.SECONDS.toHours(time - TimeUnit.DAYS.toSeconds(days));
-      Long[] bits = new Long[]{
-            0L,
-            (days / 365),
-            ((days % 365) / 30),
-            ((days % 365) % 30),
-            hours,
-            TimeUnit.SECONDS.toMinutes(time - TimeUnit.HOURS.toSeconds(hours) - TimeUnit.DAYS.toSeconds(days)),
-            time % 60
-      };
-      this.timeString = Joiner.on(' ').join(bits);
+   public static Builder builder() {
+      return new Builder();
    }
 
-   private ServerUptime(String timeString) {
-      Splitter splitter = Splitter.on(' ').omitEmptyStrings().trimResults();
-      List<String> data = new ArrayList<String>();
-      Iterables.addAll(data, splitter.split(timeString));
-      long result = Integer.parseInt(data.get(6));
-      result += TimeUnit.SECONDS.convert(Integer.parseInt(data.get(5)), TimeUnit.MINUTES);
-      result += TimeUnit.SECONDS.convert(Integer.parseInt(data.get(4)), TimeUnit.HOURS);
-      result += TimeUnit.SECONDS.convert(Integer.parseInt(data.get(3)), TimeUnit.DAYS);
-      result += TimeUnit.SECONDS.convert(Integer.parseInt(data.get(2)) * 30, TimeUnit.DAYS);
-      result += TimeUnit.SECONDS.convert(Integer.parseInt(data.get(1)) * 365, TimeUnit.DAYS);
-      this.time = result;
-      this.timeString = timeString;
+   public static class Builder {
+      private long current;
+      private String unit;
+      
+      public Builder current(long current) {
+         this.current = current;
+         return this;
+      }
+
+      public Builder unit(String unit) {
+         this.unit = unit;
+         return this;
+      }
+      
+      public ServerUptime build() {
+         return new ServerUptime(current, unit);
+      }
+      
+      public Builder fromServerUptime(ServerUptime from) {
+         return current(from.getCurrent()).unit(from.getUnit());
+      }
+   }
+   
+   private final long current;
+   private final String unit;
+
+   public ServerUptime(long current, String unit) {
+      this.current = current;
+      this.unit = unit;
+   }
+   
+   /**
+    * @return the time the server has been up in #unit
+    */
+   public long getCurrent() {
+      return current;
    }
 
    /**
-    * @param uptimeString a Glesys uptime string, ex. "0 0 0 0 0 10 1 1"
+    * @return the  unit used for #time
     */
-   public static ServerUptime fromValue(String uptimeString) {
-      return new ServerUptime(uptimeString);
+   public String getUnit() {
+      return unit;
    }
 
-   /**
-    * @param time number of seconds the server has been up
-    */
-   public static ServerUptime fromValue(long time) {
-      return new ServerUptime(time);
-   }
-
-   /**
-    * @return the number of seconds the server has been up
-    */
-   public long getTime() {
-      return time;
-   }
 
    @Override
    public boolean equals(Object object) {
@@ -94,17 +91,18 @@ public class ServerUptime {
          return true;
       }
       return object instanceof ServerUptime
-            && Objects.equal(time, ((ServerUptime) object).getTime());
+            && Objects.equal(current, ((ServerUptime) object).getCurrent())
+            && Objects.equal(unit, ((ServerUptime) object).getUnit());
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(time);
+      return Objects.hashCode(current, unit);
    }
 
    @Override
    public String toString() {
-      return timeString;
+      return String.format("[current=%d unit=%s]", current, unit);
    }
 
 }
