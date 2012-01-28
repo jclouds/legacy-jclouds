@@ -40,18 +40,14 @@ public class VmSpec {
    private final CleanupMode cleanupMode;
 
    public VmSpec(String vmId, String vmName, String osTypeId, long memory, boolean forceOverwrite, Set<StorageController> controllers, CleanupMode cleanupMode) {
-      checkNotNull(vmId, "vmId");
-      checkNotNull(vmName, "vmName");
+      this.vmId = checkNotNull(vmId, "vmId");
+      this.vmName = checkNotNull(vmName, "vmName");
+      this.osTypeId = checkNotNull(osTypeId, "osTypeId");
       checkArgument(memory > 0, "memory must be > 0");
-      checkNotNull(controllers, "controllers");
-      checkNotNull(cleanupMode, "cleanupMode");
-      this.vmId = vmId;
-      this.vmName = vmName;
-      this.osTypeId = osTypeId;
       this.memory = memory;
-      this.controllers = controllers;
+      this.controllers = checkNotNull(controllers, "controllers");
+      this.cleanupMode = checkNotNull(cleanupMode, "cleanupMode");
       this.forceOverwrite = forceOverwrite;
-      this.cleanupMode = cleanupMode;
    }
 
    public static Builder builder() {

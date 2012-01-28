@@ -66,11 +66,10 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends B
               .cleanUpMode(mode)
               .osTypeId("Debian")
               .forceOverwrite(true).build();
-      IMachineSpec machineSpec = IMachineSpec.builder()
+      MasterSpec machineSpec = MasterSpec.builder()
               .iso(IsoSpec.builder()
                       .sourcePath(operatingSystemIso)
                       .installationScript("")
-                      .preConfiguration(preconfigurationUri)
                       .build())
               .vm(vmSpec)
               .network(NetworkSpec.builder().build()).build();
@@ -97,10 +96,9 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends B
       IsoSpec isoSpec = IsoSpec.builder()
               .sourcePath(operatingSystemIso)
               .installationScript("")
-              .preConfiguration(preconfigurationUri)
               .build();
       NetworkSpec networkSpec = NetworkSpec.builder().build();
-      IMachineSpec machineSpec = IMachineSpec.builder()
+      MasterSpec machineSpec = MasterSpec.builder()
               .iso(isoSpec)
               .vm(vmSpec)
               .network(networkSpec).build();

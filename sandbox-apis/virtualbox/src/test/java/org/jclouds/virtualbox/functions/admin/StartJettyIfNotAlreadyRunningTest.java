@@ -24,10 +24,17 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.net.URI;
+import java.util.concurrent.ExecutionException;
 
+import com.google.common.base.Supplier;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.LoadingCache;
+import org.easymock.EasyMock;
 import org.eclipse.jetty.server.Server;
+import org.jclouds.virtualbox.domain.IsoSpec;
 import org.testng.annotations.Test;
 
 /**
@@ -36,22 +43,25 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", singleThreaded = true, testName = "StartJettyIfNotAlreadyRunningTest")
 public class StartJettyIfNotAlreadyRunningTest {
    @Test
-   public void testLaunchJettyServerWhenAlreadyRunningDoesntLaunchAgain() {
+   public void testLaunchJettyServerWhenAlreadyRunningDoesntLaunchAgain() throws Exception {
       Server jetty = createMock(Server.class);
+      Supplier<Server> serverSupplier = createMock(Supplier.class);
 
       String preconfigurationUrl = "http://foo:8080";
-      
+
       expect(jetty.getState()).andReturn(Server.STARTED);
-      replay(jetty);
+      expect(serverSupplier.get()).andReturn(jetty);
 
-      StartJettyIfNotAlreadyRunning starter = new StartJettyIfNotAlreadyRunning(jetty, preconfigurationUrl);
-      starter.start();
+      replay(jetty, serverSupplier);
 
-      assertEquals(starter.get(), URI.create(preconfigurationUrl));
+      StartJettyIfNotAlreadyRunning starter = new StartJettyIfNotAlreadyRunning(preconfigurationUrl, serverSupplier);
+
+      IsoSpec isoSpec = IsoSpec.builder()
+              .sourcePath("/tmp/myisos/ubuntu.iso")
+              .installationScript("install").build();
+      assertEquals(starter.load(isoSpec), URI.create(preconfigurationUrl));
       verify(jetty);
-
    }
-
 
    @Test
    public void testLaunchJettyServerWhenNotRunningStartsJettyOnCorrectHostPortAndBasedir() {
