@@ -19,6 +19,7 @@
 package org.jclouds.virtualbox.functions;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.jclouds.virtualbox.settings.KeyboardScancodes;
@@ -44,7 +45,7 @@ public class StringToKeyCode implements Function<String, List<Integer>> {
    private List<Integer> transformStandardCharacterIntoKeycodes(String s) {
       List<Integer> values = new ArrayList<Integer>();
       for (String digit : Splitter.fixedLength(1).split(s)) {
-         List<Integer> hex = KeyboardScancodes.NORMAL_KEYBOARD_BUTTON_MAP_LIST.get(digit);
+         Collection<Integer> hex = KeyboardScancodes.NORMAL_KEYBOARD_BUTTON_MAP_LIST.get(digit);
          if (hex != null)
             values.addAll(hex);
       }
@@ -55,7 +56,7 @@ public class StringToKeyCode implements Function<String, List<Integer>> {
    private List<Integer> transforSpecialCharIntoKeycodes(String s) {
       List<Integer> values = new ArrayList<Integer>();
       for (String special : s.split("<")) {
-         List<Integer> value = KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP_LIST.get("<" + special);
+         Collection<Integer> value = KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP_LIST.get("<" + special);
          if (value != null)
             values.addAll(value);
       }

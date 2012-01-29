@@ -21,7 +21,6 @@ package org.jclouds.virtualbox.functions;
 import static com.google.common.base.Predicates.in;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.any;
-import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Lists.partition;
 import static org.jclouds.compute.reference.ComputeServiceConstants.COMPUTE_LOGGER;
 import static org.jclouds.virtualbox.settings.KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP_LIST;
@@ -35,11 +34,8 @@ import org.jclouds.logging.Logger;
 import org.virtualbox_4_1.ISession;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
 
 class SendScancodes implements Function<ISession, Void> {
-   static final ImmutableSet<Integer> SPECIAL_SCANCODES = ImmutableSet.copyOf(concat(SPECIAL_KEYBOARD_BUTTON_MAP_LIST
-         .values()));
 
    @Resource
    @Named(COMPUTE_LOGGER)
@@ -59,7 +55,7 @@ class SendScancodes implements Function<ISession, Void> {
          long codesSent = iSession.getConsole().getKeyboard().putScancodes(maxOrLess);
          logger.debug("List of scancodes sent: ", maxOrLess);
          assert (codesSent == maxOrLess.size());
-         if (any(maxOrLess, in(SPECIAL_SCANCODES))) {
+         if (any(maxOrLess, in(SPECIAL_KEYBOARD_BUTTON_MAP_LIST.values()))) {
             sleepOrPropagateInterrupt(300);
          } else {
             sleepOrPropagateInterrupt(50);
