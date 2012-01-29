@@ -27,7 +27,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * A complete specification of a "master" node, including the ISO, networking setup
  * and the physical machine specification.
  */
-public class IMachineSpec {
+public class MasterSpec {
 
    private VmSpec vmSpec;
    private IsoSpec isoSpec;
@@ -58,13 +58,13 @@ public class IMachineSpec {
          return this;
       }
 
-      public IMachineSpec build() {
-         return new IMachineSpec(vmSpec, isoSpec, networkSpec);
+      public MasterSpec build() {
+         return new MasterSpec(vmSpec, isoSpec, networkSpec);
       }
 
    }
 
-   public IMachineSpec(VmSpec vmSpec, IsoSpec isoSpec, NetworkSpec networkSpec) {
+   public MasterSpec(VmSpec vmSpec, IsoSpec isoSpec, NetworkSpec networkSpec) {
       checkNotNull(vmSpec, "vmSpec");
       checkNotNull(isoSpec, "isoSpec");
       checkNotNull(networkSpec, "networkSpec");
@@ -89,7 +89,7 @@ public class IMachineSpec {
    public boolean equals(Object o) {
       if (this == o) return true;
       if (o instanceof VmSpec) {
-         IMachineSpec other = (IMachineSpec) o;
+         MasterSpec other = (MasterSpec) o;
          return Objects.equal(vmSpec, other.vmSpec) &&
                  Objects.equal(isoSpec, other.isoSpec) &&
                  Objects.equal(networkSpec, other.networkSpec);

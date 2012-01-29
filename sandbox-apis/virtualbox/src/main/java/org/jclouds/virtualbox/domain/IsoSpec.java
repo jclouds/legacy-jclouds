@@ -21,6 +21,7 @@ package org.jclouds.virtualbox.domain;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
+import com.google.common.cache.CacheLoader;
 import org.jclouds.virtualbox.Preconfiguration;
 
 import java.net.URI;
@@ -34,15 +35,10 @@ public class IsoSpec {
 
    private final String installationKeySequence;
    private final String sourcePath;
-   private final Supplier<URI> preConfigurationUri;
 
-   public IsoSpec(String sourcePath, String installationKeySequence, @Preconfiguration Supplier<URI> preConfigurationUri) {
-      checkNotNull(sourcePath, "sourcePath");
-      checkNotNull(installationKeySequence, "installationKeySequence");
-      checkNotNull(preConfigurationUri, "preConfigurationUri");
-      this.sourcePath = sourcePath;
-      this.installationKeySequence = installationKeySequence;
-      this.preConfigurationUri = preConfigurationUri;
+   public IsoSpec(String sourcePath, String installationKeySequence) {
+      this.sourcePath = checkNotNull(sourcePath, "sourcePath");
+      this.installationKeySequence = checkNotNull(installationKeySequence, "installationKeySequence");
    }
 
    public static Builder builder() {
@@ -60,11 +56,6 @@ public class IsoSpec {
          return this;
       }
 
-      public Builder preConfiguration(Supplier<URI> preConfigurationUri) {
-         this.preConfigurationUri = preConfigurationUri;
-         return this;
-      }
-
       public Builder sourcePath(String sourcePath) {
          this.sourcePath = sourcePath;
          return this;
@@ -72,16 +63,12 @@ public class IsoSpec {
 
 
       public IsoSpec build() {
-         return new IsoSpec(sourcePath, installationSequence, preConfigurationUri);
+         return new IsoSpec(sourcePath, installationSequence);
       }
    }
 
    public String getInstallationKeySequence() {
       return installationKeySequence;
-   }
-
-   public Supplier<URI> getPreConfigurationUri() {
-      return preConfigurationUri;
    }
 
    public String getSourcePath() {
@@ -94,15 +81,14 @@ public class IsoSpec {
       if (o instanceof VmSpec) {
          IsoSpec other = (IsoSpec) o;
          return Objects.equal(sourcePath, other.sourcePath) &&
-                 Objects.equal(installationKeySequence, other.installationKeySequence) &&
-                 Objects.equal(preConfigurationUri, other.preConfigurationUri);
+                 Objects.equal(installationKeySequence, other.installationKeySequence);
       }
       return false;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(sourcePath, installationKeySequence, preConfigurationUri);
+      return Objects.hashCode(sourcePath, installationKeySequence);
    }
 
    @Override
@@ -110,7 +96,6 @@ public class IsoSpec {
       return "IsoSpec{" +
               "sourcePath='" + sourcePath + '\'' +
               "installationKeySequence='" + installationKeySequence + '\'' +
-              ", preConfigurationUri=" + preConfigurationUri +
               '}';
    }
 }

@@ -49,7 +49,7 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
    private static final boolean IS_LINKED_CLONE = true;
 
    private VmSpec clonedVmSpec;
-   private IMachineSpec sourceMachineSpec;
+   private MasterSpec sourceMachineSpec;
 
    private CleanupMode mode = CleanupMode.Full;
 
@@ -87,12 +87,10 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
             .sourcePath(operatingSystemIso)
             .installationScript(
                   configProperties.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE)
-                        .replace("HOSTNAME", sourceVmSpec.getVmName()))
-            .preConfiguration(preconfigurationUri).build();
+                        .replace("HOSTNAME", sourceVmSpec.getVmName())).build();
 
       NetworkSpec networkSpec = NetworkSpec.builder().build();
-      sourceMachineSpec = IMachineSpec.builder().iso(isoSpec).vm(sourceVmSpec)
-            .network(networkSpec).build();
+      sourceMachineSpec = MasterSpec.builder().iso(isoSpec).vm(sourceVmSpec).network(networkSpec).build();
 
       clonedVmSpec = VmSpec.builder().id(cloneName).name(cloneName)
             .memoryMB(512).cleanUpMode(mode).forceOverwrite(true).build();
