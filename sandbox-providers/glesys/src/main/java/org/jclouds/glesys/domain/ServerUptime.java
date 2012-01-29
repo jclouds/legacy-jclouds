@@ -18,15 +18,7 @@
  */
 package org.jclouds.glesys.domain;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
-import com.google.gson.annotations.SerializedName;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Represents an 'uptime' duration of server in a Glesys cloud

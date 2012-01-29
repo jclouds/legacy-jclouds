@@ -19,29 +19,16 @@
 package org.jclouds.glesys.features;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.jclouds.glesys.GleSYSAsyncClient;
 import org.jclouds.glesys.GleSYSClient;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
-import org.jclouds.util.Strings2;
-
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Maps;
 
 /**
  * @author Adrian Cole

@@ -18,8 +18,16 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
+import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+
+import java.net.URI;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Set;
+
 import org.jclouds.glesys.GleSYSClient;
 import org.jclouds.glesys.domain.Email;
 import org.jclouds.glesys.domain.EmailOverview;
@@ -27,21 +35,13 @@ import org.jclouds.glesys.domain.EmailOverviewDomain;
 import org.jclouds.glesys.domain.EmailOverviewSummary;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.BaseRestClientExpectTest;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Set;
-
-import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests annotation parsing of {@code EmailClient}

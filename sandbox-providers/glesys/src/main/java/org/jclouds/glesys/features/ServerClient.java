@@ -20,10 +20,7 @@ package org.jclouds.glesys.features;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
-
-import javax.ws.rs.FormParam;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.glesys.domain.Server;

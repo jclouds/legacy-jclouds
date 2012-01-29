@@ -21,7 +21,6 @@ package org.jclouds.glesys.functions.internal;
 import java.io.IOException;
 
 import org.jclouds.glesys.domain.ServerState;
-import org.jclouds.glesys.domain.ServerUptime;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;

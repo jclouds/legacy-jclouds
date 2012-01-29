@@ -24,7 +24,6 @@ import java.util.Map;
 import javax.inject.Singleton;
 
 import org.jclouds.glesys.domain.ServerState;
-import org.jclouds.glesys.domain.ServerUptime;
 import org.jclouds.glesys.functions.internal.GleSYSTypeAdapters;
 import org.jclouds.glesys.functions.internal.GlesysDateAdapter;
 import org.jclouds.json.config.GsonModule.DateAdapter;
