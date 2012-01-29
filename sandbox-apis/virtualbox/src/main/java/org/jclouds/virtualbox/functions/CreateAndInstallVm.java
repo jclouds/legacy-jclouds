@@ -106,18 +106,11 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
    }
    
    private void configureOsInstallationWithKeyboardSequence(String vmName, String installationKeySequence) {
-
       Iterable<List<Integer>> scancodelist = 
             transform(Splitter.on(" ").split(installationKeySequence), new StringToKeyCode());
 
       for (List<Integer> scancodes : scancodelist) {
          machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new SendScancode(scancodes));
-         // this is needed to avoid to miss any scancode
-         try {
-            Thread.sleep(300);
-         } catch (InterruptedException e) {
-            logger.error("Problem in sleeping the current thread.", e);
-         }
       }
    }
 

@@ -20,22 +20,58 @@ package org.jclouds.virtualbox.functions;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+import javax.inject.Named;
+
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.logging.Logger;
+import org.jclouds.virtualbox.settings.KeyboardScancodes;
 import org.virtualbox_4_1.ISession;
 
+import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Function;
+import com.google.common.collect.Sets;
 
 class SendScancode implements Function<ISession, Void> {
+   
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
 
-	private final List<Integer> scancodes;
+
+   private static final int MAX_KEYCODES_ACCEPTED = 30;
+   private final List<Integer> scancodes;
 
    public SendScancode(List<Integer> scancodes) {
       this.scancodes = scancodes;
    }
-   
+
    @Override
    public Void apply(ISession iSession) {
-      for (Integer scancode : scancodes) {
-         iSession.getConsole().getKeyboard().putScancode(scancode);
+      int i = 0, j = 0, length = scancodes.size();
+      if (length > MAX_KEYCODES_ACCEPTED) {
+         while (i <= length) {
+            j = (i + 30 > length) ? length : i + MAX_KEYCODES_ACCEPTED;
+            List<Integer> sublist = Lists.newArrayList(scancodes).subList(i, j);
+            long codeStores = iSession.getConsole().getKeyboard().putScancodes(sublist);
+            logger.debug("List of scancodes sent: ", sublist);
+            assert(codeStores==sublist.size());
+            i = i + MAX_KEYCODES_ACCEPTED;
+            try {
+               Thread.sleep(50);
+            } catch (InterruptedException e) {
+               logger.debug("There was a problem in sleeping this thread", e);
+            }
+         }
+      } else {
+         iSession.getConsole().getKeyboard().putScancodes(scancodes);
+         if(Sets.difference(Sets.newHashSet(scancodes), Sets.newHashSet(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP_LIST.values())) != null) {
+            try {
+               Thread.sleep(200);
+            } catch (InterruptedException e) {
+               logger.debug("There was a problem in sleeping this thread", e);
+            }
+         }
       }
       return null;
    }
