@@ -19,6 +19,7 @@
 package org.jclouds.virtualbox.predicates;
 
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
+import static org.jclouds.virtualbox.predicates.IMachinePredicates.isLinkedClone;
 import static org.testng.Assert.assertTrue;
 
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
@@ -46,10 +47,9 @@ import com.google.inject.Injector;
  * 
  * @author Andrea Turli
  */
-@Test(groups = "live", singleThreaded = true, testName = "IsLinkedClonesLiveTest")
-public class IsLinkedClonesLiveTest extends BaseVirtualBoxClientLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "IMachinePredicatesLiveTest")
+public class IMachinePredicatesLiveTest extends BaseVirtualBoxClientLiveTest {
 
-   private static final boolean IS_LINKED_CLONE = true;
    private String osTypeId = "";
    private String ideControllerName = "IDE Controller";
    private String cloneName;
@@ -62,11 +62,10 @@ public class IsLinkedClonesLiveTest extends BaseVirtualBoxClientLiveTest {
    @BeforeClass(groups = "live")
    public void setupClient() {
       super.setupClient();
-      vmName = VIRTUALBOX_IMAGE_PREFIX 
-            + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
+      vmName = VIRTUALBOX_IMAGE_PREFIX + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
 
-      cloneName = VIRTUALBOX_IMAGE_PREFIX 
-            + "Clone#" + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
+      cloneName = VIRTUALBOX_IMAGE_PREFIX + "Clone#"
+            + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
 
       HardDisk hardDisk = HardDisk.builder().diskpath(adminDisk).autoDelete(true).controllerPort(0).deviceSlot(1)
                .build();
@@ -89,24 +88,24 @@ public class IsLinkedClonesLiveTest extends BaseVirtualBoxClientLiveTest {
    public void testLinkedClone() {
 
       Injector injector = context.utils().injector();
-      IMachine master = injector.getInstance(CreateAndRegisterMachineFromIsoIfNotAlreadyExists.class)
-               .apply(masterMachineSpec);
-      IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, cloneSpec,
-               IS_LINKED_CLONE).apply(master);
+      IMachine master = injector.getInstance(CreateAndRegisterMachineFromIsoIfNotAlreadyExists.class).apply(
+            masterMachineSpec);
+      IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, cloneSpec, true)
+            .apply(master);
 
-      assertTrue(new IsLinkedClone(manager).apply(clone));
+      assertTrue(isLinkedClone().apply(clone));
    }
 
    /*
-   public void testFullClone() {
-      IMachine master = context.utils().injector().getInstance(CreateAndRegisterMachineFromIsoIfNotAlreadyExists.class)
-               .apply(masterSpec);
-      IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, cloneSpec,
-               !IS_LINKED_CLONE).apply(master);
-
-      assertFalse(new IsLinkedClone(manager).apply(clone));
-   }
-   */
+    * public void testFullClone() { IMachine master =
+    * context.utils().injector().
+    * getInstance(CreateAndRegisterMachineFromIsoIfNotAlreadyExists.class)
+    * .apply(masterSpec); IMachine clone = new
+    * CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir,
+    * cloneSpec, !IS_LINKED_CLONE).apply(master);
+    * 
+    * assertFalse(new IsLinkedClone(manager).apply(clone)); }
+    */
 
    @BeforeMethod
    @AfterMethod
