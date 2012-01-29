@@ -27,7 +27,7 @@ import java.util.Set;
 import org.jclouds.openstack.domain.Link;
 import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.domain.Address.Type;
-import org.jclouds.openstack.nova.v1_1.util.NovaUtils;
+import org.jclouds.util.Multimaps2;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -141,7 +141,7 @@ public class Server extends Resource {
 
    protected Server(String id, String name, Set<Link> links, Multimap<Address.Type, Address> addresses) {
       super(id, name, links);
-      this.addresses = NovaUtils.toOldSchool(ImmutableMultimap.copyOf(checkNotNull(addresses, "addresses")));
+      this.addresses = Multimaps2.toOldSchool(ImmutableMultimap.copyOf(checkNotNull(addresses, "addresses")));
    }
 
    /**
@@ -162,7 +162,7 @@ public class Server extends Resource {
     * @return the ip addresses assigned to the server
     */
    public Multimap<Type, Address> getAddresses() {
-      return NovaUtils.fromOldSchool(addresses);
+      return Multimaps2.fromOldSchool(addresses);
    }
 
    @Override

@@ -54,7 +54,7 @@ public class NodeAsyncClientTest extends BaseCloudLoadBalancersAsyncClientTest<N
       HttpRequest httpRequest = processor.createRequest(method, 2);
 
       assertRequestLineEquals(httpRequest,
-               "GET https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/1234/loadbalancers/2/nodes HTTP/1.1");
+               "GET https://lon.loadbalancers.api.rackspacecloud.com/v1.0/10001786/loadbalancers/2/nodes HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -71,7 +71,7 @@ public class NodeAsyncClientTest extends BaseCloudLoadBalancersAsyncClientTest<N
       HttpRequest httpRequest = processor.createRequest(method, 3, 2);
 
       assertRequestLineEquals(httpRequest,
-               "GET https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/1234/loadbalancers/2/nodes/3 HTTP/1.1");
+               "GET https://lon.loadbalancers.api.rackspacecloud.com/v1.0/10001786/loadbalancers/2/nodes/3 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -89,7 +89,7 @@ public class NodeAsyncClientTest extends BaseCloudLoadBalancersAsyncClientTest<N
     		  address("192.168.1.1").port(8080).build()), 3);
 
       assertRequestLineEquals(httpRequest,
-               "POST https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/1234/loadbalancers/3/nodes HTTP/1.1");
+               "POST https://lon.loadbalancers.api.rackspacecloud.com/v1.0/10001786/loadbalancers/3/nodes HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(
                httpRequest,
@@ -110,7 +110,7 @@ public class NodeAsyncClientTest extends BaseCloudLoadBalancersAsyncClientTest<N
       HttpRequest httpRequest = processor.createRequest(method, Builder.condition(Condition.DISABLED).weight(13), 8, 7);
 
       assertRequestLineEquals(httpRequest,
-               "PUT https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/1234/loadbalancers/7/nodes/8 HTTP/1.1");
+               "PUT https://lon.loadbalancers.api.rackspacecloud.com/v1.0/10001786/loadbalancers/7/nodes/8 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, "{\"node\":{\"condition\":\"DISABLED\",\"weight\":13}}", "application/json", false);
 
@@ -127,7 +127,7 @@ public class NodeAsyncClientTest extends BaseCloudLoadBalancersAsyncClientTest<N
       HttpRequest httpRequest = processor.createRequest(method, 9, 4);
 
       assertRequestLineEquals(httpRequest,
-               "DELETE https://dfw.loadbalancers.api.rackspacecloud.com/v1.0/1234/loadbalancers/4/nodes/9 HTTP/1.1");
+               "DELETE https://lon.loadbalancers.api.rackspacecloud.com/v1.0/10001786/loadbalancers/4/nodes/9 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: */*\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

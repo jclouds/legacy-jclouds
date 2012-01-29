@@ -16,25 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudservers;
+package org.jclouds.openstack.keystone.v1_1;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.concurrent.TimeUnit;
 
-import javax.inject.Qualifier;
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.openstack.keystone.v1_1.domain.Auth;
 
 /**
- * Represents a component related to Rackspace Cloud Servers.
+ * Provides synchronous access to the KeyStone Service API.
+ * <p/>
  * 
- * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
+ * @see ServiceAsyncClient
+ * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Client_Operations.html"
+ *      />
  * @author Adrian Cole
- * 
  */
-@Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
-@Qualifier
-public @interface ServerManagement {
+@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
+public interface ServiceClient {
 
+   /**
+    * Authenticate to generate a token.
+    * 
+    * @return access with token
+    */
+   Auth authenticate(String username, String key);
 }

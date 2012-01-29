@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.util;
+package org.jclouds.util;
 
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +31,7 @@ import com.google.common.collect.ImmutableMultimap.Builder;
  * 
  * @author Adrian Cole
  */
-public class NovaUtils {
+public class Multimaps2 {
 
    /**
     * The traditional way to represent a graph in Java is Map<V, Set<V>>, which is awkward in a

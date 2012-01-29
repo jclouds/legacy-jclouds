@@ -35,6 +35,7 @@ import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 
@@ -73,7 +74,8 @@ public class BindAuthToJsonPayload extends BindToJsonPayload implements MapBinde
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
 
       Builder<String, Object> builder = ImmutableMap.<String, Object> builder();
-      builder.put("tenantId", postParams.get("tenantId"));
+      if (Strings.emptyToNull(postParams.get("tenantId")) != null)
+         builder.put("tenantId", postParams.get("tenantId"));
       addCredentialsInArgsOrNull(gRequest, builder);
       return super.bindToRequest(request, builder.build());
    }

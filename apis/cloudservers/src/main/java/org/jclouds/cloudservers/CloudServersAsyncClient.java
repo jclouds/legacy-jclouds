@@ -47,6 +47,7 @@ import org.jclouds.cloudservers.options.RebuildServerOptions;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.openstack.filters.AddTimestampQuery;
 import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.openstack.services.Compute;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -77,7 +78,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @SkipEncoding({ '/', '=' })
 @RequestFilters({ AuthenticateRequest.class, AddTimestampQuery.class })
-@Endpoint(ServerManagement.class)
+@Endpoint(Compute.class)
 public interface CloudServersAsyncClient {
 
    /**

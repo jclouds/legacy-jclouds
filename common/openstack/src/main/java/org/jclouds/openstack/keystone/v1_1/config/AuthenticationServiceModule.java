@@ -16,14 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.config;
+package org.jclouds.openstack.keystone.v1_1.config;
 
-import static com.google.common.base.Suppliers.memoizeWithExpiration;
 import static com.google.common.base.Throwables.propagate;
 
-import java.util.Date;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -33,17 +30,17 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
-import org.jclouds.date.TimeStamp;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.location.Provider;
 import org.jclouds.openstack.Authentication;
-import org.jclouds.openstack.OpenStackAuthAsyncClient;
-import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
+import org.jclouds.openstack.keystone.v1_1.ServiceAsyncClient;
+import org.jclouds.openstack.keystone.v1_1.domain.Auth;
 import org.jclouds.rest.AsyncClientFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -52,17 +49,16 @@ import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
- * Configures the Rackspace authentication service connection, including logging and http transport.
  * 
  * @author Adrian Cole
  */
 @RequiresHttp
-public class OpenStackAuthenticationModule extends AbstractModule {
+public class AuthenticationServiceModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(new TypeLiteral<Function<Credentials, AuthenticationResponse>>() {
-      }).to(GetAuthenticationResponse.class);
+      bind(new TypeLiteral<Function<Credentials, Auth>>() {
+      }).to(GetAuth.class);
    }
 
    /**
@@ -71,13 +67,19 @@ public class OpenStackAuthenticationModule extends AbstractModule {
    @Provides
    @Singleton
    @Authentication
-   protected Supplier<String> provideAuthenticationTokenCache(final Supplier<AuthenticationResponse> supplier)
+   protected Supplier<String> provideAuthenticationTokenCache(final Supplier<Auth> supplier)
             throws InterruptedException, ExecutionException, TimeoutException {
       return new Supplier<String>() {
          public String get() {
-            return supplier.get().getAuthToken();
+            return supplier.get().getToken().getId();
          }
       };
+   }
+
+   @Provides
+   @Singleton
+   protected ServiceAsyncClient provideServiceClient(AsyncClientFactory factory) {
+      return factory.create(ServiceAsyncClient.class);
    }
 
    @Provides
@@ -88,23 +90,20 @@ public class OpenStackAuthenticationModule extends AbstractModule {
    }
 
    @Singleton
-   public static class GetAuthenticationResponse extends
-            RetryOnTimeOutExceptionFunction<Credentials, AuthenticationResponse> {
-
+   public static class GetAuth extends RetryOnTimeOutExceptionFunction<Credentials, Auth> {
+      
       // passing factory here to avoid a circular dependency on
       // OpenStackAuthAsyncClient resolving OpenStackAuthAsyncClient
       @Inject
-      public GetAuthenticationResponse(final AsyncClientFactory factory) {
-         super(new Function<Credentials, AuthenticationResponse>() {
+      public GetAuth(final AsyncClientFactory factory) {
+         super(new Function<Credentials, Auth>() {
 
             @Override
-            public AuthenticationResponse apply(Credentials input) {
+            public Auth apply(Credentials input) {
                try {
-                  Future<AuthenticationResponse> response = factory.create(OpenStackAuthAsyncClient.class)
-                           .authenticate(input.identity, input.credential);
-                  return response.get(30, TimeUnit.SECONDS);
+                  return factory.create(ServiceAsyncClient.class).authenticate(input.identity, input.credential).get();
                } catch (Exception e) {
-                  throw propagate(e);
+                  throw Throwables.propagate(e);
                }
             }
 
@@ -119,19 +118,17 @@ public class OpenStackAuthenticationModule extends AbstractModule {
 
    @Provides
    @Singleton
-   public LoadingCache<Credentials, AuthenticationResponse> provideAuthenticationResponseCache2(
-            Function<Credentials, AuthenticationResponse> getAuthenticationResponse) {
-      return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS).build(
-               CacheLoader.from(getAuthenticationResponse));
+   public LoadingCache<Credentials, Auth> provideAuthCache2(Function<Credentials, Auth> getAuth) {
+      return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS).build(CacheLoader.from(getAuth));
    }
 
    @Provides
    @Singleton
-   protected Supplier<AuthenticationResponse> provideAuthenticationResponseSupplier(
-            final LoadingCache<Credentials, AuthenticationResponse> cache, @Provider final Credentials creds) {
-      return new Supplier<AuthenticationResponse>() {
+   protected Supplier<Auth> provideAuthSupplier(final LoadingCache<Credentials, Auth> cache,
+            @Provider final Credentials creds) {
+      return new Supplier<Auth>() {
          @Override
-         public AuthenticationResponse get() {
+         public Auth get() {
             try {
                return cache.get(creds);
             } catch (ExecutionException e) {
@@ -143,19 +140,7 @@ public class OpenStackAuthenticationModule extends AbstractModule {
 
    @Provides
    @Singleton
-   @TimeStamp
-   protected Supplier<Date> provideCacheBusterDate() {
-      return memoizeWithExpiration(new Supplier<Date>() {
-         public Date get() {
-            return new Date();
-         }
-      }, 1, TimeUnit.SECONDS);
-   }
-
-   @Provides
-   @Singleton
-   protected AuthenticationResponse provideAuthenticationResponse(Supplier<AuthenticationResponse> supplier)
-            throws InterruptedException, ExecutionException, TimeoutException {
+   protected Auth provideAuth(Supplier<Auth> supplier) {
       return supplier.get();
    }
 

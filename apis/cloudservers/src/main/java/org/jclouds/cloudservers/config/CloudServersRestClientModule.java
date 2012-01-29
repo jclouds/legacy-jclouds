@@ -18,14 +18,18 @@
  */
 package org.jclouds.cloudservers.config;
 
+import static com.google.common.base.Suppliers.memoizeWithExpiration;
+
 import java.net.URI;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
 import org.jclouds.cloudservers.CloudServersAsyncClient;
 import org.jclouds.cloudservers.CloudServersClient;
-import org.jclouds.cloudservers.ServerManagement;
 import org.jclouds.cloudservers.handlers.ParseCloudServersErrorFromHttpResponse;
+import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
@@ -34,13 +38,15 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
-import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
-import org.jclouds.openstack.config.OpenStackAuthenticationModule;
-import org.jclouds.openstack.handlers.RetryOnRenew;
-import org.jclouds.openstack.reference.AuthHeaders;
+import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule;
+import org.jclouds.openstack.keystone.v1_1.domain.Auth;
+import org.jclouds.openstack.keystone.v1_1.handlers.RetryOnRenew;
+import org.jclouds.openstack.services.Compute;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
+import com.google.common.base.Supplier;
+import com.google.common.collect.Iterables;
 import com.google.inject.Provides;
 
 /**
@@ -51,15 +57,15 @@ import com.google.inject.Provides;
 @RequiresHttp
 public class CloudServersRestClientModule extends RestClientModule<CloudServersClient, CloudServersAsyncClient> {
 
-   private final OpenStackAuthenticationModule module;
+   private final AuthenticationServiceModule module;
 
-   public CloudServersRestClientModule(OpenStackAuthenticationModule module) {
+   public CloudServersRestClientModule(AuthenticationServiceModule module) {
       super(CloudServersClient.class, CloudServersAsyncClient.class);
       this.module = module;
    }
 
    public CloudServersRestClientModule() {
-      this(new OpenStackAuthenticationModule());
+      this(new AuthenticationServiceModule());
    }
 
    @Override
@@ -83,9 +89,20 @@ public class CloudServersRestClientModule extends RestClientModule<CloudServersC
 
    @Provides
    @Singleton
-   @ServerManagement
-   protected URI provideServerUrl(AuthenticationResponse response) {
-      return response.getServices().get(AuthHeaders.SERVER_MANAGEMENT_URL);
+   @Compute
+   protected URI provideServerUrl(Auth response) {
+      return Iterables.get(response.getServiceCatalog().get("cloudServers"), 0).getPublicURL();
    }
 
+   //TODO: see if we still need this.
+   @Provides
+   @Singleton
+   @TimeStamp
+   protected Supplier<Date> provideCacheBusterDate() {
+      return memoizeWithExpiration(new Supplier<Date>() {
+         public Date get() {
+            return new Date();
+         }
+      }, 1, TimeUnit.SECONDS);
+   }
 }

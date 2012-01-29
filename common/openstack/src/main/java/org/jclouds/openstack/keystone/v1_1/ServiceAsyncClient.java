@@ -16,17 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.keystone.v2_0;
+package org.jclouds.openstack.keystone.v1_1;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.openstack.keystone.v2_0.binders.BindAuthToJsonPayload;
-import org.jclouds.openstack.keystone.v2_0.domain.Access;
-import org.jclouds.openstack.keystone.v2_0.domain.ApiAccessKeyCredentials;
-import org.jclouds.openstack.keystone.v2_0.domain.PasswordCredentials;
+import org.jclouds.openstack.keystone.v1_1.binders.BindCredentialsToJsonPayload;
+import org.jclouds.openstack.keystone.v1_1.domain.Auth;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.SelectJson;
@@ -38,32 +36,22 @@ import com.google.common.util.concurrent.ListenableFuture;
  * <p/>
  * 
  * @see ServiceClient
- * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Client_Operations.html"
+ * @see <a href=
+ *      "http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Client_Operations.html"
  *      />
  * @author Adrian Cole
  */
-@Path("/v2.0")
+@Path("/v1.1")
 public interface ServiceAsyncClient {
 
    /**
-    * @see ServiceClient#authenticateTenantWithCredentials(String,PasswordCredentials)
+    * @see ServiceClient#authenticate
     */
    @POST
-   @SelectJson("access")
+   @SelectJson("auth")
    @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/tokens")
-   @MapBinder(BindAuthToJsonPayload.class)
-   ListenableFuture<Access> authenticateTenantWithCredentials(@PayloadParam("tenantId") String tenantId,
-            PasswordCredentials passwordCredentials);
+   @Path("/auth")
+   @MapBinder(BindCredentialsToJsonPayload.class)
+   ListenableFuture<Auth> authenticate(@PayloadParam("username") String username, @PayloadParam("key") String key);
 
-   /**
-    * @see ServiceClient#authenticateTenantWithCredentials(String,ApiAccessKeyCredentials)
-    */
-   @POST
-   @SelectJson("access")
-   @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/tokens")
-   @MapBinder(BindAuthToJsonPayload.class)
-   ListenableFuture<Access> authenticateTenantWithCredentials(@PayloadParam("tenantId") String tenantId,
-            ApiAccessKeyCredentials apiAccessKeyCredentials);
 }

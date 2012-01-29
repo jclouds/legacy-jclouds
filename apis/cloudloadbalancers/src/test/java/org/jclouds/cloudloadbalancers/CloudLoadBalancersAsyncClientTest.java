@@ -42,11 +42,11 @@ public class CloudLoadBalancersAsyncClientTest extends BaseCloudLoadBalancersAsy
    private CloudLoadBalancersClient syncClient;
 
    public void testSync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {
-      assert syncClient.getLoadBalancerClient("DFW") != null;
+      assert syncClient.getLoadBalancerClient("LON") != null;
    }
 
    public void testAsync() throws SecurityException, NoSuchMethodException, InterruptedException, ExecutionException {  
-      assert asyncClient.getLoadBalancerClient("DFW") != null;
+      assert asyncClient.getLoadBalancerClient("LON") != null;
    }
 
    @Override

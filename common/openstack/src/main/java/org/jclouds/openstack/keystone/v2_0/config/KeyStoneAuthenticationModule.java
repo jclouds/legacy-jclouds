@@ -95,8 +95,10 @@ public class KeyStoneAuthenticationModule extends AbstractModule {
    @Singleton
    public static class GetAccess extends RetryOnTimeOutExceptionFunction<Credentials, Access> {
 
+      // passing factory here to avoid a circular dependency on
+      // OpenStackAuthAsyncClient resolving ServiceAsyncClient
       @Inject
-      public GetAccess(final ServiceAsyncClient client) {
+      public GetAccess(final AsyncClientFactory factory) {
          super(new Function<Credentials, Access>() {
 
             @Override
@@ -108,7 +110,8 @@ public class KeyStoneAuthenticationModule extends AbstractModule {
                PasswordCredentials passwordCredentials = PasswordCredentials.createWithUsernameAndPassword(username,
                         input.credential);
                try {
-                  return client.authenticateTenantWithCredentials(tenantId, passwordCredentials).get();
+                  return factory.create(ServiceAsyncClient.class)
+                        .authenticateTenantWithCredentials(tenantId, passwordCredentials).get();
                } catch (Exception e) {
                   throw Throwables.propagate(e);
                }

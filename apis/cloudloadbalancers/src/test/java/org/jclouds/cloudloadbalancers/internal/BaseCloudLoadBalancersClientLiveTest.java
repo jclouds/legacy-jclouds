@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudloadbalancers.features;
+package org.jclouds.cloudloadbalancers.internal;
 
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;

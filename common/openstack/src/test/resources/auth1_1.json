@@ -1,0 +1,25 @@
+{
+    "auth": {
+        "token": {
+            "id": "118fb907-0786-4799-88f0-9a5b7963d1ab",
+            "expires": "2012-01-30T02:30:54.000-06:00"
+        },
+        "serviceCatalog": {
+            "cloudFilesCDN": [{
+                "region": "LON",
+                "publicURL": "https:\/\/cdn3.clouddrive.com\/v1\/MossoCloudFS_83a9d536-2e25-4166-bd3b-a503a934f953",
+                "v1Default": true
+            }],
+            "cloudFiles": [{
+                "region": "LON",
+                "publicURL": "https:\/\/storage101.lon3.clouddrive.com\/v1\/MossoCloudFS_83a9d536-2e25-4166-bd3b-a503a934f953",
+                "v1Default": true,
+                "internalURL": "https:\/\/snet-storage101.lon3.clouddrive.com\/v1\/MossoCloudFS_83a9d536-2e25-4166-bd3b-a503a934f953"
+            }],
+            "cloudServers": [{
+                "publicURL": "https:\/\/lon.servers.api.rackspacecloud.com\/v1.0\/10001786",
+                "v1Default": true
+            }]
+        }
+    }
+}
