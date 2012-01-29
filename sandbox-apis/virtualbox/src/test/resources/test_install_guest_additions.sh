@@ -22,9 +22,8 @@ function installGuestAdditions {
    return 0
 }
 export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
-cd /tmp
-wget http://download.virtualbox.org/virtualbox/4.1.6/VBoxGuestAdditions_4.1.6.iso
-mount -o loop VBoxGuestAdditions_4.1.6.iso /mnt
+(mkdir -p /tmp && cd /tmp && [ ! -f VBoxGuestAdditions_4.1.6.iso ] && curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -C - -X GET  http://download.virtualbox.org/virtualbox/4.1.6/VBoxGuestAdditions_4.1.6.iso >VBoxGuestAdditions_4.1.6.iso)
+mount -o loop /tmp/VBoxGuestAdditions_4.1.6.iso /mnt
 installGuestAdditions || exit 1
 sh /mnt/VBoxLinuxAdditions.run
 umount /mnt

@@ -23,11 +23,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.scriptbuilder.domain.Statements.call;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
+import java.net.URI;
 import java.util.Collections;
 
 import org.jclouds.scriptbuilder.ScriptBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.scriptbuilder.domain.SaveHttpResponseTo;
 import org.jclouds.scriptbuilder.domain.Statement;
+
+import com.google.common.collect.ImmutableMultimap;
 
 public class InstallGuestAdditions implements Statement {
 	
@@ -56,9 +60,11 @@ public class InstallGuestAdditions implements Statement {
       
       String vboxGuestAdditionsIso = "VBoxGuestAdditions_" + vboxVersion + ".iso";
       ScriptBuilder scriptBuilder = new ScriptBuilder()
-      .addStatement(exec("{cd} {fs}tmp"))
-      .addStatement(exec("wget http://download.virtualbox.org/virtualbox/" + vboxVersion + "/" + vboxGuestAdditionsIso))
-      .addStatement(exec(String.format("mount -o loop %s %s", vboxGuestAdditionsIso, mountPoint)))
+            .addStatement(
+                  new SaveHttpResponseTo("{tmp}", vboxGuestAdditionsIso, "GET", URI
+                        .create("http://download.virtualbox.org/virtualbox/" + vboxVersion + "/"
+                              + vboxGuestAdditionsIso), ImmutableMultimap.<String, String> of()))
+      .addStatement(exec(String.format("mount -o loop {tmp}{fs}%s %s", vboxGuestAdditionsIso, mountPoint)))
       .addStatement(call("installGuestAdditions"))
       .addStatement(exec(String.format("sh %s%s", mountPoint, "/VBoxLinuxAdditions.run")))
       .addStatement(exec(String.format("umount %s", mountPoint)));
