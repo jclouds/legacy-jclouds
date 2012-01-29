@@ -22,10 +22,10 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.glesys.domain.Email;
+import org.jclouds.glesys.domain.EmailAccount;
 import org.jclouds.glesys.domain.EmailOverview;
-import org.jclouds.glesys.options.EmailCreateOptions;
-import org.jclouds.glesys.options.EmailEditOptions;
+import org.jclouds.glesys.options.CreateAccountOptions;
+import org.jclouds.glesys.options.EditAccountOptions;
 
 /**
  * Provides synchronous access to E-Mail requests.
@@ -50,7 +50,7 @@ public interface EmailClient {
     *
     * @return the relevant set of details
     */
-   Set<Email> listAccounts(String domain);
+   Set<EmailAccount> listAccounts(String domain);
 
    /**
     * Create a new e-mail account
@@ -60,7 +60,7 @@ public interface EmailClient {
     * @param options        optional parameters
     * @see DomainClient#addDomain
     */
-   void createAccount(String accountAddress, String password, EmailCreateOptions... options);
+   void createAccount(String accountAddress, String password, CreateAccountOptions... options);
 
    /**
     * Create an e-mail alias for an e-mail account
@@ -77,7 +77,7 @@ public interface EmailClient {
     * @param accountAddress the existing e-mail account address
     * @param options        optional parameters
     */
-   void editAccount(String accountAddress, EmailEditOptions... options);
+   void editAccount(String accountAddress, EditAccountOptions... options);
 
    /**
     * Adjust (re-target) an e-mail alias

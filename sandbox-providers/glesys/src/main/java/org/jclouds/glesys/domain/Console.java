@@ -26,7 +26,7 @@ import com.google.common.base.Objects;
  * @author Adam Lowe
  * @see <a href="https://customer.glesys.com/api.php?a=doc#server_console" />
  */
-public class ServerConsole {
+public class Console {
    public static Builder builder() {
       return new Builder();
    }
@@ -57,11 +57,11 @@ public class ServerConsole {
          return this;
       }
 
-      public ServerConsole build() {
-         return new ServerConsole(host, port, protocol, password);
+      public Console build() {
+         return new Console(host, port, protocol, password);
       }
       
-      public Builder fromServerConsole(ServerConsole in) {
+      public Builder fromConsole(Console in) {
          return host(in.getHost()).port(in.getPort()).password(in.getPassword()).protocol(in.getProtocol());
       }
 
@@ -72,7 +72,7 @@ public class ServerConsole {
    private final String protocol;
    private final String password;
 
-   public ServerConsole(String host, int port, String protocol, String password) {
+   public Console(String host, int port, String protocol, String password) {
       this.host = host;
       this.port = port;
       this.protocol = protocol;
@@ -112,8 +112,8 @@ public class ServerConsole {
       if (this == object) {
          return true;
       }
-      if (object instanceof ServerConsole) {
-         final ServerConsole other = (ServerConsole) object;
+      if (object instanceof Console) {
+         final Console other = (Console) object;
          return Objects.equal(host, other.host)
                && Objects.equal(port, other.port)
                && Objects.equal(protocol, other.protocol);

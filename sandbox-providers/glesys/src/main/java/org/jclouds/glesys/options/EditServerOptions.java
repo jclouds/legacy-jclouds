@@ -24,90 +24,90 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * 
  * @author Adam Lowe
  */
-public class ServerEditOptions extends BaseHttpRequestOptions {
+public class EditServerOptions extends BaseHttpRequestOptions {
 
    public static class Builder {
       /**
-       * @see org.jclouds.glesys.options.ServerEditOptions#disksize
+       * @see org.jclouds.glesys.options.EditServerOptions#disksize
        */
-      public static ServerEditOptions disksize(int disksize) {
-         ServerEditOptions options = new ServerEditOptions();
+      public static EditServerOptions disksize(int disksize) {
+         EditServerOptions options = new EditServerOptions();
          return options.disksize(disksize);
       }
       
       /**
-       * @see org.jclouds.glesys.options.ServerEditOptions#memorysize
+       * @see org.jclouds.glesys.options.EditServerOptions#memorysize
        */
-      public static ServerEditOptions memorysize(int memorysize) {
-         ServerEditOptions options = new ServerEditOptions();
+      public static EditServerOptions memorysize(int memorysize) {
+         EditServerOptions options = new EditServerOptions();
          return options.memorysize(memorysize);
       }
 
       /**
-       * @see org.jclouds.glesys.options.ServerEditOptions#cpucores
+       * @see org.jclouds.glesys.options.EditServerOptions#cpucores
        */
-      public static ServerEditOptions cpucores(int cpucores) {
-         ServerEditOptions options = new ServerEditOptions();
+      public static EditServerOptions cpucores(int cpucores) {
+         EditServerOptions options = new EditServerOptions();
          return options.cpucores(cpucores);
       }
 
       /**
-       * @see org.jclouds.glesys.options.ServerEditOptions#cpucores
+       * @see org.jclouds.glesys.options.EditServerOptions#cpucores
        */
-      public static ServerEditOptions transfer(int transfer) {
-         ServerEditOptions options = new ServerEditOptions();
+      public static EditServerOptions transfer(int transfer) {
+         EditServerOptions options = new EditServerOptions();
          return options.transfer(transfer);
       }
       
       /**
-       * @see org.jclouds.glesys.options.ServerEditOptions#hostname
+       * @see org.jclouds.glesys.options.EditServerOptions#hostname
        */
-      public static ServerEditOptions hostname(String hostname) {
-         ServerEditOptions options = new ServerEditOptions();
+      public static EditServerOptions hostname(String hostname) {
+         EditServerOptions options = new EditServerOptions();
          return options.hostname(hostname);
       }
 
       /**
-       * @see org.jclouds.glesys.options.ServerEditOptions#description
+       * @see org.jclouds.glesys.options.EditServerOptions#description
        */
-      public static ServerEditOptions description(String description) {
-         ServerEditOptions options = new ServerEditOptions();
+      public static EditServerOptions description(String description) {
+         EditServerOptions options = new EditServerOptions();
          return options.description(description);
       }
    }
 
    /** Configure the size of the disk, in GB, of the server */
-   public ServerEditOptions disksize(int disksize) {
+   public EditServerOptions disksize(int disksize) {
       formParameters.put("disksize", Integer.toString(disksize));
       return this;
    }
 
    /** Configure the amount of RAM, in MB, allocated to the server */
-   public ServerEditOptions memorysize(int memorysize) {
+   public EditServerOptions memorysize(int memorysize) {
       formParameters.put("memorysize", Integer.toString(memorysize));
       return this;
    }
 
    /** Configure the number of CPU cores allocated to the server */
-   public ServerEditOptions cpucores(int cpucores) {
+   public EditServerOptions cpucores(int cpucores) {
       formParameters.put("cpucores", Integer.toString(cpucores));
       return this;
    }
 
    /** Configure the transfer setting for the server */
-   public ServerEditOptions transfer(int transfer) {
+   public EditServerOptions transfer(int transfer) {
       formParameters.put("cpucores", Integer.toString(transfer));
       return this;
    }
 
    /** Configure the host name of the server (must be unique within the GleSYS account) */
-   public ServerEditOptions hostname(String hostname) {
+   public EditServerOptions hostname(String hostname) {
       formParameters.put("hostname", hostname);
       return this;
    }
 
    /** Configure the description of the server */
-   public ServerEditOptions description(String description) {
+   public EditServerOptions description(String description) {
       formParameters.put("description", description);
       return this;
    }

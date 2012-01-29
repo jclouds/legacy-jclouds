@@ -23,19 +23,20 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.glesys.domain.AllowedArgumentsForCreateServer;
+import org.jclouds.glesys.domain.Console;
 import org.jclouds.glesys.domain.Server;
-import org.jclouds.glesys.domain.ServerAllowedArguments;
-import org.jclouds.glesys.domain.ServerConsole;
 import org.jclouds.glesys.domain.ServerDetails;
 import org.jclouds.glesys.domain.ServerLimit;
 import org.jclouds.glesys.domain.ServerStatus;
-import org.jclouds.glesys.domain.ServerTemplate;
-import org.jclouds.glesys.options.ServerCloneOptions;
-import org.jclouds.glesys.options.ServerCreateOptions;
-import org.jclouds.glesys.options.ServerDestroyOptions;
-import org.jclouds.glesys.options.ServerEditOptions;
+import org.jclouds.glesys.domain.Template;
+import org.jclouds.glesys.options.CloneServerOptions;
+import org.jclouds.glesys.options.CreateServerOptions;
+import org.jclouds.glesys.options.DestroyServerOptions;
+import org.jclouds.glesys.options.EditServerOptions;
 import org.jclouds.glesys.options.ServerStatusOptions;
-import org.jclouds.glesys.options.ServerStopOptions;
+
+import com.google.common.annotations.Beta;
 
 /**
  * Provides synchronous access to Server.
@@ -92,21 +93,21 @@ public interface ServerClient {
     * @param id id of the server
     * @return the requested information about the server or null if not found
     */
-   ServerConsole getServerConsole(String id);
+   Console getConsole(String id);
 
    /**
     * Get information about the OS templates available
     *
     * @return the set of information about each template
     */
-   Set<ServerTemplate> getTemplates();
+   Set<Template> getTemplates();
 
    /**
     * Get information about valid arguments to #createServer for each platform
     *
     * @return a map of argument lists, keyed on platform
     */
-   Map<String, ServerAllowedArguments> getServerAllowedArguments();
+   Map<String, AllowedArgumentsForCreateServer> getAllowedArgumentsForCreateServerByPlatform();
 
    /**
     * Reset the fail count for a server limit (for OpenVZ only).
@@ -134,10 +135,16 @@ public interface ServerClient {
     * Stop a server
     *
     * @param id      id of the server
-    * @param options optional parameters
     */
-   void stopServer(String id, ServerStopOptions... options);
+   void stopServer(String id);
 
+   /**
+    * hard stop a server
+    *
+    * @param id      id of the server
+    */
+   void hardStopServer(String id);
+   
    /**
     * Create a new server
     *
@@ -152,9 +159,11 @@ public interface ServerClient {
     * @param transfer     the transfer size
     * @param options      optional settings ex. description
     */
+   //TODO: make a ServerSpecification object like LaunchSpecification in ec2 as there are too many args
+   @Beta
    ServerDetails createServer(String datacenter,String platform,String hostname,
                               String templateName, int diskSize, int memorySize, int cpuCores,
-                              String rootPassword, int transfer, ServerCreateOptions... options);
+                              String rootPassword, int transfer, CreateServerOptions... options);
 
    /**
     * Edit the configuration of a server
@@ -162,7 +171,7 @@ public interface ServerClient {
     * @param serverid the serverId of the server to edit
     * @param options  the settings to change
     */
-   ServerDetails editServer(String serverid, ServerEditOptions... options);
+   ServerDetails editServer(String serverid, EditServerOptions... options);
 
    /**
     * Clone a server
@@ -171,15 +180,15 @@ public interface ServerClient {
     * @param hostname the new host name of the cloned server
     * @param options  the settings to change
     */
-   ServerDetails cloneServer(String serverid, String hostname, ServerCloneOptions... options);
+   ServerDetails cloneServer(String serverid, String hostname, CloneServerOptions... options);
 
    /**
     * Destroy a server
     *
     * @param id     the id of the server
-    * @param keepIp if ServerDestroyOptions.keepIp(true) the servers ip will be retained for use in your GleSYS account
+    * @param keepIp if DestroyServerOptions.keepIp(true) the servers ip will be retained for use in your GleSYS account
     */
-   ServerDetails destroyServer(String id, ServerDestroyOptions keepIp);
+   ServerDetails destroyServer(String id, DestroyServerOptions keepIp);
 
    /**
     * Reset the root password of a server
@@ -196,7 +205,8 @@ public interface ServerClient {
     * @param id       the id of the server
     * @param resource the name of the resource to retrieve usage information for
     */
+   @Beta
+   // TODO: better name
    void resourceUsage(String id, String resource, String resolution);
-
 
 }

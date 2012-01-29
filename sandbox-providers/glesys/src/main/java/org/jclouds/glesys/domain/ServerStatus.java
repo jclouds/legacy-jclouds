@@ -34,13 +34,13 @@ public class ServerStatus {
    }
 
    public static class Builder {
-      private ServerState state;
+      private Server.State state;
       private ResourceUsage cpu;
       private ResourceUsage memory;
       private ResourceUsage disk;
       private ServerUptime uptime;
 
-      public Builder state(ServerState state) {
+      public Builder state(Server.State state) {
          this.state = state;
          return this;
       }
@@ -74,13 +74,13 @@ public class ServerStatus {
       }
    }
 
-   private final ServerState state;
+   private final Server.State state;
    private final ResourceUsage cpu;
    private final ResourceUsage memory;
    private final ResourceUsage disk;
    private final ServerUptime uptime;
 
-   public ServerStatus(ServerState state, ResourceUsage cpu, ResourceUsage memory, ResourceUsage disk,  ServerUptime uptime) {
+   public ServerStatus(Server.State state, ResourceUsage cpu, ResourceUsage memory, ResourceUsage disk,  ServerUptime uptime) {
       this.state = state;
       this.cpu = cpu;
       this.memory = memory;
@@ -91,7 +91,7 @@ public class ServerStatus {
    /**
     * @return the state of the server (e.g. "running")
     */
-   public ServerState getState() {
+   public Server.State getState() {
       return state;
    }
 

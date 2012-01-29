@@ -16,17 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.glesys.features;
+package org.jclouds.glesys.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
-import com.google.common.base.Predicate;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.glesys.GleSYSAsyncClient;
 import org.jclouds.glesys.GleSYSClient;
+import org.jclouds.glesys.domain.Server;
 import org.jclouds.glesys.domain.ServerDetails;
-import org.jclouds.glesys.domain.ServerState;
 import org.jclouds.glesys.domain.ServerStatus;
+import org.jclouds.glesys.features.DomainClient;
+import org.jclouds.glesys.features.ServerClient;
 import org.jclouds.glesys.options.ServerStatusOptions;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
@@ -37,10 +43,9 @@ import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Tests behavior of {@code GleSYSClient}
@@ -96,19 +101,19 @@ public class BaseGleSYSClientLiveTest {
 
       ServerStatusChecker runningServerCounter = new ServerStatusChecker(client, testServer.getId(), 180, 10, TimeUnit.SECONDS);
 
-      assertTrue(runningServerCounter.apply(ServerState.RUNNING));
+      assertTrue(runningServerCounter.apply(Server.State.RUNNING));
       return runningServerCounter;
    }
 
-   public static class ServerStatusChecker extends RetryablePredicate<ServerState> {
+   public static class ServerStatusChecker extends RetryablePredicate<Server.State> {
       private final String serverId;
       public String getServerId() {
          return serverId;
       }
       public ServerStatusChecker(final ServerClient client, final String serverId, long maxWait, long period, TimeUnit unit) {
-         super(new Predicate<ServerState>() {
+         super(new Predicate<Server.State>() {
 
-            public boolean apply(ServerState value) {
+            public boolean apply(Server.State value) {
                ServerStatus status = client.getServerStatus(serverId, ServerStatusOptions.Builder.state());
                return status.getState() == value;
             }

@@ -29,7 +29,7 @@ import java.util.Date;
  * @author Adam Lowe
  * @see <a href="https://customer.glesys.com/api.php?a=doc#email_list" />
  */
-public class Email implements Comparable<Email> {
+public class EmailAccount implements Comparable<EmailAccount> {
    public static Builder builder() {
       return new Builder();
    }
@@ -96,12 +96,12 @@ public class Email implements Comparable<Email> {
          return this;
       }
 
-      public Email build() {
-         return new Email(account, quota, usedQuota, antispamLevel, antiVirus, autoRespond, autoRespondMessage,
+      public EmailAccount build() {
+         return new EmailAccount(account, quota, usedQuota, antispamLevel, antiVirus, autoRespond, autoRespondMessage,
                autoRespondSaveEmail, created, modified);
       }
 
-      public Builder fromEmail(Email in) {
+      public Builder fromEmail(EmailAccount in) {
          return account(in.getAccount()).quota(in.getQuota()).usedQuota(in.getUsedQuota()).antispamLevel(in.getAntispamLevel()).
                antiVirus(in.getAntiVirus()).autoRespond(in.getAutoRespond()).autoRespondMessage(in.getAutoRespondMessage()).
                autoRespondSaveEmail(in.getAutoRespondSaveEmail()).created(in.getCreated()).modified(in.getModified());
@@ -126,7 +126,7 @@ public class Email implements Comparable<Email> {
    private final Date created;
    private final Date modified;
 
-   public Email(String account, String quota, String usedQuota, int antispamLevel, boolean antiVirus, boolean autoRespond, String autoRespondMessage, boolean autoRespondSaveEmail, Date created, Date modified) {
+   public EmailAccount(String account, String quota, String usedQuota, int antispamLevel, boolean antiVirus, boolean autoRespond, String autoRespondMessage, boolean autoRespondSaveEmail, Date created, Date modified) {
       this.account = account;
       this.quota = quota;
       this.usedQuota = usedQuota;
@@ -189,7 +189,7 @@ public class Email implements Comparable<Email> {
    }
    
    @Override
-   public int compareTo(Email other) {
+   public int compareTo(EmailAccount other) {
       return account.compareTo(other.getAccount());
    }
    
@@ -198,8 +198,8 @@ public class Email implements Comparable<Email> {
       if (this == object) {
          return true;
       }
-      if (object instanceof Email) {
-         Email other = (Email) object;
+      if (object instanceof EmailAccount) {
+         EmailAccount other = (EmailAccount) object;
          return Objects.equal(account, other.account);
       } else {
          return false;

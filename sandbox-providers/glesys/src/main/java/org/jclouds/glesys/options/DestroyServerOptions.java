@@ -23,36 +23,31 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
 /**
  * @author Adam Lowe
  */
-public class DomainRecordAddOptions extends BaseHttpRequestOptions {
-
+public class DestroyServerOptions extends BaseHttpRequestOptions {
    public static class Builder {
       /**
-       * @see DomainRecordAddOptions#ttl
+       * Discard the server's ip on destroy
        */
-      public static DomainRecordAddOptions ttl(int ttl) {
-         DomainRecordAddOptions options = new DomainRecordAddOptions();
-         return options.ttl(ttl);
+      public static DestroyServerOptions keepIp() {
+         return new DestroyServerOptions().keepIp(true);
       }
 
       /**
-       * @see DomainRecordAddOptions#mxPriority
+       * Discard the server's ip on destroy
        */
-      public static DomainRecordAddOptions mxPriority(int mxPriority) {
-         DomainRecordAddOptions options = new DomainRecordAddOptions();
-         return options.mxPriority(mxPriority);
+      public static DestroyServerOptions discardIp() {
+         return new DestroyServerOptions().keepIp(false);
       }
+
    }
 
-   /** Configure TTL/Time-to-live for record */
-   public DomainRecordAddOptions ttl(int ttl) {
-      formParameters.put("ttl", Integer.toString(ttl));
+   /**
+    * Determines whether to keep the server's ip attached to your account when destroying a server
+    *
+    * @param keepIp if true, keep the ip address
+    */
+   public DestroyServerOptions keepIp(boolean keepIp) {
+      formParameters.put("keepip", Integer.toString(keepIp ? 1 : 0));
       return this;
    }
-
-   /** Configure the priority of an MX record */
-   public DomainRecordAddOptions mxPriority(int mxPriority) {
-      formParameters.put("mx_priority", Integer.toString(mxPriority));
-      return this;
-   }
-
 }

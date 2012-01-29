@@ -18,20 +18,26 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.common.base.Predicate;
-import org.jclouds.glesys.domain.*;
-import org.jclouds.glesys.options.EmailCreateOptions;
-import org.jclouds.glesys.options.EmailEditOptions;
-import org.jclouds.glesys.options.ServerDestroyOptions;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.glesys.domain.EmailAccount;
+import org.jclouds.glesys.domain.EmailOverview;
+import org.jclouds.glesys.domain.EmailOverviewDomain;
+import org.jclouds.glesys.internal.BaseGleSYSClientLiveTest;
+import org.jclouds.glesys.options.CreateAccountOptions;
+import org.jclouds.glesys.options.EditAccountOptions;
+import org.jclouds.glesys.options.DestroyServerOptions;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import static org.testng.Assert.*;
+import com.google.common.base.Predicate;
 
 /**
  * Tests behavior of {@code EmailClient}
@@ -66,7 +72,7 @@ public class EmailClientLiveTest extends BaseGleSYSClientLiveTest {
       client.delete("test1@" + testDomain);
       assertTrue(emailAccountCounter.apply(0));
       context.getApi().getDomainClient().deleteDomain(testDomain);
-      context.getApi().getServerClient().destroyServer(serverId, ServerDestroyOptions.Builder.discardIp());
+      context.getApi().getServerClient().destroyServer(serverId, DestroyServerOptions.Builder.discardIp());
       super.tearDown();
    }
 
@@ -78,7 +84,7 @@ public class EmailClientLiveTest extends BaseGleSYSClientLiveTest {
    @Test
    public void testCreateEmail() {
       client.createAccount("test@" + testDomain, "password",
-            EmailCreateOptions.Builder.antiVirus(true).autorespond(true).autorespondMessage("out of office"));
+            CreateAccountOptions.Builder.antiVirus(true).autorespond(true).autorespondMessage("out of office"));
 
       assertTrue(emailAccountCounter.apply(1));
 
@@ -120,23 +126,23 @@ public class EmailClientLiveTest extends BaseGleSYSClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateEmail")
    public void testListAccounts() throws Exception {
-      Set<Email> accounts = client.listAccounts(testDomain);
+      Set<EmailAccount> accounts = client.listAccounts(testDomain);
       assertTrue(accounts.size() >= 1);
    }
 
    @Test(dependsOnMethods = "testCreateEmail")
    public void testEditAccount() throws Exception {
-      Set<Email> accounts = client.listAccounts(testDomain);
-      for (Email account : accounts) {
+      Set<EmailAccount> accounts = client.listAccounts(testDomain);
+      for (EmailAccount account : accounts) {
          if (account.getAccount().equals("test@" + testDomain)) {
             assertTrue(account.getAntiVirus());
          }
       }
 
-      client.editAccount("test@" + testDomain, EmailEditOptions.Builder.antiVirus(false));
+      client.editAccount("test@" + testDomain, EditAccountOptions.Builder.antiVirus(false));
 
       accounts = client.listAccounts(testDomain);
-      for (Email account : accounts) {
+      for (EmailAccount account : accounts) {
          if (account.getAccount().equals("test@" + testDomain)) {
             assertFalse(account.getAntiVirus());
          }

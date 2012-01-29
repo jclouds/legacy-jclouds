@@ -81,8 +81,8 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
             HttpResponse.builder().statusCode(204).payload(payloadFromResource("/server_allowed_arguments.json")).build()).getServerClient();
 
-      Map<String, ServerAllowedArguments> expected = new LinkedHashMap<String, ServerAllowedArguments>();
-      ServerAllowedArguments openvz = ServerAllowedArguments.builder()
+      Map<String, AllowedArgumentsForCreateServer> expected = new LinkedHashMap<String, AllowedArgumentsForCreateServer>();
+      AllowedArgumentsForCreateServer openvz = AllowedArgumentsForCreateServer.builder()
             .dataCenters("Amsterdam", "Falkenberg", "New York City", "Stockholm")
             .memorySizes(128, 256, 512, 768, 1024, 1536, 2048, 2560, 3072, 3584, 4096, 5120, 6144, 7168, 8192, 9216, 10240, 11264, 12288)
             .diskSizes(5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 150)
@@ -93,7 +93,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                   "Ubuntu 10.04 LTS 32-bit", "Ubuntu 10.04 LTS 64-bit", "Ubuntu 11.04 64-bit")
             .transfers(50, 100, 250, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000)
             .build();
-      ServerAllowedArguments xen = ServerAllowedArguments.builder()
+      AllowedArgumentsForCreateServer xen = AllowedArgumentsForCreateServer.builder()
             .memorySizes(512, 768, 1024, 1536, 2048, 2560, 3072, 3584, 4096, 5120, 6144, 7168, 8192, 9216, 10240, 11264, 12288, 14336, 16384)
             .diskSizes(5, 10, 20, 30, 40, 50, 80, 100, 120, 140, 150, 160, 160, 200, 250, 300)
             .cpuCores(1, 2, 3, 4, 5, 6, 7, 8)
@@ -106,7 +106,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
             .build();
       expected.put("Xen", xen);
       expected.put("OpenVZ", openvz);
-      assertEquals(client.getServerAllowedArguments(), expected);
+      assertEquals(client.getAllowedArgumentsForCreateServerByPlatform(), expected);
    }
 
    public void testGetTemplatesWhenResponseIs2xx() throws Exception {
@@ -117,23 +117,23 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_templates.json")).build()).getServerClient();
 
-      ImmutableSet.Builder<ServerTemplate> expectedBuilder = ImmutableSet.<ServerTemplate> builder();
+      ImmutableSet.Builder<Template> expectedBuilder = ImmutableSet.<Template> builder();
 
       for (String name : new String[] { "Centos 5", "Centos 5 64-bit", "Centos 6 32-bit", "Centos 6 64-bit",
             "Debian 5.0 32-bit", "Debian 5.0 64-bit", "Debian 6.0 32-bit", "Debian 6.0 64-bit", "Fedora Core 11",
             "Fedora Core 11 64-bit", "Gentoo", "Gentoo 64-bit", "Scientific Linux 6", "Scientific Linux 6 64-bit",
             "Slackware 12", "Ubuntu 10.04 LTS 32-bit", "Ubuntu 10.04 LTS 64-bit", "Ubuntu 11.04 64-bit" }) {
-         expectedBuilder.add(new ServerTemplate(name, 5, 128, "linux", "OpenVZ"));
+         expectedBuilder.add(new Template(name, 5, 128, "linux", "OpenVZ"));
       }
 
       for (String name : new String[] { "CentOS 5.5 x64", "CentOS 5.5 x86", "Centos 6 x64", "Centos 6 x86",
             "Debian-6 x64", "Debian 5.0.1 x64", "FreeBSD 8.2", "Gentoo 10.1 x64", "Ubuntu 8.04 x64",
             "Ubuntu 10.04 LTS 64-bit", "Ubuntu 10.10 x64", "Ubuntu 11.04 x64" }) {
-         expectedBuilder.add(new ServerTemplate(name, 5, 512, name.startsWith("FreeBSD") ? "freebsd" : "linux", "Xen"));
+         expectedBuilder.add(new Template(name, 5, 512, name.startsWith("FreeBSD") ? "freebsd" : "linux", "Xen"));
       }
       for (String name : new String[] { "Windows Server 2008 R2 x64 std", "Windows Server 2008 R2 x64 web",
             "Windows Server 2008 x64 web", "Windows Server 2008 x86 web" }) {
-         expectedBuilder.add(new ServerTemplate(name, 20, 1024, "windows", "Xen"));
+         expectedBuilder.add(new Template(name, 20, 1024, "windows", "Xen"));
       }
       
       assertEquals(client.getTemplates(), expectedBuilder.build());
@@ -220,7 +220,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("ip", "10.0.0.1").build())).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_details.json")).build()).getServerClient();
 
-      ServerCreateOptions options = ServerCreateOptions.Builder.description("Description-of-server").ip("10.0.0.1");
+      CreateServerOptions options = CreateServerOptions.Builder.description("Description-of-server").ip("10.0.0.1");
 
       assertEquals(client.createServer("Falkenberg", "OpenVZ", "jclouds-test", "Ubuntu 32-bit", 5, 512, 1, "password", 50, options), expectedServerDetails());
    }
@@ -256,8 +256,8 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .build())).build(),
             HttpResponse.builder().statusCode(200).build()).getServerClient();
 
-      ServerEditOptions options =
-            ServerEditOptions.Builder.description("Description-of-server").disksize(1).memorysize(512).cpucores(1).hostname("jclouds-test");
+      EditServerOptions options =
+            EditServerOptions.Builder.description("Description-of-server").disksize(1).memorysize(512).cpucores(1).hostname("jclouds-test");
 
       client.editServer("server111", options);
    }
@@ -292,7 +292,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("memorysize", "512")
                         .put("cpucores", "1").build())).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_details.json")).build()).getServerClient();
-      ServerCloneOptions options = (ServerCloneOptions) ServerCloneOptions.Builder.description("Description-of-server").disksize(1).memorysize(512).cpucores(1);
+      CloneServerOptions options = (CloneServerOptions) CloneServerOptions.Builder.description("Description-of-server").disksize(1).memorysize(512).cpucores(1);
 
       assertEquals(client.cloneServer("server111", "hostname1", options), expectedServerDetails());
    }
@@ -368,7 +368,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
       client.getServerLimits("server321");
    }
 
-   public void testGetServerConsoleWhenResponseIs2xx() throws Exception {
+   public void testGetConsoleWhenResponseIs2xx() throws Exception {
       ServerClient client = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/console/format/json"))
                   .headers(ImmutableMultimap.<String, String>builder()
@@ -379,12 +379,12 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_console.json")).build())
             .getServerClient();
 
-      ServerConsole expected = ServerConsole.builder().host("79.99.2.147").port(59478).password("1476897311").protocol("vnc").build();
+      Console expected = Console.builder().host("79.99.2.147").port(59478).password("1476897311").protocol("vnc").build();
 
-      assertEquals(client.getServerConsole("server322"), expected);
+      assertEquals(client.getConsole("server322"), expected);
    }
 
-   public void testGetServerConsoleWhenResponseIs4xx() throws Exception {
+   public void testGetConsoleWhenResponseIs4xx() throws Exception {
       ServerClient client = requestSendsResponse(
             HttpRequest.builder().method("POST").endpoint(URI.create("https://api.glesys.com/server/console/format/json"))
                   .headers(ImmutableMultimap.<String, String>builder()
@@ -395,7 +395,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
             HttpResponse.builder().statusCode(404).build())
             .getServerClient();
 
-      assertNull(client.getServerConsole("server322"));
+      assertNull(client.getConsole("server322"));
    }
 
    public void testStartServerWhenResponseIs2xx() throws Exception {
@@ -448,11 +448,11 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server777").put("type", "hard").build())).build(),
+                        .put("type", "hard").put("serverid", "server777").build())).build(),
             HttpResponse.builder().statusCode(200).build())
             .getServerClient();
 
-      client.stopServer("server777", ServerStopOptions.Builder.hard());
+      client.hardStopServer("server777");
    }
 
    @Test(expectedExceptions = {AuthorizationException.class})
@@ -509,7 +509,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
             HttpResponse.builder().statusCode(200).build())
             .getServerClient();
 
-      client.destroyServer("server777", ServerDestroyOptions.Builder.keepIp());
+      client.destroyServer("server777", DestroyServerOptions.Builder.keepIp());
    }
 
    @Test(expectedExceptions = {AuthorizationException.class})
@@ -523,7 +523,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
             HttpResponse.builder().statusCode(401).build())
             .getServerClient();
 
-      client.destroyServer("server777", ServerDestroyOptions.Builder.discardIp());
+      client.destroyServer("server777", DestroyServerOptions.Builder.discardIp());
    }
 
 
@@ -532,7 +532,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
       ResourceUsage disk = ResourceUsage.builder().unit("MB").usage(371.0).max(5120).build();
       ResourceUsage memory = ResourceUsage.builder().unit("MB").usage(3.0).max(128).build();
       ServerUptime uptime = ServerUptime.builder().current(23).unit("seconds").build();
-      return ServerStatus.builder().state(ServerState.RUNNING).uptime(uptime).
+      return ServerStatus.builder().state(Server.State.RUNNING).uptime(uptime).
             cpu(cpu).disk(disk).memory(memory).build();
    }
    

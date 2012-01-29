@@ -28,7 +28,7 @@ import com.google.gson.annotations.SerializedName;
  * @author Adam Lowe
  * @see <a href= "https://customer.glesys.com/api.php?a=doc#server_templates" />
  */
-public class ServerTemplate implements Comparable<ServerTemplate>{
+public class Template implements Comparable<Template>{
 
    public static Builder builder() {
       return new Builder();
@@ -66,11 +66,11 @@ public class ServerTemplate implements Comparable<ServerTemplate>{
          return this;
       }
 
-      public ServerTemplate build() {
-         return new ServerTemplate(name, minDiskSize, minMemSize, os, platform);
+      public Template build() {
+         return new Template(name, minDiskSize, minMemSize, os, platform);
       }
 
-      public Builder fromTemplate(ServerTemplate in) {
+      public Builder fromTemplate(Template in) {
          return name(in.getName()).minDiskSize(in.getMinDiskSize()).minMemSize(in.getMinMemSize()).os(in.getOs()).platform(in.getPlatform());
       }
 
@@ -85,7 +85,7 @@ public class ServerTemplate implements Comparable<ServerTemplate>{
    private final String os;
    private final String platform;
 
-   public ServerTemplate(String name, int minDiskSize, int minMemSize, String os, String platform) {
+   public Template(String name, int minDiskSize, int minMemSize, String os, String platform) {
       this.name = name;
       this.minDiskSize = minDiskSize;
       this.minMemSize = minMemSize;
@@ -99,7 +99,7 @@ public class ServerTemplate implements Comparable<ServerTemplate>{
 
    /**
     * @return the minimum allowed disk size in GB
-    * @see org.jclouds.glesys.domain.ServerAllowedArguments#getDiskSizes()
+    * @see org.jclouds.glesys.domain.AllowedArgumentsForCreateServer#getDiskSizes()
     */
    public int getMinDiskSize() {
       return minDiskSize;
@@ -107,7 +107,7 @@ public class ServerTemplate implements Comparable<ServerTemplate>{
 
    /**
     * @return the minimum allowed memory size in MB
-    * @see org.jclouds.glesys.domain.ServerAllowedArguments#getMemorySizes()
+    * @see org.jclouds.glesys.domain.AllowedArgumentsForCreateServer#getMemorySizes()
     */
    public int getMinMemSize() {
       return minMemSize;
@@ -132,8 +132,8 @@ public class ServerTemplate implements Comparable<ServerTemplate>{
       if (this == object) {
          return true;
       }
-      if (object instanceof ServerTemplate) {
-         final ServerTemplate other = (ServerTemplate) object;
+      if (object instanceof Template) {
+         final Template other = (Template) object;
          return Objects.equal(name, other.name)
                && Objects.equal(platform, other.platform);
       } else {
@@ -153,7 +153,7 @@ public class ServerTemplate implements Comparable<ServerTemplate>{
    }
 
    @Override
-   public int compareTo(ServerTemplate arg0) {
+   public int compareTo(Template arg0) {
       return Ordering.usingToString().compare(this, arg0);
    }
 }

@@ -33,7 +33,7 @@ import com.google.gson.annotations.SerializedName;
  * @author Adam Lowe
  * @see <a href="https://customer.glesys.com/api.php?a=doc#server_allowedarguments" />
  */
-public class ServerAllowedArguments {
+public class AllowedArgumentsForCreateServer {
    public static Builder builder() {
       return new Builder();
    }
@@ -101,11 +101,11 @@ public class ServerAllowedArguments {
          return this;
       }
 
-      public ServerAllowedArguments build() {
-         return new ServerAllowedArguments(diskSizes, memorySizes, cpuCores, templates, transfers, dataCenters);
+      public AllowedArgumentsForCreateServer build() {
+         return new AllowedArgumentsForCreateServer(diskSizes, memorySizes, cpuCores, templates, transfers, dataCenters);
       }
 
-      public Builder fromAllowedArguments(ServerAllowedArguments in) {
+      public Builder fromAllowedArguments(AllowedArgumentsForCreateServer in) {
          return diskSizes(in.getDiskSizes())
                .memorySizes(in.getMemorySizes())
                .cpuCores(in.getCpuCores())
@@ -128,7 +128,7 @@ public class ServerAllowedArguments {
    @SerializedName("datacenter")
    private final List<String> dataCenters;
 
-   public ServerAllowedArguments(List<Integer> diskSizes, List<Integer> memorySizes, List<Integer> cpuCores,
+   public AllowedArgumentsForCreateServer(List<Integer> diskSizes, List<Integer> memorySizes, List<Integer> cpuCores,
                                  List<String> templates, List<Integer> transfers, List<String> dataCenters) {
       checkNotNull(diskSizes, "diskSizes");
       checkNotNull(memorySizes, "memorySizes");
@@ -147,7 +147,7 @@ public class ServerAllowedArguments {
 
    /**
     * @return a list of disk sizes, in GB, that can be used for creating servers on this platform
-    * @see org.jclouds.glesys.domain.ServerTemplate#getMinDiskSize()
+    * @see org.jclouds.glesys.domain.Template#getMinDiskSize()
     */
    public List<Integer> getDiskSizes() {
       return diskSizes;
@@ -155,7 +155,7 @@ public class ServerAllowedArguments {
 
    /**
     * @return a list of memory sizes, in MB, that can be used for creating servers on this platform
-    * @see  org.jclouds.glesys.domain.ServerTemplate#getMinMemSize()
+    * @see  org.jclouds.glesys.domain.Template#getMinMemSize()
     */
    public List<Integer> getMemorySizes() {
       return memorySizes;
@@ -170,7 +170,7 @@ public class ServerAllowedArguments {
 
    /**
     * @return a list of template names available for creating servers on this platform
-    * @see org.jclouds.glesys.domain.ServerTemplate#getName() 
+    * @see org.jclouds.glesys.domain.Template#getName() 
     */
    public List<String> getTemplates() {
       return templates;
@@ -195,8 +195,8 @@ public class ServerAllowedArguments {
       if (this == object) {
          return true;
       }
-      if (object instanceof ServerAllowedArguments) {
-         final ServerAllowedArguments other = (ServerAllowedArguments) object;
+      if (object instanceof AllowedArgumentsForCreateServer) {
+         final AllowedArgumentsForCreateServer other = (AllowedArgumentsForCreateServer) object;
          return Objects.equal(diskSizes, other.diskSizes)
                && Objects.equal(memorySizes, other.memorySizes)
                && Objects.equal(cpuCores, other.cpuCores)

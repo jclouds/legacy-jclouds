@@ -24,70 +24,70 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * @author Adam Lowe
  * @see <a href="https://customer.glesys.com/api.php?a=doc#email_createaccount" />
  */
-public class EmailCreateOptions extends BaseHttpRequestOptions {
+public class CreateAccountOptions extends BaseHttpRequestOptions {
    public static class Builder {
       /**
-       * @see EmailCreateOptions#antispamLevel
+       * @see CreateAccountOptions#antispamLevel
        */
-      public static EmailCreateOptions antispamLevel(int antispamLevel) {
-         return new EmailCreateOptions().antispamLevel(antispamLevel);
+      public static CreateAccountOptions antispamLevel(int antispamLevel) {
+         return new CreateAccountOptions().antispamLevel(antispamLevel);
       }
 
       /**
-       * @see EmailCreateOptions#antiVirus
+       * @see CreateAccountOptions#antiVirus
        */
-      public static EmailCreateOptions antiVirus(boolean antiVirus) {
-         return new EmailCreateOptions().antiVirus(antiVirus);
+      public static CreateAccountOptions antiVirus(boolean antiVirus) {
+         return new CreateAccountOptions().antiVirus(antiVirus);
       }
 
       /**
-       * @see EmailCreateOptions#autorespond
+       * @see CreateAccountOptions#autorespond
        */
-      public static EmailCreateOptions autorespond(boolean autorespond) {
-         return new EmailCreateOptions().autorespond(autorespond);
+      public static CreateAccountOptions autorespond(boolean autorespond) {
+         return new CreateAccountOptions().autorespond(autorespond);
       }
 
       /**
-       * @see EmailCreateOptions#autorespondSaveEmail
+       * @see CreateAccountOptions#autorespondSaveEmail
        */
-      public static EmailCreateOptions autorespondSaveEmail(boolean autorespondSaveEmail) {
-         return new EmailCreateOptions().autorespondSaveEmail(autorespondSaveEmail);
+      public static CreateAccountOptions autorespondSaveEmail(boolean autorespondSaveEmail) {
+         return new CreateAccountOptions().autorespondSaveEmail(autorespondSaveEmail);
       }
 
       /**
-       * @see EmailCreateOptions#autorespondMessage
+       * @see CreateAccountOptions#autorespondMessage
        */
-      public static EmailCreateOptions autorespondMessage(String autorespondMessage) {
-         return new EmailCreateOptions().autorespondMessage(autorespondMessage);
+      public static CreateAccountOptions autorespondMessage(String autorespondMessage) {
+         return new CreateAccountOptions().autorespondMessage(autorespondMessage);
       }
    }
 
    /** Configure the antispam level of the account */
-   public EmailCreateOptions antispamLevel(int antispamLevel) {
+   public CreateAccountOptions antispamLevel(int antispamLevel) {
       formParameters.put("antispamlevel", Integer.toString(antispamLevel));
       return this;
    }
 
    /** Enable or disable virus checking */
-   public EmailCreateOptions antiVirus(boolean antiVirus) {
+   public CreateAccountOptions antiVirus(boolean antiVirus) {
       formParameters.put("antivirus", Integer.toString(antiVirus ? 1 : 0));
       return this;
    }
 
    /** Enable or disable auto-respond */
-   public EmailCreateOptions autorespond(boolean autorespond) {
+   public CreateAccountOptions autorespond(boolean autorespond) {
       formParameters.put("autorespond", Integer.toString(autorespond ? 1 : 0));
       return this;
    }
 
    /** Enable or disable saving of auto-respond e-mails */
-   public EmailCreateOptions autorespondSaveEmail(boolean autorespondSaveEmail) {
+   public CreateAccountOptions autorespondSaveEmail(boolean autorespondSaveEmail) {
       formParameters.put("autorespondsaveemail", Integer.toString(autorespondSaveEmail ? 1 : 0));
       return this;
    }
 
    /** Configure the auto-respond message */
-   public EmailCreateOptions autorespondMessage(String autorespondMessage) {
+   public CreateAccountOptions autorespondMessage(String autorespondMessage) {
       formParameters.put("autorespondmessage", autorespondMessage);
       return this;
    }

@@ -24,7 +24,7 @@ import com.google.common.collect.ImmutableSortedSet;
 import org.jclouds.glesys.GleSYSClient;
 import org.jclouds.glesys.domain.Domain;
 import org.jclouds.glesys.domain.DomainRecord;
-import org.jclouds.glesys.options.DomainAddOptions;
+import org.jclouds.glesys.options.AddDomainOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.BaseRestClientExpectTest;
@@ -143,7 +143,7 @@ public class DomainClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("ttl", "1")
                         .build())).build(),
             HttpResponse.builder().statusCode(200).build()).getDomainClient();
-      DomainAddOptions options = (DomainAddOptions) DomainAddOptions.Builder.primaryNameServer("ns1.somewhere.x")
+      AddDomainOptions options = (AddDomainOptions) AddDomainOptions.Builder.primaryNameServer("ns1.somewhere.x")
             .expire(1).minimum(1).refresh(1).responsiblePerson("Tester").retry(1).ttl(1);
 
       client.addDomain("cl66666_x", options);

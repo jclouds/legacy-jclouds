@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.glesys.domain.ArchiveAllowedArguments;
 import org.jclouds.glesys.domain.ArchiveDetails;
+import org.jclouds.glesys.internal.BaseGleSYSClientLiveTest;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;

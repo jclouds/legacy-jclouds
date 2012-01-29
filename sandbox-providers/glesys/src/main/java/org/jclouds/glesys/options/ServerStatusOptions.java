@@ -26,7 +26,7 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
 public class ServerStatusOptions extends BaseHttpRequestOptions {
 
    public enum StatusTypes {
-      state, cpu, memory, disk, bandwidth, uptime
+      STATE, CPU, MEMORY, DISK, BANDWIDTH, UPTIME;
    }
 
    public static class Builder {
@@ -35,7 +35,7 @@ public class ServerStatusOptions extends BaseHttpRequestOptions {
        */
       public static ServerStatusOptions state() {
          ServerStatusOptions options = new ServerStatusOptions();
-         return options.statusType(StatusTypes.state);
+         return options.statusType(StatusTypes.STATE);
       }
 
       /**
@@ -43,7 +43,7 @@ public class ServerStatusOptions extends BaseHttpRequestOptions {
        */
       public static ServerStatusOptions cpu() {
          ServerStatusOptions options = new ServerStatusOptions();
-         return options.statusType(StatusTypes.cpu);
+         return options.statusType(StatusTypes.CPU);
       }
 
       /**
@@ -51,7 +51,7 @@ public class ServerStatusOptions extends BaseHttpRequestOptions {
        */
       public static ServerStatusOptions memory() {
          ServerStatusOptions options = new ServerStatusOptions();
-         return options.statusType(StatusTypes.memory);
+         return options.statusType(StatusTypes.MEMORY);
       }
 
       /**
@@ -59,7 +59,7 @@ public class ServerStatusOptions extends BaseHttpRequestOptions {
        */
       public static ServerStatusOptions disk() {
          ServerStatusOptions options = new ServerStatusOptions();
-         return options.statusType(StatusTypes.disk);
+         return options.statusType(StatusTypes.DISK);
       }
 
       /**
@@ -67,7 +67,7 @@ public class ServerStatusOptions extends BaseHttpRequestOptions {
        */
       public static ServerStatusOptions bandwidth() {
          ServerStatusOptions options = new ServerStatusOptions();
-         return options.statusType(StatusTypes.bandwidth);
+         return options.statusType(StatusTypes.BANDWIDTH);
       }
    }
 
@@ -75,7 +75,7 @@ public class ServerStatusOptions extends BaseHttpRequestOptions {
     * Select the given type of information form the server
     */
    public ServerStatusOptions statusType(StatusTypes type) {
-      formParameters.put("statustype", type.name());
+      formParameters.put("statustype", type.name().toLowerCase());
       return this;
    }
 }

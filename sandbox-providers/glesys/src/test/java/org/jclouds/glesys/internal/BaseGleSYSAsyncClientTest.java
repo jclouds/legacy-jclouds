@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.glesys.features;
+package org.jclouds.glesys.internal;
 
 import static org.testng.Assert.assertEquals;
 

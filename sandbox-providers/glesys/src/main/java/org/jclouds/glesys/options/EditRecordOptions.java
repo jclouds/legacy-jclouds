@@ -21,60 +21,60 @@ package org.jclouds.glesys.options;
 /**
  * @author Adam Lowe
  */
-public class DomainRecordEditOptions extends DomainRecordAddOptions {
+public class EditRecordOptions extends AddRecordOptions {
 
    public static class Builder {
       /**
-       * @see DomainRecordEditOptions#host
+       * @see EditRecordOptions#host
        */
-      public static DomainRecordEditOptions host(String host) {
-         return new DomainRecordEditOptions().host(host);
+      public static EditRecordOptions host(String host) {
+         return new EditRecordOptions().host(host);
       }
 
       /**
-       * @see DomainRecordEditOptions#type
+       * @see EditRecordOptions#type
        */
-      public static DomainRecordEditOptions type(String type) {
-         return new DomainRecordEditOptions().type(type);
+      public static EditRecordOptions type(String type) {
+         return new EditRecordOptions().type(type);
       }
 
       /**
-       * @see DomainRecordEditOptions#data
+       * @see EditRecordOptions#data
        */
-      public static DomainRecordEditOptions data(String data) {
-         return new DomainRecordEditOptions().data(data);
+      public static EditRecordOptions data(String data) {
+         return new EditRecordOptions().data(data);
       }
 
       /**
-       * @see DomainRecordEditOptions#ttl
+       * @see EditRecordOptions#ttl
        */
-      public static DomainRecordEditOptions ttl(int ttl) {
-         return DomainRecordEditOptions.class.cast(new DomainRecordEditOptions().ttl(ttl));
+      public static EditRecordOptions ttl(int ttl) {
+         return EditRecordOptions.class.cast(new EditRecordOptions().ttl(ttl));
       }
 
       /**
-       * @see DomainRecordEditOptions#mxPriority
+       * @see EditRecordOptions#mxPriority
        */
-      public static DomainRecordEditOptions mxPriority(int mxPriority) {
-         return DomainRecordEditOptions.class.cast(new DomainRecordEditOptions().mxPriority(mxPriority));
+      public static EditRecordOptions mxPriority(int mxPriority) {
+         return EditRecordOptions.class.cast(new EditRecordOptions().mxPriority(mxPriority));
       }
    }
 
 
    /** Configure the hostname attached to this record */
-   public DomainRecordEditOptions host(String host) {
+   public EditRecordOptions host(String host) {
       formParameters.put("host", host);
       return this;
    }
 
    /** Configure the type of record, ex. "A", "CNAME" or "MX"  */
-   public DomainRecordEditOptions type(String type) {
+   public EditRecordOptions type(String type) {
       formParameters.put("type", type);
       return this;
    }
 
    /** Set the content of this record (depending on type, for an "A" record this would be an ip address) */
-   public DomainRecordEditOptions data(String data) {
+   public EditRecordOptions data(String data) {
       formParameters.put("data", data);
       return this;
    }

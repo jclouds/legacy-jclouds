@@ -18,25 +18,43 @@
  */
 package org.jclouds.glesys.options;
 
+import org.jclouds.http.options.BaseHttpRequestOptions;
+
 /**
  * @author Adam Lowe
  */
-public class ServerStopOptions extends ServerEditOptions {
+public class CreateServerOptions extends BaseHttpRequestOptions {
    public static class Builder {
       /**
-       * @see org.jclouds.glesys.options.ServerStopOptions#hard
+       * @see CreateServerOptions#description
        */
-      public static ServerStopOptions hard() {
-         ServerStopOptions options = new ServerStopOptions();
-         return options.hard();
+      public static CreateServerOptions description(String primaryNameServer) {
+         CreateServerOptions options = new CreateServerOptions();
+         return options.description(primaryNameServer);
+      }
+
+      /**
+       * @see CreateServerOptions#ip
+       */
+      public static CreateServerOptions ip(String ip) {
+         CreateServerOptions options = new CreateServerOptions();
+         return options.ip(ip);
       }
    }
 
    /**
-    * Hard stop - only supported on Xen platform
+    * @param description the description of the server
     */
-   public ServerStopOptions hard() {
-      formParameters.put("type", "hard");
+   public CreateServerOptions description(String description) {
+      formParameters.put("description", description);
+      return this;
+   }
+
+   /**
+    * @param ip the ip address to assign to the server
+    */
+   public CreateServerOptions ip(String ip) {
+      formParameters.put("ip", ip);
       return this;
    }
 
