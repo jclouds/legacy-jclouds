@@ -110,7 +110,7 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
             transform(Splitter.on(" ").split(installationKeySequence), new StringToKeyCode());
 
       for (List<Integer> scancodes : scancodelist) {
-         machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new SendScancode(scancodes));
+         machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new SendScancodes(scancodes));
       }
    }
 
