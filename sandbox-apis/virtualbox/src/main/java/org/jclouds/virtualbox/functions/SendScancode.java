@@ -25,21 +25,18 @@ import javax.inject.Named;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.virtualbox.settings.KeyboardScancodes;
 import org.virtualbox_4_1.ISession;
 
-import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Function;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 class SendScancode implements Function<ISession, Void> {
-   
+
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-
-   private static final int MAX_KEYCODES_ACCEPTED = 30;
+   private static final int MAX_SIZE = 30;
    private final List<Integer> scancodes;
 
    public SendScancode(List<Integer> scancodes) {
@@ -48,29 +45,23 @@ class SendScancode implements Function<ISession, Void> {
 
    @Override
    public Void apply(ISession iSession) {
-      int i = 0, j = 0, length = scancodes.size();
-      if (length > MAX_KEYCODES_ACCEPTED) {
-         while (i <= length) {
-            j = (i + 30 > length) ? length : i + MAX_KEYCODES_ACCEPTED;
-            List<Integer> sublist = Lists.newArrayList(scancodes).subList(i, j);
-            long codeStores = iSession.getConsole().getKeyboard().putScancodes(sublist);
-            logger.debug("List of scancodes sent: ", sublist);
-            assert(codeStores==sublist.size());
-            i = i + MAX_KEYCODES_ACCEPTED;
-            try {
-               Thread.sleep(50);
-            } catch (InterruptedException e) {
-               logger.debug("There was a problem in sleeping this thread", e);
-            }
-         }
-      } else {
-         iSession.getConsole().getKeyboard().putScancodes(scancodes);
-         if(Sets.difference(Sets.newHashSet(scancodes), Sets.newHashSet(KeyboardScancodes.SPECIAL_KEYBOARD_BUTTON_MAP_LIST.values())) != null) {
-            try {
-               Thread.sleep(200);
-            } catch (InterruptedException e) {
-               logger.debug("There was a problem in sleeping this thread", e);
-            }
+      for (List<Integer> maxOrLess : Lists.partition(scancodes, MAX_SIZE)) {
+         long codeStores = iSession.getConsole().getKeyboard().putScancodes(maxOrLess);
+         logger.debug("List of scancodes sent: ", maxOrLess);
+         assert (codeStores == maxOrLess.size());
+         // TODO @Adrian if maxOrLess contains SPECIAL CHAR sleep should be higher than NORMAL CHAR (300 ms - 50 ms)
+//         if (Iterables.any(maxOrLess, Predicates.in(SPECIAL_KEYBOARD_BUTTON_MAP_LIST.values()))) {
+//            try {
+//               Thread.sleep(300);
+//            } catch (InterruptedException e) {
+//               logger.debug("There was a problem in sleeping this thread", e);
+//            }
+//         }
+         // TODO without extra check the extra time needed is more or less 250 ms
+         try {
+            Thread.sleep(250);
+         } catch (InterruptedException e) {
+            logger.debug("There was a problem in sleeping this thread", e);
          }
       }
       return null;
