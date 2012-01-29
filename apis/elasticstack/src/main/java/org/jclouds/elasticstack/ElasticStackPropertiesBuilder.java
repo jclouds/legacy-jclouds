@@ -18,7 +18,6 @@
  */
 package org.jclouds.elasticstack;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.elasticstack.reference.ElasticStackConstants.PROPERTY_VNC_PASSWORD;
 
@@ -42,14 +41,6 @@ public class ElasticStackPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty("jclouds.ssh.max-retries", "5");
       properties.setProperty("jclouds.ssh.retry-auth", "true");
       return properties;
-   }
-
-   @Override
-   public Properties build() {
-      Properties props = super.build();
-      checkArgument(props.getProperty(PROPERTY_VNC_PASSWORD).length() <= 8,
-            "vnc passwords should be less that 8 characters!");
-      return props;
    }
 
    public ElasticStackPropertiesBuilder(Properties properties) {

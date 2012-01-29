@@ -18,7 +18,6 @@
  */
 package org.jclouds.cloudsigma;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.cloudsigma.reference.CloudSigmaConstants.PROPERTY_VNC_PASSWORD;
 
@@ -48,11 +47,4 @@ public class CloudSigmaPropertiesBuilder extends PropertiesBuilder {
       super(properties);
    }
 
-   @Override
-   public Properties build() {
-      Properties props = super.build();
-      checkArgument(props.getProperty(PROPERTY_VNC_PASSWORD).length() <= 8,
-            "vnc passwords should be less that 8 characters!");
-      return props;
-   }
 }

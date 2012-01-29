@@ -35,7 +35,7 @@
 
     <properties>
         <test.initializer>org.jclouds.azureblob.blobstore.integration.AzureBlobTestInitializer</test.initializer>
-        <test.azureblob.endpoint>https://{identity}.blob.core.windows.net</test.azureblob.endpoint>
+        <test.azureblob.endpoint>https://${jclouds.identity}.blob.core.windows.net</test.azureblob.endpoint>
         <test.azureblob.api-version>2009-09-19</test.azureblob.api-version>
         <test.azureblob.build-version></test.azureblob.build-version>
         <test.azureblob.identity>${test.azure.identity}</test.azureblob.identity>

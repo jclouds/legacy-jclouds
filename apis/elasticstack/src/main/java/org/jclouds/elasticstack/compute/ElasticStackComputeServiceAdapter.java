@@ -18,6 +18,7 @@
  */
 package org.jclouds.elasticstack.compute;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.notNull;
 import static com.google.common.collect.Iterables.filter;
@@ -100,6 +101,7 @@ public class ElasticStackComputeServiceAdapter implements
       this.preinstalledImages = checkNotNull(preinstalledImages, "preinstalledImages");
       this.cache = checkNotNull(cache, "cache");
       this.defaultVncPassword = checkNotNull(defaultVncPassword, "defaultVncPassword");
+      checkArgument(defaultVncPassword.length() <= 8, "vnc passwords should be less that 8 characters!");
       this.executor = checkNotNull(executor, "executor");
    }
 

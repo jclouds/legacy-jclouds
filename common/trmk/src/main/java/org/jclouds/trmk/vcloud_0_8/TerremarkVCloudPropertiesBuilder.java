@@ -33,7 +33,6 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.PropertiesBuilder;
-import org.jclouds.trmk.vcloud_0_8.domain.FenceMode;
 
 /**
  * Builds properties used in Terremark VCloud Clients
@@ -48,10 +47,16 @@ public class TerremarkVCloudPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "0.8");
       properties.setProperty(PROPERTY_SESSION_INTERVAL, 8 * 60 + "");
       properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA, "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, "allowInOut");
+      properties.setProperty(PROPERTY_TERREMARK_EXTENSION_NS, String.format("urn:tmrk:${%s}-${%s}",
+            PROPERTY_TERREMARK_EXTENSION_NAME, PROPERTY_TERREMARK_EXTENSION_VERSION));
+      properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE,
+            String.format("http://www.vmware.com/vcloud/v${%s}", PROPERTY_VCLOUD_VERSION_SCHEMA));
       properties.setProperty("jclouds.dns_name_length_min", "1");
       properties.setProperty("jclouds.dns_name_length_max", "15");
       // terremark can sometimes block extremely long times
       properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, TimeUnit.MINUTES.toMillis(20) + "");
+
       return properties;
    }
 
@@ -59,45 +64,4 @@ public class TerremarkVCloudPropertiesBuilder extends PropertiesBuilder {
       super(properties);
    }
 
-   void setExtensions() {
-      if (properties.getProperty(PROPERTY_TERREMARK_EXTENSION_NS) == null) {
-         properties.setProperty(
-               PROPERTY_TERREMARK_EXTENSION_NS,
-               String.format("urn:tmrk:%s-%s", properties.getProperty(PROPERTY_TERREMARK_EXTENSION_NAME),
-                     properties.getProperty(PROPERTY_TERREMARK_EXTENSION_VERSION)));
-      }
-   }
-
-   protected void setNs() {
-      if (properties.getProperty(PROPERTY_VCLOUD_XML_NAMESPACE) == null)
-         properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE,
-               "http://www.vmware.com/vcloud/v" + properties.getProperty(PROPERTY_VCLOUD_VERSION_SCHEMA));
-   }
-
-   protected void setFenceMode() {
-      if (properties.getProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) == null) {
-         if (properties.getProperty(PROPERTY_VCLOUD_VERSION_SCHEMA).startsWith("0.8"))
-            properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, "allowInOut");
-         else
-            properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, FenceMode.ALLOW_IN_OUT.toString());
-      }
-   }
-
-   public TerremarkVCloudPropertiesBuilder withApiVersion(String version) {
-      properties.setProperty(PROPERTY_API_VERSION, "0.8");
-      return this;
-   }
-
-   public TerremarkVCloudPropertiesBuilder withSchemaVersion(String version) {
-      properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "0.8");
-      return this;
-   }
-
-   @Override
-   public Properties build() {
-      setNs();
-      setFenceMode();
-      setExtensions();
-      return super.build();
-   }
 }

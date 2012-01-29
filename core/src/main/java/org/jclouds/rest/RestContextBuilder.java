@@ -27,7 +27,6 @@ import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.inject.Scopes.SINGLETON;
-import static com.google.inject.name.Names.bindProperties;
 import static com.google.inject.util.Types.newParameterizedType;
 import static org.jclouds.Constants.PROPERTY_API;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
@@ -45,7 +44,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -55,9 +53,12 @@ import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.internal.FilterStringsBoundToInjectorByName;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.lifecycle.config.LifeCycleModule;
 import org.jclouds.location.Iso3166;
 import org.jclouds.location.Provider;
@@ -73,14 +74,15 @@ import org.jclouds.rest.config.CredentialStoreModule;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.RestContextImpl;
+import org.jclouds.util.Maps2;
+import org.nnsoft.guice.rocoto.Rocoto;
+import org.nnsoft.guice.rocoto.configuration.ConfigurationModule;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ExecutionList;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -106,69 +108,105 @@ import com.google.inject.TypeLiteral;
  */
 public class RestContextBuilder<S, A> {
 
-   static class BindPropertiesAndPrincipalContext extends AbstractModule {
-      protected Properties properties;
-
-      protected BindPropertiesAndPrincipalContext(Properties properties) {
-         this.properties = checkNotNull(properties, "properties");
-      }
-
-      @Provides
-      @Singleton
-      @Named("CONSTANTS")
-      protected Multimap<String, String> constants() {
-         ImmutableMultimap.Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
-         for (Entry<Object, Object> entry : properties.entrySet())
-            if (entry.getValue() != null)
-               builder.put(entry.getKey().toString(), entry.getValue().toString());
-         return LinkedHashMultimap.create(builder.build());
-      }
+    static class BindPropertiesToAnnotations extends ConfigurationModule {
 
       @Provides
       @Singleton
       @Named("TIMEOUTS")
-      protected Map<String, Long> timeouts() {
-         final ImmutableMap.Builder<String, Long> builder = ImmutableMap.<String, Long> builder();
-         for (final Entry<Object, Object> entry : properties.entrySet()) {
-            final String key = String.valueOf(entry.getKey());
-            if (key.startsWith(PROPERTY_TIMEOUTS_PREFIX) && entry.getValue() != null) {
-               try {
-                  final Long val = Long.valueOf(String.valueOf(entry.getValue()));
-                  builder.put(key.replaceFirst(PROPERTY_TIMEOUTS_PREFIX, ""), val);
-               } catch (final Throwable t) {}
+      protected Map<String, Long> timeouts(Function<Predicate<String>, Map<String, String>> filterStringsBoundByName) {
+         Map<String, String> stringBoundWithTimeoutPrefix = filterStringsBoundByName.apply(new Predicate<String>() {
+
+            @Override
+            public boolean apply(String input) {
+               return input.startsWith(PROPERTY_TIMEOUTS_PREFIX);
             }
-         }
-         return builder.build();
+
+         });
+
+         Map<String, Long> longsByName = Maps.transformValues(stringBoundWithTimeoutPrefix, new Function<String, Long>() {
+
+            @Override
+            public Long apply(String input) {
+               return Long.valueOf(String.valueOf(input));
+            }
+
+         });
+         return Maps2.transformKeys(longsByName, new Function<String, String>() {
+
+            @Override
+            public String apply(String input) {
+               return input.replaceFirst(PROPERTY_TIMEOUTS_PREFIX, "");
+            }
+
+         });
+
       }
 
+      @Provides
+      @Singleton
+      @Provider
+      protected String bindProvider(@Named(PROPERTY_PROVIDER) String in){
+         return in;
+      }
+      
+      @Provides
+      @Singleton
+      @Provider
+      protected URI bindProviderEndpoint(@Named(PROPERTY_ENDPOINT) String in){
+         return URI.create(in);
+      }
+      
+      @Provides
+      @Singleton
+      @Iso3166
+      protected Set<String> bindIsoCodes(@Named(PROPERTY_ISO3166_CODES) String in){
+         return  ImmutableSet.copyOf(filter(on(',').split( in),
+               not(equalTo(""))));
+      }
+      
+      @Provides
+      @Singleton
+      @Api
+      protected String bindApi(@Named(PROPERTY_API) String in){
+         return in;
+      }
+      
+      @Provides
+      @Singleton
+      @ApiVersion
+      protected String bindApiVersion(@Named(PROPERTY_API_VERSION) String in){
+         return in;
+      }
+      
+      @Provides
+      @Singleton
+      @BuildVersion
+      protected String bindBuildVersion(@Named(PROPERTY_BUILD_VERSION) String in){
+         return in;
+      }
+      
+      @Provides
+      @Singleton
+      @Identity
+      protected String bindIdentity(@Named(PROPERTY_IDENTITY) String in){
+         return in;
+      }
+      
+      @Provides
+      @Singleton
+      @Credential
+      @Nullable
+      protected String bindCredential(ValueOfConfigurationKeyOrNull config){
+         return config.apply(PROPERTY_CREDENTIAL);
+      }
+      
+      
       @Override
-      protected void configure() {
-         Properties toBind = new Properties();
-         toBind.putAll(checkNotNull(properties, "properties"));
-         toBind.putAll(System.getProperties());
-         bindProperties(binder(), toBind);
-         bind(String.class).annotatedWith(Provider.class).toInstance(
-                  checkNotNull(toBind.getProperty(PROPERTY_PROVIDER), PROPERTY_PROVIDER));
-         bind(URI.class).annotatedWith(Provider.class).toInstance(
-                  URI.create(checkNotNull(toBind.getProperty(PROPERTY_ENDPOINT), PROPERTY_ENDPOINT)));
-         bind(new TypeLiteral<Set<String>>() {
-         }).annotatedWith(Iso3166.class).toInstance(
-                  ImmutableSet.copyOf(filter(on(',').split(
-                           checkNotNull(toBind.getProperty(PROPERTY_ISO3166_CODES), PROPERTY_ISO3166_CODES)),
-                           not(equalTo("")))));
+      protected void bindConfigurations() {
+         bind(new TypeLiteral<Function<Predicate<String>, Map<String, String>>>() {
+         }).to(FilterStringsBoundToInjectorByName.class);
          bind(new TypeLiteral<Map<String, Set<String>>>() {
          }).annotatedWith(Iso3166.class).toProvider(ProvideIso3166CodesByLocationIdViaProperties.class);
-         if (toBind.containsKey(PROPERTY_API))
-            bind(String.class).annotatedWith(Api.class).toInstance(toBind.getProperty(PROPERTY_API));
-         if (toBind.containsKey(PROPERTY_API_VERSION))
-            bind(String.class).annotatedWith(ApiVersion.class).toInstance(toBind.getProperty(PROPERTY_API_VERSION));
-         if (toBind.containsKey(PROPERTY_BUILD_VERSION))
-            bind(String.class).annotatedWith(BuildVersion.class).toInstance(toBind.getProperty(PROPERTY_BUILD_VERSION));
-         if (toBind.containsKey(PROPERTY_IDENTITY))
-            bind(String.class).annotatedWith(Identity.class).toInstance(
-                     checkNotNull(toBind.getProperty(PROPERTY_IDENTITY), PROPERTY_IDENTITY));
-         if (toBind.containsKey(PROPERTY_CREDENTIAL))
-            bind(String.class).annotatedWith(Credential.class).toInstance(toBind.getProperty(PROPERTY_CREDENTIAL));
       }
    }
 
@@ -190,6 +228,17 @@ public class RestContextBuilder<S, A> {
    }
 
    public Injector buildInjector() {
+      modules.add(Rocoto.expandVariables(new ConfigurationModule(){
+
+         @Override
+         protected void bindConfigurations() {
+            Properties toBind = new Properties();
+            toBind.putAll(checkNotNull(properties, "properties"));
+            toBind.putAll(System.getProperties());
+            bindProperties(toBind);            
+         }
+         
+      }));
       addContextModule(modules);
       addClientModuleIfNotPresent(modules);
       addLoggingModuleIfNotPresent(modules);
@@ -198,7 +247,7 @@ public class RestContextBuilder<S, A> {
       addExecutorServiceIfNotPresent(modules);
       addCredentialStoreIfNotPresent(modules);
       modules.add(new LifeCycleModule());
-      modules.add(new BindPropertiesAndPrincipalContext(properties));
+      modules.add(new BindPropertiesToAnnotations());
       Injector returnVal = Guice.createInjector(Stage.PRODUCTION, modules);
       returnVal.getInstance(ExecutionList.class).execute();
       return returnVal;
@@ -334,8 +383,8 @@ public class RestContextBuilder<S, A> {
       }
    }
 
-   @VisibleForTesting
-   public Properties getProperties() {
+   @VisibleForTesting 
+   protected Properties getProperties() {
       return properties;
    }
 

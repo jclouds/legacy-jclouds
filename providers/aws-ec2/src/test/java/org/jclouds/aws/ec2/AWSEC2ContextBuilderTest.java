@@ -29,13 +29,13 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "AWSEC2PropertiesBuilderTest")
-public class AWSEC2PropertiesBuilderTest {
+@Test(groups = "unit", testName = "AWSEC2ContextBuilderTest")
+public class AWSEC2ContextBuilderTest {
 
    public void testConvertImageSyntax() {
       Properties input = new Properties();
       input.setProperty(PROPERTY_EC2_AMI_OWNERS, "137112412989,063491364108,099720109477,411009282317");
-      Properties props = new AWSEC2PropertiesBuilder(input).build();
+      Properties props = new AWSEC2ContextBuilder(input).getProperties();
       assertEquals(props.getProperty(PROPERTY_EC2_AMI_OWNERS), null);
       assertEquals(props.getProperty(PROPERTY_EC2_AMI_QUERY),
                "owner-id=137112412989,063491364108,099720109477,411009282317;state=available;image-type=machine");
@@ -44,7 +44,7 @@ public class AWSEC2PropertiesBuilderTest {
    public void testConvertImageSyntaxWhenStar() {
       Properties input = new Properties();
       input.setProperty(PROPERTY_EC2_AMI_OWNERS, "*");
-      Properties props = new AWSEC2PropertiesBuilder(input).build();
+      Properties props = new AWSEC2ContextBuilder(input).getProperties();
       assertEquals(props.getProperty(PROPERTY_EC2_AMI_OWNERS), null);
       assertEquals(props.getProperty(PROPERTY_EC2_AMI_QUERY), "state=available;image-type=machine");
    }
@@ -52,7 +52,7 @@ public class AWSEC2PropertiesBuilderTest {
    public void testConvertImageSyntaxWhenBlank() {
       Properties input = new Properties();
       input.setProperty(PROPERTY_EC2_AMI_OWNERS, "");
-      Properties props = new AWSEC2PropertiesBuilder(input).build();
+      Properties props = new AWSEC2ContextBuilder(input).getProperties();
       assertEquals(props.getProperty(PROPERTY_EC2_AMI_OWNERS), null);
       assertEquals(props.getProperty(PROPERTY_EC2_AMI_QUERY), "");
    }

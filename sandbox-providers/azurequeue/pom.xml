@@ -34,7 +34,7 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <test.azurequeue.endpoint>https://{identity}.queue.core.windows.net</test.azurequeue.endpoint>
+        <test.azurequeue.endpoint>https://${jclouds.identity}.queue.core.windows.net</test.azurequeue.endpoint>
         <test.azurequeue.api-version>2009-09-19</test.azurequeue.api-version>
         <test.azurequeue.build-version></test.azurequeue.build-version>
         <test.azurequeue.identity>${test.azure.identity}</test.azurequeue.identity>

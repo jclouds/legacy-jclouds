@@ -42,6 +42,8 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_API_VERSION, "1.0");
       properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "1");
+      properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE,
+            String.format("http://www.vmware.com/vcloud/v${%s}", PROPERTY_VCLOUD_VERSION_SCHEMA));
       properties.setProperty(PROPERTY_SESSION_INTERVAL, 8 * 60 + "");
       properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA, "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
       properties.setProperty("jclouds.dns_name_length_min", "1");
@@ -58,25 +60,4 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
       super(properties);
    }
 
-   protected void setNs() {
-      if (properties.getProperty(PROPERTY_VCLOUD_XML_NAMESPACE) == null)
-         properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE, "http://www.vmware.com/vcloud/v"
-                  + properties.getProperty(PROPERTY_VCLOUD_VERSION_SCHEMA));
-   }
-
-   public VCloudPropertiesBuilder withApiVersion(String version) {
-      properties.setProperty(PROPERTY_API_VERSION, "1.0");
-      return this;
-   }
-
-   public VCloudPropertiesBuilder withSchemaVersion(String version) {
-      properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "1.0");
-      return this;
-   }
-
-   @Override
-   public Properties build() {
-      setNs();
-      return super.build();
-   }
 }

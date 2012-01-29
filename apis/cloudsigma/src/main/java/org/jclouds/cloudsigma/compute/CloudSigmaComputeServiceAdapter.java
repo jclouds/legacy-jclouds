@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudsigma.compute;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
@@ -104,6 +105,7 @@ public class CloudSigmaComputeServiceAdapter implements
       this.driveNotClaimed = checkNotNull(driveNotClaimed, "driveNotClaimed");
       this.locationSupplier = checkNotNull(locationSupplier, "locationSupplier");
       this.defaultVncPassword = checkNotNull(defaultVncPassword, "defaultVncPassword");
+      checkArgument(defaultVncPassword.length() <= 8, "vnc passwords should be less that 8 characters!"); 
       this.cache = checkNotNull(cache, "cache");
       this.executor = checkNotNull(executor, "executor");
    }
