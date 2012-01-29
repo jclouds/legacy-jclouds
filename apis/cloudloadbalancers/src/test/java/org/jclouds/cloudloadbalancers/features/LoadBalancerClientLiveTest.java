@@ -30,6 +30,7 @@ import org.jclouds.cloudloadbalancers.domain.LoadBalancerAttributes;
 import org.jclouds.cloudloadbalancers.domain.LoadBalancerRequest;
 import org.jclouds.cloudloadbalancers.domain.NodeRequest;
 import org.jclouds.cloudloadbalancers.domain.VirtualIP.Type;
+import org.jclouds.cloudloadbalancers.internal.BaseCloudLoadBalancersClientLiveTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;

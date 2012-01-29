@@ -37,6 +37,7 @@ import org.jclouds.cloudloadbalancers.domain.NodeAttributes;
 import org.jclouds.cloudloadbalancers.domain.NodeRequest;
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer.Status;
 import org.jclouds.cloudloadbalancers.domain.VirtualIP.Type;
+import org.jclouds.cloudloadbalancers.internal.BaseCloudLoadBalancersClientLiveTest;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 

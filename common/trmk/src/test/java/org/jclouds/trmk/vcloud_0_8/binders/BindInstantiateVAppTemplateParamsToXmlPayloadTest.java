@@ -18,10 +18,9 @@
  */
 package org.jclouds.trmk.vcloud_0_8.binders;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.EasyMock.replay;
 
 import java.io.IOException;
 import java.net.URI;
@@ -38,6 +37,8 @@ import org.jclouds.trmk.vcloud_0_8.endpoints.Network;
 import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions;
 import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.NetworkConfig;
 import org.jclouds.util.Strings2;
+import org.nnsoft.guice.rocoto.Rocoto;
+import org.nnsoft.guice.rocoto.configuration.ConfigurationModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.HashMultimap;
@@ -45,11 +46,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
-import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code BindInstantiateVAppTemplateParamsToXmlPayload}
@@ -58,12 +57,11 @@ import com.google.inject.name.Names;
  */
 @Test(groups = "unit")
 public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
-   Injector injector = Guice.createInjector(new AbstractModule() {
+   Injector injector = Guice.createInjector(Rocoto.expandVariables(new ConfigurationModule() {
 
       @Override
-      protected void configure() {
-         Properties props = new Properties();
-         Names.bindProperties(binder(), checkNotNull(new TerremarkVCloudPropertiesBuilder(props).build(), "properties"));
+      protected void bindConfigurations() {
+         bindProperties(new TerremarkVCloudPropertiesBuilder(new Properties()).build());
       }
 
       @SuppressWarnings("unused")
@@ -73,7 +71,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       ReferenceType provideNetwork() {
          return new ReferenceTypeImpl(null, null, URI.create("https://vcloud.safesecureweb.com/network/1990"));
       }
-   });
+   }));
 
    public void testAllOptions() throws IOException {
 

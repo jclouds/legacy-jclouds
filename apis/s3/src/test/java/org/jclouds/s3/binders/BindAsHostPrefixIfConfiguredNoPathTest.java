@@ -56,8 +56,8 @@ public class BindAsHostPrefixIfConfiguredNoPathTest extends BaseS3AsyncClientTes
 
 
    @Override
-   protected Properties getProperties() {
-      Properties properties = super.getProperties();
+   protected Properties setupProperties() {
+      Properties properties = super.setupProperties();
       properties.setProperty(PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "false");
       return properties;
    }

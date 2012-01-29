@@ -18,22 +18,11 @@
  */
 package org.jclouds.cloudloadbalancers;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.cloudloadbalancers.reference.RackspaceConstants.PROPERTY_ACCOUNT_ID;
-import static org.jclouds.cloudloadbalancers.reference.Region.DFW;
-import static org.jclouds.location.reference.LocationConstants.ENDPOINT;
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
-
 import java.io.IOException;
-import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
-import org.jclouds.cloudloadbalancers.features.BaseCloudLoadBalancersAsyncClientTest;
+import org.jclouds.cloudloadbalancers.internal.BaseCloudLoadBalancersAsyncClientTest;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -79,23 +68,4 @@ public class CloudLoadBalancersAsyncClientTest extends BaseCloudLoadBalancersAsy
 
    }
    
-   protected String provider = "cloudloadbalancers";
-
-   @Override
-   public RestContextSpec<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient> createContextSpec() {
-      return new RestContextFactory(getProperties()).createContextSpec(provider, "user", "password", new Properties());
-   }
-   
-   @Override
-   protected Properties getProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(PROPERTY_ENDPOINT, "https://auth.api.rackspacecloud.com");
-      overrides.setProperty(PROPERTY_API_VERSION, "1");
-      overrides.setProperty(PROPERTY_REGIONS, "DFW");
-      overrides.setProperty(PROPERTY_REGION + "." + DFW + "." + ENDPOINT, String
-               .format("https://dfw.loadbalancers.api.rackspacecloud.com/v{%s}/{%s}", PROPERTY_API_VERSION,
-                        PROPERTY_ACCOUNT_ID));
-      overrides.setProperty(provider + ".contextbuilder", CloudLoadBalancersContextBuilder.class.getName());
-      return overrides;
-   }
 }

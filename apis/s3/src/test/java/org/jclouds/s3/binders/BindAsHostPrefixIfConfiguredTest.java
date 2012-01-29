@@ -45,6 +45,9 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "BindAsHostPrefixIfConfiguredTest")
 public class BindAsHostPrefixIfConfiguredTest extends BaseS3AsyncClientTest<S3AsyncClient> {
 
+   public BindAsHostPrefixIfConfiguredTest(){
+      endpoint = "http://euc/services/Walrus";
+   }
    @Override
    protected TypeLiteral<RestAnnotationProcessor<S3AsyncClient>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<S3AsyncClient>>() {
@@ -93,9 +96,8 @@ public class BindAsHostPrefixIfConfiguredTest extends BaseS3AsyncClientTest<S3As
    }
 
    @Override
-   protected Properties getProperties() {
-      Properties properties = super.getProperties();
-      properties.setProperty("s3.endpoint", "http://euc/services/Walrus");
+   protected Properties setupProperties() {
+      Properties properties = super.setupProperties();
       properties.setProperty(PROPERTY_S3_SERVICE_PATH, "/services/Walrus");
       properties.setProperty(PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "false");
       return properties;

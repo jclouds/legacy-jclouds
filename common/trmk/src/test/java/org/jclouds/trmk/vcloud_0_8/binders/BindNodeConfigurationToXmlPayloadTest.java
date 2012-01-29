@@ -18,11 +18,10 @@
  */
 package org.jclouds.trmk.vcloud_0_8.binders;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.trmk.vcloud_0_8.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_NAME;
@@ -35,14 +34,13 @@ import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudPropertiesBuilder;
-import org.jclouds.trmk.vcloud_0_8.binders.BindNodeConfigurationToXmlPayload;
+import org.nnsoft.guice.rocoto.Rocoto;
+import org.nnsoft.guice.rocoto.configuration.ConfigurationModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code BindNodeConfigurationToXmlPayload}
@@ -51,19 +49,19 @@ import com.google.inject.name.Names;
  */
 @Test(groups = "unit")
 public class BindNodeConfigurationToXmlPayloadTest {
-   Injector injector = Guice.createInjector(new AbstractModule() {
+   Injector injector = Guice.createInjector(Rocoto.expandVariables(new ConfigurationModule() {
 
       @Override
-      protected void configure() {
+      protected void bindConfigurations() {
          Properties properties = new Properties();
          properties.setProperty(PROPERTY_API_VERSION, "0.8a-ext1.6");
          properties.setProperty(PROPERTY_TERREMARK_EXTENSION_NAME, "vCloudExpressExtensions");
          properties.setProperty(PROPERTY_TERREMARK_EXTENSION_VERSION, "1.6");
          properties.setProperty(PROPERTY_ENDPOINT, "https://services.vcloudexpress.terremark.com/api");
-         Names.bindProperties(binder(), checkNotNull(new TerremarkVCloudPropertiesBuilder(properties).build(),
-               "properties"));
+         bindProperties(properties);
+         bindProperties(new TerremarkVCloudPropertiesBuilder(properties).build());
       }
-   });
+   }));
 
    public void testChangeDescription() throws IOException {
       String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>willie</Name><Enabled>true</Enabled><Description>description</Description></NodeService>";

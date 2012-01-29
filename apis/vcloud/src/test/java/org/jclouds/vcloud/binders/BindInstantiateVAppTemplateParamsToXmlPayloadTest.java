@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.binders;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -44,6 +43,8 @@ import org.jclouds.vcloud.domain.network.FenceMode;
 import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
+import org.nnsoft.guice.rocoto.Rocoto;
+import org.nnsoft.guice.rocoto.configuration.ConfigurationModule;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -54,11 +55,9 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
-import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code BindInstantiateVAppTemplateParamsToXmlPayload}
@@ -69,7 +68,7 @@ import com.google.inject.name.Names;
 public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
    Injector createInjector(final URI vAppTemplate, final VAppTemplate value) {
 
-      return Guice.createInjector(new AbstractModule() {
+      return Guice.createInjector(Rocoto.expandVariables(new ConfigurationModule() {
 
          @SuppressWarnings("unused")
          @Provides
@@ -88,9 +87,8 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
          }
 
          @Override
-         protected void configure() {
-            Properties props = new Properties();
-            Names.bindProperties(binder(), checkNotNull(new VCloudPropertiesBuilder(props).build(), "properties"));
+         protected void bindConfigurations() {
+            bindProperties(new VCloudPropertiesBuilder(new Properties()).build());
          }
 
          @SuppressWarnings("unused")
@@ -108,7 +106,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
             return new ReferenceTypeImpl(null, null, URI
                      .create("https://vcenterprise.bluelock.com/api/v1.0/network/1990"));
          }
-      });
+      }));
    }
 
    public void testDefault() throws IOException {

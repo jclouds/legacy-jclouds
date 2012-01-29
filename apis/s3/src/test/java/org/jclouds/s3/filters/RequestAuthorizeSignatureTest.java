@@ -154,8 +154,9 @@ public class RequestAuthorizeSignatureTest extends BaseS3AsyncClientTest<S3Async
       assertEquals(request.getEndpoint().getHost(), "bucket.s3.amazonaws.com");
    }
 
-   protected Properties getProperties() {
-      Properties overrides = super.getProperties();
+   @Override
+   protected Properties setupProperties() {
+      Properties overrides = super.setupProperties();
       overrides.setProperty(PROPERTY_SESSION_INTERVAL, 1 + "");
       return overrides;
    }

@@ -18,27 +18,19 @@
  */
 package org.jclouds.cloudloadbalancers.features;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
-
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.cloudloadbalancers.CloudLoadBalancersAsyncClient;
-import org.jclouds.cloudloadbalancers.CloudLoadBalancersClient;
-import org.jclouds.cloudloadbalancers.CloudLoadBalancersContextBuilder;
 import org.jclouds.cloudloadbalancers.domain.NodeAttributes;
 import org.jclouds.cloudloadbalancers.domain.NodeAttributes.Builder;
 import org.jclouds.cloudloadbalancers.domain.NodeRequest;
 import org.jclouds.cloudloadbalancers.domain.internal.BaseNode.Condition;
+import org.jclouds.cloudloadbalancers.internal.BaseCloudLoadBalancersAsyncClientTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -153,20 +145,4 @@ public class NodeAsyncClientTest extends BaseCloudLoadBalancersAsyncClientTest<N
       };
    }
    
-   protected String provider = "cloudloadbalancers";
-
-   @Override
-   public RestContextSpec<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient> createContextSpec() {
-      return new RestContextFactory(getProperties()).createContextSpec(provider, "user", "password", new Properties());
-   }
-   
-   @Override
-   protected Properties getProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(PROPERTY_REGIONS, "US");
-      overrides.setProperty(PROPERTY_API_VERSION, "1");
-      overrides.setProperty(provider + ".endpoint", "https://auth");
-      overrides.setProperty(provider + ".contextbuilder", CloudLoadBalancersContextBuilder.class.getName());
-      return overrides;
-   }
 }
