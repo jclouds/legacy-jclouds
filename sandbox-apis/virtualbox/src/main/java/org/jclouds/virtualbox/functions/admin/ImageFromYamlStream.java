@@ -36,9 +36,9 @@ import org.yaml.snakeyaml.constructor.Constructor;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
-import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 

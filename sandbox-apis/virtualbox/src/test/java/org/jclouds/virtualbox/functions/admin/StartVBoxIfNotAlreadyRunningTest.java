@@ -47,7 +47,7 @@ import com.google.common.base.Suppliers;
 @Test(groups = "unit", singleThreaded = true, testName = "StartVBoxIfNotAlreadyRunningTest")
 public class StartVBoxIfNotAlreadyRunningTest {
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Test
    public void testStartVboxConnectsToManagerWhenPortAlreadyListening() throws Exception {
       VirtualBoxManager manager = createMock(VirtualBoxManager.class);
@@ -71,7 +71,7 @@ public class StartVBoxIfNotAlreadyRunningTest {
 
    }
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Test
    public void testStartVboxDisablesPasswordAccessOnWebsrvauthlibraryStartsVboxwebsrvInBackgroundAndConnectsManagerWhenPortIsNotListening()
             throws Exception {

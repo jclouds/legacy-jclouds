@@ -19,8 +19,16 @@
 
 package org.jclouds.virtualbox.functions.admin;
 
-import com.google.common.cache.CacheLoader;
-import com.google.inject.Singleton;
+import static com.google.common.base.Throwables.propagate;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
+
+import java.net.URI;
+
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
@@ -30,15 +38,8 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.domain.IsoSpec;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.net.URI;
-
-import static com.google.common.base.Throwables.propagate;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
+import com.google.common.cache.CacheLoader;
+import com.google.inject.Singleton;
 
 /**
  * @author Andrea Turli

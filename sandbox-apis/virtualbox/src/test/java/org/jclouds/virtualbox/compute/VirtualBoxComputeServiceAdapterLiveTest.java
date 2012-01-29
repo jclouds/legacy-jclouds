@@ -29,7 +29,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
@@ -77,7 +77,7 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
 
    }
 
-   protected void doConnectViaSsh(IMachine machine, Credentials creds) {
+   protected void doConnectViaSsh(IMachine machine, LoginCredentials creds) {
       SshClient ssh = context.utils().sshFactory().create(new IPSocket("//TODO", 22), creds);
       try {
          ssh.connect();

@@ -19,14 +19,9 @@
 
 package org.jclouds.virtualbox.domain;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Supplier;
-import com.google.common.cache.CacheLoader;
-import org.jclouds.virtualbox.Preconfiguration;
-
-import java.net.URI;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.google.common.base.Objects;
 
 /**
  * The information needed to create a machine from a .iso file.
@@ -48,7 +43,6 @@ public class IsoSpec {
    public static class Builder {
 
       private String installationSequence;
-      private Supplier<URI> preConfigurationUri;
       private String sourcePath;
 
       public Builder installationScript(String installationSequence) {

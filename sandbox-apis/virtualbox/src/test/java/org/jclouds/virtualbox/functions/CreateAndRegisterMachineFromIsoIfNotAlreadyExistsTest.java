@@ -18,25 +18,33 @@
  */
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.cache.LoadingCache;
-import org.easymock.EasyMock;
-import org.jclouds.virtualbox.domain.*;
-import org.jclouds.virtualbox.util.MachineUtils;
-import org.testng.annotations.Test;
-import org.virtualbox_4_1.*;
-
-import java.net.URI;
-
 import static org.easymock.EasyMock.anyBoolean;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.createNiceMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+
+import org.easymock.EasyMock;
+import org.jclouds.virtualbox.domain.IsoSpec;
+import org.jclouds.virtualbox.domain.MasterSpec;
+import org.jclouds.virtualbox.domain.NetworkSpec;
+import org.jclouds.virtualbox.domain.StorageController;
+import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.util.MachineUtils;
+import org.testng.annotations.Test;
+import org.virtualbox_4_1.CleanupMode;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.IVirtualBox;
+import org.virtualbox_4_1.LockType;
+import org.virtualbox_4_1.StorageBus;
+import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_1.VirtualBoxManager;
+
+import com.google.common.base.Suppliers;
 
 /**
  * @author Mattias Holmqvist
@@ -50,7 +58,6 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
         MachineUtils machineUtils = createMock(MachineUtils.class);
         VirtualBoxManager manager = createMock(VirtualBoxManager.class);
         IVirtualBox vBox = createMock(IVirtualBox.class);
-        LoadingCache<IsoSpec, URI> preconfiguration = createNiceMock(LoadingCache.class);
         String vmName = "jclouds-image-my-ubuntu-image";
         StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE).build();
         VmSpec vmSpec = VmSpec.builder().id(vmName).name(vmName).osTypeId("").memoryMB(1024).controller(ideController).cleanUpMode(
@@ -101,7 +108,6 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
         VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
         IVirtualBox vBox = createNiceMock(IVirtualBox.class);
-        Supplier<URI> preconfiguration = createNiceMock(Supplier.class);
         String vmName = "jclouds-image-my-ubuntu-image";
 
         IMachine registeredMachine = createMock(IMachine.class);
@@ -130,7 +136,6 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsTest {
 
         VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
         IVirtualBox vBox = createNiceMock(IVirtualBox.class);
-        Supplier<URI> preconfiguration = createNiceMock(Supplier.class);
         String vmName = "jclouds-image-my-ubuntu-image";
 
         String errorMessage = "VirtualBox error: Soem other VBox error";

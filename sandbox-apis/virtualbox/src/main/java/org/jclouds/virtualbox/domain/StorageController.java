@@ -18,26 +18,19 @@
  */
 package org.jclouds.virtualbox.domain;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.domain.Image;
-import org.jclouds.javax.annotation.Nullable;
-import org.virtualbox_4_1.DeviceType;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.StorageBus;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.filter;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
-import static org.jclouds.virtualbox.domain.HardDisk.DEFAULT_DISK_FORMAT;
+import org.jclouds.javax.annotation.Nullable;
+import org.virtualbox_4_1.DeviceType;
+import org.virtualbox_4_1.StorageBus;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * Represents a storage controller in a VirtualBox VM.

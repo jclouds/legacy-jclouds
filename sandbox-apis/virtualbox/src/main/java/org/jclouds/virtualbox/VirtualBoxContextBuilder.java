@@ -33,7 +33,7 @@ import com.google.inject.Module;
  * 
  * @author Mattias Holmqvist, Andrea Turli
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings("rawtypes")
 public class VirtualBoxContextBuilder extends StandaloneComputeServiceContextBuilder<Supplier> {
 
    public VirtualBoxContextBuilder(Properties properties) {

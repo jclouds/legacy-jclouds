@@ -19,22 +19,28 @@
 
 package org.jclouds.virtualbox.config;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.*;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
+
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.eclipse.jetty.server.Server;
 import org.jclouds.byon.Node;
 import org.jclouds.byon.functions.NodeToNodeMetadata;
 import org.jclouds.byon.suppliers.SupplyFromProviderURIOrNodesProperty;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
-import org.jclouds.compute.domain.*;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
@@ -57,19 +63,24 @@ import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
+import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Injector;
+import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * @author Mattias Holmqvist, Andrea Turli
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class VirtualBoxComputeServiceContextModule extends
         ComputeServiceAdapterContextModule<Supplier, Supplier, IMachine, IMachine, Image, Location> {
 
@@ -77,7 +88,6 @@ public class VirtualBoxComputeServiceContextModule extends
       super(Supplier.class, Supplier.class);
    }
 
-   @SuppressWarnings({"unchecked", "rawtypes"})
    @Override
    protected void configure() {
       super.configure();

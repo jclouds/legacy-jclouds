@@ -20,15 +20,14 @@
 package org.jclouds.virtualbox.functions;
 
 import static org.easymock.EasyMock.anyLong;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.createNiceMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertNotSame;
 
-import org.easymock.EasyMock;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.testng.annotations.BeforeMethod;

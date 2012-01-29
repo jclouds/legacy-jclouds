@@ -19,12 +19,15 @@
 package org.jclouds.virtualbox.predicates;
 
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import com.google.inject.Injector;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
-import org.jclouds.virtualbox.domain.*;
+import org.jclouds.virtualbox.domain.HardDisk;
+import org.jclouds.virtualbox.domain.IsoSpec;
+import org.jclouds.virtualbox.domain.MasterSpec;
+import org.jclouds.virtualbox.domain.NetworkSpec;
+import org.jclouds.virtualbox.domain.StorageController;
+import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.functions.CloneAndRegisterMachineFromIMachineIfNotAlreadyExists;
 import org.jclouds.virtualbox.functions.CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
 import org.testng.annotations.AfterMethod;
@@ -37,6 +40,7 @@ import org.virtualbox_4_1.StorageBus;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Injector;
 
 /**
  * 
@@ -46,7 +50,6 @@ import com.google.common.collect.ImmutableSet;
 public class IsLinkedClonesLiveTest extends BaseVirtualBoxClientLiveTest {
 
    private static final boolean IS_LINKED_CLONE = true;
-   private String vmId = "jclouds-image-iso-1";
    private String osTypeId = "";
    private String ideControllerName = "IDE Controller";
    private String cloneName;
