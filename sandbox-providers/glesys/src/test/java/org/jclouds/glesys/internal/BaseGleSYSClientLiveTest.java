@@ -30,6 +30,7 @@ import org.jclouds.glesys.GleSYSAsyncClient;
 import org.jclouds.glesys.GleSYSClient;
 import org.jclouds.glesys.domain.Server;
 import org.jclouds.glesys.domain.ServerDetails;
+import org.jclouds.glesys.domain.ServerSpec;
 import org.jclouds.glesys.domain.ServerStatus;
 import org.jclouds.glesys.features.DomainClient;
 import org.jclouds.glesys.features.ServerClient;
@@ -93,7 +94,10 @@ public class BaseGleSYSClientLiveTest {
 
    protected ServerStatusChecker createServer(String hostName) {
       ServerClient client = context.getApi().getServerClient();
-      ServerDetails testServer = client.createServer("Falkenberg", "OpenVZ", hostName, "Ubuntu 10.04 LTS 32-bit", 5, 512, 1, "password", 50);
+      
+      ServerDetails testServer = client.createServerWithHostnameAndRootPassword(
+            ServerSpec.builder().datacenter("Falkenberg").platform("OpenVZ").templateName("Ubuntu 10.04 LTS 32-bit")
+                  .diskSizeGB(5).memorySizeMB(512).cpuCores(1).transfer(50).build(), hostName, "password");
 
       assertNotNull(testServer.getId());
       assertEquals(testServer.getHostname(), hostName);

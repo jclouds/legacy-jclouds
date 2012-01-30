@@ -183,22 +183,27 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("cpucores", "1")
-                        .put("memorysize", "512")
-                        .put("datacenter", "Falkenberg")
-                        .put("transfer", "50")
-                        .put("rootpassword", "password")
                         .put("hostname", "jclouds-test")
+                        .put("rootpassword", "password")
+                        .put("datacenter", "Falkenberg")
                         .put("platform", "OpenVZ")
                         .put("templatename", "Ubuntu 32-bit")
-                        .put("disksize", "5").build())).build(),
+                        .put("disksize", "5")
+                        .put("memorysize", "512")
+                        .put("cpucores", "1")
+                        .put("transfer", "50")
+                        .build())).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_noip.json")).build()).getServerClient();
 
       Cost cost = Cost.builder().amount(6.38).currency("EUR").timePeriod("month").build();
       ServerDetails expected = ServerDetails.builder().id("vz1541880").hostname("mammamia").datacenter("Falkenberg").platform("OpenVZ")
             .templateName("Ubuntu 11.04 64-bit").description("description").cpuCores(1).memorySize(128).diskSize(5).transfer(50).cost(cost).build();
-      
-      assertEquals(client.createServer("Falkenberg", "OpenVZ", "jclouds-test", "Ubuntu 32-bit", 5, 512, 1, "password", 50).toString(), expected.toString());
+
+      assertEquals(
+            client.createServerWithHostnameAndRootPassword(
+                  ServerSpec.builder().datacenter("Falkenberg").platform("OpenVZ").templateName("Ubuntu 32-bit")
+                        .diskSizeGB(5).memorySizeMB(512).cpuCores(1).transfer(50).build(), "jclouds-test", "password").toString(),
+            expected.toString());
    }
 
    public void testCreateServerWithOptsWhenResponseIs2xx() throws Exception {
@@ -208,21 +213,26 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("cpucores", "1").put("memorysize", "512")
-                        .put("datacenter", "Falkenberg")
-                        .put("transfer", "50")
-                        .put("rootpassword", "password")
                         .put("hostname", "jclouds-test")
+                        .put("rootpassword", "password")
+                        .put("datacenter", "Falkenberg")
                         .put("platform", "OpenVZ")
                         .put("templatename", "Ubuntu 32-bit")
                         .put("disksize", "5")
+                        .put("memorysize", "512")
+                        .put("cpucores", "1")
+                        .put("transfer", "50")
+                        .put("ip", "10.0.0.1")
                         .put("description", "Description-of-server")
-                        .put("ip", "10.0.0.1").build())).build(),
+                        .build())).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_details.json")).build()).getServerClient();
 
       CreateServerOptions options = CreateServerOptions.Builder.description("Description-of-server").ip("10.0.0.1");
 
-      assertEquals(client.createServer("Falkenberg", "OpenVZ", "jclouds-test", "Ubuntu 32-bit", 5, 512, 1, "password", 50, options), expectedServerDetails());
+
+      assertEquals(client.createServerWithHostnameAndRootPassword(ServerSpec.builder().datacenter("Falkenberg")
+            .platform("OpenVZ").templateName("Ubuntu 32-bit").diskSizeGB(5).memorySizeMB(512).cpuCores(1).transfer(50)
+            .build(), "jclouds-test", "password", options), expectedServerDetails());
    }
 
    @Test

@@ -29,11 +29,12 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.glesys.domain.AllowedArgumentsForCreateServer;
 import org.jclouds.glesys.domain.Console;
 import org.jclouds.glesys.domain.Server;
-import org.jclouds.glesys.domain.AllowedArgumentsForCreateServer;
 import org.jclouds.glesys.domain.ServerDetails;
 import org.jclouds.glesys.domain.ServerLimit;
+import org.jclouds.glesys.domain.ServerSpec;
 import org.jclouds.glesys.domain.ServerStatus;
 import org.jclouds.glesys.domain.Template;
 import org.jclouds.glesys.functions.ParseTemplatesFromHttpResponse;
@@ -45,6 +46,8 @@ import org.jclouds.glesys.options.ServerStatusOptions;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
+import org.jclouds.rest.annotations.MapBinder;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
@@ -56,7 +59,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 /**
  * Provides asynchronous access to Server via their REST API.
  * <p/>
- *
+ * 
  * @author Adrian Cole
  * @author Adam Lowe
  * @see ServerClient
@@ -105,7 +108,6 @@ public interface ServerAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<SortedMap<String, ServerLimit>> getServerLimits(@FormParam("serverid") String id);
 
-
    /**
     * @see ServerClient#getConsole
     */
@@ -116,7 +118,6 @@ public interface ServerAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Console> getConsole(@FormParam("serverid") String id);
 
-
    /**
     * @see ServerClient#getAllowedArgumentsForCreateServerByPlatform
     */
@@ -125,7 +126,7 @@ public interface ServerAsyncClient {
    @SelectJson("argumentslist")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Map<String, AllowedArgumentsForCreateServer>> getAllowedArgumentsForCreateServerByPlatform();
-   
+
    /**
     * @see ServerClient#getTemplates
     */
@@ -134,14 +135,15 @@ public interface ServerAsyncClient {
    @ResponseParser(ParseTemplatesFromHttpResponse.class)
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Set<Template>> getTemplates();
-   
+
    /**
     * @see ServerClient#stopServer
     */
    @POST
    @Path("/server/resetlimit/format/json")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<SortedMap<String, ServerLimit>> resetServerLimit(@FormParam("serverid") String id, @FormParam("type") String type);
+   ListenableFuture<SortedMap<String, ServerLimit>> resetServerLimit(@FormParam("serverid") String id,
+         @FormParam("type") String type);
 
    /**
     * @see ServerClient#rebootServer
@@ -181,22 +183,16 @@ public interface ServerAsyncClient {
    ListenableFuture<ServerDetails> hardStopServer(@FormParam("serverid") String id);
 
    /**
-    * @see ServerClient#createServer
+    * @see ServerClient#createServerWithHostnameAndRootPassword
     */
    @POST
    @SelectJson("server")
    @Path("/server/create/format/json")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<ServerDetails> createServer(@FormParam("datacenter") String datacenter,
-                                       @FormParam("platform") String platform,
-                                       @FormParam("hostname") String hostname,
-                                       @FormParam("templatename") String templateName,
-                                       @FormParam("disksize") int diskSize,
-                                       @FormParam("memorysize") int memorySize,
-                                       @FormParam("cpucores") int cpuCores,
-                                       @FormParam("rootpassword") String rootPassword,
-                                       @FormParam("transfer") int transfer,
-                                       CreateServerOptions... options);
+   @MapBinder(CreateServerOptions.class)
+   ListenableFuture<ServerDetails> createServerWithHostnameAndRootPassword(ServerSpec serverSpec,
+         @PayloadParam("hostname") String hostname, @PayloadParam("rootpassword") String rootPassword,
+         CreateServerOptions... options);
 
    /**
     * @see ServerClient#cloneServer
@@ -206,8 +202,7 @@ public interface ServerAsyncClient {
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<ServerDetails> cloneServer(@FormParam("serverid") String serverid,
-                                               @FormParam("hostname") String hostname,
-                                               CloneServerOptions... options);
+         @FormParam("hostname") String hostname, CloneServerOptions... options);
 
    /**
     * @see ServerClient#editServer
@@ -237,6 +232,7 @@ public interface ServerAsyncClient {
     */
    @POST
    @Path("/server/resourceusage/format/json")
-   void resourceUsage(@FormParam("serverid") String id, @FormParam("resource") String resource, @FormParam("resolution") String resolution);
+   void resourceUsage(@FormParam("serverid") String id, @FormParam("resource") String resource,
+         @FormParam("resolution") String resolution);
 
 }
