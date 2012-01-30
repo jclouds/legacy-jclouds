@@ -18,38 +18,34 @@
  */
 package org.jclouds.virtualbox.functions;
 
-import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.collect.Iterables.transform;
-
-import java.net.URI;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.logging.Logger;
-import org.jclouds.ssh.SshClient;
-import org.jclouds.virtualbox.domain.ExecutionType;
-import org.jclouds.virtualbox.domain.IMachineSpec;
-import org.jclouds.virtualbox.domain.IsoSpec;
-import org.jclouds.virtualbox.domain.VmSpec;
-import org.jclouds.virtualbox.util.MachineUtils;
-import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.LockType;
-import org.virtualbox_4_1.VirtualBoxManager;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
+import com.google.common.cache.LoadingCache;
 import com.google.inject.Inject;
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.logging.Logger;
+import org.jclouds.ssh.SshClient;
+import org.jclouds.virtualbox.Preconfiguration;
+import org.jclouds.virtualbox.domain.ExecutionType;
+import org.jclouds.virtualbox.domain.IsoSpec;
+import org.jclouds.virtualbox.domain.MasterSpec;
+import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.util.MachineUtils;
+import org.virtualbox_4_1.*;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
+import javax.inject.Singleton;
+import java.net.URI;
+import java.util.List;
+
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Iterables.transform;
 
 @Singleton
-public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
+public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -60,6 +56,9 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
 
    private final Predicate<SshClient> sshResponds;
    private final ExecutionType executionType;
+
+   private LoadingCache<IsoSpec, URI> preConfiguration;
+
    private final Function<IMachine, SshClient> sshClientForIMachine;
 
    private final MachineUtils machineUtils;
@@ -68,29 +67,30 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
    public CreateAndInstallVm(Supplier<VirtualBoxManager> manager,
          CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
          Predicate<SshClient> sshResponds, Function<IMachine, SshClient> sshClientForIMachine,
-         ExecutionType executionType, MachineUtils machineUtils) {
+         ExecutionType executionType, MachineUtils machineUtils, @Preconfiguration LoadingCache<IsoSpec, URI> preConfiguration) {
       this.manager = manager;
       this.createAndRegisterMachineFromIsoIfNotAlreadyExists = CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
       this.sshResponds = sshResponds;
       this.sshClientForIMachine = sshClientForIMachine;
       this.executionType = executionType;
       this.machineUtils = machineUtils;
+      this.preConfiguration = preConfiguration;
+
    }
 
    @Override
-   public IMachine apply(IMachineSpec machineSpec) {
+   public IMachine apply(MasterSpec masterSpec) {
 
-      VmSpec vmSpec = machineSpec.getVmSpec();
-      IsoSpec isoSpec = machineSpec.getIsoSpec();
-
+      VmSpec vmSpec = masterSpec.getVmSpec();
+      IsoSpec isoSpec = masterSpec.getIsoSpec();
       String vmName = vmSpec.getVmName();
 
-      final IMachine vm = createAndRegisterMachineFromIsoIfNotAlreadyExists.apply(machineSpec);
+      final IMachine vm = createAndRegisterMachineFromIsoIfNotAlreadyExists.apply(masterSpec);
 
       // Launch machine and wait for it to come online
       ensureMachineIsLaunched(vmName);
 
-      URI uri = isoSpec.getPreConfigurationUri().get();
+      URI uri = preConfiguration.getUnchecked(isoSpec);
       String installationKeySequence = isoSpec.getInstallationKeySequence().replace("PRECONFIGURATION_URL",
             uri.toASCIIString());
 
@@ -104,9 +104,9 @@ public class CreateAndInstallVm implements Function<IMachineSpec, IMachine> {
       ensureMachineHasPowerDown(vmName);
       return vm;
    }
-   
+
    private void configureOsInstallationWithKeyboardSequence(String vmName, String installationKeySequence) {
-      Iterable<List<Integer>> scancodelist = 
+      Iterable<List<Integer>> scancodelist =
             transform(Splitter.on(" ").split(installationKeySequence), new StringToKeyCode());
 
       for (List<Integer> scancodes : scancodelist) {

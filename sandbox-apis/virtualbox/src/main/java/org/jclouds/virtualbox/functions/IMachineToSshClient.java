@@ -59,7 +59,6 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
             client = sshClientFactory.create(new IPSocket(hostAddress, Integer.parseInt(inboundPort)),
                      LoginCredentials.builder().user("toor").password("password").authenticateSudo(true).build());
          }
-
       }
       return client;
    }

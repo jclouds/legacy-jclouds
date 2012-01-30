@@ -19,16 +19,15 @@
 
 package org.jclouds.virtualbox.functions.admin;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
-import static org.testng.Assert.assertEquals;
+import org.eclipse.jetty.server.Server;
+import org.jclouds.virtualbox.domain.IsoSpec;
+import org.testng.annotations.Test;
 
 import java.net.URI;
 
-import org.eclipse.jetty.server.Server;
-import org.testng.annotations.Test;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.*;
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author Andrea Turli, Adrian Cole
@@ -36,22 +35,23 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", singleThreaded = true, testName = "StartJettyIfNotAlreadyRunningTest")
 public class StartJettyIfNotAlreadyRunningTest {
    @Test
-   public void testLaunchJettyServerWhenAlreadyRunningDoesntLaunchAgain() {
+   public void testLoadStartsJettyServer() throws Exception {
       Server jetty = createMock(Server.class);
 
       String preconfigurationUrl = "http://foo:8080";
-      
+
       expect(jetty.getState()).andReturn(Server.STARTED);
+
       replay(jetty);
 
-      StartJettyIfNotAlreadyRunning starter = new StartJettyIfNotAlreadyRunning(jetty, preconfigurationUrl);
-      starter.start();
+      StartJettyIfNotAlreadyRunning starter = new StartJettyIfNotAlreadyRunning(preconfigurationUrl, jetty);
 
-      assertEquals(starter.get(), URI.create(preconfigurationUrl));
+      IsoSpec isoSpec = IsoSpec.builder()
+              .sourcePath("/tmp/myisos/ubuntu.iso")
+              .installationScript("install").build();
+      assertEquals(starter.load(isoSpec), URI.create(preconfigurationUrl));
       verify(jetty);
-
    }
-
 
    @Test
    public void testLaunchJettyServerWhenNotRunningStartsJettyOnCorrectHostPortAndBasedir() {
