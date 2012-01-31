@@ -144,15 +144,16 @@ public abstract class BaseRestClientExpectTest<S> {
     * @return payload for use in http responses.
     */
    public Payload payloadFromResource(String resource) {
-      return Payloads.newInputStreamPayload(getClass().getResourceAsStream(resource));
+      try {
+         return payloadFromString(Strings2.toStringAndClose(getClass().getResourceAsStream(resource)));
+      } catch (IOException e) {
+         throw Throwables.propagate(e);
+      }
    }
 
    public Payload payloadFromResourceWithContentType(String resource, String contentType) {
       try {
-         Payload payload = Payloads.newStringPayload(Strings2
-                  .toStringAndClose(getClass().getResourceAsStream(resource)));
-         payload.getContentMetadata().setContentType(contentType);
-         return payload;
+         return payloadFromStringWithContentType(Strings2.toStringAndClose(getClass().getResourceAsStream(resource)), contentType);
       } catch (IOException e) {
          throw Throwables.propagate(e);
       }
