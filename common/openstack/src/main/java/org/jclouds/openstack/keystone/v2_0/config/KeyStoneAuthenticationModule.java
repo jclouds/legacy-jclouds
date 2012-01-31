@@ -31,12 +31,15 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
 import org.jclouds.domain.Credentials;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.http.annotation.ClientError;
 import org.jclouds.location.Provider;
 import org.jclouds.openstack.Authentication;
 import org.jclouds.openstack.keystone.v2_0.ServiceAsyncClient;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.PasswordCredentials;
+import org.jclouds.openstack.keystone.v2_0.handlers.RetryOnRenew;
 import org.jclouds.rest.AsyncClientFactory;
 
 import com.google.common.base.Function;
@@ -87,9 +90,9 @@ public class KeyStoneAuthenticationModule extends AbstractModule {
 
    @Provides
    @Provider
-   protected Credentials provideAuthenticationCredentials(@Named(Constants.PROPERTY_IDENTITY) String user,
-            @Named(Constants.PROPERTY_CREDENTIAL) String key) {
-      return new Credentials(user, key);
+   protected Credentials provideAuthenticationCredentials(@Named(Constants.PROPERTY_IDENTITY) String userOrApiKey,
+            @Named(Constants.PROPERTY_CREDENTIAL) String keyOrSecretKey) {
+      return new Credentials(userOrApiKey, keyOrSecretKey);
    }
 
    @Singleton
@@ -104,14 +107,14 @@ public class KeyStoneAuthenticationModule extends AbstractModule {
             @Override
             public Access apply(Credentials input) {
                // TODO: nice error messages, etc.
-               Iterable<String> usernameTenantId = Splitter.on(':').split(input.identity);
-               String username = Iterables.get(usernameTenantId, 0);
-               String tenantId = Iterables.get(usernameTenantId, 1);
+               Iterable<String> tenantIdUsername = Splitter.on(':').split(input.identity);
+               String tenantId = Iterables.get(tenantIdUsername, 0);
+               String username = Iterables.get(tenantIdUsername, 1);
                PasswordCredentials passwordCredentials = PasswordCredentials.createWithUsernameAndPassword(username,
                         input.credential);
                try {
-                  return factory.create(ServiceAsyncClient.class)
-                        .authenticateTenantWithCredentials(tenantId, passwordCredentials).get();
+                  return factory.create(ServiceAsyncClient.class).authenticateTenantWithCredentials(tenantId,
+                           passwordCredentials).get();
                } catch (Exception e) {
                   throw Throwables.propagate(e);
                }
@@ -126,12 +129,16 @@ public class KeyStoneAuthenticationModule extends AbstractModule {
       }
    }
 
+   // TODO: what is the timeout of the session token? modify default accordingly
+   // PROPERTY_SESSION_INTERVAL is default to 60 seconds, but we have this here at 23 hours for now.
    @Provides
    @Singleton
    public LoadingCache<Credentials, Access> provideAccessCache2(Function<Credentials, Access> getAccess) {
       return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS).build(CacheLoader.from(getAccess));
    }
 
+   // Temporary conversion of a cache to a supplier until there is a single-element cache
+   // http://code.google.com/p/guava-libraries/issues/detail?id=872
    @Provides
    @Singleton
    protected Supplier<Access> provideAccessSupplier(final LoadingCache<Credentials, Access> cache,
