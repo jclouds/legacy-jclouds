@@ -35,6 +35,7 @@ import org.jclouds.rest.ResourceNotFoundException;
  * @author Adrian Cole
  * 
  */
+//TODO: is there error spec someplace? let's type errors, etc.
 @Singleton
 public class NovaErrorHandler implements HttpErrorHandler {
 
