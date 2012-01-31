@@ -86,7 +86,7 @@ public class DomainOptions extends BaseHttpRequestOptions {
     *  Configure the primary DNS server for this domain.
     */
    public DomainOptions primaryNameServer(String primaryNameServer) {
-      formParameters.put("primary_ns", primaryNameServer);
+      formParameters.put("primarynameserver", primaryNameServer);
       return this;
    }
 
@@ -98,7 +98,7 @@ public class DomainOptions extends BaseHttpRequestOptions {
       if (!responsiblePerson.endsWith(".")) {
          responsiblePerson = responsiblePerson + ".";
       }
-      formParameters.put("resp_person", responsiblePerson);
+      formParameters.put("responsibleperson", responsiblePerson);
       return this;
    }
 

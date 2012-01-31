@@ -35,13 +35,13 @@ public class Domain implements Comparable<Domain> {
    }
 
    public static class Builder {
-      private String domain;
+      private String domainName;
       private Date createTime;
       private int recordCount;
-      private boolean glesysNameServer;
+      private boolean useGlesysNameServer;
 
-      public Builder domain(String domain) {
-         this.domain = domain;
+      public Builder domainName(String domainName) {
+         this.domainName = domainName;
          return this;
       }
 
@@ -55,38 +55,39 @@ public class Domain implements Comparable<Domain> {
          return this;
       }
 
-      public Builder glesysNameServer(boolean glesysNameServer) {
-         this.glesysNameServer = glesysNameServer;
+      public Builder useGlesysNameServer(boolean useGlesysNameServer) {
+         this.useGlesysNameServer = useGlesysNameServer;
          return this;
       }
 
       public Domain build() {
-         return new Domain(domain, createTime, recordCount, glesysNameServer);
+         return new Domain(domainName, createTime, recordCount, useGlesysNameServer);
       }
 
       public Builder fromDomain(Domain in) {
-         return new Builder();
+         return new Builder().domainName(in.getDomainName()).createTime(in.getCreateTime()).recordCount(in.getRecordCount()).useGlesysNameServer(in.isGlesysNameServer());
       }
    }
 
-   private final String domain;
-   @SerializedName("create_time")
+   @SerializedName("domainname")
+   private final String domainName;
+   @SerializedName("createtime")
    private final Date createTime;
-   @SerializedName("count")
+   @SerializedName("recordcount")
    private final int recordCount;
-   @SerializedName("glesysnameserver")
-   private final boolean glesysNameServer;
+   @SerializedName("usingglesysnameserver")
+   private final boolean useGlesysNameServer;
 
-   public Domain(String domain, Date createTime, int recordCount, boolean glesysNameServer) {
-      this.domain = domain;
+   public Domain(String domainName, Date createTime, int recordCount, boolean useGlesysNameServer) {
+      this.domainName = domainName;
       this.createTime = createTime;
       this.recordCount = recordCount;
-      this.glesysNameServer = glesysNameServer;
+      this.useGlesysNameServer = useGlesysNameServer;
    }
 
    /** @return the domain name, ex. "jclouds.org" */
-   public String getDomain() {
-      return domain;
+   public String getDomainName() {
+      return domainName;
    }
 
    /** @return the date the domain was registered with GleSYS */
@@ -100,18 +101,18 @@ public class Domain implements Comparable<Domain> {
    }
 
    /** @return true if a GleSYS nameserver holds the records */
-   public boolean getGlesysNameServer() {
-      return glesysNameServer;
+   public boolean isGlesysNameServer() {
+      return useGlesysNameServer;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(domain);
+      return Objects.hashCode(domainName);
    }
 
    @Override
    public int compareTo(Domain other) {
-      return domain.compareTo(other.getDomain());
+      return domainName.compareTo(other.getDomainName());
    }
 
    @Override
@@ -120,7 +121,7 @@ public class Domain implements Comparable<Domain> {
          return true;
       }
       if (object instanceof Domain) {
-         return Objects.equal(domain, ((Domain) object).domain);
+         return Objects.equal(domainName, ((Domain) object).domainName);
       } else {
          return false;
       }
@@ -128,7 +129,7 @@ public class Domain implements Comparable<Domain> {
 
    @Override
    public String toString() {
-      return String.format("[domain=%s, createTime=%s, count=%d, glesysnameserver=%b]", domain, createTime, recordCount, glesysNameServer);
+      return String.format("[domainname=%s, createtime=%s, count=%d, useglesysnameserver=%b]", domainName, createTime, recordCount, useGlesysNameServer);
    }
 
 }
