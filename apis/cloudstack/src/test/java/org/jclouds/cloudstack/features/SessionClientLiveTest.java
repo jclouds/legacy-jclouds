@@ -25,6 +25,7 @@ import org.jclouds.cloudstack.domain.User;
 import org.testng.annotations.Test;
 
 import static com.google.common.collect.Iterables.find;
+import static org.jclouds.crypto.CryptoStreams.md5Hex;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -38,24 +39,14 @@ public class SessionClientLiveTest extends BaseCloudStackClientLiveTest {
 
    private final String USER = "jcloud";
    private final String PLAIN_TEXT_PASSWORD = "jcl0ud";
-   private final String PASSWORD_MD5_HASH = "30e14b3727225d833aad2206acea1275";
-   private final String DOMAIN = "/Partners/jCloud";
+   private final String DOMAIN = "Partners/jCloud";
 
    private LoginResponse loginResponse;
 
    @Test(enabled = true)
-   public void testLoginWithPlainTextPassword() throws Exception {
-      LoginResponse response = client.getSessionClient()
-         .loginWithPlainTextPassword(USER, PLAIN_TEXT_PASSWORD, DOMAIN);
-
-      assertNotNull(response);
-      assertNotNull(response.getSessionKey());
-   }
-
-   @Test(enabled = true)
    public void testLoginWithHashedPassword() throws Exception {
       loginResponse = client.getSessionClient()
-         .loginWithHashedPassword(USER, PASSWORD_MD5_HASH, DOMAIN);
+         .loginUserInDomainWithHashOfPassword(USER, DOMAIN, md5Hex(PLAIN_TEXT_PASSWORD));
 
       assertNotNull(loginResponse);
       assertNotNull(loginResponse.getSessionKey());
@@ -64,7 +55,7 @@ public class SessionClientLiveTest extends BaseCloudStackClientLiveTest {
    @Test(dependsOnMethods = "testLoginWithHashedPassword")
    public void testRetrieveUserInfoWithSessionKey() throws Exception {
       Account account = client.getSessionClient()
-         .getAccountByName(loginResponse.getAccountName(), loginResponse.getSessionKey());
+         .getAccountByNameUsingSession(loginResponse.getAccountName(), loginResponse.getSessionKey());
 
       assertNotNull(account);
       assertEquals(account.getName(), loginResponse.getAccountName());
@@ -82,6 +73,6 @@ public class SessionClientLiveTest extends BaseCloudStackClientLiveTest {
    
    @Test(dependsOnMethods = "testRetrieveUserInfoWithSessionKey")
    public void testLogout() throws Exception {
-      client.getSessionClient().logout(loginResponse.getSessionKey());
+      client.getSessionClient().logoutUser(loginResponse.getSessionKey());
    }
 }

@@ -21,16 +21,13 @@ package org.jclouds.cloudstack.features;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.LoginResponse;
-import org.jclouds.cloudstack.functions.HashToMD5;
 import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.QueryParam;
@@ -49,30 +46,18 @@ import javax.ws.rs.core.MediaType;
 public interface SessionAsyncClient {
 
    /**
-    * @see SessionClient#loginWithHashedPassword
+    * @see SessionClient#loginUserInDomainWithHashOfPassword
     */
    @GET
    @QueryParams(keys = "command", values = "login")
    @SelectJson("loginresponse")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<LoginResponse> loginWithHashedPassword(@QueryParam("username") String userName,
-      @QueryParam("password") String hashedPassword, @QueryParam("domain") String domainOrEmpty);
+   ListenableFuture<LoginResponse> loginUserInDomainWithHashOfPassword(@QueryParam("username") String userName,
+      @QueryParam("domain") String domain, @QueryParam("password") String hashedPassword);
 
    /**
-    * @see SessionClient#loginWithPlainTextPassword
-    */
-   @GET
-   @QueryParams(keys = "command", values = "login")
-   @SelectJson("loginresponse")
-   @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<LoginResponse> loginWithPlainTextPassword(@QueryParam("username") String userName,
-      @QueryParam("password") @ParamParser(HashToMD5.class)  String plainTextPassword,
-      @QueryParam("domain") String domainOrEmpty);
-
-   /**
-    * @see SessionClient#getAccountByName
+    * @see SessionClient#getAccountByNameUsingSession
     */
    @GET
    @QueryParams(keys = "comand", values = "listAccounts")
@@ -80,14 +65,14 @@ public interface SessionAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @HeaderParam(HttpHeaders.COOKIE)
-   ListenableFuture<Account> getAccountByName(@QueryParam("name") String accountName,
-      @CookieParam("sessionKey") @QueryParam("sessionkey") String sessionKey);
+   ListenableFuture<Account> getAccountByNameUsingSession(@QueryParam("name") String accountName,
+      @QueryParam("sessionkey") String sessionKey);
 
    /**
-    * @see SessionClient#logout
+    * @see SessionClient#logoutUser
     */
    @GET
    @QueryParams(keys = "command", values = "logout")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> logout(@QueryParam("sessionkey") String sessionKey);
+   ListenableFuture<Void> logoutUser(@QueryParam("sessionkey") String sessionKey);
 }

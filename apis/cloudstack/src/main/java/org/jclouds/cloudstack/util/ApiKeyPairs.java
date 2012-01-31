@@ -25,7 +25,7 @@ import java.net.URI;
 /**
  * @author Andrei Savu
  */
-public class CloudStackUtil {
+public class ApiKeyPairs {
 
    /**
     * Retrieve the API key pair for a given CloudStack user

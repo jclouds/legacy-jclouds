@@ -39,32 +39,18 @@ public interface SessionClient {
     * cookie value that can be passed in subsequent Query command calls until the "logout"
     * command has been issued or the session has expired.
     *
-    * @param userName
-    *          user account name
-    * @param hashedPassword
-    *          hashed password (by default MD5)
-    * @param domainOrEmpty
-    *          domain name, if empty defaults to ROOT
-    * @return
-    *          login response with session key or null
-    */
-   LoginResponse loginWithHashedPassword(String userName, String hashedPassword, String domainOrEmpty);
-
-   /**
-    * Logs a user into Cloudstack.  A successful login attempt will generate a session key
-    * cookie value that can be passed in subsequent Query command calls until the "logout"
-    * command has been issued or the session has expired.
+    *
     *
     * @param userName
     *          user account name
-    * @param plainTextPassword
-    *          plain text password
-    * @param domainOrEmpty
+    * @param domain
     *          domain name, if empty defaults to ROOT
+    * @param hashedPassword
+    *          hashed password (by default MD5)
     * @return
     *          login response with session key or null
     */
-   LoginResponse loginWithPlainTextPassword(String userName, String plainTextPassword, String domainOrEmpty);
+   LoginResponse loginUserInDomainWithHashOfPassword(String userName, String domain, String hashedPassword);
 
    /**
     * Retrieve an account by name using the session key for login
@@ -76,7 +62,7 @@ public interface SessionClient {
     * @return
     *          account instance or null
     */
-   Account getAccountByName(String accountName, String sessionKey);
+   Account getAccountByNameUsingSession(String accountName, String sessionKey);
 
    /**
     * Logs out the user by invalidating the session key
@@ -84,6 +70,6 @@ public interface SessionClient {
     * @param sessionKey
     *          user session key
     */
-   Void logout(String sessionKey);
+   void logoutUser(String sessionKey);
 
 }
