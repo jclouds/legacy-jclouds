@@ -37,3 +37,7 @@ and choose the numberOfVirtualMachine you need using -Dtest.virtualbox.numberOfV
 These VMs will be cloned starting from the golden template VM created before
 
 It will create a "numberOfVirtualMachine" in a vbox default machine folder with 'VMName_i' name, by cloning the golden template in linked mode with a bridged NIC.
+
+
+** NOTE! **
+Make sure you change your VirtualBox preferences to not auto-capture keyboard, and also set host key to none.  Otherwise you may accidentally screw-up automated installs.
