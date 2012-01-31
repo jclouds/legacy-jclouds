@@ -33,11 +33,11 @@ import com.google.common.net.HttpHeaders;
  * 
  * @author Adrian Cole
  */
-public class BaseKeyStoneRestClientExpectTest<S> extends BaseRestClientExpectTest<S> {
+public class BaseKeystoneRestClientExpectTest<S> extends BaseRestClientExpectTest<S> {
 
    protected String endpoint = "http://localhost:5000";
 
-   public BaseKeyStoneRestClientExpectTest() {
+   public BaseKeystoneRestClientExpectTest() {
       identity = "user@jclouds.org";
       credential = "Password1234";
    }
@@ -60,7 +60,7 @@ public class BaseKeyStoneRestClientExpectTest<S> extends BaseRestClientExpectTes
    /**
     * in case you need to override anything
     */
-   public static class TestKeyStoneAuthenticationModule extends AuthenticationServiceModule {
+   public static class TestKeystoneAuthenticationModule extends AuthenticationServiceModule {
       @Override
       protected void configure() {
          super.configure();

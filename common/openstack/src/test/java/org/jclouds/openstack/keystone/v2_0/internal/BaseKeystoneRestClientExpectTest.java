@@ -23,7 +23,7 @@ import java.net.URI;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.openstack.keystone.v2_0.config.KeyStoneAuthenticationModule;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.rest.BaseRestClientExpectTest;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -34,7 +34,7 @@ import com.google.common.net.HttpHeaders;
  * 
  * @author Adrian Cole
  */
-public class BaseKeyStoneRestClientExpectTest<S> extends BaseRestClientExpectTest<S> {
+public class BaseKeystoneRestClientExpectTest<S> extends BaseRestClientExpectTest<S> {
 
    protected static final String tenantId = "12346637803162";
 
@@ -64,7 +64,7 @@ public class BaseKeyStoneRestClientExpectTest<S> extends BaseRestClientExpectTes
                                        "{\"auth\":{\"apiAccessKeyCredentials\":{\"accessKey\":\"%s\",\"secretKey\":\"%s\"},\"tenantId\":\"%s\"}}",
                                        accessKey, secretKey, tenantId), "application/json")).build();
 
-   public BaseKeyStoneRestClientExpectTest() {
+   public BaseKeystoneRestClientExpectTest() {
       identity = tenantId + ":" + accessKey;
       credential = secretKey;
    }
@@ -79,7 +79,7 @@ public class BaseKeyStoneRestClientExpectTest<S> extends BaseRestClientExpectTes
    /**
     * in case you need to override anything
     */
-   public static class TestKeyStoneAuthenticationModule extends KeyStoneAuthenticationModule {
+   public static class TestKeystoneAuthenticationModule extends KeystoneAuthenticationModule {
       @Override
       protected void configure() {
          super.configure();

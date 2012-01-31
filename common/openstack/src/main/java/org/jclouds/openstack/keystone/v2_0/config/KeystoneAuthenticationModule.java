@@ -56,7 +56,7 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @RequiresHttp
-public class KeyStoneAuthenticationModule extends AbstractModule {
+public class KeystoneAuthenticationModule extends AbstractModule {
 
    @Override
    protected void configure() {

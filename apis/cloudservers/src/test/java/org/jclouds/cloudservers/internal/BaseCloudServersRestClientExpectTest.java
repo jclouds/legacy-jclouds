@@ -31,7 +31,7 @@ import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.openstack.filters.AddTimestampQuery;
 import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule;
-import org.jclouds.openstack.keystone.v1_1.internal.BaseKeyStoneRestClientExpectTest;
+import org.jclouds.openstack.keystone.v1_1.internal.BaseKeystoneRestClientExpectTest;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.base.Supplier;
@@ -42,7 +42,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class BaseCloudServersRestClientExpectTest extends BaseKeyStoneRestClientExpectTest<CloudServersClient> {
+public class BaseCloudServersRestClientExpectTest extends BaseKeystoneRestClientExpectTest<CloudServersClient> {
 
    public BaseCloudServersRestClientExpectTest() {
       provider = "cloudservers";
