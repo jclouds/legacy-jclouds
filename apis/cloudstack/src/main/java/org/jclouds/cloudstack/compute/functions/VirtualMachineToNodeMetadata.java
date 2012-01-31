@@ -18,19 +18,19 @@
  */
 package org.jclouds.cloudstack.compute.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
-
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
+import org.jclouds.cloudstack.domain.NIC;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.collect.FindResourceInSet;
 import org.jclouds.collect.Memoized;
@@ -46,18 +46,21 @@ import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.InetAddresses2;
 import org.jclouds.util.Throwables2;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.util.concurrent.UncheckedExecutionException;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.util.Map;
+import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Sets.newHashSet;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
+import static org.jclouds.util.InetAddresses2.isPrivateIPAddress;
 
 /**
- * @author Adrian Cole
+ * @author Adrian Cole, Andrei Savu
  */
 @Singleton
 public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, NodeMetadata> {
@@ -108,7 +111,7 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
          builder.imageId(image.getId());
          builder.operatingSystem(image.getOperatingSystem());
       }
-      
+
       builder.hardware(new HardwareBuilder()
         .ids(from.getServiceOfferingId() + "")
         .name(from.getServiceOfferingName() + "")
@@ -120,37 +123,47 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
 
       builder.state(vmStateToNodeState.get(from.getState()));
 
-      // TODO: check to see public or private
+      Set<String> publicAddresses = newHashSet(), privateAddresses = newHashSet();
       if (from.getIPAddress() != null) {
-         boolean isPrivate = InetAddresses2.isPrivateIPAddress(from.getIPAddress());
-         Set<String> addresses = ImmutableSet.<String> of(from.getIPAddress());
-         if (isPrivate)
-            builder.privateAddresses(addresses);
-         else
-            builder.publicAddresses(addresses);
+         boolean isPrivate = isPrivateIPAddress(from.getIPAddress());
+         if (isPrivate) {
+            privateAddresses.add(from.getIPAddress());
+         } else {
+            publicAddresses.add(from.getIPAddress());
+         }
+      }
+      for (NIC nic : from.getNICs()) {
+         if (nic.getIPAddress() != null) {
+            if (isPrivateIPAddress(nic.getIPAddress())) {
+               privateAddresses.add(nic.getIPAddress());
+            } else {
+               publicAddresses.add(nic.getIPAddress());
+            }
+         }
       }
       try {
-
-         builder.publicAddresses(transform(
-               filter(getIPForwardingRulesByVirtualMachine.getUnchecked(from.getId()),
-                     new Predicate<IPForwardingRule>() {
-                        @Override
-                        public boolean apply(@Nullable IPForwardingRule rule) {
-                           return !"Deleting".equals(rule.getState());
-                        }
-                     }), new Function<IPForwardingRule, String>() {
+         /* Also add to the list of public IPs any public IP address that has a
+            forwarding rule that links to this machine */
+         Iterables.addAll(publicAddresses, transform(
+            filter(getIPForwardingRulesByVirtualMachine.getUnchecked(from.getId()),
+               new Predicate<IPForwardingRule>() {
                   @Override
-                  public String apply(@Nullable IPForwardingRule rule) {
-                     return rule.getIPAddress();
+                  public boolean apply(@Nullable IPForwardingRule rule) {
+                     return !"Deleting".equals(rule.getState());
                   }
-               }));
+               }), new Function<IPForwardingRule, String>() {
+            @Override
+            public String apply(@Nullable IPForwardingRule rule) {
+               return rule.getIPAddress();
+            }
+         }));
       } catch (UncheckedExecutionException e) {
          if (Throwables2.getFirstThrowableOfType(e, ResourceNotFoundException.class) == null) {
             Throwables.propagateIfPossible(e.getCause());
             throw e;
          }
       }
-      return builder.build();
+      return builder.privateAddresses(privateAddresses).publicAddresses(publicAddresses).build();
    }
 
    @Singleton
