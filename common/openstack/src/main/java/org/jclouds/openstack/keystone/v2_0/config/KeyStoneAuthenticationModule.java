@@ -24,7 +24,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -38,21 +37,19 @@ import org.jclouds.location.Provider;
 import org.jclouds.openstack.Authentication;
 import org.jclouds.openstack.keystone.v2_0.ServiceAsyncClient;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
-import org.jclouds.openstack.keystone.v2_0.domain.PasswordCredentials;
+import org.jclouds.openstack.keystone.v2_0.functions.AuthenticateApiAccessKeyCredentials;
+import org.jclouds.openstack.keystone.v2_0.functions.AuthenticatePasswordCredentials;
 import org.jclouds.openstack.keystone.v2_0.handlers.RetryOnRenew;
 import org.jclouds.rest.AsyncClientFactory;
 
 import com.google.common.base.Function;
-import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Iterables;
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -63,9 +60,8 @@ public class KeyStoneAuthenticationModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(new TypeLiteral<Function<Credentials, Access>>() {
-      }).to(GetAccess.class);
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
+      bind(CredentialType.class).toProvider(CredentialTypeFromPropertyOrDefault.class);
    }
 
    /**
@@ -89,45 +85,48 @@ public class KeyStoneAuthenticationModule extends AbstractModule {
       return factory.create(ServiceAsyncClient.class);
    }
 
-   @Provides
-   @Provider
-   protected Credentials provideAuthenticationCredentials(@Named(Constants.PROPERTY_IDENTITY) String userOrApiKey,
-            @Named(Constants.PROPERTY_CREDENTIAL) String keyOrSecretKey) {
-      return new Credentials(userOrApiKey, keyOrSecretKey);
+   @Singleton
+   static class CredentialTypeFromPropertyOrDefault implements javax.inject.Provider<CredentialType> {
+      /**
+       * use optional injection to supply a default value for credential type. so that we don't have
+       * to set a default property.
+       */
+      @Inject(optional = true)
+      @Named(KeystoneProperties.CREDENTIAL_TYPE)
+      String credentialType = CredentialType.API_ACCESS_KEY_CREDENTIALS.toString();
+
+      @Override
+      public CredentialType get() {
+         return CredentialType.fromValue(credentialType);
+      }
    }
 
+   @Provides
    @Singleton
-   public static class GetAccess extends RetryOnTimeOutExceptionFunction<Credentials, Access> {
-
-      // passing factory here to avoid a circular dependency on
-      // OpenStackAuthAsyncClient resolving ServiceAsyncClient
-      @Inject
-      public GetAccess(final AsyncClientFactory factory) {
-         super(new Function<Credentials, Access>() {
-
-            @Override
-            public Access apply(Credentials input) {
-               // TODO: nice error messages, etc.
-               Iterable<String> tenantIdUsername = Splitter.on(':').split(input.identity);
-               String tenantId = Iterables.get(tenantIdUsername, 0);
-               String username = Iterables.get(tenantIdUsername, 1);
-               PasswordCredentials passwordCredentials = PasswordCredentials.createWithUsernameAndPassword(username,
-                        input.credential);
-               try {
-                  return factory.create(ServiceAsyncClient.class).authenticateTenantWithCredentials(tenantId,
-                           passwordCredentials).get();
-               } catch (Exception e) {
-                  throw Throwables.propagate(e);
-               }
-            }
-
-            @Override
-            public String toString() {
-               return "authenticate()";
-            }
-         });
-
+   protected Function<Credentials, Access> authenticationMethodForCredentialType(CredentialType credentialType,
+            AuthenticatePasswordCredentials authenticatePasswordCredentials,
+            AuthenticateApiAccessKeyCredentials authenticateApiAccessKeyCredentials) {
+      Function<Credentials, Access> authMethod;
+      switch (credentialType) {
+         case PASSWORD_CREDENTIALS:
+            authMethod = authenticatePasswordCredentials;
+            break;
+         case API_ACCESS_KEY_CREDENTIALS:
+            authMethod = authenticateApiAccessKeyCredentials;
+            break;
+         default:
+            throw new IllegalArgumentException("credential type not supported: " + credentialType);
       }
+      // regardless of how we authenticate, we should retry if there is a timeout exception logging
+      // in.
+      return new RetryOnTimeOutExceptionFunction<Credentials, Access>(authMethod);
+   }
+
+   @Provides
+   @Provider
+   protected Credentials provideAuthenticationCredentials(@Named(Constants.PROPERTY_IDENTITY) String userOrAccessKey,
+            @Named(Constants.PROPERTY_CREDENTIAL) String keyOrSecretKey) {
+      return new Credentials(userOrAccessKey, keyOrSecretKey);
    }
 
    // TODO: what is the timeout of the session token? modify default accordingly

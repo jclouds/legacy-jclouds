@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.keystone.v2_0.internal;
 
+import static java.lang.String.format;
 import java.net.URI;
 
 import org.jclouds.http.HttpRequest;
@@ -35,21 +36,39 @@ import com.google.common.net.HttpHeaders;
  */
 public class BaseKeyStoneRestClientExpectTest<S> extends BaseRestClientExpectTest<S> {
 
-   public BaseKeyStoneRestClientExpectTest() {
-      // tenantId:username
-      identity = "12346637803162:user@jclouds.org";
-      credential = "Password1234";
-   }
+   protected static final String tenantId = "12346637803162";
 
-   protected HttpRequest initialAuth = HttpRequest
+   protected static final String username = "user@jclouds.org";
+   protected static final String password = "Password1234";
+   protected static final HttpRequest initialAuthWithPasswordCredentials = HttpRequest
             .builder()
             .method("POST")
             .endpoint(URI.create("http://localhost:5000/v2.0/tokens"))
             .headers(ImmutableMultimap.of(HttpHeaders.ACCEPT, "application/json"))
             .payload(
                      payloadFromStringWithContentType(
-                              "{\"auth\":{\"passwordCredentials\":{\"username\":\"user@jclouds.org\",\"password\":\"Password1234\"},\"tenantId\":\"12346637803162\"}}",
-                              "application/json")).build();
+                              format(
+                                       "{\"auth\":{\"passwordCredentials\":{\"username\":\"%s\",\"password\":\"%s\"},\"tenantId\":\"%s\"}}",
+                                       username, password, tenantId), "application/json")).build();
+
+   protected static final String accessKey = "FH6FU8GMZFLKP5BUR2X1";
+   protected static final String secretKey = "G4QWed0lh5SH7kBrcvOM1cHygKWk81EBt+Hr1dsl";
+   protected static final HttpRequest initialAuthWithApiAccessKeyCredentials = HttpRequest
+            .builder()
+            .method("POST")
+            .endpoint(URI.create("http://localhost:5000/v2.0/tokens"))
+            .headers(ImmutableMultimap.of(HttpHeaders.ACCEPT, "application/json"))
+            .payload(
+                     payloadFromStringWithContentType(
+                              format(
+                                       "{\"auth\":{\"apiAccessKeyCredentials\":{\"accessKey\":\"%s\",\"secretKey\":\"%s\"},\"tenantId\":\"%s\"}}",
+                                       accessKey, secretKey, tenantId), "application/json")).build();
+
+   public BaseKeyStoneRestClientExpectTest() {
+      identity = tenantId + ":" + accessKey;
+      credential = secretKey;
+   }
+
 
    protected String authToken = "Auth_4f173437e4b013bee56d1007";
 

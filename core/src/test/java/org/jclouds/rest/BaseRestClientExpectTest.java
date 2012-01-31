@@ -153,18 +153,19 @@ public abstract class BaseRestClientExpectTest<S> {
 
    public Payload payloadFromResourceWithContentType(String resource, String contentType) {
       try {
-         return payloadFromStringWithContentType(Strings2.toStringAndClose(getClass().getResourceAsStream(resource)), contentType);
+         return payloadFromStringWithContentType(Strings2.toStringAndClose(getClass().getResourceAsStream(resource)),
+                  contentType);
       } catch (IOException e) {
          throw Throwables.propagate(e);
       }
 
    }
 
-   public Payload payloadFromString(String payload) {
+   public static Payload payloadFromString(String payload) {
       return Payloads.newStringPayload(payload);
    }
 
-   public Payload payloadFromStringWithContentType(String payload, String contentType) {
+   public static Payload payloadFromStringWithContentType(String payload, String contentType) {
       Payload p = Payloads.newStringPayload(payload);
       p.getContentMetadata().setContentType(contentType);
       return p;
@@ -347,9 +348,22 @@ public abstract class BaseRestClientExpectTest<S> {
 
          @Override
          public HttpResponse apply(HttpRequest input) {
-            if (!(requestToResponse.containsKey(input)))
+            if (!(requestToResponse.containsKey(input))) {
+
+               StringBuilder payload = new StringBuilder("\n");
+               payload.append("the following request is not configured:\n");
+               payload.append("----------------------------------------\n");
+               payload.append(renderRequest(input));
+               payload.append("----------------------------------------\n");
+               payload.append("configured requests:\n");
+               for (HttpRequest request : requestToResponse.keySet()) {
+                  payload.append("----------------------------------------\n");
+                  payload.append(renderRequest(request));
+               }
                return HttpResponse.builder().statusCode(500).message("no response configured for request").payload(
-                        Payloads.newStringPayload(renderRequest(input))).build();
+                        Payloads.newStringPayload(payload.toString())).build();
+
+            }
             HttpResponse response = requestToResponse.get(input);
             // in case hashCode/equals doesn't do a full content check
             assertEquals(renderRequest(input), renderRequest(bimap.inverse().get(response)));

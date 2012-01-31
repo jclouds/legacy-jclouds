@@ -27,49 +27,46 @@ public class ServerClientExpectTest extends BaseNovaRestClientExpectTest {
    }
 
    public void testListServersWhenResponseIs2xx() throws Exception {
-      HttpRequest listServers = HttpRequest.builder().method("GET")
-              .endpoint(URI.create("http://compute-1.jclouds.org:8774/v1.1/40806637803162/servers"))
-              .headers(ImmutableMultimap.<String, String> builder()
-                 .put("Accept", "application/json")
-                 .put("X-Auth-Token", authToken).build()).build();
-      
+      HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(
+               URI.create("http://compute-1.jclouds.org:8774/v1.1/40806637803162/servers")).headers(
+               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
+                        authToken).build()).build();
+
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/server_list.json")).build();
 
-      ServerClient clientWhenServersExist = requestsSendResponses(initialAuth, responseWithAccess, listServers,
-               listServersResponse).getServerClient();
+      ServerClient clientWhenServersExist = requestsSendResponses(initialAuthWithApiAccessKeyCredentials,
+               responseWithAccess, listServers, listServersResponse).getServerClient();
 
       assertEquals(clientWhenServersExist.listServers().toString(), new ParseServerListTest().expected().toString());
    }
 
    public void testListServersWhenReponseIs404IsEmpty() throws Exception {
-      HttpRequest listServers = HttpRequest.builder().method("GET")
-              .endpoint(URI.create("http://compute-1.jclouds.org:8774/v1.1/40806637803162/servers"))
-              .headers(ImmutableMultimap.<String, String> builder()
-                 .put("Accept", "application/json")
-                 .put("X-Auth-Token", authToken).build()).build();
-      
+      HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(
+               URI.create("http://compute-1.jclouds.org:8774/v1.1/40806637803162/servers")).headers(
+               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
+                        authToken).build()).build();
+
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(404).build();
 
-      ServerClient clientWhenServersExist = requestsSendResponses(initialAuth, responseWithAccess, listServers,
-               listServersResponse).getServerClient();
+      ServerClient clientWhenServersExist = requestsSendResponses(initialAuthWithApiAccessKeyCredentials,
+               responseWithAccess, listServers, listServersResponse).getServerClient();
 
       assertTrue(clientWhenServersExist.listServers().isEmpty());
    }
 
-   //TODO: gson deserializer for Multimap
+   // TODO: gson deserializer for Multimap
    public void testGetServerWhenResponseIs2xx() throws Exception {
-      HttpRequest listServers = HttpRequest.builder().method("GET")
-              .endpoint(URI.create("http://compute-1.jclouds.org:8774/v1.1/40806637803162/servers/foo"))
-              .headers(ImmutableMultimap.<String, String> builder()
-                 .put("Accept", "application/json")
-                 .put("X-Auth-Token", authToken).build()).build();
-      
+      HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(
+               URI.create("http://compute-1.jclouds.org:8774/v1.1/40806637803162/servers/foo")).headers(
+               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
+                        authToken).build()).build();
+
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/server_details.json")).build();
 
-      ServerClient clientWhenServersExist = requestsSendResponses(initialAuth, responseWithAccess, listServers,
-               listServersResponse).getServerClient();
+      ServerClient clientWhenServersExist = requestsSendResponses(initialAuthWithApiAccessKeyCredentials,
+               responseWithAccess, listServers, listServersResponse).getServerClient();
 
       assertEquals(clientWhenServersExist.getServer("foo").toString(), new ParseServerTest().expected().toString());
    }
