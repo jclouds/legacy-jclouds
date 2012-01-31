@@ -36,7 +36,7 @@ import org.jclouds.glesys.domain.ServerDetails;
 import org.jclouds.glesys.domain.ServerLimit;
 import org.jclouds.glesys.domain.ServerSpec;
 import org.jclouds.glesys.domain.ServerStatus;
-import org.jclouds.glesys.domain.Template;
+import org.jclouds.glesys.domain.OSTemplate;
 import org.jclouds.glesys.functions.ParseTemplatesFromHttpResponse;
 import org.jclouds.glesys.options.CloneServerOptions;
 import org.jclouds.glesys.options.CreateServerOptions;
@@ -134,7 +134,7 @@ public interface ServerAsyncClient {
    @Path("/server/templates/format/json")
    @ResponseParser(ParseTemplatesFromHttpResponse.class)
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Set<Template>> getTemplates();
+   ListenableFuture<Set<OSTemplate>> listTemplates();
 
    /**
     * @see ServerClient#stopServer

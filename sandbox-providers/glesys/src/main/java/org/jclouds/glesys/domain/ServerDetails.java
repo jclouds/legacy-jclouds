@@ -97,7 +97,7 @@ public class ServerDetails extends Server {
       }
 
       public Builder fromServerDetails(ServerDetails in) {
-         return fromServer(in).templateName(in.getTemplateName()).memorySize(in.getMemorySize()).diskSize(in.getDiskSize()).cpuCores(in.getCpuCores()).cost(in.getCost())
+         return fromServer(in).templateName(in.getTemplateName()).memorySize(in.getMemorySizeMB()).diskSize(in.getDiskSizeGB()).cpuCores(in.getCpuCores()).cost(in.getCost())
                .description(in.getDescription()).ips(in.getIps());
       }
 
@@ -171,21 +171,21 @@ public class ServerDetails extends Server {
    /**
     * @return the disk of the server in GB
     */
-   public int getDiskSize() {
+   public int getDiskSizeGB() {
       return diskSize;
    }
 
    /**
     * @return the memory of the server in MB
     */
-   public int getMemorySize() {
+   public int getMemorySizeMB() {
       return memorySize;
    }
 
    /**
     * @return the transfer of the server
     */
-   public int getTransfer() {
+   public int getTransferGB() {
       return transfer;
    }
 

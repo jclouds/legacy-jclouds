@@ -30,7 +30,7 @@ import org.jclouds.glesys.domain.ServerDetails;
 import org.jclouds.glesys.domain.ServerLimit;
 import org.jclouds.glesys.domain.ServerSpec;
 import org.jclouds.glesys.domain.ServerStatus;
-import org.jclouds.glesys.domain.Template;
+import org.jclouds.glesys.domain.OSTemplate;
 import org.jclouds.glesys.options.CloneServerOptions;
 import org.jclouds.glesys.options.CreateServerOptions;
 import org.jclouds.glesys.options.DestroyServerOptions;
@@ -105,7 +105,7 @@ public interface ServerClient {
     * 
     * @return the set of information about each template
     */
-   Set<Template> getTemplates();
+   Set<OSTemplate> listTemplates();
 
    /**
     * Get information about valid arguments to #createServer for each platform

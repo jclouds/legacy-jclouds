@@ -20,15 +20,15 @@ package org.jclouds.glesys.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Lists the allowed arguments for some of the functions in this module such as disksize, cpucores etc.
+ * Sets the allowed arguments for some of the functions in this module such as disksize, cpucores etc.
  *
  * @author Adam Lowe
  * @see <a href="https://customer.glesys.com/api.php?a=doc#server_allowedarguments" />
@@ -39,64 +39,64 @@ public class AllowedArgumentsForCreateServer {
    }
 
    public static class Builder {
-      private List<Integer> diskSizes;
-      private List<Integer> memorySizes;
-      private List<Integer> cpuCores;
-      private List<String> templates;
-      private List<Integer> transfers;
-      private List<String> dataCenters;
+      private Set<Integer> diskSizes;
+      private Set<Integer> memorySizes;
+      private Set<Integer> cpuCores;
+      private Set<String> templates;
+      private Set<Integer> transfers;
+      private Set<String> dataCenters;
 
       public Builder diskSizes(Integer... sizes) {
-         return diskSizes(Arrays.<Integer>asList(sizes));
+         return diskSizes(ImmutableSet.<Integer>copyOf(sizes));
       }
 
-      public Builder diskSizes(List<Integer> sizes) {
+      public Builder diskSizes(Set<Integer> sizes) {
          this.diskSizes = sizes;
          return this;
       }
 
       public Builder memorySizes(Integer... sizes) {
-         return memorySizes(Arrays.<Integer>asList(sizes));
+         return memorySizes(ImmutableSet.<Integer>copyOf(sizes));
       }
 
-      public Builder memorySizes(List<Integer> sizes) {
+      public Builder memorySizes(Set<Integer> sizes) {
          this.memorySizes = sizes;
          return this;
       }
 
       public Builder cpuCores(Integer... cpuCores) {
-         this.cpuCores = Arrays.<Integer>asList(cpuCores);
+         this.cpuCores = ImmutableSet.<Integer>copyOf(cpuCores);
          return this;
       }
 
-      public Builder cpuCores(List<Integer> cpuCores) {
+      public Builder cpuCores(Set<Integer> cpuCores) {
          this.cpuCores = cpuCores;
          return this;
       }
 
       public Builder templates(String... templates) {
-         return templates(Arrays.<String>asList(templates));
+         return templates(ImmutableSet.<String>copyOf(templates));
       }
 
-      public Builder templates(List<String> templates) {
+      public Builder templates(Set<String> templates) {
          this.templates = templates;
          return this;
       }
 
       public Builder transfers(Integer... transfers) {
-         return transfers(Arrays.<Integer>asList(transfers));
+         return transfers(ImmutableSet.<Integer>copyOf(transfers));
       }
 
-      public Builder transfers(List<Integer> transfers) {
+      public Builder transfers(Set<Integer> transfers) {
          this.transfers = transfers;
          return this;
       }
 
       public Builder dataCenters(String... dataCenters) {
-         return dataCenters(Arrays.<String>asList(dataCenters));
+         return dataCenters(ImmutableSet.<String>copyOf(dataCenters));
       }
 
-      public Builder dataCenters(List<String> dataCenters) {
+      public Builder dataCenters(Set<String> dataCenters) {
          this.dataCenters = dataCenters;
          return this;
       }
@@ -106,30 +106,30 @@ public class AllowedArgumentsForCreateServer {
       }
 
       public Builder fromAllowedArguments(AllowedArgumentsForCreateServer in) {
-         return diskSizes(in.getDiskSizes())
-               .memorySizes(in.getMemorySizes())
-               .cpuCores(in.getCpuCores())
-               .templates(in.getTemplates())
-               .transfers(in.getTransfers())
+         return diskSizes(in.getDiskSizesInGB())
+               .memorySizes(in.getMemorySizesInMB())
+               .cpuCores(in.getCpuCoreOptions())
+               .templates(in.getTemplateNames())
+               .transfers(in.getTransfersInGB())
                .dataCenters(in.getDataCenters());
       }
    }
 
    @SerializedName("disksize")
-   private final List<Integer> diskSizes;
+   private final Set<Integer> diskSizes;
    @SerializedName("memorysize")
-   private final List<Integer> memorySizes;
+   private final Set<Integer> memorySizes;
    @SerializedName("cpucores")
-   private final List<Integer> cpuCores;
+   private final Set<Integer> cpuCores;
    @SerializedName("template")
-   private final List<String> templates;
+   private final Set<String> templates;
    @SerializedName("transfer")
-   private final List<Integer> transfers;
+   private final Set<Integer> transfers;
    @SerializedName("datacenter")
-   private final List<String> dataCenters;
+   private final Set<String> dataCenters;
 
-   public AllowedArgumentsForCreateServer(List<Integer> diskSizes, List<Integer> memorySizes, List<Integer> cpuCores,
-                                 List<String> templates, List<Integer> transfers, List<String> dataCenters) {
+   public AllowedArgumentsForCreateServer(Set<Integer> diskSizes, Set<Integer> memorySizes, Set<Integer> cpuCores,
+                                 Set<String> templates, Set<Integer> transfers, Set<String> dataCenters) {
       checkNotNull(diskSizes, "diskSizes");
       checkNotNull(memorySizes, "memorySizes");
       checkNotNull(cpuCores, "cpuCores");
@@ -147,46 +147,46 @@ public class AllowedArgumentsForCreateServer {
 
    /**
     * @return a list of disk sizes, in GB, that can be used for creating servers on this platform
-    * @see org.jclouds.glesys.domain.Template#getMinDiskSize()
+    * @see org.jclouds.glesys.domain.OSTemplate#getMinDiskSize()
     */
-   public List<Integer> getDiskSizes() {
+   public Set<Integer> getDiskSizesInGB() {
       return diskSizes;
    }
 
    /**
     * @return a list of memory sizes, in MB, that can be used for creating servers on this platform
-    * @see  org.jclouds.glesys.domain.Template#getMinMemSize()
+    * @see  org.jclouds.glesys.domain.OSTemplate#getMinMemSize()
     */
-   public List<Integer> getMemorySizes() {
+   public Set<Integer> getMemorySizesInMB() {
       return memorySizes;
    }
 
    /**
     * @return a list of which core counts can be used for creating servers on this platform
     */
-   public List<Integer> getCpuCores() {
+   public Set<Integer> getCpuCoreOptions() {
       return cpuCores;
    }
 
    /**
     * @return a list of template names available for creating servers on this platform
-    * @see org.jclouds.glesys.domain.Template#getName() 
+    * @see org.jclouds.glesys.domain.OSTemplate#getName() 
     */
-   public List<String> getTemplates() {
+   public Set<String> getTemplateNames() {
       return templates;
    }
 
    /**
     * @return the list of transfer settings available for creating servers on this platform
     */
-   public List<Integer> getTransfers() {
+   public Set<Integer> getTransfersInGB() {
       return transfers;
    }
 
    /**
     * @return the list of datacenters available that support creating servers on this platform
     */
-   public List<String> getDataCenters() {
+   public Set<String> getDataCenters() {
       return dataCenters;
    }
 

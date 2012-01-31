@@ -25,7 +25,7 @@ import java.util.Set;
 
 import javax.inject.Singleton;
 
-import org.jclouds.glesys.domain.Template;
+import org.jclouds.glesys.domain.OSTemplate;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.json.internal.GsonWrapper;
@@ -40,19 +40,19 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Singleton
-public class ParseTemplatesFromHttpResponse implements Function<HttpResponse, Set<Template>> {
-   private final ParseFirstJsonValueNamed<Map<String, Set<Template>>> parser;
+public class ParseTemplatesFromHttpResponse implements Function<HttpResponse, Set<OSTemplate>> {
+   private final ParseFirstJsonValueNamed<Map<String, Set<OSTemplate>>> parser;
 
    @Inject
    public ParseTemplatesFromHttpResponse(GsonWrapper gsonWrapper) {
-      this.parser = new ParseFirstJsonValueNamed<Map<String, Set<Template>>>(checkNotNull(gsonWrapper,
-               "gsonWrapper"), new TypeLiteral<Map<String, Set<Template>>>() {
+      this.parser = new ParseFirstJsonValueNamed<Map<String, Set<OSTemplate>>>(checkNotNull(gsonWrapper,
+               "gsonWrapper"), new TypeLiteral<Map<String, Set<OSTemplate>>>() {
       }, "templates");
    }
 
-   public Set<Template> apply(HttpResponse response) {
+   public Set<OSTemplate> apply(HttpResponse response) {
       checkNotNull(response, "response");
-      Map<String, Set<Template>> toParse = parser.apply(response);
+      Map<String, Set<OSTemplate>> toParse = parser.apply(response);
       checkNotNull(toParse, "parsed result from %s", response);
       return ImmutableSet.copyOf(Iterables.concat(toParse.values()));
    }

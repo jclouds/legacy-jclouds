@@ -59,7 +59,7 @@ public class CreateServerOptions implements MapBinder {
       formParams.put("disksize", serverSpec.getDiskSizeGB() + "");
       formParams.put("memorysize", serverSpec.getMemorySizeMB() + "");
       formParams.put("cpucores", serverSpec.getCpuCores() + "");
-      formParams.put("transfer", serverSpec.getTransfer() + "");
+      formParams.put("transfer", serverSpec.getTransferGB() + "");
       if (ip != null)
          formParams.put("ip", ip);
       if (description != null)

@@ -46,7 +46,7 @@ public class ServerSpec {
       protected int diskSizeGB;
       protected int memorySizeMB;
       protected int cpuCores;
-      protected int transfer;
+      protected int transferGB;
 
       public Builder datacenter(String datacenter) {
          this.datacenter = datacenter;
@@ -78,19 +78,19 @@ public class ServerSpec {
          return this;
       }
 
-      public Builder transfer(int transfer) {
-         this.transfer = transfer;
+      public Builder transferGB(int transferGB) {
+         this.transferGB = transferGB;
          return this;
       }
 
       public ServerSpec build() {
-         return new ServerSpec(platform, datacenter, memorySizeMB, diskSizeGB, templateName, cpuCores, transfer);
+         return new ServerSpec(platform, datacenter, memorySizeMB, diskSizeGB, templateName, cpuCores, transferGB);
       }
 
       public static Builder fromServerSpecification(ServerSpec in) {
          return new Builder().platform(in.getPlatform()).datacenter(in.getDatacenter())
                .memorySizeMB(in.getMemorySizeMB()).diskSizeGB(in.getDiskSizeGB()).templateName(in.getTemplateName())
-               .cpuCores(in.getCpuCores()).transfer(in.getTransfer());
+               .cpuCores(in.getCpuCores()).transferGB(in.getTransferGB());
       }
    }
 
@@ -100,17 +100,17 @@ public class ServerSpec {
    protected final int diskSizeGB;
    protected final String templateName;
    protected final int cpuCores;
-   protected final int transfer;
+   protected final int transferGB;
 
    protected ServerSpec(String platform, String datacenter, int memorySizeMB, int diskSizeGB, String templateName,
-         int cpuCores, int transfer) {
+         int cpuCores, int transferGB) {
       this.platform = checkNotNull(platform, "platform");
       this.datacenter = checkNotNull(datacenter, "datacenter");
       this.memorySizeMB = memorySizeMB;
       this.diskSizeGB = diskSizeGB;
       this.templateName = checkNotNull(templateName, "templateName");
       this.cpuCores = cpuCores;
-      this.transfer = transfer;
+      this.transferGB = transferGB;
    }
 
    /**
@@ -156,10 +156,10 @@ public class ServerSpec {
    }
 
    /**
-    * @return number of transfer
+    * @return bandwidth of in GB
     */
-   public int getTransfer() {
-      return transfer;
+   public int getTransferGB() {
+      return transferGB;
    }
 
    @Override
@@ -172,7 +172,7 @@ public class ServerSpec {
          return equal(platform, that.platform) && equal(datacenter, that.datacenter)
                && equal(memorySizeMB, that.memorySizeMB) && equal(diskSizeGB, that.diskSizeGB)
                && equal(templateName, that.templateName) && equal(cpuCores, that.cpuCores)
-               && equal(transfer, that.transfer);
+               && equal(transferGB, that.transferGB);
       } else {
          return false;
       }
@@ -180,13 +180,13 @@ public class ServerSpec {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(platform, datacenter, memorySizeMB, diskSizeGB, templateName, cpuCores, transfer);
+      return Objects.hashCode(platform, datacenter, memorySizeMB, diskSizeGB, templateName, cpuCores, transferGB);
    }
 
    @Override
    public String toString() {
       return toStringHelper("").add("platform", platform).add("datacenter", datacenter)
             .add("templateName", templateName).add("cpuCores", cpuCores).add("cpuCores", cpuCores)
-            .add("diskSizeGB", diskSizeGB).add("transfer", transfer).toString();
+            .add("diskSizeGB", diskSizeGB).add("transferGB", transferGB).toString();
    }
 }
