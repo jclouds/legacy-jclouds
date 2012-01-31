@@ -16,35 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.glesys;
+package org.jclouds.glesys.compute.functions;
 
-import java.util.List;
-import java.util.Properties;
+import java.util.Set;
 
-import org.jclouds.compute.ComputeServiceContextBuilder;
-import org.jclouds.glesys.compute.config.GleSYSComputeServiceContextModule;
-import org.jclouds.glesys.config.GleSYSRestClientModule;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-import com.google.inject.Module;
+import org.jclouds.collect.FindResourceInSet;
+import org.jclouds.collect.Memoized;
+import org.jclouds.domain.Location;
+import org.jclouds.glesys.domain.ServerSpec;
+
+import com.google.common.base.Supplier;
 
 /**
- * 
  * @author Adrian Cole
  */
-public class GleSYSContextBuilder extends ComputeServiceContextBuilder<GleSYSClient, GleSYSAsyncClient> {
+@Singleton
+public class FindLocationForServerSpec extends FindResourceInSet<ServerSpec, Location> {
 
-   public GleSYSContextBuilder(Properties props) {
-      super(GleSYSClient.class, GleSYSAsyncClient.class, props);
+   @Inject
+   public FindLocationForServerSpec(@Memoized Supplier<Set<? extends Location>> location) {
+      super(location);
    }
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new GleSYSComputeServiceContextModule());
+   public boolean matches(ServerSpec from, Location input) {
+      return input.getId().equals(from.getDatacenter());
    }
-
-   @Override
-   protected void addClientModule(List<Module> modules) {
-      modules.add(new GleSYSRestClientModule());
-   }
-
 }

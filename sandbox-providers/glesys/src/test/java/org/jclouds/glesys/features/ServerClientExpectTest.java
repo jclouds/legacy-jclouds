@@ -117,26 +117,26 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_templates.json")).build()).getServerClient();
 
-      ImmutableSet.Builder<Template> expectedBuilder = ImmutableSet.<Template> builder();
+      ImmutableSet.Builder<OSTemplate> expectedBuilder = ImmutableSet.<OSTemplate> builder();
 
       for (String name : new String[] { "Centos 5", "Centos 5 64-bit", "Centos 6 32-bit", "Centos 6 64-bit",
             "Debian 5.0 32-bit", "Debian 5.0 64-bit", "Debian 6.0 32-bit", "Debian 6.0 64-bit", "Fedora Core 11",
             "Fedora Core 11 64-bit", "Gentoo", "Gentoo 64-bit", "Scientific Linux 6", "Scientific Linux 6 64-bit",
             "Slackware 12", "Ubuntu 10.04 LTS 32-bit", "Ubuntu 10.04 LTS 64-bit", "Ubuntu 11.04 64-bit" }) {
-         expectedBuilder.add(new Template(name, 5, 128, "linux", "OpenVZ"));
+         expectedBuilder.add(new OSTemplate(name, 5, 128, "linux", "OpenVZ"));
       }
 
       for (String name : new String[] { "CentOS 5.5 x64", "CentOS 5.5 x86", "Centos 6 x64", "Centos 6 x86",
             "Debian-6 x64", "Debian 5.0.1 x64", "FreeBSD 8.2", "Gentoo 10.1 x64", "Ubuntu 8.04 x64",
             "Ubuntu 10.04 LTS 64-bit", "Ubuntu 10.10 x64", "Ubuntu 11.04 x64" }) {
-         expectedBuilder.add(new Template(name, 5, 512, name.startsWith("FreeBSD") ? "freebsd" : "linux", "Xen"));
+         expectedBuilder.add(new OSTemplate(name, 5, 512, name.startsWith("FreeBSD") ? "freebsd" : "linux", "Xen"));
       }
       for (String name : new String[] { "Windows Server 2008 R2 x64 std", "Windows Server 2008 R2 x64 web",
             "Windows Server 2008 x64 web", "Windows Server 2008 x86 web" }) {
-         expectedBuilder.add(new Template(name, 20, 1024, "windows", "Xen"));
+         expectedBuilder.add(new OSTemplate(name, 20, 1024, "windows", "Xen"));
       }
       
-      assertEquals(client.getTemplates(), expectedBuilder.build());
+      assertEquals(client.listTemplates(), expectedBuilder.build());
    }
 
    public void testGetServerDetailsWhenResponseIs2xx() throws Exception {
@@ -202,7 +202,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
       assertEquals(
             client.createServerWithHostnameAndRootPassword(
                   ServerSpec.builder().datacenter("Falkenberg").platform("OpenVZ").templateName("Ubuntu 32-bit")
-                        .diskSizeGB(5).memorySizeMB(512).cpuCores(1).transfer(50).build(), "jclouds-test", "password").toString(),
+                        .diskSizeGB(5).memorySizeMB(512).cpuCores(1).transferGB(50).build(), "jclouds-test", "password").toString(),
             expected.toString());
    }
 
@@ -231,7 +231,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
 
 
       assertEquals(client.createServerWithHostnameAndRootPassword(ServerSpec.builder().datacenter("Falkenberg")
-            .platform("OpenVZ").templateName("Ubuntu 32-bit").diskSizeGB(5).memorySizeMB(512).cpuCores(1).transfer(50)
+            .platform("OpenVZ").templateName("Ubuntu 32-bit").diskSizeGB(5).memorySizeMB(512).cpuCores(1).transferGB(50)
             .build(), "jclouds-test", "password", options), expectedServerDetails());
    }
 

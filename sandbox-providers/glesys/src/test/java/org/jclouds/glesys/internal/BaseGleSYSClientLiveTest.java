@@ -18,7 +18,6 @@
  */
 package org.jclouds.glesys.internal;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -26,6 +25,9 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.compute.BaseVersionedServiceLiveTest;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.glesys.GleSYSAsyncClient;
 import org.jclouds.glesys.GleSYSClient;
 import org.jclouds.glesys.domain.Server;
@@ -38,7 +40,6 @@ import org.jclouds.glesys.options.ServerStatusOptions;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
@@ -54,19 +55,18 @@ import com.google.inject.Module;
  * @author Adrian Cole, Adam Lowe
  */
 @Test(groups = "live")
-public class BaseGleSYSClientLiveTest {
-
+public class BaseGleSYSClientLiveTest extends BaseVersionedServiceLiveTest {
+   protected ComputeServiceContext computeContext;
    protected RestContext<GleSYSClient, GleSYSAsyncClient> context;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      if (context == null) {
-         String identity = checkNotNull(System.getProperty("test.glesys.identity"), "test.glesys.identity");
-         String credential = checkNotNull(System.getProperty("test.glesys.credential"), "test.glesys.credential");
-   
-         context = new RestContextFactory().createContext("glesys", identity, credential,
-               ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()));
-      }
+      setupCredentials();
+
+      computeContext = new ComputeServiceContextFactory(setupRestProperties()).
+               createContext(provider, ImmutableSet.<Module> of(
+               new Log4JLoggingModule(), new SshjSshClientModule()), setupProperties());
+      context = computeContext.getProviderSpecificContext();
    }
 
    @AfterGroups(groups = "live")
@@ -97,7 +97,7 @@ public class BaseGleSYSClientLiveTest {
       
       ServerDetails testServer = client.createServerWithHostnameAndRootPassword(
             ServerSpec.builder().datacenter("Falkenberg").platform("OpenVZ").templateName("Ubuntu 10.04 LTS 32-bit")
-                  .diskSizeGB(5).memorySizeMB(512).cpuCores(1).transfer(50).build(), hostName, "password");
+                  .diskSizeGB(5).memorySizeMB(512).cpuCores(1).transferGB(50).build(), hostName, "password");
 
       assertNotNull(testServer.getId());
       assertEquals(testServer.getHostname(), hostName);

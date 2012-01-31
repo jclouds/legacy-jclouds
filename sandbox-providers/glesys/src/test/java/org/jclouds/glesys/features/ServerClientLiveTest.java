@@ -33,7 +33,7 @@ import org.jclouds.glesys.domain.AllowedArgumentsForCreateServer;
 import org.jclouds.glesys.domain.ServerDetails;
 import org.jclouds.glesys.domain.ServerLimit;
 import org.jclouds.glesys.domain.ServerStatus;
-import org.jclouds.glesys.domain.Template;
+import org.jclouds.glesys.domain.OSTemplate;
 import org.jclouds.glesys.internal.BaseGleSYSClientLiveTest;
 import org.jclouds.glesys.options.CloneServerOptions;
 import org.jclouds.glesys.options.DestroyServerOptions;
@@ -99,24 +99,24 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       assertNotNull(t);
 
       assert t.getDataCenters().size() > 0 : t;
-      assert t.getCpuCores().size() > 0 : t;
-      assert t.getDiskSizes().size() > 0 : t;
-      assert t.getMemorySizes().size() > 0 : t;
-      assert t.getTemplates().size() > 0 : t;
-      assert t.getTransfers().size() > 0 : t;
-      assert t.getTransfers().size() > 0 : t;
+      assert t.getCpuCoreOptions().size() > 0 : t;
+      assert t.getDiskSizesInGB().size() > 0 : t;
+      assert t.getMemorySizesInMB().size() > 0 : t;
+      assert t.getTemplateNames().size() > 0 : t;
+      assert t.getTransfersInGB().size() > 0 : t;
+      assert t.getTransfersInGB().size() > 0 : t;
    }
    
    @Test
    public void testListTemplates() throws Exception {
-      Set<Template> templates = client.getTemplates();
+      Set<OSTemplate> oSTemplates = client.listTemplates();
 
-      for(Template template : templates) {
-         checkTemplate(template);
+      for(OSTemplate oSTemplate : oSTemplates) {
+         checkTemplate(oSTemplate);
       }
    }
    
-   private void checkTemplate(Template t) {
+   private void checkTemplate(OSTemplate t) {
       assertNotNull(t);
       assertNotNull(t.getName());
       assertNotNull(t.getOs());
@@ -149,10 +149,10 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
       assertEquals("Ubuntu 10.04 LTS 32-bit", details.getTemplateName());
       assertEquals("Falkenberg", details.getDatacenter());
       assertEquals("OpenVZ", details.getPlatform());
-      assertEquals(5, details.getDiskSize());
-      assertEquals(512, details.getMemorySize());
+      assertEquals(5, details.getDiskSizeGB());
+      assertEquals(512, details.getMemorySizeMB());
       assertEquals(1, details.getCpuCores());
-      assertEquals(50, details.getTransfer());
+      assertEquals(50, details.getTransferGB());
    }
 
    @Test
@@ -259,10 +259,10 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
    private void checkServer(ServerDetails server) {
       // description can be null
       assert server.getCpuCores() > 0 : server;
-      assert server.getDiskSize() > 0 : server;
-      assert server.getMemorySize() > 0 : server;
+      assert server.getDiskSizeGB() > 0 : server;
+      assert server.getMemorySizeMB() > 0 : server;
       assert server.getCost() != null;
-      assert server.getTransfer() > 0 : server;
+      assert server.getTransferGB() > 0 : server;
 
       assertNotNull(server.getTemplateName());
       assertNotNull(server.getIps());

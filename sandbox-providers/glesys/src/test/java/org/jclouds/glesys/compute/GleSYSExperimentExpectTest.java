@@ -16,35 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.glesys;
+package org.jclouds.glesys.compute;
 
-import java.util.List;
-import java.util.Properties;
+import static org.testng.Assert.assertEquals;
 
-import org.jclouds.compute.ComputeServiceContextBuilder;
-import org.jclouds.glesys.compute.config.GleSYSComputeServiceContextModule;
-import org.jclouds.glesys.config.GleSYSRestClientModule;
-
-import com.google.inject.Module;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.glesys.compute.internal.BaseGleSYSComputeServiceExpectTest;
+import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class GleSYSContextBuilder extends ComputeServiceContextBuilder<GleSYSClient, GleSYSAsyncClient> {
+@Test(groups = "live", singleThreaded = true, testName = "GleSYSExperimentLiveTest")
+public class GleSYSExperimentExpectTest extends BaseGleSYSComputeServiceExpectTest {
 
-   public GleSYSContextBuilder(Properties props) {
-      super(GleSYSClient.class, GleSYSAsyncClient.class, props);
-   }
+   @Test
+   public void testAndExperiment() {
+      ComputeServiceContext context = null;
+      try {
 
-   @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new GleSYSComputeServiceContextModule());
-   }
+         context = computeContextForKnownArgumentsAndConstantPassword();
 
-   @Override
-   protected void addClientModule(List<Module> modules) {
-      modules.add(new GleSYSRestClientModule());
+         assertEquals(context.getComputeService().listAssignableLocations().size(), 4);
+
+      } finally {
+         if (context != null)
+            context.close();
+      }
    }
 
 }

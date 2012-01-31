@@ -16,35 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.glesys;
+package org.jclouds.glesys.compute.functions;
 
-import java.util.List;
-import java.util.Properties;
-
-import org.jclouds.compute.ComputeServiceContextBuilder;
-import org.jclouds.glesys.compute.config.GleSYSComputeServiceContextModule;
-import org.jclouds.glesys.config.GleSYSRestClientModule;
-
-import com.google.inject.Module;
+import org.jclouds.glesys.compute.internal.BaseGleSYSComputeServiceExpectTest;
+import org.testng.annotations.Test;
 
 /**
+ * TODO
  * 
- * @author Adrian Cole
  */
-public class GleSYSContextBuilder extends ComputeServiceContextBuilder<GleSYSClient, GleSYSAsyncClient> {
+@Test(groups = "unit")
+public class ServerSpecToHardwareTest extends BaseGleSYSComputeServiceExpectTest {
 
-   public GleSYSContextBuilder(Properties props) {
-      super(GleSYSClient.class, GleSYSAsyncClient.class, props);
+   @Test
+   public void testHardwareRequest() {
+      
+      ServerSpecToHardware toTest = injectorForKnownArgumentsAndConstantPassword().getInstance(ServerSpecToHardware.class);
+
    }
 
-   @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new GleSYSComputeServiceContextModule());
-   }
-
-   @Override
-   protected void addClientModule(List<Module> modules) {
-      modules.add(new GleSYSRestClientModule());
-   }
 
 }
