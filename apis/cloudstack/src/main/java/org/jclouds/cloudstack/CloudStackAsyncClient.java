@@ -34,6 +34,7 @@ import org.jclouds.cloudstack.features.NetworkAsyncClient;
 import org.jclouds.cloudstack.features.OfferingAsyncClient;
 import org.jclouds.cloudstack.features.SSHKeyPairAsyncClient;
 import org.jclouds.cloudstack.features.SecurityGroupAsyncClient;
+import org.jclouds.cloudstack.features.SessionAsyncClient;
 import org.jclouds.cloudstack.features.SnapshotAsyncClient;
 import org.jclouds.cloudstack.features.TemplateAsyncClient;
 import org.jclouds.cloudstack.features.VMGroupAsyncClient;
@@ -184,4 +185,10 @@ public interface CloudStackAsyncClient {
     */
    @Delegate
    SnapshotAsyncClient getSnapshotClient();
+
+   /**
+    * Provides asynchronous access to Sessions
+    */
+   @Delegate
+   SessionAsyncClient getSessionClient();
 }
