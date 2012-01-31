@@ -33,7 +33,7 @@ import com.google.common.net.InetAddresses;
  * Contains options supported by the
  * {@link ComputeService#createNodesInGroup(String, int, TemplateOptions)} and
  * {@link ComputeService#createNodesInGroup(String, int, TemplateOptions)} operations on the
- * <em>gogrid</em> provider.
+ * <em>glesys</em> provider.
  * 
  * <h2>Usage</h2> The recommended way to instantiate a {@link GleSYSTemplateOptions} object is to
  * statically import {@code GleSYSTemplateOptions.*} and invoke a static creation method followed by
