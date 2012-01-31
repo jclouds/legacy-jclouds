@@ -41,38 +41,39 @@ public class SessionClientLiveTest extends BaseCloudStackClientLiveTest {
    private final String PLAIN_TEXT_PASSWORD = "jcl0ud";
    private final String DOMAIN = "Partners/jCloud";
 
-   private LoginResponse loginResponse;
+   private LoginResponse login;
 
    @Test(enabled = true)
-   public void testLoginWithHashedPassword() throws Exception {
-      loginResponse = client.getSessionClient()
+   public void testLoginWithHashOfPassword() throws Exception {
+      login = client.getSessionClient()
          .loginUserInDomainWithHashOfPassword(USER, DOMAIN, md5Hex(PLAIN_TEXT_PASSWORD));
 
-      assertNotNull(loginResponse);
-      assertNotNull(loginResponse.getSessionKey());
+      assertNotNull(login);
+      assertNotNull(login.getSessionKey());
+      assertNotNull(login.getJSessionId());
    }
 
-   @Test(dependsOnMethods = "testLoginWithHashedPassword")
+   @Test(dependsOnMethods = "testLoginWithHashOfPassword")
    public void testRetrieveUserInfoWithSessionKey() throws Exception {
-      Account account = client.getSessionClient()
-         .getAccountByNameUsingSession(loginResponse.getAccountName(), loginResponse.getSessionKey());
+      Account account = client.getSessionClient().getAccountByNameUsingSession(
+         login.getAccountName(), login.getSessionKey(), login.getJSessionId());
 
       assertNotNull(account);
-      assertEquals(account.getName(), loginResponse.getAccountName());
+      assertEquals(account.getName(), login.getAccountName());
       
       User currentUser = find(account.getUsers(), new Predicate<User>() {
          @Override
          public boolean apply(User user) {
-            return user.getId() == loginResponse.getUserId();
+            return user.getId() == login.getUserId();
          }
       });
       assertNotNull(currentUser);
-      assertEquals(currentUser.getName(), loginResponse.getUserName());
-      assertEquals(currentUser.getDomainId(), loginResponse.getDomainId());
+      assertEquals(currentUser.getName(), login.getUserName());
+      assertEquals(currentUser.getDomainId(), login.getDomainId());
    }
-   
+
    @Test(dependsOnMethods = "testRetrieveUserInfoWithSessionKey")
    public void testLogout() throws Exception {
-      client.getSessionClient().logoutUser(loginResponse.getSessionKey());
+      client.getSessionClient().logoutUser(login.getSessionKey());
    }
 }

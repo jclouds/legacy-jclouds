@@ -21,17 +21,18 @@ package org.jclouds.cloudstack.features;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.LoginResponse;
+import org.jclouds.cloudstack.functions.ParseLoginResponseFromHttpResponse;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
+import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -50,7 +51,7 @@ public interface SessionAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "login")
-   @SelectJson("loginresponse")
+   @ResponseParser(ParseLoginResponseFromHttpResponse.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<LoginResponse> loginUserInDomainWithHashOfPassword(@QueryParam("username") String userName,
@@ -64,9 +65,8 @@ public interface SessionAsyncClient {
    @SelectJson("account")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @HeaderParam(HttpHeaders.COOKIE)
    ListenableFuture<Account> getAccountByNameUsingSession(@QueryParam("name") String accountName,
-      @QueryParam("sessionkey") String sessionKey);
+      @QueryParam("sessionkey") String sessionKey, @CookieParam("JSESSIONID") String jSessionId);
 
    /**
     * @see SessionClient#logoutUser

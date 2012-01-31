@@ -59,10 +59,12 @@ public interface SessionClient {
     *          account name
     * @param sessionKey
     *          a valid session key
+    * @param jSessionId
+    *          the JSESSIONID cookie returned by the server
     * @return
     *          account instance or null
     */
-   Account getAccountByNameUsingSession(String accountName, String sessionKey);
+   Account getAccountByNameUsingSession(String accountName, String sessionKey, String jSessionId);
 
    /**
     * Logs out the user by invalidating the session key

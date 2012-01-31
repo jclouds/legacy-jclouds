@@ -46,7 +46,25 @@ public class LoginResponse implements Comparable<LoginResponse> {
       private String timezone;
       private String timezoneOffset;
       private String sessionKey;
+      private String jSessionId;
       
+      public Builder copyOf(LoginResponse r) {
+         this.userName = r.userName;
+         this.userId = r.userId;
+         this.password = r.password;
+         this.domainId = r.domainId;
+         this.timeout = r.timeout;
+         this.accountName = r.accountName;
+         this.firstName = r.firstName;
+         this.lastName = r.lastName;
+         this.accountType = r.accountType;
+         this.timezone = r.timezone;
+         this.timezoneOffset = r.timezoneOffset;
+         this.sessionKey = r.sessionKey;
+         this.jSessionId = r.jSessionId;
+         return this;
+      }
+
       public Builder userName(String userName) {
          this.userName = userName;
          return this;
@@ -106,10 +124,15 @@ public class LoginResponse implements Comparable<LoginResponse> {
          this.sessionKey = sessionKey;
          return this;
       }
+      
+      public Builder jSessionId(String jSessionId) {
+         this.jSessionId = jSessionId;
+         return this;
+      }
 
       public LoginResponse build() {
          return new LoginResponse(userName, userId, password, domainId, timeout, accountName,
-            firstName, lastName, accountType, timezone, timezoneOffset, sessionKey);
+            firstName, lastName, accountType, timezone, timezoneOffset, sessionKey, jSessionId);
       }
    }
 
@@ -137,10 +160,11 @@ public class LoginResponse implements Comparable<LoginResponse> {
    private String timezoneOffset;
    @SerializedName("sessionkey")
    private String sessionKey;
+   private String jSessionId;
 
    public LoginResponse(String userName, long userId, String password, long domainId, long timeout,
                         String accountName, String firstName, String lastName, Account.Type accountType,
-                        String timezone, String timezoneOffset, String sessionKey) {
+                        String timezone, String timezoneOffset, String sessionKey, String jSessionId) {
       this.userName = userName;
       this.userId = userId;
       this.password = password;
@@ -153,6 +177,7 @@ public class LoginResponse implements Comparable<LoginResponse> {
       this.timezone = timezone;
       this.timezoneOffset = timezoneOffset;
       this.sessionKey = sessionKey;
+      this.jSessionId = jSessionId;
    }
 
    public String getUserName() {
@@ -202,6 +227,10 @@ public class LoginResponse implements Comparable<LoginResponse> {
    public String getSessionKey() {
       return sessionKey;
    }
+   
+   public String getJSessionId() {
+      return jSessionId;
+   }
 
    @Override
    public boolean equals(Object o) {
@@ -223,6 +252,7 @@ public class LoginResponse implements Comparable<LoginResponse> {
       if (timezoneOffset != null ? !timezoneOffset.equals(loginResponse.timezoneOffset) : loginResponse.timezoneOffset != null)
          return false;
       if (userName != null ? !userName.equals(loginResponse.userName) : loginResponse.userName != null) return false;
+      if (jSessionId != null ? !jSessionId.equals(loginResponse.jSessionId) : loginResponse.jSessionId != null) return false;
 
       return true;
    }
@@ -241,6 +271,7 @@ public class LoginResponse implements Comparable<LoginResponse> {
       result = 31 * result + (timezone != null ? timezone.hashCode() : 0);
       result = 31 * result + (timezoneOffset != null ? timezoneOffset.hashCode() : 0);
       result = 31 * result + (sessionKey != null ? sessionKey.hashCode() : 0);
+      result = 31 * result + (jSessionId != null ? jSessionId.hashCode() : 0);
       return result;
    }
 
@@ -259,6 +290,7 @@ public class LoginResponse implements Comparable<LoginResponse> {
          ", timezone='" + timezone + '\'' +
          ", timezoneOffset='" + timezoneOffset + '\'' +
          ", sessionKey='" + sessionKey + '\'' +
+         ", jSessionId='" + jSessionId + '\'' +
          '}';
    }
 
