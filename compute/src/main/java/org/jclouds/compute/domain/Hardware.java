@@ -21,6 +21,7 @@ package org.jclouds.compute.domain;
 import java.util.List;
 
 import org.jclouds.compute.domain.internal.HardwareImpl;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Predicate;
 import com.google.inject.ImplementedBy;
@@ -42,7 +43,7 @@ public interface Hardware extends ComputeMetadata {
     * Amount of RAM provided in MB (256M, 1740)
     */
    int getRam();
-
+   
    /**
     * volumes associated with this.
     */
@@ -53,4 +54,9 @@ public interface Hardware extends ComputeMetadata {
     */
    Predicate<Image> supportsImage();
    
+   /**
+    * @return hypervisor type, if this is a virtual machine and the type is known
+    */
+   @Nullable
+   String getHypervisor();
 }

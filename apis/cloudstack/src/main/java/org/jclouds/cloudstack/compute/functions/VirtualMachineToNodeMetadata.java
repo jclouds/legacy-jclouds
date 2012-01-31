@@ -35,10 +35,12 @@ import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.collect.FindResourceInSet;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.Processor;
 import org.jclouds.domain.Location;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.InetAddresses2;
@@ -49,6 +51,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.UncheckedExecutionException;
@@ -72,17 +75,14 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
          .put(VirtualMachine.State.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
 
    private final FindLocationForVirtualMachine findLocationForVirtualMachine;
-   private final FindHardwareForVirtualMachine findHardwareForVirtualMachine;
    private final FindImageForVirtualMachine findImageForVirtualMachine;
    private final LoadingCache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine;
 
    @Inject
    VirtualMachineToNodeMetadata(FindLocationForVirtualMachine findLocationForVirtualMachine,
-         FindHardwareForVirtualMachine findHardwareForVirtualMachine,
          FindImageForVirtualMachine findImageForVirtualMachine,
          LoadingCache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine) {
       this.findLocationForVirtualMachine = checkNotNull(findLocationForVirtualMachine, "findLocationForVirtualMachine");
-      this.findHardwareForVirtualMachine = checkNotNull(findHardwareForVirtualMachine, "findHardwareForVirtualMachine");
       this.findImageForVirtualMachine = checkNotNull(findImageForVirtualMachine, "findImageForVirtualMachine");
       this.getIPForwardingRulesByVirtualMachine = checkNotNull(getIPForwardingRulesByVirtualMachine,
             "getIPForwardingRulesByVirtualMachine");
@@ -108,10 +108,15 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
          builder.imageId(image.getId());
          builder.operatingSystem(image.getOperatingSystem());
       }
-
-      Hardware hardware = findHardwareForVirtualMachine.apply(from);
-      if (hardware != null)
-         builder.hardware(hardware);
+      
+      builder.hardware(new HardwareBuilder()
+        .ids(from.getServiceOfferingId() + "")
+        .name(from.getServiceOfferingName() + "")
+         // .tags() TODO
+        .processors(ImmutableList.of(new Processor(from.getCpuCount(), from.getCpuSpeed())))
+        .ram((int)from.getMemory())//
+        .hypervisor(from.getHypervisor())//
+        .build());
 
       builder.state(vmStateToNodeState.get(from.getState()));
 

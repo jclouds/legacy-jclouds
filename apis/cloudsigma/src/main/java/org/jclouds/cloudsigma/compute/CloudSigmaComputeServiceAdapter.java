@@ -161,7 +161,7 @@ public class CloudSigmaComputeServiceAdapter implements
                   return "sizeLessThanOrEqual(" + size + ")";
                }
 
-            }).ids(id).ram(ram).processors(ImmutableList.of(new Processor(1, cpu)))
+            }).ids(id).ram(ram).processors(ImmutableList.of(new Processor(1, cpu))).hypervisor("kvm")
                   .volumes(ImmutableList.<Volume>of(new VolumeImpl(size, true, true))).build());
          }
       return hardware.build();

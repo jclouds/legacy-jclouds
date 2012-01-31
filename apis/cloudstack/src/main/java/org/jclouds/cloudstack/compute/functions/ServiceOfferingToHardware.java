@@ -41,6 +41,7 @@ public class ServiceOfferingToHardware implements Function<ServiceOffering, Hard
             .tags(offering.getTags())
             .processors(ImmutableList.of(new Processor(offering.getCpuNumber(), offering.getCpuSpeed())))
             .ram(offering.getMemory())//
+            // TODO: hypervisor probably from zone?
             // TODO .volumes()
             // displayText
             // created

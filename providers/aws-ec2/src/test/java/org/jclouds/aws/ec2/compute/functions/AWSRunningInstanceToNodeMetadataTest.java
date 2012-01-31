@@ -39,6 +39,7 @@ import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.functions.ImagesToRegionAndIdMap;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.BlockDevice;
+import org.jclouds.ec2.domain.Hypervisor;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.RootDeviceType;
 import org.testng.annotations.BeforeTest;
@@ -101,6 +102,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
                .virtualizationType("paravirtual")
                .tag("Name", "foo")
                .tag("Empty", "")
+               .hypervisor(Hypervisor.XEN)
                .build(),//
                new AWSRunningInstance.Builder()
                         .region(defaultRegion)
@@ -123,6 +125,7 @@ public class AWSRunningInstanceToNodeMetadataTest {
                         .rootDeviceName("/dev/sda1")
                         .device("/dev/sda1", new BlockDevice("vol-5029fc3a", Attachment.Status.ATTACHED, dateService.iso8601DateParse("2011-08-16T13:41:19.000Z"), true))
                         .virtualizationType("paravirtual")
+                        .hypervisor(Hypervisor.XEN)
                         .build());
 
       assertEquals(

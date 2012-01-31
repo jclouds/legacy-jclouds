@@ -100,7 +100,7 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
             builder.operatingSystem(image.getOperatingSystem());
          }
       }
-      builder.hardware(new HardwareBuilder().ids(from.getUuid())
+      builder.hardware(new HardwareBuilder().ids(from.getUuid()).hypervisor("kvm")
             .processors(ImmutableList.of(new Processor(1, from.getCpu()))).ram(from.getMem())
             .volumes((List) ImmutableList.of(Iterables.transform(from.getDevices().values(), deviceToVolume))).build());
       builder.state(serverStatusToNodeState.get(from.getStatus()));

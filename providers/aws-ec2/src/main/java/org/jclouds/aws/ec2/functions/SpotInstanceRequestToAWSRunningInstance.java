@@ -24,6 +24,7 @@ import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
+import org.jclouds.ec2.domain.Hypervisor;
 import org.jclouds.ec2.domain.InstanceState;
 
 import com.google.common.base.Function;
@@ -58,6 +59,8 @@ public class SpotInstanceRequestToAWSRunningInstance implements Function<SpotIns
       builder.ramdiskId(spec.getRamdiskId());
       builder.monitoringState(Boolean.TRUE.equals(spec.isMonitoringEnabled()) ? MonitoringState.PENDING
                : MonitoringState.DISABLED);
+      //TODO: determine the exact hypervisor
+      builder.hypervisor(Hypervisor.XEN);
       return builder.build();
    }
 

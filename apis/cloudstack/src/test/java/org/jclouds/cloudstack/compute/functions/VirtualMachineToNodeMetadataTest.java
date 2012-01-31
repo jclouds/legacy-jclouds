@@ -23,13 +23,13 @@ import static org.testng.Assert.assertEquals;
 import java.net.UnknownHostException;
 import java.util.Set;
 
-import org.jclouds.cloudstack.compute.functions.VirtualMachineToNodeMetadata.FindHardwareForVirtualMachine;
 import org.jclouds.cloudstack.compute.functions.VirtualMachineToNodeMetadata.FindImageForVirtualMachine;
 import org.jclouds.cloudstack.compute.functions.VirtualMachineToNodeMetadata.FindLocationForVirtualMachine;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.parse.ListVirtualMachinesResponseTest;
 import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
@@ -57,13 +57,10 @@ public class VirtualMachineToNodeMetadataTest {
       Supplier<Set<? extends Location>> locationSupplier = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
             .<Location> of(ZoneToLocationTest.one, ZoneToLocationTest.two));
 
-      Supplier<Set<? extends Hardware>> hardwareSupplier = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
-            .<Hardware> of(ServiceOfferingToHardwareTest.one, ServiceOfferingToHardwareTest.two));
-
       Supplier<Set<? extends Image>> imageSupplier = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet
             .<Image> of(TemplateToImageTest.one, TemplateToImageTest.two));
       VirtualMachineToNodeMetadata parser = new VirtualMachineToNodeMetadata(new FindLocationForVirtualMachine(
-            locationSupplier), new FindHardwareForVirtualMachine(hardwareSupplier), new FindImageForVirtualMachine(
+            locationSupplier), new FindImageForVirtualMachine(
             imageSupplier), CacheBuilder.newBuilder().<Long, Set<IPForwardingRule>> build(
             new CacheLoader<Long, Set<IPForwardingRule>>() {
 
@@ -84,7 +81,8 @@ public class VirtualMachineToNodeMetadataTest {
             new NodeMetadataBuilder().id("54").providerId("54").name("i-3-54-VM").group("i-3")
                   .location(ZoneToLocationTest.one).state(NodeState.PENDING).hostname("i-3-54-VM")
                   .privateAddresses(ImmutableSet.of("10.1.1.18")).publicAddresses(ImmutableSet.of("1.1.1.1"))
-                  .hardware(ServiceOfferingToHardwareTest.one).imageId(TemplateToImageTest.one.getId())
+                  .hardware(addHypervisor(ServiceOfferingToHardwareTest.one, "XenServer"))
+                  .imageId(TemplateToImageTest.one.getId())
                   .operatingSystem(TemplateToImageTest.one.getOperatingSystem()).build().toString());
 
    }
@@ -95,13 +93,10 @@ public class VirtualMachineToNodeMetadataTest {
       Supplier<Set<? extends Location>> locationSupplier = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
             .<Location> of(ZoneToLocationTest.one, ZoneToLocationTest.two));
 
-      Supplier<Set<? extends Hardware>> hardwareSupplier = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
-            .<Hardware> of(ServiceOfferingToHardwareTest.one, ServiceOfferingToHardwareTest.two));
-
       Supplier<Set<? extends Image>> imageSupplier = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet
             .<Image> of(TemplateToImageTest.one, TemplateToImageTest.two));
       VirtualMachineToNodeMetadata parser = new VirtualMachineToNodeMetadata(new FindLocationForVirtualMachine(
-            locationSupplier), new FindHardwareForVirtualMachine(hardwareSupplier), new FindImageForVirtualMachine(
+            locationSupplier), new FindImageForVirtualMachine(
             imageSupplier), CacheBuilder.newBuilder().<Long, Set<IPForwardingRule>> build(
             new CacheLoader<Long, Set<IPForwardingRule>>() {
 
@@ -121,9 +116,14 @@ public class VirtualMachineToNodeMetadataTest {
             node.toString(),
             new NodeMetadataBuilder().id("54").providerId("54").name("i-3-54-VM").group("i-3")
                   .location(ZoneToLocationTest.one).state(NodeState.PENDING).hostname("i-3-54-VM")
-                  .privateAddresses(ImmutableSet.of("10.1.1.18")).hardware(ServiceOfferingToHardwareTest.one)
+                  .privateAddresses(ImmutableSet.of("10.1.1.18"))
+                  .hardware(addHypervisor(ServiceOfferingToHardwareTest.one, "XenServer"))
                   .imageId(TemplateToImageTest.one.getId())
                   .operatingSystem(TemplateToImageTest.one.getOperatingSystem()).build().toString());
+   }
+   
+   protected Hardware addHypervisor(Hardware in, String hypervisor) {
+      return HardwareBuilder.fromHardware(in).hypervisor(hypervisor).build();
    }
 
 }

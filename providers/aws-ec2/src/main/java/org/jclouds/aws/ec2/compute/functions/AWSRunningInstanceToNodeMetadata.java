@@ -31,6 +31,7 @@ import javax.inject.Singleton;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
@@ -72,10 +73,19 @@ public class AWSRunningInstanceToNodeMetadata extends RunningInstanceToNodeMetad
       if (creds != null)
          builder.credentials(creds);
    }
+   
+   protected Hardware parseHardware(RunningInstance instance) {
+      Hardware in = super.parseHardware(instance);
+      if (in == null)
+         return null;
+      AWSRunningInstance awsInstance = AWSRunningInstance.class.cast(instance);
+      return HardwareBuilder.fromHardware(in).hypervisor(awsInstance.getHypervisor().toString()).build();
+   }
 
    @Override
    protected NodeMetadataBuilder buildInstance(RunningInstance instance, NodeMetadataBuilder builder) {
-      Map<String, String> tags = AWSRunningInstance.class.cast(instance).getTags();
+      AWSRunningInstance awsInstance = AWSRunningInstance.class.cast(instance);
+      Map<String, String> tags = awsInstance.getTags();
       return super.buildInstance(instance, builder).name(tags.get("Name")).tags(
                filterValues(tags, equalTo("")).keySet()).userMetadata(filterValues(tags, not(equalTo(""))));
    }

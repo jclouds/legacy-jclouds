@@ -25,6 +25,7 @@ import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.ec2.domain.Hypervisor;
 import org.jclouds.ec2.domain.InstanceState;
 import org.testng.annotations.Test;
 
@@ -64,6 +65,7 @@ public class SpotInstanceRequestToAWSRunningInstanceTest {
                   .groupId("default").instanceType("m1.large")
                   .tag("foo", "bar")
                   .tag("empty", "")
+                  .hypervisor(Hypervisor.XEN)
                   .monitoringState(MonitoringState.PENDING).build());
    }
 

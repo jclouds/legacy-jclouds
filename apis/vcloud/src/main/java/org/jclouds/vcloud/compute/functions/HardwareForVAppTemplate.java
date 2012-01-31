@@ -75,6 +75,7 @@ public class HardwareForVAppTemplate implements Function<VAppTemplate, Hardware>
       }
       builder.ids(from.getHref().toASCIIString()).name(from.getName()).supportsImage(
                ImagePredicates.idEquals(from.getHref().toASCIIString()));
+      builder.hypervisor("VMware");
       return builder.build();
 
    }

@@ -37,6 +37,7 @@
                     </monitoring>
                     <privateIpAddress>10.243.42.70</privateIpAddress>
                     <ipAddress>174.129.81.68</ipAddress>
+                    <hypervisor>xen</hypervisor>                    
                 </item>
             </instancesSet>
         </item>

@@ -52,6 +52,7 @@ public class IMachineToHardware implements Function<IMachine, Hardware> {
       hardwareBuilder.supportsImage(ImagePredicates.idEquals(vm.getId()));
       hardwareBuilder.is64Bit(is64Bit);
       hardwareBuilder.supportsImage(ImagePredicates.idEquals(vm.getId()));
+      hardwareBuilder.hypervisor("VirtualBox");
       return hardwareBuilder.build();
    }
 }

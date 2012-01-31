@@ -49,6 +49,7 @@ public class VMSpecToHardware implements Function<VMSpec, Hardware> {
       for (Entry<String, Integer> disk : from.getDataDiskDeviceNameToSizeInGig().entrySet())
          builder.volume(new VolumeBuilder().type(Volume.Type.LOCAL).device(disk.getKey()).size(
                   new Float(disk.getValue())).durable(true).build());
+      builder.hypervisor("VMware");
       return builder.build();
    }
 

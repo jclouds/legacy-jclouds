@@ -52,15 +52,17 @@ public class HardwareImpl extends ComputeMetadataImpl implements Hardware {
    private final int ram;
    private final List<Volume> volumes;
    private final Predicate<Image> supportsImage;
+   private final String hypervisor;
 
    public HardwareImpl(String providerId, String name, String id, @Nullable Location location, URI uri,
          Map<String, String> userMetadata, Set<String> tags, Iterable<? extends Processor> processors, int ram,
-         Iterable<? extends Volume> volumes, Predicate<Image> supportsImage) {
+         Iterable<? extends Volume> volumes, Predicate<Image> supportsImage, @Nullable String hypervisor) {
       super(ComputeType.HARDWARE, providerId, name, id, location, uri, userMetadata, tags);
       this.processors = ImmutableList.copyOf(checkNotNull(processors, "processors"));
       this.ram = ram;
       this.volumes = ImmutableList.copyOf(checkNotNull(volumes, "volumes"));
       this.supportsImage = supportsImage;
+      this.hypervisor = hypervisor;
    }
 
    /**
@@ -91,11 +93,21 @@ public class HardwareImpl extends ComputeMetadataImpl implements Hardware {
     * {@inheritDoc}
     */
    @Override
+   @Nullable
+   public String getHypervisor() {
+      return hypervisor;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public int compareTo(ResourceMetadata<ComputeType> that) {
       if (that instanceof Hardware) {
          Hardware thatHardware = Hardware.class.cast(that);
-         return ComparisonChain.start().compare(getCoresAndSpeed(this), getCoresAndSpeed(thatHardware))
-               .compare(this.getRam(), thatHardware.getRam()).compare(getSpace(this), getSpace(thatHardware)).result();
+         return ComparisonChain.start().compare(getCoresAndSpeed(this), getCoresAndSpeed(thatHardware)).compare(
+                  this.getRam(), thatHardware.getRam()).compare(getSpace(this), getSpace(thatHardware)).compare(
+                  getHypervisor(), thatHardware.getHypervisor()).result();
       } else {
          return super.compareTo(that);
       }
@@ -107,7 +119,8 @@ public class HardwareImpl extends ComputeMetadataImpl implements Hardware {
    @Override
    public String toString() {
       return "[id=" + getId() + ", providerId=" + getProviderId() + ", name=" + getName() + ", processors="
-            + processors + ", ram=" + ram + ", volumes=" + volumes + ", supportsImage=" + supportsImage + ", tags=" + tags + "]";
+               + processors + ", ram=" + ram + ", volumes=" + volumes + ", hypervisor=" + hypervisor
+               + ", supportsImage=" + supportsImage + ", tags=" + tags + "]";
    }
 
    /**
