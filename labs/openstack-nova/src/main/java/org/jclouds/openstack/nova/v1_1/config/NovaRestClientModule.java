@@ -24,12 +24,10 @@ import java.util.Map;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.openstack.keystone.v2_0.config.KeyStoneAuthenticationModule;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.Service;
@@ -84,11 +82,6 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(NovaErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(NovaErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(NovaErrorHandler.class);
-   }
-
-   @Override
-   protected void bindRetryHandlers() {
-      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(BackoffLimitedRetryHandler.class);
    }
 
    @Provides

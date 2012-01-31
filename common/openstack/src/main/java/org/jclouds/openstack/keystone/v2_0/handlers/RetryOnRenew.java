@@ -67,6 +67,7 @@ public class RetryOnRenew implements HttpRetryHandler {
                   retry = false;
                } else {
                   byte[] content = closeClientButKeepContentStream(response);
+                  //TODO: what is the error when the session token expires??
                   if (content != null && new String(content).contains("lease renew")) {
                      logger.debug("invalidating authentication token");
                      authenticationResponseCache.invalidateAll();

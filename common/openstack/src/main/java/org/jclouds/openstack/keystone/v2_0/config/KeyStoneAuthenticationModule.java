@@ -65,6 +65,7 @@ public class KeyStoneAuthenticationModule extends AbstractModule {
    protected void configure() {
       bind(new TypeLiteral<Function<Credentials, Access>>() {
       }).to(GetAccess.class);
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
    }
 
    /**
