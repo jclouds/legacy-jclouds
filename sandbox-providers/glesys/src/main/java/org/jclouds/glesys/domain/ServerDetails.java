@@ -42,9 +42,9 @@ public class ServerDetails extends Server {
       private String description;
       private String templateName;
       private int cpuCores;
-      private int memorySize;
-      private int diskSize;
-      private int transfer;
+      private int memorySizeMB;
+      private int diskSizeGB;
+      private int transferGB;
       private Cost cost;
       private List<Ip> ips;
 
@@ -63,18 +63,18 @@ public class ServerDetails extends Server {
          return this;
       }
 
-      public Builder memorySize(int memorySize) {
-         this.memorySize = memorySize;
+      public Builder memorySizeMB(int memorySizeMB) {
+         this.memorySizeMB = memorySizeMB;
          return this;
       }
 
-      public Builder diskSize(int diskSize) {
-         this.diskSize = diskSize;
+      public Builder diskSizeGB(int diskSizeGB) {
+         this.diskSizeGB = diskSizeGB;
          return this;
       }
 
-      public Builder transfer(int transfer) {
-         this.transfer = transfer;
+      public Builder transferGB(int transferGB) {
+         this.transferGB = transferGB;
          return this;
       }
 
@@ -93,12 +93,12 @@ public class ServerDetails extends Server {
       }
 
       public ServerDetails build() {
-         return new ServerDetails(id, hostname, datacenter, platform, templateName, description, cpuCores, memorySize, diskSize, transfer, cost, ips);
+         return new ServerDetails(id, hostname, datacenter, platform, templateName, description, cpuCores, memorySizeMB, diskSizeGB, transferGB, cost, ips);
       }
 
       public Builder fromServerDetails(ServerDetails in) {
-         return fromServer(in).templateName(in.getTemplateName()).memorySize(in.getMemorySizeMB()).diskSize(in.getDiskSizeGB()).cpuCores(in.getCpuCores()).cost(in.getCost())
-               .description(in.getDescription()).ips(in.getIps());
+         return fromServer(in).templateName(in.getTemplateName()).memorySizeMB(in.getMemorySizeMB()).diskSizeGB(in.getDiskSizeGB()).cpuCores(in.getCpuCores()).cost(in.getCost())
+               .transferGB(in.getTransferGB()).description(in.getDescription()).ips(in.getIps());
       }
 
       @Override
@@ -133,23 +133,24 @@ public class ServerDetails extends Server {
    @SerializedName("cpucores")
    private final int cpuCores;
    @SerializedName("memorysize")
-   private final int memorySize;
+   private final int memorySizeMB;
    @SerializedName("disksize")
-   private final int diskSize;
-   private final int transfer;
+   private final int diskSizeGB;
+   @SerializedName("transfer")
+   private final int transferGB;
    private final Cost cost;
    @SerializedName("iplist")
    private final List<Ip> ips;
 
    public ServerDetails(String id, String hostname, String datacenter, String platform, String templateName,
-                        String description, int cpuCores, int memorySize, int diskSize, int transfer, Cost cost, List<Ip> ips) {
+                        String description, int cpuCores, int memorySizeMB, int diskSizeGB, int transferGB, Cost cost, List<Ip> ips) {
       super(id, hostname, datacenter, platform);
       this.templateName = checkNotNull(templateName, "template");
       this.description = description;
       this.cpuCores = cpuCores;
-      this.memorySize = memorySize;
-      this.diskSize = diskSize;
-      this.transfer = transfer;
+      this.memorySizeMB = memorySizeMB;
+      this.diskSizeGB = diskSizeGB;
+      this.transferGB = transferGB;
       this.cost = checkNotNull(cost, "cost");
       this.ips = ips == null ? ImmutableList.<Ip>of() : ips;
    }
@@ -172,21 +173,21 @@ public class ServerDetails extends Server {
     * @return the disk of the server in GB
     */
    public int getDiskSizeGB() {
-      return diskSize;
+      return diskSizeGB;
    }
 
    /**
     * @return the memory of the server in MB
     */
    public int getMemorySizeMB() {
-      return memorySize;
+      return memorySizeMB;
    }
 
    /**
     * @return the transfer of the server
     */
    public int getTransferGB() {
-      return transfer;
+      return transferGB;
    }
 
    /**
@@ -213,8 +214,8 @@ public class ServerDetails extends Server {
    @Override
    public String toString() {
       return String.format(
-            "[id=%s, hostname=%s, datacenter=%s, platform=%s, templateName=%s, description=%s, cpuCores=%d, memorySize=%d, diskSize=%d, transfer=%d, cost=%s, ips=%s]", id,
-            hostname, datacenter, platform, templateName, description, cpuCores, memorySize, diskSize, transfer, cost, ips);
+            "[id=%s, hostname=%s, datacenter=%s, platform=%s, templateName=%s, description=%s, cpuCores=%d, memorySizeMB=%d, diskSizeGB=%d, transferGB=%d, cost=%s, ips=%s]", id,
+            hostname, datacenter, platform, templateName, description, cpuCores, memorySizeMB, diskSizeGB, transferGB, cost, ips);
    }
 
 }

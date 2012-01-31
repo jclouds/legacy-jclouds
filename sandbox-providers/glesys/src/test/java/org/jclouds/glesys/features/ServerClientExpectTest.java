@@ -156,8 +156,8 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
    private ServerDetails expectedServerDetails() {
       Ip ip = Ip.builder().version4().ip("31.192.226.45").cost(2.0).build();
       Cost cost = Cost.builder().amount(6.38).currency("EUR").timePeriod("month").build();
-      return ServerDetails.builder().id("vz1375882").transfer(50).hostname("jclouds-unit").cpuCores(1).memorySize(128)
-            .diskSize(5).description("unit test server").datacenter("Falkenberg").platform("OpenVZ")
+      return ServerDetails.builder().id("vz1375882").transferGB(50).hostname("jclouds-unit").cpuCores(1).memorySizeMB(128)
+            .diskSizeGB(5).description("unit test server").datacenter("Falkenberg").platform("OpenVZ")
             .templateName("Debian 6.0 64-bit").cost(cost).ips(ip).build();
    }
 
@@ -197,7 +197,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
 
       Cost cost = Cost.builder().amount(6.38).currency("EUR").timePeriod("month").build();
       ServerDetails expected = ServerDetails.builder().id("vz1541880").hostname("mammamia").datacenter("Falkenberg").platform("OpenVZ")
-            .templateName("Ubuntu 11.04 64-bit").description("description").cpuCores(1).memorySize(128).diskSize(5).transfer(50).cost(cost).build();
+            .templateName("Ubuntu 11.04 64-bit").description("description").cpuCores(1).memorySizeMB(128).diskSizeGB(5).transferGB(50).cost(cost).build();
 
       assertEquals(
             client.createServerWithHostnameAndRootPassword(
@@ -267,7 +267,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
             HttpResponse.builder().statusCode(200).build()).getServerClient();
 
       EditServerOptions options =
-            EditServerOptions.Builder.description("Description-of-server").disksize(1).memorysize(512).cpucores(1).hostname("jclouds-test");
+            EditServerOptions.Builder.description("Description-of-server").diskSizeGB(1).memorySizeMB(512).cpuCores(1).hostname("jclouds-test");
 
       client.editServer("server111", options);
    }
@@ -302,7 +302,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("memorysize", "512")
                         .put("cpucores", "1").build())).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_details.json")).build()).getServerClient();
-      CloneServerOptions options = (CloneServerOptions) CloneServerOptions.Builder.description("Description-of-server").disksize(1).memorysize(512).cpucores(1);
+      CloneServerOptions options = (CloneServerOptions) CloneServerOptions.Builder.description("Description-of-server").diskSizeGB(1).memorySizeMB(512).cpuCores(1);
 
       assertEquals(client.cloneServer("server111", "hostname1", options), expectedServerDetails());
    }
