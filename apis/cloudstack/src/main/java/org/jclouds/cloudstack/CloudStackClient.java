@@ -18,8 +18,6 @@
  */
 package org.jclouds.cloudstack;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.cloudstack.features.AccountClient;
 import org.jclouds.cloudstack.features.AddressClient;
 import org.jclouds.cloudstack.features.AsyncJobClient;
@@ -41,9 +39,12 @@ import org.jclouds.cloudstack.features.TemplateClient;
 import org.jclouds.cloudstack.features.VMGroupClient;
 import org.jclouds.cloudstack.features.VirtualMachineClient;
 import org.jclouds.cloudstack.features.VolumeClient;
+import org.jclouds.cloudstack.features.SessionClient;
 import org.jclouds.cloudstack.features.ZoneClient;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to CloudStack.
@@ -187,4 +188,10 @@ public interface CloudStackClient {
     */
    @Delegate
    SnapshotClient getSnapshotClient();
+
+   /**
+    * Provides synchronous access to Sessions
+    */
+   @Delegate
+   SessionClient getSessionClient();
 }
