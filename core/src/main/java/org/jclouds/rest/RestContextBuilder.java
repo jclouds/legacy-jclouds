@@ -54,6 +54,7 @@ import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -200,6 +201,12 @@ public class RestContextBuilder<S, A> {
          return config.apply(PROPERTY_CREDENTIAL);
       }
       
+      @Provides
+      @Singleton
+      @Provider
+      protected Credentials bindProviderCredentials(@Identity String identity, @Nullable @Credential String credential){
+         return new Credentials(identity, credential);
+      }
       
       @Override
       protected void bindConfigurations() {

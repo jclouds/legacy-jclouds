@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.features;
+package org.jclouds.openstack.nova.v1_1;
 
 import static org.testng.Assert.assertEquals;
 
@@ -25,6 +25,7 @@ import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.openstack.nova.v1_1.features.ServerClient;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaRestClientExpectTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseServerListTest;
 import org.testng.annotations.Test;

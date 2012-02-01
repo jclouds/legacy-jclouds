@@ -23,8 +23,12 @@ import java.util.Map;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.Constants;
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.internal.ClassMethodArgs;
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.location.Provider;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
@@ -61,7 +65,7 @@ public class RestClientModule<S, A> extends AbstractModule {
       this(syncClientType, asyncClientType, ImmutableMap
             .<Class<?>, Class<?>> of(syncClientType, asyncClientType));
    }
-
+   
    @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override
    protected void configure() {

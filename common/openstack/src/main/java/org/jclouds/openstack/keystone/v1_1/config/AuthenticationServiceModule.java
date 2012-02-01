@@ -25,10 +25,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.RequiresHttp;
@@ -81,14 +79,7 @@ public class AuthenticationServiceModule extends AbstractModule {
    protected ServiceAsyncClient provideServiceClient(AsyncClientFactory factory) {
       return factory.create(ServiceAsyncClient.class);
    }
-
-   @Provides
-   @Provider
-   protected Credentials provideAuthenticationCredentials(@Named(Constants.PROPERTY_IDENTITY) String user,
-            @Named(Constants.PROPERTY_CREDENTIAL) String key) {
-      return new Credentials(user, key);
-   }
-
+   
    @Singleton
    public static class GetAuth extends RetryOnTimeOutExceptionFunction<Credentials, Auth> {
       

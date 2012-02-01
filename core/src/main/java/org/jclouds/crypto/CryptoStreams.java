@@ -91,13 +91,18 @@ public class CryptoStreams {
    /**
     * @see #md5Hex
     */
-   public static String md5Hex(final String in) throws IOException {
-      return md5Hex(new InputSupplier<InputStream>() {
-         @Override
-         public InputStream getInput() throws IOException {
-            return new ByteArrayInputStream(in.getBytes());
-         }
-      });
+   public static String md5Hex(final String in) {
+      try {
+         return md5Hex(new InputSupplier<InputStream>() {
+            @Override
+            public InputStream getInput() throws IOException {
+               return new ByteArrayInputStream(in.getBytes());
+            }
+         });
+      } catch (IOException e) {
+         // risk is not here when reading from in.getBytes() so wrapping in runtime
+         throw Throwables.propagate(e);
+      }
    }
 
    /**

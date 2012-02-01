@@ -27,7 +27,6 @@ import java.util.concurrent.TimeoutException;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRetryHandler;
@@ -79,6 +78,9 @@ public class KeystoneAuthenticationModule extends AbstractModule {
       };
    }
 
+   /**
+    * service is needed to locate endpoints and such
+    */
    @Provides
    @Singleton
    protected ServiceAsyncClient provideServiceClient(AsyncClientFactory factory) {
@@ -122,18 +124,11 @@ public class KeystoneAuthenticationModule extends AbstractModule {
       return new RetryOnTimeOutExceptionFunction<Credentials, Access>(authMethod);
    }
 
-   @Provides
-   @Provider
-   protected Credentials provideAuthenticationCredentials(@Named(Constants.PROPERTY_IDENTITY) String userOrAccessKey,
-            @Named(Constants.PROPERTY_CREDENTIAL) String keyOrSecretKey) {
-      return new Credentials(userOrAccessKey, keyOrSecretKey);
-   }
-
    // TODO: what is the timeout of the session token? modify default accordingly
    // PROPERTY_SESSION_INTERVAL is default to 60 seconds, but we have this here at 23 hours for now.
    @Provides
    @Singleton
-   public LoadingCache<Credentials, Access> provideAccessCache2(Function<Credentials, Access> getAccess) {
+   public LoadingCache<Credentials, Access> provideAccessCache(Function<Credentials, Access> getAccess) {
       return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS).build(CacheLoader.from(getAccess));
    }
 
@@ -155,6 +150,10 @@ public class KeystoneAuthenticationModule extends AbstractModule {
       };
    }
 
+   /**
+    * currently, endpointParams are not configured to take their results from a supplier lazily, so
+    * we need to eagerly fetch.
+    */
    @Provides
    @Singleton
    protected Access provideAccess(Supplier<Access> supplier) {
