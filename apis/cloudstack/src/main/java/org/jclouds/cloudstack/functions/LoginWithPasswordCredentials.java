@@ -18,17 +18,15 @@
  */
 package org.jclouds.cloudstack.functions;
 
-import java.io.File;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
+import com.google.common.base.Function;
 import org.jclouds.cloudstack.domain.LoginResponse;
 import org.jclouds.cloudstack.features.SessionClient;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.domain.Credentials;
 
-import com.google.common.base.Function;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.io.File;
 
 @Singleton
 public class LoginWithPasswordCredentials implements Function<Credentials, LoginResponse> {
@@ -42,7 +40,8 @@ public class LoginWithPasswordCredentials implements Function<Credentials, Login
    @Override
    public LoginResponse apply(Credentials input) {
       String username = input.identity;
-      String domain = "ROOT";
+      String domain = "";  // empty = ROOT domain
+
       // domain may be present
       if (username.indexOf('/') != -1) {
          File domainUsername = new File(username);
