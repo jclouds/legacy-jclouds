@@ -18,17 +18,16 @@
  */
 package org.jclouds.cloudstack.config;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Inject;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
-import com.google.inject.name.Named;
+import static com.google.common.base.Throwables.propagate;
+import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
+import javax.ws.rs.core.UriBuilder;
+
 import org.jclouds.Constants;
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
@@ -123,9 +122,11 @@ import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.functions.LoginWithPasswordCredentials;
 import org.jclouds.cloudstack.handlers.CloudStackErrorHandler;
+import org.jclouds.cloudstack.handlers.RetryOnRenewAndLogoutOnClose;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
@@ -138,13 +139,17 @@ import org.jclouds.rest.config.BinderUtils;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.internal.RestContextImpl;
 
-import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-import static com.google.common.base.Throwables.propagate;
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Inject;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Named;
 
 /**
  * Configures the cloudstack connection.
@@ -233,7 +238,11 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
       });
       install(new CloudStackParserModule());
       bind(CredentialType.class).toProvider(CredentialTypeFromPropertyOrDefault.class);
-      // bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenewAndLogoutOnClose.class);
+      
+      // session client is used directly for filters and retry handlers, so let's bind it explicitly
+      bindClientAndAsyncClient(binder(), SessionClient.class, SessionAsyncClient.class);
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenewAndLogoutOnClose.class);
+      
       super.configure();
    }
 
@@ -251,15 +260,6 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
             @Named("jclouds.cloudstack.integration-api-port") int port,
             com.google.inject.Provider<UriBuilder> uriBuilder) {
       return uriBuilder.get().scheme(normal.getScheme()).host(normal.getHost()).path("/").port(port).build();
-   }
-
-   /**
-    * Session client is used in login-related functionality
-    */
-   @Provides
-   @Singleton
-   protected SessionClient bindSessionClient(CloudStackClient client) {
-      return client.getSessionClient();
    }
 
    @Singleton
