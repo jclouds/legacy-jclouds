@@ -33,7 +33,7 @@ public class DomainRecord implements Comparable<DomainRecord> {
 
    public static class Builder {
       private String id;
-      private String zone;
+      private String domainname;
       private String host;
       private String type;
       private String data;
@@ -44,9 +44,8 @@ public class DomainRecord implements Comparable<DomainRecord> {
          return this;
       }
 
-
-      public Builder zone(String zone) {
-         this.zone = zone;
+      public Builder domainname(String domainname) {
+         this.domainname = domainname;
          return this;
       }
 
@@ -71,24 +70,24 @@ public class DomainRecord implements Comparable<DomainRecord> {
       }
 
       public DomainRecord build() {
-         return new DomainRecord(id, zone, host, type, data, ttl);
+         return new DomainRecord(id, domainname, host, type, data, ttl);
       }
 
       public Builder fromDomainRecord(DomainRecord in) {
-         return new Builder().id(in.getId()).zone(in.getZone()).host(in.getHost()).type(in.getType()).data(in.getData()).ttl(in.getTtl());
+         return new Builder().id(in.getId()).domainname(in.getDomainName()).host(in.getHost()).type(in.getType()).data(in.getData()).ttl(in.getTtl());
       }
    }
 
    private final String id;
-   private final String zone;
+   private final String domainname;
    private final String host;
    private final String type;
    private final String data;
    private final int ttl;
 
-   public DomainRecord(String id, String zone, String host, String type, String data, int ttl) {
+   public DomainRecord(String id, String domainname, String host, String type, String data, int ttl) {
       this.id = id;
-      this.zone = zone;
+      this.domainname = domainname;
       this.host = host;
       this.type = type;
       this.data = data;
@@ -106,8 +105,8 @@ public class DomainRecord implements Comparable<DomainRecord> {
    /**
     * @return the zone content of the record
     */
-   public String getZone() {
-      return zone;
+   public String getDomainName() {
+      return domainname;
    }
 
    /**
@@ -163,7 +162,7 @@ public class DomainRecord implements Comparable<DomainRecord> {
 
    @Override
    public String toString() {
-      return String.format("[id=%s, zone=%s, host=%s, type=%s, data=%s, ttl=%d]", id, zone, host, type, data, ttl);
+      return String.format("[id=%s, domainname=%s, host=%s, type=%s, data=%s, ttl=%d]", id, domainname, host, type, data, ttl);
    }
 
 }

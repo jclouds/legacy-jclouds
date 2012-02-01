@@ -59,6 +59,10 @@ public class BaseGleSYSClientLiveTest extends BaseVersionedServiceLiveTest {
    protected ComputeServiceContext computeContext;
    protected RestContext<GleSYSClient, GleSYSAsyncClient> context;
 
+   public BaseGleSYSClientLiveTest() {
+      provider = "glesys";
+   }
+   
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       setupCredentials();

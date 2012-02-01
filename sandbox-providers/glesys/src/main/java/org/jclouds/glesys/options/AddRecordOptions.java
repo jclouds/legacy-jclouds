@@ -33,14 +33,6 @@ public class AddRecordOptions extends BaseHttpRequestOptions {
          AddRecordOptions options = new AddRecordOptions();
          return options.ttl(ttl);
       }
-
-      /**
-       * @see AddRecordOptions#mxPriority
-       */
-      public static AddRecordOptions mxPriority(int mxPriority) {
-         AddRecordOptions options = new AddRecordOptions();
-         return options.mxPriority(mxPriority);
-      }
    }
 
    /** Configure TTL/Time-to-live for record */
@@ -48,11 +40,4 @@ public class AddRecordOptions extends BaseHttpRequestOptions {
       formParameters.put("ttl", Integer.toString(ttl));
       return this;
    }
-
-   /** Configure the priority of an MX record */
-   public AddRecordOptions mxPriority(int mxPriority) {
-      formParameters.put("mx_priority", Integer.toString(mxPriority));
-      return this;
-   }
-
 }

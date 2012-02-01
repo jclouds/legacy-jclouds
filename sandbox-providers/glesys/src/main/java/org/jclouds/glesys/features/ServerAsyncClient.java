@@ -128,7 +128,7 @@ public interface ServerAsyncClient {
    ListenableFuture<Map<String, AllowedArgumentsForCreateServer>> getAllowedArgumentsForCreateServerByPlatform();
 
    /**
-    * @see ServerClient#getTemplates
+    * @see ServerClient#listTemplates
     */
    @GET
    @Path("/server/templates/format/json")

@@ -51,13 +51,6 @@ public class EditRecordOptions extends AddRecordOptions {
       public static EditRecordOptions ttl(int ttl) {
          return EditRecordOptions.class.cast(new EditRecordOptions().ttl(ttl));
       }
-
-      /**
-       * @see EditRecordOptions#mxPriority
-       */
-      public static EditRecordOptions mxPriority(int mxPriority) {
-         return EditRecordOptions.class.cast(new EditRecordOptions().mxPriority(mxPriority));
-      }
    }
 
 

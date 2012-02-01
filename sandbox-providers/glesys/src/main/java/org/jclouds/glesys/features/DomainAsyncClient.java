@@ -64,14 +64,14 @@ public interface DomainAsyncClient {
     */
    @POST
    @Path("/domain/add/format/json")
-   ListenableFuture<Void> addDomain(@FormParam("name") String name, AddDomainOptions... options);
+   ListenableFuture<Void> addDomain(@FormParam("domainname") String name, AddDomainOptions... options);
 
    /**
     * @see DomainClient#editDomain
     */
    @POST
    @Path("/domain/edit/format/json")
-   ListenableFuture<Void> editDomain(@FormParam("domain") String domain, DomainOptions... options);
+   ListenableFuture<Void> editDomain(@FormParam("domainname") String domain, DomainOptions... options);
 
 
    /**
@@ -79,23 +79,23 @@ public interface DomainAsyncClient {
     */
    @POST
    @Path("/domain/delete/format/json")
-   ListenableFuture<Void> deleteDomain(@FormParam("domain") String domain);
+   ListenableFuture<Void> deleteDomain(@FormParam("domainname") String domain);
 
    /**
     * @see DomainClient#listRecords
     */
    @POST
-   @Path("/domain/list_records/format/json")
+   @Path("/domain/listrecords/format/json")
    @SelectJson("records")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Set<DomainRecord>> listRecords(@FormParam("domain") String domain);
+   ListenableFuture<Set<DomainRecord>> listRecords(@FormParam("domainname") String domain);
 
    /**
     * @see DomainClient#addRecord
     */
    @POST
-   @Path("/domain/add_record/format/json")
-   ListenableFuture<Void> addRecord(@FormParam("domain") String domain, @FormParam("host") String host,
+   @Path("/domain/addrecord/format/json")
+   ListenableFuture<Void> addRecord(@FormParam("domainname") String domain, @FormParam("host") String host,
                                     @FormParam("type") String type, @FormParam("data") String data,
                                     AddRecordOptions... options);
 
@@ -103,14 +103,14 @@ public interface DomainAsyncClient {
     * @see DomainClient#editRecord
     */
    @POST
-   @Path("/domain/update_record/format/json")
-   ListenableFuture<Void> editRecord(@FormParam("record_id") String record_id, EditRecordOptions... options);
+   @Path("/domain/updaterecord/format/json")
+   ListenableFuture<Void> editRecord(@FormParam("recordid") String record_id, EditRecordOptions... options);
 
    /**
     * @see DomainClient#deleteRecord
     */
    @POST
-   @Path("/domain/delete_record/format/json")
-   ListenableFuture<Void> deleteRecord(@FormParam("record_id") String recordId);
+   @Path("/domain/deleterecord/format/json")
+   ListenableFuture<Void> deleteRecord(@FormParam("recordid") String recordId);
 
 }
