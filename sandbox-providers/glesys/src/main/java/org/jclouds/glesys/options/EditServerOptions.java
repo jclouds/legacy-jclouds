@@ -28,35 +28,32 @@ public class EditServerOptions extends BaseHttpRequestOptions {
 
    public static class Builder {
       /**
-       * @see org.jclouds.glesys.options.EditServerOptions#disksize
+       * @see org.jclouds.glesys.options.EditServerOptions#diskSizeGB
        */
-      public static EditServerOptions disksize(int disksize) {
-         EditServerOptions options = new EditServerOptions();
-         return options.disksize(disksize);
+      public static EditServerOptions disksizeGB(int disksizeGB) {
+         return new EditServerOptions().diskSizeGB(disksizeGB);
       }
       
       /**
-       * @see org.jclouds.glesys.options.EditServerOptions#memorysize
+       * @see org.jclouds.glesys.options.EditServerOptions#memorySizeMB
        */
-      public static EditServerOptions memorysize(int memorysize) {
-         EditServerOptions options = new EditServerOptions();
-         return options.memorysize(memorysize);
+      public static EditServerOptions memorysizeMB(int memorysizeMB) {
+         return new EditServerOptions().memorySizeMB(memorysizeMB);
       }
 
       /**
-       * @see org.jclouds.glesys.options.EditServerOptions#cpucores
+       * @see org.jclouds.glesys.options.EditServerOptions#cpuCores
        */
       public static EditServerOptions cpucores(int cpucores) {
          EditServerOptions options = new EditServerOptions();
-         return options.cpucores(cpucores);
+         return options.cpuCores(cpucores);
       }
 
       /**
-       * @see org.jclouds.glesys.options.EditServerOptions#cpucores
+       * @see org.jclouds.glesys.options.EditServerOptions#transferGB
        */
-      public static EditServerOptions transfer(int transfer) {
-         EditServerOptions options = new EditServerOptions();
-         return options.transfer(transfer);
+      public static EditServerOptions transferGB(int transferGB) {
+         return new EditServerOptions().transferGB(transferGB);
       }
       
       /**
@@ -77,26 +74,26 @@ public class EditServerOptions extends BaseHttpRequestOptions {
    }
 
    /** Configure the size of the disk, in GB, of the server */
-   public EditServerOptions disksize(int disksize) {
-      formParameters.put("disksize", Integer.toString(disksize));
+   public EditServerOptions diskSizeGB(int diskSizeGB) {
+      formParameters.put("disksize", Integer.toString(diskSizeGB));
       return this;
    }
 
    /** Configure the amount of RAM, in MB, allocated to the server */
-   public EditServerOptions memorysize(int memorysize) {
-      formParameters.put("memorysize", Integer.toString(memorysize));
+   public EditServerOptions memorySizeMB(int memorySizeMB) {
+      formParameters.put("memorysize", Integer.toString(memorySizeMB));
       return this;
    }
 
    /** Configure the number of CPU cores allocated to the server */
-   public EditServerOptions cpucores(int cpucores) {
+   public EditServerOptions cpuCores(int cpucores) {
       formParameters.put("cpucores", Integer.toString(cpucores));
       return this;
    }
 
    /** Configure the transfer setting for the server */
-   public EditServerOptions transfer(int transfer) {
-      formParameters.put("cpucores", Integer.toString(transfer));
+   public EditServerOptions transferGB(int transferGB) {
+      formParameters.put("transfer", Integer.toString(transferGB));
       return this;
    }
 

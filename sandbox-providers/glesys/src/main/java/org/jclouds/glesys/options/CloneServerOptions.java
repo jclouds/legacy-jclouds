@@ -24,31 +24,31 @@ package org.jclouds.glesys.options;
 public class CloneServerOptions extends EditServerOptions {
    public static class Builder {
       /**
-       * @see org.jclouds.glesys.options.CloneServerOptions#disksize
+       * @see org.jclouds.glesys.options.CloneServerOptions#diskSizeGB
        */
-      public static CloneServerOptions disksize(int disksize) {
-         return CloneServerOptions.class.cast(new CloneServerOptions().disksize(disksize));
+      public static CloneServerOptions diskSizeGB(int diskSizeGB) {
+         return CloneServerOptions.class.cast(new CloneServerOptions().diskSizeGB(diskSizeGB));
       }
 
       /**
-       * @see org.jclouds.glesys.options.CloneServerOptions#memorysize
+       * @see org.jclouds.glesys.options.CloneServerOptions#memorySizeMB
        */
-      public static CloneServerOptions memorysize(int memorysize) {
-         return CloneServerOptions.class.cast(new CloneServerOptions().memorysize(memorysize));
+      public static CloneServerOptions memorySizeMB(int memorySizeMB) {
+         return CloneServerOptions.class.cast(new CloneServerOptions().memorySizeMB(memorySizeMB));
       }
 
       /**
-       * @see org.jclouds.glesys.options.CloneServerOptions#cpucores
+       * @see org.jclouds.glesys.options.CloneServerOptions#cpuCores
        */
       public static CloneServerOptions cpucores(int cpucores) {
-         return CloneServerOptions.class.cast(new CloneServerOptions().cpucores(cpucores));
+         return CloneServerOptions.class.cast(new CloneServerOptions().cpuCores(cpucores));
       }
 
       /**
-       * @see org.jclouds.glesys.options.CloneServerOptions#cpucores
+       * @see org.jclouds.glesys.options.CloneServerOptions#transferGB
        */
-      public static CloneServerOptions transfer(int transfer) {
-         return CloneServerOptions.class.cast(new CloneServerOptions().transfer(transfer));
+      public static CloneServerOptions transferGB(int transferGB) {
+         return CloneServerOptions.class.cast(new CloneServerOptions().transferGB(transferGB));
       }
 
       /**

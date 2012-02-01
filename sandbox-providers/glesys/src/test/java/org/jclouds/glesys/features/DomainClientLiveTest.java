@@ -88,7 +88,7 @@ public class DomainClientLiveTest extends BaseGleSYSClientLiveTest {
    @Test
    public void testEditDomain() throws Exception {
       client.editDomain(testDomain, DomainOptions.Builder.responsiblePerson("tester.jclouds.org"));
-      assertTrue(client.listDomains().contains(Domain.builder().domain(testDomain).build()));
+      assertTrue(client.listDomains().contains(Domain.builder().domainName(testDomain).build()));
    }
 
    @Test
