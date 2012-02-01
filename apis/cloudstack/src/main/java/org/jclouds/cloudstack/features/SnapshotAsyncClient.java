@@ -25,7 +25,7 @@ import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.Snapshot;
 import org.jclouds.cloudstack.domain.SnapshotPolicy;
 import org.jclouds.cloudstack.domain.SnapshotPolicySchedule;
-import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.options.CreateSnapshotOptions;
 import org.jclouds.cloudstack.options.ListSnapshotPoliciesOptions;
 import org.jclouds.cloudstack.options.ListSnapshotsOptions;
@@ -54,7 +54,7 @@ import java.util.Set;
  * @see http://download.cloud.com/releases/2.2.0/api/TOC_User.html
  * @author Richard Downer
  */
-@RequestFilters(QuerySigner.class)
+@RequestFilters(AuthenticationFilter.class)
 @QueryParams(keys = "response", values = "json")
 public interface SnapshotAsyncClient {
 

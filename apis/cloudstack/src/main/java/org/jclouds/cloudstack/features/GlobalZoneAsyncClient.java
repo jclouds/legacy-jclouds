@@ -21,7 +21,7 @@ package org.jclouds.cloudstack.features;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.Zone;
-import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.options.CreateZoneOptions;
 import org.jclouds.cloudstack.options.UpdateZoneOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -45,7 +45,7 @@ import javax.ws.rs.core.MediaType;
  *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Global_Admin.html"
  *      />
  */
-@RequestFilters(QuerySigner.class)
+@RequestFilters(AuthenticationFilter.class)
 @QueryParams(keys = "response", values = "json")
 public interface GlobalZoneAsyncClient extends ZoneAsyncClient {
 

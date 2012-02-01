@@ -11,7 +11,6 @@ import javax.ws.rs.core.UriBuilder;
 import org.jclouds.cloudstack.domain.LoginResponse;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpRequestFilter;
 
 import com.google.common.base.Supplier;
 import com.google.common.net.HttpHeaders;
@@ -23,7 +22,7 @@ import com.google.common.net.HttpHeaders;
  *      />
  */
 @Singleton
-public class AddSessionKeyAndJSessionIdToRequest implements HttpRequestFilter {
+public class AddSessionKeyAndJSessionIdToRequest implements AuthenticationFilter {
 
    private final Supplier<LoginResponse> loginResponseSupplier;
    private final Provider<UriBuilder> uriBuilderProvider;

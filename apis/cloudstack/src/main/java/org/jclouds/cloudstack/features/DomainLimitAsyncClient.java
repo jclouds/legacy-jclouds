@@ -24,7 +24,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.cloudstack.binders.ResourceLimitToQueryParams;
 import org.jclouds.cloudstack.domain.ResourceLimit;
-import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -41,7 +41,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Domain_Admin.html"
  *      />
  */
-@RequestFilters(QuerySigner.class)
+@RequestFilters(AuthenticationFilter.class)
 @QueryParams(keys = "response", values = "json")
 public interface DomainLimitAsyncClient extends LimitAsyncClient {
    /**

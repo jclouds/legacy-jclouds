@@ -18,11 +18,16 @@
  */
 package org.jclouds.cloudstack.config;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
-import com.google.inject.name.Named;
+import static com.google.common.base.Throwables.propagate;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
+import javax.ws.rs.core.UriBuilder;
+
+import org.jclouds.Constants;
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.CloudStackDomainAsyncClient;
@@ -30,6 +35,7 @@ import org.jclouds.cloudstack.CloudStackDomainClient;
 import org.jclouds.cloudstack.CloudStackGlobalAsyncClient;
 import org.jclouds.cloudstack.CloudStackGlobalClient;
 import org.jclouds.cloudstack.collections.Integration;
+import org.jclouds.cloudstack.domain.LoginResponse;
 import org.jclouds.cloudstack.features.AccountAsyncClient;
 import org.jclouds.cloudstack.features.AccountClient;
 import org.jclouds.cloudstack.features.AddressAsyncClient;
@@ -110,8 +116,16 @@ import org.jclouds.cloudstack.features.VolumeAsyncClient;
 import org.jclouds.cloudstack.features.VolumeClient;
 import org.jclouds.cloudstack.features.ZoneAsyncClient;
 import org.jclouds.cloudstack.features.ZoneClient;
+import org.jclouds.cloudstack.filters.AddSessionKeyAndJSessionIdToRequest;
+import org.jclouds.cloudstack.filters.AuthenticationFilter;
+import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.functions.LoginWithPasswordCredentials;
 import org.jclouds.cloudstack.handlers.CloudStackErrorHandler;
+import org.jclouds.cloudstack.handlers.RetryOnRenewAndLogoutOnClose;
+import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
@@ -124,9 +138,17 @@ import org.jclouds.rest.config.BinderUtils;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.internal.RestContextImpl;
 
-import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
-import java.util.Map;
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Inject;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Named;
 
 /**
  * Configures the cloudstack connection.
@@ -138,47 +160,47 @@ import java.util.Map;
 public class CloudStackRestClientModule extends RestClientModule<CloudStackClient, CloudStackAsyncClient> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(ZoneClient.class, ZoneAsyncClient.class)//
-         .put(GlobalZoneClient.class, GlobalZoneAsyncClient.class)//
-         .put(TemplateClient.class, TemplateAsyncClient.class)//
-         .put(OfferingClient.class, OfferingAsyncClient.class)//
-         .put(NetworkClient.class, NetworkAsyncClient.class)//
-         .put(VirtualMachineClient.class, VirtualMachineAsyncClient.class)//
-         .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
-         .put(AsyncJobClient.class, AsyncJobAsyncClient.class)//
-         .put(AddressClient.class, AddressAsyncClient.class)//
-         .put(NATClient.class, NATAsyncClient.class)//
-         .put(FirewallClient.class, FirewallAsyncClient.class)//
-         .put(LoadBalancerClient.class, LoadBalancerAsyncClient.class)//
-         .put(GuestOSClient.class, GuestOSAsyncClient.class)//
-         .put(HypervisorClient.class, HypervisorAsyncClient.class)//
-         .put(ConfigurationClient.class, ConfigurationAsyncClient.class)//
-         .put(GlobalConfigurationClient.class, GlobalConfigurationAsyncClient.class)//
-         .put(AccountClient.class, AccountAsyncClient.class)//
-         .put(DomainAccountClient.class, DomainAccountAsyncClient.class)//
-         .put(DomainUserClient.class, DomainUserAsyncClient.class)//
-         .put(DomainDomainClient.class, DomainDomainAsyncClient.class)//
-         .put(GlobalDomainClient.class, GlobalDomainAsyncClient.class)//
-         .put(GlobalAccountClient.class, GlobalAccountAsyncClient.class)//
-         .put(GlobalUserClient.class, GlobalUserAsyncClient.class)//
-         .put(EventClient.class, EventAsyncClient.class)//
-         .put(LimitClient.class, LimitAsyncClient.class)//
-         .put(DomainLimitClient.class, DomainLimitAsyncClient.class)//
-         .put(SSHKeyPairClient.class, SSHKeyPairAsyncClient.class)//
-         .put(VMGroupClient.class, VMGroupAsyncClient.class)//
-         .put(ISOClient.class, ISOAsyncClient.class)//
-         .put(VolumeClient.class, VolumeAsyncClient.class)//
-         .put(SnapshotClient.class, SnapshotAsyncClient.class)//
-         .put(GlobalAlertClient.class, GlobalAlertAsyncClient.class)//
-         .put(GlobalCapacityClient.class, GlobalCapacityAsyncClient.class)//
-         .put(GlobalOfferingClient.class, GlobalOfferingAsyncClient.class)//
-         .put(GlobalHostClient.class, GlobalHostAsyncClient.class)//
-         .put(GlobalStoragePoolClient.class, GlobalStoragePoolAsyncClient.class)//
-         .put(GlobalUsageClient.class, GlobalUsageAsyncClient.class)//
-         .put(GlobalPodClient.class, GlobalPodAsyncClient.class)//
-         .put(GlobalVlanClient.class, GlobalVlanAsyncClient.class)//
-         .put(SessionClient.class, SessionAsyncClient.class)//
-         .build();
+            .put(ZoneClient.class, ZoneAsyncClient.class)//
+            .put(GlobalZoneClient.class, GlobalZoneAsyncClient.class)//
+            .put(TemplateClient.class, TemplateAsyncClient.class)//
+            .put(OfferingClient.class, OfferingAsyncClient.class)//
+            .put(NetworkClient.class, NetworkAsyncClient.class)//
+            .put(VirtualMachineClient.class, VirtualMachineAsyncClient.class)//
+            .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
+            .put(AsyncJobClient.class, AsyncJobAsyncClient.class)//
+            .put(AddressClient.class, AddressAsyncClient.class)//
+            .put(NATClient.class, NATAsyncClient.class)//
+            .put(FirewallClient.class, FirewallAsyncClient.class)//
+            .put(LoadBalancerClient.class, LoadBalancerAsyncClient.class)//
+            .put(GuestOSClient.class, GuestOSAsyncClient.class)//
+            .put(HypervisorClient.class, HypervisorAsyncClient.class)//
+            .put(ConfigurationClient.class, ConfigurationAsyncClient.class)//
+            .put(GlobalConfigurationClient.class, GlobalConfigurationAsyncClient.class)//
+            .put(AccountClient.class, AccountAsyncClient.class)//
+            .put(DomainAccountClient.class, DomainAccountAsyncClient.class)//
+            .put(DomainUserClient.class, DomainUserAsyncClient.class)//
+            .put(DomainDomainClient.class, DomainDomainAsyncClient.class)//
+            .put(GlobalDomainClient.class, GlobalDomainAsyncClient.class)//
+            .put(GlobalAccountClient.class, GlobalAccountAsyncClient.class)//
+            .put(GlobalUserClient.class, GlobalUserAsyncClient.class)//
+            .put(EventClient.class, EventAsyncClient.class)//
+            .put(LimitClient.class, LimitAsyncClient.class)//
+            .put(DomainLimitClient.class, DomainLimitAsyncClient.class)//
+            .put(SSHKeyPairClient.class, SSHKeyPairAsyncClient.class)//
+            .put(VMGroupClient.class, VMGroupAsyncClient.class)//
+            .put(ISOClient.class, ISOAsyncClient.class)//
+            .put(VolumeClient.class, VolumeAsyncClient.class)//
+            .put(SnapshotClient.class, SnapshotAsyncClient.class)//
+            .put(GlobalAlertClient.class, GlobalAlertAsyncClient.class)//
+            .put(GlobalCapacityClient.class, GlobalCapacityAsyncClient.class)//
+            .put(GlobalOfferingClient.class, GlobalOfferingAsyncClient.class)//
+            .put(GlobalHostClient.class, GlobalHostAsyncClient.class)//
+            .put(GlobalStoragePoolClient.class, GlobalStoragePoolAsyncClient.class)//
+            .put(GlobalUsageClient.class, GlobalUsageAsyncClient.class)//
+            .put(GlobalPodClient.class, GlobalPodAsyncClient.class)//
+            .put(GlobalVlanClient.class, GlobalVlanAsyncClient.class)//
+            .put(SessionClient.class, SessionAsyncClient.class)//
+            .build();
 
    @Override
    protected void bindAsyncClient() {
@@ -214,6 +236,8 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
       }).to(new TypeLiteral<RestContextImpl<CloudStackGlobalClient, CloudStackGlobalAsyncClient>>() {
       });
       install(new CloudStackParserModule());
+      bind(CredentialType.class).toProvider(CredentialTypeFromPropertyOrDefault.class);
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenewAndLogoutOnClose.class);
       super.configure();
    }
 
@@ -228,9 +252,91 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
    @Provides
    @Integration
    protected URI providesIntegrationEndpoint(@Provider URI normal,
-         @Named("jclouds.cloudstack.integration-api-port") int port,
-         com.google.inject.Provider<UriBuilder> uriBuilder) {
-      return uriBuilder.get().scheme(normal.getScheme())
-         .host(normal.getHost()).path("/").port(port).build();
+            @Named("jclouds.cloudstack.integration-api-port") int port,
+            com.google.inject.Provider<UriBuilder> uriBuilder) {
+      return uriBuilder.get().scheme(normal.getScheme()).host(normal.getHost()).path("/").port(port).build();
+   }
+
+   /**
+    * Session client is used in login-related functionality
+    */
+   @Provides
+   @Singleton
+   protected SessionClient bindSessionClient(CloudStackClient client) {
+      return client.getSessionClient();
+   }
+
+   @Singleton
+   static class CredentialTypeFromPropertyOrDefault implements javax.inject.Provider<CredentialType> {
+      /**
+       * use optional injection to supply a default value for credential type. so that we don't have
+       * to set a default property.
+       */
+      @Inject(optional = true)
+      @Named(CloudStackProperties.CREDENTIAL_TYPE)
+      String credentialType = CredentialType.API_ACCESS_KEY_CREDENTIALS.toString();
+
+      @Override
+      public CredentialType get() {
+         return CredentialType.fromValue(credentialType);
+      }
+   }
+
+   /**
+    * we use the type of credentials specified at login to determine which way we want to filter the
+    * request. <br/>
+    * for ex, if we are getting passwords, we know we will need to login/logout. Otherwise we are
+    * signing requests.
+    */
+   @Provides
+   @Singleton
+   protected AuthenticationFilter authenticationFilterForCredentialType(CredentialType credentialType,
+            AddSessionKeyAndJSessionIdToRequest addSessionKeyAndJSessionIdToRequest, QuerySigner querySigner) {
+      switch (credentialType) {
+         case PASSWORD_CREDENTIALS:
+            return addSessionKeyAndJSessionIdToRequest;
+         case API_ACCESS_KEY_CREDENTIALS:
+            return querySigner;
+         default:
+            throw new IllegalArgumentException("credential type not supported: " + credentialType);
+      }
+   }
+
+   @Provides
+   @Singleton
+   protected Function<Credentials, LoginResponse> makeSureFilterRetriesOnTimeout(
+            LoginWithPasswordCredentials loginWithPasswordCredentials) {
+      // we should retry on timeout exception logging in.
+      return new RetryOnTimeOutExceptionFunction<Credentials, LoginResponse>(loginWithPasswordCredentials);
+   }
+
+   // TODO: not sure we can action the timeout from loginresponse without extra code? modify default
+   // accordingly
+   // PROPERTY_SESSION_INTERVAL is default to 60 seconds
+   @Provides
+   @Singleton
+   public LoadingCache<Credentials, LoginResponse> provideLoginResponseCache(
+            Function<Credentials, LoginResponse> getLoginResponse,
+            @Named(Constants.PROPERTY_SESSION_INTERVAL) int seconds) {
+      return CacheBuilder.newBuilder().expireAfterWrite(seconds, TimeUnit.SECONDS).build(
+               CacheLoader.from(getLoginResponse));
+   }
+
+   // Temporary conversion of a cache to a supplier until there is a single-element cache
+   // http://code.google.com/p/guava-libraries/issues/detail?id=872
+   @Provides
+   @Singleton
+   protected Supplier<LoginResponse> provideLoginResponseSupplier(final LoadingCache<Credentials, LoginResponse> cache,
+            @Provider final Credentials creds) {
+      return new Supplier<LoginResponse>() {
+         @Override
+         public LoginResponse get() {
+            try {
+               return cache.get(creds);
+            } catch (ExecutionException e) {
+               throw propagate(e.getCause());
+            }
+         }
+      };
    }
 }

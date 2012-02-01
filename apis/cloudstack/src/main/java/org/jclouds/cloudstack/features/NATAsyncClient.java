@@ -27,7 +27,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
-import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.options.CreateIPForwardingRuleOptions;
 import org.jclouds.cloudstack.options.ListIPForwardingRulesOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -51,7 +51,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  *      />
  * @author Adrian Cole
  */
-@RequestFilters(QuerySigner.class)
+@RequestFilters(AuthenticationFilter.class)
 @QueryParams(keys = "response", values = "json")
 public interface NATAsyncClient {
 

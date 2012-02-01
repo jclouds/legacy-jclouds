@@ -25,7 +25,7 @@ import java.util.Set;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.cloudstack.domain.Event;
-import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.functions.ParseEventTypesFromHttpResponse;
 import org.jclouds.cloudstack.options.ListEventsOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -43,7 +43,7 @@ import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
  * @see org.jclouds.cloudstack.features.AccountClient
  * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
  */
-@RequestFilters(QuerySigner.class)
+@RequestFilters(AuthenticationFilter.class)
 @QueryParams(keys = "response", values = "json")
 public interface EventAsyncClient {
    /**
