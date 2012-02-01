@@ -56,8 +56,7 @@ public class SessionClientLiveTest extends BaseCloudStackClientLiveTest {
 
          assertEquals(
             globalAdminClient.getUserClient().registerUserKeys(testUser.getId()),
-            ApiKeyPairs.getApiKeyPairForUser(
-               System.getProperty("test.cloudstack.endpoint"), prefix + "-user", "password", "")
+            ApiKeyPairs.getApiKeyPairForUser(endpoint, prefix + "-user", "password", "")
          );
 
       } finally {
