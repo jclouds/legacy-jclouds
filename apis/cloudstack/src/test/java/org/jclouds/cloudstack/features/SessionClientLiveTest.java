@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.features;
 
 import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.domain.LoginResponse;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.util.ApiKeyPairs;
 import org.jclouds.crypto.CryptoStreams;
@@ -27,6 +28,7 @@ import org.testng.annotations.Test;
 import static org.jclouds.cloudstack.features.GlobalAccountClientLiveTest.createTestAccount;
 import static org.jclouds.cloudstack.features.GlobalUserClientLiveTest.createTestUser;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * Tests behavior of {@code SessionClient}
@@ -50,10 +52,12 @@ public class SessionClientLiveTest extends BaseCloudStackClientLiveTest {
          String expectedUsername = prefix + "-user";
          assertEquals(testUser.getName(), expectedUsername);
 
+         checkLoginAsTheNewUser(expectedUsername);
+
          assertEquals(
             globalAdminClient.getUserClient().registerUserKeys(testUser.getId()),
-            ApiKeyPairs.getApiKeyPairForUser(System.getProperty("test.cloudstack.endpoint"),
-               prefix + "-user", CryptoStreams.md5Hex("password"), "/")
+            ApiKeyPairs.getApiKeyPairForUser(
+               System.getProperty("test.cloudstack.endpoint"), prefix + "-user", "password", "")
          );
 
       } finally {
@@ -62,5 +66,16 @@ public class SessionClientLiveTest extends BaseCloudStackClientLiveTest {
          if (testAccount != null)
             globalAdminClient.getAccountClient().deleteAccount(testAccount.getId());
       }
+   }
+
+   private void checkLoginAsTheNewUser(String expectedUsername) {
+      LoginResponse response = globalAdminClient.getSessionClient()
+         .loginUserInDomainWithHashOfPassword(expectedUsername, "", CryptoStreams.md5Hex("password"));
+
+      assertNotNull(response);
+      assertNotNull(response.getSessionKey());
+      assertNotNull(response.getJSessionId());
+
+      client.getSessionClient().logoutUser(response.getSessionKey());
    }
 }

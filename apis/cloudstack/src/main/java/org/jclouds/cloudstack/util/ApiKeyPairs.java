@@ -27,7 +27,6 @@ import org.jclouds.cloudstack.domain.ApiKeyPair;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.rest.RestContextFactory;
 
 import java.util.Properties;
@@ -45,10 +44,14 @@ public class ApiKeyPairs {
    /**
     * Retrieve the API key pair for a given CloudStack user
     *
-    * @param endpoint CloudStack API endpoint (e.g. http://72.52.126.25/client/api/)
-    * @param username User account name
-    * @param password User password
-    * @param domain   Domain name. If empty defaults to ROOT
+    * @param endpoint
+    *          CloudStack API endpoint (e.g. http://72.52.126.25/client/api/)
+    * @param username
+    *          User account name
+    * @param password
+    *          User password
+    * @param domain
+    *          Domain name. If empty defaults to ROOT
     * @return
     */
    public static ApiKeyPair getApiKeyPairForUser(String endpoint, String username, String password, String domain) {
@@ -60,6 +63,7 @@ public class ApiKeyPairs {
          CloudStackClient client = CloudStackClient.class.cast(context.getProviderSpecificContext().getApi());
          Set<Account> listOfAccounts = client.getAccountClient().listAccounts();
 
+         domain = (domain.equals("") || domain.equals("/")) ? "ROOT" : domain;
          for (Account account : listOfAccounts) {
             for (User user : account.getUsers()) {
                if (user.getName().equals(username) && user.getDomain().equals(domain)) {
@@ -91,7 +95,7 @@ public class ApiKeyPairs {
       overrides.put(PROVIDER + ".endpoint", checkNotNull(endpoint, "endpoint"));
       overrides.put(PROVIDER + ".identity",
          String.format("%s/%s", checkNotNull(domain, "domain"), checkNotNull(username, "username")));
-      overrides.put(PROVIDER + ".credential", CryptoStreams.md5Hex(checkNotNull(password, "password")));
+      overrides.put(PROVIDER + ".credential", checkNotNull(password, "password"));
 
       return overrides;
    }

@@ -18,13 +18,7 @@
  */
 package org.jclouds.cloudstack.features;
 
-import static org.jclouds.crypto.CryptoStreams.md5Hex;
-import static org.testng.Assert.assertEquals;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.URLEncoder;
-
+import com.google.common.collect.ImmutableMultimap;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.LoginResponse;
@@ -32,11 +26,16 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
+
+import static org.jclouds.crypto.CryptoStreams.md5Hex;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code SessionClient}
- * 
+ *
  * @author Andrei Savu
  */
 @Test(groups = "live", singleThreaded = true, testName = "SessionClientExpectTest")
@@ -44,42 +43,54 @@ public class SessionClientExpectTest extends BaseCloudStackRestClientExpectTest<
 
    @SuppressWarnings("deprecation")
    public void testLoginWhenResponseIs2xxIncludesJSessionId() throws IOException {
-       String domain = "Partners/jCloud";
-       String user = "jcloud";
-       String password = "jcl0ud";
-       String md5password = md5Hex(password);
+      String domain = "Partners/jCloud";
+      String user = "jcloud";
+      String password = "jcl0ud";
+      String md5password = md5Hex(password);
 
       HttpRequest request = HttpRequest.builder()
          .method("GET")
          .endpoint(
             URI.create("http://localhost:8080/client/api?response=json&command=login&" +
-               "username="+user+"&password=" + md5password+ "&domain=" + URLEncoder.encode(domain)))
+               "username=" + user + "&password=" + md5password + "&domain=" + URLEncoder.encode(domain)))
          .headers(
             ImmutableMultimap.<String, String>builder()
                .put("Accept", "application/json")
                .build())
          .build();
 
-       String jSessionId = "90DD65D13AEAA590ECCA312D150B9F6D";
+      String jSessionId = "90DD65D13AEAA590ECCA312D150B9F6D";
       SessionClient client = requestSendsResponse(request,
          HttpResponse.builder()
             .statusCode(200)
-                     .headers(
-            ImmutableMultimap.<String, String>builder()
-               .put("Set-Cookie", "JSESSIONID="+jSessionId+"; Path=/client")
-               .build())
+            .headers(
+               ImmutableMultimap.<String, String>builder()
+                  .put("Set-Cookie", "JSESSIONID=" + jSessionId + "; Path=/client")
+                  .build())
             .payload(payloadFromResource("/loginresponse.json"))
             .build());
 
       assertEquals(client.loginUserInDomainWithHashOfPassword(user, domain, md5password).toString(),
-
-      LoginResponse.builder().timeout(1800).lastName("Kiran").registered(false).username("jcloud").firstName("Vijay")
-               .domainId(11).accountType(Account.Type.DOMAIN_ADMIN).userId(19).sessionKey(
-                        "uYT4/MNiglgAKiZRQkvV8QP8gn0=").jSessionId(jSessionId).accountName("jcloud").build().toString());
+         LoginResponse.builder().timeout(1800).lastName("Kiran").registered(false).username("jcloud").firstName("Vijay")
+            .domainId(11).accountType(Account.Type.DOMAIN_ADMIN).userId(19).sessionKey(
+            "uYT4/MNiglgAKiZRQkvV8QP8gn0=").jSessionId(jSessionId).accountName("jcloud").build().toString());
    }
-   
-   //TODO: logout.
 
+   public void testLogout() throws IOException {
+      HttpRequest request = HttpRequest.builder()
+         .method("GET")
+         .endpoint(
+            URI.create("http://localhost:8080/client/api?response=json&command=logout&sessionkey=dummy-session-key"))
+         .build();
+
+      SessionClient client = requestSendsResponse(request,
+         HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResource("/logoutresponse.json"))
+            .build());
+
+      client.logoutUser("dummy-session-key");
+   }
 
    @Override
    protected SessionClient clientFrom(CloudStackContext context) {
