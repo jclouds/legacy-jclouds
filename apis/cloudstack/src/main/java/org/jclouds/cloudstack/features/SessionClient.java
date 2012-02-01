@@ -18,11 +18,10 @@
  */
 package org.jclouds.cloudstack.features;
 
-import org.jclouds.cloudstack.domain.Account;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.cloudstack.domain.LoginResponse;
 import org.jclouds.concurrent.Timeout;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to CloudStack Sessions
@@ -52,19 +51,6 @@ public interface SessionClient {
     */
    LoginResponse loginUserInDomainWithHashOfPassword(String userName, String domain, String hashedPassword);
 
-   /**
-    * Retrieve an account by name using the session key for login
-    *
-    * @param accountName
-    *          account name
-    * @param sessionKey
-    *          a valid session key
-    * @param jSessionId
-    *          the JSESSIONID cookie returned by the server
-    * @return
-    *          account instance or null
-    */
-   Account getAccountByNameUsingSession(String accountName, String sessionKey, String jSessionId);
 
    /**
     * Logs out the user by invalidating the session key
