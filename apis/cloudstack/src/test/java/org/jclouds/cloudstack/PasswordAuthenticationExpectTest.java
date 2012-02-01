@@ -35,7 +35,7 @@ import com.google.common.net.HttpHeaders;
 
 /**
  * 
- * @see KeystoneProperties#CREDENTIAL_TYPE
+ * @see CloudStackProperties#CREDENTIAL_TYPE
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "PasswordAuthenticationExpectTest")

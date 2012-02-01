@@ -18,12 +18,10 @@
  */
 package org.jclouds.cloudstack.features;
 
-import static org.jclouds.crypto.CryptoStreams.md5Hex;
-
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.Properties;
-
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.http.HttpRequest;
@@ -31,10 +29,11 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.BaseRestClientExpectTest;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.Properties;
+
+import static org.jclouds.crypto.CryptoStreams.md5Hex;
 
 /**
  * Base class for writing CloudStack Rest Client Expect tests
@@ -60,7 +59,7 @@ public abstract class BaseCloudStackRestClientExpectTest<S> extends BaseRestClie
      .method("GET")
      .endpoint(
         URI.create("http://localhost:8080/client/api?response=json&command=login&" +
-           "username=identity&password=" + md5Hex("credential")+ "&domain=ROOT"))
+           "username=identity&password=" + md5Hex("credential")+ "&domain="))
      .headers(
         ImmutableMultimap.<String, String>builder()
            .put("Accept", "application/json")

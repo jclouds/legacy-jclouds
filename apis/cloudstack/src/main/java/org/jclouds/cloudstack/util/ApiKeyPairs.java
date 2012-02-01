@@ -29,6 +29,8 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.rest.RestContextFactory;
 
+import java.net.URI;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 
@@ -52,9 +54,11 @@ public class ApiKeyPairs {
     *          User password
     * @param domain
     *          Domain name. If empty defaults to ROOT
+    * @throws NoSuchElementException, AuthorizationException
     * @return
     */
-   public static ApiKeyPair getApiKeyPairForUser(String endpoint, String username, String password, String domain) {
+   public static ApiKeyPair loginToEndpointAsUsernameInDomainWithPasswordAndReturnApiKeyPair(
+         URI endpoint, String username, String password, String domain) {
       ComputeServiceContext context = null;
       try {
          context = new ComputeServiceContextFactory(setupRestProperties()).
@@ -72,7 +76,7 @@ public class ApiKeyPairs {
                }
             }
          }
-         return null;
+         throw new NoSuchElementException("Unable to find API keypair for user " + username);
 
       } finally {
          if (context != null)
@@ -84,7 +88,7 @@ public class ApiKeyPairs {
       return RestContextFactory.getPropertiesFromResource("/rest.properties");
    }
 
-   private static Properties setupProperties(String endpoint, String username, String password, String domain) {
+   private static Properties setupProperties(URI endpoint, String username, String password, String domain) {
       Properties overrides = new Properties();
 
       overrides.put(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
@@ -92,7 +96,7 @@ public class ApiKeyPairs {
 
       overrides.put("jclouds.cloudstack.credential-type", "passwordCredentials");
 
-      overrides.put(PROVIDER + ".endpoint", checkNotNull(endpoint, "endpoint"));
+      overrides.put(PROVIDER + ".endpoint", checkNotNull(endpoint, "endpoint").toASCIIString());
       overrides.put(PROVIDER + ".identity",
          String.format("%s/%s", checkNotNull(domain, "domain"), checkNotNull(username, "username")));
       overrides.put(PROVIDER + ".credential", checkNotNull(password, "password"));

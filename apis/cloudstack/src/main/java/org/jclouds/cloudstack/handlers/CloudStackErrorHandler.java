@@ -18,11 +18,8 @@
  */
 package org.jclouds.cloudstack.handlers;
 
-import java.io.IOException;
-
-import javax.annotation.Resource;
-import javax.inject.Singleton;
-
+import com.google.common.base.Throwables;
+import com.google.common.io.Closeables;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
@@ -32,8 +29,9 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Strings2;
 
-import com.google.common.base.Throwables;
-import com.google.common.io.Closeables;
+import javax.annotation.Resource;
+import javax.inject.Singleton;
+import java.io.IOException;
 
 /**
  * 
@@ -57,6 +55,7 @@ public class CloudStackErrorHandler implements HttpErrorHandler {
          case 400:
             exception = new IllegalArgumentException(message, exception);
             break;
+         case 531:
          case 401:
             exception = new AuthorizationException(message, exception);
             break;

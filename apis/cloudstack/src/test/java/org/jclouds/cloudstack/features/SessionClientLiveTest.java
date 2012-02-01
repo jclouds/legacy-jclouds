@@ -19,11 +19,15 @@
 package org.jclouds.cloudstack.features;
 
 import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.domain.ApiKeyPair;
 import org.jclouds.cloudstack.domain.LoginResponse;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.util.ApiKeyPairs;
 import org.jclouds.crypto.CryptoStreams;
+import org.jclouds.rest.AuthorizationException;
 import org.testng.annotations.Test;
+
+import java.net.URI;
 
 import static org.jclouds.cloudstack.features.GlobalAccountClientLiveTest.createTestAccount;
 import static org.jclouds.cloudstack.features.GlobalUserClientLiveTest.createTestUser;
@@ -54,10 +58,11 @@ public class SessionClientLiveTest extends BaseCloudStackClientLiveTest {
 
          checkLoginAsTheNewUser(expectedUsername);
 
-         assertEquals(
-            globalAdminClient.getUserClient().registerUserKeys(testUser.getId()),
-            ApiKeyPairs.getApiKeyPairForUser(endpoint, prefix + "-user", "password", "")
-         );
+         ApiKeyPair expected = globalAdminClient.getUserClient().registerUserKeys(testUser.getId());
+         ApiKeyPair actual = ApiKeyPairs.loginToEndpointAsUsernameInDomainWithPasswordAndReturnApiKeyPair(
+            URI.create(endpoint), prefix + "-user", "password", "");
+
+         assertEquals(actual, expected);
 
       } finally {
          if (testUser != null)
@@ -65,6 +70,12 @@ public class SessionClientLiveTest extends BaseCloudStackClientLiveTest {
          if (testAccount != null)
             globalAdminClient.getAccountClient().deleteAccount(testAccount.getId());
       }
+   }
+
+   @Test(expectedExceptions = AuthorizationException.class)
+   public void testTryToGetApiKeypairWithWrongCredentials() {
+      ApiKeyPairs.loginToEndpointAsUsernameInDomainWithPasswordAndReturnApiKeyPair(
+         URI.create(endpoint), "dummy-missing-user", "with-a-wrong-password", "");
    }
 
    private void checkLoginAsTheNewUser(String expectedUsername) {
