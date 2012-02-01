@@ -27,6 +27,7 @@ import org.jclouds.cloudstack.domain.ApiKeyPair;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
@@ -48,7 +49,7 @@ public class GlobalUserClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public static User createTestUser(CloudStackGlobalClient client, Account account, String prefix) {
       return client.getUserClient().createUser(prefix + "-user",
-            account.getName(), "dummy2@example.com", "md5-password", "First", "Last");
+            account.getName(), "dummy2@example.com", CryptoStreams.md5Hex("password"), "First", "Last");
    }
 
    @Test
