@@ -18,16 +18,11 @@
  */
 package org.jclouds.aws.ec2.compute;
 
-import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
-import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService.getJavaMethodForRequestAtIndex;
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
-import static org.testng.Assert.assertEquals;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.inject.Module;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.reference.AWSEC2Constants;
 import org.jclouds.compute.ComputeServiceContext;
@@ -45,14 +40,18 @@ import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.ec2.services.AvailabilityZoneAndRegionAsyncClient;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService;
+import org.jclouds.location.reference.LocationConstants;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.inject.Module;
+import java.io.IOException;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService.getJavaMethodForRequestAtIndex;
+import static org.testng.Assert.assertEquals;
 
 /**
  * 
@@ -314,7 +313,10 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
       try {
          Properties overrides = setupProperties();
          // set regions to only 1
-         overrides.setProperty(PROPERTY_REGIONS, Region.US_EAST_1);
+         overrides.setProperty(LocationConstants.PROPERTY_REGIONS, Region.EU_WEST_1);
+         overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_CC_REGIONS, "");
+         overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_AMI_QUERY, "");
+         overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY, "");
 
          final List<HttpCommand> commandsInvoked = Lists.newArrayList();
          context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(
@@ -325,14 +327,14 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
 
          assert context.getComputeService().listImages().size() < this.context.getComputeService().listImages().size();
 
-         Template template = context.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5").build();
+         Template template = context.getComputeService().templateBuilder().imageId("eu-west-1/ami-a33b06d7").build();
          assert (template.getImage().getProviderId().startsWith("ami-")) : template;
-         assertEquals(template.getImage().getOperatingSystem().getVersion(), "5.4");
+         assertEquals(template.getImage().getOperatingSystem().getVersion(), "2011.09.2");
          assertEquals(template.getImage().getOperatingSystem().is64Bit(), true);
-         assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
-         assertEquals(template.getImage().getVersion(), "4.4.10");
+         assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
+         assertEquals(template.getImage().getVersion(), "2011.09.2");
          assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
-         assertEquals(template.getLocation().getId(), "us-east-1");
+         assertEquals(template.getLocation().getId(), "eu-west-1");
          assertEquals(getCores(template.getHardware()), 2.0d);
          assertEquals(template.getHardware().getId(), "m1.large"); // because it
          // is 64bit
