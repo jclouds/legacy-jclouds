@@ -34,7 +34,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.location.Provider;
 import org.jclouds.openstack.Authentication;
-import org.jclouds.openstack.keystone.v2_0.IdentityServiceAsyncClient;
+import org.jclouds.openstack.keystone.v2_0.ServiceAsyncClient;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.PasswordCredentials;
 import org.jclouds.rest.AsyncClientFactory;
@@ -56,7 +56,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @RequiresHttp
-public class KeyStoneAuthenticationModule extends AbstractModule {
+public class KeystoneAuthenticationModule extends AbstractModule {
 
    @Override
    protected void configure() {
@@ -81,8 +81,8 @@ public class KeyStoneAuthenticationModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected IdentityServiceAsyncClient provideServiceClient(AsyncClientFactory factory) {
-      return factory.create(IdentityServiceAsyncClient.class);
+   protected ServiceAsyncClient provideServiceClient(AsyncClientFactory factory) {
+      return factory.create(ServiceAsyncClient.class);
    }
 
    @Provides
@@ -96,7 +96,7 @@ public class KeyStoneAuthenticationModule extends AbstractModule {
    public static class GetAccess extends RetryOnTimeOutExceptionFunction<Credentials, Access> {
 
       @Inject
-      public GetAccess(final IdentityServiceAsyncClient client) {
+      public GetAccess(final ServiceAsyncClient client) {
          super(new Function<Credentials, Access>() {
 
             @Override
