@@ -29,13 +29,18 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.PropertiesAdapter;
+import org.jclouds.location.suppliers.ImplicitLocationSupplier;
+import org.jclouds.location.suppliers.LocationsSupplier;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rimuhosting.miro.RimuHostingAsyncClient;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
+import org.jclouds.rimuhosting.miro.location.RimuHostingDefaultLocationSupplier;
+import org.jclouds.rimuhosting.miro.location.RimuHostingLocationSupplier;
 
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import com.google.inject.Scopes;
 
 /**
  * 
@@ -77,5 +82,12 @@ public class RimuHostingRestClientModule extends RestClientModule<RimuHostingCli
          return null;
       }
 
+   }
+
+   @Override
+   protected void installLocations() {
+      super.installLocations();
+      bind(ImplicitLocationSupplier.class).to(RimuHostingDefaultLocationSupplier.class).in(Scopes.SINGLETON);
+      bind(LocationsSupplier.class).to(RimuHostingLocationSupplier.class).in(Scopes.SINGLETON);
    }
 }

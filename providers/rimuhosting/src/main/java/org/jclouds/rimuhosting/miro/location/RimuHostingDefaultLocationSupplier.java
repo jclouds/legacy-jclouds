@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.rimuhosting.miro.compute.suppliers;
+package org.jclouds.rimuhosting.miro.location;
 
 import static org.jclouds.rimuhosting.miro.reference.RimuHostingConstants.PROPERTY_RIMUHOSTING_DEFAULT_DC;
 
@@ -28,6 +28,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
+import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
@@ -38,7 +39,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class RimuHostingDefaultLocationSupplier implements Supplier<Location> {
+public class RimuHostingDefaultLocationSupplier implements ImplicitLocationSupplier {
    private final Supplier<Set<? extends Location>> locations;
    private final String defaultDC;
 
