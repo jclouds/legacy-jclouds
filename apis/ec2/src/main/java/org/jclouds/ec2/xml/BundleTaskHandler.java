@@ -22,11 +22,13 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
-import org.jclouds.ec2.domain.BundleTask;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.date.DateService;
+import org.jclouds.ec2.domain.BundleTask;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
+
+import com.google.common.base.Supplier;
 
 /**
  * 
@@ -39,7 +41,7 @@ public class BundleTaskHandler extends ParseSax.HandlerForGeneratedRequestWithRe
    protected DateService dateService;
    @Inject
    @Region
-   String defaultRegion;
+   Supplier<String> defaultRegion;
 
    private String bundleId;
    private String code;
@@ -55,7 +57,7 @@ public class BundleTaskHandler extends ParseSax.HandlerForGeneratedRequestWithRe
    public BundleTask getResult() {
       String region = AWSUtils.findRegionInArgsOrNull(getRequest());
       if (region == null)
-         region = defaultRegion;
+         region = defaultRegion.get();
       BundleTask.Error error = null;
       if (code != null)
          error = new BundleTask.Error(code, message);

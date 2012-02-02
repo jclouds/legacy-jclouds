@@ -29,6 +29,7 @@ import org.jclouds.http.functions.ParseSax.HandlerForGeneratedRequestWithResult;
 import org.jclouds.location.Region;
 import org.xml.sax.Attributes;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.Sets;
 
 /**
@@ -51,7 +52,7 @@ public class InstanceStateChangeHandler extends
    private StringBuilder currentText = new StringBuilder();
    @Inject
    @Region
-   String defaultRegion;
+   Supplier<String> defaultRegion;
 
    Set<InstanceStateChange> instances = Sets.newLinkedHashSet();
    private InstanceState shutdownState;
@@ -92,7 +93,7 @@ public class InstanceStateChangeHandler extends
       } else if (qName.equals("item")) {
          String region = AWSUtils.findRegionInArgsOrNull(getRequest());
          if (region == null)
-            region = defaultRegion;
+            region = defaultRegion.get();
          instances.add(new InstanceStateChange(region, instanceId, shutdownState, previousState));
          this.instanceId = null;
          this.shutdownState = null;

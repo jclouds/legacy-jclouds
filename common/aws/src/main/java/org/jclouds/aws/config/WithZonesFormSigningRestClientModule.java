@@ -18,22 +18,12 @@
  */
 package org.jclouds.aws.config;
 
-import java.net.URI;
+
 import java.util.Map;
 
-import javax.inject.Singleton;
-
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.location.Region;
-import org.jclouds.location.Zone;
-import org.jclouds.location.config.ProvideZonesViaProperties;
 import org.jclouds.rest.ConfiguresRestClient;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
-import com.google.inject.Provides;
-import com.google.inject.Scopes;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -44,43 +34,12 @@ import com.google.inject.TypeLiteral;
 public class WithZonesFormSigningRestClientModule<S, A> extends FormSigningRestClientModule<S, A> {
 
    public WithZonesFormSigningRestClientModule(Class<S> syncClientType, Class<A> asyncClientType,
-         Map<Class<?>, Class<?>> delegates) {
+            Map<Class<?>, Class<?>> delegates) {
       super(syncClientType, asyncClientType, delegates);
    }
 
    public WithZonesFormSigningRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
       super(syncClientType, asyncClientType);
-   }
-
-   protected void bindZonesToProvider() {
-      bindZonesToProvider(ProvideZonesViaProperties.class);
-   }
-
-   protected void bindZonesToProvider(Class<? extends javax.inject.Provider<Map<String, String>>> providerClass) {
-      bind(new TypeLiteral<Map<String, String>>() {
-      }).annotatedWith(Zone.class).toProvider(providerClass).in(Scopes.SINGLETON);
-   }
-
-   @Override
-   protected void configure() {
-      super.configure();
-      bindZonesToProvider();
-   }
-
-   @Provides
-   @Singleton
-   @Zone
-   protected Map<String, URI> provideZones(@Region final Map<String, URI> regionToEndpoint,
-         @Zone Map<String, String> availabilityZoneToRegion) {
-      return Maps.transformValues(availabilityZoneToRegion, new Function<String, URI>() {
-
-         @Override
-         public URI apply(String from) {
-
-            return regionToEndpoint.get(from);
-         }
-
-      });
    }
 
 }

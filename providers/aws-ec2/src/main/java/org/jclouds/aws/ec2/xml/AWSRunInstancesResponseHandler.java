@@ -26,6 +26,7 @@ import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.location.Region;
 
+import com.google.common.base.Supplier;
 import com.google.inject.Provider;
 
 /**
@@ -39,7 +40,7 @@ import com.google.inject.Provider;
 public class AWSRunInstancesResponseHandler extends BaseAWSReservationHandler<Reservation<? extends RunningInstance>> {
 
    @Inject
-   AWSRunInstancesResponseHandler(DateService dateService, @Region String defaultRegion,
+   AWSRunInstancesResponseHandler(DateService dateService, @Region Supplier<String> defaultRegion,
          Provider<AWSRunningInstance.Builder> builderProvider) {
       super(dateService, defaultRegion, builderProvider);
    }

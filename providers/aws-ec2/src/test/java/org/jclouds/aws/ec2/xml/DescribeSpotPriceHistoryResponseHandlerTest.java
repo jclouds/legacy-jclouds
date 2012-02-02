@@ -29,8 +29,11 @@ import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.location.Region;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code DescribeSpotPriceHistoryResponseHandler}
@@ -58,7 +61,7 @@ public class DescribeSpotPriceHistoryResponseHandlerTest extends BaseHandlerTest
 
          @Override
          protected void configure() {
-            bindConstant().annotatedWith(Region.class).to("us-west-1");  
+            bind(new TypeLiteral<Supplier<String>>(){}).annotatedWith(Region.class).toInstance(Suppliers.ofInstance("us-west-1"));
          }
          
       }).getInstance(DescribeSpotPriceHistoryResponseHandler.class)).parse(is);

@@ -45,6 +45,7 @@ import org.jclouds.logging.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Provider;
@@ -59,11 +60,11 @@ public abstract class BaseAWSReservationHandler<T> extends HandlerForGeneratedRe
    protected Logger logger = Logger.NULL;
 
    protected final DateService dateService;
-   protected final String defaultRegion;
+   protected final Supplier<String> defaultRegion;
    protected final Provider<AWSRunningInstance.Builder> builderProvider;
 
    @Inject
-   public BaseAWSReservationHandler(DateService dateService, @Region String defaultRegion,
+   public BaseAWSReservationHandler(DateService dateService, @Region Supplier<String> defaultRegion,
          Provider<AWSRunningInstance.Builder> builderProvider) {
       this.dateService = dateService;
       this.defaultRegion = defaultRegion;
@@ -221,7 +222,7 @@ public abstract class BaseAWSReservationHandler<T> extends HandlerForGeneratedRe
 
    protected void refineBuilderBeforeAddingInstance() {
       String region = getRequest() != null ? AWSUtils.findRegionInArgsOrNull(getRequest()) : null;
-      builder.region((region == null) ? defaultRegion : region);
+      builder.region((region == null) ? defaultRegion.get() : region);
    }
 
    protected abstract boolean endOfInstanceItem();
@@ -233,7 +234,7 @@ public abstract class BaseAWSReservationHandler<T> extends HandlerForGeneratedRe
    protected Reservation<? extends RunningInstance> newReservation() {
       String region = getRequest() != null ? AWSUtils.findRegionInArgsOrNull(getRequest()) : null;
       if (region == null)
-         region = defaultRegion;
+         region = defaultRegion.get();
       Reservation<? extends RunningInstance> info = new Reservation<RunningInstance>(region,
             reservationGroupIdToNames.values(), instances, ownerId, requesterId, reservationId);
       this.reservationGroupIdToNames = Maps.newLinkedHashMap();

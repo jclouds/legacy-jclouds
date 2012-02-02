@@ -1,5 +1,5 @@
 /**
- * Licensed to jclouds, Inc. (jclouds) under one or more
+s * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
@@ -25,6 +25,7 @@ import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.location.Region;
 
+import com.google.common.base.Supplier;
 import com.google.inject.Provider;
 
 /**
@@ -38,7 +39,7 @@ import com.google.inject.Provider;
 public class RunInstancesResponseHandler extends BaseReservationHandler<Reservation<? extends RunningInstance>> {
 
    @Inject
-   RunInstancesResponseHandler(DateService dateService, @Region String defaultRegion,
+   RunInstancesResponseHandler(DateService dateService, @Region Supplier<String> defaultRegion,
             Provider<RunningInstance.Builder> builderProvider) {
       super(dateService, defaultRegion, builderProvider);
    }

@@ -23,6 +23,8 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.Set;
 
+import javax.inject.Singleton;
+
 import org.jclouds.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
@@ -30,8 +32,11 @@ import org.jclouds.http.functions.config.SaxParserModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
+import com.google.inject.Provides;
 
 /**
  * Tests behavior of {@code DescribeAvailabilityZonesResponseHandler}
@@ -45,11 +50,13 @@ public class DescribeAvailabilityZonesResponseHandlerTest extends BaseHandlerTes
    @BeforeTest
    protected void setUpInjector() {
       injector = Guice.createInjector(new SaxParserModule() {
-
-         @Override
-         protected void configure() {
-            bindConstant().annotatedWith(org.jclouds.location.Region.class).to("SHOULDNTSEETHISASXMLHASREGIONDATA");
-            super.configure();
+         
+         @SuppressWarnings("unused")
+         @Singleton
+         @Provides
+         @org.jclouds.location.Region
+         Supplier<String> provideDefaultRegion() {
+            return Suppliers.ofInstance("SHOULDNTSEETHISASXMLHASREGIONDATA");
          }
 
       });

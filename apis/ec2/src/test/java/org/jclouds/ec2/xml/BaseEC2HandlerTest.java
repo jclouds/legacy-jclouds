@@ -19,6 +19,7 @@
 package org.jclouds.ec2.xml;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Singleton;
 
@@ -27,10 +28,15 @@ import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.location.Zone;
+import org.jclouds.util.Suppliers2;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
@@ -57,20 +63,29 @@ public abstract class BaseEC2HandlerTest extends BaseHandlerTest {
          @Singleton
          @Provides
          @org.jclouds.location.Region
-         String provideDefaultRegion() {
-            return defaultRegion;
+         Supplier<String> provideDefaultRegion() {
+            return Suppliers.ofInstance(defaultRegion);
          }
 
          @SuppressWarnings("unused")
          @Singleton
          @Provides
          @Zone
-         Map<String, String> provideAvailabilityZoneRegionMap() {
-            return ImmutableMap.<String, String> of("us-east-1a", "us-east-1");
+         Supplier<Map<String, Supplier<Set<String>>>> provideRegionToAvailabilityZoneMap() {
+            return Suppliers.<Map<String, Supplier<Set<String>>>> ofInstance(Maps.transformValues(ImmutableMap
+                     .<String, Set<String>> of("us-east-1", ImmutableSet.of("us-east-1a")), Suppliers2
+                     .<Set<String>> ofInstanceFunction()));
+         }
+
+         @SuppressWarnings("unused")
+         @Singleton
+         @Provides
+         @Zone
+         Supplier<Set<String>> provideZones() {
+            return Suppliers.<Set<String>> ofInstance(ImmutableSet.of("us-east-1a"));
          }
       });
       factory = injector.getInstance(ParseSax.Factory.class);
       assert factory != null;
    }
-
 }

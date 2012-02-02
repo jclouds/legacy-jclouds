@@ -25,6 +25,8 @@ import org.jclouds.ec2.domain.ReservedInstancesOffering;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
 
+import com.google.common.base.Supplier;
+
 /**
  * 
  * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-DescribeReservedInstancesOfferingsResponseSetItemType.html"
@@ -35,7 +37,7 @@ public class ReservedInstancesOfferingHandler extends
       ParseSax.HandlerForGeneratedRequestWithResult<ReservedInstancesOffering> {
    @Inject
    @Region
-   String defaultRegion;
+   Supplier<String> defaultRegion;
 
    private StringBuilder currentText = new StringBuilder();
 
@@ -50,7 +52,7 @@ public class ReservedInstancesOfferingHandler extends
    public ReservedInstancesOffering getResult() {
       String region = AWSUtils.findRegionInArgsOrNull(getRequest());
       if (region == null)
-         region = defaultRegion;
+         region = defaultRegion.get();
 
       ReservedInstancesOffering returnVal = new ReservedInstancesOffering(region, availabilityZone, duration,
             fixedPrice, instanceType, productDescription, id, usagePrice);

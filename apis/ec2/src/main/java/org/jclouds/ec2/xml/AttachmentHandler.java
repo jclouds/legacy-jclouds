@@ -23,12 +23,14 @@ import java.util.Date;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.date.DateService;
+import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
 import org.jclouds.logging.Logger;
+
+import com.google.common.base.Supplier;
 
 /**
  * 
@@ -40,10 +42,10 @@ public class AttachmentHandler extends ParseSax.HandlerForGeneratedRequestWithRe
    protected Logger logger = Logger.NULL;
 
    protected final DateService dateService;
-   protected final String defaultRegion;
+   protected final Supplier<String> defaultRegion;
 
    @Inject
-   AttachmentHandler(DateService dateService, @Region String defaultRegion) {
+   AttachmentHandler(DateService dateService, @Region Supplier<String> defaultRegion) {
       this.dateService = dateService;
       this.defaultRegion = defaultRegion;
    }
@@ -58,7 +60,7 @@ public class AttachmentHandler extends ParseSax.HandlerForGeneratedRequestWithRe
    public Attachment getResult() {
       String region = AWSUtils.findRegionInArgsOrNull(getRequest());
       if (region == null)
-         region = defaultRegion;
+         region = defaultRegion.get();
       return new Attachment(region, volumeId, instanceId, device, attachmentStatus, attachTime);
    }
 

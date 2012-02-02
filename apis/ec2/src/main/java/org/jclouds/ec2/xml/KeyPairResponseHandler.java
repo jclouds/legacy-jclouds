@@ -28,6 +28,8 @@ import org.jclouds.ec2.domain.KeyPair.Builder;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
 
+import com.google.common.base.Supplier;
+
 /**
  * 
  * @see <a href=
@@ -36,13 +38,17 @@ import org.jclouds.location.Region;
  * @author Adrian Cole
  */
 public class KeyPairResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<KeyPair> {
-   private final String defaultRegion;
+   private final Supplier<String> defaultRegion;
    private Builder builder;
 
    @Inject
-   public KeyPairResponseHandler(@Region String defaultRegion) {
+   public KeyPairResponseHandler(@Region Supplier<String> defaultRegion) {
       this.defaultRegion = defaultRegion;
-      builder = KeyPair.builder().region(defaultRegion);
+   }
+
+   @Override
+   public void startDocument() {
+      builder = KeyPair.builder().region(defaultRegion.get());
    }
 
    private StringBuilder currentText = new StringBuilder();
@@ -54,7 +60,7 @@ public class KeyPairResponseHandler extends ParseSax.HandlerForGeneratedRequestW
       try {
          return builder.build();
       } finally {
-         builder = KeyPair.builder().region(defaultRegion);
+         builder = KeyPair.builder().region(defaultRegion.get());
       }
    }
 

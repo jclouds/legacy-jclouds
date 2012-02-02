@@ -49,6 +49,7 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -62,12 +63,12 @@ public class EC2ListNodesStrategy implements ListNodesStrategy {
    protected Logger logger = Logger.NULL;
 
    protected final EC2AsyncClient client;
-   protected final Set<String> regions;
+   protected final Supplier<Set<String>> regions;
    protected final Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata;
    protected final ExecutorService executor;
 
    @Inject
-   protected EC2ListNodesStrategy(EC2AsyncClient client, @Region Set<String> regions,
+   protected EC2ListNodesStrategy(EC2AsyncClient client, @Region Supplier<Set<String>> regions,
             Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.client =  checkNotNull(client, "client");
@@ -91,9 +92,8 @@ public class EC2ListNodesStrategy implements ListNodesStrategy {
 
    protected Iterable<? extends RunningInstance> pollRunningInstances() {
       Iterable<? extends Set<? extends Reservation<? extends RunningInstance>>> reservations = transformParallel(
-               regions, new Function<String, Future<Set<? extends Reservation<? extends RunningInstance>>>>() {
+               regions.get(), new Function<String, Future<Set<? extends Reservation<? extends RunningInstance>>>>() {
 
-                  @SuppressWarnings("unchecked")
                   @Override
                   public Future<Set<? extends Reservation<? extends RunningInstance>>> apply(String from) {
                      // see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7126754

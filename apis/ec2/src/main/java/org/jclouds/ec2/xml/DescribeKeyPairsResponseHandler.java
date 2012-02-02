@@ -30,6 +30,7 @@ import org.jclouds.ec2.domain.KeyPair.Builder;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.Sets;
 
 /**
@@ -40,13 +41,17 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class DescribeKeyPairsResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Set<KeyPair>> {
-   private final String defaultRegion;
+   private final Supplier<String> defaultRegion;
    private Builder builder;
 
    @Inject
-   public DescribeKeyPairsResponseHandler(@Region String defaultRegion) {
+   public DescribeKeyPairsResponseHandler(@Region Supplier<String> defaultRegion) {
       this.defaultRegion = defaultRegion;
-      builder = KeyPair.builder().region(defaultRegion);
+   }
+
+   @Override
+   public void startDocument() {
+      builder = KeyPair.builder().region(defaultRegion.get());
    }
 
    private StringBuilder currentText = new StringBuilder();
@@ -67,7 +72,7 @@ public class DescribeKeyPairsResponseHandler extends ParseSax.HandlerForGenerate
          try {
             keyPairs.add(builder.build());
          } finally {
-            builder = KeyPair.builder().region(defaultRegion);
+            builder = KeyPair.builder().region(defaultRegion.get());
          }
       } else if (qName.equals("keyName")) {
          builder.keyName(currentOrNull(currentText));

@@ -79,7 +79,8 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
    }
 
    @Override
-   protected Supplier<Set<? extends Image>> supplyNonParsingImageCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+   protected Supplier<Set<? extends Image>> supplyNonParsingImageCache(
+            AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
             final Supplier<Set<? extends Image>> imageSupplier, Injector injector) {
       final Supplier<LoadingCache<RegionAndName, ? extends Image>> cache = injector.getInstance(Key.get(new TypeLiteral<Supplier<LoadingCache<RegionAndName, ? extends Image>>>() {}));
       return new Supplier<Set<? extends Image>>() {

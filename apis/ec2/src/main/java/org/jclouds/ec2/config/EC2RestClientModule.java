@@ -18,21 +18,16 @@
  */
 package org.jclouds.ec2.config;
 
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
-
-import java.net.URI;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.config.WithZonesFormSigningRestClientModule;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.ec2.services.AMIAsyncClient;
 import org.jclouds.ec2.services.AMIClient;
 import org.jclouds.ec2.services.AvailabilityZoneAndRegionAsyncClient;
@@ -49,23 +44,22 @@ import org.jclouds.ec2.services.SecurityGroupAsyncClient;
 import org.jclouds.ec2.services.SecurityGroupClient;
 import org.jclouds.ec2.services.WindowsAsyncClient;
 import org.jclouds.ec2.services.WindowsClient;
-import org.jclouds.http.HttpResponseException;
+import org.jclouds.ec2.suppliers.DescribeAvailabilityZonesInRegion;
+import org.jclouds.ec2.suppliers.DescribeRegionsForConfiguredRegions;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.location.Region;
 import org.jclouds.location.Zone;
-import org.jclouds.logging.Logger;
+import org.jclouds.location.config.LocationModule;
+import org.jclouds.location.suppliers.RegionIdToURISupplier;
+import org.jclouds.location.suppliers.RegionIdToZoneIdsSupplier;
+import org.jclouds.location.suppliers.ZoneIdsSupplier;
 import org.jclouds.rest.ConfiguresRestClient;
 
-import com.google.common.base.Predicates;
-import com.google.common.base.Splitter;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
-import com.google.common.collect.ImmutableMap.Builder;
-import com.google.inject.ConfigurationException;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.name.Names;
+import com.google.common.collect.Iterables;
+import com.google.inject.Scopes;
 
 /**
  * Configures the EC2 connection.
@@ -97,85 +91,33 @@ public class EC2RestClientModule<S extends EC2Client, A extends EC2AsyncClient> 
    }
 
    @Override
-   protected void bindRegionsToProvider() {
-      bindRegionsToProvider(RegionIdsToURI.class);
+   protected void installLocations() {
+      install(new LocationModule());
+      bind(RegionIdToZoneIdsSupplier.class).to(DescribeAvailabilityZonesInRegion.class).in(Scopes.SINGLETON);
+      bind(RegionIdToURISupplier.class).to(DescribeRegionsForConfiguredRegions.class).in(Scopes.SINGLETON);
+      bind(ZoneIdsSupplier.class).to(ZoneIdsFromRegionIdToZoneIdsValues.class).in(Scopes.SINGLETON);
    }
 
-   @Override
-   protected void bindZonesToProvider() {
-      bindZonesToProvider(RegionIdToZoneId.class);
-   }
-
+   /**
+    * as opposed to via properties, lets look up zones via api, as they are more likely to change
+    */
    @Singleton
-   public static class RegionIdsToURI implements javax.inject.Provider<Map<String, URI>> {
-      private final AvailabilityZoneAndRegionClient client;
-      private final Injector injector;
+   public static class ZoneIdsFromRegionIdToZoneIdsValues implements ZoneIdsSupplier {
+
+      private final Supplier<Map<String, Supplier<Set<String>>>> regionIdToZoneIdsSupplier;
 
       @Inject
-      public RegionIdsToURI(EC2Client client, Injector injector) {
-         this.client = client.getAvailabilityZoneAndRegionServices();
-         this.injector = injector;
+      protected ZoneIdsFromRegionIdToZoneIdsValues(
+               @Zone Supplier<Map<String, Supplier<Set<String>>>> regionIdToZoneIdsSupplier) {
+         this.regionIdToZoneIdsSupplier = regionIdToZoneIdsSupplier;
       }
 
-      @Singleton
-      @Region
       @Override
-      public Map<String, URI> get() {
-         try {
-            String regionString = injector.getInstance(Key.get(String.class, Names.named(PROPERTY_REGIONS)));
-            Set<String> regions = ImmutableSet.copyOf(Splitter.on(',').split(regionString));
-            if (regions.size() > 0)
-               return Maps.filterKeys(client.describeRegions(), Predicates.in(regions));
-         } catch (ConfigurationException e) {
-            // this happens if regions property isn't set
-            // services not run by AWS may not have regions, so this is ok.
-         }
-         return client.describeRegions();
-
-      }
-   }
-
-   @Singleton
-   public static class RegionIdToZoneId implements javax.inject.Provider<Map<String, String>> {
-      @Resource
-      protected Logger logger = Logger.NULL;
-      
-      private final AvailabilityZoneAndRegionClient client;
-      private final Map<String, URI> regions;
-
-      @Inject
-      public RegionIdToZoneId(EC2Client client, @Region Map<String, URI> regions) {
-         this.client = client.getAvailabilityZoneAndRegionServices();
-         this.regions = regions;
-      }
-
-      @Singleton
-      @Zone
-      @Override
-      public Map<String, String> get() {
-         Builder<String, String> map = ImmutableMap.builder();
-         HttpResponseException exception = null;
-         for (Entry<String, URI> region : regions.entrySet()) {
-            try {
-               for (AvailabilityZoneInfo zoneInfo : client.describeAvailabilityZonesInRegion(region.getKey())) {
-                  map.put(zoneInfo.getZone(), region.getKey());
-               }
-            } catch (HttpResponseException e) {
-               if (e.getMessage().contains("Unable to tunnel through proxy")) {
-                  exception = e;
-                  logger.error(e, "Could not describe availability zones in Region: %s", region.getKey());
-               } else {
-                  throw e;
-               }
-            }
-         }
-         ImmutableMap<String, String> result = map.build();
-         if (result.isEmpty() && exception != null) {
-            throw exception;
-         }
-         return result;
+      public Set<String> get() {
+         Collection<Supplier<Set<String>>> zones = regionIdToZoneIdsSupplier.get().values();
+         return ImmutableSet.copyOf(Iterables.concat(Iterables.transform(zones, Suppliers
+                  .<Set<String>> supplierFunction())));
       }
 
    }
-
 }

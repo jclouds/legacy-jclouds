@@ -26,6 +26,8 @@ import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
 
+import com.google.common.base.Supplier;
+
 /**
  * 
  * @author Adrian Cole
@@ -34,10 +36,10 @@ public class SpotHandler extends ParseSax.HandlerForGeneratedRequestWithResult<S
    private StringBuilder currentText = new StringBuilder();
 
    protected final DateService dateService;
-   protected final String defaultRegion;
+   protected final Supplier<String> defaultRegion;
 
    @Inject
-   public SpotHandler(DateService dateService, @Region String defaultRegion) {
+   public SpotHandler(DateService dateService, @Region Supplier<String> defaultRegion) {
       this.dateService = dateService;
       this.defaultRegion = defaultRegion;
    }
@@ -48,7 +50,7 @@ public class SpotHandler extends ParseSax.HandlerForGeneratedRequestWithResult<S
       try {
          String region = getRequest() == null ? null : AWSUtils.findRegionInArgsOrNull(getRequest());
          if (region == null)
-            region = defaultRegion;
+            region = defaultRegion.get();
          return builder.region(region).build();
       } finally {
          builder.clear();

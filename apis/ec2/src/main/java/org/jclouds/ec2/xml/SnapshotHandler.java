@@ -22,12 +22,14 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
-import org.jclouds.ec2.domain.Snapshot;
-import org.jclouds.ec2.domain.Snapshot.Status;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.date.DateService;
+import org.jclouds.ec2.domain.Snapshot;
+import org.jclouds.ec2.domain.Snapshot.Status;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
+
+import com.google.common.base.Supplier;
 
 /**
  * 
@@ -37,7 +39,7 @@ public class SnapshotHandler extends ParseSax.HandlerForGeneratedRequestWithResu
    private StringBuilder currentText = new StringBuilder();
 
    protected final DateService dateService;
-   protected final String defaultRegion;
+   protected final Supplier<String> defaultRegion;
 
    private String id;
    private String volumeId;
@@ -50,7 +52,7 @@ public class SnapshotHandler extends ParseSax.HandlerForGeneratedRequestWithResu
    private String ownerAlias;
 
    @Inject
-   public SnapshotHandler(DateService dateService, @Region String defaultRegion) {
+   public SnapshotHandler(DateService dateService, @Region Supplier<String> defaultRegion) {
       this.dateService = dateService;
       this.defaultRegion = defaultRegion;
    }
@@ -58,7 +60,7 @@ public class SnapshotHandler extends ParseSax.HandlerForGeneratedRequestWithResu
    public Snapshot getResult() {
       String region = AWSUtils.findRegionInArgsOrNull(getRequest());
       if (region == null)
-         region = defaultRegion;
+         region = defaultRegion.get();
       Snapshot snapshot = new Snapshot(region, id, volumeId, volumeSize, status, startTime,
                progress, ownerId, description, ownerAlias);
       this.id = null;

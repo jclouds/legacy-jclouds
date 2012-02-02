@@ -18,12 +18,14 @@
  */
 package org.jclouds.aws.ec2.services;
 
+import static com.google.common.collect.Maps.transformValues;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.inject.Singleton;
 
@@ -35,17 +37,23 @@ import org.jclouds.date.DateService;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.location.config.LocationModule;
+import org.jclouds.location.suppliers.RegionIdToURISupplier;
+import org.jclouds.location.suppliers.RegionIdToZoneIdsSupplier;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
+import org.jclouds.util.Suppliers2;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.cache.LoadingCache;
+import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 
@@ -64,13 +72,9 @@ public abstract class BaseAWSEC2AsyncClientTest<T> extends RestClientTest<T> {
          return "2009-11-08T15:54:08.897Z";
       }
 
-      protected void bindRegionsToProvider() {
-         bindRegionsToProvider(Regions.class);
-      }
-
       @Provides
       @Singleton
-      LoadingCache<RegionAndName, Image> provide(){
+      LoadingCache<RegionAndName, Image> provide() {
          return CacheBuilder.newBuilder().build(new CacheLoader<RegionAndName, Image>() {
 
             @Override
@@ -80,24 +84,30 @@ public abstract class BaseAWSEC2AsyncClientTest<T> extends RestClientTest<T> {
 
          });
       }
-      static class Regions implements javax.inject.Provider<Map<String, URI>> {
-         @Override
-         public Map<String, URI> get() {
-            return ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI.create("https://ec2.eu-west-1.amazonaws.com"),
-                  Region.US_EAST_1, URI.create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1,
-                  URI.create("https://ec2.us-west-1.amazonaws.com"));
-         }
-      }
 
-      protected void bindZonesToProvider() {
-         bindZonesToProvider(Zones.class);
-      }
+      @Override
+      protected void installLocations() {
+         install(new LocationModule());
+         bind(RegionIdToURISupplier.class).toInstance(new RegionIdToURISupplier() {
 
-      static class Zones implements javax.inject.Provider<Map<String, String>> {
-         @Override
-         public Map<String, String> get() {
-            return ImmutableMap.<String, String> of("us-east-1a", "us-east-1");
-         }
+            @Override
+            public Map<String, Supplier<URI>> get() {
+               return transformValues(ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI
+                        .create("https://ec2.eu-west-1.amazonaws.com"), Region.US_EAST_1, URI
+                        .create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1, URI
+                        .create("https://ec2.us-west-1.amazonaws.com")), Suppliers2.<URI> ofInstanceFunction());
+            }
+
+         });
+         bind(RegionIdToZoneIdsSupplier.class).toInstance(new RegionIdToZoneIdsSupplier() {
+
+            @Override
+            public Map<String, Supplier<Set<String>>> get() {
+               return transformValues(ImmutableMap.<String, Set<String>> of("us-east-1", ImmutableSet.of("us-east-1a",
+                        "us-east-1b", "us-east-1c", "us-east-1b")), Suppliers2.<Set<String>> ofInstanceFunction());
+            }
+
+         });
       }
    }
 

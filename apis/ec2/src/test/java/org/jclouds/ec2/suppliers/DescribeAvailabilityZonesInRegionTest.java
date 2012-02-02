@@ -16,31 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.ec2.config;
+package org.jclouds.ec2.suppliers;
 
-import static org.easymock.classextension.EasyMock.*;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createControl;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.easymock.classextension.IMocksControl;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.ec2.services.AvailabilityZoneAndRegionClient;
+import org.jclouds.ec2.suppliers.DescribeAvailabilityZonesInRegion;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponseException;
 import org.testng.annotations.Test;
-import static org.testng.Assert.*;
 
-import java.net.URI;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 /**
- * A test for {@link EC2RestClientModule}.
- *
+ * A test for {@link DescribeAvailabilityZonesInRegion}.
+ * 
  * @author Eric Pabst (pabstec@familysearch.org)
  */
-public class EC2RestClientModuleTest {
+public class DescribeAvailabilityZonesInRegionTest {
    @Test
    public void testDescribeAvailabilityZonesInRegion_BestEffort() {
       IMocksControl control = createControl();
@@ -49,27 +56,28 @@ public class EC2RestClientModuleTest {
       AvailabilityZoneInfo info1 = control.createMock(AvailabilityZoneInfo.class);
       AvailabilityZoneInfo info2 = control.createMock(AvailabilityZoneInfo.class);
       HttpCommand command = control.createMock(HttpCommand.class);
-      HttpResponseException exception = new HttpResponseException("Error: Unable to tunnel through proxy: ...", command, null);
+      HttpResponseException exception = new HttpResponseException("Error: Unable to tunnel through proxy: ...",
+               command, null);
 
       expect(client.getAvailabilityZoneAndRegionServices()).andStubReturn(regionClient);
-      expect(regionClient.describeAvailabilityZonesInRegion("accessibleRegion1")).andReturn(Collections.singleton(info1));
+      expect(regionClient.describeAvailabilityZonesInRegion("accessibleRegion1")).andReturn(
+               Collections.singleton(info1));
       expect(regionClient.describeAvailabilityZonesInRegion("inaccessibleRegion")).andThrow(exception);
-      expect(regionClient.describeAvailabilityZonesInRegion("accessibleRegion2")).andReturn(Collections.singleton(info2));
+      expect(regionClient.describeAvailabilityZonesInRegion("accessibleRegion2")).andReturn(
+               Collections.singleton(info2));
       expect(info1.getZone()).andStubReturn("zone1");
       expect(info2.getZone()).andStubReturn("zone2");
 
-      Map<String, URI> regions = new LinkedHashMap<String, URI>();
-      regions.put("accessibleRegion1", null);
-      regions.put("inaccessibleRegion", null);
-      regions.put("accessibleRegion2", null);
+      Set<String> regions = ImmutableSet.of("accessibleRegion1", "inaccessibleRegion", "accessibleRegion2");
       control.replay();
 
-      Map<String,String> expectedResult = new HashMap<String,String>();
-      expectedResult.put("zone1", "accessibleRegion1");
-      expectedResult.put("zone2", "accessibleRegion2");
+      Map<String, Set<String>> expectedResult = ImmutableMap.<String, Set<String>> builder().put("accessibleRegion1",
+               ImmutableSet.of("zone1")).put("accessibleRegion2", ImmutableSet.of("zone2")).build();
 
-      EC2RestClientModule.RegionIdToZoneId regionIdToZoneId = new EC2RestClientModule.RegionIdToZoneId(client, regions);
-      assertEquals(regionIdToZoneId.get(), expectedResult);
+      DescribeAvailabilityZonesInRegion regionIdToZoneId = new DescribeAvailabilityZonesInRegion(client, Suppliers
+               .ofInstance(regions));
+      assertEquals(Maps.transformValues(regionIdToZoneId.get(), Suppliers.<Set<String>> supplierFunction()),
+               expectedResult);
       control.verify();
    }
 
@@ -79,16 +87,17 @@ public class EC2RestClientModuleTest {
       EC2Client client = control.createMock(EC2Client.class);
       AvailabilityZoneAndRegionClient regionClient = control.createMock(AvailabilityZoneAndRegionClient.class);
       HttpCommand command = control.createMock(HttpCommand.class);
-      HttpResponseException exception = new HttpResponseException("Error: Unable to tunnel through proxy: ...", command, null);
+      HttpResponseException exception = new HttpResponseException("Error: Unable to tunnel through proxy: ...",
+               command, null);
 
       expect(client.getAvailabilityZoneAndRegionServices()).andStubReturn(regionClient);
       expect(regionClient.describeAvailabilityZonesInRegion("inaccessibleRegion")).andThrow(exception);
 
-      Map<String, URI> regions = new LinkedHashMap<String, URI>();
-      regions.put("inaccessibleRegion", null);
+      Set<String> regions = ImmutableSet.of("inaccessibleRegion");
       control.replay();
 
-      EC2RestClientModule.RegionIdToZoneId regionIdToZoneId = new EC2RestClientModule.RegionIdToZoneId(client, regions);
+      DescribeAvailabilityZonesInRegion regionIdToZoneId = new DescribeAvailabilityZonesInRegion(client, Suppliers
+               .ofInstance(regions));
       try {
          regionIdToZoneId.get();
          fail("expected exception");
@@ -105,14 +114,15 @@ public class EC2RestClientModuleTest {
       AvailabilityZoneAndRegionClient regionClient = control.createMock(AvailabilityZoneAndRegionClient.class);
 
       expect(client.getAvailabilityZoneAndRegionServices()).andStubReturn(regionClient);
-      expect(regionClient.describeAvailabilityZonesInRegion("emptyRegion")).andReturn(Collections.<AvailabilityZoneInfo>emptySet());
+      expect(regionClient.describeAvailabilityZonesInRegion("emptyRegion")).andReturn(
+               Collections.<AvailabilityZoneInfo> emptySet());
 
-      Map<String, URI> regions = new LinkedHashMap<String, URI>();
-      regions.put("emptyRegion", null);
+      Set<String> regions = ImmutableSet.of("emptyRegion");
       control.replay();
 
-      EC2RestClientModule.RegionIdToZoneId regionIdToZoneId = new EC2RestClientModule.RegionIdToZoneId(client, regions);
-      assertEquals(regionIdToZoneId.get(), Collections.<String, String>emptyMap());
+      DescribeAvailabilityZonesInRegion regionIdToZoneId = new DescribeAvailabilityZonesInRegion(client, Suppliers
+               .ofInstance(regions));
+      assertEquals(regionIdToZoneId.get(), Collections.<String, String> emptyMap());
       control.verify();
    }
 }

@@ -29,6 +29,7 @@ import org.jclouds.http.functions.ParseSax.HandlerForGeneratedRequestWithResult;
 import org.jclouds.location.Region;
 import org.jclouds.logging.Logger;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.Sets;
 
 /**
@@ -45,7 +46,7 @@ public class DescribeAddressesResponseHandler extends
    private StringBuilder currentText = new StringBuilder();
    @Inject
    @Region
-   String defaultRegion;
+   Supplier<String> defaultRegion;
    private String instanceId;
 
    protected String currentOrNull() {
@@ -61,7 +62,7 @@ public class DescribeAddressesResponseHandler extends
       } else if (qName.equals("item")) {
          String region = AWSUtils.findRegionInArgsOrNull(getRequest());
          if (region == null)
-            region = defaultRegion;
+            region = defaultRegion.get();
          pairs.add(new PublicIpInstanceIdPair(region, ipAddress, instanceId));
          ipAddress = null;
          instanceId = null;

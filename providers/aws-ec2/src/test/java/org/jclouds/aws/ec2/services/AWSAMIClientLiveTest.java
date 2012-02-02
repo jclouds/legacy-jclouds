@@ -36,7 +36,6 @@ import org.jclouds.ec2.domain.Image;
 import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;

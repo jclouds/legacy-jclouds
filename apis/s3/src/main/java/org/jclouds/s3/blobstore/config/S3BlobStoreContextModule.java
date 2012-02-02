@@ -30,7 +30,6 @@ import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.domain.Location;
-import org.jclouds.location.config.RegionsLocationModule;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.blobstore.S3AsyncBlobStore;
@@ -59,7 +58,6 @@ public class S3BlobStoreContextModule extends AbstractModule {
    @Override
    protected void configure() {
       install(new BlobStoreMapModule());
-      install(new RegionsLocationModule());
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.EVENTUAL);
       bind(AsyncBlobStore.class).to(S3AsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(S3BlobStore.class).in(Scopes.SINGLETON);

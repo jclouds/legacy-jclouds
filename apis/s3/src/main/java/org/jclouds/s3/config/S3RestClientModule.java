@@ -34,7 +34,6 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RequestSigner;
@@ -77,8 +76,7 @@ public class S3RestClientModule<S extends S3Client, A extends S3AsyncClient> ext
    @Provides
    @Bucket
    @Singleton
-   @Nullable
-   protected String defaultRegionForBucket(@Nullable @Region String defaultRegion) {
+   protected Supplier<String> defaultRegionForBucket(@Region Supplier<String> defaultRegion) {
       return defaultRegion;
    }
 

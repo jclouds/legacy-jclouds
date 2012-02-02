@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudwatch;
 
+import static com.google.common.collect.Maps.transformValues;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -40,13 +41,17 @@ import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.location.config.LocationModule;
+import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.Suppliers2;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
@@ -91,22 +96,21 @@ public class CloudWatchAsyncClientTest extends RestClientTest<CloudWatchAsyncCli
    @RequiresHttp
    @ConfiguresRestClient
    private static final class TestMonitoringRestClientModule extends CloudWatchRestClientModule {
+
       @Override
-      protected void configure() {
-         super.configure();
-      }
+      protected void installLocations() {
+         install(new LocationModule());
+         bind(RegionIdToURISupplier.class).toInstance(new RegionIdToURISupplier() {
 
-      protected void bindRegionsToProvider() {
-         bindRegionsToProvider(Regions.class);
-      }
+            @Override
+            public Map<String, Supplier<URI>> get() {
+               return transformValues(ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI
+                        .create("https://ec2.eu-west-1.amazonaws.com"), Region.US_EAST_1, URI
+                        .create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1, URI
+                        .create("https://ec2.us-west-1.amazonaws.com")), Suppliers2.<URI> ofInstanceFunction());
+            }
 
-      static class Regions implements javax.inject.Provider<Map<String, URI>> {
-         @Override
-         public Map<String, URI> get() {
-            return ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI.create("https://ec2.eu-west-1.amazonaws.com"),
-                  Region.US_EAST_1, URI.create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1,
-                  URI.create("https://ec2.us-west-1.amazonaws.com"));
-         }
+         });
       }
 
       @Override

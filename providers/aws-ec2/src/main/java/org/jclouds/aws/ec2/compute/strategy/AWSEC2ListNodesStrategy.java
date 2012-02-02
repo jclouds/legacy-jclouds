@@ -44,6 +44,7 @@ import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.location.Region;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 /**
  * 
@@ -56,7 +57,7 @@ public class AWSEC2ListNodesStrategy extends EC2ListNodesStrategy {
    protected final SpotInstanceRequestToAWSRunningInstance spotConverter;
 
    @Inject
-   protected AWSEC2ListNodesStrategy(AWSEC2AsyncClient client, @Region Set<String> regions,
+   protected AWSEC2ListNodesStrategy(AWSEC2AsyncClient client, @Region Supplier<Set<String>> regions,
             Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
             SpotInstanceRequestToAWSRunningInstance spotConverter) {
@@ -67,7 +68,7 @@ public class AWSEC2ListNodesStrategy extends EC2ListNodesStrategy {
 
    @Override
    protected Iterable<? extends RunningInstance> pollRunningInstances() {
-      Iterable<? extends AWSRunningInstance> spots = filter(transform(concat(transformParallel(regions,
+      Iterable<? extends AWSRunningInstance> spots = filter(transform(concat(transformParallel(regions.get(),
                new Function<String, Future<Set<SpotInstanceRequest>>>() {
 
                   @SuppressWarnings("unchecked")

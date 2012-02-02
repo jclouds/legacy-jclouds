@@ -26,7 +26,6 @@ import org.jclouds.aws.ec2.domain.LaunchSpecification.Builder;
 import org.jclouds.date.DateService;
 import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.http.functions.ParseSax.HandlerForGeneratedRequestWithResult;
-import org.jclouds.location.Region;
 import org.jclouds.logging.Logger;
 import org.xml.sax.Attributes;
 
@@ -40,15 +39,13 @@ public class LaunchSpecificationHandler extends HandlerForGeneratedRequestWithRe
    protected Logger logger = Logger.NULL;
 
    protected final DateService dateService;
-   protected final String defaultRegion;
    protected final Builder builder;
    protected final BlockDeviceMapping.Builder blockDeviceMappingBuilder;
 
    @Inject
-   public LaunchSpecificationHandler(DateService dateService, @Region String defaultRegion,
-         LaunchSpecification.Builder builder, BlockDeviceMapping.Builder blockDeviceMappingBuilder) {
+   public LaunchSpecificationHandler(DateService dateService, LaunchSpecification.Builder builder,
+            BlockDeviceMapping.Builder blockDeviceMappingBuilder) {
       this.dateService = dateService;
-      this.defaultRegion = defaultRegion;
       this.builder = builder;
       this.blockDeviceMappingBuilder = blockDeviceMappingBuilder;
    }

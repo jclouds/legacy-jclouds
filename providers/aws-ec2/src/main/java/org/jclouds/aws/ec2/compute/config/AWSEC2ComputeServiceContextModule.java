@@ -113,10 +113,14 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
    }
 
    // duplicates EC2ComputeServiceContextModule; but that's easiest thing to do with guice; could extract to common util
+   // TODO: have a another look at this (Adrian)
    @Override
-   protected Supplier<Set<? extends Image>> supplyNonParsingImageCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+   protected Supplier<Set<? extends Image>> supplyNonParsingImageCache(
+            AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
             final Supplier<Set<? extends Image>> imageSupplier, Injector injector) {
-      final Supplier<LoadingCache<RegionAndName, ? extends Image>> cache = injector.getInstance(Key.get(new TypeLiteral<Supplier<LoadingCache<RegionAndName, ? extends Image>>>() {}));
+      final Supplier<LoadingCache<RegionAndName, ? extends Image>> cache = injector.getInstance(Key
+               .get(new TypeLiteral<Supplier<LoadingCache<RegionAndName, ? extends Image>>>() {
+               }));
       return new Supplier<Set<? extends Image>>() {
          @Override
          public Set<? extends Image> get() {

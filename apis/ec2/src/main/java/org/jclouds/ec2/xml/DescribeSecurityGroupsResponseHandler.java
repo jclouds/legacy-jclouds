@@ -18,8 +18,8 @@
  */
 package org.jclouds.ec2.xml;
 
-import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.currentOrNegative;
+import static org.jclouds.util.SaxUtils.currentOrNull;
 import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import java.util.Set;
@@ -34,6 +34,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
 import org.xml.sax.Attributes;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -52,7 +53,7 @@ public class DescribeSecurityGroupsResponseHandler extends
       ParseSax.HandlerForGeneratedRequestWithResult<Set<SecurityGroup>> {
    @Inject
    @Region
-   String defaultRegion;
+   Supplier<String> defaultRegion;
 
    private StringBuilder currentText = new StringBuilder();
    private Set<SecurityGroup> securtyGroups = Sets.newLinkedHashSet();
@@ -135,7 +136,7 @@ public class DescribeSecurityGroupsResponseHandler extends
          } else if (!inIpPermissions && !inIpRanges && !inGroups) {
             String region = AWSUtils.findRegionInArgsOrNull(getRequest());
             if (region == null)
-               region = defaultRegion;
+               region = defaultRegion.get();
             securtyGroups.add(new SecurityGroup(region, groupId, groupName, ownerId, groupDescription, ipPermissions));
             this.groupName = null;
             this.groupId = null;

@@ -40,6 +40,8 @@ import org.jclouds.s3.S3Client;
 import org.jclouds.s3.binders.BindAsHostPrefixIfConfigured;
 import org.jclouds.s3.config.S3RestClientModule;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.inject.Provides;
 
 /**
@@ -51,16 +53,9 @@ import com.google.inject.Provides;
 @ConfiguresRestClient
 public class AWSS3RestClientModule extends S3RestClientModule<AWSS3Client, AWSS3AsyncClient> {
 
-   @Provides
-   @Singleton
-   @Bucket
-   protected URI provideBucketURI(@Named(PROPERTY_REGION + "." + US_STANDARD + "." + ENDPOINT) String endpoint) {
-      return URI.create(endpoint);
-   }
-
    @Override
-   protected String defaultRegionForBucket(@Region String defaultRegion) {
-      return US_STANDARD;
+   protected Supplier<String> defaultRegionForBucket(@Region Supplier<String> defaultRegion) {
+      return Suppliers.ofInstance(US_STANDARD);
    }
 
    @Override
@@ -68,7 +63,14 @@ public class AWSS3RestClientModule extends S3RestClientModule<AWSS3Client, AWSS3
       bind(BindAsHostPrefixIfConfigured.class).to(AssignCorrectHostnameAndBindAsHostPrefixIfConfigured.class);
       super.configure();
    }
-
+   
+   @Provides
+   @Singleton
+   @Bucket
+   protected Supplier<URI> provideBucketURI(@Named(PROPERTY_REGION + "." + US_STANDARD + "." + ENDPOINT) String endpoint){
+      return Suppliers.ofInstance(URI.create(endpoint));
+   }
+   
    public AWSS3RestClientModule() {
       super(AWSS3Client.class, AWSS3AsyncClient.class);
    }

@@ -29,6 +29,7 @@ import org.jclouds.location.Region;
 import org.jclouds.logging.Logger;
 import org.xml.sax.Attributes;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.Sets;
 
 /**
@@ -37,7 +38,7 @@ import com.google.common.collect.Sets;
  */
 public class DescribeAvailabilityZonesResponseHandler extends ParseSax.HandlerWithResult<Set<AvailabilityZoneInfo>> {
    private StringBuilder currentText = new StringBuilder();
-   private final String defaultRegion;
+   private final Supplier<String> defaultRegion;
 
    private Set<AvailabilityZoneInfo> availablilityZones = Sets.newLinkedHashSet();
    private String zone;
@@ -52,9 +53,13 @@ public class DescribeAvailabilityZonesResponseHandler extends ParseSax.HandlerWi
     * Eucalyptus 1.6 doesn't return region in the XML output
     */
    @Inject
-   DescribeAvailabilityZonesResponseHandler(@Region String defaultRegion) {
+   DescribeAvailabilityZonesResponseHandler(@Region Supplier<String> defaultRegion) {
       this.defaultRegion = defaultRegion;
-      region = defaultRegion;
+   }
+
+   @Override
+   public void startDocument() {
+      region = defaultRegion.get();
    }
 
    public Set<AvailabilityZoneInfo> getResult() {
@@ -86,7 +91,7 @@ public class DescribeAvailabilityZonesResponseHandler extends ParseSax.HandlerWi
       } else if (qName.equals("item") && !inMessageSet) {
          availablilityZones.add(new AvailabilityZoneInfo(zone, zoneState, region, messages));
          this.zone = null;
-         this.region = defaultRegion;
+         this.region = defaultRegion.get();
          this.zoneState = null;
          this.messages = Sets.newHashSet();
       }
@@ -96,4 +101,5 @@ public class DescribeAvailabilityZonesResponseHandler extends ParseSax.HandlerWi
    public void characters(char ch[], int start, int length) {
       currentText.append(ch, start, length);
    }
+
 }

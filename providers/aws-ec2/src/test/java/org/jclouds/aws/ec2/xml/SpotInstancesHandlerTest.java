@@ -18,9 +18,9 @@
  */
 package org.jclouds.aws.ec2.xml;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
@@ -38,11 +38,14 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code SpotInstancesHandler}
@@ -63,7 +66,7 @@ public class SpotInstancesHandlerTest extends BaseEC2HandlerTest {
 
          @Override
          protected void configure() {
-            bind(String.class).annotatedWith(Region.class).toInstance("us-east-1");
+            bind(new TypeLiteral<Supplier<String>>(){}).annotatedWith(Region.class).toInstance(Suppliers.ofInstance("us-east-1"));
          }
 
       });

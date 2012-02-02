@@ -27,6 +27,7 @@ import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.location.Region;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.Sets;
 import com.google.inject.Provider;
 
@@ -43,7 +44,7 @@ public class DescribeInstancesResponseHandler extends
    private Set<Reservation<? extends RunningInstance>> reservations = Sets.newLinkedHashSet();
 
    @Inject
-   DescribeInstancesResponseHandler(DateService dateService, @Region String defaultRegion,
+   DescribeInstancesResponseHandler(DateService dateService, @Region Supplier<String> defaultRegion,
             Provider<RunningInstance.Builder> builderProvider) {
       super(dateService, defaultRegion, builderProvider);
    }

@@ -38,6 +38,7 @@ import org.jclouds.location.Region;
 import org.jclouds.logging.Logger;
 import org.xml.sax.Attributes;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -53,7 +54,7 @@ import com.google.common.collect.Sets;
 public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Set<Image>> {
 
    @Inject
-   public DescribeImagesResponseHandler(@Region String defaultRegion) {
+   public DescribeImagesResponseHandler(@Region Supplier<String> defaultRegion) {
       this.defaultRegion = defaultRegion;
    }
 
@@ -62,7 +63,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
 
    private Set<Image> contents = Sets.newLinkedHashSet();
    private StringBuilder currentText = new StringBuilder();
-   private final String defaultRegion;
+   private final Supplier<String> defaultRegion;
 
    private Architecture architecture;
    private String name;
@@ -165,7 +166,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
             try {
                String region = getRequest() != null ? AWSUtils.findRegionInArgsOrNull(getRequest()) : null;
                if (region == null)
-                  region = defaultRegion;
+                  region = defaultRegion.get();
                contents.add(new Image(region, architecture, this.name, description, imageId, imageLocation,
                         imageOwnerId, imageState, imageType, isPublic, productCodes, kernelId, platform, ramdiskId,
                         rootDeviceType, rootDeviceName, ebsBlockDevices, virtualizationType, hypervisor));

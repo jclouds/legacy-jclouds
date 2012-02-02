@@ -26,6 +26,8 @@ import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
 
+import com.google.common.base.Supplier;
+
 /**
  * 
  * @author Adrian Cole
@@ -36,7 +38,7 @@ public class PlacementGroupHandler extends
 
    @Inject
    @Region
-   String defaultRegion;
+   Supplier<String> defaultRegion;
 
    private String name;
    private String strategy = "cluster";
@@ -45,7 +47,7 @@ public class PlacementGroupHandler extends
    public PlacementGroup getResult() {
       String region = AWSUtils.findRegionInArgsOrNull(getRequest());
       if (region == null)
-         region = defaultRegion;
+         region = defaultRegion.get();
       PlacementGroup returnVal = new PlacementGroup(region, name, strategy, state);
       this.name = null;
       this.strategy = "cluster";

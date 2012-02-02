@@ -21,6 +21,7 @@ package org.jclouds.aws.s3.binders;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
+import java.util.Map;
 
 import javax.inject.Provider;
 import javax.ws.rs.core.UriBuilder;
@@ -30,12 +31,13 @@ import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.binders.BindAsHostPrefix;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
- * Tests behavior of
- * {@code AssignCorrectHostnameAndBindAsHostPrefixIfConfigured}
+ * Tests behavior of {@code AssignCorrectHostnameAndBindAsHostPrefixIfConfigured}
  * 
  * @author Adrian Cole
  */
@@ -56,11 +58,14 @@ public class AssignCorrectHostnameAndBindAsHostPrefixIfConfiguredTest {
       HttpRequest request = new HttpRequest("GET", URI.create("https://s3.amazonaws.com"));
 
       AssignCorrectHostnameAndBindAsHostPrefixIfConfigured binder = new AssignCorrectHostnameAndBindAsHostPrefixIfConfigured(
-            new BindAsHostPrefix(uriBuilderProvider), new RegionToEndpointOrProviderIfNull("aws-s3",
-                  URI.create("https://s3.amazonaws.com"), ImmutableMap.of("us-standard",
-                        URI.create("https://s3.amazonaws.com"), "us-west-1",
-                        URI.create("https://s3-us-west-1.amazonaws.com"))), uriBuilderProvider,
-            ImmutableMap.<String, String> of());
+               new BindAsHostPrefix(uriBuilderProvider), new RegionToEndpointOrProviderIfNull("aws-s3", Suppliers
+                        .ofInstance(URI.create("https://s3.amazonaws.com")),
+
+               Suppliers.<Map<String, Supplier<URI>>> ofInstance(ImmutableMap.of("us-standard", Suppliers
+                        .ofInstance(URI.create("https://s3.amazonaws.com")), "us-west-1", Suppliers.ofInstance(URI
+                        .create("https://s3-us-west-1.amazonaws.com"))))),
+
+               uriBuilderProvider, ImmutableMap.<String, String> of());
 
       request = binder.bindToRequest(request, "bucket");
       assertEquals(request.getRequestLine(), "GET https://bucket.s3.amazonaws.com HTTP/1.1");
@@ -71,11 +76,14 @@ public class AssignCorrectHostnameAndBindAsHostPrefixIfConfiguredTest {
       HttpRequest request = new HttpRequest("GET", URI.create("https://s3.amazonaws.com"));
 
       AssignCorrectHostnameAndBindAsHostPrefixIfConfigured binder = new AssignCorrectHostnameAndBindAsHostPrefixIfConfigured(
-            new BindAsHostPrefix(uriBuilderProvider), new RegionToEndpointOrProviderIfNull("aws-s3",
-                  URI.create("https://s3.amazonaws.com"), ImmutableMap.of("us-standard",
-                        URI.create("https://s3.amazonaws.com"), "us-west-1",
-                        URI.create("https://s3-us-west-1.amazonaws.com"))), uriBuilderProvider,
-            ImmutableMap.<String, String> of("bucket", "us-west-1"));
+               new BindAsHostPrefix(uriBuilderProvider), new RegionToEndpointOrProviderIfNull("aws-s3", Suppliers
+                        .ofInstance(URI.create("https://s3.amazonaws.com")),
+
+               Suppliers.<Map<String, Supplier<URI>>> ofInstance(ImmutableMap.of("us-standard", Suppliers
+                        .ofInstance(URI.create("https://s3.amazonaws.com")), "us-west-1", Suppliers.ofInstance(URI
+                        .create("https://s3-us-west-1.amazonaws.com"))))),
+
+               uriBuilderProvider, ImmutableMap.<String, String> of("bucket", "us-west-1"));
 
       request = binder.bindToRequest(request, "bucket");
       assertEquals(request.getRequestLine(), "GET https://bucket.s3-us-west-1.amazonaws.com HTTP/1.1");

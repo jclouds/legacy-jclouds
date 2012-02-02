@@ -72,14 +72,14 @@ public class AWSEC2ImageSupplier implements Supplier<Set<? extends Image>> {
    private final CallForImages.Factory factory;
    private final ExecutorService executor;
 
-   private final Iterable<String> regions;
+   private final Supplier<Set<String>> regions;
    private final String amiQuery;
    private final Iterable<String> clusterRegions;
    private final String ccAmiQuery;
    private final Supplier<LoadingCache<RegionAndName, ? extends Image>> cache;
    
    @Inject
-   protected AWSEC2ImageSupplier(@Region Set<String> regions,
+   protected AWSEC2ImageSupplier(@Region Supplier<Set<String>> regions,
             @Named(PROPERTY_EC2_AMI_QUERY) String amiQuery, @Named(PROPERTY_EC2_CC_REGIONS) String clusterRegions,
             @Named(PROPERTY_EC2_CC_AMI_QUERY) String ccAmiQuery, 
             Supplier<LoadingCache<RegionAndName, ? extends Image>> cache,
@@ -98,7 +98,7 @@ public class AWSEC2ImageSupplier implements Supplier<Set<? extends Image>> {
    @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override
    public Set<? extends Image> get() {
-      Future<Iterable<Image>> normalImages = images(regions, amiQuery, PROPERTY_EC2_AMI_QUERY);
+      Future<Iterable<Image>> normalImages = images(regions.get(), amiQuery, PROPERTY_EC2_AMI_QUERY);
       ImmutableSet<Image> clusterImages;
       try {
          clusterImages = ImmutableSet.copyOf(images(clusterRegions, ccAmiQuery, PROPERTY_EC2_CC_AMI_QUERY).get());

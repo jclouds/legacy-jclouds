@@ -323,6 +323,8 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
                   new Log4JLoggingModule(), TrackingJavaUrlHttpCommandExecutorService.newTrackingModule(commandsInvoked)), 
                   overrides);
 
+         assert context.getComputeService().listAssignableLocations().size() < this.context.getComputeService().listAssignableLocations().size();
+
          assertOnlyOneRegionQueriedForAvailabilityZone(commandsInvoked);
 
          assert context.getComputeService().listImages().size() < this.context.getComputeService().listImages().size();

@@ -41,6 +41,7 @@ import org.jclouds.location.Region;
 import org.jclouds.logging.Logger;
 import org.xml.sax.Attributes;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.Sets;
 import com.google.inject.Provider;
 
@@ -54,11 +55,11 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
    protected Logger logger = Logger.NULL;
 
    protected final DateService dateService;
-   protected final String defaultRegion;
+   protected final Supplier<String> defaultRegion;
    protected final Provider<Builder> builderProvider;
 
    @Inject
-   public BaseReservationHandler(DateService dateService, @Region String defaultRegion,
+   public BaseReservationHandler(DateService dateService, @Region Supplier<String> defaultRegion,
          Provider<RunningInstance.Builder> builderProvider) {
       this.dateService = dateService;
       this.defaultRegion = defaultRegion;
@@ -205,7 +206,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
          builder.privateDnsName(null);
       }
 
-      builder.region((region == null) ? defaultRegion : region);
+      builder.region((region == null) ? defaultRegion.get() : region);
       builder.groupIds(groupIds);
    }
 
@@ -224,7 +225,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
    protected Reservation<? extends RunningInstance> newReservation() {
       String region = getRequest() != null ? AWSUtils.findRegionInArgsOrNull(getRequest()) : null;
       if (region == null)
-         region = defaultRegion;
+         region = defaultRegion.get();
       Reservation<? extends RunningInstance> info = new Reservation<RunningInstance>(region, groupIds, instances,
             ownerId, requesterId, reservationId);
       this.groupIds = Sets.newLinkedHashSet();

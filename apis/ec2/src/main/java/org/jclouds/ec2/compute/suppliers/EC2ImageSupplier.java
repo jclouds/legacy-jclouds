@@ -25,8 +25,8 @@ import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -47,9 +47,9 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * 
@@ -61,14 +61,14 @@ public class EC2ImageSupplier implements Supplier<Set<? extends Image>> {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final Set<String> regions;
+   private final Supplier<Set<String>> regions;
    private final DescribeImagesParallel describer;
    private final String[] amiOwners;
    private final EC2ImageParser parser;
    private final Supplier<LoadingCache<RegionAndName, ? extends Image>> cache;
 
    @Inject
-   protected EC2ImageSupplier(@Region Set<String> regions, DescribeImagesParallel describer,
+   protected EC2ImageSupplier(@Region Supplier<Set<String>> regions, DescribeImagesParallel describer,
          @Named(PROPERTY_EC2_AMI_OWNERS) String[] amiOwners, Supplier<LoadingCache<RegionAndName, ? extends Image>> cache,
          EC2ImageParser parser) {
       this.regions = regions;
@@ -88,7 +88,7 @@ public class EC2ImageSupplier implements Supplier<Set<? extends Image>> {
       } else {
          logger.debug(">> providing images");
 
-         Iterable<Entry<String, DescribeImagesOptions>> queries = getDescribeQueriesForOwnersInRegions(regions,
+         Iterable<Entry<String, DescribeImagesOptions>> queries = getDescribeQueriesForOwnersInRegions(regions.get(),
                   amiOwners);
 
          Iterable<? extends Image> parsedImages = ImmutableSet.copyOf(filter(transform(describer.apply(queries), parser), Predicates

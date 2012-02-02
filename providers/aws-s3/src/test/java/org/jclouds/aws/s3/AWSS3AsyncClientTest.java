@@ -20,7 +20,6 @@ package org.jclouds.aws.s3;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentMap;
@@ -111,16 +110,16 @@ public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3
       Method method = AWSS3AsyncClient.class.getMethod("getBucketLocation", String.class);
       HttpRequest request = processor.createRequest(method, "bucket");
 
-      assertRequestLineEquals(request, "GET https://bucket.bucketendpoint/?location HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.bucketendpoint\n");
+      assertRequestLineEquals(request, "GET https://bucket.s3.amazonaws.com/?location HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
       assertPayloadEquals(request, null, null, false);
 
       request = filter.filter(request);
 
-      assertRequestLineEquals(request, "GET https://bucket.bucketendpoint/?location HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://bucket.s3.amazonaws.com/?location HTTP/1.1");
       assertNonPayloadHeadersEqual(
             request,
-            "Authorization: AWS identity:2fFTeYJTDwiJmaAkKj732RjNbOg=\nDate: 2009-11-08T15:54:08.897Z\nHost: bucket.bucketendpoint\n");
+            "Authorization: AWS identity:2fFTeYJTDwiJmaAkKj732RjNbOg=\nDate: 2009-11-08T15:54:08.897Z\nHost: bucket.s3.amazonaws.com\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -137,8 +136,8 @@ public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3
             PutBucketOptions[].class);
       HttpRequest request = processor.createRequest(method, (String) null, "bucket");
 
-      assertRequestLineEquals(request, "PUT https://bucket.bucketendpoint/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.bucketendpoint\n");
+      assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
@@ -245,8 +244,8 @@ public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3
             PutBucketOptions[].class);
       HttpRequest request = processor.createRequest(method, "EU", "bucket");
 
-      assertRequestLineEquals(request, "PUT https://bucket.bucketendpoint/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.bucketendpoint\n");
+      assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
       assertPayloadEquals(request,
             "<CreateBucketConfiguration><LocationConstraint>EU</LocationConstraint></CreateBucketConfiguration>",
             "text/xml", false);
@@ -271,11 +270,6 @@ public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3
          ConcurrentMap<String, String> returnVal = Maps.newConcurrentMap();
          returnVal.put("eubucket", "EU");
          return returnVal;
-      }
-
-      @Override
-      protected URI provideBucketURI(String endpoint) {
-         return URI.create("https://bucketendpoint");
       }
 
       @Override

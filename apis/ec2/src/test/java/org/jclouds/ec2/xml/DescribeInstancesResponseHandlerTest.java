@@ -38,10 +38,13 @@ import org.jclouds.location.Region;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code DescribeInstancesResponseHandler}
@@ -142,7 +145,8 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
 
          @Override
          protected void configure() {
-            bind(String.class).annotatedWith(Region.class).toInstance("us-east-1");
+            bind(new TypeLiteral<Supplier<String>>() {
+            }).annotatedWith(Region.class).toInstance(Suppliers.ofInstance("us-east-1"));
          }
 
       });

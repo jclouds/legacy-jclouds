@@ -18,7 +18,8 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import static org.jclouds.util.SaxUtils.*;
+import static org.jclouds.util.SaxUtils.currentOrNull;
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
 
 import javax.inject.Inject;
 
@@ -31,6 +32,8 @@ import org.jclouds.location.Region;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import com.google.common.base.Supplier;
+
 /**
  * 
  * @author Adrian Cole
@@ -39,7 +42,7 @@ public class SpotInstanceHandler extends ParseSax.HandlerForGeneratedRequestWith
    private StringBuilder currentText = new StringBuilder();
 
    protected final DateService dateService;
-   protected final String defaultRegion;
+   protected final Supplier<String> defaultRegion;
    protected final Builder builder;
    protected boolean inLaunchSpecification;
    protected final LaunchSpecificationHandler launchSpecificationHandler;
@@ -47,7 +50,7 @@ public class SpotInstanceHandler extends ParseSax.HandlerForGeneratedRequestWith
    protected final TagSetHandler tagSetHandler;
 
    @Inject
-   public SpotInstanceHandler(DateService dateService, @Region String defaultRegion,
+   public SpotInstanceHandler(DateService dateService, @Region Supplier<String> defaultRegion,
          LaunchSpecificationHandler launchSpecificationHandler, TagSetHandler tagSetHandler,
          SpotInstanceRequest.Builder builder) {
       this.dateService = dateService;
@@ -61,7 +64,7 @@ public class SpotInstanceHandler extends ParseSax.HandlerForGeneratedRequestWith
       try {
          String region = getRequest() != null ? AWSUtils.findRegionInArgsOrNull(getRequest()) : null;
          if (region == null)
-            region = defaultRegion;
+            region = defaultRegion.get();
          return builder.region(region).build();
       } finally {
          builder.clear();

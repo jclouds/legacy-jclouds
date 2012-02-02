@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -39,6 +40,9 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.xml.sax.Attributes;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -54,11 +58,14 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerForGeneratedReq
    protected DateService dateService;
    @Inject
    @Region
-   String defaultRegion;
+   Supplier<String> defaultRegion;
    @Inject
    @Zone
-   protected Map<String, String> availabilityZoneToRegion;
-
+   protected Supplier<Map<String, Supplier<Set<String>>>> regionToZonesSupplier;
+   @Inject
+   @Zone
+   protected Supplier<Set<String>> zonesSupplier;
+   
    private String id;
    private int size;
    private String snapshotId;
@@ -159,12 +166,21 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerForGeneratedReq
       super.setContext(request);
       region = AWSUtils.findRegionInArgsOrNull(getRequest());
       if (region == null) {
-         String zone = findAvailabilityZoneInArgsOrNull(getRequest(), availabilityZoneToRegion.keySet());
+         Set<String> zones = zonesSupplier.get();
+         String zone = findAvailabilityZoneInArgsOrNull(getRequest(), zones);
          if (zone != null) {
-            region = checkNotNull(availabilityZoneToRegion.get(zone),
-                  String.format("zone %s not in %s", zone, availabilityZoneToRegion));
+            Map<String, Set<String>> regionToZones = Maps.transformValues(regionToZonesSupplier.get(), Suppliers
+                     .<Set<String>> supplierFunction());
+            for (Entry<String, Set<String>> entry : regionToZones.entrySet()) {
+               if (entry.getValue().contains(zone)) {
+                  region = entry.getKey();
+                  break;
+               }
+
+            }
+            checkNotNull(regionToZones, String.format("zone %s not in %s", zone, regionToZones));
          } else {
-            region = defaultRegion;
+            region = defaultRegion.get();
          }
       }
       return this;

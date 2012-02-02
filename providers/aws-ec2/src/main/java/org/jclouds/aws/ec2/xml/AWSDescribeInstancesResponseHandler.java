@@ -27,13 +27,13 @@ import javax.inject.Inject;
 
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.date.DateService;
-import org.jclouds.ec2.domain.Hypervisor;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.location.Region;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.Sets;
 import com.google.inject.Provider;
 
@@ -53,7 +53,7 @@ public class AWSDescribeInstancesResponseHandler extends
    private String value;
 
    @Inject
-   AWSDescribeInstancesResponseHandler(DateService dateService, @Region String defaultRegion,
+   AWSDescribeInstancesResponseHandler(DateService dateService, @Region Supplier<String> defaultRegion,
          Provider<AWSRunningInstance.Builder> builderProvider, TagSetHandler tagSetHandler) {
       super(dateService, defaultRegion, builderProvider);
    }
