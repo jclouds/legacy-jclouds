@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.location.suppliers;
+package org.jclouds.location.suppliers.implicit;
 
 import static org.testng.Assert.assertEquals;
 
@@ -26,6 +26,7 @@ import java.util.Set;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstZone;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;

@@ -26,8 +26,10 @@ import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.io.OutputSupplier;
 
 /**
@@ -35,6 +37,21 @@ import com.google.common.io.OutputSupplier;
  * @author Adrian Cole
  */
 public class Suppliers2 {
+
+   public static <X> Function<X, Supplier<X>> ofInstanceFunction() {
+      return new Function<X, Supplier<X>>(){
+
+         @Override
+         public Supplier<X> apply(X arg0) {
+            return Suppliers.ofInstance(arg0);
+         }
+        
+         @Override
+         public String toString(){
+            return "Suppliers.ofInstance()";
+         }
+      };
+   }
 
    /**
     * converts an {@link OutputStream} to an {@link OutputSupplier}
@@ -52,9 +69,11 @@ public class Suppliers2 {
    /**
     * See Supplier.memoizeWithExpiration.
     * 
-    * Difference between this impl and v11.0 is that we fix http://code.google.com/p/guava-libraries/issues/detail?id=857.
+    * Difference between this impl and v11.0 is that we fix
+    * http://code.google.com/p/guava-libraries/issues/detail?id=857.
     */
-   public static <T> Supplier<T> memoizeWithExpirationOnAbsoluteInterval(Supplier<T> delegate, long duration, TimeUnit unit) {
+   public static <T> Supplier<T> memoizeWithExpirationOnAbsoluteInterval(Supplier<T> delegate, long duration,
+            TimeUnit unit) {
       return new ExpiringMemoizingSupplier<T>(delegate, duration, unit);
    }
 
@@ -85,16 +104,17 @@ public class Suppliers2 {
          if (nanos == 0 || now - nanos >= 0) {
             synchronized (this) {
                if (nanos == expirationNanos) { // recheck for lost race
-                  
-                  // Set value to null prior to retrieving new val, so old and new are not held in memory simultaneously
+
+                  // Set value to null prior to retrieving new val, so old and new are not held in
+                  // memory simultaneously
                   value = null;
-                  
+
                   T t = delegate.get();
                   value = t;
 
                   // Update now so that, if call was expensive, we keep value for the full duration
                   now = System.nanoTime();
-                  
+
                   nanos = now + durationNanos;
                   // In the very unlikely event that nanos is 0, set it to 1;
                   // no one will notice 1 ns of tardiness.

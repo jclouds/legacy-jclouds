@@ -16,18 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.loadbalancer.config;
+package org.jclouds.rest.suppliers;
 
-import com.google.inject.AbstractModule;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * 
- * @author Adrian Cole
- */
-public abstract class BaseLoadBalancerServiceContextModule extends AbstractModule {
+import java.net.URI;
+
+import javax.inject.Inject;
+
+import com.google.common.base.Supplier;
+
+public class URIFromStringSupplier implements Supplier<URI> {
+
+   private final URI endpoint;
+
+   @Inject
+   protected URIFromStringSupplier(String uri) {
+      this.endpoint = URI.create(checkNotNull(uri, "uri"));
+   }
 
    @Override
-   protected void configure() {
-
+   public URI get() {
+      return endpoint;
    }
+
 }

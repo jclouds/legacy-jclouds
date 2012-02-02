@@ -16,18 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.loadbalancer.config;
+package org.jclouds.location.suppliers.fromconfig;
 
-import com.google.inject.AbstractModule;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONES;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.jclouds.config.ValueOfConfigurationKeyOrNull;
+import org.jclouds.location.Provider;
+import org.jclouds.location.suppliers.ZoneIdsSupplier;
+
 
 /**
  * 
+ * looks for properties bound to the naming convention jclouds.zones
+ * 
  * @author Adrian Cole
  */
-public abstract class BaseLoadBalancerServiceContextModule extends AbstractModule {
+@Singleton
+public class ZoneIdsFromConfiguration extends SplitConfigurationKey implements ZoneIdsSupplier {
 
-   @Override
-   protected void configure() {
-
+   @Inject
+   protected ZoneIdsFromConfiguration(ValueOfConfigurationKeyOrNull config, @Provider String provider) {
+      super(config, provider, PROPERTY_ZONES);
    }
+
 }

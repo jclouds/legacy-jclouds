@@ -144,6 +144,8 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -181,7 +183,9 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       @Override
       protected void configure() {
          super.configure();
-         bind(URI.class).annotatedWith(Localhost2.class).toInstance(URI.create("http://localhost:1111"));
+         bind(new TypeLiteral<Supplier<URI>>() {
+         }).annotatedWith(Localhost2.class).toInstance(
+                  Suppliers.ofInstance(URI.create("http://localhost:1111")));
          bind(IOExceptionRetryHandler.class).toInstance(IOExceptionRetryHandler.NEVER_RETRY);
       }
 
@@ -2436,7 +2440,9 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
                   }).toInstance(ImmutableSet.of("foo"));
                   bind(new TypeLiteral<Set<String>>() {
                   }).annotatedWith(Names.named("bar")).toInstance(ImmutableSet.of("bar"));
-                  bind(URI.class).annotatedWith(Localhost2.class).toInstance(URI.create("http://localhost:1111"));
+                  bind(new TypeLiteral<Supplier<URI>>() {
+                  }).annotatedWith(Localhost2.class).toInstance(
+                           Suppliers.ofInstance(URI.create("http://localhost:1111")));
                }
 
                @SuppressWarnings("unused")

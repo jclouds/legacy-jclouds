@@ -16,18 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.loadbalancer.config;
+package org.jclouds.location.suppliers;
 
-import com.google.inject.AbstractModule;
+import java.net.URI;
+import java.util.Map;
+
+import org.jclouds.location.suppliers.fromconfig.ZoneIdToURIFromConfigurationOrDefaultToProvider;
+
+import com.google.common.base.Supplier;
+import com.google.inject.ImplementedBy;
 
 /**
  * 
+ * 
  * @author Adrian Cole
  */
-public abstract class BaseLoadBalancerServiceContextModule extends AbstractModule {
+@ImplementedBy(ZoneIdToURIFromConfigurationOrDefaultToProvider.class)
+public interface ZoneIdToURISupplier extends Supplier<Map<String, Supplier<URI>>> {
 
-   @Override
-   protected void configure() {
-
-   }
 }

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.location.suppliers;
+package org.jclouds.location.suppliers.implicit;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.find;
@@ -33,6 +33,7 @@ import javax.inject.Singleton;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.location.functions.ToIdAndScope;
+import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 
 import com.google.common.base.Supplier;
 
@@ -42,7 +43,7 @@ import com.google.common.base.Supplier;
  * 
  */
 @Singleton
-public class OnlyLocationOrFirstZone implements Supplier<Location> {
+public class OnlyLocationOrFirstZone implements ImplicitLocationSupplier {
 
    private final Supplier<Set<? extends Location>> locationsSupplier;
 

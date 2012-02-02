@@ -55,7 +55,6 @@ import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.json.Json;
 import org.jclouds.location.Provider;
-import org.jclouds.location.config.LocationModule;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.scriptbuilder.domain.Statement;
@@ -81,7 +80,6 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      configureLocationModule();
       install(new ComputeServiceTimeoutsModule());
       bind(new TypeLiteral<Function<NodeMetadata, SshClient>>() {
       }).to(CreateSshClientOncePortIsListeningOnNode.class);
@@ -113,10 +111,6 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       }, InitializeRunScriptOnNodeOrPlaceInBadMap.class).build(InitializeRunScriptOnNodeOrPlaceInBadMap.Factory.class));
 
       install(new FactoryModuleBuilder().build(BlockUntilInitScriptStatusIsZeroThenReturnOutput.Factory.class));
-   }
-
-   protected void configureLocationModule() {
-      install(new LocationModule(authException));
    }
 
    @Singleton
@@ -210,8 +204,6 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       return "%s-%s";
    }
 
-   protected AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
-
    @Provides
    @Singleton
    protected Supplier<Map<String, ? extends Image>> provideImageMap(@Memoized Supplier<Set<? extends Image>> images) {
@@ -235,12 +227,12 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Provides
    @Singleton
    @Memoized
-   protected Supplier<Set<? extends Image>> supplyImageCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+   protected Supplier<Set<? extends Image>> supplyImageCache(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final Supplier<Set<? extends Image>> imageSupplier, Injector injector) {
       if (shouldParseImagesOnDemand(injector)) {
-         return supplyImageCache(seconds, imageSupplier);
+         return supplyImageCache(authException, seconds, imageSupplier);
       } else {
-         return supplyNonParsingImageCache(seconds, imageSupplier, injector);
+         return supplyNonParsingImageCache(authException, seconds, imageSupplier, injector);
       }
    }
 
@@ -248,7 +240,7 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       return true;
    }
 
-   protected Supplier<Set<? extends Image>> supplyImageCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+   protected Supplier<Set<? extends Image>> supplyImageCache(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final Supplier<Set<? extends Image>> imageSupplier) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Image>>(authException,
             seconds, new Supplier<Set<? extends Image>>() {
@@ -262,9 +254,9 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    /**
     * For overriding; default impl is same as {@link supplyImageCache(seconds, imageSupplier)}
     */
-   protected Supplier<Set<? extends Image>> supplyNonParsingImageCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+   protected Supplier<Set<? extends Image>> supplyNonParsingImageCache(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
             final Supplier<Set<? extends Image>> imageSupplier, Injector injector) {
-      return supplyImageCache(seconds, imageSupplier);
+      return supplyImageCache(authException, seconds, imageSupplier);
    }
 
    @Provides
@@ -290,7 +282,7 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Provides
    @Singleton
    @Memoized
-   protected Supplier<Set<? extends Hardware>> supplySizeCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+   protected Supplier<Set<? extends Hardware>> supplySizeCache(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final Supplier<Set<? extends Hardware>> hardwareSupplier) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Hardware>>(authException,
             seconds, new Supplier<Set<? extends Hardware>>() {

@@ -18,21 +18,22 @@
  */
 package org.jclouds.rest.config;
 
+import java.net.URI;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
-import org.jclouds.domain.Credentials;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.internal.ClassMethodArgs;
-import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.location.Provider;
+import org.jclouds.location.config.LocationModule;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
+import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
@@ -49,10 +50,13 @@ import com.google.inject.util.Types;
 @ConfiguresRestClient
 @RequiresHttp
 public class RestClientModule<S, A> extends AbstractModule {
-
+   public final static TypeLiteral<Supplier<URI>> URI_SUPPLIER_TYPE = new TypeLiteral<Supplier<URI>>() {
+   };
+   
    protected final Class<A> asyncClientType;
    protected final Class<S> syncClientType;
    protected final Map<Class<?>, Class<?>> delegates;
+   protected final AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
 
    public RestClientModule(Class<S> syncClientType, Class<A> asyncClientType,
          Map<Class<?>, Class<?>> delegates) {
@@ -65,10 +69,16 @@ public class RestClientModule<S, A> extends AbstractModule {
       this(syncClientType, asyncClientType, ImmutableMap
             .<Class<?>, Class<?>> of(syncClientType, asyncClientType));
    }
+
+   protected void installLocations() {
+      install(new LocationModule());
+   }
    
    @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override
    protected void configure() {
+      // this will help short circuit scenarios that can otherwise lock out users
+      bind(new TypeLiteral<AtomicReference<AuthorizationException>>(){}).toInstance(authException);
       // Ensures the restcontext can be looked up without generic types.
       bind(new TypeLiteral<RestContext>() {
       }).to(
@@ -82,6 +92,7 @@ public class RestClientModule<S, A> extends AbstractModule {
       bindClient();
       bindErrorHandlers();
       bindRetryHandlers();
+      installLocations();
    }
 
    /**

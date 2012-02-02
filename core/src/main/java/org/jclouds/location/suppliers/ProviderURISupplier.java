@@ -16,31 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.location.config;
+package org.jclouds.location.suppliers;
 
-import java.util.Set;
+import java.net.URI;
 
-import org.jclouds.domain.Location;
-import org.jclouds.location.suppliers.OnlyLocationOrFirstRegionOptionallyMatchingRegionId;
-import org.jclouds.location.suppliers.RegionToProviderOrJustProvider;
+import org.jclouds.location.suppliers.fromconfig.ProviderURIFromConfiguration;
 
 import com.google.common.base.Supplier;
-import com.google.inject.TypeLiteral;
+import com.google.inject.ImplementedBy;
 
-/**
- * 
- * @author Adrian Cole
- * 
- */
-public class RegionsLocationModule extends LocationModule {
-
-   @Override
-   protected void configure() {
-      bind(new TypeLiteral<Supplier<Set<? extends Location>>>() {
-      }).to(RegionToProviderOrJustProvider.class);
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(OnlyLocationOrFirstRegionOptionallyMatchingRegionId.class);
-      super.configure();
-   }
-
+@ImplementedBy(ProviderURIFromConfiguration.class)
+public interface ProviderURISupplier extends Supplier<URI> {
+   
 }

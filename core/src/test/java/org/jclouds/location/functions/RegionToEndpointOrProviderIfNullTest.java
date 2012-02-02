@@ -22,9 +22,12 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Map;
 
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -37,33 +40,34 @@ public class RegionToEndpointOrProviderIfNullTest {
 
    @Test
    public void testWhenFindsRegion() throws SecurityException, NoSuchMethodException {
-      RegionToEndpointOrProviderIfNull fn = new RegionToEndpointOrProviderIfNull("leader", URI.create("http://leader"),
-            ImmutableMap.of("1", URI.create("http://1")));
+      RegionToEndpointOrProviderIfNull fn = new RegionToEndpointOrProviderIfNull("leader", Suppliers.ofInstance(URI
+               .create("http://leader")), Suppliers.<Map<String, Supplier<URI>>>ofInstance(ImmutableMap.of("1", Suppliers.ofInstance(URI.create("http://1")))));
       assertEquals(fn.apply("1"), URI.create("http://1"));
    }
 
    public void testNullReturnsProvider() {
-      RegionToEndpointOrProviderIfNull fn = new RegionToEndpointOrProviderIfNull("leader", URI.create("http://leader"),
-            ImmutableMap.of("1", URI.create("http://1")));
+      RegionToEndpointOrProviderIfNull fn = new RegionToEndpointOrProviderIfNull("leader", Suppliers.ofInstance(URI
+               .create("http://leader")), Suppliers.<Map<String, Supplier<URI>>>ofInstance(ImmutableMap.of("1", Suppliers.ofInstance(URI.create("http://1")))));
       assertEquals(fn.apply("leader"), URI.create("http://leader"));
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeString() {
-      RegionToEndpointOrProviderIfNull fn = new RegionToEndpointOrProviderIfNull("leader", URI.create("http://leader"),
-            ImmutableMap.of("1", URI.create("http://1")));
+      RegionToEndpointOrProviderIfNull fn = new RegionToEndpointOrProviderIfNull("leader", Suppliers.ofInstance(URI
+               .create("http://leader")), Suppliers.<Map<String, Supplier<URI>>>ofInstance(ImmutableMap.of("1", Suppliers.ofInstance(URI.create("http://1")))));
       fn.apply(new File("foo"));
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeInRegionMapIfSpecified() {
-      RegionToEndpointOrProviderIfNull fn = new RegionToEndpointOrProviderIfNull("leader", URI.create("http://leader"),
-            ImmutableMap.of("1", URI.create("http://1")));
+      RegionToEndpointOrProviderIfNull fn = new RegionToEndpointOrProviderIfNull("leader", Suppliers.ofInstance(URI
+               .create("http://leader")), Suppliers.<Map<String, Supplier<URI>>>ofInstance(ImmutableMap.of("1", Suppliers.ofInstance(URI.create("http://1")))));
       fn.apply("2");
    }
 
    public void testOkIfNoRegionMappings() {
-      new RegionToEndpointOrProviderIfNull("leader", URI.create("http://leader"), ImmutableMap.<String, URI> of());
+      new RegionToEndpointOrProviderIfNull("leader", Suppliers.ofInstance(URI.create("http://leader")), Suppliers
+               .<Map<String, Supplier<URI>>> ofInstance(ImmutableMap.<String, Supplier<URI>> of()));
    }
 
 }

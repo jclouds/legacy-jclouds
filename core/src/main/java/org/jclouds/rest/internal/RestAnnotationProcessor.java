@@ -139,6 +139,7 @@ import com.google.common.base.Functions;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -759,7 +760,10 @@ public class RestAnnotationProcessor<T> {
       return null;
    }
 
-   //TODO: change to LoadingCache<ClassMethodArgs, URI> and move this logic to the CacheLoader.
+   private final static TypeLiteral<Supplier<URI>> uriSupplierLiteral = new TypeLiteral<Supplier<URI>>() {
+   };
+
+   // TODO: change to LoadingCache<ClassMethodArgs, URI> and move this logic to the CacheLoader.
    public static URI getEndpointFor(Method method, Object[] args, Injector injector) throws ExecutionException {
       URI endpoint = getEndpointInParametersOrNull(method, args, injector);
       if (endpoint == null) {
@@ -771,18 +775,22 @@ public class RestAnnotationProcessor<T> {
          } else {
             throw new IllegalStateException("no annotations on class or method: " + method);
          }
-         endpoint = injector.getInstance(Key.get(URI.class, annotation.value()));
+         endpoint = injector.getInstance(Key.get(uriSupplierLiteral, annotation.value())).get();
       }
-       return addHostIfMissing(endpoint, injector.getInstance(Key.get(URI.class, org.jclouds.location.Provider.class)));
+      URI providerEndpoint = injector.getInstance(Key.get(uriSupplierLiteral, org.jclouds.location.Provider.class))
+               .get();
+      return addHostIfMissing(endpoint, providerEndpoint);
    }
 
    public static URI addHostIfMissing(URI original, URI withHost) {
-       checkNotNull(withHost,"URI witHost cannot be null");
-       checkArgument(withHost.getHost()!=null, "URI withHost must have host:"+withHost);
+      checkNotNull(withHost, "URI witHost cannot be null");
+      checkArgument(withHost.getHost() != null, "URI withHost must have host:" + withHost);
 
-       if(original == null) return null;
-       if (original.getHost() != null) return original;
-       return withHost.resolve(original);
+      if (original == null)
+         return null;
+      if (original.getHost() != null)
+         return original;
+      return withHost.resolve(original);
    }
 
    public static final TypeLiteral<ListenableFuture<Boolean>> futureBooleanLiteral = new TypeLiteral<ListenableFuture<Boolean>>() {

@@ -33,6 +33,24 @@ import com.google.common.base.Predicate;
  */
 public class LocationPredicates {
 
+   public static Predicate<Location> isProvider() {
+      return IsProvider.INSTANCE;
+   }
+
+   @Singleton
+   static enum IsProvider implements Predicate<Location> {
+      INSTANCE;
+      @Override
+      public boolean apply(Location input) {
+         return input.getScope() == LocationScope.PROVIDER;
+      }
+
+      @Override
+      public String toString() {
+         return "isProvider()";
+      }
+   }
+
    public static Predicate<Location> isZone() {
       return IsZone.INSTANCE;
    }

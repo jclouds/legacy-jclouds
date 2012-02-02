@@ -20,13 +20,8 @@ package org.jclouds.compute.config;
 
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.domain.Location;
-import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 
 import com.google.common.base.Supplier;
 import com.google.inject.AbstractModule;
@@ -41,54 +36,18 @@ public abstract class BindComputeSuppliersByClass extends AbstractModule {
    @Override
    protected void configure() {
       bindImageSupplier(defineImageSupplier());
-      bindLocationSupplier(defineLocationSupplier());
       bindHardwareSupplier(defineHardwareSupplier());
-      bindDefaultLocationSupplier(defineDefaultLocationSupplier());
    }
 
    protected abstract Class<? extends Supplier<Set<? extends Image>>> defineImageSupplier();
 
    protected abstract Class<? extends Supplier<Set<? extends Hardware>>> defineHardwareSupplier();
 
-   protected Class<? extends Supplier<Set<? extends Location>>> defineLocationSupplier() {
-      return SupplierOfLocationSet.class;
-   }
-
-   @Singleton
-   static class SupplierOfLocationSet implements Supplier<Set<? extends Location>> {
-      private final Set<? extends Location> locations;
-
-      @Inject
-      SupplierOfLocationSet(Set<? extends Location> locations) {
-         this.locations = locations;
-      }
-
-      @Override
-      public Set<? extends Location> get() {
-         return locations;
-      }
-
-   }
-
-   protected Class<? extends Supplier<Location>> defineDefaultLocationSupplier() {
-      return OnlyLocationOrFirstZone.class;
-   }
-
    protected void bindImageSupplier(Class<? extends Supplier<Set<? extends Image>>> clazz) {
       bind(new TypeLiteral<Supplier<Set<? extends Image>>>() {
       }).to(clazz).in(Scopes.SINGLETON);
    }
-
-   protected void bindLocationSupplier(Class<? extends Supplier<Set<? extends Location>>> clazz) {
-      bind(new TypeLiteral<Supplier<Set<? extends Location>>>() {
-      }).to(clazz).in(Scopes.SINGLETON);
-   }
-
-   protected void bindDefaultLocationSupplier(Class<? extends Supplier<Location>> clazz) {
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(clazz).in(Scopes.SINGLETON);
-   }
-
+   
    protected void bindHardwareSupplier(Class<? extends Supplier<Set<? extends Hardware>>> clazz) {
       bind(new TypeLiteral<Supplier<Set<? extends Hardware>>>() {
       }).to(clazz).in(Scopes.SINGLETON);

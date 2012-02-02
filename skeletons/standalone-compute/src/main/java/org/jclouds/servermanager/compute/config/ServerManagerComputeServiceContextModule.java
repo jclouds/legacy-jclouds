@@ -22,7 +22,6 @@ import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Location;
-import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.servermanager.Datacenter;
 import org.jclouds.servermanager.Hardware;
 import org.jclouds.servermanager.Image;
@@ -35,7 +34,6 @@ import org.jclouds.servermanager.compute.functions.ServerToNodeMetadata;
 import org.jclouds.servermanager.compute.strategy.ServerManagerComputeServiceAdapter;
 
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -62,7 +60,7 @@ public class ServerManagerComputeServiceContextModule extends
       }).to(ServerManagerHardwareToHardware.class);
       bind(new TypeLiteral<Function<Datacenter, Location>>() {
       }).to(DatacenterToLocation.class);
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(OnlyLocationOrFirstZone.class);
+      // to have the compute service adapter override default locations
+      install(new LocationsFromComputeServiceAdapterModule<Server, Hardware, Image, Datacenter>(){});
    }
 }

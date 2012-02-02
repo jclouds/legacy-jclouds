@@ -47,6 +47,11 @@ public class MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<T> imp
    private final Supplier<T> delegate;
    private final long seconds;
 
+   public static <T> MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<T> create(
+            AtomicReference<AuthorizationException> authException, long seconds, Supplier<T> delegate) {
+      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<T>(authException, seconds, delegate);
+   }
+   
    public MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier(
          AtomicReference<AuthorizationException> authException, long seconds, Supplier<T> delegate) {
       this.delegate = memoizeWithExpirationOnAbsoluteInterval(new RetryOnTimeOutExceptionSupplier<T>(

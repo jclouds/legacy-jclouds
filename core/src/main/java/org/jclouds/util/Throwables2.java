@@ -25,11 +25,13 @@ import static com.google.common.collect.Iterables.find;
 
 import java.util.NoSuchElementException;
 
+import org.jclouds.concurrent.TransformParallelException;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.InsufficientResourcesException;
 import org.jclouds.rest.ResourceNotFoundException;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.inject.CreationException;
 import com.google.inject.ProvisionException;
@@ -42,10 +44,26 @@ import com.google.inject.spi.Message;
  */
 public class Throwables2 {
 
+   public static <T extends Throwable> Predicate<Throwable> containsThrowable(final Class<T> throwableType) {
+      return new Predicate<Throwable>() {
+
+         @Override
+         public boolean apply(Throwable input) {
+            return getFirstThrowableOfType(input, throwableType) != null;
+         }
+
+         public String toString() {
+            return "containsThrowable()";
+         }
+      };
+   }
+
    @SuppressWarnings("unchecked")
    public static <T extends Throwable> T getFirstThrowableOfType(Throwable from, Class<T> clazz) {
       if (from instanceof ProvisionException)
          return getFirstThrowableOfType(ProvisionException.class.cast(from), clazz);
+      else if (from instanceof TransformParallelException)
+         return getFirstThrowableOfType(TransformParallelException.class.cast(from), clazz);
       else if (from instanceof CreationException)
          return getFirstThrowableOfType(CreationException.class.cast(from), clazz);
       try {
@@ -55,12 +73,23 @@ public class Throwables2 {
       }
    }
 
+   public static <T extends Throwable> T getFirstThrowableOfType(TransformParallelException e, Class<T> clazz) {
+      for (Exception exception : e.getFromToException().values()) {
+         T cause = getFirstThrowableOfType(exception, clazz);
+         if (cause != null)
+            return cause;
+      }
+      return null;
+   }
+
    public static <T extends Throwable> T getFirstThrowableOfType(ProvisionException e, Class<T> clazz) {
       for (Message message : e.getErrorMessages()) {
          if (message.getCause() != null) {
             T cause = getFirstThrowableOfType(message.getCause(), clazz);
             if (cause instanceof ProvisionException)
                return getFirstThrowableOfType(ProvisionException.class.cast(cause), clazz);
+            else if (cause instanceof TransformParallelException)
+               return getFirstThrowableOfType(TransformParallelException.class.cast(cause), clazz);
             else if (cause instanceof CreationException)
                return getFirstThrowableOfType(CreationException.class.cast(cause), clazz);
             return cause;
@@ -75,6 +104,8 @@ public class Throwables2 {
             T cause = getFirstThrowableOfType(message.getCause(), clazz);
             if (cause instanceof ProvisionException)
                return getFirstThrowableOfType(ProvisionException.class.cast(cause), clazz);
+            else if (cause instanceof TransformParallelException)
+               return getFirstThrowableOfType(TransformParallelException.class.cast(cause), clazz);
             else if (cause instanceof CreationException)
                return getFirstThrowableOfType(CreationException.class.cast(cause), clazz);
             return cause;
@@ -99,9 +130,10 @@ public class Throwables2 {
             return (Exception) throwable;
          }
       }
-      for (Class<Exception> propagatableExceptionType : new Class[] { IllegalStateException.class, AssertionError.class,
-               UnsupportedOperationException.class, IllegalArgumentException.class, AuthorizationException.class,
-               ResourceNotFoundException.class, InsufficientResourcesException.class, HttpResponseException.class }) {
+      for (Class<Exception> propagatableExceptionType : new Class[] { IllegalStateException.class,
+               AssertionError.class, UnsupportedOperationException.class, IllegalArgumentException.class,
+               AuthorizationException.class, ResourceNotFoundException.class, InsufficientResourcesException.class,
+               HttpResponseException.class }) {
          Throwable throwable = getFirstThrowableOfType(exception, propagatableExceptionType);
          if (throwable != null) {
             if (throwable instanceof AssertionError)

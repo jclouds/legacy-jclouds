@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.location.suppliers;
+package org.jclouds.location.suppliers.implicit;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.getOnlyElement;
@@ -34,9 +34,9 @@ import javax.inject.Singleton;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.ToIdAndScope;
+import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -47,22 +47,23 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class OnlyLocationOrFirstRegionOptionallyMatchingRegionId implements Supplier<Location> {
-
-   private final Predicate<Location> locationPredicate;
+public class OnlyLocationOrFirstRegionOptionallyMatchingRegionId implements ImplicitLocationSupplier {
+   private final Supplier<String>  regionSupplier;
    private final Supplier<Set<? extends Location>> locationsSupplier;
 
    @Inject
-   OnlyLocationOrFirstRegionOptionallyMatchingRegionId(@Nullable @Region String region,
-         @Memoized Supplier<Set<? extends Location>> locationsSupplier) {
-      this.locationPredicate = region == null ? Predicates.<Location>or(isZone(), isRegion())
-            : isZoneOrRegionWhereRegionIdEquals(region);
+   OnlyLocationOrFirstRegionOptionallyMatchingRegionId(@Region Supplier<String> regionSupplier,
+            @Memoized Supplier<Set<? extends Location>> locationsSupplier) {
+      this.regionSupplier = checkNotNull(regionSupplier, "regionSupplier");
       this.locationsSupplier = checkNotNull(locationsSupplier, "locationsSupplier");
    }
 
    @Override
    @Singleton
    public Location get() {
+      String region = regionSupplier.get();
+      Predicate<Location> locationPredicate = region == null ? Predicates.<Location>or(isZone(), isRegion())
+               : isZoneOrRegionWhereRegionIdEquals(region);
       Set<? extends Location> locations = locationsSupplier.get();
       if (locationsSupplier.get().size() == 1)
          return getOnlyElement(locationsSupplier.get());

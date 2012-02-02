@@ -26,8 +26,11 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.concurrent.TransformParallelException;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
@@ -36,6 +39,7 @@ import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.CreationException;
 import com.google.inject.ProvisionException;
@@ -110,6 +114,38 @@ public class Throwables2Test {
    public void testGetFirstThrowableOfTypeWhenCauseIsNullCreation() {
       Message message = new Message(ImmutableList.of(), "test", null);
       CreationException pex = new CreationException(ImmutableSet.of(message));
+      assertEquals(getFirstThrowableOfType(pex, AuthorizationException.class), null);
+   }
+
+   @SuppressWarnings("unchecked")
+   public void testGetCauseTransformParallel() {
+      Exception aex = createMock(AuthorizationException.class);
+      TransformParallelException pex = new TransformParallelException((Map) ImmutableMap.of(), ImmutableMap.of("bad",
+               aex), "test");
+      assertEquals(getFirstThrowableOfType(pex, AuthorizationException.class), aex);
+   }
+
+   @SuppressWarnings("unchecked")
+   public void testGetFirstThrowableOfTypeInnerTransformParallel() {
+      Exception aex = createMock(AuthorizationException.class);
+      TransformParallelException pex = new TransformParallelException((Map) ImmutableMap.of(), ImmutableMap.of("bad",
+               (Exception) new ExecutionException(aex)), "test");
+      assertEquals(getFirstThrowableOfType(pex, AuthorizationException.class), aex);
+   }
+
+   @SuppressWarnings("unchecked")
+   public void testGetFirstThrowableOfTypeOuterTransformParallel() {
+      Exception aex = createMock(AuthorizationException.class);
+      TransformParallelException pex = new TransformParallelException((Map) ImmutableMap.of(), ImmutableMap.of("bad",
+               (Exception) aex), "test");
+      assertEquals(getFirstThrowableOfType(new ExecutionException(pex), AuthorizationException.class), aex);
+   }
+
+   @SuppressWarnings("unchecked")
+   public void testGetFirstThrowableOfTypeFailTransformParallel() {
+      Exception aex = createMock(TimeoutException.class);
+      TransformParallelException pex = new TransformParallelException((Map) ImmutableMap.of(), ImmutableMap.of("bad",
+               aex), "test");
       assertEquals(getFirstThrowableOfType(pex, AuthorizationException.class), null);
    }
 

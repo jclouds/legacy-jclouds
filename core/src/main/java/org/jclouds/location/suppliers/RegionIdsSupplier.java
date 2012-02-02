@@ -16,40 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.location.config;
+package org.jclouds.location.suppliers;
 
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
-import org.jclouds.domain.Location;
-import org.jclouds.location.suppliers.JustProvider;
-import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
-import org.jclouds.rest.AuthorizationException;
+import org.jclouds.location.suppliers.fromconfig.RegionIdsFromConfiguration;
 
 import com.google.common.base.Supplier;
-import com.google.inject.TypeLiteral;
+import com.google.inject.ImplementedBy;
 
 /**
- * 
+
  * @author Adrian Cole
- * 
  */
-public class JustProviderLocationModule extends LocationModule {
-   public JustProviderLocationModule() {
-      super();
-   }
-
-   public JustProviderLocationModule(AtomicReference<AuthorizationException> authException) {
-      super(authException);
-   }
-
-   @Override
-   protected void configure() {
-      bind(new TypeLiteral<Supplier<Set<? extends Location>>>() {
-      }).to(JustProvider.class);
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(OnlyLocationOrFirstZone.class);
-      super.configure();
-   }
+@ImplementedBy(RegionIdsFromConfiguration.class)
+public interface RegionIdsSupplier extends Supplier<Set<String>> {
 
 }

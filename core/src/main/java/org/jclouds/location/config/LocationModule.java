@@ -20,6 +20,8 @@ package org.jclouds.location.config;
 
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
+import java.net.URI;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -28,6 +30,20 @@ import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
+import org.jclouds.location.Iso3166;
+import org.jclouds.location.Provider;
+import org.jclouds.location.Region;
+import org.jclouds.location.Zone;
+import org.jclouds.location.suppliers.ImplicitLocationSupplier;
+import org.jclouds.location.suppliers.ImplicitRegionIdSupplier;
+import org.jclouds.location.suppliers.LocationIdToIso3166CodesSupplier;
+import org.jclouds.location.suppliers.LocationsSupplier;
+import org.jclouds.location.suppliers.ProviderURISupplier;
+import org.jclouds.location.suppliers.RegionIdToURISupplier;
+import org.jclouds.location.suppliers.RegionIdToZoneIdsSupplier;
+import org.jclouds.location.suppliers.RegionIdsSupplier;
+import org.jclouds.location.suppliers.ZoneIdToURISupplier;
+import org.jclouds.location.suppliers.ZoneIdsSupplier;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
@@ -36,35 +52,100 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
+ * All of these are memoized as locations do not change often at runtime. Note that we take care to
+ * propagate authorization exceptions. this is so that we do not lock out the account.
  * 
  * @author Adrian Cole
  */
 public class LocationModule extends AbstractModule {
-   protected final AtomicReference<AuthorizationException> authException;
 
-   public LocationModule() {
-      this(new AtomicReference<AuthorizationException>());
-   }
-
-   public LocationModule(AtomicReference<AuthorizationException> authException) {
-      this.authException = authException;
+   @Override
+   protected void configure() {
    }
 
    @Provides
    @Singleton
-   @Memoized
-   protected Supplier<Set<? extends Location>> supplyLocationCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final Supplier<Set<? extends Location>> locationSupplier) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Location>>(authException, seconds,
-               new Supplier<Set<? extends Location>>() {
-                  @Override
-                  public Set<? extends Location> get() {
-                     return locationSupplier.get();
-                  }
-               });
+   @Iso3166
+   protected Supplier<Map<String, Supplier<Set<String>>>> isoCodesSupplier(
+            AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
+            LocationIdToIso3166CodesSupplier uncached) {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, seconds, uncached);
    }
 
-   @Override
-   protected void configure() {
+   @Provides
+   @Singleton
+   @Provider
+   protected Supplier<URI> provideProvider(AtomicReference<AuthorizationException> authException,
+            @Named(PROPERTY_SESSION_INTERVAL) long seconds, ProviderURISupplier uncached) {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, seconds, uncached);
+   }
+
+   @Provides
+   @Singleton
+   protected Supplier<Location> implicitLocationSupplier(AtomicReference<AuthorizationException> authException,
+            @Named(PROPERTY_SESSION_INTERVAL) long seconds, ImplicitLocationSupplier uncached) {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, seconds, uncached);
+   }
+
+   @Provides
+   @Singleton
+   // TODO: we should eventually get rid of memoized as an annotation, as it is confusing
+   @Memoized
+   protected Supplier<Set<? extends Location>> memoizedLocationsSupplier(
+            AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
+            LocationsSupplier uncached) {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, seconds, uncached);
+   }
+
+   @Provides
+   @Singleton
+   @Region
+   protected Supplier<Set<String>> regionIdsSupplier(AtomicReference<AuthorizationException> authException,
+            @Named(PROPERTY_SESSION_INTERVAL) long seconds, RegionIdsSupplier uncached) {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, seconds, uncached);
+   }
+
+   @Provides
+   @Singleton
+   @Region
+   protected Supplier<Map<String, Supplier<URI>>> regionIdToURISupplier(
+            AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
+            RegionIdToURISupplier uncached) {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, seconds, uncached);
+   }
+
+   @Provides
+   @Singleton
+   @Region
+   protected Supplier<String> implicitRegionIdSupplier(AtomicReference<AuthorizationException> authException,
+            @Named(PROPERTY_SESSION_INTERVAL) long seconds, ImplicitRegionIdSupplier uncached) {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, seconds, uncached);
+   }
+
+   @Provides
+   @Singleton
+   @Zone
+   protected Supplier<Set<String>> regionIdsSupplier(
+            AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
+            ZoneIdsSupplier uncached) {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, seconds, uncached);
+   }
+   
+   @Provides
+   @Singleton
+   @Zone
+   protected Supplier<Map<String, Supplier<Set<String>>>> regionIdToZoneIdsSupplier(
+            AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
+            RegionIdToZoneIdsSupplier uncached) {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, seconds, uncached);
+   }
+
+   @Provides
+   @Singleton
+   @Zone
+   protected Supplier<Map<String, Supplier<URI>>> zoneIdToURISupplier(
+            AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
+            ZoneIdToURISupplier uncached) {
+      return MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier.create(authException, seconds, uncached);
    }
 }

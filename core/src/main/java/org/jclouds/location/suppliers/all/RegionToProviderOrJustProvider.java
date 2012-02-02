@@ -16,11 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.location.suppliers;
+package org.jclouds.location.suppliers.all;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,9 +30,9 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.location.Iso3166;
-import org.jclouds.location.Provider;
 import org.jclouds.location.Region;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableSet.Builder;
@@ -43,37 +42,36 @@ import com.google.common.collect.ImmutableSet.Builder;
  * @author Adrian Cole
  */
 @Singleton
-public class RegionToProviderOrJustProvider extends JustProvider {
-   private final Set<String> regions;
-   private final Map<String, Set<String>> isoCodesById;
+public class RegionToProviderOrJustProvider implements Supplier<Set<? extends Location>> {
+   private final JustProvider justProvider;
+   private final Supplier<Set<String>> regionsSupplier;
+   private final Supplier<Map<String, Supplier<Set<String>>>> isoCodesByIdSupplier;
 
    @Inject
-   public RegionToProviderOrJustProvider(@Iso3166 Set<String> isoCodes, @Provider String providerName,
-            @Provider URI endpoint, @Region Set<String> regions, @Iso3166 Map<String, Set<String>> isoCodesById) {
-      super(providerName, endpoint, isoCodes);
-      this.regions = checkNotNull(regions, "regions");
-      this.isoCodesById = checkNotNull(isoCodesById, "isoCodesById");
+   public RegionToProviderOrJustProvider(JustProvider justProvider, @Region Supplier<Set<String>> regionsSupplier,
+            @Iso3166 Supplier<Map<String, Supplier<Set<String>>>> isoCodesByIdSupplier) {
+      this.justProvider = checkNotNull(justProvider, "justProvider");
+      this.regionsSupplier = checkNotNull(regionsSupplier, "regionsSupplier");
+      this.isoCodesByIdSupplier = checkNotNull(isoCodesByIdSupplier, "isoCodesByIdSupplier");
    }
 
    @Override
    public Set<? extends Location> get() {
-      return buildJustProviderOrRegions().build();
-   }
-
-   protected Builder<Location> buildJustProviderOrRegions() {
       Builder<Location> locations = ImmutableSet.builder();
-      Location provider = Iterables.getOnlyElement(super.get());
+      Location provider = Iterables.getOnlyElement(justProvider.get());
+      Set<String> regions = regionsSupplier.get();
+      Map<String, Supplier<Set<String>>> isoCodesById = isoCodesByIdSupplier.get();
       if (regions.size() == 0)
-         return locations.add(provider);
+         return locations.add(provider).build();
       else
          for (String region : regions) {
             LocationBuilder builder = new LocationBuilder().scope(LocationScope.REGION).id(region).description(region)
                      .parent(provider);
             if (isoCodesById.containsKey(region))
-               builder.iso3166Codes(isoCodesById.get(region));
+               builder.iso3166Codes(isoCodesById.get(region).get());
             locations.add(builder.build());
          }
-      return locations;
+      return locations.build();
    }
 
 }

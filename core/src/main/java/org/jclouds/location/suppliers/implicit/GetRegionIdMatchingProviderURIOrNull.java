@@ -16,18 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.loadbalancer.config;
+package org.jclouds.location.suppliers.implicit;
 
-import com.google.inject.AbstractModule;
+import java.net.URI;
+import java.util.Map;
 
-/**
- * 
- * @author Adrian Cole
- */
-public abstract class BaseLoadBalancerServiceContextModule extends AbstractModule {
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-   @Override
-   protected void configure() {
+import org.jclouds.location.Provider;
+import org.jclouds.location.Region;
+import org.jclouds.location.suppliers.ImplicitRegionIdSupplier;
+import org.jclouds.suppliers.SupplyKeyMatchingValueOrNull;
 
+import com.google.common.base.Supplier;
+
+@Singleton
+public class GetRegionIdMatchingProviderURIOrNull extends SupplyKeyMatchingValueOrNull<String, URI> implements
+         ImplicitRegionIdSupplier {
+
+   @Inject
+   public GetRegionIdMatchingProviderURIOrNull(@Region Supplier<Map<String, Supplier<URI>>> supplier,
+            @Provider Supplier<URI> providerUri) {
+      super(supplier, providerUri);
    }
+
 }

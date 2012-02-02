@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.location.config;
+package org.jclouds.location.suppliers.fromconfig;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
@@ -30,45 +30,48 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.location.Iso3166;
+import org.jclouds.location.suppliers.LocationIdToIso3166CodesSupplier;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * 
- * looks for properties bound to the naming conventions jclouds.region.
- * {@code regionId} .iso3166-codes and jclouds.zone.{@code zoneId}.iso3166-codes
+ * looks for properties bound to the naming conventions jclouds.region. {@code regionId}
+ * .iso3166-codes and jclouds.zone.{@code zoneId}.iso3166-codes
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class ProvideIso3166CodesByLocationIdViaProperties implements javax.inject.Provider<Map<String, Set<String>>> {
+public class LocationIdToIso3166CodesFromConfiguration implements LocationIdToIso3166CodesSupplier {
 
    private final Function<Predicate<String>, Map<String, String>> filterStringsBoundByName;
 
    @Inject
-   ProvideIso3166CodesByLocationIdViaProperties(
-         Function<Predicate<String>, Map<String, String>> filterStringsBoundByName) {
+   public LocationIdToIso3166CodesFromConfiguration(
+            Function<Predicate<String>, Map<String, String>> filterStringsBoundByName) {
       this.filterStringsBoundByName = checkNotNull(filterStringsBoundByName, "filterStringsBoundByName");
    }
 
    @Singleton
    @Iso3166
    @Override
-   public Map<String, Set<String>> get() {
+   public Map<String, Supplier<Set<String>>> get() {
       Map<String, String> stringsBoundWithRegionOrZonePrefix = filterStringsBoundByName.apply(new Predicate<String>() {
 
          @Override
          public boolean apply(String input) {
-            return input.startsWith(PROPERTY_REGION) || input.startsWith(PROPERTY_ZONE);
+            return (input.startsWith(PROPERTY_REGION) || input.startsWith(PROPERTY_ZONE));
          }
 
       });
-      Builder<String, Set<String>> codes = ImmutableMap.<String, Set<String>> builder();
+      Builder<String, Supplier<Set<String>>> codes = ImmutableMap.<String, Supplier<Set<String>>> builder();
       for (String key : ImmutableSet.of(PROPERTY_REGION, PROPERTY_ZONE)) {
          String regionOrZoneString = stringsBoundWithRegionOrZonePrefix.get(key + "s");
          if (regionOrZoneString == null)
@@ -76,7 +79,8 @@ public class ProvideIso3166CodesByLocationIdViaProperties implements javax.injec
          for (String region : Splitter.on(',').split(regionOrZoneString)) {
             String isoCodes = stringsBoundWithRegionOrZonePrefix.get(key + "." + region + "." + ISO3166_CODES);
             if (isoCodes != null)
-               codes.put(region, ImmutableSet.copyOf(Splitter.on(',').split(isoCodes)));
+               codes.put(region, Suppliers.<Set<String>> ofInstance(ImmutableSet.copyOf(Splitter.on(',')
+                        .split(isoCodes))));
          }
       }
       return codes.build();

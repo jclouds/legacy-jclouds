@@ -18,7 +18,12 @@
  */
 package org.jclouds.concurrent;
 
+import static com.google.common.base.Throwables.propagate;
+import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Maps.newHashMap;
+import static org.jclouds.util.Throwables2.containsThrowable;
+import static org.jclouds.util.Throwables2.propagateAuthorizationOrOriginalException;
 
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -29,20 +34,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.AuthorizationException;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 /**
@@ -82,6 +85,7 @@ public class FutureIterables {
       return transformParallel(fromIterable, function, exec, maxTime, logger, logPrefix, retryHandler, maxRetries);
    }
 
+   @SuppressWarnings("unchecked")
    public static <F, T> Iterable<T> transformParallel(Iterable<F> fromIterable,
             Function<? super F, Future<T>> function, ExecutorService exec, @Nullable Long maxTime, Logger logger,
             String logPrefix, BackoffLimitedRetryHandler retryHandler, int maxRetries) {
@@ -93,7 +97,7 @@ public class FutureIterables {
             responses.put(from, function.apply(from));
          }
          exceptions = awaitCompletion(responses, exec, maxTime, logger, logPrefix);
-         if (exceptions.size() > 0) {
+         if (exceptions.size() > 0 && !any(exceptions.values(), containsThrowable(AuthorizationException.class))) {
             fromIterable = exceptions.keySet();
             retryHandler.imposeBackoffExponentialDelay(delayStart, 2, i + 1, maxRetries,
                      String.format("error %s: %s: %s", logPrefix, fromIterable, exceptions));
@@ -101,8 +105,10 @@ public class FutureIterables {
             break;
          }
       }
+      //make sure we propagate any authorization exception so that we don't lock out accounts
       if (exceptions.size() > 0)
-         throw new RuntimeException(String.format("error %s: %s: %s", logPrefix, fromIterable, exceptions));
+         return propagateAuthorizationOrOriginalException(new TransformParallelException((Map) responses, exceptions,
+                  logPrefix));
 
       return unwrap(responses.values());
    }
@@ -116,7 +122,7 @@ public class FutureIterables {
       final AtomicInteger complete = new AtomicInteger(0);
       final AtomicInteger errors = new AtomicInteger(0);
       final long start = System.currentTimeMillis();
-      final Map<T, Exception> errorMap = Maps.newHashMap();
+      final Map<T, Exception> errorMap = newHashMap();
       for (final java.util.Map.Entry<T, ? extends Future<?>> future : responses.entrySet()) {
          Futures.makeListenable(future.getValue(), exec).addListener(new Runnable() {
 
@@ -157,21 +163,21 @@ public class FutureIterables {
          String message = message(logPrefix, total, complete.get(), errors.get(), start);
          TimeoutException exception = new TimeoutException(message);
          logger.error(exception, message);
-         Throwables.propagate(exception);
+         propagate(exception);
       }
       return errorMap;
    }
 
    public static <T> Iterable<T> unwrap(Iterable<Future<T>> values) {
-      return Iterables.transform(values, new Function<Future<T>, T>() {
+      return transform(values, new Function<Future<T>, T>() {
          @Override
          public T apply(Future<T> from) {
             try {
                return from.get();
             } catch (InterruptedException e) {
-               Throwables.propagate(e);
+               propagate(e);
             } catch (ExecutionException e) {
-               Throwables.propagate(e);
+               propagate(e);
             }
             return null;
          }

@@ -41,6 +41,19 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 public class Maps2 {
+   public static <K> Function<Map<K, ?>, Set<K>> keySetFunction() {
+      return new Function<Map<K, ?>, Set<K>>() {
+
+         @Override
+         public Set<K> apply(Map<K, ?> arg0) {
+            return arg0.keySet();
+         }
+
+         public String toString() {
+            return "keySet()";
+         }
+      };
+   }
 
    public static <K, V> Map<K, V> convertUnsafe(Multimap<K, V> in) {
       LinkedHashMap<K, V> out = Maps.newLinkedHashMap();

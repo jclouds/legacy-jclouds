@@ -42,7 +42,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.location.suppliers.JustProvider;
+import org.jclouds.location.suppliers.all.JustProvider;
 import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.base.Supplier;

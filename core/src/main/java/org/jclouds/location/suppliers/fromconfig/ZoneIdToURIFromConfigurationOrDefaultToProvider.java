@@ -16,9 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.location.suppliers;
+package org.jclouds.location.suppliers.fromconfig;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONE;
 
 import java.net.URI;
 import java.util.Set;
@@ -26,36 +26,26 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationBuilder;
-import org.jclouds.domain.LocationScope;
-import org.jclouds.location.Iso3166;
+import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.location.Provider;
+import org.jclouds.location.Zone;
+import org.jclouds.location.suppliers.ZoneIdToURISupplier;
 
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableSet;
 
 /**
+ * 
+ * looks for properties bound to the naming convention jclouds.zone.{@code zoneId}.endpoint
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class JustProvider implements Supplier<Set<? extends Location>> {
-   private final String providerName;
-   private final URI endpoint;
-   private final Set<String> isoCodes;
+public class ZoneIdToURIFromConfigurationOrDefaultToProvider extends LocationIdToURIFromConfigurationOrDefaultToProvider implements ZoneIdToURISupplier {
 
    @Inject
-   public JustProvider(@Provider String providerName, @Provider URI endpoint, @Iso3166 Set<String> isoCodes) {
-      this.providerName = checkNotNull(providerName, "providerName");
-      this.endpoint = checkNotNull(endpoint, "endpoint");
-      this.isoCodes = checkNotNull(isoCodes, "isoCodes");
-   }
-
-   @Override
-   public Set<? extends Location> get() {
-      return ImmutableSet.of(new LocationBuilder().scope(LocationScope.PROVIDER).id(providerName)
-            .description(endpoint.toASCIIString()).iso3166Codes(isoCodes).build());
+   protected ZoneIdToURIFromConfigurationOrDefaultToProvider(ValueOfConfigurationKeyOrNull config, @Provider Supplier<URI> providerURI,
+            @Zone Supplier<Set<String>> zoneIds) {
+      super(config, providerURI, zoneIds, PROPERTY_ZONE);
    }
 
 }

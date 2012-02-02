@@ -16,18 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.loadbalancer.config;
+package org.jclouds.location.suppliers;
 
-import com.google.inject.AbstractModule;
+import org.jclouds.domain.Location;
+import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstRegionOptionallyMatchingRegionId;
+
+import com.google.common.base.Supplier;
+import com.google.inject.ImplementedBy;
 
 /**
  * 
  * @author Adrian Cole
  */
-public abstract class BaseLoadBalancerServiceContextModule extends AbstractModule {
+@ImplementedBy(OnlyLocationOrFirstRegionOptionallyMatchingRegionId.class)
+public interface ImplicitLocationSupplier extends Supplier<Location> {
 
-   @Override
-   protected void configure() {
-
-   }
 }

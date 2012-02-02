@@ -31,7 +31,6 @@ import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.domain.Location;
-import org.jclouds.location.config.JustProviderLocationModule;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
@@ -59,7 +58,6 @@ public class TransientBlobStoreContextModule extends AbstractModule {
       }).toInstance(containerToLocation);
       install(new BlobStoreObjectModule());
       install(new BlobStoreMapModule());
-      install(new JustProviderLocationModule());
       bind(BlobStore.class).to(TransientBlobStore.class);
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
       bind(BlobRequestSigner.class).to(TransientBlobRequestSigner.class);

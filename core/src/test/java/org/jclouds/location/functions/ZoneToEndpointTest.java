@@ -22,9 +22,12 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Map;
 
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -36,25 +39,30 @@ import com.google.common.collect.ImmutableMap;
 public class ZoneToEndpointTest {
 
    @Test
-   public void testCorrect() throws SecurityException, NoSuchMethodException {
-      ZoneToEndpoint fn = new ZoneToEndpoint(ImmutableMap.of("1", URI.create("http://1")));
+   public void testCorrect() {
+      ZoneToEndpoint fn = new ZoneToEndpoint(Suppliers.<Map<String, Supplier<URI>>> ofInstance(ImmutableMap.of("1",
+               Suppliers.ofInstance(URI.create("http://1")))));
       assertEquals(fn.apply("1"), URI.create("http://1"));
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeString() {
-      ZoneToEndpoint fn = new ZoneToEndpoint(ImmutableMap.of("1", URI.create("http://1")));
+      ZoneToEndpoint fn = new ZoneToEndpoint(Suppliers.<Map<String, Supplier<URI>>> ofInstance(ImmutableMap.of("1",
+               Suppliers.ofInstance(URI.create("http://1")))));
       fn.apply(new File("foo"));
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
+   @Test(expectedExceptions = IllegalStateException.class)
    public void testMustHaveEndpoints() {
-      new ZoneToEndpoint(ImmutableMap.<String, URI> of());
+      ZoneToEndpoint fn = new ZoneToEndpoint(Suppliers.<Map<String, Supplier<URI>>> ofInstance(ImmutableMap
+               .<String, Supplier<URI>> of()));
+      fn.apply("1");
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testNullIsIllegal() {
-      ZoneToEndpoint fn = new ZoneToEndpoint(ImmutableMap.of("1", URI.create("http://1")));
+      ZoneToEndpoint fn = new ZoneToEndpoint(Suppliers.<Map<String, Supplier<URI>>> ofInstance(ImmutableMap.of("1",
+               Suppliers.ofInstance(URI.create("http://1")))));
       fn.apply(null);
    }
 }

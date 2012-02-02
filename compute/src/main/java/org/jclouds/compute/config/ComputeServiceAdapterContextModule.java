@@ -23,15 +23,12 @@ import static com.google.common.base.Predicates.notNull;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.inject.util.Types.newParameterizedType;
-import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.collect.Memoized;
 import org.jclouds.collect.TransformingSetSupplier;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.ComputeServiceContext;
@@ -50,11 +47,12 @@ import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.compute.strategy.impl.AdaptingComputeServiceStrategies;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
+import org.jclouds.location.suppliers.LocationsSupplier;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
@@ -82,25 +80,38 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
                (TypeLiteral) TypeLiteral.get(newParameterizedType(ComputeServiceContextImpl.class, syncClientType,
                         asyncClientType))).in(Scopes.SINGLETON);
    }
+   
+   /**
+    * install this, if you want to use your computeservice adapter to handle locations. Note that if
+    * you do this, you'll want to instantiate a subclass to prevent type erasure.
+    * 
+    * ex.
+    * <pre>
+    *       install(new LocationsFromComputeServiceAdapterModule<NodeMetadata, Hardware, Image, Location>(){});
+    * </pre>
+    * not
+    * <pre>
+    *       install(new LocationsFromComputeServiceAdapterModule<NodeMetadata, Hardware, Image, Location>());
+    * </pre>
+    */
+   public static class LocationsFromComputeServiceAdapterModule<N, H, I, L> extends AbstractModule {
 
-   @Override
-   protected void configureLocationModule() {
-      // configuring below
-   }
+      @Override
+      protected void configure() {
+      }
 
-   @Provides
-   @Singleton
-   @Memoized
-   protected Supplier<Set<? extends Location>> supplyLocationCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final ComputeServiceAdapter<N, H, I, L> adapter, final Function<L, Location> transformer) {
-      return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Location>>(authException,
-               seconds, new Supplier<Set<? extends Location>>() {
-                  @Override
-                  public Set<? extends Location> get() {
-                     return ImmutableSet.<Location> copyOf(transform(filter(adapter.listLocations(), notNull()),
-                              transformer));
-                  }
-               });
+      @Provides
+      @Singleton
+      protected LocationsSupplier supplyLocationsFromComputeServiceAdapter(
+               final ComputeServiceAdapter<N, H, I, L> adapter, final Function<L, Location> transformer) {
+         return new LocationsSupplier() {
+            @Override
+            public Set<? extends Location> get() {
+               Iterable<L> locations = filter(adapter.listLocations(), notNull());
+               return ImmutableSet.<Location> copyOf(transform(locations, transformer));
+            }
+         };
+      }
    }
 
    @Provides
@@ -111,7 +122,7 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
 
          @Override
          public Iterable<H> get() {
-            return filter(adapter.listHardwareProfiles(), notNull());
+            return adapter.listHardwareProfiles();
          }
 
       }, transformer);

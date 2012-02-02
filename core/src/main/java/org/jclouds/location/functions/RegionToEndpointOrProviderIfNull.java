@@ -32,6 +32,7 @@ import org.jclouds.location.Provider;
 import org.jclouds.location.Region;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 /**
  * Return a uri corresponding to the name of the region (passed argument).
@@ -41,25 +42,26 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class RegionToEndpointOrProviderIfNull implements Function<Object, URI> {
-   private final URI defaultUri;
+   private final Supplier<URI> defaultUri;
    private final String defaultProvider;
-   private final Map<String, URI> regionToEndpoint;
+   private final Supplier<Map<String, Supplier<URI>>> regionToEndpointSupplier;
 
    @Inject
-   public RegionToEndpointOrProviderIfNull(@Provider String defaultProvider, @Provider URI defaultUri,
-         @Region Map<String, URI> regionToEndpoint) {
+   public RegionToEndpointOrProviderIfNull(@Provider String defaultProvider, @Provider Supplier<URI> defaultUri,
+         @Region Supplier<Map<String, Supplier<URI>>> regionToEndpointSupplier) {
       this.defaultProvider = checkNotNull(defaultProvider, "defaultProvider");
       this.defaultUri = checkNotNull(defaultUri, "defaultUri");
-      this.regionToEndpoint = checkNotNull(regionToEndpoint, "regionToEndpoint");
+      this.regionToEndpointSupplier = checkNotNull(regionToEndpointSupplier, "regionToEndpointSupplier");
    }
 
    @Override
    public URI apply(@Nullable Object from) {
       if (from == null || from.equals(defaultProvider))
-         return defaultUri;
+         return defaultUri.get();
       checkArgument(from instanceof String, "region is a String argument");
+      Map<String, Supplier<URI>> regionToEndpoint = regionToEndpointSupplier.get();
       checkArgument(regionToEndpoint.containsKey(from),
             "requested location %s, which is not in the configured locations: %s", from, regionToEndpoint);
-      return regionToEndpoint.get(from);
+      return regionToEndpoint.get(from).get();
    }
 }

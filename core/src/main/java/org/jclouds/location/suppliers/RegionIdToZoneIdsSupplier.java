@@ -18,31 +18,19 @@
  */
 package org.jclouds.location.suppliers;
 
-import static org.testng.Assert.assertEquals;
+import java.util.Map;
+import java.util.Set;
 
-import java.net.URI;
+import org.jclouds.location.suppliers.fromconfig.RegionIdToZoneIdsFromConfiguration;
 
-import org.jclouds.domain.LocationBuilder;
-import org.jclouds.domain.LocationScope;
-import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
+import com.google.common.base.Supplier;
+import com.google.inject.ImplementedBy;
 
 /**
- * Tests behavior of {@code JustProvider}
- * 
+
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "JustProviderTest")
-public class JustProviderTest {
-
-   @Test
-   public void test() throws SecurityException, NoSuchMethodException {
-      JustProvider fn = new JustProvider("servo", URI.create("http://servo"), ImmutableSet.of("US"));
-      assertEquals(
-            fn.get(),
-            ImmutableSet.of(new LocationBuilder().scope(LocationScope.PROVIDER).id("servo").description("http://servo")
-                  .iso3166Codes(ImmutableSet.of("US")).build()));
-   }
+@ImplementedBy(RegionIdToZoneIdsFromConfiguration.class)
+public interface RegionIdToZoneIdsSupplier extends Supplier<Map<String, Supplier<Set<String>>>> {
 
 }

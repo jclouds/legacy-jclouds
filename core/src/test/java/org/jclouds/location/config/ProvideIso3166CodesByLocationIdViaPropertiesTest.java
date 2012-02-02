@@ -23,10 +23,13 @@ import static org.testng.Assert.assertEquals;
 import java.util.Map;
 import java.util.Set;
 
+import org.jclouds.location.suppliers.LocationIdToIso3166CodesSupplier;
+import org.jclouds.util.Suppliers2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -42,14 +45,14 @@ import com.google.inject.Provides;
 public class ProvideIso3166CodesByLocationIdViaPropertiesTest {
 
    public void testEmptyWhenNoLocationsBound() {
-      ProvideIso3166CodesByLocationIdViaProperties fn = createWithValue(ImmutableMap.<String, String> of());
+      LocationIdToIso3166CodesSupplier fn = createWithValue(ImmutableMap.<String, String> of());
 
       assertEquals(fn.get(), ImmutableMap.<String, Set<String>> of());
    }
 
    public void testEmptyWhenRegionsAndZonesBoundButNoIsoCodes() {
 
-      ProvideIso3166CodesByLocationIdViaProperties fn = createWithValue(ImmutableMap.<String, String> of(
+      LocationIdToIso3166CodesSupplier fn = createWithValue(ImmutableMap.<String, String> of(
             "jclouds.regions", "us-east", "jclouds.zones", "us-easta"));
 
       assertEquals(fn.get(), ImmutableMap.<String, Set<String>> of());
@@ -57,20 +60,18 @@ public class ProvideIso3166CodesByLocationIdViaPropertiesTest {
 
    public void testIsoCodesWhenRegionsAndZonesBoundWithIsoCodes() {
 
-      ProvideIso3166CodesByLocationIdViaProperties fn = createWithValue(ImmutableMap.<String, String> of(
+      LocationIdToIso3166CodesSupplier fn = createWithValue(ImmutableMap.<String, String> of(
             "jclouds.regions", "us-east", "jclouds.region.us-east.iso3166-codes", "US", "jclouds.zones", "us-easta",
             "jclouds.zone.us-easta.iso3166-codes", "US-CA"));
 
-      assertEquals(
-            fn.get(),
-            ImmutableMap.<String, Set<String>> of("us-east", ImmutableSet.of("US"), "us-easta",
-                  ImmutableSet.of("US-CA")));
+      assertEquals(Maps.transformValues(fn.get(), Suppliers.<Set<String>> supplierFunction()), ImmutableMap
+               .<String, Set<String>> of("us-east", ImmutableSet.of("US"), "us-easta", ImmutableSet.of("US-CA")));
    }
 
    //
 
-   private ProvideIso3166CodesByLocationIdViaProperties createWithValue(final ImmutableMap<String, String> value) {
-      ProvideIso3166CodesByLocationIdViaProperties fn = Guice.createInjector(new AbstractModule() {
+   private LocationIdToIso3166CodesSupplier createWithValue(final ImmutableMap<String, String> value) {
+      LocationIdToIso3166CodesSupplier fn = Guice.createInjector(new AbstractModule() {
          @SuppressWarnings("unused")
          @Provides
          Function<Predicate<String>, Map<String, String>> provide() {
@@ -87,7 +88,7 @@ public class ProvideIso3166CodesByLocationIdViaPropertiesTest {
          protected void configure() {
          }
 
-      }).getInstance(ProvideIso3166CodesByLocationIdViaProperties.class);
+      }).getInstance(LocationIdToIso3166CodesSupplier.class);
       return fn;
    }
 
