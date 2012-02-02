@@ -36,7 +36,6 @@ import org.jclouds.filesystem.predicates.validators.internal.FilesystemContainer
 import org.jclouds.filesystem.strategy.FilesystemStorageStrategy;
 import org.jclouds.filesystem.strategy.internal.FilesystemStorageStrategyImpl;
 import org.jclouds.filesystem.util.internal.FileSystemBlobUtilsImpl;
-import org.jclouds.location.config.JustProviderLocationModule;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -63,7 +62,6 @@ public class FilesystemBlobStoreContextModule extends AbstractModule {
       bind(FilesystemBlobKeyValidator.class).to(FilesystemBlobKeyValidatorImpl.class);
       bind(FilesystemContainerNameValidator.class).to(FilesystemContainerNameValidatorImpl.class);
       bind(BlobRequestSigner.class).to(TransientBlobRequestSigner.class);
-      install(new JustProviderLocationModule());
    }
 
    @Provides
