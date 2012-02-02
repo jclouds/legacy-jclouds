@@ -22,7 +22,7 @@ import java.net.URI;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.openstack.keystone.v2_0.config.KeyStoneAuthenticationModule;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.rest.BaseRestClientExpectTest;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -60,7 +60,7 @@ public class BaseKeyStoneRestClientExpectTest<S> extends BaseRestClientExpectTes
    /**
     * in case you need to override anything
     */
-   public static class TestKeyStoneAuthenticationModule extends KeyStoneAuthenticationModule {
+   public static class TestKeyStoneAuthenticationModule extends KeystoneAuthenticationModule {
       @Override
       protected void configure() {
          super.configure();

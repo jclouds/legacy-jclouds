@@ -30,7 +30,7 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
-import org.jclouds.openstack.keystone.v2_0.config.KeyStoneAuthenticationModule;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.Service;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
@@ -61,13 +61,13 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
             .put(ServerClient.class, ServerAsyncClient.class)//
             .build();
 
-   private final KeyStoneAuthenticationModule authModule;
+   private final KeystoneAuthenticationModule authModule;
 
    public NovaRestClientModule() {
-      this(new KeyStoneAuthenticationModule());
+      this(new KeystoneAuthenticationModule());
    }
 
-   public NovaRestClientModule(KeyStoneAuthenticationModule authModule) {
+   public NovaRestClientModule(KeystoneAuthenticationModule authModule) {
       super(NovaClient.class, NovaAsyncClient.class, DELEGATE_MAP);
       this.authModule = authModule;
    }
