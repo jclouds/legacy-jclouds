@@ -28,7 +28,7 @@ import org.jclouds.cloudstack.parse.ListZonesResponseTest;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.location.suppliers.JustProvider;
+import org.jclouds.location.suppliers.all.JustProvider;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;

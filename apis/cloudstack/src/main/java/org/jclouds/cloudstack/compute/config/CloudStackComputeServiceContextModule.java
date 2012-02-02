@@ -24,13 +24,12 @@ import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.compute.functions.ServiceOfferingToHardware;
@@ -66,17 +65,19 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
-import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -107,8 +108,6 @@ public class CloudStackComputeServiceContextModule
       }).to(ServiceOfferingToHardware.class);
       bind(new TypeLiteral<Function<Zone, Location>>() {
       }).to(ZoneToLocation.class);
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(OnlyLocationOrFirstZone.class);
       bind(TemplateOptions.class).to(CloudStackTemplateOptions.class);
       bind(new TypeLiteral<Function<Template, OperatingSystem>>() {
       }).to(TemplateToOperatingSystem.class);
@@ -119,12 +118,14 @@ public class CloudStackComputeServiceContextModule
       }).to(ZoneIdToZone.class);
       bind(new TypeLiteral<Supplier<LoadingCache<Long, Zone>>>() {
       }).to(ZoneIdToZoneSupplier.class);
+      // to have the compute service adapter override default locations
+      install(new LocationsFromComputeServiceAdapterModule<VirtualMachine, ServiceOffering, Template, Zone>(){});
    }
-
+   
    @Provides
    @Singleton
    @Memoized
-   public Supplier<Map<Long, String>> listOSCategories(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+   public Supplier<Map<Long, String>> listOSCategories(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final CloudStackClient client) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<Long, String>>(authException,
             seconds, new Supplier<Map<Long, String>>() {
@@ -139,7 +140,7 @@ public class CloudStackComputeServiceContextModule
    @Provides
    @Singleton
    @Memoized
-   public Supplier<Map<Long, OSType>> listOSTypes(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+   public Supplier<Map<Long, OSType>> listOSTypes(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final CloudStackClient client) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<Long, OSType>>(authException,
             seconds, new Supplier<Map<Long, OSType>>() {
@@ -160,7 +161,7 @@ public class CloudStackComputeServiceContextModule
    @Provides
    @Singleton
    @Memoized
-   public Supplier<Map<Long, Network>> listNetworks(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+   public Supplier<Map<Long, Network>> listNetworks(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final NetworksForCurrentUser networksForCurrentUser) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<Long, Network>>(authException,
             seconds, networksForCurrentUser);
@@ -169,7 +170,7 @@ public class CloudStackComputeServiceContextModule
    @Provides
    @Singleton
    @Memoized
-   public Supplier<User> getCurrentUser(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+   public Supplier<User> getCurrentUser(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final GetCurrentUser getCurrentUser) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<User>(authException, seconds,
             getCurrentUser);

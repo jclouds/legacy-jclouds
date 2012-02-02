@@ -26,7 +26,7 @@ import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.location.suppliers.JustProvider;
+import org.jclouds.location.suppliers.all.JustProvider;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
