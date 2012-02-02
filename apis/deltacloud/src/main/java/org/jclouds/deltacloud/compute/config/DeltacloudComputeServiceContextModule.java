@@ -32,10 +32,8 @@ import org.jclouds.deltacloud.domain.HardwareProfile;
 import org.jclouds.deltacloud.domain.Instance;
 import org.jclouds.deltacloud.domain.Realm;
 import org.jclouds.domain.Location;
-import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -64,7 +62,7 @@ public class DeltacloudComputeServiceContextModule
       }).to(HardwareProfileToHardware.class);
       bind(new TypeLiteral<Function<Realm, Location>>() {
       }).to(RealmToLocation.class);
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(OnlyLocationOrFirstZone.class);
+      // to have the compute service adapter override default locations
+      install(new LocationsFromComputeServiceAdapterModule<Instance, HardwareProfile, org.jclouds.deltacloud.domain.Image, Realm>(){});
    }
 }

@@ -49,8 +49,10 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Iterables;
 import com.google.inject.Provides;
 
@@ -100,47 +102,56 @@ public class DeltacloudRestClientModule extends RestClientModule<DeltacloudClien
     */
    @Provides
    @Images
-   protected URI provideImageCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
-      return findCollectionWithRel(collectionSupplier.get(), "images").getHref();
+   protected Supplier<URI> provideImageCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+      return Suppliers.compose(new FindCollectionWithRelAndReturnHref("images"), collectionSupplier);
    }
 
-   public static DeltacloudCollection findCollectionWithRel(Iterable<? extends DeltacloudCollection> iterable,
-         final String rel) {
-      try {
-         return Iterables.find(iterable, new Predicate<DeltacloudCollection>() {
+   public static class FindCollectionWithRelAndReturnHref implements Function<Set<? extends DeltacloudCollection>, URI> {
+      private final String rel;
 
-            @Override
-            public boolean apply(DeltacloudCollection arg0) {
-               return arg0.getRel().equals(rel);
-            }
-
-         });
-      } catch (NoSuchElementException e) {
-         throw new NoSuchElementException("could not find rel " + rel + " in collections " + iterable);
+      public FindCollectionWithRelAndReturnHref(String rel) {
+         this.rel = rel;
       }
+
+      @Override
+      public URI apply(Set<? extends DeltacloudCollection> arg0) {
+         try {
+            return Iterables.find(arg0, new Predicate<DeltacloudCollection>() {
+
+               @Override
+               public boolean apply(DeltacloudCollection arg0) {
+                  return arg0.getRel().equals(rel);
+               }
+
+            }).getHref();
+         } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("could not find rel " + rel + " in collections " + arg0);
+         }
+      }
+
    }
 
    @Provides
    @HardwareProfiles
-   protected URI provideHardwareProfileCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
-      return findCollectionWithRel(collectionSupplier.get(), "hardware_profiles").getHref();
+   protected Supplier<URI> provideHardwareProfileCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+      return Suppliers.compose(new FindCollectionWithRelAndReturnHref("hardware_profiles"), collectionSupplier);
    }
 
    @Provides
    @Instances
-   protected URI provideInstanceCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
-      return findCollectionWithRel(collectionSupplier.get(), "instances").getHref();
+   protected Supplier<URI> provideInstanceCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+      return Suppliers.compose(new FindCollectionWithRelAndReturnHref("instances"), collectionSupplier);
    }
 
    @Provides
    @Realms
-   protected URI provideRealmCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
-      return findCollectionWithRel(collectionSupplier.get(), "realms").getHref();
+   protected Supplier<URI> provideRealmCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+      return Suppliers.compose(new FindCollectionWithRelAndReturnHref("realms"), collectionSupplier);
    }
 
    @Provides
    @InstanceStates
-   protected URI provideInstanceStateCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
-      return findCollectionWithRel(collectionSupplier.get(), "instance_states").getHref();
+   protected Supplier<URI> provideInstanceStateCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+      return Suppliers.compose(new FindCollectionWithRelAndReturnHref("instance_states"), collectionSupplier);
    }
 }

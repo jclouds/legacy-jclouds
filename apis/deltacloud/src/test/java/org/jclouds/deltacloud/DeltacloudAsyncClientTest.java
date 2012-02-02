@@ -309,28 +309,28 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
       }
 
       @Override
-      protected URI provideImageCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
-         return URI.create("http://localhost:3001/api/images");
+      protected Supplier<URI> provideImageCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+         return Suppliers.ofInstance(URI.create("http://localhost:3001/api/images"));
       }
 
       @Override
-      protected URI provideHardwareProfileCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
-         return URI.create("http://localhost:3001/api/profiles");
+      protected Supplier<URI> provideHardwareProfileCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+         return Suppliers.ofInstance(URI.create("http://localhost:3001/api/profiles"));
       }
 
       @Override
-      protected URI provideInstanceCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
-         return URI.create("http://localhost:3001/api/instances");
+      protected Supplier<URI> provideInstanceCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+         return Suppliers.ofInstance(URI.create("http://localhost:3001/api/instances"));
       }
 
       @Override
-      protected URI provideRealmCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
-         return URI.create("http://localhost:3001/api/realms");
+      protected Supplier<URI> provideRealmCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+         return Suppliers.ofInstance(URI.create("http://localhost:3001/api/realms"));
       }
 
       @Override
-      protected URI provideInstanceStateCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
-         return URI.create("http://localhost:3001/api/instance_states");
+      protected Supplier<URI> provideInstanceStateCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+         return Suppliers.ofInstance(URI.create("http://localhost:3001/api/instance_states"));
       }
    }
 
