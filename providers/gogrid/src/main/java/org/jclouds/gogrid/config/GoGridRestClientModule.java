@@ -29,6 +29,7 @@ import org.jclouds.date.TimeStamp;
 import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.handlers.GoGridErrorHandler;
+import org.jclouds.gogrid.location.GoGridDefaultLocationSupplier;
 import org.jclouds.gogrid.services.GridImageAsyncClient;
 import org.jclouds.gogrid.services.GridImageClient;
 import org.jclouds.gogrid.services.GridIpAsyncClient;
@@ -44,6 +45,7 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
@@ -51,6 +53,7 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 
 /**
  * Configures the GoGrid connection.
@@ -105,4 +108,9 @@ public class GoGridRestClientModule extends RestClientModule<GoGridClient, GoGri
       super.configure();
    }
 
+   @Override
+   protected void installLocations() {
+      super.installLocations();
+      bind(ImplicitLocationSupplier.class).to(GoGridDefaultLocationSupplier.class).in(Scopes.SINGLETON);
+   }
 }

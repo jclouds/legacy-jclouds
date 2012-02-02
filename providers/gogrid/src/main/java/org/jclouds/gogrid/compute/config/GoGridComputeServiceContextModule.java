@@ -43,7 +43,6 @@ import org.jclouds.gogrid.compute.functions.ServerImageToImage;
 import org.jclouds.gogrid.compute.functions.ServerToNodeMetadata;
 import org.jclouds.gogrid.compute.options.GoGridTemplateOptions;
 import org.jclouds.gogrid.compute.strategy.GoGridComputeServiceAdapter;
-import org.jclouds.gogrid.compute.suppliers.GoGridDefaultLocationSupplier;
 import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.domain.ServerImage;
@@ -51,7 +50,6 @@ import org.jclouds.gogrid.domain.ServerState;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
@@ -93,11 +91,10 @@ public class GoGridComputeServiceContextModule extends
       bind(new TypeLiteral<Function<Hardware, Hardware>>() {
       }).to((Class) IdentityFunction.class);
 
-      // there are no locations except the provider
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(GoGridDefaultLocationSupplier.class);
-
       bind(TemplateOptions.class).to(GoGridTemplateOptions.class);
+      
+      // to have the compute service adapter override default locations
+      install(new LocationsFromComputeServiceAdapterModule<Server, Hardware, ServerImage, Option>(){});
    }
 
    @VisibleForTesting

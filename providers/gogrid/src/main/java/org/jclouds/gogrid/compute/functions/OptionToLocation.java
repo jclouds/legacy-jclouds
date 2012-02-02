@@ -20,7 +20,6 @@ package org.jclouds.gogrid.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,10 +31,10 @@ import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.gogrid.domain.Option;
 import org.jclouds.location.Iso3166;
-import org.jclouds.location.Provider;
-import org.jclouds.location.suppliers.JustProvider;
+import org.jclouds.location.suppliers.all.JustProvider;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 
 /**
@@ -43,25 +42,24 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class OptionToLocation extends JustProvider implements Function<Option, Location> {
-
-   private final Map<String, Set<String>> isoCodesById;
+public class OptionToLocation implements Function<Option, Location> {
    private final Location provider;
+   private final Supplier<Map<String, Supplier<Set<String>>>> isoCodesByIdSupplier;
 
    @Inject
-   OptionToLocation(@Iso3166 Set<String> isoCodes, @Provider String providerName, @Provider URI endpoint,
-            @Iso3166 Map<String, Set<String>> isoCodesById) {
-      super(providerName, endpoint, isoCodes);
-      this.provider = Iterables.getOnlyElement(super.get());
-      this.isoCodesById = checkNotNull(isoCodesById, "isoCodesById");
+   OptionToLocation(JustProvider justProvider,
+            @Iso3166 Supplier<Map<String, Supplier<Set<String>>>> isoCodesByIdSupplier) {
+      this.provider = Iterables.getOnlyElement(justProvider.get());
+      this.isoCodesByIdSupplier = checkNotNull(isoCodesByIdSupplier, "isoCodesByIdSupplier");
    }
 
    @Override
    public Location apply(Option from) {
       LocationBuilder builder = new LocationBuilder().scope(LocationScope.ZONE).id(from.getId() + "").description(
                from.getDescription()).parent(provider);
+      Map<String, Supplier<Set<String>>> isoCodesById = isoCodesByIdSupplier.get();
       if (isoCodesById.containsKey(from.getId() + ""))
-         builder.iso3166Codes(isoCodesById.get(from.getId() + ""));
+         builder.iso3166Codes(isoCodesById.get(from.getId() + "").get());
       return builder.build();
    }
 }
