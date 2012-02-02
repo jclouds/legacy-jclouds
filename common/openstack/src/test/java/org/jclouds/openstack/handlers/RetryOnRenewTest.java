@@ -30,7 +30,7 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
-import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
+import org.jclouds.openstack.domain.AuthenticationResponse;
 import org.testng.annotations.Test;
 
 import com.google.common.cache.LoadingCache;

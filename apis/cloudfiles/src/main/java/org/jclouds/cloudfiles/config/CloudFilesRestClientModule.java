@@ -18,6 +18,7 @@
  */
 package org.jclouds.cloudfiles.config;
 
+
 import java.net.URI;
 
 import javax.inject.Singleton;
@@ -34,7 +35,7 @@ import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule;
-import org.jclouds.openstack.keystone.v1_1.domain.Auth;
+import org.jclouds.openstack.keystone.v1_1.functions.PublicURLFromAuthResponseForService;
 import org.jclouds.openstack.keystone.v1_1.handlers.RetryOnRenew;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.CommonSwiftClient;
@@ -44,7 +45,7 @@ import org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponse;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
-import com.google.common.collect.Iterables;
+import com.google.common.base.Supplier;
 import com.google.inject.Provides;
 
 /**
@@ -76,19 +77,19 @@ public class CloudFilesRestClientModule extends RestClientModule<CloudFilesClien
    CommonSwiftAsyncClient provideCommonSwiftClient(CloudFilesAsyncClient in) {
       return in;
    }
-
+   
    @Provides
    @Singleton
    @CDNManagement
-   protected URI provideCDNUrl(Auth response) {
-      return Iterables.get(response.getServiceCatalog().get("cloudFilesCDN"), 0).getPublicURL();
+   protected Supplier<URI> provideCDNUrl(PublicURLFromAuthResponseForService.Factory factory) {
+      return factory.create("cloudFilesCDN");
    }
-
+   
    @Provides
    @Singleton
    @Storage
-   protected URI provideStorageUrl(Auth response) {
-      return Iterables.get(response.getServiceCatalog().get("cloudFiles"), 0).getPublicURL();
+   protected Supplier<URI> provideStorageUrl(PublicURLFromAuthResponseForService.Factory factory) {
+      return factory.create("cloudFiles");
    }
    
    @Override

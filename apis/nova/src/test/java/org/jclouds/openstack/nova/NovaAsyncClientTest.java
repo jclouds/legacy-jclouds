@@ -28,7 +28,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.Date;
 import java.util.Properties;
 
@@ -39,7 +38,6 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
 import org.jclouds.openstack.TestOpenStackAuthenticationModule;
 import org.jclouds.openstack.filters.AddTimestampQuery;
 import org.jclouds.openstack.filters.AuthenticateRequest;
@@ -775,11 +773,6 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
    protected static class TestNovaRestClientModule extends NovaRestClientModule {
       private TestNovaRestClientModule() {
          super(new TestOpenStackAuthenticationModule());
-      }
-
-      @Override
-      protected URI provideServerUrl(AuthenticationResponse response) {
-         return URI.create("http://endpoint/vapi-version");
       }
 
    }

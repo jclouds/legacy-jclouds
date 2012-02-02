@@ -18,23 +18,17 @@
  */
 package org.jclouds.openstack;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.net.URI;
-import java.util.Map;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 
 import org.jclouds.Constants;
+import org.jclouds.openstack.domain.AuthenticationResponse;
 import org.jclouds.openstack.functions.ParseAuthenticationResponseFromHeaders;
 import org.jclouds.openstack.reference.AuthHeaders;
 import org.jclouds.rest.annotations.ResponseParser;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -47,48 +41,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Path("/v{" + Constants.PROPERTY_API_VERSION + "}")
 public interface OpenStackAuthAsyncClient {
    public static final String VERSION = "1.0";
-
-   public static class AuthenticationResponse {
-      private final String authToken;
-      private Map<String, URI> services;
-
-      public AuthenticationResponse(String authToken, Map<String, URI> services) {
-         this.authToken = checkNotNull(authToken, "authToken");
-         this.services = ImmutableMap.copyOf(checkNotNull(services, "services"));
-      }
-
-      public Map<String, URI> getServices() {
-         return services;
-      }
-
-      public void setEndpoints(Map<String, URI> services) {
-         this.services = services;
-      }
-
-      public String getAuthToken() {
-         return authToken;
-      }
-
-      // performance isn't a concern on a infrequent object like this, so using shortcuts;
-
-      @Override
-      public int hashCode() {
-         return Objects.hashCode(authToken, services);
-      }
-
-      @Override
-      public boolean equals(Object that) {
-         if (that == null)
-            return false;
-         return Objects.equal(this.toString(), that.toString());
-      }
-
-      @Override
-      public String toString() {
-         return Objects.toStringHelper(this).add("authToken", authToken).add("services", services).toString();
-      }
-
-   }
 
    @GET
    @Consumes

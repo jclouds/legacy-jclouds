@@ -16,23 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudloadbalancers.loadbalancer.config;
+package org.jclouds.openstack.keystone.v1_1.functions;
 
-import java.util.Set;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.domain.Location;
-import org.jclouds.loadbalancer.config.BindLoadBalancerSuppliersByClass;
-import org.jclouds.location.suppliers.RegionToProviderOrJustProvider;
+import java.net.URI;
 
-import com.google.common.base.Supplier;
+import org.jclouds.openstack.keystone.v1_1.domain.Auth;
 
-/**
- * @author Adrian Cole
- */
-public class CloudLoadBalancersBindLoadBalancerSuppliersByClass extends BindLoadBalancerSuppliersByClass {
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+
+public class PublicUrlForService implements Function<Auth, URI> {
+   private final String serviceId;
+
+   public PublicUrlForService(String serviceId) {
+      this.serviceId = checkNotNull(serviceId, "serviceId");
+   }
 
    @Override
-   protected Class<? extends Supplier<Set<? extends Location>>> defineLocationSupplier() {
-      return RegionToProviderOrJustProvider.class;
+   public URI apply(Auth arg0) {
+      return Iterables.get(arg0.getServiceCatalog().get(serviceId), 0).getPublicURL();
    }
 }

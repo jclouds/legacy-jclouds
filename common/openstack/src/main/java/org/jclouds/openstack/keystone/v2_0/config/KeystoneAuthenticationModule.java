@@ -19,6 +19,7 @@
 package org.jclouds.openstack.keystone.v2_0.config;
 
 import static com.google.common.base.Throwables.propagate;
+import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -35,11 +36,12 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.location.Provider;
 import org.jclouds.openstack.Authentication;
 import org.jclouds.openstack.keystone.v2_0.ServiceAsyncClient;
+import org.jclouds.openstack.keystone.v2_0.ServiceClient;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.functions.AuthenticateApiAccessKeyCredentials;
 import org.jclouds.openstack.keystone.v2_0.functions.AuthenticatePasswordCredentials;
+import org.jclouds.openstack.keystone.v2_0.functions.PublicURLFromAccessForService;
 import org.jclouds.openstack.keystone.v2_0.handlers.RetryOnRenew;
-import org.jclouds.rest.AsyncClientFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -49,6 +51,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
  * 
@@ -61,6 +64,10 @@ public class KeystoneAuthenticationModule extends AbstractModule {
    protected void configure() {
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
       bind(CredentialType.class).toProvider(CredentialTypeFromPropertyOrDefault.class);
+      // ServiceClient is used directly for filters and retry handlers, so let's bind it
+      // explicitly
+      bindClientAndAsyncClient(binder(), ServiceClient.class, ServiceAsyncClient.class);
+      install(new FactoryModuleBuilder().build(PublicURLFromAccessForService.Factory.class));
    }
 
    /**
@@ -76,15 +83,6 @@ public class KeystoneAuthenticationModule extends AbstractModule {
             return supplier.get().getToken().getId();
          }
       };
-   }
-
-   /**
-    * service is needed to locate endpoints and such
-    */
-   @Provides
-   @Singleton
-   protected ServiceAsyncClient provideServiceClient(AsyncClientFactory factory) {
-      return factory.create(ServiceAsyncClient.class);
    }
 
    @Singleton
@@ -148,16 +146,6 @@ public class KeystoneAuthenticationModule extends AbstractModule {
             }
          }
       };
-   }
-
-   /**
-    * currently, endpointParams are not configured to take their results from a supplier lazily, so
-    * we need to eagerly fetch.
-    */
-   @Provides
-   @Singleton
-   protected Access provideAccess(Supplier<Access> supplier) {
-      return supplier.get();
    }
 
 }

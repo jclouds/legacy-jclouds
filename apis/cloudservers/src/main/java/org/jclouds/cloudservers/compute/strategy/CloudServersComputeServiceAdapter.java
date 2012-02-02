@@ -36,7 +36,8 @@ import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.location.suppliers.JustProvider;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * defines the connection between the {@link CloudServersClient} implementation and the jclouds
@@ -47,13 +48,10 @@ import org.jclouds.location.suppliers.JustProvider;
 public class CloudServersComputeServiceAdapter implements ComputeServiceAdapter<Server, Flavor, Image, Location> {
 
    protected final CloudServersClient client;
-   protected final JustProvider locationSupplier;
 
    @Inject
-   protected CloudServersComputeServiceAdapter(CloudServersClient client, JustProvider locationSupplier) {
+   protected CloudServersComputeServiceAdapter(CloudServersClient client) {
       this.client = checkNotNull(client, "client");
-      this.locationSupplier = checkNotNull(locationSupplier, "locationSupplier");
-
    }
 
    @Override
@@ -83,10 +81,10 @@ public class CloudServersComputeServiceAdapter implements ComputeServiceAdapter<
       return client.listServers(ListOptions.Builder.withDetails());
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public Iterable<Location> listLocations() {
-      return (Iterable<Location>) locationSupplier.get();
+      // Not using the adapter to determine locations
+      return ImmutableSet.<Location>of();
    }
 
    @Override

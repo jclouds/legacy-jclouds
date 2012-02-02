@@ -28,7 +28,7 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.logging.Logger;
-import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
+import org.jclouds.openstack.domain.AuthenticationResponse;
 import org.jclouds.openstack.reference.AuthHeaders;
 
 import com.google.common.cache.LoadingCache;

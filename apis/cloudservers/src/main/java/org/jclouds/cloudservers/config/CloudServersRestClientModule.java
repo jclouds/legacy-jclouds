@@ -39,14 +39,13 @@ import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule;
-import org.jclouds.openstack.keystone.v1_1.domain.Auth;
+import org.jclouds.openstack.keystone.v1_1.functions.PublicURLFromAuthResponseForService;
 import org.jclouds.openstack.keystone.v1_1.handlers.RetryOnRenew;
 import org.jclouds.openstack.services.Compute;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Supplier;
-import com.google.common.collect.Iterables;
 import com.google.inject.Provides;
 
 /**
@@ -90,10 +89,10 @@ public class CloudServersRestClientModule extends RestClientModule<CloudServersC
    @Provides
    @Singleton
    @Compute
-   protected URI provideServerUrl(Auth response) {
-      return Iterables.get(response.getServiceCatalog().get("cloudServers"), 0).getPublicURL();
+   protected Supplier<URI> provideServerUrl(PublicURLFromAuthResponseForService.Factory factory) {
+      return factory.create("cloudServers");
    }
-
+   
    //TODO: see if we still need this.
    @Provides
    @Singleton

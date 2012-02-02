@@ -27,7 +27,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.jclouds.Constants;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
+import org.jclouds.openstack.domain.AuthenticationResponse;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;

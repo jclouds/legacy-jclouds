@@ -19,6 +19,7 @@
 package org.jclouds.openstack.keystone.v1_1.config;
 
 import static com.google.common.base.Throwables.propagate;
+import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -33,18 +34,19 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.location.Provider;
 import org.jclouds.openstack.Authentication;
 import org.jclouds.openstack.keystone.v1_1.ServiceAsyncClient;
+import org.jclouds.openstack.keystone.v1_1.ServiceClient;
 import org.jclouds.openstack.keystone.v1_1.domain.Auth;
-import org.jclouds.rest.AsyncClientFactory;
+import org.jclouds.openstack.keystone.v1_1.functions.PublicURLFromAuthResponseForService;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
  * 
@@ -57,6 +59,10 @@ public class AuthenticationServiceModule extends AbstractModule {
    protected void configure() {
       bind(new TypeLiteral<Function<Credentials, Auth>>() {
       }).to(GetAuth.class);
+      // ServiceClient is used directly for filters and retry handlers, so let's bind it
+      // explicitly
+      bindClientAndAsyncClient(binder(), ServiceClient.class, ServiceAsyncClient.class);
+      install(new FactoryModuleBuilder().build(PublicURLFromAuthResponseForService.Factory.class));
    }
 
    /**
@@ -74,28 +80,16 @@ public class AuthenticationServiceModule extends AbstractModule {
       };
    }
 
-   @Provides
-   @Singleton
-   protected ServiceAsyncClient provideServiceClient(AsyncClientFactory factory) {
-      return factory.create(ServiceAsyncClient.class);
-   }
-   
    @Singleton
    public static class GetAuth extends RetryOnTimeOutExceptionFunction<Credentials, Auth> {
-      
-      // passing factory here to avoid a circular dependency on
-      // OpenStackAuthAsyncClient resolving OpenStackAuthAsyncClient
+
       @Inject
-      public GetAuth(final AsyncClientFactory factory) {
+      public GetAuth(final ServiceClient client) {
          super(new Function<Credentials, Auth>() {
 
             @Override
             public Auth apply(Credentials input) {
-               try {
-                  return factory.create(ServiceAsyncClient.class).authenticate(input.identity, input.credential).get();
-               } catch (Exception e) {
-                  throw Throwables.propagate(e);
-               }
+               return client.authenticate(input.identity, input.credential);
             }
 
             @Override
@@ -109,7 +103,7 @@ public class AuthenticationServiceModule extends AbstractModule {
 
    @Provides
    @Singleton
-   public LoadingCache<Credentials, Auth> provideAuthCache2(Function<Credentials, Auth> getAuth) {
+   public LoadingCache<Credentials, Auth> provideAuthCache(Function<Credentials, Auth> getAuth) {
       return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS).build(CacheLoader.from(getAuth));
    }
 
@@ -128,11 +122,4 @@ public class AuthenticationServiceModule extends AbstractModule {
          }
       };
    }
-
-   @Provides
-   @Singleton
-   protected Auth provideAuth(Supplier<Auth> supplier) {
-      return supplier.get();
-   }
-
 }

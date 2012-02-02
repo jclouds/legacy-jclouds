@@ -22,15 +22,11 @@ import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.openstack.TestOpenStackAuthenticationModule;
-import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
-import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
-import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.config.BaseSwiftRestClientModule;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
@@ -65,12 +61,6 @@ public abstract class CommonSwiftClientTest<A extends CommonSwiftAsyncClient> ex
       private TestSwiftRestClientModule() {
          super(new TestOpenStackAuthenticationModule(), CommonSwiftClient.class, CommonSwiftAsyncClient.class);
       }
-
-      @Override
-      protected URI provideStorageUrl(AuthenticationResponse response) {
-         return URI.create("http://storage");
-      }
-
    }
 
    protected String provider = "swift";

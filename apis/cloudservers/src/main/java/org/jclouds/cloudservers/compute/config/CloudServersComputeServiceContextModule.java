@@ -42,7 +42,7 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
-import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
+import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstZone;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -85,13 +85,9 @@ public class CloudServersComputeServiceContextModule
       // we aren't converting location from a provider-specific type
       bind(new TypeLiteral<Function<Location, Location>>() {
       }).to((Class) IdentityFunction.class);
-      
-      // there are no locations except  the provider
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(OnlyLocationOrFirstZone.class);
 
    }
-
+   
    @VisibleForTesting
    public static final Map<ServerStatus, NodeState> serverToNodeState = ImmutableMap
             .<ServerStatus, NodeState> builder().put(ServerStatus.ACTIVE, NodeState.RUNNING)//
@@ -124,5 +120,6 @@ public class CloudServersComputeServiceContextModule
    Map<ServerStatus, NodeState> provideServerToNodeState() {
       return serverToNodeState;
    }
+
 
 }

@@ -21,8 +21,13 @@ package org.jclouds.openstack;
 import java.net.URI;
 import java.util.Date;
 
-import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.jclouds.domain.Credentials;
 import org.jclouds.openstack.config.OpenStackAuthenticationModule;
+import org.jclouds.openstack.domain.AuthenticationResponse;
+import org.jclouds.openstack.reference.AuthHeaders;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
@@ -35,11 +40,24 @@ public class TestOpenStackAuthenticationModule extends OpenStackAuthenticationMo
    @Override
    protected void configure() {
       super.configure();
+      bind(GetAuthenticationResponse.class).to(TestGetAuthenticationResponse.class);
    }
 
-   @Override
-   protected AuthenticationResponse provideAuthenticationResponse(Supplier<AuthenticationResponse> supplier) {
-      return new AuthenticationResponse("authToken", ImmutableMap.<String, URI> of());
+   @Singleton
+   public static class TestGetAuthenticationResponse extends GetAuthenticationResponse {
+
+      @Inject
+      protected TestGetAuthenticationResponse() {
+         super(null);
+      }
+
+      @Override
+      public AuthenticationResponse apply(Credentials input) {
+         return new AuthenticationResponse("authToken", ImmutableMap.<String, URI> of(
+                  AuthHeaders.SERVER_MANAGEMENT_URL, URI.create("http://endpoint/vapi-version"),
+                  AuthHeaders.STORAGE_URL, URI.create("http://storage")));
+      }
+
    }
 
    @Override

@@ -27,7 +27,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -43,6 +42,7 @@ import org.jclouds.location.Region;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -58,12 +58,12 @@ public class CloudLoadBalancersListLoadBalancersStrategy implements ListLoadBala
    private final CloudLoadBalancersAsyncClient aclient;
    private final Function<LoadBalancer, LoadBalancerMetadata> converter;
    private final ExecutorService executor;
-   private final Set<String> regions;
+   private final Supplier<Set<String>> regions;
 
    @Inject
    protected CloudLoadBalancersListLoadBalancersStrategy(CloudLoadBalancersAsyncClient aclient,
             Function<LoadBalancer, LoadBalancerMetadata> converter,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, @Nullable @Region Set<String> regions) {
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, @Region Supplier<Set<String>> regions) {
       this.aclient = checkNotNull(aclient, "aclient");
       this.regions = checkNotNull(regions, "regions");
       this.converter = checkNotNull(converter, "converter");
@@ -72,7 +72,7 @@ public class CloudLoadBalancersListLoadBalancersStrategy implements ListLoadBala
 
    @Override
    public Iterable<? extends LoadBalancerMetadata> listLoadBalancers() {
-      return transform(concat(transformParallel(regions, new Function<String, Future<Set<LoadBalancer>>>() {
+      return transform(concat(transformParallel(regions.get(), new Function<String, Future<Set<LoadBalancer>>>() {
 
          @Override
          public ListenableFuture<Set<LoadBalancer>> apply(String from) {

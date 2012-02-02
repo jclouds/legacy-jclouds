@@ -19,22 +19,23 @@
 package org.jclouds.openstack.keystone.v2_0.functions;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.domain.Credentials;
-import org.jclouds.openstack.keystone.v2_0.ServiceAsyncClient;
+import org.jclouds.openstack.keystone.v2_0.ServiceClient;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiAccessKeyCredentials;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
-import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 
+@Singleton
 public class AuthenticateApiAccessKeyCredentials implements Function<Credentials, Access> {
-   private final ServiceAsyncClient client;
+   private final ServiceClient client;
 
    @Inject
-   public AuthenticateApiAccessKeyCredentials(ServiceAsyncClient client) {
+   public AuthenticateApiAccessKeyCredentials(ServiceClient client) {
       this.client = client;
    }
 
@@ -46,13 +47,9 @@ public class AuthenticateApiAccessKeyCredentials implements Function<Credentials
       String usernameOrAccessKey = Iterables.get(tenantIdUsernameOrAccessKey, 1);
       String passwordOrSecretKey = input.credential;
 
-      try {
-         ApiAccessKeyCredentials apiAccessKeyCredentials = ApiAccessKeyCredentials.createWithAccessKeyAndSecretKey(
-                  usernameOrAccessKey, passwordOrSecretKey);
-         return client.authenticateTenantWithCredentials(tenantId, apiAccessKeyCredentials).get();
-      } catch (Exception e) {
-         throw Throwables.propagate(e);
-      }
+      ApiAccessKeyCredentials apiAccessKeyCredentials = ApiAccessKeyCredentials.createWithAccessKeyAndSecretKey(
+               usernameOrAccessKey, passwordOrSecretKey);
+      return client.authenticateTenantWithCredentials(tenantId, apiAccessKeyCredentials);
    }
 
    @Override

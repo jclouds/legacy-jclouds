@@ -29,8 +29,7 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
-import org.jclouds.openstack.keystone.v2_0.domain.Access;
-import org.jclouds.openstack.keystone.v2_0.domain.Service;
+import org.jclouds.openstack.keystone.v2_0.functions.PublicURLFromAccessForService;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerAsyncClient;
@@ -41,9 +40,8 @@ import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
-import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.google.inject.Provides;
 
 /**
@@ -83,19 +81,11 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(NovaErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(NovaErrorHandler.class);
    }
-
    @Provides
    @Singleton
    @Compute
-   protected URI provideServerUrl(Access response) {
-      return Iterables.getOnlyElement(Iterables.find(response.getServiceCatalog(), new Predicate<Service>(){
-
-         @Override
-         public boolean apply(Service input) {
-            return input.getId().equals(ServiceType.COMPUTE);
-         }
-         
-      }).getEndpoints()).getPublicURL();
+   protected Supplier<URI> provideServerUrl(PublicURLFromAccessForService.Factory factory) {
+      return factory.create(ServiceType.COMPUTE);
    }
 
 }

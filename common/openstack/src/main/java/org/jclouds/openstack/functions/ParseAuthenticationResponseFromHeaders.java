@@ -34,7 +34,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
-import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
+import org.jclouds.openstack.domain.AuthenticationResponse;
 import org.jclouds.rest.InvocationContext;
 
 import com.google.common.annotations.VisibleForTesting;

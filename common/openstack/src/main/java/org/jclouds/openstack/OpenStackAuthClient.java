@@ -16,22 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudloadbalancers.loadbalancer.config;
+package org.jclouds.openstack;
+import java.util.concurrent.TimeUnit;
 
-import org.jclouds.loadbalancer.config.BaseLoadBalancerServiceContextModule;
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.openstack.domain.AuthenticationResponse;
 
 /**
- * Configures the CloudLoadBalancers connection.
+ * Provides access to Rackspace resources via their REST API.
+ * <p/>
  * 
+ * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
  * @author Adrian Cole
  */
+@Timeout(duration = 10, timeUnit = TimeUnit.SECONDS)
+public interface OpenStackAuthClient {
 
-public class CloudLoadBalancersLoadBalancerContextModule extends BaseLoadBalancerServiceContextModule {
-
-   @Override
-   protected void configure() {
-      install(new CloudLoadBalancersBindLoadBalancerStrategiesByClass());
-      install(new CloudLoadBalancersLoadBalancerServiceDependenciesModule());
-      super.configure();
-   }
+   AuthenticationResponse authenticate(String user, String key);
 }

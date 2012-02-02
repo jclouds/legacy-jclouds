@@ -30,8 +30,8 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
-import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
 import org.jclouds.openstack.config.OpenStackAuthenticationModule;
+import org.jclouds.openstack.functions.URIFromAuthenticationResponseForService;
 import org.jclouds.openstack.handlers.RetryOnRenew;
 import org.jclouds.openstack.reference.AuthHeaders;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
@@ -41,6 +41,7 @@ import org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponse;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
+import com.google.common.base.Supplier;
 import com.google.inject.Provides;
 
 /**
@@ -82,11 +83,11 @@ public class BaseSwiftRestClientModule<S extends CommonSwiftClient, A extends Co
    protected void bindRetryHandlers() {
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
    }
-   
+
    @Provides
    @Singleton
    @Storage
-   protected URI provideStorageUrl(AuthenticationResponse response) {
-      return response.getServices().get(AuthHeaders.STORAGE_URL);
+   protected Supplier<URI> provideStorageUrl(URIFromAuthenticationResponseForService.Factory factory) {
+      return factory.create(AuthHeaders.STORAGE_URL);
    }
 }

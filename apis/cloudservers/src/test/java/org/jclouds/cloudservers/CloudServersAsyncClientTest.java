@@ -31,7 +31,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Properties;
@@ -96,7 +95,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
             createServerOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method, "ralphie", 2, 1);
 
-      assertRequestLineEquals(request, "POST http://serverManagementUrl/servers?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1}}",
             "application/json", false);
@@ -114,7 +113,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
             createServerOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method, "ralphie", 2, 1, withSharedIpGroup(2));
 
-      assertRequestLineEquals(request, "POST http://serverManagementUrl/servers?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request,
             "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1,\"sharedIpGroupId\":2}}",
@@ -133,7 +132,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       HttpRequest request = processor
             .createRequest(method, "ralphie", 2, 1, withFile("/etc/jclouds", "foo".getBytes()));
 
-      assertRequestLineEquals(request, "POST http://serverManagementUrl/servers?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(
             request,
@@ -154,7 +153,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       HttpRequest request = processor.createRequest(method, "ralphie", 2, 1,
             withMetadata(ImmutableMap.of("foo", "bar")));
 
-      assertRequestLineEquals(request, "POST http://serverManagementUrl/servers?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request,
             "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1,\"metadata\":{\"foo\":\"bar\"}}}",
@@ -175,7 +174,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       HttpRequest request = processor.createRequest(method, "ralphie", 2, 1,
             withSharedIpGroup(2).withSharedIp("127.0.0.1"));
 
-      assertRequestLineEquals(request, "POST http://serverManagementUrl/servers?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(
             request,
@@ -193,7 +192,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("deleteImage", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "DELETE http://serverManagementUrl/images/2 HTTP/1.1");
+      assertRequestLineEquals(request, "DELETE https://lon.servers.api.rackspacecloud.com/v1.0/10001786/images/2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -208,7 +207,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("getLimits");
       HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(request, "GET http://serverManagementUrl/limits?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/limits?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -223,7 +222,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listServers", listOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(request, "GET http://serverManagementUrl/servers?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -241,7 +240,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       HttpRequest request = processor.createRequest(method, changesSince(now).maxResults(1).startAt(2));
 
       assertRequestLineEquals(request,
-            "GET http://serverManagementUrl/servers?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
+            "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -256,7 +255,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listServers", listOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method, withDetails());
 
-      assertRequestLineEquals(request, "GET http://serverManagementUrl/servers/detail?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/detail?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -271,7 +270,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("getServer", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "GET http://serverManagementUrl/servers/2?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/2?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -286,7 +285,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listFlavors", listOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(request, "GET http://serverManagementUrl/flavors?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/flavors?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -302,7 +301,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       HttpRequest request = processor.createRequest(method, changesSince(now).maxResults(1).startAt(2));
 
       assertRequestLineEquals(request,
-            "GET http://serverManagementUrl/flavors?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
+            "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/flavors?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -317,7 +316,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listFlavors", listOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method, withDetails());
 
-      assertRequestLineEquals(request, "GET http://serverManagementUrl/flavors/detail?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/flavors/detail?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -333,7 +332,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       HttpRequest request = processor.createRequest(method, withDetails().changesSince(now).maxResults(1).startAt(2));
 
       assertRequestLineEquals(request,
-            "GET http://serverManagementUrl/flavors/detail?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
+            "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/flavors/detail?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -348,7 +347,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("getFlavor", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "GET http://serverManagementUrl/flavors/2?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/flavors/2?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -363,7 +362,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listImages", listOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(request, "GET http://serverManagementUrl/images?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/images?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -378,7 +377,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listImages", listOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method, withDetails());
 
-      assertRequestLineEquals(request, "GET http://serverManagementUrl/images/detail?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/images/detail?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -394,7 +393,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       HttpRequest request = processor.createRequest(method, changesSince(now).maxResults(1).startAt(2));
 
       assertRequestLineEquals(request,
-            "GET http://serverManagementUrl/images?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
+            "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/images?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -410,7 +409,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       HttpRequest request = processor.createRequest(method, withDetails().changesSince(now).maxResults(1).startAt(2));
 
       assertRequestLineEquals(request,
-            "GET http://serverManagementUrl/images/detail?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
+            "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/images/detail?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -425,7 +424,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("getImage", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "GET http://serverManagementUrl/images/2?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/images/2?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -440,7 +439,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("deleteServer", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "DELETE http://serverManagementUrl/servers/2 HTTP/1.1");
+      assertRequestLineEquals(request, "DELETE https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -456,7 +455,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
             boolean.class);
       HttpRequest request = processor.createRequest(method, "127.0.0.1", 2, 3, false);
 
-      assertRequestLineEquals(request, "PUT http://serverManagementUrl/servers/2/ips/public/127.0.0.1 HTTP/1.1");
+      assertRequestLineEquals(request, "PUT https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/2/ips/public/127.0.0.1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"shareIp\":{\"sharedIpGroupId\":3,\"configureServer\":false}}",
             MediaType.APPLICATION_JSON, false);
@@ -474,7 +473,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
             boolean.class);
       HttpRequest request = processor.createRequest(method, "127.0.0.1", 2, 3, true);
 
-      assertRequestLineEquals(request, "PUT http://serverManagementUrl/servers/2/ips/public/127.0.0.1 HTTP/1.1");
+      assertRequestLineEquals(request, "PUT https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/2/ips/public/127.0.0.1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"shareIp\":{\"sharedIpGroupId\":3,\"configureServer\":true}}",
             MediaType.APPLICATION_JSON, false);
@@ -492,7 +491,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("unshareIp", String.class, int.class);
       HttpRequest request = processor.createRequest(method, "127.0.0.1", 2, 3, false);
 
-      assertRequestLineEquals(request, "DELETE http://serverManagementUrl/servers/2/ips/public/127.0.0.1 HTTP/1.1");
+      assertRequestLineEquals(request, "DELETE https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/2/ips/public/127.0.0.1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -509,7 +508,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       HttpRequest request = processor.createRequest(method, 2, new BackupSchedule(WeeklyBackup.MONDAY,
             DailyBackup.H_0800_1000, true));
 
-      assertRequestLineEquals(request, "POST http://serverManagementUrl/servers/2/backup_schedule HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/2/backup_schedule HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request,
             "{\"backupSchedule\":{\"daily\":\"H_0800_1000\",\"enabled\":true,\"weekly\":\"MONDAY\"}}",
@@ -527,7 +526,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("deleteBackupSchedule", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "DELETE http://serverManagementUrl/servers/2/backup_schedule HTTP/1.1");
+      assertRequestLineEquals(request, "DELETE https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/2/backup_schedule HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, MediaType.APPLICATION_JSON, false);
 
@@ -543,7 +542,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("changeAdminPass", int.class, String.class);
       HttpRequest request = processor.createRequest(method, 2, "foo");
 
-      assertRequestLineEquals(request, "PUT http://serverManagementUrl/servers/2 HTTP/1.1");
+      assertRequestLineEquals(request, "PUT https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"server\":{\"adminPass\":\"foo\"}}", MediaType.APPLICATION_JSON, false);
 
@@ -559,7 +558,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("renameServer", int.class, String.class);
       HttpRequest request = processor.createRequest(method, 2, "foo");
 
-      assertRequestLineEquals(request, "PUT http://serverManagementUrl/servers/2 HTTP/1.1");
+      assertRequestLineEquals(request, "PUT https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"server\":{\"name\":\"foo\"}}", MediaType.APPLICATION_JSON, false);
 
@@ -575,7 +574,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listSharedIpGroups", listOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(request, "GET http://serverManagementUrl/shared_ip_groups?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/shared_ip_groups?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -591,7 +590,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       HttpRequest request = processor.createRequest(method, changesSince(now).maxResults(1).startAt(2));
 
       assertRequestLineEquals(request,
-            "GET http://serverManagementUrl/shared_ip_groups?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
+            "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/shared_ip_groups?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -606,7 +605,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listSharedIpGroups", listOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method, withDetails());
 
-      assertRequestLineEquals(request, "GET http://serverManagementUrl/shared_ip_groups/detail?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/shared_ip_groups/detail?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -622,7 +621,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       HttpRequest request = processor.createRequest(method, withDetails().changesSince(now).maxResults(1).startAt(2));
 
       assertRequestLineEquals(request,
-            "GET http://serverManagementUrl/shared_ip_groups/detail?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
+            "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/shared_ip_groups/detail?format=json&changes-since=10000&limit=1&offset=2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -637,7 +636,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("getSharedIpGroup", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "GET http://serverManagementUrl/shared_ip_groups/2?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/shared_ip_groups/2?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -656,7 +655,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
             createSharedIpGroupOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method, "ralphie");
 
-      assertRequestLineEquals(request, "POST http://serverManagementUrl/shared_ip_groups?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://lon.servers.api.rackspacecloud.com/v1.0/10001786/shared_ip_groups?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, "{\"sharedIpGroup\":{\"name\":\"ralphie\"}}", MediaType.APPLICATION_JSON, false);
 
@@ -673,7 +672,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
             createSharedIpGroupOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method, "ralphie", withServer(2));
 
-      assertRequestLineEquals(request, "POST http://serverManagementUrl/shared_ip_groups?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://lon.servers.api.rackspacecloud.com/v1.0/10001786/shared_ip_groups?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, "{\"sharedIpGroup\":{\"name\":\"ralphie\",\"server\":2}}",
             MediaType.APPLICATION_JSON, false);
@@ -689,7 +688,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("deleteSharedIpGroup", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "DELETE http://serverManagementUrl/shared_ip_groups/2 HTTP/1.1");
+      assertRequestLineEquals(request, "DELETE https://lon.servers.api.rackspacecloud.com/v1.0/10001786/shared_ip_groups/2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -704,7 +703,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("getAddresses", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "GET http://serverManagementUrl/servers/2/ips?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/2/ips?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -719,7 +718,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listPublicAddresses", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "GET http://serverManagementUrl/servers/2/ips/public?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/2/ips/public?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -734,7 +733,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("listPrivateAddresses", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "GET http://serverManagementUrl/servers/2/ips/private?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/2/ips/private?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -749,7 +748,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("getBackupSchedule", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "GET http://serverManagementUrl/servers/2/backup_schedule?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/2/backup_schedule?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -764,7 +763,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("createImageFromServer", String.class, int.class);
       HttpRequest request = processor.createRequest(method, "ralphie", 2);
 
-      assertRequestLineEquals(request, "POST http://serverManagementUrl/images?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://lon.servers.api.rackspacecloud.com/v1.0/10001786/images?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, "{\"image\":{\"serverId\":2,\"name\":\"ralphie\"}}", MediaType.APPLICATION_JSON,
             false);
@@ -785,7 +784,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
             rebuildServerOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method, 3);
 
-      assertRequestLineEquals(request, "POST http://serverManagementUrl/servers/3/action?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/3/action?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"rebuild\":{}}", MediaType.APPLICATION_JSON, false);
 
@@ -801,7 +800,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
             rebuildServerOptionsVarargsClass);
       HttpRequest request = processor.createRequest(method, 3, withImage(2));
 
-      assertRequestLineEquals(request, "POST http://serverManagementUrl/servers/3/action?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/3/action?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"rebuild\":{\"imageId\":2}}", MediaType.APPLICATION_JSON, false);
 
@@ -816,7 +815,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("rebootServer", int.class, RebootType.class);
       HttpRequest request = processor.createRequest(method, 2, RebootType.HARD);
 
-      assertRequestLineEquals(request, "POST http://serverManagementUrl/servers/2/action?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/2/action?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"reboot\":{\"type\":\"HARD\"}}", MediaType.APPLICATION_JSON, false);
 
@@ -831,7 +830,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("resizeServer", int.class, int.class);
       HttpRequest request = processor.createRequest(method, 2, 3);
 
-      assertRequestLineEquals(request, "POST http://serverManagementUrl/servers/2/action?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/2/action?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"resize\":{\"flavorId\":3}}", MediaType.APPLICATION_JSON, false);
 
@@ -847,7 +846,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("confirmResizeServer", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "POST http://serverManagementUrl/servers/2/action?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/2/action?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"confirmResize\":null}", MediaType.APPLICATION_JSON, false);
 
@@ -862,7 +861,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
       Method method = CloudServersAsyncClient.class.getMethod("revertResizeServer", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "POST http://serverManagementUrl/servers/2/action?format=json HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://lon.servers.api.rackspacecloud.com/v1.0/10001786/servers/2/action?format=json HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"revertResize\":null}", MediaType.APPLICATION_JSON, false);
 
@@ -908,11 +907,6 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
                return new ParseAuthTest().expected();
             }
          };
-      }
-
-      @Override
-      protected URI provideServerUrl(Auth response) {
-         return URI.create("http://serverManagementUrl");
       }
 
    }

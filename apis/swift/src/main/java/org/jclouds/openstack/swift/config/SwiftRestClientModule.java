@@ -18,13 +18,9 @@
  */
 package org.jclouds.openstack.swift.config;
 
-import java.net.URI;
-
 import javax.inject.Singleton;
 
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
-import org.jclouds.openstack.reference.AuthHeaders;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.SwiftAsyncClient;
@@ -57,7 +53,4 @@ public class SwiftRestClientModule extends BaseSwiftRestClientModule<SwiftClient
       return in;
    }
 
-   protected URI provideStorageUrl(AuthenticationResponse response) {
-      return response.getServices().get(AuthHeaders.STORAGE_URL);
-   }   
 }

@@ -22,12 +22,8 @@ import static org.jclouds.rest.RestContextFactory.contextSpec;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.concurrent.TimeUnit;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.openstack.OpenStackAuthAsyncClient;
-import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
 import org.jclouds.openstack.functions.ParseAuthenticationResponseFromHeaders;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextSpec;
@@ -90,9 +86,4 @@ public class OpenStackAuthAsyncClientTest extends RestClientTest<OpenStackAuthAs
       };
    }
 
-   @Timeout(duration = 10, timeUnit = TimeUnit.SECONDS)
-   public interface OpenStackAuthClient {
-
-      AuthenticationResponse authenticate(String user, String key);
-   }
 }

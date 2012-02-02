@@ -19,11 +19,10 @@
 package org.jclouds.openstack.config;
 
 import static com.google.common.base.Suppliers.memoizeWithExpiration;
-import static com.google.common.base.Throwables.propagate;
+import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -37,8 +36,9 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.location.Provider;
 import org.jclouds.openstack.Authentication;
 import org.jclouds.openstack.OpenStackAuthAsyncClient;
-import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
-import org.jclouds.rest.AsyncClientFactory;
+import org.jclouds.openstack.OpenStackAuthClient;
+import org.jclouds.openstack.domain.AuthenticationResponse;
+import org.jclouds.openstack.functions.URIFromAuthenticationResponseForService;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -48,6 +48,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
  * Configures the Rackspace authentication service connection, including logging and http transport.
@@ -61,6 +62,10 @@ public class OpenStackAuthenticationModule extends AbstractModule {
    protected void configure() {
       bind(new TypeLiteral<Function<Credentials, AuthenticationResponse>>() {
       }).to(GetAuthenticationResponse.class);
+      // OpenStackAuthClient is used directly for filters and retry handlers, so let's bind it
+      // explicitly
+      bindClientAndAsyncClient(binder(), OpenStackAuthClient.class, OpenStackAuthAsyncClient.class);
+      install(new FactoryModuleBuilder().build(URIFromAuthenticationResponseForService.Factory.class));
    }
 
    /**
@@ -82,21 +87,13 @@ public class OpenStackAuthenticationModule extends AbstractModule {
    public static class GetAuthenticationResponse extends
             RetryOnTimeOutExceptionFunction<Credentials, AuthenticationResponse> {
 
-      // passing factory here to avoid a circular dependency on
-      // OpenStackAuthAsyncClient resolving OpenStackAuthAsyncClient
       @Inject
-      public GetAuthenticationResponse(final AsyncClientFactory factory) {
+      public GetAuthenticationResponse(final OpenStackAuthClient client) {
          super(new Function<Credentials, AuthenticationResponse>() {
 
             @Override
             public AuthenticationResponse apply(Credentials input) {
-               try {
-                  Future<AuthenticationResponse> response = factory.create(OpenStackAuthAsyncClient.class)
-                           .authenticate(input.identity, input.credential);
-                  return response.get(30, TimeUnit.SECONDS);
-               } catch (Exception e) {
-                  throw propagate(e);
-               }
+               return client.authenticate(input.identity, input.credential);
             }
 
             @Override
@@ -110,7 +107,7 @@ public class OpenStackAuthenticationModule extends AbstractModule {
 
    @Provides
    @Singleton
-   public LoadingCache<Credentials, AuthenticationResponse> provideAuthenticationResponseCache2(
+   public LoadingCache<Credentials, AuthenticationResponse> provideAuthenticationResponseCache(
             Function<Credentials, AuthenticationResponse> getAuthenticationResponse) {
       return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS).build(
                CacheLoader.from(getAuthenticationResponse));
@@ -123,11 +120,7 @@ public class OpenStackAuthenticationModule extends AbstractModule {
       return new Supplier<AuthenticationResponse>() {
          @Override
          public AuthenticationResponse get() {
-            try {
-               return cache.get(creds);
-            } catch (ExecutionException e) {
-               throw propagate(e.getCause());
-            }
+            return cache.getUnchecked(creds);
          }
       };
    }
@@ -141,13 +134,6 @@ public class OpenStackAuthenticationModule extends AbstractModule {
             return new Date();
          }
       }, 1, TimeUnit.SECONDS);
-   }
-
-   @Provides
-   @Singleton
-   protected AuthenticationResponse provideAuthenticationResponse(Supplier<AuthenticationResponse> supplier)
-            throws InterruptedException, ExecutionException, TimeoutException {
-      return supplier.get();
    }
 
 }

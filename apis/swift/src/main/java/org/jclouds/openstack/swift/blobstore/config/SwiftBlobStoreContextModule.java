@@ -25,7 +25,6 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
-import org.jclouds.location.config.JustProviderLocationModule;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.blobstore.SwiftAsyncBlobStore;
@@ -47,7 +46,6 @@ public class SwiftBlobStoreContextModule extends AbstractModule {
    @Override
    protected void configure() {
       install(new BlobStoreMapModule());
-      install(new JustProviderLocationModule());
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
       bind(AsyncBlobStore.class).to(SwiftAsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(SwiftBlobStore.class).in(Scopes.SINGLETON);

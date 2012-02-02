@@ -32,7 +32,6 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
-import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.openstack.nova.NovaAsyncClient;
 import org.jclouds.openstack.nova.NovaClient;
 import org.jclouds.openstack.nova.compute.functions.FlavorToHardware;
@@ -46,7 +45,6 @@ import org.jclouds.openstack.nova.domain.ServerStatus;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -85,12 +83,8 @@ public class NovaComputeServiceContextModule
       bind(new TypeLiteral<Function<Location, Location>>() {
       }).to((Class) IdentityFunction.class);
 
-      // there are no locations except the provider
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(OnlyLocationOrFirstZone.class);
-
    }
-
+   
    @VisibleForTesting
    public static final Map<ServerStatus, NodeState> serverToNodeState = ImmutableMap
             .<ServerStatus, NodeState> builder().put(ServerStatus.ACTIVE, NodeState.RUNNING)//
