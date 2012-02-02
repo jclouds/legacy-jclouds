@@ -18,13 +18,19 @@
  */
 package org.jclouds.http;
 
+import static com.google.common.base.Throwables.propagate;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.net.ssl.SSLException;
 
 import org.jclouds.rest.BaseRestClientExpectTest;
 import org.jclouds.rest.BaseRestClientExpectTest.RegisterContext;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Function;
 
 /**
  * 
@@ -36,7 +42,34 @@ import org.testng.annotations.Test;
 // only needed as IntegrationTestClient is not registered in rest.properties
 @RegisterContext(sync = IntegrationTestClient.class, async = IntegrationTestAsyncClient.class)
 public class IntegrationTestClientExpectTest extends BaseRestClientExpectTest<IntegrationTestClient> {
+   
+   public void testRetryOnSSLExceptionClose() {
+      // keeps track of request count
+      final AtomicInteger counter = new AtomicInteger(0);
 
+      IntegrationTestClient client = createClient(new Function<HttpRequest, HttpResponse>() {
+         @Override
+         public HttpResponse apply(HttpRequest input) {
+            // on first request, throw an SSL close_notify exception
+            if (counter.getAndIncrement() == 0)
+               throw propagate(new SSLException("Received close_notify during handshake"));
+            
+            // on other requests, just validate and return 200
+            assertEquals(renderRequest(input), renderRequest(HttpRequest.builder().method("HEAD").endpoint(
+                     URI.create("http://mock/objects/rabbit")).build()));
+            return HttpResponse.builder().statusCode(200).build();
+         }
+      });
+
+      // try three times, first should fail quietly due to retry logic
+      for (int i = 0; i < 3; i++)
+         assertEquals(client.exists("rabbit"), true);
+
+      // should be an extra request relating to the retry
+      assertEquals(counter.get(), 4);
+
+   }
+   
    public void testWhenResponseIs2xxExistsReturnsTrue() {
 
       IntegrationTestClient client = requestSendsResponse(HttpRequest.builder().method("HEAD").endpoint(

@@ -26,10 +26,10 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.glesys.domain.Email;
+import org.jclouds.glesys.domain.EmailAccount;
 import org.jclouds.glesys.domain.EmailOverview;
-import org.jclouds.glesys.options.EmailCreateOptions;
-import org.jclouds.glesys.options.EmailEditOptions;
+import org.jclouds.glesys.options.CreateAccountOptions;
+import org.jclouds.glesys.options.EditAccountOptions;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -68,14 +68,14 @@ public interface EmailAsyncClient {
    @SelectJson("emailaccounts")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Email>> listAccounts(@FormParam("domain") String domain);
+   ListenableFuture<Set<EmailAccount>> listAccounts(@FormParam("domain") String domain);
 
    /**
     * @see org.jclouds.glesys.features.EmailClient#createAccount
     */
    @POST
    @Path("/email/createaccount/format/json")
-   ListenableFuture<Void> createAccount(@FormParam("emailaccount") String accountAddress, @FormParam("password") String password, EmailCreateOptions... options);
+   ListenableFuture<Void> createAccount(@FormParam("emailaccount") String accountAddress, @FormParam("password") String password, CreateAccountOptions... options);
 
    /**
     * @see org.jclouds.glesys.features.EmailClient#createAlias
@@ -89,7 +89,7 @@ public interface EmailAsyncClient {
     */
    @POST
    @Path("/email/editaccount/format/json")
-   ListenableFuture<Void> editAccount(@FormParam("emailaccount") String accountAddress, EmailEditOptions... options);
+   ListenableFuture<Void> editAccount(@FormParam("emailaccount") String accountAddress, EditAccountOptions... options);
 
    /**
     * @see org.jclouds.glesys.features.EmailClient#editAlias

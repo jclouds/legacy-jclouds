@@ -36,7 +36,7 @@ import com.google.common.collect.ImmutableList;
 @Singleton
 public class FlavorToHardware implements Function<Flavor, Hardware> {
    public Hardware apply(Flavor from) {
-      return new HardwareBuilder().ids(from.getId() + "").name(from.getName())
+      return new HardwareBuilder().ids(from.getId() + "").name(from.getName()).hypervisor("xen")
             .processors(ImmutableList.of(new Processor(from.getRam() / 1024.0, 1.0))).ram(from.getRam())
             .volumes(ImmutableList.<Volume> of(new VolumeImpl((from.getRam() * 4) / 1024.0f, true, true))).build();
    }

@@ -20,6 +20,7 @@ package org.jclouds.rest.annotations;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -33,7 +34,7 @@ import javax.inject.Qualifier;
  * 
  * @author Adrian Cole
  */
-@Target( { ANNOTATION_TYPE, FIELD, PARAMETER })
+@Target( { ANNOTATION_TYPE, FIELD, METHOD, PARAMETER })
 @Retention(RUNTIME)
 @Qualifier
 public @interface Identity {

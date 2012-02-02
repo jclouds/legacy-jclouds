@@ -18,6 +18,7 @@
  */
 package org.jclouds.glesys.domain;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
@@ -27,6 +28,8 @@ import com.google.gson.annotations.SerializedName;
  * @author Adam Lowe
  * @see <a href="https://customer.glesys.com/api.php?a=doc#email_overview" />
  */
+//TODO: find a better name for this class
+@Beta
 public class EmailOverviewSummary {
    public static Builder builder() {
       return new Builder();

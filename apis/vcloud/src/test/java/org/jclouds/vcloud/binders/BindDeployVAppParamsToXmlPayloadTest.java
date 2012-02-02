@@ -18,11 +18,10 @@
  */
 package org.jclouds.vcloud.binders;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 import java.io.IOException;
 import java.net.URI;
@@ -31,13 +30,13 @@ import java.util.Properties;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.VCloudPropertiesBuilder;
+import org.nnsoft.guice.rocoto.Rocoto;
+import org.nnsoft.guice.rocoto.configuration.ConfigurationModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Maps;
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code BindDeployVAppParamsToXmlPayload}
@@ -46,14 +45,13 @@ import com.google.inject.name.Names;
  */
 @Test(groups = "unit")
 public class BindDeployVAppParamsToXmlPayloadTest {
-   Injector injector = Guice.createInjector(new AbstractModule() {
+   Injector injector = Guice.createInjector(Rocoto.expandVariables(new ConfigurationModule() {
 
       @Override
-      protected void configure() {
-         Properties props = new Properties();
-         Names.bindProperties(binder(), checkNotNull(new VCloudPropertiesBuilder(props).build(), "properties"));
+      protected void bindConfigurations() {
+         bindProperties(new VCloudPropertiesBuilder(new Properties()).build());
       }
-   });
+   }));
 
    public void testPowerOnTrue() throws IOException {
       String expected = "<DeployVAppParams xmlns=\"http://www.vmware.com/vcloud/v1\" powerOn=\"true\"/>";

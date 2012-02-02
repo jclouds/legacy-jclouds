@@ -21,7 +21,6 @@ package org.jclouds.rackspace.cloudloadbalancers;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
-import static org.jclouds.cloudloadbalancers.reference.RackspaceConstants.PROPERTY_ACCOUNT_ID;
 import static org.jclouds.cloudloadbalancers.reference.Region.DFW;
 import static org.jclouds.cloudloadbalancers.reference.Region.ORD;
 import static org.jclouds.location.reference.LocationConstants.ENDPOINT;
@@ -52,13 +51,11 @@ public class CloudLoadBalancersUSPropertiesBuilder extends CloudLoadBalancersPro
       
       properties.setProperty(PROPERTY_REGION + "." + ORD + "." + ISO3166_CODES, "US-IL");
       properties.setProperty(PROPERTY_REGION + "." + ORD + "." + ENDPOINT, String
-               .format("https://ord.loadbalancers.api.rackspacecloud.com/v{%s}/{%s}", PROPERTY_API_VERSION,
-                        PROPERTY_ACCOUNT_ID));
+               .format("https://ord.loadbalancers.api.rackspacecloud.com/v${%s}", PROPERTY_API_VERSION));
       
       properties.setProperty(PROPERTY_REGION + "." + DFW + "." + ISO3166_CODES, "US-TX");
       properties.setProperty(PROPERTY_REGION + "." + DFW + "." + ENDPOINT, String
-               .format("https://dfw.loadbalancers.api.rackspacecloud.com/v{%s}/{%s}", PROPERTY_API_VERSION,
-                        PROPERTY_ACCOUNT_ID));
+               .format("https://dfw.loadbalancers.api.rackspacecloud.com/v${%s}", PROPERTY_API_VERSION));
       return properties;
    }
 

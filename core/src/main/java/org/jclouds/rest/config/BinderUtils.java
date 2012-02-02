@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Binder;
 import com.google.inject.Provider;
 
@@ -32,10 +33,57 @@ import com.google.inject.Provider;
  */
 public class BinderUtils {
 
-   public static <K, V> void bindClient(Binder binder, Class<K> syncClientType,
-            Class<V> asyncClientType, Map<Class<?>, Class<?>> delegates) {
-      Provider<K> asyncProvider = new ClientProvider<K, V>(syncClientType, asyncClientType,
-               delegates);
+   /**
+    * adds an explicit binding for a rest client, after which you can inject either the sync or
+    * async client class.
+    * 
+    * <h3>note</h3> This client cannot have @Delegate methods, so if you have them, use the
+    * {@link #bindClientAndAsyncClient(Binder, Class, Class, Map) overloaded method}.
+    * 
+    * @param <S>
+    *           sync client type
+    * @param <A>
+    *           async client type (all methods have same args as client, but return
+    *           listenablefuture)
+    * @param binder
+    *           guice binder
+    * @param syncClientType
+    *           interface for the sync client
+    * @param asyncClientType
+    *           interface for the async client
+    */
+   public static <S, A> void bindClientAndAsyncClient(Binder binder, Class<S> syncClientType, Class<A> asyncClientType) {
+      bindClientAndAsyncClient(binder, syncClientType, asyncClientType, ImmutableMap.<Class<?>, Class<?>> of());
+   }
+
+   /**
+    * adds an explicit binding for a rest client, after which you can inject either the sync or
+    * async client class.
+    * 
+    * @param <S>
+    *           sync client type
+    * @param <A>
+    *           async client type (all methods have same args as client, but return
+    *           listenablefuture)
+    * @param binder
+    *           guice binder
+    * @param syncClientType
+    *           interface for the sync client (ex. LoginClient)
+    * @param asyncClientType
+    *           interface for the async client (ex. LoginAsyncClient)
+    * @param delegates
+    *           presuming your clients are annotated with @Delegate, contains the sync to async
+    *           classes relating to these methods
+    */
+   public static <S, A> void bindClientAndAsyncClient(Binder binder, Class<S> syncClientType, Class<A> asyncClientType,
+            Map<Class<?>, Class<?>> delegates) {
+      bindClient(binder, syncClientType, asyncClientType, delegates);
+      bindAsyncClient(binder, asyncClientType);
+   }
+
+   public static <K, V> void bindClient(Binder binder, Class<K> syncClientType, Class<V> asyncClientType,
+            Map<Class<?>, Class<?>> delegates) {
+      Provider<K> asyncProvider = new ClientProvider<K, V>(syncClientType, asyncClientType, delegates);
       binder.requestInjection(asyncProvider);
       binder.bind(syncClientType).toProvider(asyncProvider);
    }
@@ -48,14 +96,13 @@ public class BinderUtils {
 
    @SuppressWarnings("unchecked")
    public static <T> T newNullProxy(Class<T> clazz) {
-      return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz },
-               new InvocationHandler() {
+      return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz }, new InvocationHandler() {
 
-                  @Override
-                  public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                     return null;
-                  }
+         @Override
+         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            return null;
+         }
 
-               });
+      });
    }
 }

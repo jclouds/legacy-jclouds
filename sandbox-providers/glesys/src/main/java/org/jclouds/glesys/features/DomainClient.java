@@ -21,10 +21,10 @@ package org.jclouds.glesys.features;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.glesys.domain.Domain;
 import org.jclouds.glesys.domain.DomainRecord;
-import org.jclouds.glesys.options.DomainAddOptions;
+import org.jclouds.glesys.options.AddDomainOptions;
 import org.jclouds.glesys.options.DomainOptions;
-import org.jclouds.glesys.options.DomainRecordAddOptions;
-import org.jclouds.glesys.options.DomainRecordEditOptions;
+import org.jclouds.glesys.options.AddRecordOptions;
+import org.jclouds.glesys.options.EditRecordOptions;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -53,7 +53,7 @@ public interface DomainClient {
     * @param domain  the name of the domain to add.
     * @param options optional parameters
     */
-   void addDomain(String domain, DomainAddOptions... options);
+   void addDomain(String domain, AddDomainOptions... options);
 
    /**
     * Add a domain to the Glesys dns-system
@@ -86,7 +86,7 @@ public interface DomainClient {
     * @param data
     * @param options optional settings for the record
     */
-   void addRecord(String domain, String host, String type, String data, DomainRecordAddOptions... options);
+   void addRecord(String domain, String host, String type, String data, AddRecordOptions... options);
 
    /**
     * Modify a specific DNS Record
@@ -95,7 +95,7 @@ public interface DomainClient {
     * @param options  the settings to change
     * @see #listRecords to retrieve the necessary ids
     */
-   void editRecord(String recordId, DomainRecordEditOptions... options);
+   void editRecord(String recordId, EditRecordOptions... options);
 
    /**
     * Delete a DNS record

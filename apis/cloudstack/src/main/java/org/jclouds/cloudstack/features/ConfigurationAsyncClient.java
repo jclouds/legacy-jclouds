@@ -23,7 +23,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.cloudstack.domain.Capabilities;
-import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
@@ -38,7 +38,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html" />
  * @author Adrian Cole
  */
-@RequestFilters(QuerySigner.class)
+@RequestFilters(AuthenticationFilter.class)
 @QueryParams(keys = "response", values = "json")
 public interface ConfigurationAsyncClient {
 

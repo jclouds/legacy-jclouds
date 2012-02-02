@@ -18,24 +18,17 @@
  */
 package org.jclouds.openstack.keystone.v2_0;
 
-import java.util.Set;
-
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.Constants;
-import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.keystone.v2_0.binders.BindAuthToJsonPayload;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiAccessKeyCredentials;
 import org.jclouds.openstack.keystone.v2_0.domain.PasswordCredentials;
-import org.jclouds.openstack.keystone.v2_0.domain.Tenant;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.PayloadParam;
-import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -49,7 +42,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  *      />
  * @author Adrian Cole
  */
-@Path("/v{" + Constants.PROPERTY_API_VERSION + "}")
+@Path("/v2.0")
 public interface ServiceAsyncClient {
 
    /**
@@ -73,16 +66,4 @@ public interface ServiceAsyncClient {
    @MapBinder(BindAuthToJsonPayload.class)
    ListenableFuture<Access> authenticateTenantWithCredentials(@PayloadParam("tenantId") String tenantId,
             ApiAccessKeyCredentials apiAccessKeyCredentials);
-
-   /**
-    * @see ServiceClient#getTenants()
-    */
-   @GET
-   @SelectJson("tenants")
-   @Consumes(MediaType.APPLICATION_JSON)
-   @Path("/tenants")
-   @RequestFilters(AuthenticateRequest.class)
-   ListenableFuture<? extends Set<Tenant>> getTenants();
-
-
 }

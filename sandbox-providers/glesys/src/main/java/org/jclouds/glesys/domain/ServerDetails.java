@@ -18,13 +18,13 @@
  */
 package org.jclouds.glesys.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.collect.ImmutableList;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Detailed information about a server such as cpuCores, hardware configuration
@@ -40,11 +40,11 @@ public class ServerDetails extends Server {
 
    public static class Builder extends Server.Builder {
       private String description;
-      private String template;
+      private String templateName;
       private int cpuCores;
-      private int memory;
-      private int disk;
-      private int transfer;
+      private int memorySizeMB;
+      private int diskSizeGB;
+      private int transferGB;
       private Cost cost;
       private List<Ip> ips;
 
@@ -53,8 +53,8 @@ public class ServerDetails extends Server {
          return this;
       }
 
-      public Builder template(String template) {
-         this.template = template;
+      public Builder templateName(String templateName) {
+         this.templateName = templateName;
          return this;
       }
       
@@ -63,18 +63,18 @@ public class ServerDetails extends Server {
          return this;
       }
 
-      public Builder memory(int memory) {
-         this.memory = memory;
+      public Builder memorySizeMB(int memorySizeMB) {
+         this.memorySizeMB = memorySizeMB;
          return this;
       }
 
-      public Builder disk(int disk) {
-         this.disk = disk;
+      public Builder diskSizeGB(int diskSizeGB) {
+         this.diskSizeGB = diskSizeGB;
          return this;
       }
 
-      public Builder transfer(int transfer) {
-         this.transfer = transfer;
+      public Builder transferGB(int transferGB) {
+         this.transferGB = transferGB;
          return this;
       }
 
@@ -93,12 +93,12 @@ public class ServerDetails extends Server {
       }
 
       public ServerDetails build() {
-         return new ServerDetails(id, hostname, datacenter, platform, template, description, cpuCores, memory, disk, transfer, cost, ips);
+         return new ServerDetails(id, hostname, datacenter, platform, templateName, description, cpuCores, memorySizeMB, diskSizeGB, transferGB, cost, ips);
       }
 
       public Builder fromServerDetails(ServerDetails in) {
-         return fromServer(in).template(in.getTemplate()).memory(in.getMemory()).disk(in.getDisk()).cpuCores(in.getCpuCores()).cost(in.getCost())
-               .description(in.getDescription()).ips(in.getIps());
+         return fromServer(in).templateName(in.getTemplateName()).memorySizeMB(in.getMemorySizeMB()).diskSizeGB(in.getDiskSizeGB()).cpuCores(in.getCpuCores()).cost(in.getCost())
+               .transferGB(in.getTransferGB()).description(in.getDescription()).ips(in.getIps());
       }
 
       @Override
@@ -128,25 +128,29 @@ public class ServerDetails extends Server {
    }
 
    private final String description;
-   private final String template;
+   @SerializedName("templatename")
+   private final String templateName;
    @SerializedName("cpucores")
    private final int cpuCores;
-   private final int memory;
-   private final int disk;
-   private final int transfer;
+   @SerializedName("memorysize")
+   private final int memorySizeMB;
+   @SerializedName("disksize")
+   private final int diskSizeGB;
+   @SerializedName("transfer")
+   private final int transferGB;
    private final Cost cost;
    @SerializedName("iplist")
    private final List<Ip> ips;
 
-   public ServerDetails(String id, String hostname, String datacenter, String platform, String template,
-                        String description, int cpuCores, int memory, int disk, int transfer, Cost cost, List<Ip> ips) {
+   public ServerDetails(String id, String hostname, String datacenter, String platform, String templateName,
+                        String description, int cpuCores, int memorySizeMB, int diskSizeGB, int transferGB, Cost cost, List<Ip> ips) {
       super(id, hostname, datacenter, platform);
-      this.template = checkNotNull(template, "template");
+      this.templateName = checkNotNull(templateName, "template");
       this.description = description;
       this.cpuCores = cpuCores;
-      this.memory = memory;
-      this.disk = disk;
-      this.transfer = transfer;
+      this.memorySizeMB = memorySizeMB;
+      this.diskSizeGB = diskSizeGB;
+      this.transferGB = transferGB;
       this.cost = checkNotNull(cost, "cost");
       this.ips = ips == null ? ImmutableList.<Ip>of() : ips;
    }
@@ -168,22 +172,22 @@ public class ServerDetails extends Server {
    /**
     * @return the disk of the server in GB
     */
-   public int getDisk() {
-      return disk;
+   public int getDiskSizeGB() {
+      return diskSizeGB;
    }
 
    /**
     * @return the memory of the server in MB
     */
-   public int getMemory() {
-      return memory;
+   public int getMemorySizeMB() {
+      return memorySizeMB;
    }
 
    /**
     * @return the transfer of the server
     */
-   public int getTransfer() {
-      return transfer;
+   public int getTransferGB() {
+      return transferGB;
    }
 
    /**
@@ -203,15 +207,15 @@ public class ServerDetails extends Server {
    /**
     * @return the name of the template used to create the server
     */
-   public String getTemplate() {
-      return template;
+   public String getTemplateName() {
+      return templateName;
    }
 
    @Override
    public String toString() {
       return String.format(
-            "[id=%s, hostname=%s, datacenter=%s, platform=%s, template=%s, description=%s, cpuCores=%d, memory=%d, disk=%d, transfer=%d, cost=%s, ips=%s]", id,
-            hostname, datacenter, platform, template, description, cpuCores, memory, disk, transfer, cost, ips);
+            "[id=%s, hostname=%s, datacenter=%s, platform=%s, templateName=%s, description=%s, cpuCores=%d, memorySizeMB=%d, diskSizeGB=%d, transferGB=%d, cost=%s, ips=%s]", id,
+            hostname, datacenter, platform, templateName, description, cpuCores, memorySizeMB, diskSizeGB, transferGB, cost, ips);
    }
 
 }

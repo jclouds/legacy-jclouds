@@ -40,137 +40,79 @@ public class RetryOnRenewExpectTest extends BaseCloudServersRestClientExpectTest
 
    @Test
    public void testShouldReauthenticateOn401() {
-      String authToken = "d6245d35-22a0-47c0-9770-2c5097da25fc";
-      String authToken2 = "12345678-9012-47c0-9770-2c5097da25fc";
-      
-      HttpRequest initialAuth = HttpRequest.builder().method("GET").endpoint(URI.create("https://auth/v1.0"))
-               .headers(
-               ImmutableMultimap.<String, String> builder()
-               .put("X-Auth-User", "identity")
-               .put("X-Auth-Key", "credential")
-               .put("Accept", "*/*").build()).build();
-      
-      
-      HttpResponse responseWithUrls = HttpResponse.builder().statusCode(204).message("HTTP/1.1 204 No Content")
-               .headers(ImmutableMultimap.<String,String>builder()
-               .put("Server", "Apache/2.2.3 (Red Hat)")
-               .put("vary", "X-Auth-Token,X-Auth-Key,X-Storage-User,X-Storage-Pass")
-               .put("X-Storage-Url", "https://storage101.dfw1.clouddrive.com/v1/MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22")
-               .put("Cache-Control", "s-maxage=86399")
-               .put("Content-Type", "text/xml")
-               .put("Date", "Tue, 10 Jan 2012 22:08:47 GMT")
-               .put("X-Auth-Token", authToken)
-               .put("X-Server-Management-Url","https://servers.api.rackspacecloud.com/v1.0/413274")
-               .put("X-Storage-Token", authToken)
-               .put("Connection", "Keep-Alive")
-               .put("X-CDN-Management-Url", "https://cdn1.clouddrive.com/v1/MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22")
-               .put("Content-Length", "0")
-               .build()).build();
-      
-      HttpRequest deleteImage = HttpRequest.builder().method("DELETE").endpoint(
-               URI.create("https://servers.api.rackspacecloud.com/v1.0/413274/images/11?now=1257695648897")).headers(
-               ImmutableMultimap.<String, String> builder()
-               .put("X-Auth-Token", authToken).build()).build();
 
-      HttpResponse pleaseRenew = HttpResponse.builder().statusCode(401)
-               .message("HTTP/1.1 401 Unauthorized")
-               .payload(Payloads.newStringPayload("[{\"unauthorized\":{\"message\":\"Invalid authentication token.  Please renew.\",\"code\":401}}]"))
-               .build();
-      
+      HttpRequest deleteImage = HttpRequest.builder().method("DELETE")
+            .endpoint(URI.create("https://lon.servers.api.rackspacecloud.com/v1.0/10001786/images/11?now=1257695648897"))
+            .headers(ImmutableMultimap.<String, String> builder().put("X-Auth-Token", authToken).build()).build();
+
+      HttpResponse pleaseRenew = HttpResponse
+            .builder()
+            .statusCode(401)
+            .message("HTTP/1.1 401 Unauthorized")
+            .payload(
+                  Payloads
+                        .newStringPayload("[{\"unauthorized\":{\"message\":\"Invalid authentication token.  Please renew.\",\"code\":401}}]"))
+            .build();
+
       // second auth uses same creds as initial one
       HttpRequest redoAuth = initialAuth;
       
-      HttpResponse responseWithUrls2 = HttpResponse.builder().statusCode(204).message("HTTP/1.1 204 No Content")
-               .headers(ImmutableMultimap.<String,String>builder()
-               .put("Server", "Apache/2.2.3 (Red Hat)")
-               .put("vary", "X-Auth-Token,X-Auth-Key,X-Storage-User,X-Storage-Pass")
-               .put("X-Storage-Url", "https://storage101.dfw1.clouddrive.com/v1/MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22")
-               .put("Cache-Control", "s-maxage=86399")
-               .put("Content-Type", "text/xml")
-               .put("Date", "Tue, 10 Jan 2012 22:08:47 GMT")
-               .put("X-Auth-Token", authToken2)
-               .put("X-Server-Management-Url","https://servers.api.rackspacecloud.com/v1.0/413274")
-               .put("X-Storage-Token", authToken2)
-               .put("Connection", "Keep-Alive")
-               .put("X-CDN-Management-Url", "https://cdn1.clouddrive.com/v1/MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22")
-               .put("Content-Length", "0")
-               .build()).build();
-            
-      HttpRequest deleteImage2 = HttpRequest.builder().method("DELETE").endpoint(
-               URI.create("https://servers.api.rackspacecloud.com/v1.0/413274/images/11?now=1257695648897")).headers(
-               ImmutableMultimap.<String, String> builder()
-               .put("X-Auth-Token", authToken2).build()).build();
+      String authToken2 = "12345678-9012-47c0-9770-2c5097da25fc";
+
+      HttpResponse responseWithUrls2 = HttpResponse
+            .Builder.from(responseWithAuth)
+            .payload(
+                  Payloads.newPayload(responseWithAuth.getPayload().getRawContent().toString()
+                        .replace(authToken, authToken2))).build();
+
+      HttpRequest deleteImage2 = HttpRequest.builder().method("DELETE")
+            .endpoint(URI.create("https://lon.servers.api.rackspacecloud.com/v1.0/10001786/images/11?now=1257695648897"))
+            .headers(ImmutableMultimap.<String, String> builder().put("X-Auth-Token", authToken2).build()).build();
 
       HttpResponse imageDeleted = HttpResponse.builder().statusCode(204).message("HTTP/1.1 204 No Content").build();
 
-      CloudServersClient clientWhenImageExists = orderedRequestsSendResponses(initialAuth, responseWithUrls,
-                deleteImage, pleaseRenew, redoAuth, responseWithUrls2, deleteImage2, imageDeleted);
-      
+      CloudServersClient clientWhenImageExists = orderedRequestsSendResponses(initialAuth, responseWithAuth,
+            deleteImage, pleaseRenew, redoAuth, responseWithUrls2, deleteImage2, imageDeleted);
+
       assert clientWhenImageExists.deleteImage(11);
    }
 
-   @Test(expectedExceptions=AuthorizationException.class)
+   @Test(expectedExceptions = AuthorizationException.class)
    public void testDoesNotReauthenticateOnFatal401() {
-      String authToken = "d6245d35-22a0-47c0-9770-2c5097da25fc";
-      
-      HttpRequest initialAuth = HttpRequest.builder().method("GET").endpoint(URI.create("https://auth/v1.0"))
-               .headers(
-               ImmutableMultimap.<String, String> builder()
-               .put("X-Auth-User", "identity")
-               .put("X-Auth-Key", "credential")
-               .put("Accept", "*/*").build()).build();
-      
-      
-      HttpResponse responseWithUrls = HttpResponse.builder().statusCode(204).message("HTTP/1.1 204 No Content")
-               .headers(ImmutableMultimap.<String,String>builder()
-               .put("Server", "Apache/2.2.3 (Red Hat)")
-               .put("vary", "X-Auth-Token,X-Auth-Key,X-Storage-User,X-Storage-Pass")
-               .put("X-Storage-Url", "https://storage101.dfw1.clouddrive.com/v1/MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22")
-               .put("Cache-Control", "s-maxage=86399")
-               .put("Content-Type", "text/xml")
-               .put("Date", "Tue, 10 Jan 2012 22:08:47 GMT")
-               .put("X-Auth-Token", authToken)
-               .put("X-Server-Management-Url","https://servers.api.rackspacecloud.com/v1.0/413274")
-               .put("X-Storage-Token", authToken)
-               .put("Connection", "Keep-Alive")
-               .put("X-CDN-Management-Url", "https://cdn1.clouddrive.com/v1/MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22")
-               .put("Content-Length", "0")
-               .build()).build();
-      
-      HttpRequest deleteImage = HttpRequest.builder().method("DELETE").endpoint(
-               URI.create("https://servers.api.rackspacecloud.com/v1.0/413274/images/11?now=1257695648897")).headers(
-               ImmutableMultimap.<String, String> builder()
-               .put("X-Auth-Token", authToken).build()).build();
+      HttpRequest deleteImage = HttpRequest.builder().method("DELETE")
+            .endpoint(URI.create("https://lon.servers.api.rackspacecloud.com/v1.0/10001786/images/11?now=1257695648897"))
+            .headers(ImmutableMultimap.<String, String> builder().put("X-Auth-Token", authToken).build()).build();
 
-      HttpResponse unauthResponse = HttpResponse.builder().statusCode(401)
-               .message("HTTP/1.1 401 Unauthorized")
-               .payload(Payloads.newStringPayload("[{\"unauthorized\":{\"message\":\"Fatal unauthorized.\",\"code\":401}}]"))
-               .build();
+      HttpResponse unauthResponse = HttpResponse
+            .builder()
+            .statusCode(401)
+            .message("HTTP/1.1 401 Unauthorized")
+            .payload(
+                  Payloads.newStringPayload("[{\"unauthorized\":{\"message\":\"Fatal unauthorized.\",\"code\":401}}]"))
+            .build();
 
-      CloudServersClient client = orderedRequestsSendResponses(initialAuth, responseWithUrls,
-                deleteImage, unauthResponse);
-      
+      CloudServersClient client = orderedRequestsSendResponses(initialAuth, responseWithAuth, deleteImage,
+            unauthResponse);
+
       client.deleteImage(11);
    }
 
-   // FIXME stack trace shows the AuthorizationException, but it's buried inside a guice TestException
-   @Test(expectedExceptions=AuthorizationException.class)
+   // FIXME stack trace shows the AuthorizationException, but it's buried inside
+   // a guice TestException
+   @Test(expectedExceptions = AuthorizationException.class)
    public void testDoesNotReauthenticateOnAuthentication401() {
-      HttpRequest initialAuth = HttpRequest.builder().method("GET").endpoint(URI.create("https://auth/v1.0"))
-               .headers(
-               ImmutableMultimap.<String, String> builder()
-               .put("X-Auth-User", "identity")
-               .put("X-Auth-Key", "credential")
-               .put("Accept", "*/*").build()).build();
-      
-      
-      HttpResponse unauthResponse = HttpResponse.builder().statusCode(401)
-               .message("HTTP/1.1 401 Unauthorized")
-               .payload(Payloads.newStringPayload("[{\"unauthorized\":{\"message\":\"A different message implying fatal.\",\"code\":401}}]"))
-               .build();
+
+      HttpResponse unauthResponse = HttpResponse
+            .builder()
+            .statusCode(401)
+            .message("HTTP/1.1 401 Unauthorized")
+            .payload(
+                  Payloads
+                        .newStringPayload("[{\"unauthorized\":{\"message\":\"A different message implying fatal.\",\"code\":401}}]"))
+            .build();
 
       CloudServersClient client = requestSendsResponse(initialAuth, unauthResponse);
-                    
+
       client.deleteImage(11);
    }
 }

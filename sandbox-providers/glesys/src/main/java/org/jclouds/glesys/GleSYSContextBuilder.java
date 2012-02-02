@@ -21,8 +21,9 @@ package org.jclouds.glesys;
 import java.util.List;
 import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.glesys.compute.config.GleSYSComputeServiceContextModule;
 import org.jclouds.glesys.config.GleSYSRestClientModule;
-import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Module;
 
@@ -30,10 +31,15 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class GleSYSContextBuilder extends RestContextBuilder<GleSYSClient, GleSYSAsyncClient> {
+public class GleSYSContextBuilder extends ComputeServiceContextBuilder<GleSYSClient, GleSYSAsyncClient> {
 
    public GleSYSContextBuilder(Properties props) {
       super(GleSYSClient.class, GleSYSAsyncClient.class, props);
+   }
+
+   @Override
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new GleSYSComputeServiceContextModule());
    }
 
    @Override

@@ -40,6 +40,7 @@
                     <virtualizationType>hvm</virtualizationType>
                     <privateIpAddress>10.210.209.157</privateIpAddress>
                     <ipAddress>75.101.203.146</ipAddress>
+                    <hypervisor>xen</hypervisor>
                     <rootDeviceType>ebs</rootDeviceType>
                     <rootDeviceName>/dev/sda1</rootDeviceName>
                     <blockDeviceMapping>

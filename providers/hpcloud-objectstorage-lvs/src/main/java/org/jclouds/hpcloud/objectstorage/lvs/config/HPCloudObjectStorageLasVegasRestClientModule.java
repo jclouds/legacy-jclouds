@@ -85,11 +85,6 @@ public class HPCloudObjectStorageLasVegasRestClientModule extends
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ParseSwiftErrorFromHttpResponse.class);
    }
 
-   @Override
-   protected void bindRetryHandlers() {
-      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(BackoffLimitedRetryHandler.class);
-   }
-
    @Provides
    @Singleton
    CommonSwiftClient provideCommonSwiftClient(HPCloudObjectStorageLasVegasClient in) {
@@ -121,14 +116,6 @@ public class HPCloudObjectStorageLasVegasRestClientModule extends
    @Singleton
    @HPExtensionCDN
    protected URI provideCDNUrl(Access response) {
-	 /*
-	  if (response.getServices().get(AuthHeaders.CDN_MANAGEMENT_URL) == null) {
-	     return URI.create(cdnEndpoint + response.getServices().get(AuthHeaders.STORAGE_URL).getPath());
-	  }
-	  // Placeholder for when the Object Storage service returns the CDN Management URL in the headers 
-      return response.getServices().get(AuthHeaders.CDN_MANAGEMENT_URL);
-      */
-      
    		return Iterables.getOnlyElement(Iterables.find(response.getServiceCatalog(), new Predicate<Service>(){
     
          @Override

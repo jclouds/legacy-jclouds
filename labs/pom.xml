@@ -33,5 +33,6 @@
     <name>jclouds labs project</name>
     <modules>
        <module>openstack-nova</module>
+       <module>virtualbox</module>
     </modules>
 </project>

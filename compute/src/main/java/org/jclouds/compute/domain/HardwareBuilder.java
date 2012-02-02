@@ -43,6 +43,7 @@ public class HardwareBuilder extends ComputeMetadataBuilder {
    protected int ram;
    protected List<Volume> volumes = Lists.newArrayList();
    protected Predicate<Image> supportsImage = any();
+   protected String hypervisor;
 
    public HardwareBuilder() {
       super(ComputeType.HARDWARE);
@@ -75,6 +76,11 @@ public class HardwareBuilder extends ComputeMetadataBuilder {
 
    public HardwareBuilder supportsImage(Predicate<Image> supportsImage) {
       this.supportsImage = checkNotNull(supportsImage, "supportsImage");
+      return this;
+   }
+
+   public HardwareBuilder hypervisor(String hypervisor) {
+      this.hypervisor = hypervisor;
       return this;
    }
 
@@ -126,7 +132,7 @@ public class HardwareBuilder extends ComputeMetadataBuilder {
    @Override
    public Hardware build() {
       return new HardwareImpl(providerId, name, id, location, uri, userMetadata, tags, processors, ram, volumes,
-               supportsImage);
+               supportsImage, hypervisor);
    }
 
    @SuppressWarnings("unchecked")
@@ -134,6 +140,6 @@ public class HardwareBuilder extends ComputeMetadataBuilder {
       return new HardwareBuilder().id(in.getId()).providerId(in.getProviderId()).location(in.getLocation()).name(
                in.getName()).uri(in.getUri()).userMetadata(in.getUserMetadata()).tags(in.getTags()).processors(
                List.class.cast(in.getProcessors())).ram(in.getRam()).volumes(List.class.cast(in.getVolumes()))
-               .supportsImage(in.supportsImage());
+               .supportsImage(in.supportsImage()).hypervisor(in.getHypervisor());
    }
 }

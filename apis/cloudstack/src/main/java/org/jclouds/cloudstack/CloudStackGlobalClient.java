@@ -31,6 +31,7 @@ import org.jclouds.cloudstack.features.GlobalPodClient;
 import org.jclouds.cloudstack.features.GlobalStoragePoolClient;
 import org.jclouds.cloudstack.features.GlobalUsageClient;
 import org.jclouds.cloudstack.features.GlobalUserClient;
+import org.jclouds.cloudstack.features.GlobalVlanClient;
 import org.jclouds.cloudstack.features.GlobalZoneClient;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
@@ -125,4 +126,10 @@ public interface CloudStackGlobalClient extends CloudStackDomainClient {
     */
    @Delegate
    GlobalPodClient getPodClient();
+
+   /**
+    * Provides synchronous access to Vlan
+    */
+   @Delegate
+   GlobalVlanClient getVlanClient();
 }

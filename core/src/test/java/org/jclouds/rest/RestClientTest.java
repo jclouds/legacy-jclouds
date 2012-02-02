@@ -26,6 +26,7 @@ import java.util.Properties;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.rest.BaseRestClientExpectTest.RegisterContext;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -67,13 +68,24 @@ public abstract class RestClientTest<T> extends BaseRestClientTest {
       RestContextSpec<?, ?> contextSpec = createContextSpec();
       
       injector = createContextBuilder(contextSpec,
-            ImmutableSet.of(new MockModule(), new NullLoggingModule(), createModule()), getProperties())
+            ImmutableSet.of(new MockModule(), new NullLoggingModule(), createModule()), setupProperties())
             .buildInjector();
       parserFactory = injector.getInstance(ParseSax.Factory.class);
       processor = injector.getInstance(Key.get(createTypeLiteral()));
    }
 
-   protected Properties getProperties() {
+   /**
+    * override this when the provider or api is not located in rest.properties and you are not using
+    * the {@link RegisterContext} annotation on your tests.
+    */
+   protected Properties setupRestProperties() {
+      return RestContextFactory.getPropertiesFromResource("/rest.properties");
+   }
+
+   /**
+    * override this to supply context-specific parameters during tests.
+    */
+   protected Properties setupProperties() {
       return new Properties();
    }
 }

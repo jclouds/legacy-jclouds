@@ -24,13 +24,14 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.ec2.domain.BlockDevice;
+import org.jclouds.ec2.domain.Hypervisor;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.javax.annotation.Nullable;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -56,6 +57,7 @@ public class AWSRunningInstance extends RunningInstance {
       private String subnetId;
       private String spotInstanceRequestId;
       private String vpcId;
+      private Hypervisor hypervisor;
       private Map<String, String> securityGroupIdToNames = Maps.newLinkedHashMap();
       private Map<String, String> tags = Maps.newLinkedHashMap();
 
@@ -115,6 +117,11 @@ public class AWSRunningInstance extends RunningInstance {
 
       public Builder vpcId(String vpcId) {
          this.vpcId = vpcId;
+         return this;
+      }
+      
+      public Builder hypervisor(Hypervisor hypervisor) {
+         this.hypervisor = hypervisor;
          return this;
       }
 
@@ -244,7 +251,7 @@ public class AWSRunningInstance extends RunningInstance {
                instanceState, instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone,
                virtualizationType, platform, privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType,
                rootDeviceName, ebsBlockDevices, monitoringState, placementGroup, productCodes, subnetId,
-               spotInstanceRequestId, vpcId, tags);
+               spotInstanceRequestId, vpcId, hypervisor, tags);
       }
 
    }
@@ -259,6 +266,7 @@ public class AWSRunningInstance extends RunningInstance {
    private final String spotInstanceRequestId;
    @Nullable
    private final String vpcId;
+   private final Hypervisor hypervisor;
    private final Map<String, String> securityGroupIdToNames;
    private final Map<String, String> tags;
 
@@ -268,7 +276,7 @@ public class AWSRunningInstance extends RunningInstance {
          String virtualizationType, String platform, String privateDnsName, String privateIpAddress, String ramdiskId,
          String reason, RootDeviceType rootDeviceType, String rootDeviceName, Map<String, BlockDevice> ebsBlockDevices,
          MonitoringState monitoringState, String placementGroup, Iterable<String> productCodes, String subnetId,
-         String spotInstanceRequestId, String vpcId, Map<String, String> tags) {
+         String spotInstanceRequestId, String vpcId, Hypervisor hypervisor, Map<String, String> tags) {
       super(region, securityGroupIdToNames.values(), amiLaunchIndex, dnsName, imageId, instanceId, instanceState,
             instanceType, ipAddress, kernelId, keyName, launchTime, availabilityZone, virtualizationType, platform,
             privateDnsName, privateIpAddress, ramdiskId, reason, rootDeviceType, rootDeviceName, ebsBlockDevices);
@@ -278,6 +286,7 @@ public class AWSRunningInstance extends RunningInstance {
       this.subnetId = subnetId;
       this.spotInstanceRequestId = spotInstanceRequestId;
       this.vpcId = vpcId;
+      this.hypervisor = checkNotNull(hypervisor, "hypervisor");
       this.securityGroupIdToNames = ImmutableMap.<String, String> copyOf(checkNotNull(securityGroupIdToNames,
             "securityGroupIdToNames"));
       this.tags = ImmutableMap.<String, String> copyOf(checkNotNull(tags, "tags"));
@@ -323,7 +332,15 @@ public class AWSRunningInstance extends RunningInstance {
    public String getVpcId() {
       return vpcId;
    }
-
+   
+   /**
+    * hypervisor of the VM
+    * @see Hypervisor
+    */
+   public Hypervisor getHypervisor() {
+      return hypervisor;
+   }
+   
    /**
     * Specifies the subnet ID in which the instance is running (Amazon Virtual
     * Private Cloud).
@@ -348,6 +365,7 @@ public class AWSRunningInstance extends RunningInstance {
       result = prime * result + ((spotInstanceRequestId == null) ? 0 : spotInstanceRequestId.hashCode());
       result = prime * result + ((subnetId == null) ? 0 : subnetId.hashCode());
       result = prime * result + ((vpcId == null) ? 0 : vpcId.hashCode());
+      result = prime * result + ((hypervisor == null) ? 0 : hypervisor.hashCode());
       result = prime * result + ((tags == null) ? 0 : tags.hashCode());
       return result;
    }
@@ -391,20 +409,22 @@ public class AWSRunningInstance extends RunningInstance {
             return false;
       } else if (!tags.equals(other.tags))
          return false;
+      if (!Objects.equal(hypervisor, other.hypervisor))
+         return false;
       return true;
    }
 
    @Override
    public String toString() {
       return "[region=" + region + ", availabilityZone=" + availabilityZone + ", instanceId=" + instanceId
-            + ", instanceState=" + instanceState + ", instanceType=" + instanceType + ", virtualizationType="
-            + virtualizationType + ", imageId=" + imageId + ", ipAddress=" + ipAddress + ", dnsName=" + dnsName
-            + ", privateIpAddress=" + privateIpAddress + ", privateDnsName=" + privateDnsName + ", keyName=" + keyName
-            + ", platform=" + platform + ", launchTime=" + launchTime + ", rootDeviceName=" + rootDeviceName
-            + ", rootDeviceType=" + rootDeviceType + ", ebsBlockDevices=" + ebsBlockDevices + ", monitoringState="
-            + monitoringState + ", placementGroup=" + placementGroup + ", productCodes=" + productCodes
-            + ", spotInstanceRequestId=" + spotInstanceRequestId + ", subnetId=" + subnetId + ", vpcId=" + vpcId
-            + ", tags=" + tags + "]";
+               + ", instanceState=" + instanceState + ", instanceType=" + instanceType + ", virtualizationType="
+               + virtualizationType + ", imageId=" + imageId + ", ipAddress=" + ipAddress + ", dnsName=" + dnsName
+               + ", privateIpAddress=" + privateIpAddress + ", privateDnsName=" + privateDnsName + ", keyName="
+               + keyName + ", platform=" + platform + ", launchTime=" + launchTime + ", rootDeviceName="
+               + rootDeviceName + ", rootDeviceType=" + rootDeviceType + ", ebsBlockDevices=" + ebsBlockDevices
+               + ", monitoringState=" + monitoringState + ", placementGroup=" + placementGroup + ", productCodes="
+               + productCodes + ", spotInstanceRequestId=" + spotInstanceRequestId + ", subnetId=" + subnetId
+               + ", hypervisor=" + hypervisor + ", vpcId=" + vpcId + ", tags=" + tags + "]";
    }
 
 }

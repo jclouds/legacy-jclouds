@@ -27,6 +27,7 @@ import javax.inject.Inject;
 
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.date.DateService;
+import org.jclouds.ec2.domain.Hypervisor;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.location.Region;

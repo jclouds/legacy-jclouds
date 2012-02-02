@@ -21,7 +21,7 @@ package org.jclouds.cloudstack.features;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
-import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.options.AddClusterOptions;
 import org.jclouds.cloudstack.options.AddHostOptions;
 import org.jclouds.cloudstack.options.AddSecondaryStorageOptions;
@@ -50,7 +50,7 @@ import java.util.Set;
  * @see <a href="http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Global_Admin.html" />
  * @author Andrei Savu
  */
-@RequestFilters(QuerySigner.class)
+@RequestFilters(AuthenticationFilter.class)
 @QueryParams(keys = "response", values = "json")
 public interface GlobalHostAsyncClient {
 

@@ -18,23 +18,7 @@
  */
 package org.jclouds.http.internal;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.io.ByteStreams.copy;
-import static org.jclouds.http.HttpUtils.checkRequestHasContentLengthOrChunkedEncoding;
-import static org.jclouds.http.HttpUtils.wirePayloadIfEnabled;
-
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.net.ssl.SSLException;
-
+import com.google.common.io.NullOutputStream;
 import org.jclouds.Constants;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandExecutorService;
@@ -47,10 +31,22 @@ import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.AuthorizationException;
 import org.jclouds.util.Throwables2;
 
-import com.google.common.io.NullOutputStream;
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.ByteStreams.copy;
+import static org.jclouds.http.HttpUtils.checkRequestHasContentLengthOrChunkedEncoding;
+import static org.jclouds.http.HttpUtils.wirePayloadIfEnabled;
 
 /**
  * 
@@ -171,18 +167,13 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
                }
             } catch (Exception e) {
                IOException ioe = Throwables2.getFirstThrowableOfType(e, IOException.class);
-               if (ioe != null) {
-                  if (ioe instanceof SSLException) {
-                     command.setException(new AuthorizationException(e.getMessage() + " connecting to "
-                              + command.getCurrentRequest().getRequestLine(), e));
-                     break;
-                  } else if (ioRetryHandler.shouldRetryRequest(command, ioe)) {
-                     continue;
-                  }
+               if (ioe != null && ioRetryHandler.shouldRetryRequest(command, ioe)) {
+                  continue;
                }
                command.setException(new HttpResponseException(e.getMessage() + " connecting to "
-                        + command.getCurrentRequest().getRequestLine(), command, null, e));
+                  + command.getCurrentRequest().getRequestLine(), command, null, e));
                break;
+
             } finally {
                cleanup(nativeRequest);
             }

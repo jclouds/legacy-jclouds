@@ -27,8 +27,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.glesys.domain.Domain;
 import org.jclouds.glesys.domain.DomainRecord;
+import org.jclouds.glesys.internal.BaseGleSYSClientLiveTest;
 import org.jclouds.glesys.options.DomainOptions;
-import org.jclouds.glesys.options.DomainRecordEditOptions;
+import org.jclouds.glesys.options.EditRecordOptions;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
@@ -87,7 +88,7 @@ public class DomainClientLiveTest extends BaseGleSYSClientLiveTest {
    @Test
    public void testEditDomain() throws Exception {
       client.editDomain(testDomain, DomainOptions.Builder.responsiblePerson("tester.jclouds.org"));
-      assertTrue(client.listDomains().contains(Domain.builder().domain(testDomain).build()));
+      assertTrue(client.listDomains().contains(Domain.builder().domainName(testDomain).build()));
    }
 
    @Test
@@ -125,7 +126,7 @@ public class DomainClientLiveTest extends BaseGleSYSClientLiveTest {
 
       assertNotNull(recordId);
 
-      client.editRecord(recordId, DomainRecordEditOptions.Builder.host("testeditafter"));
+      client.editRecord(recordId, EditRecordOptions.Builder.host("testeditafter"));
 
       boolean found = false;
       for(DomainRecord record : client.listRecords(testDomain)) {

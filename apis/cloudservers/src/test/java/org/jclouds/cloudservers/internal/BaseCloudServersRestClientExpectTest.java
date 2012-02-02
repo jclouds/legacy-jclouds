@@ -29,9 +29,9 @@ import org.jclouds.cloudservers.CloudServersPropertiesBuilder;
 import org.jclouds.cloudservers.config.CloudServersRestClientModule;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.openstack.config.OpenStackAuthenticationModule;
 import org.jclouds.openstack.filters.AddTimestampQuery;
-import org.jclouds.rest.BaseRestClientExpectTest;
+import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule;
+import org.jclouds.openstack.keystone.v1_1.internal.BaseKeystoneRestClientExpectTest;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.base.Supplier;
@@ -42,7 +42,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class BaseCloudServersRestClientExpectTest extends BaseRestClientExpectTest<CloudServersClient> {
+public class BaseCloudServersRestClientExpectTest extends BaseKeystoneRestClientExpectTest<CloudServersClient> {
 
    public BaseCloudServersRestClientExpectTest() {
       provider = "cloudservers";
@@ -52,7 +52,7 @@ public class BaseCloudServersRestClientExpectTest extends BaseRestClientExpectTe
    protected Properties setupRestProperties() {
       Properties overrides = new Properties();
       overrides.setProperty(PROPERTY_REGIONS, "US");
-      overrides.setProperty(provider + ".endpoint", "https://auth");
+      overrides.setProperty(provider + ".endpoint", endpoint);
       overrides.setProperty(provider + ".contextbuilder", CloudServersContextBuilder.class.getName());
       overrides.setProperty(provider + ".propertiesbuilder", CloudServersPropertiesBuilder.class.getName());
       return overrides;
@@ -61,23 +61,14 @@ public class BaseCloudServersRestClientExpectTest extends BaseRestClientExpectTe
    protected static final String CONSTANT_DATE = "2009-11-08T15:54:08.897Z";
 
    /**
-    * override so that we can control the timestamp used in {@link AddTimestampQuery}
+    * override so that we can control the timestamp used in
+    * {@link AddTimestampQuery}
     */
-   static class TestOpenStackAuthenticationModule extends OpenStackAuthenticationModule {
+   public static class TestAuthenticationServiceModule extends AuthenticationServiceModule {
       @Override
       protected void configure() {
          super.configure();
       }
-
-      @Override
-      public Supplier<Date> provideCacheBusterDate() {
-         return new Supplier<Date>() {
-            public Date get() {
-               return new SimpleDateFormatDateService().iso8601DateParse(CONSTANT_DATE);
-            }
-         };
-      }
-
    }
 
    @Override
@@ -89,8 +80,16 @@ public class BaseCloudServersRestClientExpectTest extends BaseRestClientExpectTe
    @RequiresHttp
    protected static class TestCloudServersRestClientModule extends CloudServersRestClientModule {
       private TestCloudServersRestClientModule() {
-         super(new TestOpenStackAuthenticationModule());
+         super(new TestAuthenticationServiceModule());
       }
 
+      @Override
+      public Supplier<Date> provideCacheBusterDate() {
+         return new Supplier<Date>() {
+            public Date get() {
+               return new SimpleDateFormatDateService().iso8601DateParse(CONSTANT_DATE);
+            }
+         };
+      }
    }
 }

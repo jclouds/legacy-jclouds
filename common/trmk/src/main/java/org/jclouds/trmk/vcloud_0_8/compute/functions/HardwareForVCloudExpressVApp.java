@@ -62,6 +62,7 @@ public class HardwareForVCloudExpressVApp implements Function<VApp, Hardware> {
          builder.location(findLocationForResource.apply(checkNotNull(from, "from").getVDC()));
          builder.ids(from.getHref().toASCIIString()).name(from.getName())
                .supportsImage(ImagePredicates.idEquals(from.getHref().toASCIIString()));
+         builder.hypervisor("VMware");
          return builder.build();
       } catch (NoSuchElementException e) {
          logger.debug("incomplete data to form vApp %s", from.getHref());

@@ -26,6 +26,8 @@ import java.util.Date;
 
 import javax.inject.Singleton;
 
+import com.google.inject.Inject;
+import org.jclouds.date.DateService;
 import org.jclouds.json.config.GsonModule;
 
 import com.google.common.base.Throwables;
@@ -34,27 +36,43 @@ import com.google.gson.stream.JsonWriter;
 
 /**
  * Parser for Glesys Date formats
- *
+ * 
+ * @deprecated this should be replaced by standard ISO8601 parser in the next week or so
+ * 
  * @author Adam Lowe
  */
 @Singleton
 public class GlesysDateAdapter extends GsonModule.DateAdapter {
    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+   private final DateService standardDateService;
+
+   @Inject
+   public GlesysDateAdapter(DateService service) {
+      this.standardDateService = service;
+   }
 
    public void write(JsonWriter writer, Date value) throws IOException {
-      synchronized (dateFormat) {
-         writer.value(dateFormat.format(value));
+      try {
+         writer.value(standardDateService.iso8601SecondsDateFormat(value));
+      } catch (Exception ex) {
+         synchronized (dateFormat) {
+            writer.value(dateFormat.format(value));
+         }
       }
    }
 
    public Date read(JsonReader reader) throws IOException {
       String toParse = reader.nextString();
       try {
-         synchronized (dateFormat) {
-            return dateFormat.parse(toParse);
+         return standardDateService.iso8601SecondsDateParse(toParse);
+      } catch (Exception ex) {
+         try {
+            synchronized (dateFormat) {
+               return dateFormat.parse(toParse);
+            }
+         } catch (ParseException e) {
+            throw Throwables.propagate(e);
          }
-      } catch (ParseException e) {
-         throw Throwables.propagate(e);
       }
    }
 }

@@ -28,10 +28,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.domain.Credentials;
@@ -80,17 +78,12 @@ public class OpenStackAuthenticationModule extends AbstractModule {
       };
    }
 
-   @Provides
-   @Provider
-   protected Credentials provideAuthenticationCredentials(@Named(Constants.PROPERTY_IDENTITY) String user,
-            @Named(Constants.PROPERTY_CREDENTIAL) String key) {
-      return new Credentials(user, key);
-   }
-
    @Singleton
    public static class GetAuthenticationResponse extends
             RetryOnTimeOutExceptionFunction<Credentials, AuthenticationResponse> {
 
+      // passing factory here to avoid a circular dependency on
+      // OpenStackAuthAsyncClient resolving OpenStackAuthAsyncClient
       @Inject
       public GetAuthenticationResponse(final AsyncClientFactory factory) {
          super(new Function<Credentials, AuthenticationResponse>() {

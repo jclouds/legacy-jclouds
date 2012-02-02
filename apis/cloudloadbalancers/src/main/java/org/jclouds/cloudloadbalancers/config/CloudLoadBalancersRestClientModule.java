@@ -27,6 +27,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersAsyncClient;
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersClient;
@@ -50,18 +51,17 @@ import org.jclouds.location.Provider;
 import org.jclouds.location.Region;
 import org.jclouds.location.config.ProvideRegionToURIViaProperties;
 import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
-import org.jclouds.openstack.config.OpenStackAuthenticationModule;
-import org.jclouds.openstack.handlers.RetryOnRenew;
-import org.jclouds.openstack.reference.AuthHeaders;
+import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule;
+import org.jclouds.openstack.keystone.v1_1.domain.Auth;
+import org.jclouds.openstack.keystone.v1_1.handlers.RetryOnRenew;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
-import com.google.common.base.Supplier;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -83,23 +83,44 @@ public class CloudLoadBalancersRestClientModule extends
          .put(NodeClient.class, NodeAsyncClient.class)//
          .build();
 
-   public CloudLoadBalancersRestClientModule() {
+   private final AuthenticationServiceModule module;
+
+   public CloudLoadBalancersRestClientModule(AuthenticationServiceModule module) {
       super(CloudLoadBalancersClient.class, CloudLoadBalancersAsyncClient.class, DELEGATE_MAP);
+      this.module = module;
    }
 
+   public CloudLoadBalancersRestClientModule() {
+      this(new AuthenticationServiceModule());
+   }
    protected void bindRegionsToProvider() {
-      bindRegionsToProvider(ProvideRegionToURIViaPropertiesWithAccountID.class);
+      bindRegionsToProvider(RegionUrisFromPropertiesAndAccountIDPathSuffix.class);
    }
 
    @Singleton
-   public static class ProvideRegionToURIViaPropertiesWithAccountID extends ProvideRegionToURIViaProperties {
+   public static class RegionUrisFromPropertiesAndAccountIDPathSuffix extends ProvideRegionToURIViaProperties {
+
+      private final String accountID;
+      private final javax.inject.Provider<UriBuilder> builders;
 
       @Inject
-      protected ProvideRegionToURIViaPropertiesWithAccountID(Injector injector,
-            @Named("CONSTANTS") Multimap<String, String> constants,
-            @Named(RackspaceConstants.PROPERTY_ACCOUNT_ID) String accountID) {
-         super(injector, constants);
-         constants.replaceValues(RackspaceConstants.PROPERTY_ACCOUNT_ID, ImmutableSet.of(accountID));
+      protected RegionUrisFromPropertiesAndAccountIDPathSuffix(Injector injector,
+            javax.inject.Provider<UriBuilder> builders, @Named(RackspaceConstants.PROPERTY_ACCOUNT_ID) String accountID) {
+         super(injector);
+         this.builders = builders;
+         this.accountID = accountID;
+      }
+      
+      @Override
+      public Map<String, URI> get() {
+         return Maps.transformValues(super.get(), new Function<URI, URI>(){
+
+            @Override
+            public URI apply(URI input) {
+               return builders.get().uri(input).path(accountID).build();
+            }
+            
+         });
       }
    }
 
@@ -110,7 +131,7 @@ public class CloudLoadBalancersRestClientModule extends
 
    @Override
    protected void configure() {
-      install(new OpenStackAuthenticationModule());
+      install(module);
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
       bindRegionsToProvider();
       install(new FactoryModuleBuilder().build(ConvertLB.Factory.class));
@@ -120,8 +141,8 @@ public class CloudLoadBalancersRestClientModule extends
    @Provides
    @Singleton
    @Named(RackspaceConstants.PROPERTY_ACCOUNT_ID)
-   protected String accountID(Supplier<AuthenticationResponse> in) {
-      URI serverURL = in.get().getServices().get(AuthHeaders.SERVER_MANAGEMENT_URL);
+   protected String accountID(Auth response) {
+      URI serverURL = Iterables.get(response.getServiceCatalog().get("cloudServers"), 0).getPublicURL();
       return serverURL.getPath().substring(serverURL.getPath().lastIndexOf('/') + 1);
    }
 

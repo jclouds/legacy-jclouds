@@ -18,11 +18,10 @@
  */
 package org.jclouds.vcloud.binders;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 import java.io.IOException;
 import java.net.URI;
@@ -32,14 +31,14 @@ import java.util.Properties;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.VCloudPropertiesBuilder;
 import org.jclouds.vcloud.options.CatalogItemOptions;
+import org.nnsoft.guice.rocoto.Rocoto;
+import org.nnsoft.guice.rocoto.configuration.ConfigurationModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code BindCatalogItemToXmlPayload}
@@ -48,14 +47,13 @@ import com.google.inject.name.Names;
  */
 @Test(groups = "unit")
 public class BindCatalogItemToXmlPayloadTest {
-   Injector injector = Guice.createInjector(new AbstractModule() {
+   Injector injector = Guice.createInjector(Rocoto.expandVariables(new ConfigurationModule() {
 
       @Override
-      protected void configure() {
-         Properties props = new Properties();
-         Names.bindProperties(binder(), checkNotNull(new VCloudPropertiesBuilder(props).build(), "properties"));
+      protected void bindConfigurations() {
+         bindProperties(new VCloudPropertiesBuilder(new Properties()).build());
       }
-   });
+   }));
 
    public void testDefault() throws IOException {
       String expected = "<CatalogItem xmlns=\"http://www.vmware.com/vcloud/v1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" name=\"myname\" xsi:schemaLocation=\"http://www.vmware.com/vcloud/v1 http://vcloud.safesecureweb.com/ns/vcloud.xsd\"><Description>mydescription</Description><Entity href=\"http://fooentity\"/><Property key=\"foo\">bar</Property></CatalogItem>";

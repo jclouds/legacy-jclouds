@@ -29,6 +29,7 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Qualifier;
 import javax.inject.Singleton;
+import javax.ws.rs.Path;
 
 import org.jclouds.Constants;
 import org.jclouds.concurrent.ExceptionParsingListenableFuture;
@@ -132,7 +133,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
       } else if (isRestCall(method)) {
          return createListenableFutureForHttpRequestMappedToMethodAndArgs(method, args);
       } else {
-         throw new RuntimeException("method is intended solely to set constants: " + method);
+         throw new RuntimeException(String.format("Method is not annotated as either http or provider method: %s", method));
       }
    }
 

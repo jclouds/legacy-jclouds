@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.inject.Singleton;
 
@@ -46,10 +45,11 @@ import org.jclouds.rest.RestContextSpec;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 
@@ -135,19 +135,14 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
 
    protected String provider = "ec2";
 
-   @Override
-   protected Properties getProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(provider + ".endpoint", "https://ec2.us-east-1.amazonaws.com");
-      overrides.setProperty(provider + ".propertiesbuilder", EC2PropertiesBuilder.class.getName());
-      overrides.setProperty(provider + ".contextbuilder", EC2ContextBuilder.class.getName());
-      return overrides;
-   }
-
+   /**
+    * this is only here as "ec2" is not in rest.properties
+    */
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override
    public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory(getProperties()).createContextSpec(provider, "identity", "credential",
-            new Properties());
+      return RestContextFactory.<EC2Client, EC2AsyncClient> contextSpec(provider, "https://ec2.us-east-1.amazonaws.com",
+            EC2AsyncClient.VERSION, "", "", "identity", "credential", EC2Client.class, EC2AsyncClient.class,
+            (Class) EC2PropertiesBuilder.class, (Class) EC2ContextBuilder.class, ImmutableSet.<Module> of());
    }
-
 }

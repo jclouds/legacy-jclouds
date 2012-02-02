@@ -34,6 +34,7 @@ import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.date.DateService;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.BlockDevice;
+import org.jclouds.ec2.domain.Hypervisor;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RootDeviceType;
@@ -133,6 +134,8 @@ public abstract class BaseAWSReservationHandler<T> extends HandlerForGeneratedRe
          builder.spotInstanceRequestId(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "vpcId")) {
          builder.vpcId(currentOrNull(currentText));
+      } else if (equalsOrSuffix(qName, "hypervisor")) {
+         builder.hypervisor(Hypervisor.fromValue(currentOrNull(currentText)));
       } else if (equalsOrSuffix(qName, "productCode")) {
          builder.productCode(currentOrNull(currentText));
       } else if (equalsOrSuffix(qName, "instancesSet")) {

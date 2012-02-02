@@ -26,7 +26,7 @@ import java.util.Set;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.cloudstack.domain.SshKeyPair;
-import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.options.ListSSHKeyPairsOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.OnlyElement;
@@ -45,7 +45,7 @@ import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
  *      href="http://download.cloud.com/releases/2.2.0/api_2.2.8/TOC_User.html"
  *      />
  */
-@RequestFilters(QuerySigner.class)
+@RequestFilters(AuthenticationFilter.class)
 @QueryParams(keys = "response", values = "json")
 public interface SSHKeyPairAsyncClient {
    /**

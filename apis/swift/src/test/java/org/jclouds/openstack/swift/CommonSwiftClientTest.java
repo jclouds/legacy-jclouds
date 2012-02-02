@@ -77,11 +77,11 @@ public abstract class CommonSwiftClientTest<A extends CommonSwiftAsyncClient> ex
 
    @Override
    public RestContextSpec<CommonSwiftClient, CommonSwiftAsyncClient> createContextSpec() {
-      return new RestContextFactory().createContextSpec(provider, "user", "password", new Properties());
+      return new RestContextFactory(setupRestProperties()).createContextSpec(provider, "user", "password", setupProperties());
    }
 
    @Override
-   protected Properties getProperties() {
+   protected Properties setupProperties() {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_REGIONS, "US");
       properties.setProperty(PROPERTY_ENDPOINT, "https://auth");

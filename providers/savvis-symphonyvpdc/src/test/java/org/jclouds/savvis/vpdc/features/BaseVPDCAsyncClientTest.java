@@ -98,8 +98,8 @@ public abstract class BaseVPDCAsyncClientTest<T> extends RestClientTest<T> {
    }
 
    @Override
-   protected Properties getProperties() {
-      Properties props = super.getProperties();
+   protected Properties setupProperties() {
+      Properties props = super.setupProperties();
       props.setProperty(VPDCConstants.PROPERTY_VPDC_VDC_EMAIL, "test");
       return props;
    }

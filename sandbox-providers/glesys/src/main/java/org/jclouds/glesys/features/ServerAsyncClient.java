@@ -29,23 +29,25 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.glesys.domain.AllowedArgumentsForCreateServer;
+import org.jclouds.glesys.domain.Console;
 import org.jclouds.glesys.domain.Server;
-import org.jclouds.glesys.domain.ServerAllowedArguments;
-import org.jclouds.glesys.domain.ServerConsole;
-import org.jclouds.glesys.domain.ServerCreated;
 import org.jclouds.glesys.domain.ServerDetails;
 import org.jclouds.glesys.domain.ServerLimit;
+import org.jclouds.glesys.domain.ServerSpec;
 import org.jclouds.glesys.domain.ServerStatus;
-import org.jclouds.glesys.domain.ServerTemplate;
-import org.jclouds.glesys.functions.ParseServerTemplatesFromHttpResponse;
-import org.jclouds.glesys.options.ServerCloneOptions;
-import org.jclouds.glesys.options.ServerCreateOptions;
-import org.jclouds.glesys.options.ServerDestroyOptions;
-import org.jclouds.glesys.options.ServerEditOptions;
+import org.jclouds.glesys.domain.OSTemplate;
+import org.jclouds.glesys.functions.ParseTemplatesFromHttpResponse;
+import org.jclouds.glesys.options.CloneServerOptions;
+import org.jclouds.glesys.options.CreateServerOptions;
+import org.jclouds.glesys.options.DestroyServerOptions;
+import org.jclouds.glesys.options.EditServerOptions;
 import org.jclouds.glesys.options.ServerStatusOptions;
-import org.jclouds.glesys.options.ServerStopOptions;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.FormParams;
+import org.jclouds.rest.annotations.MapBinder;
+import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
@@ -57,7 +59,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 /**
  * Provides asynchronous access to Server via their REST API.
  * <p/>
- *
+ * 
  * @author Adrian Cole
  * @author Adam Lowe
  * @see ServerClient
@@ -106,81 +108,91 @@ public interface ServerAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<SortedMap<String, ServerLimit>> getServerLimits(@FormParam("serverid") String id);
 
-
    /**
-    * @see ServerClient#getServerConsole
+    * @see ServerClient#getConsole
     */
    @POST
    @Path("/server/console/format/json")
-   @SelectJson("remote")
+   @SelectJson("console")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ServerConsole> getServerConsole(@FormParam("serverid") String id);
-
+   ListenableFuture<Console> getConsole(@FormParam("serverid") String id);
 
    /**
-    * @see ServerClient#getServerAllowedArguments
+    * @see ServerClient#getAllowedArgumentsForCreateServerByPlatform
     */
    @GET
    @Path("/server/allowedarguments/format/json")
    @SelectJson("argumentslist")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Map<String, ServerAllowedArguments>> getServerAllowedArguments();
-   
+   ListenableFuture<Map<String, AllowedArgumentsForCreateServer>> getAllowedArgumentsForCreateServerByPlatform();
+
    /**
-    * @see ServerClient#getTemplates
+    * @see ServerClient#listTemplates
     */
    @GET
    @Path("/server/templates/format/json")
-   @ResponseParser(ParseServerTemplatesFromHttpResponse.class)
+   @ResponseParser(ParseTemplatesFromHttpResponse.class)
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Set<ServerTemplate>> getTemplates();
-   
+   ListenableFuture<Set<OSTemplate>> listTemplates();
+
    /**
     * @see ServerClient#stopServer
     */
    @POST
    @Path("/server/resetlimit/format/json")
-   ListenableFuture<Void> resetServerLimit(@FormParam("serverid") String id, @FormParam("type") String type);
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<SortedMap<String, ServerLimit>> resetServerLimit(@FormParam("serverid") String id,
+         @FormParam("type") String type);
 
    /**
     * @see ServerClient#rebootServer
     */
    @POST
+   @SelectJson("server")
    @Path("/server/reboot/format/json")
-   ListenableFuture<Void> rebootServer(@FormParam("serverid") String id);
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<ServerDetails> rebootServer(@FormParam("serverid") String id);
 
    /**
     * @see ServerClient#startServer
     */
    @POST
+   @SelectJson("server")
    @Path("/server/start/format/json")
-   ListenableFuture<Void> startServer(@FormParam("serverid") String id);
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<ServerDetails> startServer(@FormParam("serverid") String id);
 
    /**
     * @see ServerClient#stopServer
     */
    @POST
+   @SelectJson("server")
    @Path("/server/stop/format/json")
-   ListenableFuture<Void> stopServer(@FormParam("serverid") String id, ServerStopOptions... options);
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<ServerDetails> stopServer(@FormParam("serverid") String id);
 
    /**
-    * @see ServerClient#createServer
+    * @see ServerClient#hardStopServer
     */
    @POST
-   @Path("/server/create/format/json")
    @SelectJson("server")
+   @Path("/server/stop/format/json")
+   @FormParams(keys = "type", values = "hard")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<ServerCreated> createServer(@FormParam("datacenter") String dataCenter,
-                                       @FormParam("platform") String platform,
-                                       @FormParam("hostname") String hostname,
-                                       @FormParam("template") String template,
-                                       @FormParam("disksize") int diskSize,
-                                       @FormParam("memorysize") int memorySize,
-                                       @FormParam("cpucores") int cpucores,
-                                       @FormParam("rootpw") String rootpw,
-                                       @FormParam("transfer") int transfer,
-                                       ServerCreateOptions... options);
+   ListenableFuture<ServerDetails> hardStopServer(@FormParam("serverid") String id);
+
+   /**
+    * @see ServerClient#createServerWithHostnameAndRootPassword
+    */
+   @POST
+   @SelectJson("server")
+   @Path("/server/create/format/json")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @MapBinder(CreateServerOptions.class)
+   ListenableFuture<ServerDetails> createServerWithHostnameAndRootPassword(ServerSpec serverSpec,
+         @PayloadParam("hostname") String hostname, @PayloadParam("rootpassword") String rootPassword,
+         CreateServerOptions... options);
 
    /**
     * @see ServerClient#cloneServer
@@ -189,23 +201,24 @@ public interface ServerAsyncClient {
    @Path("/server/clone/format/json")
    @SelectJson("server")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<ServerCreated> cloneServer(@FormParam("serverid") String serverid,
-                                               @FormParam("hostname") String hostname,
-                                               ServerCloneOptions... options);
+   ListenableFuture<ServerDetails> cloneServer(@FormParam("serverid") String serverid,
+         @FormParam("hostname") String hostname, CloneServerOptions... options);
 
    /**
     * @see ServerClient#editServer
     */
    @POST
    @Path("/server/edit/format/json")
-   ListenableFuture<Void> editServer(@FormParam("serverid") String serverid, ServerEditOptions... options);
+   @SelectJson("server")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<ServerDetails> editServer(@FormParam("serverid") String serverid, EditServerOptions... options);
 
    /**
     * @see ServerClient#destroyServer
     */
    @POST
    @Path("/server/destroy/format/json")
-   ListenableFuture<Void> destroyServer(@FormParam("serverid") String id, ServerDestroyOptions keepIp);
+   ListenableFuture<Void> destroyServer(@FormParam("serverid") String id, DestroyServerOptions keepIp);
 
    /**
     * @see ServerClient#resetPassword
@@ -213,5 +226,13 @@ public interface ServerAsyncClient {
    @POST
    @Path("/server/destroy/format/json")
    ListenableFuture<Void> resetPassword(@FormParam("serverid") String id, @FormParam("newpassword") String password);
-   
+
+   /**
+    * @see ServerClient#resourceUsage
+    */
+   @POST
+   @Path("/server/resourceusage/format/json")
+   void resourceUsage(@FormParam("serverid") String id, @FormParam("resource") String resource,
+         @FormParam("resolution") String resolution);
+
 }

@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import org.jclouds.cloudstack.CloudStackGlobalClient;
 import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.crypto.CryptoStreams;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
@@ -36,7 +37,7 @@ public class GlobalAccountClientLiveTest extends BaseCloudStackClientLiveTest {
    public static Account createTestAccount(CloudStackGlobalClient client, String prefix) {
       return client.getAccountClient().createAccount(
          prefix + "-account", Account.Type.USER, "dummy@example.com",
-         "First", "Last", "hashed-password");
+         "First", "Last", CryptoStreams.md5Hex("password"));
    }
 
    @Test

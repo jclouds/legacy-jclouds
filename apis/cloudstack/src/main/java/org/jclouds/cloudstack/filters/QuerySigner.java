@@ -58,7 +58,7 @@ import com.google.common.collect.Multimap;
  * 
  */
 @Singleton
-public class QuerySigner implements HttpRequestFilter, RequestSigner {
+public class QuerySigner implements AuthenticationFilter, RequestSigner {
 
    private final SignatureWire signatureWire;
    private final String accessKey;

@@ -24,32 +24,31 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
 import org.jclouds.domain.Credentials;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.http.annotation.ClientError;
 import org.jclouds.location.Provider;
 import org.jclouds.openstack.Authentication;
 import org.jclouds.openstack.keystone.v2_0.ServiceAsyncClient;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
-import org.jclouds.openstack.keystone.v2_0.domain.PasswordCredentials;
+import org.jclouds.openstack.keystone.v2_0.functions.AuthenticateApiAccessKeyCredentials;
+import org.jclouds.openstack.keystone.v2_0.functions.AuthenticatePasswordCredentials;
+import org.jclouds.openstack.keystone.v2_0.handlers.RetryOnRenew;
 import org.jclouds.rest.AsyncClientFactory;
 
 import com.google.common.base.Function;
-import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Iterables;
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -60,8 +59,8 @@ public class KeystoneAuthenticationModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(new TypeLiteral<Function<Credentials, Access>>() {
-      }).to(GetAccess.class);
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
+      bind(CredentialType.class).toProvider(CredentialTypeFromPropertyOrDefault.class);
    }
 
    /**
@@ -79,56 +78,62 @@ public class KeystoneAuthenticationModule extends AbstractModule {
       };
    }
 
+   /**
+    * service is needed to locate endpoints and such
+    */
    @Provides
    @Singleton
    protected ServiceAsyncClient provideServiceClient(AsyncClientFactory factory) {
       return factory.create(ServiceAsyncClient.class);
    }
 
-   @Provides
-   @Provider
-   protected Credentials provideAuthenticationCredentials(@Named(Constants.PROPERTY_IDENTITY) String user,
-            @Named(Constants.PROPERTY_CREDENTIAL) String key) {
-      return new Credentials(user, key);
-   }
-
    @Singleton
-   public static class GetAccess extends RetryOnTimeOutExceptionFunction<Credentials, Access> {
+   static class CredentialTypeFromPropertyOrDefault implements javax.inject.Provider<CredentialType> {
+      /**
+       * use optional injection to supply a default value for credential type. so that we don't have
+       * to set a default property.
+       */
+      @Inject(optional = true)
+      @Named(KeystoneProperties.CREDENTIAL_TYPE)
+      String credentialType = CredentialType.API_ACCESS_KEY_CREDENTIALS.toString();
 
-      @Inject
-      public GetAccess(final ServiceAsyncClient client) {
-         super(new Function<Credentials, Access>() {
-
-            @Override
-            public Access apply(Credentials input) {
-               // TODO: nice error messages, etc.
-               Iterable<String> usernameTenantId = Splitter.on(':').split(input.identity);
-               String username = Iterables.get(usernameTenantId, 0);
-               String tenantId = Iterables.get(usernameTenantId, 1);
-               PasswordCredentials passwordCredentials = PasswordCredentials.createWithUsernameAndPassword(username,
-                        input.credential);
-               try {
-                  return client.authenticateTenantWithCredentials(tenantId, passwordCredentials).get();
-               } catch (Exception e) {
-                  throw Throwables.propagate(e);
-               }
-            }
-
-            @Override
-            public String toString() {
-               return "authenticate()";
-            }
-         });
-
+      @Override
+      public CredentialType get() {
+         return CredentialType.fromValue(credentialType);
       }
    }
 
    @Provides
    @Singleton
-   public LoadingCache<Credentials, Access> provideAccessCache2(Function<Credentials, Access> getAccess) {
+   protected Function<Credentials, Access> authenticationMethodForCredentialType(CredentialType credentialType,
+            AuthenticatePasswordCredentials authenticatePasswordCredentials,
+            AuthenticateApiAccessKeyCredentials authenticateApiAccessKeyCredentials) {
+      Function<Credentials, Access> authMethod;
+      switch (credentialType) {
+         case PASSWORD_CREDENTIALS:
+            authMethod = authenticatePasswordCredentials;
+            break;
+         case API_ACCESS_KEY_CREDENTIALS:
+            authMethod = authenticateApiAccessKeyCredentials;
+            break;
+         default:
+            throw new IllegalArgumentException("credential type not supported: " + credentialType);
+      }
+      // regardless of how we authenticate, we should retry if there is a timeout exception logging
+      // in.
+      return new RetryOnTimeOutExceptionFunction<Credentials, Access>(authMethod);
+   }
+
+   // TODO: what is the timeout of the session token? modify default accordingly
+   // PROPERTY_SESSION_INTERVAL is default to 60 seconds, but we have this here at 23 hours for now.
+   @Provides
+   @Singleton
+   public LoadingCache<Credentials, Access> provideAccessCache(Function<Credentials, Access> getAccess) {
       return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS).build(CacheLoader.from(getAccess));
    }
 
+   // Temporary conversion of a cache to a supplier until there is a single-element cache
+   // http://code.google.com/p/guava-libraries/issues/detail?id=872
    @Provides
    @Singleton
    protected Supplier<Access> provideAccessSupplier(final LoadingCache<Credentials, Access> cache,
@@ -145,6 +150,10 @@ public class KeystoneAuthenticationModule extends AbstractModule {
       };
    }
 
+   /**
+    * currently, endpointParams are not configured to take their results from a supplier lazily, so
+    * we need to eagerly fetch.
+    */
    @Provides
    @Singleton
    protected Access provideAccess(Supplier<Access> supplier) {

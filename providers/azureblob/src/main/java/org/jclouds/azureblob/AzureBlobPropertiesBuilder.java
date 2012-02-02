@@ -25,20 +25,20 @@ import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_M
 
 import java.util.Properties;
 
-import org.jclouds.azure.storage.AzureStoragePropertiesBuilder;
+import org.jclouds.PropertiesBuilder;
 
 /**
  * Builds properties used in AzureBlob Connections
  * 
  * @author Adrian Cole
  */
-public class AzureBlobPropertiesBuilder extends AzureStoragePropertiesBuilder {
+public class AzureBlobPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-ms-meta-");
       properties.setProperty(PROPERTY_API_VERSION, "2009-09-19");
-      properties.setProperty(PROPERTY_ENDPOINT, "https://{identity}.blob.core.windows.net");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://${jclouds.identity}.blob.core.windows.net");
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-TX,US-IL,IE-D,SG,NL-NH,HK");
       return properties;
    }

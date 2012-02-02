@@ -22,7 +22,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.cloudstack.collections.Integration;
 import org.jclouds.cloudstack.domain.ApiKeyPair;
 import org.jclouds.cloudstack.domain.User;
-import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.options.CreateUserOptions;
 import org.jclouds.cloudstack.options.UpdateUserOptions;
 import org.jclouds.rest.annotations.Endpoint;
@@ -46,7 +46,7 @@ import javax.ws.rs.core.MediaType;
  *      "http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_Global_Admin.html"
  *      />
  */
-@RequestFilters(QuerySigner.class)
+@RequestFilters(AuthenticationFilter.class)
 @QueryParams(keys = "response", values = "json")
 public interface GlobalUserAsyncClient extends DomainUserAsyncClient {
 

@@ -21,19 +21,22 @@ package org.jclouds.s3.internal;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.s3.S3AsyncClient;
+import org.jclouds.s3.S3Client;
 import org.jclouds.s3.S3ContextBuilder;
 import org.jclouds.s3.S3PropertiesBuilder;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
 import org.jclouds.s3.filters.RequestAuthorizeSignature;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * 
@@ -65,20 +68,17 @@ public abstract class BaseS3AsyncClientTest<T extends S3AsyncClient> extends Res
    }
 
    protected String provider = "s3";
+   protected String endpoint = "https://s3.amazonaws.com";
 
-   @Override
-   protected Properties getProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(provider + ".endpoint", "https://s3.amazonaws.com");
-      overrides.setProperty(provider + ".propertiesbuilder", S3PropertiesBuilder.class.getName());
-      overrides.setProperty(provider + ".contextbuilder", S3ContextBuilder.class.getName());
-      return overrides;
-   }
-
+   /**
+    * this is only here as "s3" is not in rest.properties
+    */
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override
    public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory(getProperties()).createContextSpec(provider, "identity", "credential",
-            new Properties());
+      return RestContextFactory.<S3Client, S3AsyncClient> contextSpec(provider, endpoint,
+            S3AsyncClient.VERSION, "", "", "identity", "credential", S3Client.class, S3AsyncClient.class,
+            (Class) S3PropertiesBuilder.class, (Class) S3ContextBuilder.class, ImmutableSet.<Module> of());
    }
 
 }

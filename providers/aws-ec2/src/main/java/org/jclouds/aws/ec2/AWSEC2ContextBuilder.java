@@ -18,13 +18,18 @@
  */
 package org.jclouds.aws.ec2;
 
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUERY;
+import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
+
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import org.jclouds.aws.ec2.compute.config.AWSEC2ComputeServiceContextModule;
 import org.jclouds.aws.ec2.config.AWSEC2RestClientModule;
 import org.jclouds.ec2.EC2ContextBuilder;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Module;
 
 /**
@@ -34,9 +39,34 @@ import com.google.inject.Module;
 public class AWSEC2ContextBuilder extends EC2ContextBuilder {
 
    public AWSEC2ContextBuilder(Properties props) {
-      super(props);
+      super(warnAndReplaceIfUsingOldImageKey(props));
    }
-
+   
+   @VisibleForTesting
+   @Override
+   public Properties getProperties(){
+      return properties;
+   }
+   
+   //TODO: determine how to do conditional manipulation w/rocoto
+   static Properties warnAndReplaceIfUsingOldImageKey(Properties props) {
+      if (props.containsKey(PROPERTY_EC2_AMI_OWNERS)) {
+         StringBuilder query = new StringBuilder();
+         String owners = props.remove(PROPERTY_EC2_AMI_OWNERS).toString();
+         if ("*".equals(owners))
+            query.append("state=available;image-type=machine");
+         else if (!"".equals(owners))
+            query.append("owner-id=").append(owners).append(";state=available;image-type=machine");
+         else if ("".equals(owners))
+            query = new StringBuilder();
+         props.setProperty(PROPERTY_EC2_AMI_QUERY, query.toString());
+         Logger.getAnonymousLogger().warning(
+                  String.format("Property %s is deprecated, please use new syntax: %s=%s", PROPERTY_EC2_AMI_OWNERS,
+                           PROPERTY_EC2_AMI_QUERY, query.toString()));
+      }
+      return props;
+   }
+   
    @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new AWSEC2RestClientModule());

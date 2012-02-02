@@ -29,7 +29,7 @@ import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.ExtractMode;
 import org.jclouds.cloudstack.domain.ISO;
 import org.jclouds.cloudstack.domain.ISOPermissions;
-import org.jclouds.cloudstack.filters.QuerySigner;
+import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.options.AccountInDomainOptions;
 import org.jclouds.cloudstack.options.DeleteISOOptions;
 import org.jclouds.cloudstack.options.ExtractISOOptions;
@@ -54,7 +54,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see http://download.cloud.com/releases/2.2.12/api/TOC_User.html
  * @author Richard Downer
  */
-@RequestFilters(QuerySigner.class)
+@RequestFilters(AuthenticationFilter.class)
 @QueryParams(keys = "response", values = "json")
 @SkipEncoding({'/', ','})
 public interface ISOAsyncClient {

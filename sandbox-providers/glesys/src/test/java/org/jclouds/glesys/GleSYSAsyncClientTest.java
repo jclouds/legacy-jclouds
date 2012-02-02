@@ -21,7 +21,7 @@ package org.jclouds.glesys;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-import org.jclouds.glesys.features.BaseGleSYSAsyncClientTest;
+import org.jclouds.glesys.internal.BaseGleSYSAsyncClientTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;

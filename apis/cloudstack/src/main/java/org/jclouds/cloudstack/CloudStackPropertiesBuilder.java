@@ -18,12 +18,12 @@
  */
 package org.jclouds.cloudstack;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import org.jclouds.PropertiesBuilder;
 
 import java.util.Properties;
 
-import org.jclouds.PropertiesBuilder;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 
 /**
  * Builds properties used in cloudstack Clients

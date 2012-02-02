@@ -21,6 +21,7 @@ package org.jclouds.glesys.features;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import org.jclouds.glesys.internal.BaseGleSYSAsyncClientTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;

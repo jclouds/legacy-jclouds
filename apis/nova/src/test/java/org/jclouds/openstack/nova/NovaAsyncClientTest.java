@@ -788,15 +788,14 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
 
    @Override
    public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory(getProperties()).createContextSpec(provider, "user", "password", new Properties());
+      return new RestContextFactory(setupRestProperties()).createContextSpec(provider, "user", "password", setupProperties());
    }
 
    @Override
-   protected Properties getProperties() {
+   protected Properties setupProperties() {
       Properties overrides = new Properties();
       overrides.setProperty(PROPERTY_API_VERSION, "api-version");
       overrides.setProperty(provider + ".endpoint", "http://endpoint");
-      overrides.setProperty(provider + ".contextbuilder", NovaContextBuilder.class.getName());
       return overrides;
    }
 }

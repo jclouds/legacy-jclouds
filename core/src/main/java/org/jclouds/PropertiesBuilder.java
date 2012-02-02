@@ -18,6 +18,7 @@
  */
 package org.jclouds;
 
+import static org.jclouds.Constants.PROPERTY_API;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
 import static org.jclouds.Constants.PROPERTY_CONNECTION_TIMEOUT;
@@ -181,10 +182,10 @@ public class PropertiesBuilder {
    }
 
    /**
-    * @see org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS
+    * @see org.jclouds.Constants.PROPERTY_USER_THREADS
     */
-   public PropertiesBuilder limitUserThreadsTo(int poolIoWorkerThreads) {
-      properties.setProperty(PROPERTY_USER_THREADS, Integer.toString(poolIoWorkerThreads));
+   public PropertiesBuilder limitUserThreadsTo(int poolUserThreads) {
+      properties.setProperty(PROPERTY_USER_THREADS, Integer.toString(poolUserThreads));
       return this;
    }
 
@@ -219,6 +220,8 @@ public class PropertiesBuilder {
       props.setProperty(PROPERTY_CONNECTION_TIMEOUT, 60000 + "");
       props.setProperty(PROPERTY_IO_WORKER_THREADS, 20 + "");
       props.setProperty(PROPERTY_USER_THREADS, 0 + "");
+      props.setProperty(PROPERTY_API, "");
+      props.setProperty(PROPERTY_API_VERSION, "");
       props.setProperty(PROPERTY_BUILD_VERSION, "");
       props.setProperty(PROPERTY_MAX_CONNECTION_REUSE, 75 + "");
       props.setProperty(PROPERTY_MAX_SESSION_FAILURES, 2 + "");

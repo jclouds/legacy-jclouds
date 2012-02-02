@@ -18,6 +18,7 @@
  */
 package org.jclouds.glesys.domain;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
@@ -30,6 +31,29 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @see <a href= "https://customer.glesys.com/api.php?a=doc#server_list" />
  */
 public class Server implements Comparable<Server> {
+   
+   public static enum State {
+
+      RUNNING, STOPPED, UNRECOGNIZED;
+
+      public String value() {
+         return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
+      }
+
+      @Override
+      public String toString() {
+         return value();
+      }
+
+      public static State fromValue(String state) {
+         try {
+            return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
+      }
+   }
+   
    public static Builder builder() {
       return new Builder();
    }

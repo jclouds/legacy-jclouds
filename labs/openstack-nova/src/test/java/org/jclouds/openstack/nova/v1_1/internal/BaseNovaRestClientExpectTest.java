@@ -19,7 +19,7 @@
 package org.jclouds.openstack.nova.v1_1.internal;
 
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.openstack.keystone.v2_0.internal.BaseKeyStoneRestClientExpectTest;
+import org.jclouds.openstack.keystone.v2_0.internal.BaseKeystoneRestClientExpectTest;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.config.NovaRestClientModule;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -31,7 +31,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class BaseNovaRestClientExpectTest extends BaseKeyStoneRestClientExpectTest<NovaClient> {
+public class BaseNovaRestClientExpectTest extends BaseKeystoneRestClientExpectTest<NovaClient> {
 
    public BaseNovaRestClientExpectTest() {
       provider = "openstack-nova";
@@ -46,7 +46,7 @@ public class BaseNovaRestClientExpectTest extends BaseKeyStoneRestClientExpectTe
    @RequiresHttp
    protected static class TestNovaRestClientModule extends NovaRestClientModule {
       private TestNovaRestClientModule() {
-         super(new TestKeyStoneAuthenticationModule());
+         super(new TestKeystoneAuthenticationModule());
       }
    }
 

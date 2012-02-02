@@ -34,46 +34,21 @@ import com.google.common.collect.ImmutableMultimap;
 @Test(groups = "unit", testName = "CloudServersExpectTest")
 public class CloudServersExpectTest extends BaseCloudServersRestClientExpectTest {
    
-   HttpRequest initialAuth = HttpRequest.builder().method("GET").endpoint(URI.create("https://auth/v1.0"))
-            .headers(
-            ImmutableMultimap.<String, String> builder()
-            .put("X-Auth-User", "identity")
-            .put("X-Auth-Key", "credential")
-            .put("Accept", "*/*").build()).build();
-   
-   String authToken = "d6245d35-22a0-47c0-9770-2c5097da25fc";
-   
-   HttpResponse responseWithUrls = HttpResponse.builder().statusCode(204).message("HTTP/1.1 204 No Content")
-            .headers(ImmutableMultimap.<String,String>builder()
-            .put("Server", "Apache/2.2.3 (Red Hat)")
-            .put("vary", "X-Auth-Token,X-Auth-Key,X-Storage-User,X-Storage-Pass")
-            .put("X-Storage-Url", "https://storage101.dfw1.clouddrive.com/v1/MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22")
-            .put("Cache-Control", "s-maxage=86399")
-            .put("Content-Type", "text/xml")
-            .put("Date", "Tue, 10 Jan 2012 22:08:47 GMT")
-            .put("X-Auth-Token", authToken)
-            .put("X-Server-Management-Url","https://servers.api.rackspacecloud.com/v1.0/413274")
-            .put("X-Storage-Token", authToken)
-            .put("Connection", "Keep-Alive")
-            .put("X-CDN-Management-Url", "https://cdn1.clouddrive.com/v1/MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22")
-            .put("Content-Length", "0")
-            .build()).build();
-   
    public void deleteImageReturnsTrueOn200AndFalseOn404() {
       
       HttpRequest deleteImage11 = HttpRequest.builder().method("DELETE").endpoint(
-               URI.create("https://servers.api.rackspacecloud.com/v1.0/413274/images/11?now=1257695648897")).headers(
+               URI.create("https://lon.servers.api.rackspacecloud.com/v1.0/10001786/images/11?now=1257695648897")).headers(
                ImmutableMultimap.<String, String> builder()
                .put("X-Auth-Token", authToken).build()).build();
       
       HttpResponse imageDeleted = HttpResponse.builder().statusCode(204).message("HTTP/1.1 204 No Content").build();
 
-      CloudServersClient clientWhenImageExists = requestsSendResponses(initialAuth, responseWithUrls, deleteImage11, imageDeleted);
+      CloudServersClient clientWhenImageExists = requestsSendResponses(initialAuth, responseWithAuth, deleteImage11, imageDeleted);
       assert clientWhenImageExists.deleteImage(11);
 
       HttpResponse imageNotFound = HttpResponse.builder().statusCode(404).message("HTTP/1.1 404 Not Found").build();
 
-      CloudServersClient clientWhenImageDoesntExist =  requestsSendResponses(initialAuth, responseWithUrls, deleteImage11, imageNotFound);
+      CloudServersClient clientWhenImageDoesntExist =  requestsSendResponses(initialAuth, responseWithAuth, deleteImage11, imageNotFound);
       assert !clientWhenImageDoesntExist.deleteImage(11);
       
    }

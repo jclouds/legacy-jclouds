@@ -37,6 +37,7 @@
                     </monitoring>
                     <kernelId>aki-ba3adfd3</kernelId>
                     <ramdiskId>ari-badbad00</ramdiskId>
+                    <hypervisor>xen</hypervisor>
                 </item>
                 <item>
                     <instanceId>i-28a64435</instanceId>
@@ -66,6 +67,7 @@
                     </monitoring>
                     <kernelId>aki-ba3adfd3</kernelId>
                     <ramdiskId>ari-badbad00</ramdiskId>
+                    <hypervisor>xen</hypervisor>
                 </item>
             </instancesSet>
         </item>

@@ -1,1 +1,1 @@
-{"response":{"status":{"code":"200","text":"OK"},"domains":[{"domain":"adamlowe.net","create_time":"2011-12-20 10:58:51","count":"9","glesysnameserver":false}],"debug":{"input":[]}}}
+{"response":{"status":{"code":200,"text":"OK"},"domains":[{"domainname":"testglesys.jclouds.org","createtime":"2012-01-31T12:19:03+01:00","recordcount":9,"usingglesysnameserver":"no"}],"debug":{"input":[]}}}

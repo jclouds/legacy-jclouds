@@ -90,7 +90,9 @@ public class ProductItemsToHardware implements Function<Iterable<ProductItem>, H
       int ram = ProductItems.capacity().apply(ramItem).intValue();
 
       return new HardwareBuilder().ids(hardwareId).processors(ImmutableList.of(new Processor(cores, coreSpeed))).ram(
-               ram).volumes(
+               ram)
+               .hypervisor("XenServer")
+               .volumes(
                   Iterables.transform(filter(items, categoryCodeMatches(diskCategoryRegex)),
                         new Function<ProductItem, Volume>() {
                            @Override

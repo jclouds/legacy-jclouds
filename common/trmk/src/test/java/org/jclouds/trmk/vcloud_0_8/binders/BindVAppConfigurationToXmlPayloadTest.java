@@ -18,11 +18,10 @@
  */
 package org.jclouds.trmk.vcloud_0_8.binders;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.jclouds.trmk.vcloud_0_8.domain.VAppConfiguration.Builder.changeNameTo;
 
 import java.io.IOException;
@@ -34,21 +33,20 @@ import org.jclouds.cim.ResourceAllocationSettingData;
 import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudPropertiesBuilder;
-import org.jclouds.trmk.vcloud_0_8.binders.BindVAppConfigurationToXmlPayload;
 import org.jclouds.trmk.vcloud_0_8.domain.Status;
 import org.jclouds.trmk.vcloud_0_8.domain.VAppConfiguration;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.VAppImpl;
 import org.jclouds.util.Strings2;
+import org.nnsoft.guice.rocoto.Rocoto;
+import org.nnsoft.guice.rocoto.configuration.ConfigurationModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code BindVAppConfigurationToXmlPayload}
@@ -57,16 +55,13 @@ import com.google.inject.name.Names;
  */
 @Test(groups = "unit")
 public class BindVAppConfigurationToXmlPayloadTest {
-   Injector injector = Guice.createInjector(new AbstractModule() {
+   Injector injector = Guice.createInjector(Rocoto.expandVariables(new ConfigurationModule() {
 
       @Override
-      protected void configure() {
-         Properties props = new Properties();
-         Names
-                  .bindProperties(binder(), checkNotNull(new TerremarkVCloudPropertiesBuilder(props).build(),
-                           "properties"));
+      protected void bindConfigurations() {
+         bindProperties(new TerremarkVCloudPropertiesBuilder(new Properties()).build());
       }
-   });
+   }));
 
    public void testChangeName() throws IOException {
       VAppImpl vApp = new VAppImpl("MyAppServer6", URI

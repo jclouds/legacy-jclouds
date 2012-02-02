@@ -36,6 +36,7 @@ import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Properties;
 
+import javax.inject.Singleton;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.cloudservers.config.CloudServersRestClientModule;
@@ -43,20 +44,23 @@ import org.jclouds.cloudservers.domain.BackupSchedule;
 import org.jclouds.cloudservers.domain.DailyBackup;
 import org.jclouds.cloudservers.domain.RebootType;
 import org.jclouds.cloudservers.domain.WeeklyBackup;
+import org.jclouds.cloudservers.internal.BaseCloudServersRestClientExpectTest.TestAuthenticationServiceModule;
 import org.jclouds.cloudservers.options.CreateServerOptions;
 import org.jclouds.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.cloudservers.options.ListOptions;
 import org.jclouds.cloudservers.options.RebuildServerOptions;
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
-import org.jclouds.openstack.TestOpenStackAuthenticationModule;
 import org.jclouds.openstack.filters.AddTimestampQuery;
 import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule.GetAuth;
+import org.jclouds.openstack.keystone.v1_1.domain.Auth;
+import org.jclouds.openstack.keystone.v1_1.parse.ParseAuthTest;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
@@ -71,6 +75,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
+import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -78,8 +83,9 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "unit", singleThreaded=true, testName = "CloudServersAsyncClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
+@Test(groups = "unit", singleThreaded = true, testName = "CloudServersAsyncClientTest")
 public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyncClient> {
    private static final Class<? extends ListOptions[]> listOptionsVarargsClass = new ListOptions[] {}.getClass();
    private static final Class<? extends CreateServerOptions[]> createServerOptionsVarargsClass = new CreateServerOptions[] {}
@@ -890,11 +896,22 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
    @RequiresHttp
    protected static class TestCloudServersRestClientModule extends CloudServersRestClientModule {
       private TestCloudServersRestClientModule() {
-         super(new TestOpenStackAuthenticationModule());
+         super(new TestAuthenticationServiceModule());
+      }
+
+      @Provides
+      @Singleton
+      GetAuth provideGetAuth() {
+         return new GetAuth(null) {
+            @Override
+            public Auth apply(Credentials in) {
+               return new ParseAuthTest().expected();
+            }
+         };
       }
 
       @Override
-      protected URI provideServerUrl(AuthenticationResponse response) {
+      protected URI provideServerUrl(Auth response) {
          return URI.create("http://serverManagementUrl");
       }
 
@@ -904,16 +921,15 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
 
    @Override
    public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory(getProperties()).createContextSpec(provider, "user", "password", new Properties());
+      return new RestContextFactory(setupRestProperties()).createContextSpec(provider, "user", "password", setupProperties());
    }
 
    @Override
-   protected Properties getProperties() {
+   protected Properties setupProperties() {
       Properties overrides = new Properties();
       overrides.setProperty(PROPERTY_REGIONS, "US");
       overrides.setProperty(PROPERTY_API_VERSION, "1");
       overrides.setProperty(provider + ".endpoint", "https://auth");
-      overrides.setProperty(provider + ".contextbuilder", CloudServersContextBuilder.class.getName());
       return overrides;
    }
 }

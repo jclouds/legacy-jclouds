@@ -18,8 +18,10 @@
  */
 package org.jclouds.cloudstack.features;
 
-import java.util.Properties;
-
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.http.HttpRequest;
@@ -27,9 +29,11 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.BaseRestClientExpectTest;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.Properties;
+
+import static org.jclouds.crypto.CryptoStreams.md5Hex;
 
 /**
  * Base class for writing CloudStack Rest Client Expect tests
@@ -50,5 +54,38 @@ public abstract class BaseCloudStackRestClientExpectTest<S> extends BaseRestClie
    }
 
    protected abstract S clientFrom(CloudStackContext context);
+
+   protected final HttpRequest loginRequest = HttpRequest.builder()
+     .method("GET")
+     .endpoint(
+        URI.create("http://localhost:8080/client/api?response=json&command=login&" +
+           "username=identity&password=" + md5Hex("credential")+ "&domain="))
+     .headers(
+        ImmutableMultimap.<String, String>builder()
+           .put("Accept", "application/json")
+           .build())
+     .build();
+
+   protected final String jSessionId = "90DD65D13AEAA590ECCA312D150B9F6D";
+   protected final String sessionKey = "uYT4/MNiglgAKiZRQkvV8QP8gn0=";
+   
+   protected final HttpResponse loginResponse = HttpResponse.builder()
+      .statusCode(200)
+      .headers(
+        ImmutableMultimap.<String, String>builder()
+           .put("Set-Cookie", "JSESSIONID="+jSessionId+"; Path=/client")
+           .build())
+      .payload(payloadFromResource("/loginresponse.json"))
+      .build();
+
+   @SuppressWarnings("deprecation")
+   protected final HttpRequest logoutRequest = HttpRequest.builder()
+     .method("GET")
+     .endpoint(
+        URI.create("http://localhost:8080/client/api?response=json&command=logout&" +
+           "sessionkey=" + URLEncoder.encode(sessionKey)))
+     .build();
+   
+   protected final HttpResponse logoutResponse = HttpResponse.builder().statusCode(200).build();
 
 }

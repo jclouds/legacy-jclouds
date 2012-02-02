@@ -18,16 +18,17 @@
  */
 package org.jclouds.glesys.features;
 
-import org.jclouds.glesys.domain.IpDetails;
-import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Set;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import org.jclouds.glesys.domain.IpDetails;
+import org.jclouds.glesys.internal.BaseGleSYSClientLiveTest;
+import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.Test;
 
 /**
  * Tests behavior of {@code IpClient}

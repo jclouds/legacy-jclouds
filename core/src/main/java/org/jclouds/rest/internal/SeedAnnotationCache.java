@@ -39,22 +39,19 @@ import java.lang.reflect.Method;
 import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.RestContext;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.internal.RestAnnotationProcessor.MethodKey;
 
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Provides;
 
 /**
@@ -70,19 +67,11 @@ public class SeedAnnotationCache extends CacheLoader<Class<?>, Boolean> {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   protected final Multimap<String, String> constants;
    protected final Injector injector;
 
    @Inject
-   public SeedAnnotationCache(Injector injector, @Named("CONSTANTS") Multimap<String, String> constants) {
+   public SeedAnnotationCache(Injector injector) {
       this.injector = injector;
-      this.constants = constants;
-   }
-
-   public void bindConstant(Method method) {
-      String key = method.getAnnotation(PathParam.class).value();
-      String value = injector.getInstance(Key.get(String.class, method.getAnnotation(Named.class)));
-      constants.put(key, value);
    }
 
    @Override
@@ -106,14 +95,12 @@ public class SeedAnnotationCache extends CacheLoader<Class<?>, Boolean> {
                methodToIndexesOfOptions.get(method);
             }
             delegationMap.put(new MethodKey(method), method);
-         } else if (isConstantDeclaration(method)) {
-            bindConstant(method);
          } else if (!method.getDeclaringClass().equals(declaring)) {
             logger.trace("skipping potentially overridden method %s", method);
          } else if (method.isAnnotationPresent(Provides.class)) {
             logger.trace("skipping provider method %s", method);
          } else {
-            logger.trace("Method is not annotated as either http or constant: %s", method);
+            logger.trace("Method is not annotated as either http or provider method: %s", method);
          }
       }
       return true;
@@ -124,7 +111,4 @@ public class SeedAnnotationCache extends CacheLoader<Class<?>, Boolean> {
                || ImmutableSet.copyOf(method.getParameterTypes()).contains(HttpRequest.class);
    }
 
-   public static boolean isConstantDeclaration(Method method) {
-      return method.isAnnotationPresent(PathParam.class) && method.isAnnotationPresent(Named.class);
-   }
 }

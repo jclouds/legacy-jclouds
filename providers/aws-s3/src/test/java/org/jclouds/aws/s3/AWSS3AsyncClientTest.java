@@ -40,6 +40,7 @@ import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -89,8 +90,8 @@ public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3
    public void testPutObject() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
          NoSuchMethodException, IOException {
 
-      Method method = AWSS3AsyncClient.class
-            .getMethod("putObject", String.class, S3Object.class, PutObjectOptions[].class);
+      Method method = AWSS3AsyncClient.class.getMethod("putObject", String.class, S3Object.class,
+            PutObjectOptions[].class);
       HttpRequest request = processor.createRequest(method, "bucket",
             blobToS3Object.apply(BindBlobToMultipartFormTest.TEST_BLOB));
 
@@ -151,11 +152,6 @@ public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3
    protected TypeLiteral<RestAnnotationProcessor<AWSS3AsyncClient>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<AWSS3AsyncClient>>() {
       };
-   }
-
-   @Override
-   protected Properties getProperties() {
-      return RestContextFactory.getPropertiesFromResource("/rest.properties");
    }
 
    public void testInitiateMultipartUpload() throws SecurityException, NegativeArraySizeException,
@@ -293,4 +289,9 @@ public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3
       return new TestAWSS3RestClientModule();
    }
 
+   @Override
+   public RestContextSpec<?, ?> createContextSpec() {
+      Properties props = new Properties();
+      return new RestContextFactory().createContextSpec(provider, "identity", "credential", props);
+   }
 }

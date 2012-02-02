@@ -27,7 +27,6 @@ import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIM
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import org.jclouds.aws.domain.Region;
 
@@ -72,28 +71,5 @@ public class AWSEC2PropertiesBuilder extends org.jclouds.ec2.EC2PropertiesBuilde
       super(properties);
    }
 
-   @Override
-   public Properties build() {
-      Properties props = super.build();
-      warnAndReplaceIfUsingOldImageKey(props);
-      return props;
-   }
-
-   protected void warnAndReplaceIfUsingOldImageKey(Properties props) {
-      if (props.containsKey(PROPERTY_EC2_AMI_OWNERS)) {
-         StringBuilder query = new StringBuilder();
-         String owners = properties.remove(PROPERTY_EC2_AMI_OWNERS).toString();
-         if ("*".equals(owners))
-            query.append("state=available;image-type=machine");
-         else if (!"".equals(owners))
-            query.append("owner-id=").append(owners).append(";state=available;image-type=machine");
-         else if ("".equals(owners))
-            query = new StringBuilder();
-         props.setProperty(PROPERTY_EC2_AMI_QUERY, query.toString());
-         Logger.getAnonymousLogger().warning(
-                  String.format("Property %s is deprecated, please use new syntax: %s=%s", PROPERTY_EC2_AMI_OWNERS,
-                           PROPERTY_EC2_AMI_QUERY, query.toString()));
-      }
-   }
 
 }

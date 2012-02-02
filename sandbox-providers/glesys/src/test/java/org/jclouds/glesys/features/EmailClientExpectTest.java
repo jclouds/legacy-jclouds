@@ -18,30 +18,30 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.glesys.GleSYSClient;
-import org.jclouds.glesys.domain.Email;
-import org.jclouds.glesys.domain.EmailOverview;
-import org.jclouds.glesys.domain.EmailOverviewDomain;
-import org.jclouds.glesys.domain.EmailOverviewSummary;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpResponseException;
-import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.BaseRestClientExpectTest;
-import org.jclouds.rest.ResourceNotFoundException;
-import org.testng.annotations.Test;
+import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Set;
 
-import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import org.jclouds.glesys.GleSYSClient;
+import org.jclouds.glesys.domain.EmailAccount;
+import org.jclouds.glesys.domain.EmailOverview;
+import org.jclouds.glesys.domain.EmailOverviewDomain;
+import org.jclouds.glesys.domain.EmailOverviewSummary;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.BaseRestClientExpectTest;
+import org.jclouds.rest.ResourceNotFoundException;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests annotation parsing of {@code EmailClient}
@@ -65,8 +65,8 @@ public class EmailClientExpectTest extends BaseRestClientExpectTest<GleSYSClient
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/email_list.json")).build()).getEmailClient();
 
       DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-      Email.Builder builder = Email.builder().quota("200 MB").usedQuota("0 MB").antispamLevel(3).antiVirus(true).autoRespond(false).autoRespondSaveEmail(true).autoRespondMessage("false");
-      Set<Email> expected =
+      EmailAccount.Builder builder = EmailAccount.builder().quota("200 MB").usedQuota("0 MB").antispamLevel(3).antiVirus(true).autoRespond(false).autoRespondSaveEmail(true).autoRespondMessage("false");
+      Set<EmailAccount> expected =
             ImmutableSet.of(
                   builder.account("test@adamlowe.net").created(dateFormat.parse("2011-12-22T12:13:14")).modified(dateFormat.parse("2011-12-22T12:13:35")).build(),
                   builder.account("test2@adamlowe.net").created(dateFormat.parse("2011-12-22T12:14:29")).modified(dateFormat.parse("2011-12-22T12:14:31")).build()

@@ -21,7 +21,6 @@ package org.jclouds.rackspace.cloudloadbalancers;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
-import static org.jclouds.cloudloadbalancers.reference.RackspaceConstants.PROPERTY_ACCOUNT_ID;
 import static org.jclouds.cloudloadbalancers.reference.Region.LON;
 import static org.jclouds.location.reference.LocationConstants.ENDPOINT;
 import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
@@ -50,9 +49,8 @@ public class CloudLoadBalancersUKPropertiesBuilder extends CloudLoadBalancersPro
       properties.setProperty(PROPERTY_ISO3166_CODES, "GB-SLG");
       
       properties.setProperty(PROPERTY_REGION + "." + LON + "." + ISO3166_CODES, "GB-SLG");
-      properties.setProperty(PROPERTY_REGION + "." + LON + "." + ENDPOINT, String
-               .format("https://lon.loadbalancers.api.rackspacecloud.com/v{%s}/{%s}", PROPERTY_API_VERSION,
-                        PROPERTY_ACCOUNT_ID));
+      properties.setProperty(PROPERTY_REGION + "." + LON + "." + ENDPOINT,
+            String.format("https://lon.loadbalancers.api.rackspacecloud.com/v${%s}", PROPERTY_API_VERSION));
       
       return properties;
    }

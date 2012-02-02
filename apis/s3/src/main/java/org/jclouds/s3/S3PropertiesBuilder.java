@@ -49,6 +49,7 @@ public class S3PropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "true");
       properties.setProperty(PROPERTY_RELAX_HOSTNAME, "true");
       properties.setProperty(PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX, DIRECTORY_SUFFIX_FOLDER);
+      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, String.format("x-${%s}-meta-", PROPERTY_HEADER_TAG));
       return properties;
    }
 
@@ -60,21 +61,4 @@ public class S3PropertiesBuilder extends PropertiesBuilder {
       super();
    }
 
-   protected S3PropertiesBuilder withMetaPrefix(String prefix) {
-      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, prefix);
-      return this;
-   }
-
-   protected void setMetaPrefix() {
-      if (properties.getProperty(PROPERTY_USER_METADATA_PREFIX) == null) {
-         properties.setProperty(PROPERTY_USER_METADATA_PREFIX, String.format("x-%s-meta-", properties
-                  .getProperty(PROPERTY_HEADER_TAG)));
-      }
-   }
-
-   @Override
-   public Properties build() {
-      setMetaPrefix();
-      return super.build();
-   }
 }
