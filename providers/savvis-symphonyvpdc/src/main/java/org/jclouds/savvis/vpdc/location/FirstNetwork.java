@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.savvis.vpdc.compute.suppliers;
+package org.jclouds.savvis.vpdc.location;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.find;
@@ -29,6 +29,7 @@ import javax.inject.Singleton;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
@@ -39,7 +40,7 @@ import com.google.common.base.Supplier;
  * 
  */
 @Singleton
-public class FirstNetwork implements Supplier<Location> {
+public class FirstNetwork implements ImplicitLocationSupplier {
    @Singleton
    public static final class IsNetwork implements Predicate<Location> {
       @Override

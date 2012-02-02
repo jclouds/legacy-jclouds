@@ -33,13 +33,11 @@ import org.jclouds.savvis.vpdc.compute.functions.NetworkToLocation;
 import org.jclouds.savvis.vpdc.compute.functions.VMSpecToHardware;
 import org.jclouds.savvis.vpdc.compute.functions.VMToNodeMetadata;
 import org.jclouds.savvis.vpdc.compute.strategy.VPDCComputeServiceAdapter;
-import org.jclouds.savvis.vpdc.compute.suppliers.FirstNetwork;
 import org.jclouds.savvis.vpdc.domain.Network;
 import org.jclouds.savvis.vpdc.domain.VM;
 import org.jclouds.savvis.vpdc.domain.VMSpec;
 
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 
@@ -72,7 +70,7 @@ public class VPDCComputeServiceContextModule extends
       }).to(VMSpecToHardware.class);
       bind(new TypeLiteral<Function<Network, Location>>() {
       }).to(NetworkToLocation.class);
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(FirstNetwork.class);
+      // to have the compute service adapter override default locations
+      install(new LocationsFromComputeServiceAdapterModule<VM, VMSpec, CIMOperatingSystem, Network>(){});
    }
 }

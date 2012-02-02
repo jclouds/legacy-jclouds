@@ -41,6 +41,7 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.Json;
 import org.jclouds.location.Provider;
+import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.AuthorizationException;
@@ -61,6 +62,7 @@ import org.jclouds.savvis.vpdc.features.VMClient;
 import org.jclouds.savvis.vpdc.handlers.VPDCErrorHandler;
 import org.jclouds.savvis.vpdc.internal.LoginAsyncClient;
 import org.jclouds.savvis.vpdc.internal.VCloudToken;
+import org.jclouds.savvis.vpdc.location.FirstNetwork;
 import org.jclouds.savvis.vpdc.predicates.TaskSuccess;
 import org.jclouds.util.Strings2;
 
@@ -70,6 +72,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -163,5 +166,10 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(VPDCErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(VPDCErrorHandler.class);
    }
-
+   
+   @Override
+   protected void installLocations() {
+      super.installLocations();
+      bind(ImplicitLocationSupplier.class).to(FirstNetwork.class).in(Scopes.SINGLETON);
+   }
 }
