@@ -23,17 +23,12 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.SortedMap;
-import java.util.concurrent.TimeUnit;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudVersionsAsyncClient;
 import org.jclouds.trmk.vcloud_0_8.xml.SupportedVersionsHandler;
 import org.testng.annotations.Test;
 
@@ -74,16 +69,10 @@ public class TerremarkVCloudVersionsAsyncClientTest extends RestClientTest<Terre
       };
    }
 
-   @Timeout(duration = 10, timeUnit = TimeUnit.SECONDS)
-   public interface VCloudVersionsClient {
-
-      SortedMap<String, URI> getSupportedVersions();
-   }
-
    @Override
-   public RestContextSpec<VCloudVersionsClient, TerremarkVCloudVersionsAsyncClient> createContextSpec() {
+   public RestContextSpec<TerremarkVCloudVersionsClient, TerremarkVCloudVersionsAsyncClient> createContextSpec() {
       return contextSpec("test", "http://localhost:8080", "1", "", "", "identity", "credential",
-               VCloudVersionsClient.class, TerremarkVCloudVersionsAsyncClient.class);
+               TerremarkVCloudVersionsClient.class, TerremarkVCloudVersionsAsyncClient.class);
    }
 
 }

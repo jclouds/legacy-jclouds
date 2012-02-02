@@ -24,23 +24,21 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.location.Provider;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.trmk.vcloud_0_8.domain.VCloudSession;
 import org.jclouds.trmk.vcloud_0_8.endpoints.VCloudLogin;
 import org.jclouds.trmk.vcloud_0_8.functions.ParseLoginResponseFromHeaders;
-import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudLoginAsyncClient;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -93,22 +91,17 @@ public class TerremarkVCloudLoginAsyncClientTest extends RestClientTest<Terremar
          @SuppressWarnings("unused")
          @Provides
          @VCloudLogin
-         URI provideURI(@Provider URI uri) {
-            return uri;
+         Supplier<URI> provideURI(@Provider URI uri) {
+            return Suppliers.ofInstance(uri);
          }
 
       };
    }
 
-   @Timeout(duration = 10, timeUnit = TimeUnit.SECONDS)
-   public interface VCloudLoginClient {
-
-      VCloudSession login();
-   }
 
    @Override
-   public RestContextSpec<VCloudLoginClient, TerremarkVCloudLoginAsyncClient> createContextSpec() {
+   public RestContextSpec<TerremarkVCloudLoginClient, TerremarkVCloudLoginAsyncClient> createContextSpec() {
       return contextSpec("test", "http://localhost:8080/login", "1", "", "", "identity", "credential",
-               VCloudLoginClient.class, TerremarkVCloudLoginAsyncClient.class);
+               TerremarkVCloudLoginClient.class, TerremarkVCloudLoginAsyncClient.class);
    }
 }

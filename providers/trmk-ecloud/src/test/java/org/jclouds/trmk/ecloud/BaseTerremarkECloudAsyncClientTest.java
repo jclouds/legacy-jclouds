@@ -48,8 +48,8 @@ import org.jclouds.trmk.vcloud_0_8.domain.internal.CatalogItemImpl;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.ReferenceTypeImpl;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.VDCImpl;
 import org.jclouds.trmk.vcloud_0_8.filters.SetVCloudTokenCookie;
-import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudLoginAsyncClient;
-import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudVersionsAsyncClient;
+import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudLoginClient;
+import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudVersionsClient;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
@@ -133,8 +133,8 @@ public abstract class BaseTerremarkECloudAsyncClientTest<T> extends RestClientTe
    protected static class TerremarkECloudRestClientModuleExtension extends TerremarkECloudRestClientModule {
 
       @Override
-      protected URI provideAuthenticationURI(TerremarkVCloudVersionsAsyncClient versionService, String version) {
-         return URI.create("https://vcloud.safesecureweb.com/api/v0.8/login");
+      protected Supplier<URI> provideAuthenticationURI(TerremarkVCloudVersionsClient versionService, String version) {
+         return Suppliers.ofInstance(URI.create("https://vcloud.safesecureweb.com/api/v0.8/login"));
       }
 
       @Override
@@ -166,7 +166,7 @@ public abstract class BaseTerremarkECloudAsyncClientTest<T> extends RestClientTe
 
       @Override
       protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            AtomicReference<AuthorizationException> authException, TerremarkVCloudLoginAsyncClient login) {
+            AtomicReference<AuthorizationException> authException, TerremarkVCloudLoginClient login) {
          return Suppliers.<VCloudSession> ofInstance(new VCloudSession() {
 
             @Override

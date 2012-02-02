@@ -20,7 +20,6 @@ package org.jclouds.trmk.vcloud_0_8.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.getLast;
 import static com.google.common.collect.Iterables.transform;
@@ -28,16 +27,14 @@ import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 import static org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.SortedMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
@@ -49,8 +46,9 @@ import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.location.suppliers.ImplicitLocationSupplier;
+import org.jclouds.location.suppliers.LocationsSupplier;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
@@ -67,6 +65,7 @@ import org.jclouds.trmk.vcloud_0_8.domain.VDC;
 import org.jclouds.trmk.vcloud_0_8.endpoints.Keys;
 import org.jclouds.trmk.vcloud_0_8.endpoints.Org;
 import org.jclouds.trmk.vcloud_0_8.endpoints.OrgList;
+import org.jclouds.trmk.vcloud_0_8.endpoints.VCloudLogin;
 import org.jclouds.trmk.vcloud_0_8.functions.AllCatalogItemsInCatalog;
 import org.jclouds.trmk.vcloud_0_8.functions.AllCatalogItemsInOrg;
 import org.jclouds.trmk.vcloud_0_8.functions.AllCatalogsInOrg;
@@ -76,7 +75,11 @@ import org.jclouds.trmk.vcloud_0_8.functions.OrgsForNames;
 import org.jclouds.trmk.vcloud_0_8.functions.VAppTemplatesForCatalogItems;
 import org.jclouds.trmk.vcloud_0_8.handlers.ParseTerremarkVCloudErrorFromHttpResponse;
 import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudLoginAsyncClient;
+import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudLoginClient;
 import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudVersionsAsyncClient;
+import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudVersionsClient;
+import org.jclouds.trmk.vcloud_0_8.location.DefaultVDC;
+import org.jclouds.trmk.vcloud_0_8.location.OrgAndVDCToLocationSupplier;
 import org.jclouds.trmk.vcloud_0_8.predicates.TaskSuccess;
 import org.jclouds.util.Strings2;
 
@@ -85,10 +88,11 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Maps;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
 public class TerremarkVCloudRestClientModule<S extends TerremarkVCloudClient, A extends TerremarkVCloudAsyncClient>
@@ -109,9 +113,6 @@ public class TerremarkVCloudRestClientModule<S extends TerremarkVCloudClient, A 
       bind(new TypeLiteral<Function<Iterable<? extends CatalogItem>, Iterable<? extends VAppTemplate>>>() {
       }).to(new TypeLiteral<VAppTemplatesForCatalogItems>() {
       });
-      // Ensures we don't retry on authorization failures
-      bind(new TypeLiteral<AtomicReference<AuthorizationException>>() {
-      }).toInstance(new AtomicReference<AuthorizationException>());
       installDefaultVCloudEndpointsModule();
       bind(new TypeLiteral<Function<ReferenceType, Location>>() {
       }).to(new TypeLiteral<FindLocationForResource>() {
@@ -135,6 +136,8 @@ public class TerremarkVCloudRestClientModule<S extends TerremarkVCloudClient, A 
       bind(new TypeLiteral<Function<org.jclouds.trmk.vcloud_0_8.domain.Org, Iterable<? extends CatalogItem>>>() {
       }).to(new TypeLiteral<AllCatalogItemsInOrg>() {
       });
+      bindClientAndAsyncClient(binder(), TerremarkVCloudVersionsClient.class, TerremarkVCloudVersionsAsyncClient.class);
+      bindClientAndAsyncClient(binder(), TerremarkVCloudLoginClient.class, TerremarkVCloudLoginAsyncClient.class);
    }
 
    @Provides
@@ -171,9 +174,20 @@ public class TerremarkVCloudRestClientModule<S extends TerremarkVCloudClient, A 
    @Provides
    @Singleton
    @OrgList
-   URI provideOrgListURI(Supplier<VCloudSession> sessionSupplier) {
-      VCloudSession session = sessionSupplier.get();
-      return URI.create(getLast(session.getOrgs().values()).getHref().toASCIIString().replaceAll("org/.*", "org"));
+   protected Supplier<URI> provideOrgListURI(Supplier<VCloudSession> sessionSupplier) {
+      return Suppliers.compose(new Function<VCloudSession, URI>() {
+
+         @Override
+         public URI apply(VCloudSession arg0) {
+            return URI.create(getLast(arg0.getOrgs().values()).getHref().toASCIIString().replaceAll("org/.*", "org"));
+         }
+
+         @Override
+         public String toString() {
+            return "orgListURI()";
+         }
+
+      }, sessionSupplier);
    }
 
    @Singleton
@@ -296,16 +310,28 @@ public class TerremarkVCloudRestClientModule<S extends TerremarkVCloudClient, A 
 
    };
 
+
    @Provides
    @Singleton
-   @org.jclouds.trmk.vcloud_0_8.endpoints.VCloudLogin
-   protected URI provideAuthenticationURI(TerremarkVCloudVersionsAsyncClient versionService,
-         @Named(PROPERTY_API_VERSION) String version) throws InterruptedException, ExecutionException, TimeoutException {
-      SortedMap<String, URI> versions = versionService.getSupportedVersions().get(180, TimeUnit.SECONDS);
-      checkState(versions.size() > 0, "No versions present");
-      checkState(versions.containsKey(version), "version " + version + " not present in: " + versions);
-      return versions.get(version);
+   @VCloudLogin
+   protected Supplier<URI> provideAuthenticationURI(final TerremarkVCloudVersionsClient versionService,
+            @Named(PROPERTY_API_VERSION) final String version) {
+      return new Supplier<URI>() {
+
+         @Override
+         public URI get() {
+            SortedMap<String, URI> versions = versionService.getSupportedVersions();
+            checkState(versions.size() > 0, "No versions present");
+            checkState(versions.containsKey(version), "version " + version + " not present in: " + versions);
+            return versions.get(version);
+         }
+
+         public String toString() {
+            return "login()";
+         }
+      };
    }
+
 
    @Singleton
    private static class OrgNameToOrgSupplier implements Supplier<Map<String, ReferenceType>> {
@@ -322,12 +348,6 @@ public class TerremarkVCloudRestClientModule<S extends TerremarkVCloudClient, A 
          return sessionSupplier.get().getOrgs();
       }
 
-   }
-
-   @Provides
-   @Singleton
-   protected TerremarkVCloudVersionsAsyncClient provideVCloudVersions(AsyncClientFactory factory) {
-      return factory.create(TerremarkVCloudVersionsAsyncClient.class);
    }
 
    @Provides
@@ -451,31 +471,20 @@ public class TerremarkVCloudRestClientModule<S extends TerremarkVCloudClient, A 
       return sessionSupplier.get().getOrgs();
    }
 
-   @Provides
-   @Singleton
-   protected TerremarkVCloudLoginAsyncClient provideVCloudLogin(AsyncClientFactory factory) {
-      return factory.create(TerremarkVCloudLoginAsyncClient.class);
-   }
 
    @Provides
    @Singleton
    protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         AtomicReference<AuthorizationException> authException, final TerremarkVCloudLoginAsyncClient login) {
+            AtomicReference<AuthorizationException> authException, final TerremarkVCloudLoginClient login) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<VCloudSession>(authException, seconds,
-            new Supplier<VCloudSession>() {
+               new Supplier<VCloudSession>() {
 
-               @Override
-               public VCloudSession get() {
-                  try {
-                     return login.login().get(10, TimeUnit.SECONDS);
-                  } catch (Exception e) {
-                     propagate(e);
-                     assert false : e;
-                     return null;
+                  @Override
+                  public VCloudSession get() {
+                     return login.login();
                   }
-               }
 
-            });
+               });
    }
 
    @Singleton
@@ -538,5 +547,12 @@ public class TerremarkVCloudRestClientModule<S extends TerremarkVCloudClient, A 
    @Named("CreateKey")
    String provideCreateKey() throws IOException {
       return Strings2.toStringAndClose(getClass().getResourceAsStream("/CreateKey.xml"));
+   }
+
+   @Override
+   protected void installLocations() {
+      super.installLocations();
+      bind(ImplicitLocationSupplier.class).to(DefaultVDC.class).in(Scopes.SINGLETON);
+      bind(LocationsSupplier.class).to(OrgAndVDCToLocationSupplier.class).in(Scopes.SINGLETON);
    }
 }
