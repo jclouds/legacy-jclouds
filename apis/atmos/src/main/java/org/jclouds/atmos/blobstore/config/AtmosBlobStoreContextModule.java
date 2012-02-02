@@ -36,7 +36,6 @@ import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
-import org.jclouds.location.config.JustProviderLocationModule;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -63,7 +62,6 @@ public class AtmosBlobStoreContextModule extends AbstractModule {
       }).in(Scopes.SINGLETON);
       bind(ContainsValueInListStrategy.class).to(FindMD5InUserMetadata.class);
       bind(BlobRequestSigner.class).to(AtmosBlobRequestSigner.class);
-      install(new JustProviderLocationModule());
    }
 
    @Provides
