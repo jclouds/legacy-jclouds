@@ -70,7 +70,6 @@ public class BaseKeystoneRestClientExpectTest<S> extends BaseRestClientExpectTes
       credential = secretKey;
    }
 
-
    protected String authToken = "Auth_4f173437e4b013bee56d1007";
 
    protected HttpResponse responseWithAccess = HttpResponse.builder().statusCode(200).message("HTTP/1.1 200").payload(
