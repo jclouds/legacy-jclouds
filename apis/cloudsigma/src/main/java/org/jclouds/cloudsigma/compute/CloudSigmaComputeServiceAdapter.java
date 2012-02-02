@@ -55,7 +55,6 @@ import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.location.suppliers.JustProvider;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
@@ -88,7 +87,6 @@ public class CloudSigmaComputeServiceAdapter implements
          });
    private final CloudSigmaClient client;
    private final Predicate<DriveInfo> driveNotClaimed;
-   private final JustProvider locationSupplier;
    private final String defaultVncPassword;
    private final LoadingCache<String, DriveInfo> cache;
    private final ExecutorService executor;
@@ -99,11 +97,10 @@ public class CloudSigmaComputeServiceAdapter implements
 
    @Inject
    public CloudSigmaComputeServiceAdapter(CloudSigmaClient client, Predicate<DriveInfo> driveNotClaimed,
-         JustProvider locationSupplier, @Named(CloudSigmaConstants.PROPERTY_VNC_PASSWORD) String defaultVncPassword,
+         @Named(CloudSigmaConstants.PROPERTY_VNC_PASSWORD) String defaultVncPassword,
          LoadingCache<String, DriveInfo> cache, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.client = checkNotNull(client, "client");
       this.driveNotClaimed = checkNotNull(driveNotClaimed, "driveNotClaimed");
-      this.locationSupplier = checkNotNull(locationSupplier, "locationSupplier");
       this.defaultVncPassword = checkNotNull(defaultVncPassword, "defaultVncPassword");
       checkArgument(defaultVncPassword.length() <= 8, "vnc passwords should be less that 8 characters!"); 
       this.cache = checkNotNull(cache, "cache");
@@ -201,11 +198,11 @@ public class CloudSigmaComputeServiceAdapter implements
    public Iterable<ServerInfo> listNodes() {
       return (Iterable<ServerInfo>) client.listServerInfo();
    }
-
-   @SuppressWarnings("unchecked")
+   
    @Override
    public Iterable<Location> listLocations() {
-      return (Iterable<Location>) locationSupplier.get();
+      // Not using the adapter to determine locations
+      return ImmutableSet.<Location>of();
    }
 
    @Override
