@@ -24,6 +24,7 @@ import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLA
 import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PRICES;
 
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -32,6 +33,7 @@ import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContext;
 import org.jclouds.softlayer.SoftLayerAsyncClient;
 import org.jclouds.softlayer.SoftLayerClient;
@@ -83,9 +85,11 @@ public class BaseSoftLayerClientLiveTest {
          @Provides
          @Singleton
          @Memoized
-         public Supplier<ProductPackage> getProductPackage(SoftLayerClient client,
+         public Supplier<ProductPackage> getProductPackage(AtomicReference<AuthorizationException> authException,
+                  SoftLayerClient client,
                   @Named(PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME) String virtualGuestPackageName) {
-            return new SoftLayerComputeServiceContextModule().getProductPackage(30, client, virtualGuestPackageName);
+            return new SoftLayerComputeServiceContextModule().getProductPackage(authException, 30, client,
+                     virtualGuestPackageName);
          }
 
          @SuppressWarnings("unused")

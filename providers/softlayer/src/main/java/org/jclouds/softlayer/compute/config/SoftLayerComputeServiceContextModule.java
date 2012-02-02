@@ -25,6 +25,8 @@ import static org.jclouds.softlayer.predicates.ProductPackagePredicates.named;
 import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME;
 import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PRICES;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -36,7 +38,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
-import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.softlayer.SoftLayerAsyncClient;
 import org.jclouds.softlayer.SoftLayerClient;
@@ -87,9 +89,9 @@ public class SoftLayerComputeServiceContextModule
       }).to(ProductItemsToHardware.class);
       bind(new TypeLiteral<Function<Datacenter, Location>>() {
       }).to(DatacenterToLocation.class);
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(OnlyLocationOrFirstZone.class);
       bind(TemplateOptions.class).to(SoftLayerTemplateOptions.class);
+      // to have the compute service adapter override default locations
+      install(new LocationsFromComputeServiceAdapterModule<VirtualGuest, Iterable<ProductItem>, ProductItem, Datacenter>(){});
    }
 
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
@@ -104,8 +106,8 @@ public class SoftLayerComputeServiceContextModule
    @Provides
    @Singleton
    @Memoized
-   public Supplier<ProductPackage> getProductPackage(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final SoftLayerClient client,
+   public Supplier<ProductPackage> getProductPackage(AtomicReference<AuthorizationException> authException,
+            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final SoftLayerClient client,
             @Named(PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME) final String virtualGuestPackageName) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<ProductPackage>(authException, seconds,
                new Supplier<ProductPackage>() {

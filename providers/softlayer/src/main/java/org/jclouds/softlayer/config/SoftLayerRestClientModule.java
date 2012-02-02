@@ -27,6 +27,9 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
+import org.jclouds.location.config.LocationModule;
+import org.jclouds.location.suppliers.ImplicitLocationSupplier;
+import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstZone;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.softlayer.SoftLayerAsyncClient;
@@ -42,6 +45,7 @@ import org.jclouds.softlayer.features.VirtualGuestClient;
 import org.jclouds.softlayer.handlers.SoftLayerErrorHandler;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Scopes;
 
 /**
  * Configures the SoftLayer connection.
@@ -79,6 +83,12 @@ public class SoftLayerRestClientModule extends RestClientModule<SoftLayerClient,
    @Override
    protected void bindRetryHandlers() {
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(BackoffLimitedRetryHandler.class);
+   }
+
+   @Override
+   protected void installLocations() {
+      install(new LocationModule());
+      bind(ImplicitLocationSupplier.class).to(OnlyLocationOrFirstZone.class).in(Scopes.SINGLETON);
    }
 
 }

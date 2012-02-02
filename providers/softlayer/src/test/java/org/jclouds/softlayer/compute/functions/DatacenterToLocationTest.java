@@ -25,7 +25,7 @@ import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.domain.Location;
-import org.jclouds.location.suppliers.JustProvider;
+import org.jclouds.location.suppliers.all.JustProvider;
 import org.jclouds.softlayer.domain.Address;
 import org.jclouds.softlayer.domain.Datacenter;
 import org.testng.annotations.Test;
