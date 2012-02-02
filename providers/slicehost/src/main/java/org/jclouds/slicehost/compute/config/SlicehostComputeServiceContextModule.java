@@ -35,7 +35,6 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
-import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.slicehost.SlicehostAsyncClient;
 import org.jclouds.slicehost.SlicehostClient;
 import org.jclouds.slicehost.compute.functions.FlavorToHardware;
@@ -48,7 +47,6 @@ import org.jclouds.slicehost.domain.Slice;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
@@ -88,12 +86,8 @@ public class SlicehostComputeServiceContextModule
       bind(new TypeLiteral<Function<Location, Location>>() {
       }).to((Class) IdentityFunction.class);
 
-      // there are no locations except the provider
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(OnlyLocationOrFirstZone.class);
-
    }
-
+   
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       return template.osFamily(UBUNTU).osVersionMatches("1[10].[10][04]").osDescriptionMatches("^((?!MGC).)*$")

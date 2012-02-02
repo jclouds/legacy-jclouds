@@ -28,11 +28,12 @@ import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.location.suppliers.JustProvider;
 import org.jclouds.slicehost.SlicehostClient;
 import org.jclouds.slicehost.domain.Flavor;
 import org.jclouds.slicehost.domain.Image;
 import org.jclouds.slicehost.domain.Slice;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * defines the connection between the {@link SlicehostClient} implementation and the jclouds
@@ -43,13 +44,10 @@ import org.jclouds.slicehost.domain.Slice;
 public class SlicehostComputeServiceAdapter implements ComputeServiceAdapter<Slice, Flavor, Image, Location> {
 
    protected final SlicehostClient client;
-   protected final JustProvider locationSupplier;
 
    @Inject
-   protected SlicehostComputeServiceAdapter(SlicehostClient client, JustProvider locationSupplier) {
+   protected SlicehostComputeServiceAdapter(SlicehostClient client) {
       this.client = checkNotNull(client, "client");
-      this.locationSupplier = checkNotNull(locationSupplier, "locationSupplier");
-
    }
 
    @Override
@@ -79,10 +77,10 @@ public class SlicehostComputeServiceAdapter implements ComputeServiceAdapter<Sli
       return client.listSlices();
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public Iterable<Location> listLocations() {
-      return (Iterable<Location>) locationSupplier.get();
+      // Not using the adapter to determine locations
+      return ImmutableSet.<Location>of();
    }
 
    @Override
