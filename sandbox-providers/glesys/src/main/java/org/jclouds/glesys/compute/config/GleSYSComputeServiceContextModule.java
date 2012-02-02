@@ -45,10 +45,8 @@ import org.jclouds.glesys.compute.functions.ServerDetailsToNodeMetadata;
 import org.jclouds.glesys.compute.options.GleSYSTemplateOptions;
 import org.jclouds.glesys.domain.OSTemplate;
 import org.jclouds.glesys.domain.ServerDetails;
-import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import com.google.inject.Injector;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
@@ -82,10 +80,10 @@ public class GleSYSComputeServiceContextModule
       }).to(DatacenterToLocation.class);
       bind(new TypeLiteral<Function<String, OsFamilyVersion64Bit>>() {
       }).to(ParseOsFamilyVersion64BitFromImageName.class);
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(OnlyLocationOrFirstZone.class);
       bind(TemplateOptions.class).to(GleSYSTemplateOptions.class);
       bind(String.class).annotatedWith(Names.named("PASSWORD")).toProvider(PasswordProvider.class).in(Scopes.SINGLETON);
+      // to have the compute service adapter override default locations
+      install(new LocationsFromComputeServiceAdapterModule<ServerDetails, Hardware, OSTemplate, String>(){});
    }
 
    // 128MB is perhaps too little ram

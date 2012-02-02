@@ -103,6 +103,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
 
       ServerSpec.Builder builder = ServerSpec.builder();
       builder.datacenter(template.getLocation().getId());
+      builder.templateName(template.getImage().getName());
       builder.platform(template.getHardware().getHypervisor());
       builder.diskSizeGB(Math.round(template.getHardware().getVolumes().get(0).getSize()));
       builder.cpuCores((int) template.getHardware().getProcessors().get(0).getCores());

@@ -36,7 +36,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = false, singleThreaded = true)
+@Test(groups = "live", enabled = true, singleThreaded = true)
 public class GleSYSComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public GleSYSComputeServiceLiveTest() {
       provider = "glesys";
