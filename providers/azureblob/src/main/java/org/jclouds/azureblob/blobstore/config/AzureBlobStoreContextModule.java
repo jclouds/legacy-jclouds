@@ -37,7 +37,6 @@ import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
-import org.jclouds.location.config.JustProviderLocationModule;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -57,7 +56,6 @@ public class AzureBlobStoreContextModule extends AbstractModule {
    @Override
    protected void configure() {
       install(new BlobStoreMapModule());
-      install(new JustProviderLocationModule());
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
       bind(AsyncBlobStore.class).to(AzureAsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(AzureBlobStore.class).in(Scopes.SINGLETON);
