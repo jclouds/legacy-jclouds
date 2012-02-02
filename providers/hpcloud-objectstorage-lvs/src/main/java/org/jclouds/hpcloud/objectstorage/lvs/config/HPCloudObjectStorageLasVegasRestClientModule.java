@@ -35,7 +35,7 @@ import org.jclouds.http.annotation.ServerError;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
-import org.jclouds.openstack.keystone.v2_0.config.KeyStoneAuthenticationModule;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.Service;
 import org.jclouds.openstack.services.ServiceType;
@@ -60,13 +60,13 @@ import com.google.inject.Provides;
 public class HPCloudObjectStorageLasVegasRestClientModule extends
          RestClientModule<HPCloudObjectStorageLasVegasClient, HPCloudObjectStorageLasVegasAsyncClient> {
 
-   private final KeyStoneAuthenticationModule authModule;
+   private final KeystoneAuthenticationModule authModule;
 
    public HPCloudObjectStorageLasVegasRestClientModule() {
-      this(new KeyStoneAuthenticationModule());
+      this(new KeystoneAuthenticationModule());
    }
 
-   public HPCloudObjectStorageLasVegasRestClientModule(KeyStoneAuthenticationModule authModule) {
+   public HPCloudObjectStorageLasVegasRestClientModule(KeystoneAuthenticationModule authModule) {
       super(HPCloudObjectStorageLasVegasClient.class, HPCloudObjectStorageLasVegasAsyncClient.class);
       this.authModule = authModule;
    }
