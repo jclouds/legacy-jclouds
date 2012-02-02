@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.compute.suppliers;
+package org.jclouds.vcloud.location;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -32,7 +32,8 @@ import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.location.Iso3166;
 import org.jclouds.location.Provider;
-import org.jclouds.location.suppliers.JustProvider;
+import org.jclouds.location.suppliers.LocationsSupplier;
+import org.jclouds.location.suppliers.all.JustProvider;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
 
@@ -45,20 +46,21 @@ import com.google.common.collect.ImmutableSet.Builder;
  * @author Adrian Cole
  */
 @Singleton
-public class OrgAndVDCToLocationSupplier extends JustProvider {
+public class OrgAndVDCToLocationSupplier extends JustProvider implements LocationsSupplier {
 
    private final Supplier<Map<String, ReferenceType>> orgNameToResource;
    private final Supplier<Map<String, Org>> orgNameToVDCResource;
-   private final Map<String, Set<String>> isoCodesById;
+   private final Supplier<Map<String, Supplier<Set<String>>>> isoCodesByIdSupplier;
 
    @Inject
    OrgAndVDCToLocationSupplier(@Iso3166 Set<String> isoCodes, @Provider String providerName, @Provider URI endpoint,
             @org.jclouds.vcloud.endpoints.Org Supplier<Map<String, ReferenceType>> orgNameToResource,
-            Supplier<Map<String, Org>> orgNameToVDCResource, @Iso3166 Map<String, Set<String>> isoCodesById) {
+            Supplier<Map<String, Org>> orgNameToVDCResource,
+            @Iso3166 Supplier<Map<String, Supplier<Set<String>>>> isoCodesByIdSupplier) {
       super(providerName, endpoint, isoCodes);
       this.orgNameToResource = checkNotNull(orgNameToResource, "orgNameToResource");
       this.orgNameToVDCResource = checkNotNull(orgNameToVDCResource, "orgNameToVDCResource");
-      this.isoCodesById = checkNotNull(isoCodesById, "isoCodesById");
+      this.isoCodesByIdSupplier = checkNotNull(isoCodesByIdSupplier, "isoCodesByIdSupplier");
    }
 
    @Override
@@ -71,21 +73,21 @@ public class OrgAndVDCToLocationSupplier extends JustProvider {
       Location provider = Iterables.getOnlyElement(super.get());
       if (orgNameToResource.get().size() == 0)
          return locations.add(provider);
-      else
-         for (ReferenceType org : orgNameToResource.get().values()) {
-            LocationBuilder builder = new LocationBuilder().scope(LocationScope.REGION).id(
-                     org.getHref().toASCIIString()).description((org.getName())).parent(provider);
-            if (isoCodesById.containsKey(org.getHref().toASCIIString()))
-               builder.iso3166Codes(isoCodesById.get(org.getHref().toASCIIString()));
-            Location orgL = builder.build();
-            for (ReferenceType vdc : orgNameToVDCResource.get().get(org.getName()).getVDCs().values()) {
-               builder = new LocationBuilder().scope(LocationScope.ZONE).id(vdc.getHref().toASCIIString()).description(
-                        (vdc.getName())).parent(orgL);
-               if (isoCodesById.containsKey(vdc.getHref().toASCIIString()))
-                  builder.iso3166Codes(isoCodesById.get(vdc.getHref().toASCIIString()));
-               locations.add(builder.build());
-            }
+      Map<String, Supplier<Set<String>>> isoCodesById = isoCodesByIdSupplier.get();
+      for (ReferenceType org : orgNameToResource.get().values()) {
+         LocationBuilder builder = new LocationBuilder().scope(LocationScope.REGION).id(org.getHref().toASCIIString())
+                  .description((org.getName())).parent(provider);
+         if (isoCodesById.containsKey(org.getHref().toASCIIString()))
+            builder.iso3166Codes(isoCodesById.get(org.getHref().toASCIIString()).get());
+         Location orgL = builder.build();
+         for (ReferenceType vdc : orgNameToVDCResource.get().get(org.getName()).getVDCs().values()) {
+            builder = new LocationBuilder().scope(LocationScope.ZONE).id(vdc.getHref().toASCIIString()).description(
+                     (vdc.getName())).parent(orgL);
+            if (isoCodesById.containsKey(vdc.getHref().toASCIIString()))
+               builder.iso3166Codes(isoCodesById.get(vdc.getHref().toASCIIString()).get());
+            locations.add(builder.build());
          }
+      }
       return locations;
    }
 

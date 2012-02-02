@@ -40,7 +40,6 @@ import org.jclouds.vcloud.TaskInErrorStateException;
 import org.jclouds.vcloud.TaskStillRunningException;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
-import org.jclouds.vcloud.compute.suppliers.OrgAndVDCToLocationSupplier;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
@@ -75,20 +74,18 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
    protected final Supplier<Map<String, Org>> nameToOrg;
    protected final Supplier<Set<VAppTemplate>> templates;
    protected final Function<VAppTemplate, Envelope> templateToEnvelope;
-   protected final Supplier<Set<? extends Location>> locations;
 
    @Inject
    protected VCloudComputeServiceAdapter(VCloudClient client, Predicate<URI> successTester,
             InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn booter,
             Supplier<Map<String, Org>> nameToOrg, VAppTemplatesSupplier templates,
-            Function<VAppTemplate, Envelope> templateToEnvelope, OrgAndVDCToLocationSupplier locations) {
+            Function<VAppTemplate, Envelope> templateToEnvelope) {
       this.client = checkNotNull(client, "client");
       this.successTester = checkNotNull(successTester, "successTester");
       this.booter = checkNotNull(booter, "booter");
       this.nameToOrg = checkNotNull(nameToOrg, "nameToOrg");
       this.templates = checkNotNull(templates, "templates");
       this.templateToEnvelope = checkNotNull(templateToEnvelope, "templateToEnvelope");
-      this.locations = checkNotNull(locations, "locations");
    }
 
    @Override
@@ -154,10 +151,10 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
       }
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public Iterable<Location> listLocations() {
-      return (Iterable<Location>) locations.get();
+      // Not using the adapter to determine locations
+      return ImmutableSet.<Location>of();
    }
 
    @Override

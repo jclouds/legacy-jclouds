@@ -24,22 +24,21 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.location.Provider;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.endpoints.VCloudLogin;
 import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -92,18 +91,13 @@ public class VCloudLoginAsyncClientTest extends RestClientTest<VCloudLoginAsyncC
          @SuppressWarnings("unused")
          @Provides
          @VCloudLogin
-         URI provideURI(@Provider URI uri) {
-            return uri;
+         Supplier<URI> provideURI(@Provider URI uri) {
+            return Suppliers.ofInstance(uri);
          }
 
       };
    }
 
-   @Timeout(duration = 10, timeUnit = TimeUnit.SECONDS)
-   public interface VCloudLoginClient {
-
-      VCloudSession login();
-   }
 
    @Override
    public RestContextSpec<VCloudLoginClient, VCloudLoginAsyncClient> createContextSpec() {

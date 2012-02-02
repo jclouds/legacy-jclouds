@@ -34,7 +34,7 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.location.suppliers.JustProvider;
+import org.jclouds.location.suppliers.all.JustProvider;
 import org.jclouds.vcloud.compute.BaseVCloudComputeServiceExpectTest;
 import org.testng.annotations.Test;
 

@@ -40,7 +40,7 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.vcloud.VCloudMediaType;
-import org.jclouds.vcloud.VCloudVersionsAsyncClient;
+import org.jclouds.vcloud.VCloudVersionsClient;
 import org.jclouds.vcloud.config.VCloudRestClientModule;
 import org.jclouds.vcloud.domain.AllocationModel;
 import org.jclouds.vcloud.domain.Org;
@@ -134,8 +134,8 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
    public static class VCloudRestClientModuleExtension extends VCloudRestClientModule {
 
       @Override
-      protected URI provideAuthenticationURI(VCloudVersionsAsyncClient versionService, String version) {
-         return URI.create("https://vcenterprise.bluelock.com/api/v1.0/login");
+      protected Supplier<URI> provideAuthenticationURI(VCloudVersionsClient versionService, String version) {
+         return Suppliers.ofInstance(URI.create("https://vcenterprise.bluelock.com/api/v1.0/login"));
       }
 
       @Override
@@ -165,7 +165,7 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
 
       @Override
       protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            AtomicReference<AuthorizationException> authException, final VCloudLoginAsyncClient login) {
+            AtomicReference<AuthorizationException> authException, final VCloudLoginClient login) {
          return Suppliers.<VCloudSession> ofInstance(new VCloudSession() {
 
             @Override

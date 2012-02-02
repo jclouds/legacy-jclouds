@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Predicates.notNull;
 import static com.google.common.base.Suppliers.compose;
-import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.getLast;
@@ -31,6 +30,7 @@ import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
 
@@ -38,9 +38,6 @@ import java.net.URI;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
@@ -54,9 +51,10 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.location.suppliers.ImplicitLocationSupplier;
+import org.jclouds.location.suppliers.LocationsSupplier;
 import org.jclouds.ovf.Envelope;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
@@ -65,6 +63,7 @@ import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudToken;
 import org.jclouds.vcloud.VCloudVersionsAsyncClient;
+import org.jclouds.vcloud.VCloudVersionsClient;
 import org.jclouds.vcloud.compute.functions.FindLocationForResource;
 import org.jclouds.vcloud.compute.functions.ValidateVAppTemplateAndReturnEnvelopeOrThrowIllegalArgumentException;
 import org.jclouds.vcloud.domain.Catalog;
@@ -103,14 +102,18 @@ import org.jclouds.vcloud.functions.OrgsForNames;
 import org.jclouds.vcloud.functions.VAppTemplatesForCatalogItems;
 import org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponse;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
+import org.jclouds.vcloud.internal.VCloudLoginClient;
 import org.jclouds.vcloud.loaders.OVFLoader;
 import org.jclouds.vcloud.loaders.VAppTemplateLoader;
+import org.jclouds.vcloud.location.DefaultVDC;
+import org.jclouds.vcloud.location.OrgAndVDCToLocationSupplier;
 import org.jclouds.vcloud.predicates.TaskSuccess;
 import org.jclouds.vcloud.xml.ovf.VCloudResourceAllocationSettingDataHandler;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -118,6 +121,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -146,26 +150,14 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
 
    @Provides
    @Singleton
-   protected VCloudLoginAsyncClient provideVCloudLogin(AsyncClientFactory factory) {
-      return factory.create(VCloudLoginAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
    protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            AtomicReference<AuthorizationException> authException, final VCloudLoginAsyncClient login) {
+            AtomicReference<AuthorizationException> authException, final VCloudLoginClient login) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<VCloudSession>(authException, seconds,
                new Supplier<VCloudSession>() {
 
                   @Override
                   public VCloudSession get() {
-                     try {
-                        return login.login().get(10, TimeUnit.SECONDS);
-                     } catch (Exception e) {
-                        propagate(e);
-                        assert false : e;
-                        return null;
-                     }
+                     return login.login();
                   }
 
                });
@@ -178,9 +170,6 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
       }).to(new TypeLiteral<VAppTemplatesForCatalogItems>() {
       });
       bind(ResourceAllocationSettingDataHandler.class).to(VCloudResourceAllocationSettingDataHandler.class);
-      // Ensures we don't retry on authorization failures
-      bind(new TypeLiteral<AtomicReference<AuthorizationException>>() {
-      }).toInstance(new AtomicReference<AuthorizationException>());
       installDefaultVCloudEndpointsModule();
       bind(new TypeLiteral<Function<ReferenceType, Location>>() {
       }).to(new TypeLiteral<FindLocationForResource>() {
@@ -203,24 +192,25 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
       bind(new TypeLiteral<Function<Org, Iterable<CatalogItem>>>() {
       }).to(new TypeLiteral<AllCatalogItemsInOrg>() {
       });
-      
+
       bindCacheLoaders();
-      
+
       bind(new TypeLiteral<Function<VAppTemplate, String>>() {
       }).annotatedWith(Network.class).to(new TypeLiteral<DefaultNetworkNameInTemplate>() {
       });
-      
+
       bind(new TypeLiteral<Function<VAppTemplate, Envelope>>() {
       }).to(new TypeLiteral<ValidateVAppTemplateAndReturnEnvelopeOrThrowIllegalArgumentException>() {
       });
-      
+      bindClientAndAsyncClient(binder(), VCloudVersionsClient.class, VCloudVersionsAsyncClient.class);
+      bindClientAndAsyncClient(binder(), VCloudLoginClient.class, VCloudLoginAsyncClient.class);
    }
 
    protected void bindCacheLoaders() {
       bind(new TypeLiteral<CacheLoader<URI, VAppTemplate>>() {
       }).to(new TypeLiteral<VAppTemplateLoader>() {
       });
-      
+
       bind(new TypeLiteral<CacheLoader<URI, Envelope>>() {
       }).to(new TypeLiteral<OVFLoader>() {
       });
@@ -257,9 +247,20 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    @Provides
    @Singleton
    @OrgList
-   URI provideOrgListURI(Supplier<VCloudSession> sessionSupplier) {
-      VCloudSession session = sessionSupplier.get();
-      return URI.create(getLast(session.getOrgs().values()).getHref().toASCIIString().replaceAll("org/.*", "org"));
+   protected Supplier<URI> provideOrgListURI(Supplier<VCloudSession> sessionSupplier) {
+      return Suppliers.compose(new Function<VCloudSession, URI>() {
+
+         @Override
+         public URI apply(VCloudSession arg0) {
+            return URI.create(getLast(arg0.getOrgs().values()).getHref().toASCIIString().replaceAll("org/.*", "org"));
+         }
+
+         @Override
+         public String toString() {
+            return "orgListURI()";
+         }
+
+      }, sessionSupplier);
    }
 
    @Singleton
@@ -381,13 +382,22 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    @Provides
    @Singleton
    @org.jclouds.vcloud.endpoints.VCloudLogin
-   protected URI provideAuthenticationURI(VCloudVersionsAsyncClient versionService,
-            @Named(PROPERTY_API_VERSION) String version) throws InterruptedException, ExecutionException,
-            TimeoutException {
-      SortedMap<String, URI> versions = versionService.getSupportedVersions().get(180, TimeUnit.SECONDS);
-      checkState(versions.size() > 0, "No versions present");
-      checkState(versions.containsKey(version), "version " + version + " not present in: " + versions);
-      return versions.get(version);
+   protected Supplier<URI> provideAuthenticationURI(final VCloudVersionsClient versionService,
+            @Named(PROPERTY_API_VERSION) final String version) {
+      return new Supplier<URI>() {
+
+         @Override
+         public URI get() {
+            SortedMap<String, URI> versions = versionService.getSupportedVersions();
+            checkState(versions.size() > 0, "No versions present");
+            checkState(versions.containsKey(version), "version " + version + " not present in: " + versions);
+            return versions.get(version);
+         }
+
+         public String toString() {
+            return "login()";
+         }
+      };
    }
 
    @Singleton
@@ -405,12 +415,6 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
          return sessionSupplier.get().getOrgs();
       }
 
-   }
-
-   @Provides
-   @Singleton
-   protected VCloudVersionsAsyncClient provideVCloudVersions(AsyncClientFactory factory) {
-      return factory.create(VCloudVersionsAsyncClient.class);
    }
 
    @Provides
@@ -518,14 +522,13 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, Map<String, org.jclouds.vcloud.domain.CatalogItem>>>>(
                authException, seconds, supplier);
    }
-   
-   
+
    @Provides
    @Singleton
-   protected FenceMode defaultFenceMode(@Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode){
+   protected FenceMode defaultFenceMode(@Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode) {
       return FenceMode.fromValue(fenceMode);
    }
-   
+
    @Provides
    @Singleton
    protected LoadingCache<URI, VAppTemplate> vAppTemplates(CacheLoader<URI, VAppTemplate> vAppTemplates) {
@@ -537,11 +540,18 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
    protected LoadingCache<URI, Envelope> envelopes(CacheLoader<URI, Envelope> envelopes) {
       return CacheBuilder.newBuilder().build(envelopes);
    }
-   
+
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseVCloudErrorFromHttpResponse.class);
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(ParseVCloudErrorFromHttpResponse.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ParseVCloudErrorFromHttpResponse.class);
+   }
+
+   @Override
+   protected void installLocations() {
+      super.installLocations();
+      bind(ImplicitLocationSupplier.class).to(DefaultVDC.class).in(Scopes.SINGLETON);
+      bind(LocationsSupplier.class).to(OrgAndVDCToLocationSupplier.class).in(Scopes.SINGLETON);
    }
 }

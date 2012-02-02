@@ -48,7 +48,7 @@ public class VCloudComputeServiceContextModule
       super.configure();
       install(new VCloudComputeServiceDependenciesModule());
    }
-
+   
    // CIM ostype does not include version info
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {

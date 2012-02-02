@@ -18,16 +18,11 @@
  */
 package org.jclouds.vcloud.compute.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.find;
 
 import java.util.Map;
-import java.util.Set;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -56,11 +51,9 @@ import org.jclouds.vcloud.functions.VAppTemplatesInOrg;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -87,8 +80,6 @@ public class VCloudComputeServiceDependenciesModule extends AbstractModule {
    @SuppressWarnings("unchecked")
    @Override
    protected void configure() {
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(DefaultVDC.class).in(Scopes.SINGLETON);
       bind(new TypeLiteral<ComputeServiceAdapter<VApp, VAppTemplate, VAppTemplate, Location>>() {
       }).to(VCloudComputeServiceAdapter.class);
 
@@ -119,25 +110,6 @@ public class VCloudComputeServiceDependenciesModule extends AbstractModule {
    @Singleton
    public NetworkConfig networkConfig(@Network ReferenceType network, FenceMode defaultFenceMode) {
       return new NetworkConfig(network.getName(), network.getHref(), defaultFenceMode);
-   }
-
-   
-   @Singleton
-   public static class DefaultVDC implements Supplier<Location> {
-      private final Supplier<Set<? extends Location>> locationsSupplier;
-      private final IsDefaultVDC isDefaultVDC;
-
-      @Inject
-      DefaultVDC(@Memoized Supplier<Set<? extends Location>> locationsSupplier, IsDefaultVDC isDefaultVDC) {
-         this.locationsSupplier = checkNotNull(locationsSupplier, "locationsSupplierSupplier");
-         this.isDefaultVDC = checkNotNull(isDefaultVDC, "isDefaultVDC");
-      }
-
-      @Override
-      public Location get() {
-         return find(locationsSupplier.get(), isDefaultVDC);
-      }
-
    }
 
 }

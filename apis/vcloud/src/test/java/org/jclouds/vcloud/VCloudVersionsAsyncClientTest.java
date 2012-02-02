@@ -23,11 +23,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.SortedMap;
-import java.util.concurrent.TimeUnit;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.RestClientTest;
@@ -71,12 +67,6 @@ public class VCloudVersionsAsyncClientTest extends RestClientTest<VCloudVersions
    protected TypeLiteral<RestAnnotationProcessor<VCloudVersionsAsyncClient>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<VCloudVersionsAsyncClient>>() {
       };
-   }
-
-   @Timeout(duration = 10, timeUnit = TimeUnit.SECONDS)
-   public interface VCloudVersionsClient {
-
-      SortedMap<String, URI> getSupportedVersions();
    }
 
    @Override
