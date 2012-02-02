@@ -19,9 +19,9 @@
 
 package org.jclouds.virtualbox.compute;
 
+import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createNiceMock;
-import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.EasyMock.replay;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.testng.Assert.assertEquals;
 
@@ -37,7 +37,6 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.location.suppliers.JustProvider;
 import org.jclouds.virtualbox.functions.IMachineToImage;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IGuestOSType;
@@ -61,7 +60,6 @@ public class VirtualBoxComputeServiceAdapterTest {
    public void testListImages() throws Exception {
 
       VirtualBoxManager manager = createNiceMock(VirtualBoxManager.class);
-      JustProvider justProvider = createNiceMock(JustProvider.class);
       IVirtualBox vBox = createNiceMock(IVirtualBox.class);
       IGuestOSType osType = createNiceMock(IGuestOSType.class);
 
@@ -82,11 +80,10 @@ public class VirtualBoxComputeServiceAdapterTest {
       expect(osType.getDescription()).andReturn("Ubuntu 10.04").anyTimes();
       expect(osType.getIs64Bit()).andReturn(true).anyTimes();
 
-      replay(manager, justProvider, vBox, clonedMachine, imageMachine, osType);
+      replay(manager, vBox, clonedMachine, imageMachine, osType);
 
       Function<IMachine, Image> iMachineToImage = new IMachineToImage(Suppliers.ofInstance(manager), osMap);
-      VirtualBoxComputeServiceAdapter adapter = new VirtualBoxComputeServiceAdapter(Suppliers.ofInstance(manager), justProvider,
-            iMachineToImage);
+      VirtualBoxComputeServiceAdapter adapter = new VirtualBoxComputeServiceAdapter(Suppliers.ofInstance(manager), iMachineToImage);
 
       Iterator<Image> iterator = adapter.listImages().iterator();
       Image image = Iterators.getOnlyElement(iterator);

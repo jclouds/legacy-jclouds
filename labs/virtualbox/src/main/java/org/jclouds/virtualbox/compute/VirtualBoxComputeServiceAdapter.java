@@ -31,7 +31,6 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Location;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.location.suppliers.JustProvider;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
@@ -43,6 +42,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Singleton;
 
@@ -57,15 +57,13 @@ import com.google.inject.Singleton;
 public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IMachine, IMachine, Image, Location> {
 
    private final Supplier<VirtualBoxManager> manager;
-   private final JustProvider justProvider;
    private final Function<IMachine, Image> iMachineToImage;
 
    @Inject
-   public VirtualBoxComputeServiceAdapter(Supplier<VirtualBoxManager> manager, JustProvider justProvider,
+   public VirtualBoxComputeServiceAdapter(Supplier<VirtualBoxManager> manager,
          Function<IMachine, Image> iMachineToImage) {
       this.iMachineToImage = iMachineToImage;
       this.manager = checkNotNull(manager, "manager");
-      this.justProvider = checkNotNull(justProvider, "justProvider");
    }
 
    @Override
@@ -107,10 +105,10 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
       return imageMachines;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public Iterable<Location> listLocations() {
-      return (Iterable<Location>) justProvider.get();
+      // Not using the adapter to determine locations
+      return ImmutableSet.<Location>of();
    }
 
    @Override

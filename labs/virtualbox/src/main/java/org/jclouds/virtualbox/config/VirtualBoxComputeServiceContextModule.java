@@ -44,7 +44,6 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
-import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.Preconfiguration;
@@ -103,8 +102,6 @@ public class VirtualBoxComputeServiceContextModule extends
       }).to(IMachineToHardware.class);
       bind(new TypeLiteral<Function<IMachine, Image>>() {
       }).to(IMachineToImage.class);
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(OnlyLocationOrFirstZone.class);
       bind(new TypeLiteral<CacheLoader<IsoSpec, URI>>() {
       }).to((Class) StartJettyIfNotAlreadyRunning.class);
       bind(new TypeLiteral<Supplier<VirtualBoxManager>>() {
@@ -120,7 +117,7 @@ public class VirtualBoxComputeServiceContextModule extends
       bind(LockType.class).toInstance(LockType.Write);
 
    }
-
+   
    @Provides
    @Singleton
    @Preconfiguration
