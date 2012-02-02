@@ -78,6 +78,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
          assert template.getHypervisor() != null : template;
          assert template.getDomain() != null : template;
          assert template.getDomainId() > 0 : template;
+         assert template.getSize() > 0 : template;
       }
    }
 
