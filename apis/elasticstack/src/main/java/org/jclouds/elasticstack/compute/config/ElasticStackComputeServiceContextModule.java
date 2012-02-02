@@ -38,10 +38,10 @@ import org.jclouds.elasticstack.ElasticStackAsyncClient;
 import org.jclouds.elasticstack.ElasticStackClient;
 import org.jclouds.elasticstack.compute.ElasticStackComputeServiceAdapter;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata;
+import org.jclouds.elasticstack.compute.functions.WellKnownImageToImage;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata.DeviceToVolume;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata.FindImageForId;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata.GetImageIdFromServer;
-import org.jclouds.elasticstack.compute.functions.WellKnownImageToImage;
 import org.jclouds.elasticstack.domain.Device;
 import org.jclouds.elasticstack.domain.DriveInfo;
 import org.jclouds.elasticstack.domain.Server;
@@ -51,17 +51,15 @@ import org.jclouds.elasticstack.predicates.DriveClaimed;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.json.Json;
 import org.jclouds.location.Provider;
-import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.base.Supplier;
-import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Maps;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -100,10 +98,8 @@ public class ElasticStackComputeServiceContextModule
       }).to(FindImageForId.class);
       bind(new TypeLiteral<Function<DriveInfo, Image>>() {
       }).to(WellKnownImageToImage.class);
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(OnlyLocationOrFirstZone.class);
    }
-
+   
    @Provides
    @Singleton
    protected LoadingCache<String, DriveInfo> cache(GetDrive getDrive) {

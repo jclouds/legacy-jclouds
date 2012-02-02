@@ -57,7 +57,6 @@ import org.jclouds.elasticstack.domain.ServerInfo;
 import org.jclouds.elasticstack.domain.ServerStatus;
 import org.jclouds.elasticstack.domain.WellKnownImage;
 import org.jclouds.elasticstack.reference.ElasticStackConstants;
-import org.jclouds.location.suppliers.JustProvider;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
@@ -82,7 +81,6 @@ public class ElasticStackComputeServiceAdapter implements
    private final Predicate<DriveInfo> driveNotClaimed;
    private final Map<String, WellKnownImage> preinstalledImages;
    private final LoadingCache<String, DriveInfo> cache;
-   private final JustProvider locationSupplier;
    private final String defaultVncPassword;
    private final ExecutorService executor;
 
@@ -92,12 +90,11 @@ public class ElasticStackComputeServiceAdapter implements
 
    @Inject
    public ElasticStackComputeServiceAdapter(ElasticStackClient client, Predicate<DriveInfo> driveNotClaimed,
-         JustProvider locationSupplier, Map<String, WellKnownImage> preinstalledImages, LoadingCache<String, DriveInfo> cache,
+         Map<String, WellKnownImage> preinstalledImages, LoadingCache<String, DriveInfo> cache,
          @Named(ElasticStackConstants.PROPERTY_VNC_PASSWORD) String defaultVncPassword,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.client = checkNotNull(client, "client");
       this.driveNotClaimed = checkNotNull(driveNotClaimed, "driveNotClaimed");
-      this.locationSupplier = checkNotNull(locationSupplier, "locationSupplier");
       this.preinstalledImages = checkNotNull(preinstalledImages, "preinstalledImages");
       this.cache = checkNotNull(cache, "cache");
       this.defaultVncPassword = checkNotNull(defaultVncPassword, "defaultVncPassword");
@@ -195,10 +192,10 @@ public class ElasticStackComputeServiceAdapter implements
       return (Iterable<ServerInfo>) client.listServerInfo();
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public Iterable<Location> listLocations() {
-      return (Iterable<Location>) locationSupplier.get();
+      // Not using the adapter to determine locations
+      return ImmutableSet.<Location>of();
    }
 
    @Override
