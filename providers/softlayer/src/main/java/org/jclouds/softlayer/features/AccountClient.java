@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
  * @see <a href="http://sldn.softlayer.com/article/REST" />
  * @author Jason King
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
 public interface AccountClient {
 
    /**
