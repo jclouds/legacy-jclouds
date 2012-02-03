@@ -91,8 +91,8 @@ public class VCloudLoginAsyncClientTest extends RestClientTest<VCloudLoginAsyncC
          @SuppressWarnings("unused")
          @Provides
          @VCloudLogin
-         Supplier<URI> provideURI(@Provider URI uri) {
-            return Suppliers.ofInstance(uri);
+         Supplier<URI> provideURI(@Provider Supplier<URI> uri) {
+            return uri;
          }
 
       };

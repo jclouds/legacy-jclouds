@@ -33,6 +33,7 @@ import org.jclouds.util.Strings2;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -43,15 +44,20 @@ import com.google.inject.name.Named;
 public class SupplyFromProviderURIOrNodesProperty implements Supplier<InputStream>, Function<URI, InputStream> {
    @Resource
    protected Logger logger = Logger.NULL;
-   private final URI url;
+   private final Supplier<URI> url;
 
    @Inject(optional = true)
    @Named("byon.nodes")
    @VisibleForTesting
    String nodes;
-
+   
+   @VisibleForTesting
+   public SupplyFromProviderURIOrNodesProperty(URI url) {
+      this(Suppliers.ofInstance(checkNotNull(url, "url")));
+   }
+   
    @Inject
-   public SupplyFromProviderURIOrNodesProperty(@Provider URI url) {
+   public SupplyFromProviderURIOrNodesProperty(@Provider Supplier<URI> url) {
       this.url = checkNotNull(url, "url");
    }
 
@@ -59,7 +65,7 @@ public class SupplyFromProviderURIOrNodesProperty implements Supplier<InputStrea
    public InputStream get() {
       if (nodes != null)
          return Strings2.toInputStream(nodes);
-      return apply(url);
+      return apply(url.get());
    }
 
    @Override

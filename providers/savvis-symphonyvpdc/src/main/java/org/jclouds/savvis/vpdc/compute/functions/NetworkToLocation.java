@@ -39,6 +39,7 @@ import org.jclouds.savvis.vpdc.domain.Org;
 import org.jclouds.savvis.vpdc.domain.VDC;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 /**
  * @author Adrian Cole
@@ -49,12 +50,12 @@ public class NetworkToLocation implements Function<Network, Location> {
    public static final Pattern netPattern = Pattern.compile(".*org/([0-9.]+)/vdc/([0-9.]+)/network/(.*)$");
 
    private final String providerName;
-   private final URI endpoint;
+   private final Supplier<URI> endpoint;
    private final Set<String> isoCodes;
    private VPDCClient client;
 
    @Inject
-   public NetworkToLocation(@Iso3166 Set<String> isoCodes, @Provider String providerName, @Provider URI endpoint,
+   public NetworkToLocation(@Iso3166 Set<String> isoCodes, @Provider String providerName, @Provider Supplier<URI> endpoint,
             VPDCClient client) {
       this.providerName = checkNotNull(providerName, "providerName");
       this.endpoint = checkNotNull(endpoint, "endpoint");
@@ -67,7 +68,7 @@ public class NetworkToLocation implements Function<Network, Location> {
       Matcher matcher = netPattern.matcher(from.getHref().toASCIIString());
       if (matcher.find()) {
          Location provider = new LocationBuilder().scope(LocationScope.PROVIDER).id(providerName).description(
-                  endpoint.toASCIIString()).iso3166Codes(isoCodes).build();
+                  endpoint.get().toASCIIString()).iso3166Codes(isoCodes).build();
 
          Org org = client.getBrowsingClient().getOrg(matcher.group(1));
 

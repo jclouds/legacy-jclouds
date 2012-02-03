@@ -53,7 +53,7 @@ public class OrgAndVDCToLocationSupplier extends JustProvider implements Locatio
    private final Supplier<Map<String, Supplier<Set<String>>>> isoCodesByIdSupplier;
 
    @Inject
-   OrgAndVDCToLocationSupplier(@Iso3166 Set<String> isoCodes, @Provider String providerName, @Provider URI endpoint,
+   OrgAndVDCToLocationSupplier(@Iso3166 Set<String> isoCodes, @Provider String providerName, @Provider Supplier<URI> endpoint,
             @org.jclouds.trmk.vcloud_0_8.endpoints.Org Supplier<Map<String, ReferenceType>> orgNameToResource,
             Supplier<Map<String, ? extends Org>> orgNameToVDCResource,
             @Iso3166 Supplier<Map<String, Supplier<Set<String>>>> isoCodesByIdSupplier) {

@@ -39,6 +39,7 @@ import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 /**
  * Signs the EMC Atmos Online Storage request.
@@ -52,7 +53,7 @@ public class ShareUrl implements Function<String, URI> {
 
    private final String uid;
    private final byte[] key;
-   private final URI provider;
+   private final Supplier<URI> provider;
    private final javax.inject.Provider<Long> timeStampProvider;
    private final javax.inject.Provider<UriBuilder> uriBuilders;
    private final Crypto crypto;
@@ -66,7 +67,7 @@ public class ShareUrl implements Function<String, URI> {
 
    @Inject
    public ShareUrl(@Named(PROPERTY_IDENTITY) String uid, @Named(PROPERTY_CREDENTIAL) String encodedKey,
-            @Provider URI provider, @TimeStamp javax.inject.Provider<Long> timeStampProvider,
+            @Provider Supplier<URI> provider, @TimeStamp javax.inject.Provider<Long> timeStampProvider,
             javax.inject.Provider<UriBuilder> uriBuilders, Crypto crypto) {
       this.uid = uid;
       this.key = CryptoStreams.base64(encodedKey);
@@ -81,7 +82,7 @@ public class ShareUrl implements Function<String, URI> {
       String requestedResource = new StringBuilder().append("/rest/namespace/").append(path).toString();
       long expires = timeStampProvider.get();
       String signature = signString(createStringToSign(requestedResource, expires));
-      return uriBuilders.get().uri(provider).path(requestedResource).queryParam("uid", uid).queryParam("expires",
+      return uriBuilders.get().uri(provider.get()).path(requestedResource).queryParam("uid", uid).queryParam("expires",
                expires).queryParam("signature", signature).build();
    }
 

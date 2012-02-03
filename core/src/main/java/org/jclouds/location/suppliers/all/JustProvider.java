@@ -42,11 +42,11 @@ import com.google.common.collect.ImmutableSet;
 @Singleton
 public class JustProvider implements Supplier<Set<? extends Location>> {
    private final String providerName;
-   private final URI endpointSupplier;
+   private final Supplier<URI> endpointSupplier;
    private final Set<String> isoCodesSupplier;
 
    @Inject
-   public JustProvider(@Provider String providerName, @Provider URI endpointSupplier, @Iso3166 Set<String> isoCodesSupplier) {
+   public JustProvider(@Provider String providerName, @Provider Supplier<URI> endpointSupplier, @Iso3166 Set<String> isoCodesSupplier) {
       this.providerName = checkNotNull(providerName, "providerName");
       this.endpointSupplier = checkNotNull(endpointSupplier, "endpoint");
       this.isoCodesSupplier = checkNotNull(isoCodesSupplier, "isoCodes");
@@ -55,7 +55,7 @@ public class JustProvider implements Supplier<Set<? extends Location>> {
    @Override
    public Set<? extends Location> get() {
       return ImmutableSet.of(new LocationBuilder().scope(LocationScope.PROVIDER).id(providerName)
-            .description(endpointSupplier.toASCIIString()).iso3166Codes(isoCodesSupplier).build());
+            .description(endpointSupplier.get().toASCIIString()).iso3166Codes(isoCodesSupplier).build());
    }
 
 }

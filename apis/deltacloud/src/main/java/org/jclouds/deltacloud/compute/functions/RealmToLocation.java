@@ -34,6 +34,7 @@ import org.jclouds.location.Iso3166;
 import org.jclouds.location.Provider;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 /**
  * @author Adrian Cole
@@ -42,11 +43,11 @@ import com.google.common.base.Function;
 public class RealmToLocation implements Function<Realm, Location> {
 
    private final String providerName;
-   private final URI endpoint;
+   private final Supplier<URI> endpoint;
    private final Set<String> isoCodes;
 
    @Inject
-   public RealmToLocation(@Iso3166 Set<String> isoCodes, @Provider String providerName, @Provider URI endpoint) {
+   public RealmToLocation(@Iso3166 Set<String> isoCodes, @Provider String providerName, @Provider Supplier<URI> endpoint) {
       this.providerName = checkNotNull(providerName, "providerName");
       this.endpoint = checkNotNull(endpoint, "endpoint");
       this.isoCodes = checkNotNull(isoCodes, "isoCodes");
@@ -56,6 +57,6 @@ public class RealmToLocation implements Function<Realm, Location> {
    public Location apply(Realm from) {
       return new LocationBuilder().scope(LocationScope.ZONE).id(from.getHref().toASCIIString()).description(from.getName()).parent(
                new LocationBuilder().scope(LocationScope.PROVIDER).iso3166Codes(isoCodes).id(providerName).description(
-                        endpoint.toASCIIString()).parent(null).build()).build();
+                        endpoint.get().toASCIIString()).parent(null).build()).build();
    }
 }

@@ -33,9 +33,12 @@ import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code DescribeRegionsResponseHandler}
@@ -52,8 +55,8 @@ public class DescribeRegionsResponseHandlerTest extends BaseHandlerTest {
 
          @Override
          protected void configure() {
-            bind(URI.class).annotatedWith(Provider.class).toInstance(
-                  URI.create("https://booya"));
+            bind(new TypeLiteral<Supplier<URI>>(){}).annotatedWith(Provider.class).toInstance(
+                  Suppliers.ofInstance(URI.create("https://booya")));
          }
 
       });

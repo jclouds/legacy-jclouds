@@ -31,6 +31,7 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.location.suppliers.all.JustProvider;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
@@ -42,7 +43,8 @@ import com.google.common.collect.Iterables;
 @Test(singleThreaded = true, groups = "unit")
 public class ZoneToLocationTest {
 
-   static JustProvider justProvider = new JustProvider("cloudstack", URI.create("foo"), ImmutableSet.<String> of());
+   static JustProvider justProvider = new JustProvider("cloudstack", Suppliers.ofInstance(URI.create("foo")),
+            ImmutableSet.<String> of());
    static ZoneToLocation function = new ZoneToLocation(justProvider);
    static Location one = new LocationBuilder().parent(Iterables.get(justProvider.get(), 0)).scope(LocationScope.ZONE)
          .description("San Jose 1").id("1").build();

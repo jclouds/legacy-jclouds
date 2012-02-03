@@ -57,7 +57,7 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
    private final Factory runScriptOnNodeFactory;
    private final RetryIfSocketNotYetOpen socketTester;
    private final Supplier<NodeMetadata> host;
-   private final URI provider;
+   private final Supplier<URI> providerSupplier;
    private final String identity;
    private final String credential;
    private final Function<Supplier<NodeMetadata>, VirtualBoxManager> managerForNode;
@@ -67,11 +67,11 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
    @Inject
    public StartVBoxIfNotAlreadyRunning(Function<Supplier<NodeMetadata>, VirtualBoxManager> managerForNode,
             Factory runScriptOnNodeFactory, RetryIfSocketNotYetOpen socketTester, Supplier<NodeMetadata> host,
-            @Provider URI provider, @Identity String identity, @Credential String credential) {
+            @Provider Supplier<URI> providerSupplier, @Identity String identity, @Credential String credential) {
       this.runScriptOnNodeFactory = checkNotNull(runScriptOnNodeFactory, "runScriptOnNodeFactory");
       this.socketTester = checkNotNull(socketTester, "socketTester");
       this.host = checkNotNull(host, "host");
-      this.provider = checkNotNull(provider, "endpoint to virtualbox websrvd is needed");
+      this.providerSupplier = checkNotNull(providerSupplier, "endpoint to virtualbox websrvd is needed");
       this.identity = checkNotNull(identity, "identity");
       this.credential = checkNotNull(credential, "credential");
       this.managerForNode = checkNotNull(managerForNode, "managerForNode");
@@ -79,6 +79,7 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
 
    @PostConstruct
    public void start() {
+      URI provider = providerSupplier.get();
       if (!socketTester.apply(new IPSocket(provider.getHost(), provider.getPort()))) {
          logger.debug("disabling password access");
          runScriptOnNodeFactory.create(host.get(), Statements.exec("VBoxManage setproperty websrvauthlibrary null"),

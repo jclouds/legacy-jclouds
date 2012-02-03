@@ -24,9 +24,9 @@ import java.net.URI;
 
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.location.suppliers.all.JustProvider;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -39,7 +39,7 @@ public class JustProviderTest {
 
    @Test
    public void test() throws SecurityException, NoSuchMethodException {
-      JustProvider fn = new JustProvider("servo", URI.create("http://servo"), ImmutableSet.of("US"));
+      JustProvider fn = new JustProvider("servo", Suppliers.ofInstance(URI.create("http://servo")), ImmutableSet.of("US"));
       assertEquals(
             fn.get(),
             ImmutableSet.of(new LocationBuilder().scope(LocationScope.PROVIDER).id("servo").description("http://servo")

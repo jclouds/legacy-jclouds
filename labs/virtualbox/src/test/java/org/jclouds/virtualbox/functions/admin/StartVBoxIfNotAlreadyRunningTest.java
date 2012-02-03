@@ -19,10 +19,10 @@
 
 package org.jclouds.virtualbox.functions.admin;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 
 import java.net.URI;
@@ -65,7 +65,7 @@ public class StartVBoxIfNotAlreadyRunningTest {
       replay(manager, runScriptOnNodeFactory, client);
 
       new StartVBoxIfNotAlreadyRunning((Function) Functions.constant(manager), runScriptOnNodeFactory, client,
-               Suppliers.ofInstance(host), provider, identity, credential).start();
+               Suppliers.ofInstance(host), Suppliers.ofInstance(provider), identity, credential).start();
 
       verify(manager, runScriptOnNodeFactory, client);
 
@@ -103,7 +103,7 @@ public class StartVBoxIfNotAlreadyRunningTest {
 
       replay(manager, runScriptOnNodeFactory, runScriptOnNode, client);
       new StartVBoxIfNotAlreadyRunning((Function) Functions.constant(manager), runScriptOnNodeFactory, client,
-               Suppliers.ofInstance(host), provider, identity, credential).start();
+               Suppliers.ofInstance(host), Suppliers.ofInstance(provider), identity, credential).start();
       verify(manager, runScriptOnNodeFactory, runScriptOnNode, client);
 
    }

@@ -38,7 +38,6 @@ import org.jclouds.trmk.vcloud_0_8.functions.ParseLoginResponseFromHeaders;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -91,8 +90,8 @@ public class TerremarkVCloudLoginAsyncClientTest extends RestClientTest<Terremar
          @SuppressWarnings("unused")
          @Provides
          @VCloudLogin
-         Supplier<URI> provideURI(@Provider URI uri) {
-            return Suppliers.ofInstance(uri);
+         Supplier<URI> provideURI(@Provider Supplier<URI> uri) {
+            return uri;
          }
 
       };

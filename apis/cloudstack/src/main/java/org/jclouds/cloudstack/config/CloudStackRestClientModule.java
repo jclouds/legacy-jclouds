@@ -141,6 +141,7 @@ import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -256,10 +257,21 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
    @Singleton
    @Provides
    @Integration
-   protected URI providesIntegrationEndpoint(@Provider URI normal,
-            @Named("jclouds.cloudstack.integration-api-port") int port,
-            com.google.inject.Provider<UriBuilder> uriBuilder) {
-      return uriBuilder.get().scheme(normal.getScheme()).host(normal.getHost()).path("/").port(port).build();
+   protected Supplier<URI> providesIntegrationEndpoint(@Provider final Supplier<URI> provider,
+            @Named("jclouds.cloudstack.integration-api-port") final int port,
+            final com.google.inject.Provider<UriBuilder> uriBuilder) {
+      return Suppliers.compose(new Function<URI, URI>() {
+
+         @Override
+         public URI apply(URI input) {
+            URI normal = provider.get();
+            return uriBuilder.get().scheme(normal.getScheme()).host(normal.getHost()).path("/").port(port).build();
+         }
+         
+         public String toString(){
+            return "getIntegrationEndpoint()";
+         }
+      }, provider);
    }
 
    @Singleton

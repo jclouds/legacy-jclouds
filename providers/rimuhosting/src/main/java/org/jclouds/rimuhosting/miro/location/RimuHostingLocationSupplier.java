@@ -56,7 +56,7 @@ public class RimuHostingLocationSupplier extends JustProvider implements Locatio
    private final Supplier<Map<String, Supplier<Set<String>>>> isoCodesByIdSupplier;
 
    @Inject
-   RimuHostingLocationSupplier(@Iso3166 Set<String> isoCodes, @Provider String providerName, @Provider URI endpoint,
+   RimuHostingLocationSupplier(@Iso3166 Set<String> isoCodes, @Provider String providerName, @Provider Supplier<URI> endpoint,
             RimuHostingClient sync, @Iso3166 Supplier<Map<String, Supplier<Set<String>>>> isoCodesByIdSupplier) {
       super(providerName, endpoint, isoCodes);
       this.sync = checkNotNull(sync, "sync");

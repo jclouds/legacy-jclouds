@@ -30,6 +30,7 @@ import org.jclouds.softlayer.domain.Address;
 import org.jclouds.softlayer.domain.Datacenter;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -40,8 +41,8 @@ import com.google.common.collect.ImmutableSet;
 @Test(singleThreaded = true, groups = "unit")
 public class DatacenterToLocationTest {
 
-   static DatacenterToLocation function = new DatacenterToLocation(new JustProvider("softlayer", URI.create("foo"),
-         ImmutableSet.<String> of()));
+   static DatacenterToLocation function = new DatacenterToLocation(new JustProvider("softlayer", Suppliers
+            .ofInstance(URI.create("foo")), ImmutableSet.<String> of()));
 
    @Test
    public void testDatacenterToLocation() {

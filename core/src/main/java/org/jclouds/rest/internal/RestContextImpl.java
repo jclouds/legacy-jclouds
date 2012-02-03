@@ -40,6 +40,7 @@ import org.jclouds.rest.annotations.BuildVersion;
 import org.jclouds.rest.annotations.Identity;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -57,7 +58,7 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
    private final A asyncApi;
    private final S syncApi;
    private final Closer closer;
-   private final URI endpoint;
+   private final Supplier<URI> endpoint;
    private final String identity;
    private final String provider;
    private final String apiVersion;
@@ -68,7 +69,7 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
 
    @Inject
    protected RestContextImpl(Closer closer, Map<String, Credentials> credentialStore, Utils utils, Injector injector,
-            TypeLiteral<S> syncApi, TypeLiteral<A> asyncApi, @Provider URI endpoint, @Provider String provider,
+            TypeLiteral<S> syncApi, TypeLiteral<A> asyncApi, @Provider Supplier<URI> endpoint, @Provider String provider,
             @Identity String identity, @ApiVersion String apiVersion, @BuildVersion String buildVersion,
             @Iso3166 Set<String> iso3166Codes) {
       this.credentialStore = credentialStore;
@@ -115,7 +116,7 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
 
    @Override
    public URI getEndpoint() {
-      return endpoint;
+      return endpoint.get();
    }
 
    @Override
