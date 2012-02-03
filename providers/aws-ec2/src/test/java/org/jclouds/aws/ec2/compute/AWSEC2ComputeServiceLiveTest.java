@@ -18,10 +18,16 @@
  */
 package org.jclouds.aws.ec2.compute;
 
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Sets.newTreeSet;
+import static org.jclouds.compute.domain.OsFamily.AMZN_LINUX;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
+import static org.jclouds.ec2.util.IpPermissions.permit;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Date;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
@@ -33,9 +39,9 @@ import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.EC2Client;
@@ -45,7 +51,6 @@ import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
-import org.jclouds.ec2.util.IpPermissions;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
@@ -55,8 +60,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Module;
 
 /**
@@ -75,17 +79,16 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
    @Override
    protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
       assert node.getUserMetadata().equals(userMetadata) : String.format("node userMetadata did not match %s %s",
-            userMetadata, node);
+               userMetadata, node);
    }
    
    @Override
    @Test
    public void testExtendedOptionsAndLogin() throws Exception {
-      // note that this is sensitive to regions that quickly fill spot requests
-      String region = "sa-east-1";
-      
-      AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi())
-               .getSecurityGroupServices();
+      String region = "us-west-2";
+
+      AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(
+               context.getProviderSpecificContext().getApi()).getSecurityGroupServices();
 
       KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
                .getKeyPairServices();
@@ -95,91 +98,94 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
       String group = this.group + "o";
 
-      TemplateOptions options = client.templateOptions();
-
       Date before = new Date();
 
       ImmutableMap<String, String> userMetadata = ImmutableMap.<String, String> of("Name", group);
 
-      options.userMetadata(userMetadata);
-      options.as(AWSEC2TemplateOptions.class).enableMonitoring();
-      options.as(AWSEC2TemplateOptions.class).spotPrice(0.3f);
+      // note that if you change the location, you must also specify image parameters
+      Template template = client.templateBuilder().locationId(region).osFamily(AMZN_LINUX).os64Bit(true).build();
+      template.getOptions().userMetadata(userMetadata);
+      template.getOptions().as(AWSEC2TemplateOptions.class).enableMonitoring();
+      template.getOptions().as(AWSEC2TemplateOptions.class).spotPrice(0.3f);
 
       String startedId = null;
       try {
          cleanupExtendedStuffInRegion(region, securityGroupClient, keyPairClient, group);
 
          Thread.sleep(3000);// eventual consistency if deletes actually occurred.
-         
+
          // create a security group that allows ssh in so that our scripts later
          // will work
          String groupId = securityGroupClient.createSecurityGroupInRegionAndReturnId(region, group, group);
-         
-         securityGroupClient.authorizeSecurityGroupIngressInRegion(region, groupId,
-               IpPermissions.permit(IpProtocol.TCP).port(22));
 
-         options.as(AWSEC2TemplateOptions.class).securityGroupIds(groupId);
+         securityGroupClient.authorizeSecurityGroupIngressInRegion(region, groupId, permit(IpProtocol.TCP).port(22));
+
+         template.getOptions().as(AWSEC2TemplateOptions.class).securityGroupIds(groupId);
 
          // create a keypair to pass in as well
          KeyPair result = keyPairClient.createKeyPairInRegion(region, group);
-         options.as(AWSEC2TemplateOptions.class).keyPair(result.getKeyName());
-         
+         template.getOptions().as(AWSEC2TemplateOptions.class).keyPair(result.getKeyName());
+
          // pass in the private key, so that we can run a script with it
          assert result.getKeyMaterial() != null : result;
-         options.overrideLoginPrivateKey(result.getKeyMaterial());
-         
-         // an arbitrary command to run
-         options.runScript(Statements.exec("find /usr"));
-         
-         Template template = client.templateBuilder().locationId(region).options(options).build();
-         
-         Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, template);
-         NodeMetadata first = Iterables.get(nodes, 0);
+         template.getOptions().overrideLoginPrivateKey(result.getKeyMaterial());
 
-         //Name metadata should turn into node.name
+         Set<? extends NodeMetadata> nodes = client.createNodesInGroup(group, 1, template);
+         NodeMetadata first = getOnlyElement(nodes);
+
+         // Name metadata should turn into node.name
          assertEquals(first.getName(), group);
-         
+
          checkUserMetadataInNodeEquals(first, userMetadata);
 
          assert first.getCredentials() != null : first;
          assert first.getCredentials().identity != null : first;
 
-         startedId = Iterables.getOnlyElement(nodes).getProviderId();
-         
-         AWSRunningInstance instance = AWSRunningInstance.class.cast(Iterables.getOnlyElement(Iterables.getOnlyElement(instanceClient
+         startedId = first.getProviderId();
+
+         AWSRunningInstance instance = AWSRunningInstance.class.cast(getOnlyElement(getOnlyElement(instanceClient
                   .describeInstancesInRegion(region, startedId))));
 
          assertEquals(instance.getKeyName(), group);
+         assert instance.getSpotInstanceRequestId() != null;
          assertEquals(instance.getMonitoringState(), MonitoringState.ENABLED);
 
+         // generate some load
+         ListenableFuture<ExecResponse> future = client.submitScriptOnNode(first.getId(), Statements
+                  .exec("while true; do true; done"), runAsRoot(false).nameTask("cpuSpinner"));
+
+         // monitoring granularity must be at least 60 seconds, so lets make sure we have data.
+         Thread.sleep(TimeUnit.MILLISECONDS.convert(61, TimeUnit.SECONDS));
+
+         // stop the spinner
+         future.cancel(true);
 
          RestContext<CloudWatchClient, CloudWatchAsyncClient> monitoringContext = new RestContextFactory()
-                  .createContext("aws-cloudwatch", identity, credential, ImmutableSet.<Module> of(new Log4JLoggingModule()));
+                  .createContext("aws-cloudwatch", identity, credential, ImmutableSet
+                           .<Module> of(new Log4JLoggingModule()));
 
          try {
             Set<Datapoint> datapoints = monitoringContext.getApi().getMetricStatisticsInRegion(instance.getRegion(),
                      "CPUUtilization", "AWS/EC2", before, new Date(), 60, Statistics.AVERAGE,
                      GetMetricStatisticsOptions.Builder.instanceId(instance.getId()).unit(Unit.PERCENT));
-            assert datapoints != null && datapoints.size() > 0;
-
+            assert (datapoints.size() > 0) : instance;
          } finally {
             monitoringContext.close();
          }
 
          // make sure we made our dummy group and also let in the user's group
-         assertEquals(Sets.newTreeSet(instance.getGroupIds()), ImmutableSortedSet.<String> of("jclouds#" + group + "#"
+         assertEquals(newTreeSet(instance.getGroupIds()), ImmutableSortedSet.<String> of("jclouds#" + group + "#"
                   + instance.getRegion(), group));
 
          // make sure our dummy group has no rules
-         SecurityGroup secgroup = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(instance
+         SecurityGroup secgroup = getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(instance
                   .getRegion(), "jclouds#" + group + "#" + instance.getRegion()));
-         
+
          assert secgroup.getIpPermissions().size() == 0 : secgroup;
 
          // try to run a script with the original keyPair
-         runScriptWithCreds(group, first.getOperatingSystem(),
-               LoginCredentials.builder().user(first.getCredentials().identity).privateKey(result.getKeyMaterial())
-                     .build());
+         runScriptWithCreds(group, first.getOperatingSystem(), LoginCredentials.builder().user(
+                  first.getCredentials().identity).privateKey(result.getKeyMaterial()).build());
 
       } finally {
          client.destroyNodesMatching(NodePredicates.inGroup(group));
