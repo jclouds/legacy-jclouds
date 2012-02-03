@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PreDestroy;
@@ -43,6 +44,7 @@ import javax.inject.Named;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.IOUtils;
 import net.schmizz.sshj.connection.ConnectionException;
+import net.schmizz.sshj.connection.channel.direct.PTYMode;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.connection.channel.direct.Session.Command;
 import net.schmizz.sshj.sftp.SFTPClient;
@@ -446,7 +448,7 @@ public class SshjSshClient implements SshClient {
          public Session create() throws Exception {
             checkConnected();
             session = ssh.startSession();
-            session.allocateDefaultPTY();
+            session.allocatePTY("vt100", 80, 24, 0, 0, Collections.<PTYMode, Integer>emptyMap());
             return session;
          }
 
