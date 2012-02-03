@@ -25,7 +25,7 @@ import com.google.inject.ImplementedBy;
 import org.jclouds.blobstore.options.PutOptions;
 
 /**
- * @see <a href="http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?qfacts.html"
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?qfacts.html">AWS Documentation</a>
  *
  * @author Tibor Kiss
  */
