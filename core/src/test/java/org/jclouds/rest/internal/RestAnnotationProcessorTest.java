@@ -201,7 +201,12 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    @Endpoint(Localhost2.class)
    @Timeout(duration = 10, timeUnit = TimeUnit.NANOSECONDS)
    public static interface Caller {
-
+      
+      // tests that we can pull from suppliers
+      @Provides
+      @Localhost2
+      URI getURI();
+      
       @Delegate
       public Callee getCallee();
 
@@ -216,7 +221,10 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    public static interface AsyncCaller {
-
+      @Provides
+      @Localhost2
+      URI getURI();
+      
       @Delegate
       public AsyncCallee getCallee();
 
@@ -267,6 +275,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       }
 
       child.getInstance(Caller.class).getCallee().onePath("foo");
+      child.getInstance(Caller.class).getCallee().onePath("foo");
 
    }
    
@@ -292,6 +301,8 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       child.getInstance(AsyncCaller.class).getCallee(URI.create("http://howdyboys")).onePath("foo").get();
 
+      assertEquals(child.getInstance(AsyncCaller.class).getURI(), URI.create("http://localhost:1111"));
+
    }
 
    public void testDelegateIsLazyLoadedAndRequestIncludesEndpointVersionAndPath() throws InterruptedException, ExecutionException {
@@ -313,7 +324,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       }
 
-      child.getInstance(Caller.class).getCallee(URI.create("http://howdyboys")).onePath("foo");
+      assertEquals(child.getInstance(Caller.class).getURI(), URI.create("http://localhost:1111"));
 
    }
    

@@ -16,36 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.location.suppliers;
+package org.jclouds.openstack.keystone.v2_0.functions;
 
 import java.net.URI;
-import java.util.Map;
 
-import org.jclouds.location.suppliers.fromconfig.RegionIdToURIFromConfigurationOrDefaultToProvider;
+import org.jclouds.openstack.keystone.v2_0.domain.Endpoint;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.inject.ImplementedBy;
-import com.google.inject.assistedinject.Assisted;
 
-/**
- * 
- * 
- * @author Adrian Cole
- */
-@ImplementedBy(RegionIdToURIFromConfigurationOrDefaultToProvider.class)
-public interface RegionIdToURISupplier extends Supplier<Map<String, Supplier<URI>>> {
-   static interface Factory {
-      /**
-       * 
-       * @param apiType
-       *           type of the api, according to the provider. ex. {@code compute} {@code
-       *           object-store}
-       * @param apiVersion
-       *           version of the api
-       * @return regions mapped to default uri
-       */
-      RegionIdToURISupplier createForApiTypeAndVersion(@Assisted("apiType") String apiType,
-               @Assisted("apiVersion") String apiVersion);
-   }
-
+@ImplementedBy(PublicURLOrInternalIfNull.class)
+public interface EndpointToSupplierURI extends Function<Endpoint, Supplier<URI>> {  
 }

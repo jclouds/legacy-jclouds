@@ -7,12 +7,14 @@ import java.net.URI;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaRestClientExpectTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseServerListTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseServerTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests annotation parsing of {@code ServerAsyncClient}
@@ -22,53 +24,53 @@ import com.google.common.collect.ImmutableMultimap;
 @Test(groups = "unit", testName = "ServerAsyncClientTest")
 public class ServerClientExpectTest extends BaseNovaRestClientExpectTest {
 
-   public ServerClientExpectTest() {
-      provider = "openstack-nova";
-   }
-
    public void testListServersWhenResponseIs2xx() throws Exception {
       HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(
-               URI.create("http://compute-1.jclouds.org:8774/v1.1/40806637803162/servers")).headers(
+               URI.create("https://compute.north.host/v1.1/3456/servers")).headers(
                ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                         authToken).build()).build();
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/server_list.json")).build();
 
-      ServerClient clientWhenServersExist = requestsSendResponses(initialAuthWithApiAccessKeyCredentials,
-               responseWithAccess, listServers, listServersResponse).getServerClient();
+      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+               responseWithKeystoneAccess, listServers, listServersResponse);
 
-      assertEquals(clientWhenServersExist.listServers().toString(), new ParseServerListTest().expected().toString());
+      assertEquals(clientWhenServersExist.getConfiguredRegions(), ImmutableSet.of("North"));
+
+      assertEquals(clientWhenServersExist.getServerClientForRegion("North").listServers().toString(),
+               new ParseServerListTest().expected().toString());
    }
 
    public void testListServersWhenReponseIs404IsEmpty() throws Exception {
       HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(
-               URI.create("http://compute-1.jclouds.org:8774/v1.1/40806637803162/servers")).headers(
+               URI.create("https://compute.north.host/v1.1/3456/servers")).headers(
                ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                         authToken).build()).build();
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(404).build();
 
-      ServerClient clientWhenServersExist = requestsSendResponses(initialAuthWithApiAccessKeyCredentials,
-               responseWithAccess, listServers, listServersResponse).getServerClient();
+      NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+               responseWithKeystoneAccess, listServers, listServersResponse);
 
-      assertTrue(clientWhenServersExist.listServers().isEmpty());
+      assertTrue(clientWhenNoServersExist.getServerClientForRegion("North").listServers().isEmpty());
    }
 
    // TODO: gson deserializer for Multimap
    public void testGetServerWhenResponseIs2xx() throws Exception {
       HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(
-               URI.create("http://compute-1.jclouds.org:8774/v1.1/40806637803162/servers/foo")).headers(
+               URI.create("https://compute.north.host/v1.1/3456/servers/foo")).headers(
                ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                         authToken).build()).build();
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/server_details.json")).build();
 
-      ServerClient clientWhenServersExist = requestsSendResponses(initialAuthWithApiAccessKeyCredentials,
-               responseWithAccess, listServers, listServersResponse).getServerClient();
+      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+               responseWithKeystoneAccess, listServers, listServersResponse);
 
-      assertEquals(clientWhenServersExist.getServer("foo").toString(), new ParseServerTest().expected().toString());
+      assertEquals(clientWhenServersExist.getServerClientForRegion("North").getServer("foo").toString(),
+               new ParseServerTest().expected().toString());
    }
 
 }

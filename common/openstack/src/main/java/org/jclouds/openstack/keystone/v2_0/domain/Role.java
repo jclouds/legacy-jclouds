@@ -26,6 +26,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ComparisonChain;
 
 /**
  * A personality that a user assumes when performing a specific set of operations. A role includes a
@@ -99,6 +100,9 @@ public class Role implements Comparable<Role> {
    protected final String id;
    protected final String name;
    protected final String serviceId;
+   // renamed half-way through
+   @Deprecated
+   protected String tenantName;
    protected final String tenantId;
 
    protected Role(String id, String name, @Nullable String serviceId, @Nullable String tenantId) {
@@ -137,7 +141,7 @@ public class Role implements Comparable<Role> {
     */
    @Nullable
    public String getTenantId() {
-      return tenantId;
+      return tenantId != null ? tenantId : tenantName;
    }
 
    @Override
@@ -148,7 +152,7 @@ public class Role implements Comparable<Role> {
       if (object instanceof Role) {
          final Role other = Role.class.cast(object);
          return equal(id, other.id) && equal(name, other.name) && equal(serviceId, other.serviceId)
-                  && equal(tenantId, other.tenantId);
+                  && equal(getTenantId(), other.getTenantId());
       } else {
          return false;
       }
@@ -156,22 +160,18 @@ public class Role implements Comparable<Role> {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(id, name, serviceId, tenantId);
+      return Objects.hashCode(id, name, serviceId, getTenantId());
    }
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", id).add("name", name).add("serviceId", serviceId).add("tenantId", tenantId)
+      return toStringHelper("").add("id", id).add("name", name).add("serviceId", serviceId).add("tenantId", getTenantId())
                .toString();
    }
-
+   
    @Override
    public int compareTo(Role that) {
-      if (that == null)
-         return 1;
-      if (this == that)
-         return 0;
-      return this.id.compareTo(that.id);
+      return ComparisonChain.start().compare(this.id, that.id).result();
    }
 
 }

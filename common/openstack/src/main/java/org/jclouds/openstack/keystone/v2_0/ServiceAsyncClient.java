@@ -53,7 +53,7 @@ public interface ServiceAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/tokens")
    @MapBinder(BindAuthToJsonPayload.class)
-   ListenableFuture<Access> authenticateTenantWithCredentials(@PayloadParam("tenantId") String tenantId,
+   ListenableFuture<Access> authenticateTenantWithCredentials(@PayloadParam("tenantName") String tenantId,
             PasswordCredentials passwordCredentials);
 
    /**
@@ -64,6 +64,8 @@ public interface ServiceAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/tokens")
    @MapBinder(BindAuthToJsonPayload.class)
-   ListenableFuture<Access> authenticateTenantWithCredentials(@PayloadParam("tenantId") String tenantId,
+   // TODO: is tenantName permanent? or should we switch to tenantId at some point. seems most tools
+   // still use tenantName
+   ListenableFuture<Access> authenticateTenantWithCredentials(@PayloadParam("tenantName") String tenantId,
             ApiAccessKeyCredentials apiAccessKeyCredentials);
 }

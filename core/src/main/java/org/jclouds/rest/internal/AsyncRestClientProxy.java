@@ -18,10 +18,10 @@
  */
 package org.jclouds.rest.internal;
 
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
 
@@ -45,38 +45,38 @@ import org.jclouds.util.Throwables2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Binding;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.ProvisionException;
 import com.google.inject.TypeLiteral;
+import com.google.inject.util.Types;
 
 /**
  * Generates RESTful clients from appropriately annotated interfaces.
  * <p/>
  * Particularly, this code delegates calls to other things.
  * <ol>
- * <li>if the method has a {@link Provides} annotation, it responds via a
- * {@link Injector} lookup</li>
- * <li>if the method has a {@link Delegate} annotation, it responds with an
- * instance of interface set in returnVal, adding the current JAXrs annotations
- * to whatever are on that class.</li>
+ * <li>if the method has a {@link Provides} annotation, it responds via a {@link Injector} lookup</li>
+ * <li>if the method has a {@link Delegate} annotation, it responds with an instance of interface
+ * set in returnVal, adding the current JAXrs annotations to whatever are on that class.</li>
  * <ul>
- * <li>ex. if the method with {@link Delegate} has a {@link Path} annotation,
- * and the returnval interface also has {@link Path}, these values are combined.
- * </li>
+ * <li>ex. if the method with {@link Delegate} has a {@link Path} annotation, and the returnval
+ * interface also has {@link Path}, these values are combined.</li>
  * </ul>
- * <li>if {@link RestAnnotationProcessor#delegationMap} contains a mapping for
- * this, and the returnVal is properly assigned as a {@link ListenableFuture},
- * it responds with an http implementation.</li>
- * <li>otherwise a RuntimeException is thrown with a message including:
- * {@code method is intended solely to set constants}</li>
+ * <li>if {@link RestAnnotationProcessor#delegationMap} contains a mapping for this, and the
+ * returnVal is properly assigned as a {@link ListenableFuture}, it responds with an http
+ * implementation.</li>
+ * <li>otherwise a RuntimeException is thrown with a message including: {@code method is intended
+ * solely to set constants}</li>
  * </ol>
  * 
  * @author Adrian Cole
@@ -133,7 +133,8 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
       } else if (isRestCall(method)) {
          return createListenableFutureForHttpRequestMappedToMethodAndArgs(method, args);
       } else {
-         throw new RuntimeException(String.format("Method is not annotated as either http or provider method: %s", method));
+         throw new RuntimeException(String.format("Method is not annotated as either http or provider method: %s",
+                  method));
       }
    }
 
@@ -148,11 +149,18 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
 
    public Object lookupValueFromGuice(Method method) {
       try {
+         Type genericReturnType = method.getGenericReturnType();
          try {
             Annotation qualifier = Iterables.find(ImmutableList.copyOf(method.getAnnotations()), isQualifierPresent);
-            return injector.getInstance(Key.get(method.getGenericReturnType(), qualifier));
+            Binding<?> binding = injector.getExistingBinding(Key.get(genericReturnType, qualifier));
+            if (binding != null)
+               return binding.getProvider().get();
+            // try looking via supplier
+            return Supplier.class.cast(
+                     injector.getInstance(Key.get(Types.newParameterizedType(Supplier.class, genericReturnType),
+                              qualifier))).get();
          } catch (NoSuchElementException e) {
-            return injector.getInstance(Key.get(method.getGenericReturnType()));
+            return injector.getInstance(Key.get(genericReturnType));
          }
       } catch (ProvisionException e) {
          AuthorizationException aex = Throwables2.getFirstThrowableOfType(e, AuthorizationException.class);
@@ -163,7 +171,8 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
    }
 
    @SuppressWarnings( { "unchecked", "rawtypes" })
-   private ListenableFuture<?> createListenableFutureForHttpRequestMappedToMethodAndArgs(Method method, Object[] args) throws ExecutionException {
+   private ListenableFuture<?> createListenableFutureForHttpRequestMappedToMethodAndArgs(Method method, Object[] args)
+            throws ExecutionException {
       method = annotationProcessor.getDelegateOrNull(method);
       logger.trace("Converting %s.%s", declaring.getSimpleName(), method.getName());
       Function<Exception, ?> exceptionParser = annotationProcessor

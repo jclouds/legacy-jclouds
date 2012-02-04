@@ -18,6 +18,8 @@
  */
 package org.jclouds.cloudloadbalancers.config;
 
+import static org.jclouds.util.Suppliers2.getLastValueInMap;
+
 import java.net.URI;
 import java.util.Map;
 
@@ -35,28 +37,26 @@ import org.jclouds.cloudloadbalancers.handlers.ParseCloudLoadBalancersErrorFromH
 import org.jclouds.cloudloadbalancers.location.RegionUrisFromPropertiesAndAccountIDPathSuffix;
 import org.jclouds.cloudloadbalancers.reference.RackspaceConstants;
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
-import org.jclouds.location.Region;
+import org.jclouds.location.config.LocationModule;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule;
-import org.jclouds.openstack.keystone.v1_1.functions.PublicURLFromAuthResponseForService;
-import org.jclouds.openstack.keystone.v1_1.handlers.RetryOnRenew;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
-import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
@@ -67,75 +67,65 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 @RequiresHttp
 @ConfiguresRestClient
 public class CloudLoadBalancersRestClientModule extends
-      RestClientModule<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient> {
+         RestClientModule<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(LoadBalancerClient.class, LoadBalancerAsyncClient.class)//
-         .put(NodeClient.class, NodeAsyncClient.class)//
-         .build();
-
-   private final AuthenticationServiceModule module;
-
-   public CloudLoadBalancersRestClientModule(AuthenticationServiceModule module) {
-      super(CloudLoadBalancersClient.class, CloudLoadBalancersAsyncClient.class, DELEGATE_MAP);
-      this.module = module;
-   }
+            .put(LoadBalancerClient.class, LoadBalancerAsyncClient.class)//
+            .put(NodeClient.class, NodeAsyncClient.class)//
+            .build();
 
    public CloudLoadBalancersRestClientModule() {
-      this(new AuthenticationServiceModule());
+      super(CloudLoadBalancersClient.class, CloudLoadBalancersAsyncClient.class, DELEGATE_MAP);
    }
 
-   @Override
    protected void installLocations() {
-      super.installLocations();
-      bind(RegionIdToURISupplier.class).to(RegionUrisFromPropertiesAndAccountIDPathSuffix.class).in(Scopes.SINGLETON);
+      install(new LocationModule());
+      install(new URIWithAccountIDPathSuffixAuthenticationServiceModule());
    }
-   
-   protected void bindRegionsToProvider(Class<? extends javax.inject.Provider<Map<String, URI>>> providerClass) {
-      bind(new TypeLiteral<Map<String, URI>>() {
-      }).annotatedWith(Region.class).toProvider(providerClass).in(Scopes.SINGLETON);
+
+   public static class URIWithAccountIDPathSuffixAuthenticationServiceModule extends AbstractModule {
+
+      @Override
+      protected void configure() {
+         install(new AuthenticationServiceModule());
+         bind(RegionIdToURISupplier.class).to(RegionUrisFromPropertiesAndAccountIDPathSuffix.class)
+                  .in(Scopes.SINGLETON);
+      }
+
+      @Provides
+      @Singleton
+      @Named(RackspaceConstants.PROPERTY_ACCOUNT_ID)
+      protected Supplier<String> accountID(RegionIdToURISupplier.Factory factory, @ApiVersion String apiVersion) {
+         return Suppliers.compose(new Function<URI, String>() {
+
+            @Override
+            public String apply(URI arg0) {
+               return arg0.getPath().substring(arg0.getPath().lastIndexOf('/') + 1);
+            }
+
+            @Override
+            public String toString() {
+               return "getAccountIdFromCloudServers()";
+            }
+         }, getLastValueInMap(factory.createForApiTypeAndVersion("cloudServers", apiVersion)));
+
+      }
    }
 
    @Override
    protected void configure() {
-      install(module);
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
       install(new FactoryModuleBuilder().build(ConvertLB.Factory.class));
       super.configure();
    }
 
-   @Provides
-   @Singleton
-   @Named(RackspaceConstants.PROPERTY_ACCOUNT_ID)
-   protected Supplier<String> accountID(PublicURLFromAuthResponseForService.Factory factory) {
-      return Suppliers.compose(new Function<URI, String>() {
-
-         @Override
-         public String apply(URI arg0) {
-            return arg0.getPath().substring(arg0.getPath().lastIndexOf('/') + 1);
-         }
-
-         @Override
-         public String toString() {
-            return "getAccountIdFromCloudServers()";
-         }
-      }, factory.create("cloudServers"));
-
-   }
-
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
-            ParseCloudLoadBalancersErrorFromHttpResponse.class);
+               ParseCloudLoadBalancersErrorFromHttpResponse.class);
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
-            ParseCloudLoadBalancersErrorFromHttpResponse.class);
+               ParseCloudLoadBalancersErrorFromHttpResponse.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
-            ParseCloudLoadBalancersErrorFromHttpResponse.class);
+               ParseCloudLoadBalancersErrorFromHttpResponse.class);
    }
-
-   @Override
-   protected void bindRetryHandlers() {
-      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
-   }
-
 }

@@ -24,6 +24,8 @@ import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
+import org.jclouds.openstack.services.ServiceType;
 
 /**
  * Builds properties used in Nova Clients
@@ -34,9 +36,11 @@ public class NovaPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      // TODO: keystone
       properties.setProperty(PROPERTY_ENDPOINT, "http://localhost:5000");
-      properties.setProperty(PROPERTY_API_VERSION, "2.0");
+      properties.setProperty(KeystoneProperties.SERVICE_TYPE, ServiceType.COMPUTE);
+      // TODO: this doesn't actually do anything yet.
+      properties.setProperty(KeystoneProperties.VERSION, "2.0");
+      properties.setProperty(PROPERTY_API_VERSION, "1.1");
       return properties;
    }
 

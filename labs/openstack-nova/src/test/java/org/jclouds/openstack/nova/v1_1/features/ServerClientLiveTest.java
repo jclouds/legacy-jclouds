@@ -26,7 +26,6 @@ import java.util.Set;
 import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 /**
@@ -37,25 +36,20 @@ import org.testng.annotations.Test;
 @Test(groups = "live", testName = "ServerClientLiveTest")
 public class ServerClientLiveTest extends BaseNovaClientLiveTest {
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      super.setupClient();
-      client = context.getApi().getServerClient();
-   }
-
-   private ServerClient client;
-
    @Test
    public void testListServersInDetail() throws Exception {
-      Set<Resource> response = client.listServers();
-      assert null != response;
-      assertTrue(response.size() >= 0);
-      for (Resource server : response) {
-         Server newDetails = client.getServer(server.getId());
-         assertEquals(newDetails.getId(), server.getId());
-         assertEquals(newDetails.getName(), server.getName());
-         assertEquals(newDetails.getLinks(), server.getLinks());
-         checkServer(newDetails);
+      for (String regionId : context.getApi().getConfiguredRegions()) {
+         ServerClient client = context.getApi().getServerClientForRegion(regionId);
+         Set<Resource> response = client.listServers();
+         assert null != response;
+         assertTrue(response.size() >= 0);
+         for (Resource server : response) {
+            Server newDetails = client.getServer(server.getId());
+            assertEquals(newDetails.getId(), server.getId());
+            assertEquals(newDetails.getName(), server.getName());
+            assertEquals(newDetails.getLinks(), server.getLinks());
+            checkServer(newDetails);
+         }
       }
    }
 

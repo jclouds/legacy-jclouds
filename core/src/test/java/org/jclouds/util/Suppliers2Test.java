@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,9 +38,24 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableMap;
 
 public class Suppliers2Test {
 
+   @Test
+   public void testGetLastValueInMap() {
+      assertEquals(Suppliers2
+               .<String, String> getLastValueInMap(
+                        Suppliers.<Map<String, Supplier<String>>> ofInstance(ImmutableMap.of("foo", Suppliers
+                                 .ofInstance("bar")))).get(), "bar");
+   }
+
+   @Test
+   public void testOfInstanceFunction() {
+      assertEquals(Suppliers2.ofInstanceFunction().apply("foo").get(), "foo");
+   }
+   
    @Test
    public void testMemoizeKeepsValueForFullDurationWhenDelegateCallIsSlow() {
       final long SLEEP_TIME = 250;

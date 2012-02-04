@@ -104,10 +104,10 @@ public class Endpoint implements Comparable<Endpoint> {
    protected final URI publicURL;
    protected final URI internalURL;
 
-   protected Endpoint(boolean v1Default, @Nullable String region, URI publicURL, @Nullable URI internalURL) {
+   protected Endpoint(boolean v1Default, @Nullable String region, @Nullable  URI publicURL, @Nullable URI internalURL) {
       this.v1Default = v1Default;
       this.region = region;
-      this.publicURL = checkNotNull(publicURL, "publicURL");
+      this.publicURL = publicURL;
       this.internalURL = internalURL;
    }
 
@@ -141,11 +141,12 @@ public class Endpoint implements Comparable<Endpoint> {
    }
 
    /**
-    * A public URL is accessible from anywhere. Access to a public URL usually
-    * incurs traffic charges.
+    * A public URL is accessible from anywhere. Access to a public URL usually incurs traffic
+    * charges.
     * 
     * @return the public endpoint of the service
     */
+   @Nullable
    public URI getPublicURL() {
       return publicURL;
    }

@@ -28,6 +28,7 @@ import java.net.URI;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ComparisonChain;
 
 /**
  * An network-accessible address, usually described by URL, where a service may be accessed. If
@@ -50,16 +51,17 @@ public class Endpoint implements Comparable<Endpoint> {
 
    public static class Builder {
 
-      protected String id;
+      protected String versionId;
       protected String region;
       protected URI publicURL;
+      protected URI internalURL;
       protected String tenantId;
 
       /**
-       * @see Endpoint#getId()
+       * @see Endpoint#getVersionId()
        */
-      public Builder id(String id) {
-         this.id = checkNotNull(id, "id");
+      public Builder versionId(String versionId) {
+         this.versionId = checkNotNull(versionId, "versionId");
          return this;
       }
 
@@ -80,6 +82,14 @@ public class Endpoint implements Comparable<Endpoint> {
       }
 
       /**
+       * @see Endpoint#getInternalURL()
+       */
+      public Builder internalURL(URI internalURL) {
+         this.internalURL = checkNotNull(internalURL, "internalURL");
+         return this;
+      }
+
+      /**
        * @see Endpoint#getTenantId()
        */
       public Builder tenantId(@Nullable String tenantId) {
@@ -88,34 +98,43 @@ public class Endpoint implements Comparable<Endpoint> {
       }
 
       public Endpoint build() {
-         return new Endpoint(id, region, publicURL, tenantId);
+         return new Endpoint(versionId, region, publicURL, internalURL, tenantId);
       }
 
       public Builder fromEndpoint(Endpoint from) {
-         return id(from.getId()).region(from.getRegion()).publicURL(from.getPublicURL()).tenantId(from.getTenantId());
+         return versionId(from.getVersionId()).region(from.getRegion()).publicURL(from.getPublicURL()).internalURL(
+                  from.getInternalURL()).tenantId(from.getTenantId());
       }
    }
-
-   protected final String id;
+   // renamed half-way through
+   @Deprecated
+   protected String id;
+   protected final String versionId;
    protected final String region;
    protected final URI publicURL;
+   protected final URI internalURL;
+   // renamed half-way through
+   @Deprecated
+   protected String tenantName;
    protected final String tenantId;
 
-   protected Endpoint(String id, String region, URI publicURL, @Nullable String tenantId) {
-      this.id = checkNotNull(id, "id");
+   protected Endpoint(String versionId, String region, @Nullable URI publicURL, @Nullable URI internalURL,
+            @Nullable String tenantId) {
+      this.versionId = checkNotNull(versionId, "versionId");
       this.region = checkNotNull(region, "region");
-      this.publicURL = checkNotNull(publicURL, "publicURL");
+      this.publicURL = publicURL;
+      this.internalURL = internalURL;
       this.tenantId = tenantId;
    }
 
    /**
-    * When providing an ID, it is assumed that the endpoint exists in the current OpenStack
+    * When provversionIding an ID, it is assumed that the endpoint exists in the current OpenStack
     * deployment
     * 
-    * @return the id of the endpoint in the current OpenStack deployment
+    * @return the versionId of the endpoint in the current OpenStack deployment
     */
-   public String getId() {
-      return id;
+   public String getVersionId() {
+      return versionId != null ? versionId : id;
    }
 
    /**
@@ -126,19 +145,27 @@ public class Endpoint implements Comparable<Endpoint> {
    }
 
    /**
-    * @return the service id of the endpoint
+    * @return the public url of the endpoint
     */
-
+   @Nullable
    public URI getPublicURL() {
       return publicURL;
    }
 
    /**
-    * @return the tenant id of the endpoint or null
+    * @return the internal url of the endpoint
+    */
+   @Nullable
+   public URI getInternalURL() {
+      return internalURL;
+   }
+
+   /**
+    * @return the tenant versionId of the endpoint or null
     */
    @Nullable
    public String getTenantId() {
-      return tenantId;
+      return tenantId != null ? tenantId : tenantName;
    }
 
    @Override
@@ -148,8 +175,8 @@ public class Endpoint implements Comparable<Endpoint> {
       }
       if (object instanceof Endpoint) {
          final Endpoint other = Endpoint.class.cast(object);
-         return equal(id, other.id) && equal(region, other.region) && equal(publicURL, other.publicURL)
-                  && equal(tenantId, other.tenantId);
+         return equal(getVersionId(), other.getVersionId()) && equal(region, other.region) && equal(publicURL, other.publicURL)
+                  && equal(internalURL, other.internalURL) && equal(getTenantId(), other.getTenantId());
       } else {
          return false;
       }
@@ -157,22 +184,19 @@ public class Endpoint implements Comparable<Endpoint> {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(id, region, publicURL, tenantId);
+      return Objects.hashCode(getVersionId(), region, publicURL, internalURL, getTenantId());
    }
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", id).add("region", region).add("publicURL", publicURL).add("tenantId",
-               tenantId).toString();
+      return toStringHelper("").add("versionId", getVersionId()).add("region", region).add("publicURL", publicURL).add("internalURL",
+               internalURL).add("tenantId", getTenantId()).toString();
    }
 
    @Override
    public int compareTo(Endpoint that) {
-      if (that == null)
-         return 1;
-      if (this == that)
-         return 0;
-      return this.id.compareTo(that.id);
+      return ComparisonChain.start().compare(this.getTenantId(), that.getTenantId()).compare(this.getVersionId(), that.getVersionId())
+               .compare(this.region, that.region).result();
    }
 
 }

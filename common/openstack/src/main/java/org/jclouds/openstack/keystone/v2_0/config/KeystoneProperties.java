@@ -18,6 +18,8 @@
  */
 package org.jclouds.openstack.keystone.v2_0.config;
 
+import org.jclouds.openstack.services.ServiceType;
+
 /**
  * Configuration properties and constants used in Keystone connections.
  * 
@@ -40,4 +42,15 @@ public interface KeystoneProperties {
     */
    public static final String CREDENTIAL_TYPE = "jclouds.keystone.credential-type";
 
+   /**
+    * version of the keystone service
+    */
+   public static final String VERSION = "jclouds.keystone.version";
+
+   /**
+    * type of the keystone service. ex. {@code compute}
+    * 
+    * @see ServiceType
+    */
+   public static final String SERVICE_TYPE = "jclouds.keystone.service-type";
 }

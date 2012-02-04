@@ -18,24 +18,14 @@
  */
 package org.jclouds.openstack.keystone.v1_1.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.net.URI;
 
-import org.jclouds.openstack.keystone.v1_1.domain.Auth;
+import org.jclouds.openstack.keystone.v1_1.domain.Endpoint;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
+import com.google.common.base.Supplier;
+import com.google.inject.ImplementedBy;
 
-public class PublicUrlForService implements Function<Auth, URI> {
-   private final String serviceId;
-
-   public PublicUrlForService(String serviceId) {
-      this.serviceId = checkNotNull(serviceId, "serviceId");
-   }
-
-   @Override
-   public URI apply(Auth arg0) {
-      return Iterables.get(arg0.getServiceCatalog().get(serviceId), 0).getPublicURL();
-   }
+@ImplementedBy(PublicURLOrInternalIfNull.class)
+public interface EndpointToSupplierURI extends Function<Endpoint, Supplier<URI>> {
 }

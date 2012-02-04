@@ -75,8 +75,10 @@ public class BindAuthToJsonPayload extends BindToJsonPayload implements MapBinde
 
       Builder<String, Object> builder = ImmutableMap.<String, Object> builder();
       addCredentialsInArgsOrNull(gRequest, builder);
-      if (Strings.emptyToNull(postParams.get("tenantId")) != null)
-         builder.put("tenantId", postParams.get("tenantId"));
+      // TODO: is tenantName permanent? or should we switch to tenantId at some point. seems most tools
+      // still use tenantName
+      if (Strings.emptyToNull(postParams.get("tenantName")) != null)
+         builder.put("tenantName", postParams.get("tenantName"));
       return super.bindToRequest(request, ImmutableMap.of("auth", builder.build()));
    }
 

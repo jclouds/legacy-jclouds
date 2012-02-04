@@ -16,41 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.keystone.v1_1.functions;
+package org.jclouds.location.suppliers.derived;
 
 import java.net.URI;
+import java.util.Map;
+import java.util.Set;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.openstack.keystone.v1_1.domain.Auth;
+import org.jclouds.location.Region;
+import org.jclouds.location.suppliers.RegionIdsSupplier;
 
 import com.google.common.base.Supplier;
-import com.google.common.collect.Iterables;
-import com.google.inject.assistedinject.Assisted;
+import com.google.inject.Inject;
 
+/**
+ * as opposed to via properties, lets look up regions via api, as they are more likely to change
+ */
 @Singleton
-public class PublicURLFromAuthResponseForService implements Supplier<URI> {
-   public static interface Factory {
-      PublicURLFromAuthResponseForService create(String service);
-   }
+public class RegionIdsFromRegionIdToURIKeySet implements RegionIdsSupplier {
 
-   private final Supplier<Auth> auth;
-   private final String service;
+   private final Supplier<Map<String, Supplier<URI>>> regionIdToURISupplier;
 
    @Inject
-   public PublicURLFromAuthResponseForService(Supplier<Auth> auth, @Assisted String service) {
-      this.auth = auth;
-      this.service = service;
+   protected RegionIdsFromRegionIdToURIKeySet(@Region Supplier<Map<String, Supplier<URI>>> regionIdToURISupplier) {
+      this.regionIdToURISupplier = regionIdToURISupplier;
    }
 
    @Override
-   public URI get() {
-      return Iterables.get(auth.get().getServiceCatalog().get(service), 0).getPublicURL();
-   }
-
-   @Override
-   public String toString() {
-      return "getPublicURLForService(" + service + ")";
+   public Set<String> get() {
+      return regionIdToURISupplier.get().keySet();
    }
 }

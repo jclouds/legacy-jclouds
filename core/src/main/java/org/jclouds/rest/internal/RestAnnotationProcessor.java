@@ -734,7 +734,7 @@ public class RestAnnotationProcessor<T> {
                      String.format("endpoint for [%s] not configured for %s", args[index], method));
                return returnVal;
             } catch (NullPointerException e) {
-               throw new IllegalArgumentException(String.format("argument at index %d on method %s", index, method), e);
+               throw new IllegalArgumentException(String.format("argument at index %d on method %s was null", index, method), e);
             }
          } else {
             SortedSet<Integer> keys = newTreeSet(map.keySet());

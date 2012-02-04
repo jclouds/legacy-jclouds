@@ -18,36 +18,32 @@
  */
 package org.jclouds.openstack.nova.v1_1.internal;
 
-import org.jclouds.http.RequiresHttp;
-import org.jclouds.openstack.keystone.v2_0.internal.BaseKeystoneRestClientExpectTest;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.openstack.keystone.v2_0.internal.KeystoneFixture;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.config.NovaRestClientModule;
-import org.jclouds.rest.ConfiguresRestClient;
-
-import com.google.inject.Module;
+import org.jclouds.rest.BaseRestClientExpectTest;
 
 /**
  * Base class for writing KeyStone Rest Client Expect tests
  * 
  * @author Adrian Cole
  */
-public class BaseNovaRestClientExpectTest extends BaseKeystoneRestClientExpectTest<NovaClient> {
+public class BaseNovaRestClientExpectTest extends BaseRestClientExpectTest<NovaClient> {
+   protected HttpRequest keystoneAuthWithUsernameAndPassword;
+   protected HttpRequest keystoneAuthWithAccessKeyAndSecretKey;
+   protected String authToken;
+   protected HttpResponse responseWithKeystoneAccess;
 
    public BaseNovaRestClientExpectTest() {
       provider = "openstack-nova";
+      keystoneAuthWithUsernameAndPassword = KeystoneFixture.INSTANCE.initialAuthWithUsernameAndPassword(identity,
+               credential);
+      keystoneAuthWithAccessKeyAndSecretKey = KeystoneFixture.INSTANCE.initialAuthWithAccessKeyAndSecretKey(identity,
+               credential);
+      authToken = KeystoneFixture.INSTANCE.getAuthToken();
+      responseWithKeystoneAccess = KeystoneFixture.INSTANCE.responseWithAccess();
+      // now, createContext arg will need tenant prefix
+      identity =  KeystoneFixture.INSTANCE.getTenantName() + ":" + identity;
    }
-
-   @Override
-   protected Module createModule() {
-      return new TestNovaRestClientModule();
-   }
-
-   @ConfiguresRestClient
-   @RequiresHttp
-   protected static class TestNovaRestClientModule extends NovaRestClientModule {
-      private TestNovaRestClientModule() {
-         super(new TestKeystoneAuthenticationModule());
-      }
-   }
-
 }

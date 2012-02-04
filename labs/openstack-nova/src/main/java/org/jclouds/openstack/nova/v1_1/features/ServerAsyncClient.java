@@ -29,8 +29,6 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
-import org.jclouds.openstack.services.Compute;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
@@ -51,7 +49,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @SkipEncoding({ '/', '=' })
 @RequestFilters(AuthenticateRequest.class)
-@Endpoint(Compute.class)
 public interface ServerAsyncClient {
 
    /**

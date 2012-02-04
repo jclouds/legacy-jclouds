@@ -18,12 +18,8 @@
  */
 package org.jclouds.ec2.config;
 
-import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.jclouds.aws.config.WithZonesFormSigningRestClientModule;
 import org.jclouds.ec2.EC2AsyncClient;
@@ -47,18 +43,14 @@ import org.jclouds.ec2.services.WindowsClient;
 import org.jclouds.ec2.suppliers.DescribeAvailabilityZonesInRegion;
 import org.jclouds.ec2.suppliers.DescribeRegionsForConfiguredRegions;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.location.Zone;
 import org.jclouds.location.config.LocationModule;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.location.suppliers.RegionIdToZoneIdsSupplier;
 import org.jclouds.location.suppliers.ZoneIdsSupplier;
+import org.jclouds.location.suppliers.derived.ZoneIdsFromRegionIdToZoneIdsValues;
 import org.jclouds.rest.ConfiguresRestClient;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.inject.Scopes;
 
 /**
@@ -96,28 +88,5 @@ public class EC2RestClientModule<S extends EC2Client, A extends EC2AsyncClient> 
       bind(RegionIdToZoneIdsSupplier.class).to(DescribeAvailabilityZonesInRegion.class).in(Scopes.SINGLETON);
       bind(RegionIdToURISupplier.class).to(DescribeRegionsForConfiguredRegions.class).in(Scopes.SINGLETON);
       bind(ZoneIdsSupplier.class).to(ZoneIdsFromRegionIdToZoneIdsValues.class).in(Scopes.SINGLETON);
-   }
-
-   /**
-    * as opposed to via properties, lets look up zones via api, as they are more likely to change
-    */
-   @Singleton
-   public static class ZoneIdsFromRegionIdToZoneIdsValues implements ZoneIdsSupplier {
-
-      private final Supplier<Map<String, Supplier<Set<String>>>> regionIdToZoneIdsSupplier;
-
-      @Inject
-      protected ZoneIdsFromRegionIdToZoneIdsValues(
-               @Zone Supplier<Map<String, Supplier<Set<String>>>> regionIdToZoneIdsSupplier) {
-         this.regionIdToZoneIdsSupplier = regionIdToZoneIdsSupplier;
-      }
-
-      @Override
-      public Set<String> get() {
-         Collection<Supplier<Set<String>>> zones = regionIdToZoneIdsSupplier.get().values();
-         return ImmutableSet.copyOf(Iterables.concat(Iterables.transform(zones, Suppliers
-                  .<Set<String>> supplierFunction())));
-      }
-
    }
 }

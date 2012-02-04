@@ -63,23 +63,28 @@ public class ParseAccessTest extends BaseItemParserTest<Access> {
                         Role.builder().id("00000000004004").serviceId("100").name("domainuser").build(),
                         Role.builder().id("00000000004016").serviceId("120").name("netadmin")
                                  .tenantId("40806637803162").build()).build()).serviceCatalog(
+
                Service.builder().name("Object Storage").type("object-store").endpoints(
                         Endpoint.builder().tenantId("40806637803162").publicURL(
                                  URI.create("https://objects.jclouds.org/v1.0/40806637803162"))
-                                 .region("region-a.geo-1").id("1.0").build()).build(),
+                                 .region("region-a.geo-1").versionId("1.0").build()).build(),
+
                Service.builder().name("Identity").type("identity").endpoints(
                         Endpoint.builder().publicURL(URI.create("https://csnode.jclouds.org/v2.0/")).region(
-                                 "region-a.geo-1").id("2.0").build()).build(),
-               Service.builder()
+                                 "region-a.geo-1").versionId("2.0").build()).build(),
 
-               .name("Image Management").type("image").endpoints(
+               Service.builder().name("Image Management").type("image").endpoints(
                         Endpoint.builder().tenantId("40806637803162").publicURL(
-                                 URI.create("https://glance.jclouds.org:9292/v1.0")).region("az-1.region-a.geo-1").id(
-                                 "1.0").build()).build(),
-               Service.builder().name("Compute").type("compute").endpoints(
-                        Endpoint.builder().tenantId("40806637803162").publicURL(
-                                 URI.create("http://compute-1.jclouds.org:8774/v1.1/40806637803162")).region(
-                                 "az-1.region-a.geo-1").id("1.1").build()).build()).build();
+                                 URI.create("https://glance.jclouds.org:9292/v1.0")).region("az-1.region-a.geo-1")
+                                 .versionId("1.0").build()).build(),
+
+               Service.builder().name("Cloud Servers").type("compute").endpoints(
+                        Endpoint.builder().tenantId("1").publicURL(URI.create("https://compute.north.host/v1/1234"))
+                                 .internalURL(URI.create("https://compute.north.host/v1/1234")).region("North")
+                                 .versionId("1.0").build(),
+                        Endpoint.builder().tenantId("2").publicURL(URI.create("https://compute.north.host/v1.1/3456"))
+                                 .internalURL(URI.create("https://compute.north.host/v1.1/3456")).region("North")
+                                 .versionId("1.1").build()).build()).build();
 
    }
 

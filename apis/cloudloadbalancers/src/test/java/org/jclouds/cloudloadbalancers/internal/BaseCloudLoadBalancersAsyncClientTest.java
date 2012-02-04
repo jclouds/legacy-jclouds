@@ -42,8 +42,8 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.internal.ClassMethodArgs;
+import org.jclouds.location.config.LocationModule;
 import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule;
 import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule.GetAuth;
 import org.jclouds.openstack.keystone.v1_1.domain.Auth;
 import org.jclouds.openstack.keystone.v1_1.parse.ParseAuthTest;
@@ -55,6 +55,7 @@ import org.testng.annotations.BeforeClass;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 
@@ -77,21 +78,27 @@ public abstract class BaseCloudLoadBalancersAsyncClientTest<T> extends RestClien
    @ConfiguresRestClient
    @RequiresHttp
    protected static class TestCloudLoadBalancersRestClientModule extends CloudLoadBalancersRestClientModule {
-      private TestCloudLoadBalancersRestClientModule() {
-         super(new AuthenticationServiceModule());
-      }
-
-      @Provides
-      @Singleton
-      GetAuth provideGetAuth() {
-         return new GetAuth(null) {
-            @Override
-            public Auth apply(Credentials in) {
-               return new ParseAuthTest().expected();
+      @Override
+      protected void installLocations() {
+         install(new AbstractModule() {
+            protected void configure() {
             }
-         };
-      }
 
+            @Provides
+            @Singleton
+            GetAuth provideGetAuth() {
+               return new GetAuth(null) {
+                  @Override
+                  public Auth apply(Credentials in) {
+                     return new ParseAuthTest().expected();
+                  }
+               };
+            }
+         });
+         install(new LocationModule());
+         install(new URIWithAccountIDPathSuffixAuthenticationServiceModule());
+
+      }
    }
 
    @Override
@@ -106,8 +113,8 @@ public abstract class BaseCloudLoadBalancersAsyncClientTest<T> extends RestClien
       super.setupFactory();
       try {
          processor.setCaller(new ClassMethodArgs(CloudLoadBalancersAsyncClient.class,
-               CloudLoadBalancersAsyncClient.class.getMethod("getLoadBalancerClient", String.class),
-               new Object[] { Region.LON }));
+                  CloudLoadBalancersAsyncClient.class.getMethod("getLoadBalancerClient", String.class),
+                  new Object[] { Region.LON }));
       } catch (Exception e) {
          Throwables.propagate(e);
       }
@@ -119,20 +126,20 @@ public abstract class BaseCloudLoadBalancersAsyncClientTest<T> extends RestClien
       overrides.setProperty(provider + ".endpoint", "https://auth");
       overrides.setProperty(PROPERTY_REGIONS, LON);
       overrides.setProperty(PROPERTY_REGION + "." + LON + "." + ISO3166_CODES, "GB-SLG");
-      overrides.setProperty(PROPERTY_REGION + "." + LON + "." + ENDPOINT,
-            String.format("https://lon.loadbalancers.api.rackspacecloud.com/v${%s}", PROPERTY_API_VERSION));
+      overrides.setProperty(PROPERTY_REGION + "." + LON + "." + ENDPOINT, String.format(
+               "https://lon.loadbalancers.api.rackspacecloud.com/v${%s}", PROPERTY_API_VERSION));
       return overrides;
    }
 
    /**
     * this is only here as "cloudloadbalancers" is not in rest.properties
     */
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings( { "unchecked", "rawtypes" })
    @Override
    public RestContextSpec<?, ?> createContextSpec() {
       return RestContextFactory.<LoadBalancerClient, LoadBalancerAsyncClient> contextSpec(provider, "https://auth",
-            "1.0", "", "", "identity", "credential", LoadBalancerClient.class, LoadBalancerAsyncClient.class,
-            (Class)CloudLoadBalancersPropertiesBuilder.class, (Class)CloudLoadBalancersContextBuilder.class,
-            ImmutableSet.<Module> of());
+               "1.0", "", "", "identity", "credential", LoadBalancerClient.class, LoadBalancerAsyncClient.class,
+               (Class) CloudLoadBalancersPropertiesBuilder.class, (Class) CloudLoadBalancersContextBuilder.class,
+               ImmutableSet.<Module> of());
    }
 }

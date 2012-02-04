@@ -18,10 +18,7 @@
  */
 package org.jclouds.openstack.nova.v1_1.config;
 
-import java.net.URI;
 import java.util.Map;
-
-import javax.inject.Singleton;
 
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
@@ -29,20 +26,15 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
-import org.jclouds.openstack.keystone.v2_0.functions.PublicURLFromAccessForService;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerClient;
 import org.jclouds.openstack.nova.v1_1.handlers.NovaErrorHandler;
-import org.jclouds.openstack.services.Compute;
-import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.Provides;
 
 /**
  * Configures the Nova connection.
@@ -57,22 +49,23 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
             .put(ServerClient.class, ServerAsyncClient.class)//
             .build();
 
-   private final KeystoneAuthenticationModule authModule;
-
    public NovaRestClientModule() {
-      this(new KeystoneAuthenticationModule());
-   }
-
-   public NovaRestClientModule(KeystoneAuthenticationModule authModule) {
       super(NovaClient.class, NovaAsyncClient.class, DELEGATE_MAP);
-      this.authModule = authModule;
    }
 
    @Override
    protected void configure() {
-      install(authModule);
       install(new NovaParserModule());
       super.configure();
+   }
+
+   @Override
+   protected void installLocations() {
+      super.installLocations();
+      // TODO: select this from KeystoneProperties.VERSION; note you select from a guice provided
+      // property, so it will have to come from somewhere else, maybe we move this to the the
+      // ContextBuilder
+      install(new KeystoneAuthenticationModule());
    }
 
    @Override
@@ -81,11 +74,4 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(NovaErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(NovaErrorHandler.class);
    }
-   @Provides
-   @Singleton
-   @Compute
-   protected Supplier<URI> provideServerUrl(PublicURLFromAccessForService.Factory factory) {
-      return factory.create(ServiceType.COMPUTE);
-   }
-
 }

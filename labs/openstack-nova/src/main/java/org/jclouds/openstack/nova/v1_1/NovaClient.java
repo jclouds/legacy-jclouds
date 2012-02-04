@@ -18,11 +18,18 @@
  */
 package org.jclouds.openstack.nova.v1_1;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.location.Region;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.openstack.nova.v1_1.features.ServerClient;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
+
+import com.google.inject.Provides;
 
 /**
  * Provides synchronous access to Nova.
@@ -34,11 +41,19 @@ import org.jclouds.rest.annotations.Delegate;
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface NovaClient {
-
+   /**
+    * 
+    * @return the region codes configured
+    */
+   @Provides
+   @Region
+   Set<String> getConfiguredRegions();
+   
    /**
     * Provides synchronous access to Server features.
     */
    @Delegate
-   ServerClient getServerClient();
+   ServerClient getServerClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
 }

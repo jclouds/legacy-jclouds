@@ -79,9 +79,6 @@ public class BaseCloudServersRestClientExpectTest extends BaseKeystoneRestClient
    @ConfiguresRestClient
    @RequiresHttp
    protected static class TestCloudServersRestClientModule extends CloudServersRestClientModule {
-      private TestCloudServersRestClientModule() {
-         super(new TestAuthenticationServiceModule());
-      }
 
       @Override
       public Supplier<Date> provideCacheBusterDate() {

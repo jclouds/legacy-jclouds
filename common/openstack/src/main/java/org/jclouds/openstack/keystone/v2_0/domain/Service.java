@@ -87,7 +87,7 @@ public class Service implements Comparable<Service> {
       }
 
       public Builder fromService(Service from) {
-         return type(from.getId()).name(from.getName()).endpoints(from.getEndpoints());
+         return type(from.getType()).name(from.getName()).endpoints(from.getEndpoints());
       }
    }
 
@@ -106,7 +106,7 @@ public class Service implements Comparable<Service> {
     * 
     * @return the type of the service in the current OpenStack deployment
     */
-   public String getId() {
+   public String getType() {
       return type;
    }
 

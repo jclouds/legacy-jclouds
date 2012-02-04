@@ -25,12 +25,13 @@ import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.openstack.nova.v1_1.features.ServerClient;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaRestClientExpectTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseServerListTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -39,12 +40,6 @@ import com.google.common.collect.ImmutableMultimap;
  */
 @Test(groups = "unit", testName = "PasswordAuthenticationExpectTest")
 public class PasswordAuthenticationExpectTest extends BaseNovaRestClientExpectTest {
-
-   public PasswordAuthenticationExpectTest() {
-      provider = "openstack-nova";
-      identity = tenantId + ":" + username;
-      credential = password;
-   }
 
    /**
     * this reflects the properties that a user would pass to createContext
@@ -58,17 +53,19 @@ public class PasswordAuthenticationExpectTest extends BaseNovaRestClientExpectTe
 
    public void testListServersWhenResponseIs2xx() throws Exception {
       HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(
-               URI.create("http://compute-1.jclouds.org:8774/v1.1/40806637803162/servers")).headers(
+               URI.create("https://compute.north.host/v1.1/3456/servers")).headers(
                ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                         authToken).build()).build();
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/server_list.json")).build();
 
-      ServerClient clientWhenServersExist = requestsSendResponses(initialAuthWithPasswordCredentials,
-               responseWithAccess, listServers, listServersResponse).getServerClient();
-
-      assertEquals(clientWhenServersExist.listServers().toString(), new ParseServerListTest().expected().toString());
+      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+               responseWithKeystoneAccess, listServers, listServersResponse);
+      
+      assertEquals(clientWhenServersExist.getConfiguredRegions(), ImmutableSet.of("North"));
+      
+      assertEquals(clientWhenServersExist.getServerClientForRegion("North").listServers().toString(), new ParseServerListTest().expected().toString());
    }
 
 }

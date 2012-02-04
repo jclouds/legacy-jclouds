@@ -32,13 +32,16 @@ import javax.inject.Singleton;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.domain.Credentials;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.http.annotation.ClientError;
 import org.jclouds.location.Provider;
 import org.jclouds.openstack.Authentication;
 import org.jclouds.openstack.OpenStackAuthAsyncClient;
 import org.jclouds.openstack.OpenStackAuthClient;
 import org.jclouds.openstack.domain.AuthenticationResponse;
 import org.jclouds.openstack.functions.URIFromAuthenticationResponseForService;
+import org.jclouds.openstack.handlers.RetryOnRenew;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -66,6 +69,7 @@ public class OpenStackAuthenticationModule extends AbstractModule {
       // explicitly
       bindClientAndAsyncClient(binder(), OpenStackAuthClient.class, OpenStackAuthAsyncClient.class);
       install(new FactoryModuleBuilder().build(URIFromAuthenticationResponseForService.Factory.class));
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
    }
 
    /**

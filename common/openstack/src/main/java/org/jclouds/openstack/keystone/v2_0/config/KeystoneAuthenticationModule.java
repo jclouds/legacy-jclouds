@@ -34,14 +34,18 @@ import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.location.Provider;
+import org.jclouds.location.suppliers.RegionIdToURISupplier;
+import org.jclouds.location.suppliers.RegionIdsSupplier;
+import org.jclouds.location.suppliers.derived.RegionIdsFromRegionIdToURIKeySet;
 import org.jclouds.openstack.Authentication;
 import org.jclouds.openstack.keystone.v2_0.ServiceAsyncClient;
 import org.jclouds.openstack.keystone.v2_0.ServiceClient;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.functions.AuthenticateApiAccessKeyCredentials;
 import org.jclouds.openstack.keystone.v2_0.functions.AuthenticatePasswordCredentials;
-import org.jclouds.openstack.keystone.v2_0.functions.PublicURLFromAccessForService;
 import org.jclouds.openstack.keystone.v2_0.handlers.RetryOnRenew;
+import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToURIFromAccessForTypeAndVersionSupplier;
+import org.jclouds.rest.annotations.ApiVersion;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -67,7 +71,19 @@ public class KeystoneAuthenticationModule extends AbstractModule {
       // ServiceClient is used directly for filters and retry handlers, so let's bind it
       // explicitly
       bindClientAndAsyncClient(binder(), ServiceClient.class, ServiceAsyncClient.class);
-      install(new FactoryModuleBuilder().build(PublicURLFromAccessForService.Factory.class));
+      install(new FactoryModuleBuilder().implement(RegionIdToURISupplier.class,
+               RegionIdToURIFromAccessForTypeAndVersionSupplier.class).build(RegionIdToURISupplier.Factory.class));
+      // dynamically build the region list as opposed to from properties
+      bind(RegionIdsSupplier.class).to(RegionIdsFromRegionIdToURIKeySet.class);
+   }
+
+   // supply the region to id map from keystone, based on the servicetype and api version in config
+   @Provides
+   @Singleton
+   protected RegionIdToURISupplier provideRegionIdToURISupplierForApiVersion(
+            @Named(KeystoneProperties.SERVICE_TYPE) String serviceType, @ApiVersion String apiVersion,
+            RegionIdToURISupplier.Factory factory) {
+      return factory.createForApiTypeAndVersion(serviceType, apiVersion);
    }
 
    /**

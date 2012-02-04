@@ -17,15 +17,18 @@
  * under the License.
  */
 package org.jclouds.openstack.keystone.v2_0.internal;
-
 import static java.lang.String.format;
+import static org.jclouds.rest.BaseRestClientExpectTest.payloadFromStringWithContentType;
+
+import java.io.IOException;
 import java.net.URI;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
-import org.jclouds.rest.BaseRestClientExpectTest;
+import org.jclouds.io.Payload;
+import org.jclouds.util.Strings2;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.net.HttpHeaders;
 
@@ -34,13 +37,15 @@ import com.google.common.net.HttpHeaders;
  * 
  * @author Adrian Cole
  */
-public class BaseKeystoneRestClientExpectTest<S> extends BaseRestClientExpectTest<S> {
+public enum KeystoneFixture {
+   INSTANCE;
 
-   protected static final String tenantId = "12346637803162";
+   public String getTenantName(){
+      return "12346637803162";
+   }
 
-   protected static final String username = "user@jclouds.org";
-   protected static final String password = "Password1234";
-   protected static final HttpRequest initialAuthWithPasswordCredentials = HttpRequest
+   public HttpRequest initialAuthWithUsernameAndPassword(String username, String password){
+      return HttpRequest
             .builder()
             .method("POST")
             .endpoint(URI.create("http://localhost:5000/v2.0/tokens"))
@@ -48,12 +53,12 @@ public class BaseKeystoneRestClientExpectTest<S> extends BaseRestClientExpectTes
             .payload(
                      payloadFromStringWithContentType(
                               format(
-                                       "{\"auth\":{\"passwordCredentials\":{\"username\":\"%s\",\"password\":\"%s\"},\"tenantId\":\"%s\"}}",
-                                       username, password, tenantId), "application/json")).build();
-
-   protected static final String accessKey = "FH6FU8GMZFLKP5BUR2X1";
-   protected static final String secretKey = "G4QWed0lh5SH7kBrcvOM1cHygKWk81EBt+Hr1dsl";
-   protected static final HttpRequest initialAuthWithApiAccessKeyCredentials = HttpRequest
+                                       "{\"auth\":{\"passwordCredentials\":{\"username\":\"%s\",\"password\":\"%s\"},\"tenantName\":\"%s\"}}",
+                                       username, password, getTenantName()), "application/json")).build();
+   }
+  
+   public HttpRequest initialAuthWithAccessKeyAndSecretKey(String accessKey, String secretKey){
+      return HttpRequest
             .builder()
             .method("POST")
             .endpoint(URI.create("http://localhost:5000/v2.0/tokens"))
@@ -61,30 +66,27 @@ public class BaseKeystoneRestClientExpectTest<S> extends BaseRestClientExpectTes
             .payload(
                      payloadFromStringWithContentType(
                               format(
-                                       "{\"auth\":{\"apiAccessKeyCredentials\":{\"accessKey\":\"%s\",\"secretKey\":\"%s\"},\"tenantId\":\"%s\"}}",
-                                       accessKey, secretKey, tenantId), "application/json")).build();
+                                       "{\"auth\":{\"apiAccessKeyCredentials\":{\"accessKey\":\"%s\",\"secretKey\":\"%s\"},\"tenantName\":\"%s\"}}",
+                                       accessKey, secretKey, getTenantName()), "application/json")).build();
+   }
 
-   public BaseKeystoneRestClientExpectTest() {
-      identity = tenantId + ":" + accessKey;
-      credential = secretKey;
+   public String getAuthToken(){
+      return  "Auth_4f173437e4b013bee56d1007";
+   }
+
+   public HttpResponse responseWithAccess(){
+      return HttpResponse.builder().statusCode(200).message("HTTP/1.1 200").payload(
+            payloadFromResourceWithContentType("/keystoneAuthResponse.json", "application/json")).build();
    }
 
 
-   protected String authToken = "Auth_4f173437e4b013bee56d1007";
-
-   protected HttpResponse responseWithAccess = HttpResponse.builder().statusCode(200).message("HTTP/1.1 200").payload(
-            payloadFromResourceWithContentType("/keystoneAuthResponse.json", "application/json")).build();
-
-
-   /**
-    * in case you need to override anything
-    */
-   public static class TestKeystoneAuthenticationModule extends KeystoneAuthenticationModule {
-      @Override
-      protected void configure() {
-         super.configure();
+   public Payload payloadFromResourceWithContentType(String resource, String contentType) {
+      try {
+         return payloadFromStringWithContentType(Strings2.toStringAndClose(getClass().getResourceAsStream(resource)),
+                  contentType);
+      } catch (IOException e) {
+         throw Throwables.propagate(e);
       }
 
    }
-
 }

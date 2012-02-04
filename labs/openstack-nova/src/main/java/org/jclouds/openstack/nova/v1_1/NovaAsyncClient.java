@@ -18,8 +18,16 @@
  */
 package org.jclouds.openstack.nova.v1_1;
 
+import java.util.Set;
+
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.location.Region;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.openstack.nova.v1_1.features.ServerAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
+
+import com.google.inject.Provides;
 
 /**
  * Provides asynchronous access to Nova via their REST API.
@@ -32,9 +40,18 @@ import org.jclouds.rest.annotations.Delegate;
 public interface NovaAsyncClient {
 
    /**
+    * 
+    * @return the region codes configured
+    */
+   @Provides
+   @Region
+   Set<String> getConfiguredRegions();
+   
+   /**
     * Provides asynchronous access to Server features.
     */
    @Delegate
-   ServerAsyncClient getServerClient();
+   ServerAsyncClient getServerClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
 }

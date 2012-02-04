@@ -43,7 +43,6 @@ import org.jclouds.cloudservers.domain.BackupSchedule;
 import org.jclouds.cloudservers.domain.DailyBackup;
 import org.jclouds.cloudservers.domain.RebootType;
 import org.jclouds.cloudservers.domain.WeeklyBackup;
-import org.jclouds.cloudservers.internal.BaseCloudServersRestClientExpectTest.TestAuthenticationServiceModule;
 import org.jclouds.cloudservers.options.CreateServerOptions;
 import org.jclouds.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.cloudservers.options.ListOptions;
@@ -894,9 +893,6 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
    @ConfiguresRestClient
    @RequiresHttp
    protected static class TestCloudServersRestClientModule extends CloudServersRestClientModule {
-      private TestCloudServersRestClientModule() {
-         super(new TestAuthenticationServiceModule());
-      }
 
       @Provides
       @Singleton

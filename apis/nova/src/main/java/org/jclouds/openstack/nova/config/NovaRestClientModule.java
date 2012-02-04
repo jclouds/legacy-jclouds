@@ -77,11 +77,6 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ParseNovaErrorFromHttpResponse.class);
    }
 
-   @Override
-   protected void bindRetryHandlers() {
-      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
-   }
-
    @Provides
    @Singleton
    @ServerManagement

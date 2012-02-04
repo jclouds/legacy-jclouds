@@ -19,6 +19,7 @@
 package org.jclouds.cloudservers.config;
 
 import static com.google.common.base.Suppliers.memoizeWithExpiration;
+import static org.jclouds.util.Suppliers2.getLastValueInMap;
 
 import java.net.URI;
 import java.util.Date;
@@ -31,18 +32,17 @@ import org.jclouds.cloudservers.CloudServersClient;
 import org.jclouds.cloudservers.handlers.ParseCloudServersErrorFromHttpResponse;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
+import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule;
-import org.jclouds.openstack.keystone.v1_1.functions.PublicURLFromAuthResponseForService;
-import org.jclouds.openstack.keystone.v1_1.handlers.RetryOnRenew;
 import org.jclouds.openstack.services.Compute;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Supplier;
@@ -56,20 +56,12 @@ import com.google.inject.Provides;
 @RequiresHttp
 public class CloudServersRestClientModule extends RestClientModule<CloudServersClient, CloudServersAsyncClient> {
 
-   private final AuthenticationServiceModule module;
-
-   public CloudServersRestClientModule(AuthenticationServiceModule module) {
-      super(CloudServersClient.class, CloudServersAsyncClient.class);
-      this.module = module;
-   }
-
    public CloudServersRestClientModule() {
-      this(new AuthenticationServiceModule());
+      super(CloudServersClient.class, CloudServersAsyncClient.class);
    }
 
    @Override
    protected void configure() {
-      install(module);
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
       super.configure();
    }
@@ -82,18 +74,19 @@ public class CloudServersRestClientModule extends RestClientModule<CloudServersC
    }
 
    @Override
-   protected void bindRetryHandlers() {
-      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
+   protected void installLocations() {
+      super.installLocations();
+      install(new AuthenticationServiceModule());
    }
 
    @Provides
    @Singleton
    @Compute
-   protected Supplier<URI> provideServerUrl(PublicURLFromAuthResponseForService.Factory factory) {
-      return factory.create("cloudServers");
+   protected Supplier<URI> provideCloudServers(RegionIdToURISupplier.Factory factory, @ApiVersion String apiVersion) {
+      return getLastValueInMap(factory.createForApiTypeAndVersion("cloudServers", apiVersion));
    }
-   
-   //TODO: see if we still need this.
+
+   // TODO: see if we still need this.
    @Provides
    @Singleton
    @TimeStamp

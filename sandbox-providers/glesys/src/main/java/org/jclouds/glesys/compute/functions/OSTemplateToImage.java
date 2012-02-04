@@ -37,17 +37,17 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class OSTemplateToImage implements Function<OSTemplate, Image> {
-   private final Function<String, OsFamilyVersion64Bit> imageParser;
+   private final Function<String, OsFamilyVersion64Bit> osParser;
 
    @Inject
-   public OSTemplateToImage(Function<String, OsFamilyVersion64Bit> imageParser) {
-      this.imageParser = imageParser;
+   public OSTemplateToImage(Function<String, OsFamilyVersion64Bit> osParser) {
+      this.osParser = osParser;
    }
 
    @Override
    public Image apply(OSTemplate template) {
       checkNotNull(template, "template");
-      OsFamilyVersion64Bit parsed = imageParser.apply(template.getName());
+      OsFamilyVersion64Bit parsed = osParser.apply(template.getName());
       Builder builder = OperatingSystem.builder();
       builder.name(template.getName()).description(template.getName()).is64Bit(parsed.is64Bit).version(parsed.version)
                .family(parsed.family);

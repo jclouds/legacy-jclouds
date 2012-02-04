@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -30,6 +31,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.collect.Iterables;
 import com.google.common.io.OutputSupplier;
 
 /**
@@ -37,6 +39,21 @@ import com.google.common.io.OutputSupplier;
  * @author Adrian Cole
  */
 public class Suppliers2 {
+
+   public static <K, V> Supplier<V> getLastValueInMap(Supplier<Map<K, Supplier<V>>> input) {
+      return Suppliers.compose(new Function<Map<K, Supplier<V>>, V>() {
+
+         @Override
+         public V apply(Map<K, Supplier<V>> input) {
+            return Iterables.getLast(input.values()).get();
+         }
+
+         @Override
+         public String toString() {
+            return "getLastValueInMap()";
+         }
+      }, input);
+   }
 
    public static <X> Function<X, Supplier<X>> ofInstanceFunction() {
       return new Function<X, Supplier<X>>(){
