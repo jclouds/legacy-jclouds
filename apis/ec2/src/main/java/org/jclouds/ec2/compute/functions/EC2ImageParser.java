@@ -86,6 +86,7 @@ public class EC2ImageParser implements Function<org.jclouds.ec2.domain.Image, Im
       ImageBuilder builder = new ImageBuilder();
       builder.providerId(from.getId());
       builder.id(from.getRegion() + "/" + from.getId());
+      builder.name(from.getName());
       builder.description(from.getDescription() != null ? from.getDescription() : from.getImageLocation());
       builder.userMetadata(ImmutableMap.<String, String> builder().put("owner", from.getImageOwnerId()).put(
                "rootDeviceType", from.getRootDeviceType().value()).put("virtualizationType",

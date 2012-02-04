@@ -23,6 +23,8 @@ import static org.jclouds.aws.reference.FormParameters.VERSION;
 
 import java.util.Set;
 
+import org.jclouds.ec2.domain.PasswordData;
+import org.jclouds.ec2.xml.GetPasswordDataResponseHandler;
 import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -95,5 +97,16 @@ public interface WindowsAsyncClient {
    ListenableFuture<? extends Set<BundleTask>> describeBundleTasksInRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @BinderParam(BindBundleIdsToIndexedFormParams.class) String... bundleTaskIds);
+
+   /**
+    * @see WindowsClient#getPasswordData
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "GetPasswordData")
+   @XMLResponseParser(GetPasswordDataResponseHandler.class)
+   ListenableFuture<PasswordData> getPasswordData(
+         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
+         @FormParam("InstanceId") String instanceId);
 
 }

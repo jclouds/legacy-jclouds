@@ -25,7 +25,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateFactory;
 
+import javax.crypto.Cipher;
 import javax.crypto.Mac;
+import javax.crypto.NoSuchPaddingException;
 
 import org.jclouds.encryption.internal.JCECrypto;
 
@@ -60,5 +62,7 @@ public interface Crypto {
    MessageDigest sha256();
 
    MessageDigest sha512();
+
+   Cipher cipher(String algorithm) throws NoSuchAlgorithmException, NoSuchPaddingException;
 
 }
