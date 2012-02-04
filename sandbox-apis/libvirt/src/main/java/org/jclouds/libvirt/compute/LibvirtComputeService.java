@@ -95,9 +95,11 @@ public class LibvirtComputeService extends BaseComputeService {
    }
 
    @Override
-   public void destroyNode(String id) {
-      super.destroyNode(id);
-      // eliminateDomain(id);
+   protected void cleanUpIncidentalResourcesOfDeadNodes(Set<? extends NodeMetadata> deadNodes) {
+      // TODO Was previously commented out in overridden destroyNode; refactored to here but left commented out
+//      for (NodeMetadata deadNode : deadNodes) {
+//         eliminateDomain(deadNode.getId());
+//      }
    }
 
    private void eliminateDomain(String id) {

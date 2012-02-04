@@ -302,6 +302,11 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       }
    }
 
+   /**
+    * Gets the instance with the given ID from the default region
+    * 
+    * @throws NoSuchElementException If no instance with that id exists, or the instance is in a different region
+    */
    protected RunningInstance getInstance(InstanceClient instanceClient, String id) {
       RunningInstance instance = Iterables.getOnlyElement(Iterables.getOnlyElement(instanceClient
                .describeInstancesInRegion(null, id)));
