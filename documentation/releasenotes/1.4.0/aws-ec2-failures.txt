@@ -1,0 +1,22 @@
+-------------------------------------------------------------------------------
+Test set: TestSuite
+-------------------------------------------------------------------------------
+Tests run: 155, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 1,864.652 sec <<< FAILURE!
+testCreatePlacementGroup(org.jclouds.aws.ec2.services.PlacementGroupClientLiveTest)  Time elapsed: 4.264 sec  <<< FAILURE!
+java.lang.AssertionError: expected:<1> but was:<0>
+	at org.testng.Assert.fail(Assert.java:89)
+	at org.testng.Assert.failNotEquals(Assert.java:489)
+	at org.testng.Assert.assertEquals(Assert.java:118)
+	at org.testng.Assert.assertEquals(Assert.java:365)
+	at org.testng.Assert.assertEquals(Assert.java:375)
+	at org.jclouds.aws.ec2.services.PlacementGroupClientLiveTest.verifyPlacementGroup(PlacementGroupClientLiveTest.java:135)
+	at org.jclouds.aws.ec2.services.PlacementGroupClientLiveTest.testCreatePlacementGroup(PlacementGroupClientLiveTest.java:127)
+testExtendedOptionsAndLogin(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)  Time elapsed: 0.576 sec  <<< FAILURE!
+java.lang.AssertionError: [region=us-west-2, availabilityZone=us-west-2b, instanceId=i-f0f2b5c0, instanceState=running, instanceType=t1.micro, virtualizationType=paravirtual, imageId=ami-30fe7300, ipAddress=50.112.51.89, dnsName=ec2-50-112-51-89.us-west-2.compute.amazonaws.com, privateIpAddress=10.248.16.194, privateDnsName=ip-10-248-16-194.us-west-2.compute.internal, keyName=ec2-o, platform=null, launchTime=Sat Feb 04 13:16:13 PST 2012, rootDeviceName=/dev/sda1, rootDeviceType=ebs, ebsBlockDevices={/dev/sda1=[volumeId=vol-951090fe, attachmentStatus=attached, attachTime=Sat Feb 04 13:16:33 PST 2012, deleteOnTermination=true]}, monitoringState=enabled, placementGroup=null, productCodes=[], spotInstanceRequestId=sir-80024a19, subnetId=null, hypervisor=xen, vpcId=null, tags={Name=ec2-o}]
+	at org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest.testExtendedOptionsAndLogin(AWSEC2ComputeServiceLiveTest.java:176)
+testIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroyNodesMatching(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)  Time elapsed: 132.382 sec  <<< FAILURE!
+java.lang.AssertionError: Sets differ: expected [] but got [[region=us-east-1, id=sg-c83effa0, name=jclouds#ec2-incidental#us-east-1, ownerId=993194456877, description=jclouds#ec2-incidental#us-east-1, ipPermissions=[[fromPort=-1, toPort=-1, userIdGroupPairs={993194456877=[jclouds#ec2-incidental#us-east-1]}, groupIds=[], ipProtocol=icmp, ipRanges=[]], [fromPort=1, toPort=65535, userIdGroupPairs={993194456877=[jclouds#ec2-incidental#us-east-1]}, groupIds=[], ipProtocol=tcp, ipRanges=[]], [fromPort=1, toPort=65535, userIdGroupPairs={993194456877=[jclouds#ec2-incidental#us-east-1]}, groupIds=[], ipProtocol=udp, ipRanges=[]], [fromPort=22, toPort=22, userIdGroupPairs={}, groupIds=[], ipProtocol=tcp, ipRanges=[0.0.0.0/0]]]]]
+	at org.testng.Assert.fail(Assert.java:89)
+	at org.testng.Assert.assertEquals(Assert.java:694)
+	at org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest.runIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroy(AWSEC2ComputeServiceLiveTest.java:306)
+	at org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest.testIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroyNodesMatching(AWSEC2ComputeServiceLiveTest.java:228)
