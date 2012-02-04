@@ -27,7 +27,6 @@ import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
@@ -43,7 +42,6 @@ import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.PasswordData;
 import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.encryption.bouncycastle.config.BouncyCastleCryptoModule;
-import org.jclouds.logging.Logger;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
@@ -51,12 +49,6 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import javax.annotation.Nullable;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -95,7 +87,7 @@ public class WindowsClientLiveTest extends BaseVersionedServiceLiveTest {
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
-      overrides.put(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "206029621532");
+      overrides.put(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "206029621532"); /* Amazon Owner ID */
       ComputeServiceContext serviceContext = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider,
          ImmutableSet.<Module>of(new Log4JLoggingModule(), new BouncyCastleCryptoModule()), overrides);
       computeService = serviceContext.getComputeService();
@@ -128,7 +120,7 @@ public class WindowsClientLiveTest extends BaseVersionedServiceLiveTest {
    }
 
    @Test
-   public void testGetPasswordData() throws Exception {
+   public void testGetPasswordDataInRegion() throws Exception {
 
       // Spin up a new node. Make sure to open the RDP port 3389
       Template template = computeService.templateBuilder()
@@ -150,7 +142,7 @@ public class WindowsClientLiveTest extends BaseVersionedServiceLiveTest {
             @Override
             public boolean apply(@Nullable String s) {
                if (Strings.isNullOrEmpty(s)) return false;
-               PasswordData data = client.getPasswordData(null, s);
+               PasswordData data = client.getPasswordDataInRegion(null, s);
                if (data == null) return false;
                return !Strings.isNullOrEmpty(data.getPasswordData());
             }
@@ -160,7 +152,7 @@ public class WindowsClientLiveTest extends BaseVersionedServiceLiveTest {
 
          // Now pull together Amazon's encrypted password blob, and the private key that jclouds generated
          PasswordDataAndPrivateKey dataAndKey = new PasswordDataAndPrivateKey(
-            client.getPasswordData(null, node.getProviderId()),
+            client.getPasswordDataInRegion(null, node.getProviderId()),
             node.getCredentials().getPrivateKey());
 
          // And apply it to the decryption function

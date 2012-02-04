@@ -18,15 +18,14 @@
  */
 package org.jclouds.ec2.services;
 
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.ec2.domain.BundleTask;
 import org.jclouds.ec2.domain.PasswordData;
+import org.jclouds.ec2.options.BundleInstanceS3StorageOptions;
 import org.jclouds.javax.annotation.Nullable;
 
-import org.jclouds.ec2.domain.BundleTask;
-import org.jclouds.ec2.options.BundleInstanceS3StorageOptions;
-import org.jclouds.concurrent.Timeout;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Provides windows services for EC2. For more information, refer to the Amazon
@@ -119,5 +118,5 @@ public interface WindowsClient {
     * @param instanceId The ID of the instance to query
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-GetPasswordData.html" />
     */
-   PasswordData getPasswordData(@Nullable String region, String instanceId);
+   PasswordData getPasswordDataInRegion(@Nullable String region, String instanceId);
 }

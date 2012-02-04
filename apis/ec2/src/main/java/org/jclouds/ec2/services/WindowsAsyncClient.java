@@ -99,7 +99,7 @@ public interface WindowsAsyncClient {
             @BinderParam(BindBundleIdsToIndexedFormParams.class) String... bundleTaskIds);
 
    /**
-    * @see WindowsClient#getPasswordData
+    * @see WindowsClient#getPasswordDataInRegion
     */
    @POST
    @Path("/")
