@@ -18,14 +18,14 @@
  */
 package org.jclouds.ec2.services;
 
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.ec2.domain.BundleTask;
+import org.jclouds.ec2.domain.PasswordData;
+import org.jclouds.ec2.options.BundleInstanceS3StorageOptions;
 import org.jclouds.javax.annotation.Nullable;
 
-import org.jclouds.ec2.domain.BundleTask;
-import org.jclouds.ec2.options.BundleInstanceS3StorageOptions;
-import org.jclouds.concurrent.Timeout;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Provides windows services for EC2. For more information, refer to the Amazon
@@ -109,4 +109,14 @@ public interface WindowsClient {
     *      />
     */
    Set<BundleTask> describeBundleTasksInRegion(@Nullable String region, String... bundleTaskIds);
+
+   /**
+    *
+    * Retrieves the encrypted administrator password for the instances running Windows.
+    *
+    * @param region The region where the instance is based
+    * @param instanceId The ID of the instance to query
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-GetPasswordData.html" />
+    */
+   PasswordData getPasswordDataInRegion(@Nullable String region, String instanceId);
 }
