@@ -105,7 +105,7 @@ public interface WindowsAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "GetPasswordData")
    @XMLResponseParser(GetPasswordDataResponseHandler.class)
-   ListenableFuture<PasswordData> getPasswordData(
+   ListenableFuture<PasswordData> getPasswordDataInRegion(
          @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
          @FormParam("InstanceId") String instanceId);
 
