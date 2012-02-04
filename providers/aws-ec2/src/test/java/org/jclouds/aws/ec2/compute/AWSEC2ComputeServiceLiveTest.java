@@ -54,13 +54,12 @@ import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
+import com.google.common.base.Function;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -206,7 +205,30 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
    }
 
    @Test
-   public void testIncidentalResourcesGetCleanedUpAfterInstanceIsDestroyed() throws Exception {
+   public void testIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroyNode() throws Exception {
+      Function<String,Void> destroyer = new Function<String,Void>() {
+         @Override
+         public Void apply(String instanceId) {
+            client.destroyNode(instanceId);
+            return null;
+         }
+      };
+      runIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroy(destroyer);
+   }
+   
+   @Test
+   public void testIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroyNodesMatching() throws Exception {
+      Function<String,Void> destroyer = new Function<String,Void>() {
+         @Override
+         public Void apply(String instanceId) {
+            client.destroyNodesMatching(NodePredicates.<NodeMetadata>withIds(instanceId));
+            return null;
+         }
+      };
+      runIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroy(destroyer);
+   }
+   
+   private void runIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroy(Function<String,Void> destroyer) throws Exception {
       AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi())
                .getSecurityGroupServices();
 
@@ -254,7 +276,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          assertEquals(Iterables.get(keyPairs, 0).getKeyName(), expectedKeyPairName);
 
          // Destroy the first node; the key-pair and security-group should still remain
-         client.destroyNode(first.getId());
+         destroyer.apply(first.getId());
 
          Set<SecurityGroup> securityGroupsAfterDestroyFirst = securityGroupClient.describeSecurityGroupsInRegion(region, expectedSecurityGroupName);
          Set<KeyPair> keyPairsAfterDestroyFirst = keyPairClient.describeKeyPairsInRegion(region, expectedKeyPairName);
@@ -264,7 +286,7 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          // Destroy the second node; the key-pair and security-group should be automatically deleted
          // It can take some time after destroyNode returns for the securityGroup and keyPair to be completely removed.
          // Therefore try repeatedly.
-         client.destroyNode(second.getId());
+         destroyer.apply(second.getId());
 
          final int TIMEOUT_MS = 30*1000;
          boolean firstAttempt = true;
