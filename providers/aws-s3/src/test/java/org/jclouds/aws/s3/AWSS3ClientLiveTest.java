@@ -39,7 +39,6 @@ import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.http.BaseJettyTest;
-import org.jclouds.http.apachehc.config.ApacheHCHttpCommandExecutorServiceModule;
 import org.jclouds.io.Payload;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.S3ClientLiveTest;
@@ -71,12 +70,6 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
    @Override
    public AWSS3Client getApi() {
       return (AWSS3Client) context.getProviderSpecificContext().getApi();
-   }
-
-   @Override
-   protected Module createHttpModule() {
-      // in order to be able to debug the wire protocol I use ApacheHC...
-      return new ApacheHCHttpCommandExecutorServiceModule();
    }
 
    @BeforeClass(groups = { "integration", "live" })
