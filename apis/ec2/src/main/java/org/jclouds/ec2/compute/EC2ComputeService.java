@@ -109,20 +109,20 @@ public class EC2ComputeService extends BaseComputeService {
       this.securityGroupMap = securityGroupMap;
    }
 
+   /**
+    * @throws IllegalStateException If the security group was in use
+    */
    @VisibleForTesting
    void deleteSecurityGroup(String region, String group) {
+      checkNotEmpty(region, "region");
       checkNotEmpty(group, "group");
       String groupName = String.format("jclouds#%s#%s", group, region);
       if (ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, groupName).size() > 0) {
          logger.debug(">> deleting securityGroup(%s)", groupName);
-         try {
-            ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, groupName);
-            // TODO: test this clear happens
-            securityGroupMap.invalidate(new RegionNameAndIngressRules(region, groupName, null, false));
-            logger.debug("<< deleted securityGroup(%s)", groupName);
-         } catch (IllegalStateException e) {
-            logger.debug("<< inUse securityGroup(%s)", groupName);
-         }
+         ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, groupName);
+         // TODO: test this clear happens
+         securityGroupMap.invalidate(new RegionNameAndIngressRules(region, groupName, null, false));
+         logger.debug("<< deleted securityGroup(%s)", groupName);
       }
    }
 
@@ -180,26 +180,36 @@ public class EC2ComputeService extends BaseComputeService {
    }
 
    /**
-    * like {@link BaseComputeService#destroyNodesMatching} except that this will
-    * clean implicit keypairs and security groups.
+    * Cleans implicit keypairs and security groups.
     */
    @Override
-   public Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {
-      Set<? extends NodeMetadata> deadOnes = super.destroyNodesMatching(filter);
+   protected void cleanUpIncidentalResourcesOfDeadNodes(Set<? extends NodeMetadata> deadNodes) {
       Builder<String, String> regionGroups = ImmutableMultimap.<String, String> builder();
-      for (NodeMetadata nodeMetadata : deadOnes) {
+      for (NodeMetadata nodeMetadata : deadNodes) {
          if (nodeMetadata.getGroup() != null)
             regionGroups.put(AWSUtils.parseHandle(nodeMetadata.getId())[0], nodeMetadata.getGroup());
-      }
+         }
       for (Entry<String, String> regionGroup : regionGroups.build().entries()) {
-         cleanUpIncidentalResources(regionGroup);
+         cleanUpIncidentalResources(regionGroup.getKey(), regionGroup.getValue());
       }
-      return deadOnes;
    }
 
-   protected void cleanUpIncidentalResources(Entry<String, String> regionGroup) {
-      deleteKeyPair(regionGroup.getKey(), regionGroup.getValue());
-      deleteSecurityGroup(regionGroup.getKey(), regionGroup.getValue());
+   protected void cleanUpIncidentalResources(String region, String group){
+      // For issue #445, tries to delete security groups first: ec2 throws exception if in use, but
+      // deleting a key pair does not.
+      // This is "belt-and-braces" because deleteKeyPair also does extractIdsFromInstances & usingKeyPairAndNotDead
+      // for us to check if any instances are using the key-pair before we delete it. 
+      // There is (probably?) still a race if someone is creating instances at the same time as deleting them: 
+      // we may delete the key-pair just when the node-being-created was about to rely on the incidental 
+      // resources existing.
+      try {
+         logger.debug(">> deleting incidentalResources(%s @ %s)", region, group);
+         deleteSecurityGroup(region, group);
+         deleteKeyPair(region, group); // not executed if securityGroup was in use
+         logger.debug("<< deleted incidentalResources(%s @ %s)", region, group);
+      } catch (IllegalStateException e) {
+         logger.debug("<< inUse incidentalResources(%s @ %s)", region, group);
+      }
    }
 
    /**

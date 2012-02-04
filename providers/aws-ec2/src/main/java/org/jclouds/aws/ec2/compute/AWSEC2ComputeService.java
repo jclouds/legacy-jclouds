@@ -204,9 +204,9 @@ public class AWSEC2ComputeService extends EC2ComputeService {
    }
 
    @Override
-   protected void cleanUpIncidentalResources(Entry<String, String> regionTag) {
-      super.cleanUpIncidentalResources(regionTag);
-      deletePlacementGroup(regionTag.getKey(), regionTag.getValue());
+   protected void cleanUpIncidentalResources(String region, String group) {
+      super.cleanUpIncidentalResources(region, group);
+      deletePlacementGroup(region, group);
    }
 
    /**
