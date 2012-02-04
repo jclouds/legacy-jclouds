@@ -87,14 +87,11 @@ public class TerremarkVCloudComputeService extends BaseComputeService {
    }
 
    /**
-    * like {@link BaseComputeService#destroyNodesMatching} except that this will
-    * clean implicit keypairs.
+    * Cleans implicit keypairs.
     */
    @Override
-   public Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {
-      Set<? extends NodeMetadata> deadOnes = super.destroyNodesMatching(filter);
-      cleanupOrphanKeys.execute(deadOnes);
-      return deadOnes;
+   protected void cleanUpIncidentalResourcesOfDeadNodes(Set<? extends NodeMetadata> deadNodes) {
+      cleanupOrphanKeys.execute(deadNodes);
    }
 
    /**

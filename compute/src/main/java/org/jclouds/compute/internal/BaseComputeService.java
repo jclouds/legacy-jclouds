@@ -32,6 +32,7 @@ import static org.jclouds.compute.predicates.NodePredicates.all;
 import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -225,6 +226,45 @@ public class BaseComputeService implements ComputeService {
     */
    @Override
    public void destroyNode(final String id) {
+      NodeMetadata destroyedNode = doDestroyNode(id);
+      cleanUpIncidentalResourcesOfDeadNodes(Collections.singleton(destroyedNode));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {
+      logger.debug(">> destroying nodes matching(%s)", filter);
+      Set<NodeMetadata> set = newLinkedHashSet(transformParallel(nodesMatchingFilterAndNotTerminated(filter),
+            new Function<NodeMetadata, Future<NodeMetadata>>() {
+
+               // TODO make an async interface instead of re-wrapping
+               @Override
+               public Future<NodeMetadata> apply(final NodeMetadata from) {
+                  return executor.submit(new Callable<NodeMetadata>() {
+
+                     @Override
+                     public NodeMetadata call() throws Exception {
+                        doDestroyNode(from.getId());
+                        return from;
+                     }
+
+                     @Override
+                     public String toString() {
+                        return "destroyNode(" + from.getId() + ")";
+                     }
+                  });
+               }
+
+            }, executor, null, logger, "destroyNodesMatching(" + filter + ")"));
+      logger.debug("<< destroyed(%d)", set.size());
+      
+      cleanUpIncidentalResourcesOfDeadNodes(set);
+      return set;
+   }
+
+   protected NodeMetadata doDestroyNode(final String id) {
       checkNotNull(id, "id");
       logger.debug(">> destroying node(%s)", id);
       final AtomicReference<NodeMetadata> node = new AtomicReference<NodeMetadata>();
@@ -244,44 +284,18 @@ public class BaseComputeService implements ComputeService {
          }
 
       }, timeouts.nodeRunning, 1000, TimeUnit.MILLISECONDS);
+      
       boolean successful = tester.apply(id) && (node.get() == null || nodeTerminated.apply(node.get()));
       if (successful)
          credentialStore.remove("node#" + id);
       logger.debug("<< destroyed node(%s) success(%s)", id, successful);
+      return node.get();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {
-      logger.debug(">> destroying nodes matching(%s)", filter);
-      Set<NodeMetadata> set = newLinkedHashSet(transformParallel(nodesMatchingFilterAndNotTerminated(filter),
-            new Function<NodeMetadata, Future<NodeMetadata>>() {
-
-               // TODO make an async interface instead of re-wrapping
-               @Override
-               public Future<NodeMetadata> apply(final NodeMetadata from) {
-                  return executor.submit(new Callable<NodeMetadata>() {
-
-                     @Override
-                     public NodeMetadata call() throws Exception {
-                        destroyNode(from.getId());
-                        return from;
-                     }
-
-                     @Override
-                     public String toString() {
-                        return "destroyNode(" + from.getId() + ")";
-                     }
-                  });
-               }
-
-            }, executor, null, logger, "destroyNodesMatching(" + filter + ")"));
-      logger.debug("<< destroyed(%d)", set.size());
-      return set;
+   protected void cleanUpIncidentalResourcesOfDeadNodes(Set<? extends NodeMetadata> deadNodes) {
+      // no-op; to be overridden
    }
-
+   
    Iterable<? extends NodeMetadata> nodesMatchingFilterAndNotTerminated(Predicate<NodeMetadata> filter) {
       return filter(detailsOnAllNodes(), and(checkNotNull(filter, "filter"), not(TERMINATED)));
    }
