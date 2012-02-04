@@ -28,7 +28,10 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 
 import org.jclouds.javax.annotation.Nullable;
+
+import javax.crypto.Cipher;
 import javax.crypto.Mac;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -84,6 +87,11 @@ public class JCECrypto implements Crypto {
    @Override
    public MessageDigest digest(String algorithm) throws NoSuchAlgorithmException {
       return provider == null ? MessageDigest.getInstance(algorithm) : MessageDigest.getInstance(algorithm, provider);
+   }
+
+   @Override
+   public Cipher cipher(String algorithm) throws NoSuchAlgorithmException, NoSuchPaddingException {
+      return provider == null ? Cipher.getInstance(algorithm) : Cipher.getInstance(algorithm, provider);
    }
 
    public final static String MD5 = "MD5";

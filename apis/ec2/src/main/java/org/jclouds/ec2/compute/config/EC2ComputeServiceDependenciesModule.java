@@ -48,6 +48,7 @@ import org.jclouds.ec2.compute.functions.CredentialsForInstance;
 import org.jclouds.ec2.compute.functions.LoadPublicIpForInstanceOrNull;
 import org.jclouds.ec2.compute.functions.RegionAndIdToImage;
 import org.jclouds.ec2.compute.functions.RunningInstanceToNodeMetadata;
+import org.jclouds.ec2.compute.functions.WindowsLoginCredentialsFromEncryptedData;
 import org.jclouds.ec2.compute.internal.EC2TemplateBuilderImpl;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.compute.predicates.SecurityGroupPresent;
@@ -110,6 +111,7 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<EC2Client, EC2AsyncClient>>() {
       }).in(Scopes.SINGLETON);
+      bind(WindowsLoginCredentialsFromEncryptedData.class);
    }
 
    /**
