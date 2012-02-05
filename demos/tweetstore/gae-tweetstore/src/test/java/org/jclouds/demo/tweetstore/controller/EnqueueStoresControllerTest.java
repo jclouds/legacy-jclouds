@@ -35,9 +35,9 @@ import com.google.appengine.api.taskqueue.TaskOptions.Method;
 import com.google.common.collect.ImmutableMap;
 
 /**
- * Tests behavior of {@code StoreTweetsController}
+ * Tests behavior of {@link EnqueueStoresController}
  * 
- * @author Adrian Cole
+ * @author Andrew Phillips
  */
 @Test(groups = "unit")
 public class EnqueueStoresControllerTest {
