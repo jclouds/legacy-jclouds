@@ -1,0 +1,396 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:cloudfiles-uk:bundle:1.4.0-SNAPSHOT
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.4.0-SNAPSHOT (/Users/adriancole/workspace/git/1.4.x/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.4.0-SNAPSHOT, /Users/adriancole/workspace/git/1.4.x/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building jclouds CloudFiles UK provider 1.4.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ cloudfiles-uk ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ cloudfiles-uk ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-banned-dependencies) @ cloudfiles-uk ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-java) @ cloudfiles-uk ---
+[INFO] 
+[INFO] --- maven-remote-resources-plugin:1.2:process (process-remote-resources) @ cloudfiles-uk ---
+[INFO] Setting property: classpath.resource.loader.class => 'org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader'.
+[INFO] Setting property: velocimacro.messages.on => 'false'.
+[INFO] Setting property: resource.loader => 'classpath'.
+[INFO] Setting property: resource.manager.logwhenfound => 'false'.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ cloudfiles-uk ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.4.x/jclouds/providers/cloudfiles-uk/src/main/clojure
+[INFO] Copying 1 resource
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ cloudfiles-uk ---
+[INFO] Compiling 2 source files to /Users/adriancole/workspace/git/1.4.x/jclouds/providers/cloudfiles-uk/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ cloudfiles-uk ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.4.x/jclouds/providers/cloudfiles-uk/src/test/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.4.x/jclouds/providers/cloudfiles-uk/src/test/resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ cloudfiles-uk ---
+[INFO] Compiling 11 source files to /Users/adriancole/workspace/git/1.4.x/jclouds/providers/cloudfiles-uk/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.10:test (default-test) @ cloudfiles-uk ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.4.x/jclouds/providers/cloudfiles-uk/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest
+Starting test testAllContains(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest)
+Starting test testInRestProperties(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest)
+Starting test testOfTypeContains(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest)
+Starting test testWithId(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest)
+[pool-2-thread-2] Test testInRestProperties(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest) succeeded: 59ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testOfTypeContains(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest) succeeded: 61ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testWithId(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest) succeeded: 60ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+[pool-2-thread-1] Test testAllContains(org.jclouds.rackspace.cloudfiles.CloudFilesUKProviderTest) succeeded: 84ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.625 sec
+
+Results :
+
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.3.8:test (test-clojure) @ cloudfiles-uk ---
+
+Testing com.theoryinpractise.clojure.testrunner
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+[INFO] 
+[INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ cloudfiles-uk ---
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ cloudfiles-uk ---
+[INFO] Building jar: /Users/adriancole/workspace/git/1.4.x/jclouds/providers/cloudfiles-uk/target/cloudfiles-uk-1.4.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ cloudfiles-uk ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ cloudfiles-uk ---
+[INFO] Building jar: /Users/adriancole/workspace/git/1.4.x/jclouds/providers/cloudfiles-uk/target/cloudfiles-uk-1.4.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.10:test (integration) @ cloudfiles-uk ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.4.x/jclouds/providers/cloudfiles-uk/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+*** containers to test: [adriancole-blobstore0, adriancole-blobstore1, adriancole-blobstore2, adriancole-blobstore3, adriancole-blobstore4, adriancole-blobstore5, adriancole-blobstore6, adriancole-blobstore7, adriancole-blobstore8, adriancole-blobstore9]
+Starting test blobNotFound(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test blobNotFound(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 3933ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 4441ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 4680ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 4412ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 4475ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 8392ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 4641ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 4480ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 4671ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 4394ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test deleteObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 4369ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Starting test deleteObjectNoContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test deleteObjectNoContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 702ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+Starting test deleteObjectNotFound(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test deleteObjectNotFound(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 2970ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+Starting test testBigFileGets(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test testBigFileGets(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 33108ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+Starting test testGetIfMatch(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test testGetIfMatch(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 8076ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+Starting test testGetIfModifiedSince(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test testGetIfModifiedSince(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 14397ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
+Starting test testGetIfNoneMatch(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test testGetIfNoneMatch(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 16386ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
+Starting test testGetIfUnmodifiedSince(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test testGetIfUnmodifiedSince(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 10799ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+Starting test testGetRange(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test testGetRange(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 8704ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+Starting test testMetadata(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test testMetadata(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 10590ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+Starting test testPutFileParallel(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test testPutFileParallel(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 32216ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
+Starting test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 5843ms
+Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
+Starting test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 5496ms
+Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
+Starting test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test testPutObject(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 8533ms
+Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
+Starting test testPutObjectStream(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest)
+[TestNG] Test testPutObjectStream(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobIntegrationLiveTest) succeeded: 6678ms
+Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
+Starting test testCopyUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobLiveTest)
+[TestNG] Test testCopyUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobLiveTest) succeeded: 12502ms
+Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
+Starting test testContains(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[TestNG] Test testContains(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 8241ms
+Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
+Starting test testEntrySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[TestNG] Test testEntrySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 44189ms
+Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
+Starting test testPut(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[TestNG] Test testPut(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 13752ms
+Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
+Starting test testPutAll(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[TestNG] Test testPutAll(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 23160ms
+Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
+Starting test testPutMoreThanSingleListing(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[TestNG] Test testPutMoreThanSingleListing(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 20390ms
+Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
+Starting test testRemove(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[TestNG] Test testRemove(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 10792ms
+Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
+Starting test testValues(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[TestNG] Test testValues(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 16003ms
+Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
+Starting test testClear(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[TestNG] Test testClear(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 12289ms
+Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
+Starting test testContainsKey(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[TestNG] Test testContainsKey(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 7266ms
+Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
+Starting test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[TestNG] Test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 310770ms
+Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
+Starting test testIsEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[TestNG] Test testIsEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 7794ms
+Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
+Starting test testKeySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[TestNG] Test testKeySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 11957ms
+Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
+Starting test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest)
+[TestNG] Test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobMapIntegrationLiveTest) succeeded: 5460ms
+Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
+Starting test testSignGetUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest)
+[TestNG] Test testSignGetUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest) succeeded: 10461ms
+Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
+Starting test testSignGetUrlOptions(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest)
+[TestNG] Test testSignGetUrlOptions(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest) succeeded: 5035ms
+Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
+Starting test testSignPutUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest)
+[TestNG] Test testSignPutUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest) succeeded: 4577ms
+Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
+Starting test testSignRemoveUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest)
+[TestNG] Test testSignRemoveUrl(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKBlobSignerLiveTest) succeeded: 12527ms
+Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
+Starting test containerDoesntExist(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[TestNG] Test containerDoesntExist(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 2373ms
+Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
+Starting test containerExists(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[TestNG] Test containerExists(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 2848ms
+Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
+Starting test deleteContainerIfEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+*** allocated new container adriancole-blobstore3...
+[TestNG] Test deleteContainerIfEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 10131ms
+Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
+Starting test deleteContainerWithContents(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+*** allocated new container adriancole-blobstore4...
+[TestNG] Test deleteContainerWithContents(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 24686ms
+Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
+Starting test testClearWhenContentsUnderPath(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[TestNG] Test testClearWhenContentsUnderPath(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 42599ms
+Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
+Starting test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[TestNG] Test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 82026ms
+Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
+Starting test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[TestNG] Test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 27232ms
+Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
+Starting test testListContainerMarker(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[TestNG] Test testListContainerMarker(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 67438ms
+Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
+Starting test testListContainerMaxResults(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[TestNG] Test testListContainerMaxResults(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 30798ms
+Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
+Starting test testListContainerPrefix(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[TestNG] Test testListContainerPrefix(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 39000ms
+Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
+Starting test testListRootUsesDelimiter(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[TestNG] Test testListRootUsesDelimiter(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 35196ms
+Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
+Starting test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[TestNG] Test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 6001ms
+Test suite progress: tests succeeded: 55, failed: 0, skipped: 0.
+Starting test testWithDetails(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest)
+[TestNG] Test testWithDetails(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerIntegrationLiveTest) succeeded: 9104ms
+Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
+Starting test testPublicAccess(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerLiveTest)
+*** allocated new container adriancole-blobstore6...
+*** allocated new container adriancole-blobstore613...
+[TestNG] Test testPublicAccess(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKContainerLiveTest) succeeded: 11708ms
+Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
+Starting test testContainsBytesValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testContainsBytesValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 18019ms
+Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
+Starting test testContainsFileValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testContainsFileValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 25541ms
+Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
+Starting test testContainsInputStreamValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testContainsInputStreamValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 7795ms
+Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
+Starting test testContainsStringValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testContainsStringValue(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 12406ms
+Test suite progress: tests succeeded: 61, failed: 0, skipped: 0.
+Starting test testEntrySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testEntrySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 31777ms
+Test suite progress: tests succeeded: 62, failed: 0, skipped: 0.
+Starting test testPut(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testPut(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 16245ms
+Test suite progress: tests succeeded: 63, failed: 0, skipped: 0.
+Starting test testPutAll(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testPutAll(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 22935ms
+Test suite progress: tests succeeded: 64, failed: 0, skipped: 0.
+Starting test testPutAllBytes(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testPutAllBytes(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 24645ms
+Test suite progress: tests succeeded: 65, failed: 0, skipped: 0.
+Starting test testPutAllFiles(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testPutAllFiles(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 25147ms
+Test suite progress: tests succeeded: 66, failed: 0, skipped: 0.
+Starting test testPutAllStrings(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testPutAllStrings(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 11656ms
+Test suite progress: tests succeeded: 67, failed: 0, skipped: 0.
+Starting test testPutBytes(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testPutBytes(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 10844ms
+Test suite progress: tests succeeded: 68, failed: 0, skipped: 0.
+Starting test testPutFile(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testPutFile(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 11012ms
+Test suite progress: tests succeeded: 69, failed: 0, skipped: 0.
+Starting test testPutMoreThanSingleListing(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testPutMoreThanSingleListing(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 257966ms
+Test suite progress: tests succeeded: 70, failed: 0, skipped: 0.
+Starting test testPutString(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testPutString(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 16506ms
+Test suite progress: tests succeeded: 71, failed: 0, skipped: 0.
+Starting test testRemove(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testRemove(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 13730ms
+Test suite progress: tests succeeded: 72, failed: 0, skipped: 0.
+Starting test testValues(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testValues(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 17321ms
+Test suite progress: tests succeeded: 73, failed: 0, skipped: 0.
+Starting test testClear(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testClear(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 10837ms
+Test suite progress: tests succeeded: 74, failed: 0, skipped: 0.
+Starting test testContainsKey(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testContainsKey(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 6999ms
+Test suite progress: tests succeeded: 75, failed: 0, skipped: 0.
+Starting test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testDirectory(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 68023ms
+Test suite progress: tests succeeded: 76, failed: 0, skipped: 0.
+Starting test testIsEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testIsEmpty(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 5564ms
+Test suite progress: tests succeeded: 77, failed: 0, skipped: 0.
+Starting test testKeySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testKeySet(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 9091ms
+Test suite progress: tests succeeded: 78, failed: 0, skipped: 0.
+Starting test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest)
+[TestNG] Test testListContainer(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKInputStreamMapIntegrationLiveTest) succeeded: 2769ms
+Test suite progress: tests succeeded: 79, failed: 0, skipped: 0.
+Starting test containerDoesntExist(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest)
+[TestNG] Test containerDoesntExist(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest) succeeded: 2586ms
+Test suite progress: tests succeeded: 80, failed: 0, skipped: 0.
+Starting test testAllLocations(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest)
+*** allocated new container adriancole-blobstore8...
+ >> creating container in location [id=UK, scope=REGION, description=UK, parent=cloudfiles-uk, iso3166Codes=[], metadata={}]
+ << call complete.. checking
+*** allocated new container adriancole-blobstore815...
+[TestNG] Test testAllLocations(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest) succeeded: 10986ms
+Test suite progress: tests succeeded: 81, failed: 0, skipped: 0.
+Starting test testGetAssignableLocations(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest)
+location [id=UK, scope=REGION, description=UK, parent=cloudfiles-uk, iso3166Codes=[], metadata={}]
+[TestNG] Test testGetAssignableLocations(org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUKServiceIntegrationLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 82, failed: 0, skipped: 0.
+Starting test deleteContainerIfEmptyNotFound(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
+[TestNG] Test deleteContainerIfEmptyNotFound(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 1689ms
+Test suite progress: tests succeeded: 83, failed: 0, skipped: 0.
+Starting test testHeadAccountMetadata(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
+[TestNG] Test testHeadAccountMetadata(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 5078ms
+Test suite progress: tests succeeded: 84, failed: 0, skipped: 0.
+Starting test testListContainerPath(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
+[TestNG] Test testListContainerPath(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 7998ms
+Test suite progress: tests succeeded: 85, failed: 0, skipped: 0.
+Starting test testListOwnedContainers(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
+[TestNG] Test testListOwnedContainers(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 20990ms
+Test suite progress: tests succeeded: 86, failed: 0, skipped: 0.
+Starting test testObjectOperations(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
+[TestNG] Test testObjectOperations(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 12680ms
+Test suite progress: tests succeeded: 87, failed: 0, skipped: 0.
+Starting test testPutContainers(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest)
+[TestNG] Test testPutContainers(org.jclouds.rackspace.cloudfiles.CloudFilesUKClientLiveTest) succeeded: 9014ms
+Test suite progress: tests succeeded: 88, failed: 0, skipped: 0.
+Tests run: 88, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1,880.81 sec
+
+Results :
+
+Tests run: 88, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- maven-install-plugin:2.3:install (default-install) @ cloudfiles-uk ---
+[INFO] Installing /Users/adriancole/workspace/git/1.4.x/jclouds/providers/cloudfiles-uk/target/cloudfiles-uk-1.4.0-SNAPSHOT.jar to /Users/adriancole/.m2/repository/org/jclouds/provider/cloudfiles-uk/1.4.0-SNAPSHOT/cloudfiles-uk-1.4.0-SNAPSHOT.jar
+[INFO] Installing /Users/adriancole/workspace/git/1.4.x/jclouds/providers/cloudfiles-uk/pom.xml to /Users/adriancole/.m2/repository/org/jclouds/provider/cloudfiles-uk/1.4.0-SNAPSHOT/cloudfiles-uk-1.4.0-SNAPSHOT.pom
+[INFO] Installing /Users/adriancole/workspace/git/1.4.x/jclouds/providers/cloudfiles-uk/target/cloudfiles-uk-1.4.0-SNAPSHOT-sources.jar to /Users/adriancole/.m2/repository/org/jclouds/provider/cloudfiles-uk/1.4.0-SNAPSHOT/cloudfiles-uk-1.4.0-SNAPSHOT-sources.jar
+[INFO] Installing /Users/adriancole/workspace/git/1.4.x/jclouds/providers/cloudfiles-uk/target/cloudfiles-uk-1.4.0-SNAPSHOT-tests.jar to /Users/adriancole/.m2/repository/org/jclouds/provider/cloudfiles-uk/1.4.0-SNAPSHOT/cloudfiles-uk-1.4.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-bundle-plugin:2.3.4:install (default-install) @ cloudfiles-uk ---
+[INFO] Installing org/jclouds/provider/cloudfiles-uk/1.4.0-SNAPSHOT/cloudfiles-uk-1.4.0-SNAPSHOT.jar
+[INFO] Writing OBR metadata
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 32:04.660s
+[INFO] Finished at: Sat Feb 04 15:59:24 PST 2012
+[INFO] Final Memory: 19M/265M
+[INFO] ------------------------------------------------------------------------
