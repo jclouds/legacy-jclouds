@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.4.0-SNAPSHOT</version>
+        <version>1.4.0-rc.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -36,9 +36,9 @@
     <properties>
         <test.rimuhosting.endpoint>https://api.rimuhosting.com/r</test.rimuhosting.endpoint>
         <test.rimuhosting.api-version>1.0</test.rimuhosting.api-version>
-        <test.rimuhosting.build-version></test.rimuhosting.build-version>
+        <test.rimuhosting.build-version />
         <test.rimuhosting.identity>FIXME</test.rimuhosting.identity>
-        <test.rimuhosting.image-id></test.rimuhosting.image-id>
+        <test.rimuhosting.image-id />
     </properties>
     <dependencies>
         <dependency>

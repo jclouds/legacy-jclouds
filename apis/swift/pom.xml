@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.4.0-SNAPSHOT</version>
+    <version>1.4.0-rc.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.api</groupId>
@@ -37,7 +37,7 @@
     <test.initializer>org.jclouds.openstack.swift.blobstore.integration.SwiftTestInitializer</test.initializer>
     <test.swift.endpoint>http://localhost:11000</test.swift.endpoint>
     <test.swift.api-version>1.0</test.swift.api-version>
-    <test.swift.build-version></test.swift.build-version>
+    <test.swift.build-version />
     <test.swift.identity>test:tester</test.swift.identity>
     <test.swift.credential>testing</test.swift.credential>
   </properties>

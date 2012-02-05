@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.4.0-SNAPSHOT</version>
+        <version>1.4.0-rc.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -37,7 +37,7 @@
         <test.initializer>org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUSTestInitializer</test.initializer>
         <test.cloudfiles-us.endpoint>https://auth.api.rackspacecloud.com</test.cloudfiles-us.endpoint>
         <test.cloudfiles-us.api-version>1.0</test.cloudfiles-us.api-version>
-        <test.cloudfiles-us.build-version></test.cloudfiles-us.build-version>
+        <test.cloudfiles-us.build-version />
         <test.cloudfiles-us.identity>${test.rackspace-us.identity}</test.cloudfiles-us.identity>
         <test.cloudfiles-us.credential>${test.rackspace-us.credential}</test.cloudfiles-us.credential>
     </properties>
