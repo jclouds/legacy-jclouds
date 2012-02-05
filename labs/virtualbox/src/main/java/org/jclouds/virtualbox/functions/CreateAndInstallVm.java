@@ -75,7 +75,6 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
       this.executionType = executionType;
       this.machineUtils = machineUtils;
       this.preConfiguration = preConfiguration;
-
    }
 
    @Override
