@@ -103,7 +103,6 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       container = checkNotNull(props.getProperty(PROPERTY_TWEETSTORE_CONTAINER), PROPERTY_TWEETSTORE_CONTAINER);
 
       // instantiate and store references to all blobstores by provider name
-      // instantiate and store references to all blobstores by provider name
       providerTypeToBlobStoreMap = Maps.newHashMap();
       for (String hint : getBlobstoreContexts(props)) {
           providerTypeToBlobStoreMap.put(hint, blobStoreContextFactory.createContext(hint, modules, props));
