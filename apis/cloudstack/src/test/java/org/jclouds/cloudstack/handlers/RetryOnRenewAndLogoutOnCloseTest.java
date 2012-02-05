@@ -18,12 +18,7 @@
  */
 package org.jclouds.cloudstack.handlers;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.testng.Assert.assertTrue;
-
+import com.google.common.cache.LoadingCache;
 import org.jclouds.cloudstack.domain.LoginResponse;
 import org.jclouds.cloudstack.features.SessionClient;
 import org.jclouds.domain.Credentials;
@@ -32,11 +27,15 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
 import org.testng.annotations.Test;
 
-import com.google.common.cache.LoadingCache;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tests behavior of {@code RetryOnRenewAndLogoutOnClose} handler
- * 
+ *
  * @author grkvlt@apache.org
  */
 @Test(groups = "unit", testName = "RetryOnRenewAndLogoutOnCloseTest")
@@ -54,7 +53,7 @@ public class RetryOnRenewAndLogoutOnCloseTest {
       replay(cache, command);
 
       HttpResponse response = HttpResponse.builder().payload(
-               Payloads.newStringPayload("TODO: What state can we retry?")).statusCode(401).build();
+         Payloads.newStringPayload("Not relevant")).statusCode(401).build();
 
       RetryOnRenewAndLogoutOnClose retry = new RetryOnRenewAndLogoutOnClose(cache, sessionClient);
 
