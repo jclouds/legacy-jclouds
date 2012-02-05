@@ -18,21 +18,47 @@
  */
 package org.jclouds.demo.paas;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.demo.paas.config.PlatformServicesInitializer.PLATFORM_SERVICES_ATTRIBUTE_NAME;
+
+import java.util.Map;
+
+import javax.servlet.ServletContext;
+
+import org.jclouds.demo.paas.service.scheduler.Scheduler;
+import org.jclouds.demo.paas.service.taskqueue.TaskQueue;
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * @author Andrew Phillips
  */
-public class PlatformServices implements ServletContextListener {
+public class PlatformServices {
+    protected final String baseUrl;
+    protected final Scheduler scheduler;
+    private ImmutableMap<String, TaskQueue> taskQueues;
 
-    @Override
-    public void contextInitialized(ServletContextEvent arg0) {
-        throw new UnsupportedOperationException("TODO Auto-generated method stub");
+    public PlatformServices(String baseUrl, Scheduler scheduler, Map<String, TaskQueue> taskQueues) {
+        this.baseUrl = baseUrl;
+        this.scheduler = scheduler;
+        this.taskQueues = ImmutableMap.copyOf(taskQueues);
     }
 
-    @Override
-    public void contextDestroyed(ServletContextEvent arg0) {
-        throw new UnsupportedOperationException("TODO Auto-generated method stub");
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public Scheduler getScheduler() {
+        return scheduler;
+    }
+
+    public @Nullable TaskQueue getTaskQueue(String name) {
+        return taskQueues.get(name);
+    }
+
+    public static PlatformServices get(ServletContext context) {
+        return (PlatformServices) checkNotNull(context.getAttribute(
+                PLATFORM_SERVICES_ATTRIBUTE_NAME), PLATFORM_SERVICES_ATTRIBUTE_NAME);
     }
 }

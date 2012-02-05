@@ -23,7 +23,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Predicates.in;
 import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Sets.filter;
-import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.jclouds.demo.paas.reference.PaasConstants.PROPERTY_PLATFORM_BASE_URL;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_BLOBSTORES;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER;
 import static org.jclouds.demo.tweetstore.reference.TwitterConstants.PROPERTY_TWITTER_ACCESSTOKEN;
@@ -31,9 +31,6 @@ import static org.jclouds.demo.tweetstore.reference.TwitterConstants.PROPERTY_TW
 import static org.jclouds.demo.tweetstore.reference.TwitterConstants.PROPERTY_TWITTER_CONSUMER_KEY;
 import static org.jclouds.demo.tweetstore.reference.TwitterConstants.PROPERTY_TWITTER_CONSUMER_SECRET;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -43,13 +40,13 @@ import javax.servlet.ServletContextEvent;
 
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
-import org.jclouds.demo.paas.service.taskqueue.HttpRequestTask;
+import org.jclouds.demo.paas.PlatformServices;
 import org.jclouds.demo.paas.service.taskqueue.TaskQueue;
-import org.jclouds.demo.paas.service.taskqueue.HttpRequestTask.Factory;
 import org.jclouds.demo.tweetstore.config.util.CredentialsCollector;
+import org.jclouds.demo.tweetstore.config.util.PropertiesLoader;
 import org.jclouds.demo.tweetstore.controller.AddTweetsController;
+import org.jclouds.demo.tweetstore.controller.EnqueueStoresController;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
-import org.jclouds.http.HttpRequest;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
@@ -57,10 +54,8 @@ import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.common.io.Closeables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -79,13 +74,14 @@ public class GuiceServletConfig extends GuiceServletContextListener {
     private Twitter twitterClient;
     private String container;
     private TaskQueue queue;
+    private String baseUrl;
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         BlobStoreContextFactory blobStoreContextFactory = new BlobStoreContextFactory();
+        ServletContext servletContext = servletContextEvent.getServletContext();
 
-        Properties props = loadJCloudsProperties(servletContextEvent);
-
+        Properties props = new PropertiesLoader(servletContext).get();
         Set<Module> modules = ImmutableSet.<Module>of();
         // shared across all blobstores and used to retrieve tweets
         try {
@@ -108,16 +104,10 @@ public class GuiceServletConfig extends GuiceServletContextListener {
             providerTypeToBlobStoreMap.put(hint, blobStoreContextFactory.createContext(hint, modules, props));
         }
 
-        // get a queue for submitting store tweet requests
-        queue = TaskQueue.builder().name("twitter").period(MINUTES).build();
-        Factory taskFactory = HttpRequestTask.factory(props, "twitter");
-        // submit a job to store tweets for each configured blobstore
-        for (String name : providerTypeToBlobStoreMap.keySet()) {
-            queue.add(taskFactory.create(HttpRequest.builder()
-                    .endpoint(withUrl(servletContextEvent.getServletContext(), "/store/do"))
-                    .headers(ImmutableMultimap.of("context", name))
-                    .method("GET").build()));
-        }
+        // get a queue for submitting store tweet requests and the application's base URL
+        PlatformServices platform = PlatformServices.get(servletContext);
+        queue = platform.getTaskQueue("twitter");
+        baseUrl = platform.getBaseUrl();
 
         super.contextInitialized(servletContextEvent);
     }
@@ -131,40 +121,23 @@ public class GuiceServletConfig extends GuiceServletContextListener {
         checkState(!contexts.isEmpty(), "no credentials available for any requested  context");
         return contexts;
     }
-
-    private static URI withUrl(ServletContext servletContext, String url) {
-        return URI.create("http://" + checkNotNull(servletContext.getInitParameter("application.host"), "application.host")
-                + servletContext.getContextPath() + url);
-    }
     
-    private Properties loadJCloudsProperties(
-            ServletContextEvent servletContextEvent) {
-        InputStream input = servletContextEvent.getServletContext()
-                .getResourceAsStream("/WEB-INF/jclouds.properties");
-        Properties props = new Properties();
-        try {
-            props.load(input);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            Closeables.closeQuietly(input);
-        }
-        return props;
-    }
-
     @Override
     protected Injector getInjector() {
         return Guice.createInjector(new ServletModule() {
             @Override
             protected void configureServlets() {
-                bind(new TypeLiteral<Map<String, BlobStoreContext>>() {
-                }).toInstance(providerTypeToBlobStoreMap);
+                bind(new TypeLiteral<Map<String, BlobStoreContext>>() {})
+                .toInstance(providerTypeToBlobStoreMap);
                 bind(Twitter.class).toInstance(twitterClient);
-                bindConstant().annotatedWith(
-                        Names.named(PROPERTY_TWEETSTORE_CONTAINER)).to(
-                        container);
+                bind(TaskQueue.class).toInstance(queue);
+                bindConstant().annotatedWith(Names.named(PROPERTY_PLATFORM_BASE_URL))
+                .to(baseUrl);
+                bindConstant().annotatedWith(Names.named(PROPERTY_TWEETSTORE_CONTAINER))
+                .to(container);
                 serve("/store/*").with(StoreTweetsController.class);
                 serve("/tweets/*").with(AddTweetsController.class);
+                serve("/stores/*").with(EnqueueStoresController.class);
             }
         });
     }

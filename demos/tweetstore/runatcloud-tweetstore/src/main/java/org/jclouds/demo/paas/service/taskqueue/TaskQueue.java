@@ -20,21 +20,63 @@ package org.jclouds.demo.paas.service.taskqueue;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.String.format;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
+
+import org.jclouds.demo.paas.RunnableHttpRequest;
+import org.jclouds.demo.paas.RunnableHttpRequest.Factory;
+import org.jclouds.http.HttpCommandExecutorService;
 
 import com.google.inject.Provider;
 
 public class TaskQueue {
-    public static Builder builder() {
-        return new Builder();
+    protected final Factory httpRequestFactory;
+    private final Timer timer;
+    private final ConcurrentLinkedQueue<Runnable> tasks = new ConcurrentLinkedQueue<Runnable>();
+
+    private TaskQueue(String name, long pollingIntervalMillis, Factory httpRequestFactory) {
+        this.httpRequestFactory = httpRequestFactory;
+        timer = new Timer(name);
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                Runnable task = tasks.poll();
+                if (task != null) {
+                    task.run();
+                }
+            }
+        }, 0, pollingIntervalMillis);
+    }
+
+    public void add(final Runnable task) {
+        tasks.add(task);
+    }
+
+    public Factory getHttpRequestFactory() {
+        return httpRequestFactory;
+    }
+
+    public void destroy() {
+        timer.cancel();
+        tasks.clear();
+    }
+
+    public static Builder builder(HttpCommandExecutorService httpClient) {
+        return new Builder(httpClient);
     }
 
     public static class Builder implements Provider<TaskQueue> {
+        protected final HttpCommandExecutorService httpClient;
         protected String name = "default";
-        protected long taskPeriodMillis = TimeUnit.SECONDS.toMillis(1);
+        protected long pollingIntervalMillis = TimeUnit.SECONDS.toMillis(1);
+
+        private Builder(HttpCommandExecutorService httpClient) {
+            this.httpClient = checkNotNull(httpClient, "httpClient");
+        }
 
         public Builder name(String name) {
             this.name = checkNotNull(name, "name");
@@ -42,44 +84,24 @@ public class TaskQueue {
         }
 
         public Builder period(TimeUnit period) {
-            this.taskPeriodMillis = checkNotNull(period, "period").toMillis(1);
+            this.pollingIntervalMillis = checkNotNull(period, "period").toMillis(1);
             return this;
         }
 
-        public Builder period(long taskPeriodMillis) {
-            checkArgument(taskPeriodMillis > 0, "taskPeriodMillis");
-            this.taskPeriodMillis = taskPeriodMillis;
+        public Builder period(long pollingIntervalMillis) {
+            checkArgument(pollingIntervalMillis > 0, "pollingIntervalMillis");
+            this.pollingIntervalMillis = pollingIntervalMillis;
             return this;
         }
-        
+
         public TaskQueue build() {
-            return new TaskQueue(name, taskPeriodMillis);
+            return new TaskQueue(name, pollingIntervalMillis,
+                    RunnableHttpRequest.factory(httpClient, format("taskqueue-%s", name)));
         }
 
         @Override
         public TaskQueue get() {
             return build();
         }
-    }
-
-    private final Timer timer;
-    private final long taskPeriodMillis;
-
-    private TaskQueue(String name, long taskPeriodMillis) {
-        timer = new Timer(name);
-        this.taskPeriodMillis = taskPeriodMillis;
-    }
-
-    public void add(final Runnable task) {
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                task.run();
-            }
-        }, 0, taskPeriodMillis);
-    }
-    
-    public void destroy() {
-        timer.cancel();
     }
 }
