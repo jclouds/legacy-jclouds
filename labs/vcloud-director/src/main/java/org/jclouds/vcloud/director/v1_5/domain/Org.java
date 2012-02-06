@@ -35,8 +35,12 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
- * Retrieves a list of organizations.
- * 
+ * An organization.
+ *
+ * <pre>
+ * &lt;xs:complexType name="OrgType"&gt;
+ * </pre>
+ *
  * @author Adrian Cole
  */
 @XmlRootElement(namespace = NS, name = "Org")
@@ -47,6 +51,7 @@ public class Org extends BaseNamedResource<Org> {
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromOrg(this);
    }
@@ -59,7 +64,7 @@ public class Org extends BaseNamedResource<Org> {
       private Set<Link> links = Sets.newLinkedHashSet();
 
       /**
-       * @see Org#getId
+       * @see Org#getId()
        */
       public Builder id(String id) {
          this.id = id;
@@ -67,7 +72,7 @@ public class Org extends BaseNamedResource<Org> {
       }
 
       /**
-       * @see Org#getDescription
+       * @see Org#getDescription()
        */
       public Builder description(String description) {
          this.description = description;
@@ -75,7 +80,7 @@ public class Org extends BaseNamedResource<Org> {
       }
 
       /**
-       * @see Org#getFullName
+       * @see Org#getFullName()
        */
       public Builder fullName(String fullName) {
          this.fullName = fullName;
@@ -83,7 +88,7 @@ public class Org extends BaseNamedResource<Org> {
       }
 
       /**
-       * @see Org#getOrgs
+       * @see Org#getLinks()
        */
       public Builder links(Set<Link> links) {
          this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
@@ -91,13 +96,14 @@ public class Org extends BaseNamedResource<Org> {
       }
 
       /**
-       * @see Org#getOrgs
+       * @see Org#getLinks()
        */
       public Builder addLink(Link org) {
          links.add(checkNotNull(org, "org"));
          return this;
       }
 
+      @Override
       public Org build() {
          return new Org(href, type, name, id, description, fullName, links);
       }

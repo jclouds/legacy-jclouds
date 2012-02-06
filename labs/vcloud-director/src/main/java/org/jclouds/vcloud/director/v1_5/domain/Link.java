@@ -12,10 +12,13 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * <xs:complexType name="LinkType">
- * 
+ * A link.
+ *
+ * <pre>
+ * &lt;xs:complexType name="LinkType"&gt;
+ * </pre>
+ *
  * @author Adrian Cole
- * 
  */
 public class Link extends BaseNamedResource<Link> {
 
@@ -37,7 +40,7 @@ public class Link extends BaseNamedResource<Link> {
       protected String rel;
 
       /**
-       * @see Link#getString
+       * @see Link#getRel()
        */
       public Builder rel(String rel) {
          this.rel = rel;

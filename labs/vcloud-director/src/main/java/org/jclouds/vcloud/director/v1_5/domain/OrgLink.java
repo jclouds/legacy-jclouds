@@ -20,6 +20,11 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import java.net.URI;
 
+/**
+ * A link to an organization.
+ * 
+ * @author Adrian Cole
+ */
 public class OrgLink extends BaseNamedResource<OrgLink> {
 
    @SuppressWarnings("unchecked")
