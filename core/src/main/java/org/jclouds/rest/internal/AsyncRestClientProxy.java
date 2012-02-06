@@ -149,18 +149,13 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
 
    public Object lookupValueFromGuice(Method method) {
       try {
+         //TODO: tidy
          Type genericReturnType = method.getGenericReturnType();
          try {
             Annotation qualifier = Iterables.find(ImmutableList.copyOf(method.getAnnotations()), isQualifierPresent);
-            Binding<?> binding = injector.getExistingBinding(Key.get(genericReturnType, qualifier));
-            if (binding != null)
-               return binding.getProvider().get();
-            // try looking via supplier
-            return Supplier.class.cast(
-                     injector.getInstance(Key.get(Types.newParameterizedType(Supplier.class, genericReturnType),
-                              qualifier))).get();
+            return getInstanceOfTypeWithQualifier(genericReturnType, qualifier);
          } catch (NoSuchElementException e) {
-            return injector.getInstance(Key.get(genericReturnType));
+            return getInstanceOfType(genericReturnType);
          }
       } catch (ProvisionException e) {
          AuthorizationException aex = Throwables2.getFirstThrowableOfType(e, AuthorizationException.class);
@@ -168,6 +163,39 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
             throw aex;
          throw e;
       }
+   }
+
+   // TODO: tidy
+   private Object getInstanceOfType(Type genericReturnType) {
+      // look for an existing binding
+      Binding<?> binding = injector.getExistingBinding(Key.get(genericReturnType));
+      if (binding != null)
+         return binding.getProvider().get();
+
+      // then, try looking via supplier
+      binding = injector.getExistingBinding(Key.get(Types.newParameterizedType(Supplier.class, genericReturnType)));
+      if (binding != null)
+         return Supplier.class.cast(binding.getProvider().get()).get();
+
+      // else try to create an instance
+      return injector.getInstance(Key.get(genericReturnType));
+   }
+
+   // TODO: tidy
+   private Object getInstanceOfTypeWithQualifier(Type genericReturnType, Annotation qualifier) {
+      // look for an existing binding
+      Binding<?> binding = injector.getExistingBinding(Key.get(genericReturnType, qualifier));
+      if (binding != null)
+         return binding.getProvider().get();
+
+      // then, try looking via supplier
+      binding = injector.getExistingBinding(Key.get(Types.newParameterizedType(Supplier.class, genericReturnType),
+               qualifier));
+      if (binding != null)
+         return Supplier.class.cast(binding.getProvider().get()).get();
+
+      // else try to create an instance
+      return injector.getInstance(Key.get(genericReturnType, qualifier));
    }
 
    @SuppressWarnings( { "unchecked", "rawtypes" })
