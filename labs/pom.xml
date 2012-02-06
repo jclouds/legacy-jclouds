@@ -34,5 +34,6 @@
     <modules>
        <module>openstack-nova</module>
        <module>virtualbox</module>
+       <module>vcloud-director</module>
     </modules>
 </project>

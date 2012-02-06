@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Session xmlns="http://www.vmware.com/vcloud/v1.5" user="adrian@jclouds.org" org="JClouds" type="application/vnd.vmware.vcloud.session+xml" href="https://vcloudbeta.bluelock.com/api/session/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd">
+    <Link rel="down" type="application/vnd.vmware.vcloud.orgList+xml" href="https://vcloudbeta.bluelock.com/api/org/"/>
+    <Link rel="down" type="application/vnd.vmware.admin.vcloud+xml" href="https://vcloudbeta.bluelock.com/api/admin/"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.query.queryList+xml" href="https://vcloudbeta.bluelock.com/api/query"/>
+    <Link rel="entityResolver" type="application/vnd.vmware.vcloud.entity+xml" href="https://vcloudbeta.bluelock.com/api/entity/"/>
+</Session>
