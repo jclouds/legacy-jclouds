@@ -20,7 +20,7 @@ import com.google.common.base.Objects.ToStringHelper;
  *
  * @author Adrian Cole
  */
-public class Link extends BaseNamedResource<Link> {
+public class Link extends Reference<Link> {
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -35,7 +35,7 @@ public class Link extends BaseNamedResource<Link> {
       return new Builder().fromLink(this);
    }
 
-   public static class Builder extends BaseNamedResource.Builder<Link> {
+   public static class Builder extends Reference.Builder<Link> {
 
       protected String rel;
 
@@ -47,59 +47,27 @@ public class Link extends BaseNamedResource<Link> {
          return this;
       }
 
-      @Override
       public Link build() {
-         return new Link(href, type, name, rel);
+         Link link = new Link(href, rel);
+         link.setId(id);
+         link.setName(name);
+         link.setType(type);
       }
 
       public Builder fromLink(Link in) {
-         return fromNamedResource(in).rel(in.getRel());
+         return fromReference(in).rel(in.getRel());
       }
 
       /**
        * {@inheritDoc}
        */
-      @Override
-      public Builder fromBaseResource(BaseResource<Link> in) {
-         return Builder.class.cast(super.fromBaseResource(in));
+      public Builder fromReference(Reference<Link> in) {
+         return Builder.class.cast(super.fromReference(in));
       }
 
       /**
        * {@inheritDoc}
        */
-      @Override
-      public Builder fromNamedResource(BaseNamedResource<Link> in) {
-         return Builder.class.cast(super.fromNamedResource(in));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder name(String name) {
-         return Builder.class.cast(super.name(name));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder href(URI href) {
-         return Builder.class.cast(super.href(href));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder type(String type) {
-         return Builder.class.cast(super.type(type));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
       public Builder fromAttributes(Map<String, String> attributes) {
          super.fromAttributes(attributes);
          rel(attributes.get("rel"));
@@ -110,8 +78,8 @@ public class Link extends BaseNamedResource<Link> {
    @XmlAttribute
    protected String rel;
 
-   private Link(URI href, String type, String name, String rel) {
-      super(href, type, name);
+   private Link(URI href, String rel) {
+      super(href);
       this.rel = checkNotNull(rel, "rel");
    }
 
@@ -136,7 +104,7 @@ public class Link extends BaseNamedResource<Link> {
       if (!super.equals(o))
          return false;
       Link that = (Link) o;
-      return equal(this.rel, that.rel);
+      return super.equals(that) && equal(this.rel, that.rel);
    }
 
    @Override
