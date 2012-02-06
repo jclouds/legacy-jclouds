@@ -18,32 +18,29 @@
  */
 package org.jclouds.cloudstack.handlers;
 
-import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
-import static org.jclouds.http.HttpUtils.releasePayload;
-
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-
+import com.google.common.cache.LoadingCache;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.jclouds.cloudstack.domain.LoginResponse;
 import org.jclouds.cloudstack.features.SessionClient;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpRetryHandler;
+import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
 
-import com.google.common.cache.LoadingCache;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+
+import static org.jclouds.http.HttpUtils.releasePayload;
 
 /**
  * This will parse and set an appropriate exception on the command object.
- * 
+ *
  * @author Adrian Cole
- * 
  */
 @Singleton
-public class RetryOnRenewAndLogoutOnClose implements HttpRetryHandler {
+public class InvalidateSessionAndRetryOn401AndLogoutOnClose extends BackoffLimitedRetryHandler {
    @Resource
    protected Logger logger = Logger.NULL;
 
@@ -51,26 +48,22 @@ public class RetryOnRenewAndLogoutOnClose implements HttpRetryHandler {
    private final SessionClient sessionClient;
 
    @Inject
-   protected RetryOnRenewAndLogoutOnClose(LoadingCache<Credentials, LoginResponse> authenticationResponseCache,
-            SessionClient sessionClient) {
+   protected InvalidateSessionAndRetryOn401AndLogoutOnClose(LoadingCache<Credentials, LoginResponse> authenticationResponseCache,
+                                                            SessionClient sessionClient) {
       this.authenticationResponseCache = authenticationResponseCache;
       this.sessionClient = sessionClient;
    }
 
    @Override
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
-      boolean retry = false; // default
       try {
          switch (response.getStatusCode()) {
             case 401:
-               byte[] content = closeClientButKeepContentStream(response);
-               if (new String(content).equals("TODO: What state can we retry?")) {
-                  logger.debug("invalidating session");
-                  authenticationResponseCache.invalidateAll();
-                  retry = true;
-               }
+               authenticationResponseCache.invalidateAll();
+               return super.shouldRetryRequest(command, response);
          }
-         return retry;
+         return false;
+
       } finally {
          releasePayload(response);
       }
