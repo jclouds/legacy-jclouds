@@ -58,7 +58,7 @@ public class Session {
       private Set<Link> links = Sets.newLinkedHashSet();
 
       /**
-       * @see Session#getUser
+       * @see Session#getUser()
        */
       public Builder user(String user) {
          this.user = user;
@@ -66,7 +66,7 @@ public class Session {
       }
 
       /**
-       * @see Session#getOrg
+       * @see Session#getOrg()
        */
       public Builder org(String org) {
          this.org = org;
@@ -74,7 +74,7 @@ public class Session {
       }
 
       /**
-       * @see Session#getHref
+       * @see Session#getHref()
        */
       public Builder href(URI href) {
          this.href = href;
@@ -82,7 +82,7 @@ public class Session {
       }
 
       /**
-       * @see Session#getLinks
+       * @see Session#getLinks()
        */
       public Builder links(Set<Link> links) {
          this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
@@ -90,7 +90,7 @@ public class Session {
       }
 
       /**
-       * @see Session#getLinks
+       * @see Session#getLinks()
        */
       public Builder addLink(Link link) {
          links.add(checkNotNull(link, "link"));
