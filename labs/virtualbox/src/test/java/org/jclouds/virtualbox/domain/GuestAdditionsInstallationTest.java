@@ -32,11 +32,11 @@ import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
 @Test(groups = "unit")
-public class InstallGuestAdditionsTest {
+public class GuestAdditionsInstallationTest {
   @Test
   public void testUnix() throws IOException {
 	  InstallGuestAdditions statement = new InstallGuestAdditions("4.1.6");
 	  assertEquals(statement.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources
-           .getResource("test_install_guest_additions." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+           .getResource("test_guest_additions_installer." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
   }
 }

@@ -65,8 +65,8 @@ public class InstallGuestAdditions implements Statement {
                         .create("http://download.virtualbox.org/virtualbox/" + vboxVersion + "/"
                               + vboxGuestAdditionsIso), ImmutableMultimap.<String, String> of()))
             .addStatement(exec(String.format("mount -o loop {tmp}{fs}%s %s", vboxGuestAdditionsIso, mountPoint)))
-            .addStatement(call("installGuestAdditions"))
-            .addStatement(exec(String.format("sh %s%s", mountPoint, "/VBoxLinuxAdditions.run")))
+            .addStatement(call("installModuleAssistantIfNeeded"))
+            .addStatement(exec(String.format("%s%s", mountPoint, "/VBoxLinuxAdditions.run")))
             .addStatement(exec(String.format("umount %s", mountPoint)));
 
       return scriptBuilder.render(family);

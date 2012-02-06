@@ -1,4 +1,4 @@
-function installGuestAdditions {
+function installModuleAssistantIfNeeded {
    unset OSNAME;
    local OSNAME=`lsb_release -d -s | cut -d ' ' -f 1`; shift
    if [ $OSNAME = 'Ubuntu' ]

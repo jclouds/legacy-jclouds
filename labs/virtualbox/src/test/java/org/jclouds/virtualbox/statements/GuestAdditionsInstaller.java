@@ -3,6 +3,8 @@ package org.jclouds.virtualbox.statements;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 
+import java.util.concurrent.ExecutionException;
+
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -70,14 +72,20 @@ public class GuestAdditionsInstaller implements Function<String, IMachine> {
 
       NodeMetadata vmMetadata = new IMachineToNodeMetadata().apply(vm);
 
-      context.getComputeService().submitScriptOnNode(vmMetadata.getId(), statementList,
+      ListenableFuture<ExecResponse> execFuture = context.getComputeService().submitScriptOnNode(vmMetadata.getId(), statementList,
             runAsRoot(true).wrapInInitScript(false));
-      
+      try {
+         execFuture.get();
+      } catch (InterruptedException e) {
+         e.printStackTrace();
+      } catch (ExecutionException e) {
+         e.printStackTrace();
+      }
       return vm;
    }
 
    private void ensureMachineIsLaunched(String vmName) {
       machineUtils.applyForMachine(vmName, new LaunchMachineIfNotAlreadyRunning(manager.get(), executionType, ""));
    }
-
+   
 }
