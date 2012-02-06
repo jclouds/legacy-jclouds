@@ -121,19 +121,11 @@ public class Error {
       return message;
    }
 
-   public void setMessage(String message) {
-      this.message = message;
-   }
-
    /**
     * The class of the error. Matches the HTTP status code.
     */
    public int getMajorErrorCode() {
       return majorErrorCode;
-   }
-
-   public void setMajorErrorCode(int majorErrorCode) {
-      this.majorErrorCode = majorErrorCode;
    }
 
    /**
@@ -143,10 +135,6 @@ public class Error {
     */
    public String getMinorErrorCode() {
       return minorErrorCode;
-   }
-
-   public void setMinorErrorCode(String minorErrorCode) {
-      this.minorErrorCode = minorErrorCode;
    }
 
    /**
