@@ -22,6 +22,8 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 
@@ -49,4 +51,18 @@ public interface OrgClient {
     * @return the org or null if not found
     */
    Org getOrg(URI orgHref);
+   
+   /**
+    * Retrieves an list of the organization's metadata
+    * 
+    * @return a list of metadata
+    */
+   Metadata getMetadata(URI orgRef);
+
+   /**
+    * Retrieves a metadata
+    * 
+    * @return the metadata or null if not found
+    */
+   MetadataEntry getMetadataEntry(URI metaDataRef);
 }
