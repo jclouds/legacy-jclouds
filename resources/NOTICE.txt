@@ -60,3 +60,7 @@ distributed under the GNU Lesser GPL License, Version 3.0.
 
 This product includes aopalliance (http://aopalliance.sourceforge.net/)
 distributed in the Public Domain
+
+This product includes software developed at Hewlett-Packard
+Copyright (c) 2011-2012 Hewlett-Packard Development Company, L.P
+
