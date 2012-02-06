@@ -102,7 +102,6 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
                       .href(URI.create("https://vcloudbeta.bluelock.com/api/vdc/d16d333b-e3c0-4176-845d-a5ee6392df07"))
                       .build())
               .link(Link.builder()
-                      .rel("down")
                       .type("application/vnd.vmware.vcloud.tasksList+xml")
                       .href(URI.create("https://vcloudbeta.bluelock.com/api/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
                       .build())
