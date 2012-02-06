@@ -26,7 +26,7 @@ import org.jclouds.cloudstack.features.SessionClient;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpRetryHandler;
+import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
 
 import javax.annotation.PreDestroy;
@@ -36,12 +36,11 @@ import static org.jclouds.http.HttpUtils.releasePayload;
 
 /**
  * This will parse and set an appropriate exception on the command object.
- * 
+ *
  * @author Adrian Cole
- * 
  */
 @Singleton
-public class RetryOnRenewAndLogoutOnClose implements HttpRetryHandler {
+public class InvalidateSessionAndRetryOn401AndLogoutOnClose extends BackoffLimitedRetryHandler {
    @Resource
    protected Logger logger = Logger.NULL;
 
@@ -49,8 +48,8 @@ public class RetryOnRenewAndLogoutOnClose implements HttpRetryHandler {
    private final SessionClient sessionClient;
 
    @Inject
-   protected RetryOnRenewAndLogoutOnClose(LoadingCache<Credentials, LoginResponse> authenticationResponseCache,
-            SessionClient sessionClient) {
+   protected InvalidateSessionAndRetryOn401AndLogoutOnClose(LoadingCache<Credentials, LoginResponse> authenticationResponseCache,
+                                                            SessionClient sessionClient) {
       this.authenticationResponseCache = authenticationResponseCache;
       this.sessionClient = sessionClient;
    }
@@ -61,7 +60,7 @@ public class RetryOnRenewAndLogoutOnClose implements HttpRetryHandler {
          switch (response.getStatusCode()) {
             case 401:
                authenticationResponseCache.invalidateAll();
-               return true;
+               return super.shouldRetryRequest(command, response);
          }
          return false;
 
