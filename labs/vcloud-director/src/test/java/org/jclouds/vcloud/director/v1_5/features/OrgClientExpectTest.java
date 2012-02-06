@@ -69,8 +69,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
 
    }
 
-   // please help solve javax.xml.bind.UnmarshalException
-   @Test(enabled = false)
+   @Test
    public void testWhenResponseIs2xxLoginReturnsValidOrg() {
 
       URI orgRef = URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
