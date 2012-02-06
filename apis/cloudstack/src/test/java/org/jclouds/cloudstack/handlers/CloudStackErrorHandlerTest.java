@@ -18,14 +18,7 @@
  */
 package org.jclouds.cloudstack.handlers;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.reportMatcher;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
-
-import java.net.URI;
-
+import com.google.inject.Guice;
 import org.easymock.IArgumentMatcher;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
@@ -36,54 +29,59 @@ import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
-import com.google.inject.Guice;
+import java.net.URI;
+
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.reportMatcher;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.verify;
 
 /**
- * 
  * @author Adrian Cole
  */
-@Test(groups = { "unit" })
+@Test(groups = {"unit"})
 public class CloudStackErrorHandlerTest {
 
    @Test
    public void test400MakesIllegalArgumentException() {
       assertCodeMakes("GET", URI.create("https://cloudstack.com/foo"), 400, "", "Bad Request",
-            IllegalArgumentException.class);
+         IllegalArgumentException.class);
    }
 
    @Test
    public void test401MakesAuthorizationException() {
       assertCodeMakes("GET", URI.create("https://cloudstack.com/foo"), 401, "", "Unauthorized",
-            AuthorizationException.class);
+         AuthorizationException.class);
    }
 
    @Test
    public void test404MakesResourceNotFoundException() {
       assertCodeMakes("GET", URI.create("https://cloudstack.com/foo"), 404, "", "Not Found",
-            ResourceNotFoundException.class);
+         ResourceNotFoundException.class);
    }
 
    @Test
    public void test405MakesIllegalArgumentException() {
       assertCodeMakes("GET", URI.create("https://cloudstack.com/foo"), 405, "", "Method Not Allowed",
-            IllegalArgumentException.class);
+         IllegalArgumentException.class);
    }
 
    @Test
    public void test431MakesIllegalStateException() {
       assertCodeMakes("GET", URI.create("https://cloudstack.com/foo"), 431, "", "Method Not Allowed",
-            IllegalStateException.class);
+         IllegalStateException.class);
    }
 
    @Test
    public void test431MakesResourceNotFoundExceptionOnDelete() {
       assertCodeMakes(
-            "GET",
-            URI.create("https://api.ninefold.com/compute/v1.0/?response=json&command=deleteSSHKeyPair"),
-            431,
-            "",
-            "{ \"deletekeypairresponse\" : {\"errorcode\" : 431, \"errortext\" : \"A key pair with name 'adriancole-adapter-test-keypair' does not exist for account jclouds in domain id=457\"}  }",
-            ResourceNotFoundException.class);
+         "GET",
+         URI.create("https://api.ninefold.com/compute/v1.0/?response=json&command=deleteSSHKeyPair"),
+         431,
+         "",
+         "{ \"deletekeypairresponse\" : {\"errorcode\" : 431, \"errortext\" : \"A key pair with name 'adriancole-adapter-test-keypair' does not exist for account jclouds in domain id=457\"}  }",
+         ResourceNotFoundException.class);
    }
 
    @Test
@@ -91,30 +89,37 @@ public class CloudStackErrorHandlerTest {
       assertCodeMakes("GET", URI.create("https://cloudstack.com/foo"), 409, "", "Conflict", IllegalStateException.class);
    }
 
-   @Test void test537MakesIllegalStateException() {
+   @Test
+   public void test531MakesAuthorizationException() {
+      assertCodeMakes("GET", URI.create("https://cloudstack.com/foo"), 531, "", "Unauthoized",
+         AuthorizationException.class);
+   }
+
+   @Test
+   void test537MakesIllegalStateException() {
       assertCodeMakes(
-            "GET",
-            URI.create("http://10.26.26.155:8080/client/api?response=json&command=createIpForwardingRule&ipaddressid=37&startport=22&protocol=tcp"),
-            537,
-            "",
-            "{ \"createipforwardingruleresponse\" : {\"errorcode\" : 537, \"errortext\" : \"There is already firewall rule specified for the ip address id=37\"}  }",
-            IllegalStateException.class);
+         "GET",
+         URI.create("http://10.26.26.155:8080/client/api?response=json&command=createIpForwardingRule&ipaddressid=37&startport=22&protocol=tcp"),
+         537,
+         "",
+         "{ \"createipforwardingruleresponse\" : {\"errorcode\" : 537, \"errortext\" : \"There is already firewall rule specified for the ip address id=37\"}  }",
+         IllegalStateException.class);
    }
 
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String content,
-         Class<? extends Exception> expected) {
+                                Class<? extends Exception> expected) {
       assertCodeMakes(method, uri, statusCode, message, "text/xml", content, expected);
    }
 
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String contentType,
-         String content, Class<? extends Exception> expected) {
+                                String content, Class<? extends Exception> expected) {
 
       CloudStackErrorHandler function = Guice.createInjector().getInstance(CloudStackErrorHandler.class);
 
       HttpCommand command = createMock(HttpCommand.class);
       HttpRequest request = new HttpRequest(method, uri);
       HttpResponse response = new HttpResponse(statusCode, message, Payloads.newInputStreamPayload(Strings2
-            .toInputStream(content)));
+         .toInputStream(content)));
       response.getPayload().getContentMetadata().setContentType(contentType);
 
       expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();

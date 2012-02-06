@@ -122,7 +122,7 @@ import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.functions.LoginWithPasswordCredentials;
 import org.jclouds.cloudstack.handlers.CloudStackErrorHandler;
-import org.jclouds.cloudstack.handlers.RetryOnRenewAndLogoutOnClose;
+import org.jclouds.cloudstack.handlers.InvalidateSessionAndRetryOn401AndLogoutOnClose;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpErrorHandler;
@@ -242,7 +242,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
       
       // session client is used directly for filters and retry handlers, so let's bind it explicitly
       bindClientAndAsyncClient(binder(), SessionClient.class, SessionAsyncClient.class);
-      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenewAndLogoutOnClose.class);
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(InvalidateSessionAndRetryOn401AndLogoutOnClose.class);
       
       super.configure();
    }
