@@ -1,0 +1,113 @@
+-------------------------------------------------------------------------------
+Test set: TestSuite
+-------------------------------------------------------------------------------
+Tests run: 129, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 653.263 sec <<< FAILURE!
+testCreateAndRunAService(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)  Time elapsed: 133.134 sec  <<< FAILURE!
+java.lang.AssertionError: failed to open socket [address=178.250.52.248, port=8080] on node [id=3d51985e-8852-42b6-84f5-16926ade0c29, providerId=3d51985e-8852-42b6-84f5-16926ade0c29, group=serverlove-s, name=serverlove-s-334, location=[id=serverlove-z1-man, scope=PROVIDER, description=https://api.z1-man.serverlove.com, parent=null, iso3166Codes=[GB-MAN], metadata={}], uri=null, imageId=null, os=[name=Ubuntu 10.04 LTS, family=ubuntu, version=10.04, arch=null, is64Bit=true, description=img/Ubuntu 10.04 LTS/1], state=RUNNING, loginPort=22, hostname=null, privateAddresses=[], publicAddresses=[178.250.52.248], hardware=[id=3d51985e-8852-42b6-84f5-16926ade0c29, providerId=3d51985e-8852-42b6-84f5-16926ade0c29, name=null, processors=[[cores=1.0, speed=1000.0]], ram=512, volumes=[[[id=null, type=NAS, size=null, device=null, durable=true, isBootDevice=false]]], hypervisor=kvm, supportsImage=ALWAYS_TRUE, tags=[]], loginUser=root, userMetadata={}, tags=[]]:
+[output=, error=, exitCode=0][output=Exception in thread "main" org.jboss.modules.ModuleNotFoundException: Module org.jboss.logmanager:main is not found
+	at org.jboss.modules.LocalModuleLoader.findModule(LocalModuleLoader.java:121)
+	at org.jboss.modules.ModuleLoader.loadModuleLocal(ModuleLoader.java:245)
+	at org.jboss.modules.ModuleLoader.preloadModule(ModuleLoader.java:194)
+	at org.jboss.modules.LocalModuleLoader.preloadModule(LocalModuleLoader.java:97)
+	at org.jboss.modules.ModuleLoader.loadModule(ModuleLoader.java:176)
+	at org.jboss.modules.ModuleLoader.loadModule(ModuleLoader.java:172)
+	at org.jboss.modules.Main.main(Main.java:257)
+, error=, exitCode=0]
+	at org.jclouds.compute.BaseComputeServiceLiveTest.trackAvailabilityOfProcessOnNode(BaseComputeServiceLiveTest.java:597)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.testCreateAndRunAService(BaseComputeServiceLiveTest.java:708)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:758)
+	at org.testng.TestRunner.run(TestRunner.java:613)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
+	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)  Time elapsed: 93.326 sec  <<< FAILURE!
+java.lang.AssertionError: [output=bash: java: command not found
+, error=, exitCode=127]
+[output=#!/bin/bash
+set +u
+shopt -s xpg_echo
+shopt -s expand_aliases
+PROMPT_COMMAND='echo -ne "\033]0;runScriptWithCreds\007"'
+export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
+export INSTANCE_NAME='runScriptWithCreds'
+export INSTANCE_NAME='runScriptWithCreds'
+export INSTANCE_HOME='/tmp/runScriptWithCreds'
+export LOG_DIR='/tmp/runScriptWithCreds'
+cd $INSTANCE_HOME
+which nslookup >&- 2>&-|| apt-get install -f -y -qq --force-yes dnsutils|| (apt-get update -qq&&apt-get upgrade -y -qq)&&apt-get install -f -y -qq --force-yes dnsutils
+grep `hostname` /etc/hosts >/dev/null || awk -v hostname=`hostname` 'END { print $1" "hostname }' /proc/net/arp >> /etc/hosts
+nslookup yahoo.com >/dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf
+which curl >&- 2>&-|| apt-get install -f -y -qq --force-yes curl|| (apt-get update -qq&&apt-get upgrade -y -qq)&&apt-get install -f -y -qq --force-yes curl
+mkdir -p /usr/local/jdk
+curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://download.oracle.com/otn-pub/java/jdk/7u2-b13/jdk-7u2-linux-x64.tar.gz |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
+mv /usr/local/jdk1.7*/* /usr/local/jdk/
+test -n "$SUDO_USER" && 
+cat >> /home/$SUDO_USER/.bashrc <<'END_OF_FILE'
+export JAVA_HOME=/usr/local/jdk
+export PATH=$JAVA_HOME/bin:$PATH
+END_OF_FILE
+cat >> /etc/bashrc <<'END_OF_FILE'
+export JAVA_HOME=/usr/local/jdk
+export PATH=$JAVA_HOME/bin:$PATH
+END_OF_FILE
+cat >> $HOME/.bashrc <<'END_OF_FILE'
+export JAVA_HOME=/usr/local/jdk
+export PATH=$JAVA_HOME/bin:$PATH
+END_OF_FILE
+cat >> /etc/skel/.bashrc <<'END_OF_FILE'
+export JAVA_HOME=/usr/local/jdk
+export PATH=$JAVA_HOME/bin:$PATH
+END_OF_FILE
+ln -fs /usr/local/jdk/bin/java /usr/bin/java
+
+exit 0
+Selecting previously deselected package libcurl3.
+(Reading database ... 19934 files and directories currently installed.)
+Unpacking libcurl3 (from .../libcurl3_7.19.7-1ubuntu1.1_amd64.deb) ...
+Selecting previously deselected package curl.
+Unpacking curl (from .../curl_7.19.7-1ubuntu1.1_amd64.deb) ...
+Processing triggers for man-db ...
+Setting up libcurl3 (7.19.7-1ubuntu1.1) ...
+
+Setting up curl (7.19.7-1ubuntu1.1) ...
+Processing triggers for libc-bin ...
+ldconfig deferred processing now taking place
+dpkg-preconfigure: unable to re-open stdin: 
+, error=, exitCode=0]
+	at org.jclouds.compute.BaseComputeServiceLiveTest.doCheckJavaIsInstalledViaSsh(BaseComputeServiceLiveTest.java:889)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.sshPing(BaseComputeServiceLiveTest.java:870)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.checkNodes(BaseComputeServiceLiveTest.java:457)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.testAScriptExecutionAfterBootWithBasicTemplate(BaseComputeServiceLiveTest.java:253)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:758)
+	at org.testng.TestRunner.run(TestRunner.java:613)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
+	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)

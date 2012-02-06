@@ -1,0 +1,667 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.jclouds.provider:ninefold-storage:bundle:1.4.0-SNAPSHOT
+[WARNING] 'parent.relativePath' of POM org.jclouds:jclouds-project:1.4.0-SNAPSHOT (/Users/adriancole/workspace/git/1.4.x/jclouds/project/pom.xml) points at org.jclouds:jclouds-multi instead of org.sonatype.oss:oss-parent, please verify your project structure @ org.jclouds:jclouds-project:1.4.0-SNAPSHOT, /Users/adriancole/workspace/git/1.4.x/jclouds/project/pom.xml, line 24, column 13
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building jclouds ninefold storage provider 1.4.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ ninefold-storage ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ ninefold-storage ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-banned-dependencies) @ ninefold-storage ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-java) @ ninefold-storage ---
+[INFO] 
+[INFO] --- maven-remote-resources-plugin:1.2:process (process-remote-resources) @ ninefold-storage ---
+[INFO] Setting property: classpath.resource.loader.class => 'org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader'.
+[INFO] Setting property: velocimacro.messages.on => 'false'.
+[INFO] Setting property: resource.loader => 'classpath'.
+[INFO] Setting property: resource.manager.logwhenfound => 'false'.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:resources (default-resources) @ ninefold-storage ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.4.x/jclouds/providers/ninefold-storage/src/main/clojure
+[INFO] Copying 1 resource
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:compile (default-compile) @ ninefold-storage ---
+[INFO] Compiling 2 source files to /Users/adriancole/workspace/git/1.4.x/jclouds/providers/ninefold-storage/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.2:testResources (default-testResources) @ ninefold-storage ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.4.x/jclouds/providers/ninefold-storage/src/test/clojure
+[INFO] skip non existing resourceDirectory /Users/adriancole/workspace/git/1.4.x/jclouds/providers/ninefold-storage/src/test/resources
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3:testCompile (default-testCompile) @ ninefold-storage ---
+[INFO] Compiling 12 source files to /Users/adriancole/workspace/git/1.4.x/jclouds/providers/ninefold-storage/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.10:test (default-test) @ ninefold-storage ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.4.x/jclouds/providers/ninefold-storage/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+Starting test testCreateFile(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
+Starting test testDeletePath(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
+Starting test testCreateDirectoryOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
+Starting test testCreateDirectory(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
+Starting test testCreateFileOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
+[pool-2-thread-5] Test testDeletePath(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 151ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testGetSystemMetadata(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
+[pool-2-thread-5] Test testGetSystemMetadata(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 14ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test testIsPublic(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
+[pool-2-thread-5] Test testIsPublic(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 46ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test testListDirectories(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
+[pool-2-thread-5] Test testListDirectories(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 23ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Starting test testListDirectoriesOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
+[pool-2-thread-2] Test testCreateDirectoryOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 234ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test testListDirectory(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
+[pool-2-thread-5] Test testListDirectoriesOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 3ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testListDirectory(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 10ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+Starting test testListDirectoryOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
+[pool-2-thread-2] Test testListDirectoryOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 4ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+Starting test testNewObject(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
+[pool-2-thread-2] Test testNewObject(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 0ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+Starting test testReadFile(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
+Starting test testUpdateFile(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
+[pool-2-thread-1] Test testCreateDirectory(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 284ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testReadFile(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 30ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Starting test testUpdateFileOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest)
+[pool-2-thread-5] Test testUpdateFile(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 176ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+[pool-2-thread-4] Test testCreateFileOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 429ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+[pool-2-thread-2] Test testUpdateFileOptions(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 153ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+[pool-2-thread-3] Test testCreateFile(org.jclouds.ninefold.storage.NinefoldStorageAsyncClientTest) succeeded: 470ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+Starting test testAllContains(org.jclouds.ninefold.storage.NinefoldStorageProviderTest)
+Starting test testInRestProperties(org.jclouds.ninefold.storage.NinefoldStorageProviderTest)
+[pool-5-thread-1] Test testAllContains(org.jclouds.ninefold.storage.NinefoldStorageProviderTest) succeeded: 4ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
+Starting test testOfTypeContains(org.jclouds.ninefold.storage.NinefoldStorageProviderTest)
+Starting test testWithId(org.jclouds.ninefold.storage.NinefoldStorageProviderTest)
+[pool-5-thread-2] Test testInRestProperties(org.jclouds.ninefold.storage.NinefoldStorageProviderTest) succeeded: 48ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
+[pool-5-thread-4] Test testWithId(org.jclouds.ninefold.storage.NinefoldStorageProviderTest) succeeded: 46ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+[pool-5-thread-3] Test testOfTypeContains(org.jclouds.ninefold.storage.NinefoldStorageProviderTest) succeeded: 51ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+Tests run: 19, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.927 sec
+
+Results :
+
+Tests run: 19, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- clojure-maven-plugin:1.3.8:test (test-clojure) @ ninefold-storage ---
+
+Testing com.theoryinpractise.clojure.testrunner
+
+Ran 0 tests containing 0 assertions.
+0 failures, 0 errors.
+[INFO] 
+[INFO] --- maven-bundle-plugin:2.3.4:bundle (default-bundle) @ ninefold-storage ---
+[INFO] 
+[INFO] --- maven-source-plugin:2.1.1:jar-no-fork (attach-sources) @ ninefold-storage ---
+[INFO] Building jar: /Users/adriancole/workspace/git/1.4.x/jclouds/providers/ninefold-storage/target/ninefold-storage-1.4.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.8:jar (javadoc) @ ninefold-storage ---
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-jar-plugin:2.3.1:test-jar (default) @ ninefold-storage ---
+[INFO] Building jar: /Users/adriancole/workspace/git/1.4.x/jclouds/providers/ninefold-storage/target/ninefold-storage-1.4.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.10:test (integration) @ ninefold-storage ---
+[INFO] Surefire report directory: /Users/adriancole/workspace/git/1.4.x/jclouds/providers/ninefold-storage/target/surefire-reports
+[INFO] Using configured provider org.apache.maven.surefire.testng.TestNGProvider
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running TestSuite
+*** containers to test: [adriancole-blobstore0, adriancole-blobstore1, adriancole-blobstore2, adriancole-blobstore3, adriancole-blobstore4, adriancole-blobstore5, adriancole-blobstore6, adriancole-blobstore7, adriancole-blobstore8, adriancole-blobstore9]
+Starting test testContains(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
+[TestNG] Test testContains(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+Starting test testEntrySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
+Starting test testListContainerMarker(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[TestNG] Test testListContainerMarker(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test testListContainerMaxResults(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[TestNG] Test testListContainerMaxResults(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test containerDoesntExist(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+Starting test testCopyUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobLiveTest)
+Starting test testSignGetUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest)
+Starting test testPutObjectStream(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+[TestNG] Test containerDoesntExist(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) succeeded: 1761ms
+Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
+Starting test containerExists(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[TestNG] Test containerExists(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) succeeded: 7729ms
+Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+Starting test deleteContainerIfEmpty(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[TestNG] Test testPutObjectStream(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) succeeded: 12704ms
+Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+Starting test blobNotFound(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+[TestNG] Test testSignGetUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest) succeeded: 14199ms
+Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+Starting test testSignGetUrlOptions(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest)
+*** allocated new container adriancole-blobstore5...
+[TestNG] Test deleteContainerIfEmpty(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) succeeded: 12082ms
+Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+Starting test deleteContainerWithContents(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[TestNG] Test blobNotFound(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) succeeded: 7835ms
+Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
+Starting test deleteObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+[TestNG] Test testCopyUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobLiveTest) succeeded: 22799ms
+Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+Starting test testPublicAccess(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerLiveTest)
+[TestNG] Test testSignGetUrlOptions(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest) succeeded: 14285ms
+Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Starting test testSignPutUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest)
+[TestNG] Test testEntrySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) succeeded: 29743ms
+Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+Starting test testPut(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
+*** allocated new container adriancole-blobstore3...
+[TestNG] Test deleteObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) succeeded: 14520ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+Starting test deleteObjectNoContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+[TestNG] Test testSignPutUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest) succeeded: 8583ms
+Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+Starting test testSignRemoveUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest)
+*** allocated new container adriancole-blobstore8...
+*** allocated new container adriancole-blobstore312...
+[TestNG] Test deleteContainerWithContents(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) succeeded: 19576ms
+Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+Starting test testClearWhenContentsUnderPath(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[TestNG] Test deleteObjectNoContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) succeeded: 4698ms
+Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
+Starting test deleteObjectNotFound(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+[TestNG] Test testPublicAccess(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerLiveTest) succeeded: 19227ms
+Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
+Starting test testEntrySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[TestNG] Test testPut(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) succeeded: 18787ms
+Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+Starting test testPutAll(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
+[TestNG] Test testSignRemoveUrl(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobSignerLiveTest) succeeded: 15144ms
+Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+Exception in thread "user thread 0" java.lang.IllegalStateException: interrupted calling get() on [[method=AtmosAsyncClient.pathExists, request=HEAD http://onlinestorage.ninefold.com/rest/namespace/adriancole-blobstore6/hello HTTP/1.1]], so could not run listeners
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:66)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:979)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1281)
+	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:218)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:237)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:59)
+	... 3 more
+Caused by: java.util.concurrent.ExecutionException: task submitted from the following trace
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:270)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:241)
+	... 4 more
+Starting test containerDoesntExist(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageServiceIntegrationLiveTest)
+[TestNG] Test containerDoesntExist(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageServiceIntegrationLiveTest) succeeded: 874ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+Starting test testAllLocations(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageServiceIntegrationLiveTest)
+[TestNG] Test deleteObjectNotFound(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) succeeded: 13279ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
+Starting test testBigFileGets(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+*** allocated new container adriancole-blobstore2...
+ >> creating container in location [id=ninefold-storage, scope=PROVIDER, description=http://onlinestorage.ninefold.com, parent=null, iso3166Codes=[AU-NSW], metadata={}]
+ << call complete.. checking
+*** allocated new container adriancole-blobstore215...
+[TestNG] Test testPutAll(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) succeeded: 16367ms
+Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
+Starting test testPutMoreThanSingleListing(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
+[TestNG] Test testAllLocations(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageServiceIntegrationLiveTest) succeeded: 13553ms
+Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
+Starting test testGetAssignableLocations(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageServiceIntegrationLiveTest)
+location [id=ninefold-storage, scope=PROVIDER, description=http://onlinestorage.ninefold.com, parent=null, iso3166Codes=[AU-NSW], metadata={}]
+[TestNG] Test testGetAssignableLocations(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageServiceIntegrationLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
+Starting test testCreateDirectory(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest)
+[TestNG] Test testCreateDirectory(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest) failed.
+Test suite progress: tests succeeded: 24, failed: 1, skipped: 0.
+Starting test testListDirectorys(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest)
+[TestNG] Test testListDirectorys(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest) failed.
+Test suite progress: tests succeeded: 24, failed: 2, skipped: 0.
+[TestNG] Test testListOptions(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest) skipped.
+Test suite progress: tests succeeded: 24, failed: 2, skipped: 1.
+[TestNG] Test testFileOperations(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest) skipped.
+Test suite progress: tests succeeded: 24, failed: 2, skipped: 2.
+Exception in thread "user thread 0" java.lang.IllegalStateException: interrupted calling get() on [[method=AtmosAsyncClient.listDirectories, request=GET http://onlinestorage.ninefold.com/rest/namespace HTTP/1.1]], so could not run listeners
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:66)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:979)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1281)
+	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:218)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:237)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:59)
+	... 3 more
+Caused by: java.util.concurrent.ExecutionException: task submitted from the following trace
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:270)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:241)
+	... 4 more
+[TestNG] Test testEntrySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) succeeded: 33963ms
+Test suite progress: tests succeeded: 25, failed: 2, skipped: 2.
+Starting test testPutAll(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[TestNG] Test testPutAll(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) succeeded: 17423ms
+Test suite progress: tests succeeded: 26, failed: 2, skipped: 2.
+Starting test testPutAllBytes(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[TestNG] Test testPutAllBytes(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) succeeded: 20995ms
+Test suite progress: tests succeeded: 27, failed: 2, skipped: 2.
+Starting test testPutAllFiles(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[TestNG] Test testPutMoreThanSingleListing(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) succeeded: 50503ms
+Test suite progress: tests succeeded: 28, failed: 2, skipped: 2.
+Starting test testRemove(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
+[TestNG] Test testClearWhenContentsUnderPath(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) succeeded: 75419ms
+Test suite progress: tests succeeded: 29, failed: 2, skipped: 2.
+Starting test testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[TestNG] Test testBigFileGets(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) succeeded: 78465ms
+Test suite progress: tests succeeded: 30, failed: 2, skipped: 2.
+Starting test testPutFileParallel(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+[TestNG] Test testPutAllFiles(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) succeeded: 18647ms
+Test suite progress: tests succeeded: 31, failed: 2, skipped: 2.
+Starting test testPutAllStrings(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[TestNG] Test testRemove(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) succeeded: 22938ms
+Test suite progress: tests succeeded: 32, failed: 2, skipped: 2.
+Starting test testValues(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
+[TestNG] Test testPutAllStrings(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) succeeded: 18189ms
+Test suite progress: tests succeeded: 33, failed: 2, skipped: 2.
+Starting test testPutMoreThanSingleListing(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+ERROR: get constitution, completed: 0/10, errors: 1, rate: 5243ms/op
+java.util.concurrent.ExecutionException: java.lang.NullPointerException
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:289)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:276)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:111)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:635)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:132)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.NullPointerException
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:185)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:180)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:503)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:501)
+	at com.google.common.util.concurrent.Futures$3.apply(Futures.java:279)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:729)
+	... 3 more
+ERROR: get constitution, completed: 0/10, errors: 2, rate: 5250ms/op
+java.util.concurrent.ExecutionException: java.lang.NullPointerException
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:289)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:276)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:111)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:635)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:132)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.NullPointerException
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:185)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:180)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:503)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:501)
+	at com.google.common.util.concurrent.Futures$3.apply(Futures.java:279)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:729)
+	... 3 more
+ERROR: get constitution, completed: 0/10, errors: 3, rate: 5271ms/op
+java.util.concurrent.ExecutionException: java.lang.NullPointerException
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:289)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:276)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:111)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:635)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:132)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.NullPointerException
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:185)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:180)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:503)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:501)
+	at com.google.common.util.concurrent.Futures$3.apply(Futures.java:279)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:729)
+	... 3 more
+ERROR: get constitution, completed: 0/10, errors: 4, rate: 5301ms/op
+java.util.concurrent.ExecutionException: java.lang.NullPointerException
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:289)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:276)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:111)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:635)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:132)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.NullPointerException
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:185)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:180)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:503)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:501)
+	at com.google.common.util.concurrent.Futures$3.apply(Futures.java:279)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:729)
+	... 3 more
+ERROR: get constitution, completed: 0/10, errors: 5, rate: 5307ms/op
+java.util.concurrent.ExecutionException: java.lang.NullPointerException
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:289)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:276)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:111)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:635)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:132)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.NullPointerException
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:185)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:180)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:503)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:501)
+	at com.google.common.util.concurrent.Futures$3.apply(Futures.java:279)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:729)
+	... 3 more
+ERROR: get constitution, completed: 0/10, errors: 6, rate: 5308ms/op
+java.util.concurrent.ExecutionException: java.lang.NullPointerException
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:289)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:276)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:111)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:635)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:132)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.NullPointerException
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:185)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:180)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:503)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:501)
+	at com.google.common.util.concurrent.Futures$3.apply(Futures.java:279)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:729)
+	... 3 more
+ERROR: get constitution, completed: 0/10, errors: 7, rate: 5342ms/op
+java.util.concurrent.ExecutionException: java.lang.NullPointerException
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:289)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:276)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:111)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:635)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:132)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.NullPointerException
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:185)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:180)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:503)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:501)
+	at com.google.common.util.concurrent.Futures$3.apply(Futures.java:279)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:729)
+	... 3 more
+ERROR: get constitution, completed: 0/10, errors: 8, rate: 5364ms/op
+java.util.concurrent.ExecutionException: java.lang.NullPointerException
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:289)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:276)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:111)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:635)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:132)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.NullPointerException
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:185)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:180)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:503)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:501)
+	at com.google.common.util.concurrent.Futures$3.apply(Futures.java:279)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:729)
+	... 3 more
+ERROR: get constitution, completed: 0/10, errors: 9, rate: 5373ms/op
+java.util.concurrent.ExecutionException: java.lang.NullPointerException
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:289)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:276)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:111)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:635)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:132)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.NullPointerException
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:185)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:180)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:503)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:501)
+	at com.google.common.util.concurrent.Futures$3.apply(Futures.java:279)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:729)
+	... 3 more
+ERROR: get constitution, completed: 0/10, errors: 10, rate: 5375ms/op
+java.util.concurrent.ExecutionException: java.lang.NullPointerException
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:289)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:276)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:111)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:635)
+	at org.jclouds.concurrent.FutureIterables$1.run(FutureIterables.java:132)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.NullPointerException
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:185)
+	at org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest$2.apply(BaseBlobIntegrationTest.java:180)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:503)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:501)
+	at com.google.common.util.concurrent.Futures$3.apply(Futures.java:279)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:729)
+	... 3 more
+[TestNG] Test testValues(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) succeeded: 24804ms
+Test suite progress: tests succeeded: 34, failed: 2, skipped: 2.
+Starting test testClear(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
+[TestNG] Test testPutFileParallel(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) succeeded: 37737ms
+Test suite progress: tests succeeded: 35, failed: 2, skipped: 2.
+Starting test testPutObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+[TestNG] Test testClear(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) succeeded: 28867ms
+Test suite progress: tests succeeded: 36, failed: 2, skipped: 2.
+Starting test testContainsKey(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
+[TestNG] Test testPutObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) succeeded: 27122ms
+Test suite progress: tests succeeded: 37, failed: 2, skipped: 2.
+Starting test testPutObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+[TestNG] Test testContainsKey(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) succeeded: 25513ms
+Test suite progress: tests succeeded: 38, failed: 2, skipped: 2.
+Starting test testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
+[TestNG] Test testPutObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) succeeded: 22346ms
+Test suite progress: tests succeeded: 39, failed: 2, skipped: 2.
+Starting test testPutObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest)
+[TestNG] Test testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) succeeded: 119547ms
+Test suite progress: tests succeeded: 40, failed: 2, skipped: 2.
+Starting test testListContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[TestNG] Test testPutObject(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobIntegrationLiveTest) succeeded: 17142ms
+Test suite progress: tests succeeded: 41, failed: 2, skipped: 2.
+Feb 5, 2012 12:46:19 AM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable callGetOnFuture(8,java.util.concurrent.FutureTask@7274187a) with executor java.util.concurrent.ThreadPoolExecutor@23f32c4a
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:149)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:134)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Feb 5, 2012 12:46:19 AM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable callGetOnFuture(6,java.util.concurrent.FutureTask@6b2f0342) with executor java.util.concurrent.ThreadPoolExecutor@23f32c4a
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:149)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:134)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Feb 5, 2012 12:46:19 AM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable callGetOnFuture(2,java.util.concurrent.FutureTask@cfc9fac) with executor java.util.concurrent.ThreadPoolExecutor@23f32c4a
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:149)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:134)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Feb 5, 2012 12:46:19 AM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable callGetOnFuture(9,java.util.concurrent.FutureTask@1adaf109) with executor java.util.concurrent.ThreadPoolExecutor@23f32c4a
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:149)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:134)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Feb 5, 2012 12:46:19 AM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable callGetOnFuture(1,java.util.concurrent.FutureTask@5b7f1907) with executor java.util.concurrent.ThreadPoolExecutor@23f32c4a
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:149)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:134)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Feb 5, 2012 12:46:20 AM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable callGetOnFuture(5,java.util.concurrent.FutureTask@2884c5ae) with executor java.util.concurrent.ThreadPoolExecutor@23f32c4a
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:149)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:134)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Feb 5, 2012 12:46:20 AM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable callGetOnFuture(4,java.util.concurrent.FutureTask@24ce374a) with executor java.util.concurrent.ThreadPoolExecutor@23f32c4a
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:149)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:134)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+[TestNG] Test testPutMoreThanSingleListing(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) succeeded: 130229ms
+Test suite progress: tests succeeded: 42, failed: 2, skipped: 2.
+Starting test testRemove(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[TestNG] Test testRemove(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) succeeded: 37331ms
+Test suite progress: tests succeeded: 43, failed: 2, skipped: 2.
+Starting test testValues(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[TestNG] Test testValues(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) succeeded: 29174ms
+Test suite progress: tests succeeded: 44, failed: 2, skipped: 2.
+Starting test testClear(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[TestNG] Test testClear(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) succeeded: 22049ms
+Test suite progress: tests succeeded: 45, failed: 2, skipped: 2.
+Starting test testContainsKey(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[TestNG] Test testListContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) succeeded: 141102ms
+Test suite progress: tests succeeded: 46, failed: 2, skipped: 2.
+Starting test testListContainerPrefix(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[TestNG] Test testContainsKey(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) succeeded: 14838ms
+Test suite progress: tests succeeded: 47, failed: 2, skipped: 2.
+Starting test testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[TestNG] Test testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) failed.
+Test suite progress: tests succeeded: 47, failed: 3, skipped: 2.
+Starting test testIsEmpty(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
+[TestNG] Test testIsEmpty(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) succeeded: 14612ms
+Test suite progress: tests succeeded: 48, failed: 3, skipped: 2.
+Starting test testKeySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
+[TestNG] Test testKeySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) succeeded: 16823ms
+Test suite progress: tests succeeded: 49, failed: 3, skipped: 2.
+Starting test testListContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)
+[TestNG] Test testListContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest) succeeded: 8860ms
+Test suite progress: tests succeeded: 50, failed: 3, skipped: 2.
+[TestNG] Test testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) failed.
+Test suite progress: tests succeeded: 50, failed: 4, skipped: 2.
+Starting test testIsEmpty(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[TestNG] Test testListContainerPrefix(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) succeeded: 156705ms
+Test suite progress: tests succeeded: 51, failed: 4, skipped: 2.
+Starting test testListRootUsesDelimiter(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[TestNG] Test testIsEmpty(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) succeeded: 18678ms
+Test suite progress: tests succeeded: 52, failed: 4, skipped: 2.
+Starting test testKeySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[TestNG] Test testKeySet(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) succeeded: 17401ms
+Test suite progress: tests succeeded: 53, failed: 4, skipped: 2.
+Starting test testListContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)
+[TestNG] Test testListContainer(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest) succeeded: 8365ms
+Test suite progress: tests succeeded: 54, failed: 4, skipped: 2.
+[TestNG] Test testListRootUsesDelimiter(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) succeeded: 162576ms
+Test suite progress: tests succeeded: 55, failed: 4, skipped: 2.
+Starting test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[TestNG] Test testPutTwiceIsOkAndDoesntOverwrite(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) succeeded: 35429ms
+Test suite progress: tests succeeded: 56, failed: 4, skipped: 2.
+Starting test testWithDetails(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest)
+[TestNG] Test testWithDetails(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageContainerIntegrationLiveTest) succeeded: 20924ms
+Test suite progress: tests succeeded: 57, failed: 4, skipped: 2.
+Tests run: 63, Failures: 4, Errors: 0, Skipped: 2, Time elapsed: 823.425 sec <<< FAILURE!
+
+Results :
+
+Failed tests:   testCreateDirectory(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest): command GET http://onlinestorage.ninefold.com/rest/namespace/On%20and%20On/ HTTP/1.1 failed with code 403, error: AtmosError [code=1032, message=There was a mismatch between the signature in the request and the signature computed by the server., stringSigned=GET
+  testListDirectorys(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest)
+  testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest): Sets differ: expected [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, apps/0, apps/1, apps/2, apps/3, apps/4, apps/5, apps/6, apps/7, apps/8, apps/9] but got [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest): Sets differ: expected [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, apps/0, apps/1, apps/2, apps/3, apps/4, apps/5, apps/6, apps/7, apps/8, apps/9] but got [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+Tests run: 63, Failures: 4, Errors: 0, Skipped: 2
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 14:04.397s
+[INFO] Finished at: Sun Feb 05 00:54:54 PST 2012
+[INFO] Final Memory: 20M/265M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project ninefold-storage: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/adriancole/workspace/git/1.4.x/jclouds/providers/ninefold-storage/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
