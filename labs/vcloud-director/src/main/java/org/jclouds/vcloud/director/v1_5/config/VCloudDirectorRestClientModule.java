@@ -42,6 +42,8 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.annotations.Login;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
+import org.jclouds.vcloud.director.v1_5.features.OrgAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.OrgClient;
 import org.jclouds.vcloud.director.v1_5.functions.LoginUserInOrgWithPassword;
 import org.jclouds.vcloud.director.v1_5.handlers.InvalidateSessionAndRetryOn401AndLogoutOnClose;
 import org.jclouds.vcloud.director.v1_5.handlers.VCloudDirectorErrorHandler;
@@ -69,7 +71,7 @@ import com.google.inject.name.Named;
 public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirectorClient, VCloudDirectorAsyncClient> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-            // TODO
+            .put(OrgClient.class, OrgAsyncClient.class)
             .build();
 
    public VCloudDirectorRestClientModule() {

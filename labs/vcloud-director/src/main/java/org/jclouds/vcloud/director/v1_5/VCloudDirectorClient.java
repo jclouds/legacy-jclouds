@@ -21,7 +21,9 @@ package org.jclouds.vcloud.director.v1_5;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
+import org.jclouds.vcloud.director.v1_5.features.OrgClient;
 
 import com.google.inject.Provides;
 
@@ -40,5 +42,10 @@ public interface VCloudDirectorClient {
     */
    @Provides
    Session getCurrentSession();
-
+   
+   /**
+    * @return synchronous access to Org features
+    */
+   @Delegate
+   OrgClient getOrgClient();
 }

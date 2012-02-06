@@ -18,7 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5;
 
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
+import org.jclouds.vcloud.director.v1_5.features.OrgAsyncClient;
 
 import com.google.inject.Provides;
 
@@ -38,4 +40,9 @@ public interface VCloudDirectorAsyncClient {
    @Provides
    Session getCurrentSession();
 
+   /**
+    * @return synchronous access to Org features
+    */
+   @Delegate
+   OrgAsyncClient getOrgClient();
 }

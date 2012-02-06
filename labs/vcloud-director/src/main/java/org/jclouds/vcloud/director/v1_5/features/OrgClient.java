@@ -16,25 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5;
+package org.jclouds.vcloud.director.v1_5.features;
 
-import javax.ws.rs.core.MediaType;
+import java.net.URI;
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.vcloud.director.v1_5.domain.Org;
+import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 
 /**
- * Resource Types used in VCloud
+ * Provides synchronous access to Org.
+ * <p/>
  * 
- * <br/>
- * The object type, specified as a MIME content type, of the object that the link references. This
- * attribute is present only for links to objects. It is not present for links to actions.
- * 
- * @see MediaType
+ * @see OrgAsyncClient
+ * @see <a href= "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID=" />
+ * @author Adrian Cole
  */
-public interface VCloudDirectorMediaType {
-   public final static String NS = "http://www.vmware.com/vcloud/v1.5";
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
+public interface OrgClient {
 
-   public final static String SESSION_XML = "application/vnd.vmware.vcloud.session+xml";
+   /**
+    * Retrieves a list of organizations.
+    * 
+    * @return a list of organizations
+    */
+   OrgList getOrgList();
 
-   public final static String ORGLIST_XML = "application/vnd.vmware.vcloud.orgList+xml";
-  
-   public final static String ORG_XML = "application/vnd.vmware.vcloud.org+xml";
+   /**
+    * Retrieves an organization.
+    * 
+    * @return the org or null if not found
+    */
+   Org getOrg(URI orgHref);
 }
