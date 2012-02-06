@@ -32,7 +32,6 @@ import com.google.common.base.Objects.ToStringHelper;
  * Location of a Rest resource
  * 
  * @author Adrian Cole
- * 
  */
 public class BaseResource<T extends BaseResource<T>> {
 

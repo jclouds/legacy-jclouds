@@ -32,7 +32,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
- * Retrieves a list of organizations.
+ * A list of organizations.
  * 
  * @author Adrian Cole
  */

@@ -29,10 +29,13 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * Location of a Rest resource <xs:complexType name="ReferenceType">
- * 
+ * Location of a Rest resource.
+ *
+ * <pre>
+ * &lt;xs:complexType name="ReferenceType"&gt;
+ * </pre>
+ *
  * @author Adrian Cole
- * 
  */
 public class BaseNamedResource<T extends BaseNamedResource<T>> extends BaseResource<T> {
 
@@ -40,6 +43,7 @@ public class BaseNamedResource<T extends BaseNamedResource<T>> extends BaseResou
       return new Builder<T>();
    }
 
+   @Override
    public Builder<T> toBuilder() {
       return new Builder<T>().fromNamedResource(this);
    }
@@ -56,6 +60,7 @@ public class BaseNamedResource<T extends BaseNamedResource<T>> extends BaseResou
          return this;
       }
 
+      @Override
       public BaseNamedResource<T> build() {
          return new BaseNamedResource<T>(href, type, name);
       }
@@ -63,7 +68,6 @@ public class BaseNamedResource<T extends BaseNamedResource<T>> extends BaseResou
       /**
        * {@inheritDoc}
        */
-      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> fromBaseResource(BaseResource<T> in) {
          return Builder.class.cast(super.fromBaseResource(in));
@@ -77,6 +81,7 @@ public class BaseNamedResource<T extends BaseNamedResource<T>> extends BaseResou
        * {@inheritDoc}
        */
       @SuppressWarnings("unchecked")
+      @Override
       public Builder<T> fromAttributes(Map<String, String> attributes) {
          return Builder.class.cast(super.fromAttributes(attributes)).name(attributes.get("name"));
       }
