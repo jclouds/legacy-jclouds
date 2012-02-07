@@ -64,15 +64,15 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, orgListRequest,
                orgListResponse);
       
-      OrgList actual = OrgList.builder()
-            .org(OrgLink.builder()
+      OrgList expected = OrgList.builder()
+            .org(Reference.builder()
                .type("application/vnd.vmware.vcloud.org+xml")
                .name("JClouds")
                .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
                .build())
             .build();
 
-      assertEquals(client.getOrgClient().getOrgList(), actual);
+      assertEquals(client.getOrgClient().getOrgList(), expected);
    }
 
    @Test
@@ -95,7 +95,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, orgRequest, orgResponse);
       
-      Org actual = Org
+      Org expected = Org
          .builder()
          .name("JClouds")
          .description("")
@@ -129,7 +129,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .rel("down")
             .type("application/vnd.vmware.vcloud.orgNetwork+xml")
             .name("ilsolation01-Jclouds")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/network/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/network/f3ba8256-6f48-4512-aad6-600e85b4dc38"))
             .build())
          .link(Link.builder()
             .rel("down")
@@ -144,40 +144,42 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .build())
          .build();
 
-      assertEquals(client.getOrgClient().getOrg(orgRef), actual);
+      assertEquals(client.getOrgClient().getOrg(orgRef), expected);
    }
    
    @Test
    public void testWhenResponseIs2xxLoginReturnsValidMetadataList() {
       URI orgRef = URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
+      URI metaRef = URI.create(orgRef.toASCIIString()+"/metadata/");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", orgRef),
-            getStandardPaylodResponse("/orglist.xml"));
+            getStandardRequest("GET", metaRef),
+            getStandardPaylodResponse("/org/metadata.xml", VCloudDirectorMediaType.METADATA_XML));
       
-      Metadata actual = Metadata.builder()
-//            .link(Link.builder()
-//                  .rel("up")
-//                  .type("application/vnd.vmware.vcloud.vdc+xml")
-//                  .name("Cluster01-JClouds")
-//                  .href(URI.create("https://vcloudbeta.bluelock.com/api/vdc/d16d333b-e3c0-4176-845d-a5ee6392df07"))
-//                  .build())
+      Metadata expected = Metadata.builder()
+            .type("application/vnd.vmware.vcloud.metadata+xml")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata"))
+            .link(Link.builder()
+                  .rel("up")
+                  .type("application/vnd.vmware.vcloud.org+xml")
+                  .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+                  .build())
             .build();
 
-      assertEquals(client.getOrgClient().getMetadata(orgRef), actual);
+      assertEquals(client.getOrgClient().getMetadata(orgRef), expected);
    }
    
    @Test(enabled=false)
    public void testWhenResponseIs2xxLoginReturnsValidMetadata() {
-      URI metadataRef = URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadataKEY");
+      URI metadataRef = URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata/KEY");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", metadataRef),
-            getStandardPaylodResponse("/org/metadata.xml"));
+            getStandardPaylodResponse("/org/metadata.xml", VCloudDirectorMediaType.METADATAENTRY_XML));
       
-      MetadataEntry actual = MetadataEntry.builder()
+      MetadataEntry expected = MetadataEntry.builder()
             .build();
 
-      assertEquals(client.getOrgClient().getMetadataEntry(metadataRef), actual);
+      assertEquals(client.getOrgClient().getMetadataEntry(metadataRef), expected);
    }
 }
