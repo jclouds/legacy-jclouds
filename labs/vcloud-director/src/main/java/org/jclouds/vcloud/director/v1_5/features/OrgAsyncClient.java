@@ -29,6 +29,8 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
@@ -60,4 +62,23 @@ public interface OrgAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Org> getOrg(@EndpointParam URI uri);
+   
+   /**
+    * @see OrgClient#getMetadata
+    */
+   @GET
+   @Path("/metadata/")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Metadata> getMetadata(@EndpointParam URI orgRef);
+
+   /**
+    * @see OrgClient#getMetadataEntry
+    */
+   @GET
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<MetadataEntry> getMetadataEntry(@EndpointParam URI metaDataRef);
 }
