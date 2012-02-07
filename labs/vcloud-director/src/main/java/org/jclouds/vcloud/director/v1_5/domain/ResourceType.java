@@ -53,7 +53,7 @@ public class ResourceType<T extends ResourceType<T>> {
    }
 
    public Builder<T> toBuilder() {
-      return new Builder<T>().fromResource(this);
+      return new Builder<T>().fromResourceType(this);
    }
 
    public static class Builder<T extends ResourceType<T>> {

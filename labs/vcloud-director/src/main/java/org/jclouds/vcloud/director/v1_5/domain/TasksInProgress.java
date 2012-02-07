@@ -56,7 +56,7 @@ public class TasksInProgress {
       /**
        * @see TasksInProgress#getTasks()
        */
-      public Builder tasks(Collection<Task> tasks) {
+      public Builder tasks(Set<Task> tasks) {
          this.tasks = Sets.newLinkedHashSet(checkNotNull(tasks, "tasks"));
          return this;
       }
@@ -69,11 +69,11 @@ public class TasksInProgress {
          return this;
       }
 
-      public TaskList build() {
-         return new TaskList(tasks);
+      public TasksInProgress build() {
+         return new TasksInProgress(tasks);
       }
 
-      public Builder fromTaskList(TaskList in) {
+      public Builder fromTasksInProgress(TasksInProgress in) {
          return tasks(in.getTasks());
       }
    }
