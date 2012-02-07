@@ -46,24 +46,11 @@ import com.google.common.collect.ImmutableMultimap;
 public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
    @Test
    public void testWhenResponseIs2xxLoginReturnsValidOrgList() {
-      HttpRequest orgListRequest = HttpRequest.builder()
-            .method("GET")
-            .endpoint(URI.create("http://localhost/api/org/"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                  .put("Accept", "*/*")
-                  .put("x-vcloud-authorization",token)
-                  .build())
-            .build();
 
-      HttpResponse orgListResponse = HttpResponse.builder()
-            .statusCode(200)
-            .payload(payloadFromResourceWithContentType("/org/orglist.xml", VCloudDirectorMediaType.ORGLIST_XML
-                  +";version=1.5"))
-            .build();
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+            getStandardRequest("GET", URI.create("http://localhost/api/org/")), 
+            getStandardPayloadResponse("/org/orglist.xml", VCloudDirectorMediaType.ORGLIST_XML));
 
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, orgListRequest,
-               orgListResponse);
-      
       OrgList expected = OrgList.builder()
             .org(Reference.builder()
                .type("application/vnd.vmware.vcloud.org+xml")
@@ -79,21 +66,9 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
    public void testWhenResponseIs2xxLoginReturnsValidOrg() {
       URI orgRef = URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
 
-      HttpRequest orgRequest = HttpRequest.builder()
-            .method("GET")
-            .endpoint(orgRef)
-            .headers(ImmutableMultimap.<String, String> builder()
-                  .put("Accept", "*/*")
-                  .put("x-vcloud-authorization", token)
-                  .build())
-            .build();
-
-      HttpResponse orgResponse = HttpResponse.builder()
-            .statusCode(200)
-            .payload(payloadFromResourceWithContentType("/org/org.xml", VCloudDirectorMediaType.ORG_XML + ";version=1.5"))
-            .build();
-
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, orgRequest, orgResponse);
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+            getStandardRequest("GET", orgRef), 
+            getStandardPayloadResponse("/org/org.xml", VCloudDirectorMediaType.ORG_XML));
       
       Org expected = Org
          .builder()
@@ -154,7 +129,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", metaRef),
-            getStandardPaylodResponse("/org/metadata.xml", VCloudDirectorMediaType.METADATA_XML));
+            getStandardPayloadResponse("/org/metadata.xml", VCloudDirectorMediaType.METADATA_XML));
       
       Metadata expected = Metadata.builder()
             .type("application/vnd.vmware.vcloud.metadata+xml")
@@ -169,13 +144,13 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       assertEquals(client.getOrgClient().getMetadata(orgRef), expected);
    }
    
-   @Test(enabled=false)
+   @Test(enabled=false) // No metadata in exemplar xml...
    public void testWhenResponseIs2xxLoginReturnsValidMetadata() {
       URI metadataRef = URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata/KEY");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", metadataRef),
-            getStandardPaylodResponse("/org/metadata.xml", VCloudDirectorMediaType.METADATAENTRY_XML));
+            getStandardPayloadResponse("/org/metadata.xml", VCloudDirectorMediaType.METADATAENTRY_XML));
       
       MetadataEntry expected = MetadataEntry.builder()
             .build();
