@@ -51,13 +51,13 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
 
    @Override
    public Builder<T> toBuilder() {
-      return new Builder<T>().fromEntity(this);
+      return new Builder<T>().fromEntityType(this);
    }
 
    public static class Builder<T extends EntityType<T>> extends ResourceType.Builder<T> {
 
       protected String description;
-      protected TaskList tasks;
+      protected TasksInProgress tasksInProgress;
       protected String name;
       protected String id;
 
@@ -86,10 +86,10 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       }
 
       /**
-       * @see EntityType#getTasks()
+       * @see EntityType#getTasksInProgress()
        */
-      public Builder<T> tasks(TaskList tasks) {
-         this.tasks = tasks;
+      public Builder<T> tasksInProgress(TasksInProgress tasksInProgress) {
+         this.tasksInProgress = tasksInProgress;
          return this;
       }
 
@@ -97,7 +97,7 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       public EntityType<T> build() {
          EntityType<T> entity = new EntityType<T>(href, name);
          entity.setDescription(description);
-         entity.setTasks(tasks);
+         entity.setTasksInProgress(tasksInProgress);
          entity.setId(id);
          entity.setType(type);
          entity.setLinks(links);
@@ -149,14 +149,16 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       }
 
       public Builder<T> fromEntityType(EntityType<T> in) {
-         return fromResourceType(in).description(in.getDescription()).tasks(in.getTasks()).id(in.getId()).name(in.getName());
+         return fromResourceType(in)
+	               .description(in.getDescription()).tasksInProgress(in.getTasksInProgress())
+	               .id(in.getId()).name(in.getName());
       }
    }
 
    @XmlElement(namespace = NS, name = "Description")
    private String description;
    @XmlElement(namespace = NS, name = "TasksInProgress")
-   private TaskList tasks;
+   private TasksInProgress tasksInProgress;
    @XmlAttribute
    private String id;
    @XmlAttribute
@@ -185,12 +187,12 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
    /**
     * A list of queued, running, or recently completed tasks associated with this entity.
     */
-   public TaskList getTasks() {
-      return tasks;
+   public TasksInProgress getTasksInProgress() {
+      return tasksInProgress;
    }
 
-   public void setTasks(TaskList tasks) {
-      this.tasks = tasks;
+   public void setTasksInProgress(TasksInProgress tasksInProgress) {
+      this.tasksInProgress = tasksInProgress;
    }
 
    /**
@@ -224,16 +226,18 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       if (!super.equals(o))
          return false;
       EntityType<?> that = EntityType.class.cast(o);
-      return super.equals(that) && equal(this.id, that.id) && equal(this.description, that.description) && equal(this.tasks, that.tasks);
+      return super.equals(that) &&
+            equal(this.id, that.id) && equal(this.description, that.description) &&
+            equal(this.tasksInProgress, that.tasksInProgress);
    }
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(description, tasks, id, name);
+      return super.hashCode() + Objects.hashCode(description, tasksInProgress, id, name);
    }
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("description", description).add("tasks", tasks).add("id", id).add("name", name);
+      return super.string().add("description", description).add("tasksInProgress", tasksInProgress).add("id", id).add("name", name);
    }
 }

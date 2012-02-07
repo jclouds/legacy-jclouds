@@ -93,15 +93,15 @@ public class Link extends ReferenceType<Link> {
       }
 
       public Builder fromLink(Link in) {
-         return fromReference(in).rel(in.getRel());
+         return fromReferenceType(in).rel(in.getRel());
       }
 
       /**
        * {@inheritDoc}
        */
       @Override
-      public Builder fromReference(ReferenceType<Link> in) {
-         return Builder.class.cast(super.fromReference(in));
+      public Builder fromReferenceType(ReferenceType<Link> in) {
+         return Builder.class.cast(super.fromReferenceType(in));
       }
 
       /**
