@@ -16,38 +16,41 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5;
+package org.jclouds.vcloud.director.v1_5.features;
 
-import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.vcloud.director.v1_5.domain.Session;
-import org.jclouds.vcloud.director.v1_5.features.OrgAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.TaskAsyncClient;
+import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
-import com.google.inject.Provides;
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.TasksList;
 
 /**
- * Provides asynchronous access to VCloudDirector via their REST API.
+ * Provides synchronous access to {@link Task} objects.
  * 
- * @see VCloudDirectorClient
- * @author Adrian Cole
+ * @see TaskAsyncClient
+ * @author grkvlt@apache.org
  */
-public interface VCloudDirectorAsyncClient {
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
+public interface TaskClient {
+
    /**
+    * Retrieves a list of tasks.
     * 
-    * @return the current login session
+    * @param orgId the unique id for the organization
+    * @return a list of tasks
     */
-   @Provides
-   Session getCurrentSession();
+   TasksList getTaskList(String orgId);
 
    /**
-    * @return synchronous access to Org features
+    * Retrieves a task.
+    * 
+    * @return the task or null if not found
     */
-   @Delegate
-   OrgAsyncClient getOrgClient();
+   Task getTask(URI taskHref);
 
    /**
-    * @return synchronous access to Task features
+    * Cancels a task.
     */
-   @Delegate
-   TaskAsyncClient getTaskClient();
+   void cancelTask(URI taskHref);
 }

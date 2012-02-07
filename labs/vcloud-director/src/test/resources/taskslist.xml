@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TasksList xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	    xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd"
+	    name="Tasks Lists"
+	    type="application/vnd.vmware.vcloud.tasksList+xml"
+	    href="https://vcloudbeta.bluelock.com/api/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0">
+    <Task
+            status="success"
+            startTime="2012-02-07T00:16:28.450-05:00"
+	        operationName="catalogCreateCatalog"
+	        operation="Created Catalog QunyingTestCatalog(7212e451-76e1-4631-b2de-ba1dfd8080e4)"
+	        expiryTime="2012-05-07T00:16:28.450-04:00"
+            endTime="2012-02-07T00:16:28.867-05:00"
+	        name="task"
+            id="urn:vcloud:task:5fcd2af3-d0ec-45ce-9451-8c585a2c766b"
+	        type="application/vnd.vmware.vcloud.task+xml"
+	        href="https://vcloudbeta.bluelock.com/api/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b">
+        <Owner
+                type="application/vnd.vmware.vcloud.catalog+xml"
+	            name="QunyingTestCatalog"
+	            href="https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4" />
+        <User
+                type="application/vnd.vmware.admin.user+xml"
+                name="qunying.huang@enstratus.com"
+	            href="https://vcloudbeta.bluelock.com/api/admin/user/967d317c-4273-4a95-b8a4-bf63b78e9c69" />
+        <Organization
+                type="application/vnd.vmware.vcloud.org+xml"
+	            name="JClouds"
+	            href="https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0" />
+    </Task>
+    <Task
+            status="success"
+            startTime="2012-02-06T17:30:38.507-05:00"
+	        operationName="jobEnable"
+	        operation="Enabled User (967d317c-4273-4a95-b8a4-bf63b78e9c69)"
+	        expiryTime="2012-05-06T17:30:38.507-04:00"
+            endTime="2012-02-06T17:30:38.507-05:00"
+	        name="task"
+            id="urn:vcloud:task:bd22e745-9c2a-4f82-a954-0e35b6f76ba5"
+	        type="application/vnd.vmware.vcloud.task+xml"
+	        href="https://vcloudbeta.bluelock.com/api/task/bd22e745-9c2a-4f82-a954-0e35b6f76ba5">
+        <User
+                type="application/vnd.vmware.admin.user+xml"
+                name="adrian@jclouds.org"
+	            href="https://vcloudbeta.bluelock.com/api/admin/user/8c360b93-ed25-4c9a-8e24-d48cd9966d93" />
+        <Organization
+                type="application/vnd.vmware.vcloud.org+xml"
+	            name="JClouds"
+	            href="https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0" />
+    </Task>
+</TasksList>

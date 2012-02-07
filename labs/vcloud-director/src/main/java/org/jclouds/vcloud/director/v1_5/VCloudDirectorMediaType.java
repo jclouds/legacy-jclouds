@@ -18,16 +18,13 @@
  */
 package org.jclouds.vcloud.director.v1_5;
 
-import javax.ws.rs.core.MediaType;
-
 /**
- * Resource Types used in VCloud
+ * Resource Types used in VCloud.
  * 
- * <br/>
  * The object type, specified as a MIME content type, of the object that the link references. This
  * attribute is present only for links to objects. It is not present for links to actions.
  * 
- * @see MediaType
+ * @see javax.ws.rs.core.MediaType
  */
 public interface VCloudDirectorMediaType {
    public final static String NS = "http://www.vmware.com/vcloud/v1.5";
@@ -42,4 +39,7 @@ public interface VCloudDirectorMediaType {
    
    public final static String ORG_XML = "application/vnd.vmware.vcloud.org+xml";
 
+   public final static String TASKSLIST_XML = "application/vnd.vmware.vcloud.tasksList+xml";
+
+   public final static String TASK_XML = "application/vnd.vmware.vcloud.task+xml";
 }
