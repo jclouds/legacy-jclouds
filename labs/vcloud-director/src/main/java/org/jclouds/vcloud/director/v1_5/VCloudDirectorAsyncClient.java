@@ -22,13 +22,13 @@ import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.TaskAsyncClient;
 
 import com.google.inject.Provides;
 
 
 /**
  * Provides asynchronous access to VCloudDirector via their REST API.
- * <p/>
  * 
  * @see VCloudDirectorClient
  * @author Adrian Cole
@@ -46,6 +46,12 @@ public interface VCloudDirectorAsyncClient {
     */
    @Delegate
    OrgAsyncClient getOrgClient();
+   
+   /**
+    * @return asynchronous access to Task features
+    */
+   @Delegate
+   TaskAsyncClient getTaskClient();
    
    /**
     * @return asynchronous access to Network features

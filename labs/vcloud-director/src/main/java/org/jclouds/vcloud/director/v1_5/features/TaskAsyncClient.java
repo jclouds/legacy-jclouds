@@ -22,62 +22,54 @@ import java.net.URI;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
-import org.jclouds.vcloud.director.v1_5.domain.Org;
-import org.jclouds.vcloud.director.v1_5.domain.OrgList;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.TasksList;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * @see OrgClient
- * @author Adrian Cole
+ * @see TaskClient
+ * @author grkvlt@apache.org
  */
 @RequestFilters(AddVCloudAuthorizationToRequest.class)
-public interface OrgAsyncClient {
+public interface TaskAsyncClient {
 
    /**
-    * @see OrgClient#getOrgList
+    * @see TaskClient#getTaskList(URI)
     */
    @GET
-   @Path("/org/")
+   @Path("/tasksList/{id}")
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<OrgList> getOrgList();
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<TasksList> getTaskList(@PathParam("id") String orgId);
 
    /**
-    * @see OrgClient#getOrg
+    * @see TaskClient#getTask(URI)
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Org> getOrg(@EndpointParam URI uri);
-   
-   /**
-    * @see OrgClient#getMetadata
-    */
-   @GET
-   @Path("/metadata/")
-   @Consumes
-   @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Metadata> getMetadata(@EndpointParam URI orgRef);
+   ListenableFuture<Task> getTask(@EndpointParam URI taskHref);
 
    /**
-    * @see OrgClient#getMetadataEntry
+    * @see TaskClient#cancelTask(URI)
     */
-   @GET
+   @POST
+   @Path("/action/cancel")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<MetadataEntry> getMetadataEntry(@EndpointParam URI metaDataRef);
+   void cancelTask(@EndpointParam URI taskHref);
 }

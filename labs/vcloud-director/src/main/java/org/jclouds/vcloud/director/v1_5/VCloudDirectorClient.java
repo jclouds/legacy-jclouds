@@ -25,6 +25,7 @@ import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgClient;
+import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 
 import com.google.inject.Provides;
 
@@ -49,6 +50,12 @@ public interface VCloudDirectorClient {
     */
    @Delegate
    OrgClient getOrgClient();
+   
+   /**
+    * @return synchronous access to Task features
+    */
+   @Delegate
+   TaskClient getTaskClient();
 
    /**
     * @return synchronous access to Network features

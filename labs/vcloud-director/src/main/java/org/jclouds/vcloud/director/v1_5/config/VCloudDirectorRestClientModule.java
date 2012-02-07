@@ -46,6 +46,8 @@ import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgClient;
+import org.jclouds.vcloud.director.v1_5.features.TaskAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 import org.jclouds.vcloud.director.v1_5.functions.LoginUserInOrgWithPassword;
 import org.jclouds.vcloud.director.v1_5.handlers.InvalidateSessionAndRetryOn401AndLogoutOnClose;
 import org.jclouds.vcloud.director.v1_5.handlers.VCloudDirectorErrorHandler;
@@ -75,6 +77,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
             .put(OrgClient.class, OrgAsyncClient.class)
             .put(NetworkClient.class, NetworkAsyncClient.class)
+            .put(TaskClient.class, TaskAsyncClient.class)
             .build();
 
    public VCloudDirectorRestClientModule() {
