@@ -18,22 +18,18 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.*;
 
 import java.net.URI;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jclouds.vcloud.director.v1_5.domain.Entity.Builder;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -48,7 +44,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @XmlRootElement(namespace = NS, name = "Org")
-public class Org extends Entity<Org> {
+public class Org extends EntityType<Org> {
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -60,7 +56,7 @@ public class Org extends Entity<Org> {
       return new Builder().fromOrg(this);
    }
 
-   public static class Builder extends Entity.Builder<Org> {
+   public static class Builder extends EntityType.Builder<Org> {
 
       private String fullName;
 
@@ -83,8 +79,80 @@ public class Org extends Entity<Org> {
          return org;
       }
 
+      /**
+       * @see EntityType#getName()
+       */
       @Override
-      public Builder fromEntity(Entity<Org> in) {
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
+
+      /**
+       * @see EntityType#getDescription()
+       */
+      @Override
+      public Builder description(String description) {
+         this.description = description;
+         return this;
+      }
+
+      /**
+       * @see EntityType#getId()
+       */
+      @Override
+      public Builder id(String id) {
+         this.id = id;
+         return this;
+      }
+
+      /**
+       * @see EntityType#getTasks()
+       */
+      @Override
+      public Builder tasks(TaskList tasks) {
+         this.tasks = tasks;
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getHref()
+       */
+      @Override
+      public Builder href(URI href) {
+         this.href = href;
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getType()
+       */
+      @Override
+      public Builder type(String type) {
+         this.type = type;
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getLinks()
+       */
+      @Override
+      public Builder links(Set<Link> links) {
+         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getLinks()
+       */
+      @Override
+      public Builder link(Link link) {
+         this.links.add(checkNotNull(link, "link"));
+         return this;
+      }
+
+      @Override
+      public Builder fromEntity(EntityType<Org> in) {
          return Builder.class.cast(super.fromEntity(in));
       }
 

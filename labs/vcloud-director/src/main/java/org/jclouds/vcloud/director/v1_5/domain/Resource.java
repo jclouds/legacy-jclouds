@@ -18,162 +18,103 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Objects.*;
 import static com.google.common.base.Preconditions.*;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.*;
 
 import java.net.URI;
-import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
-import org.jclouds.vcloud.director.v1_5.domain.Task.Builder;
+import org.jclouds.vcloud.director.v1_5.domain.Resource.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Sets;
 
 /**
- * The base type for all objects in the vCloud model.
- *
- * Has an optional list of links and href and type attributes.
- *
- * <pre>
- * &lt;xs:complexType name="ResourceType"&gt;
- * </pre>
+ * A resource.
  * 
- * @author Adrian Cole
+ * @author grkvlt@apache.org
  */
-public class Resource<T extends Resource<T>> {
+public class Resource extends ResourceType<Resource> {
 
-   public static <T extends Resource<T>> Builder<T> builder() {
-      return new Builder<T>();
+   @SuppressWarnings("unchecked")
+   public static Builder builder() {
+      return new Builder();
    }
 
-   public Builder<T> toBuilder() {
-      return new Builder<T>().fromResource(this);
+   @Override
+   public Builder toBuilder() {
+      return new Builder().fromResource(this);
    }
 
-   public static class Builder<T extends Resource<T>> {
+   public static class Builder extends ResourceType.Builder<Resource> {
 
-      protected URI href;
-      protected String type;
-      protected Set<Link> links = Sets.newLinkedHashSet();
-
-      /**
-       * @see Reference#getHref()
-       */
-      public Builder<T> href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see Reference#getType()
-       */
-      public Builder<T> type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see Reference#getLinks()
-       */
-      public Builder<T> links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
-         return this;
-      }
-
-      /**
-       * @see Reference#getLinks()
-       */
-      public Builder<T> link(Link link) {
-         this.links.add(checkNotNull(link, "link"));
-         return this;
-      }
-
-      public Resource<T> build() {
-         Resource<T> reference = new Resource<T>(href);
+      @Override
+      public Resource build() {
+         Resource reference = new Resource(href);
          reference.setType(type);
          reference.setLinks(links);
          return reference;
       }
 
-      protected Builder<T> fromResource(Resource<T> in) {
-         return href(in.getHref()).type(in.getType()).links(in.getLinks());
+      /**
+       * @see ResourceType#getHref()
+       */
+      @Override
+      public Builder href(URI href) {
+         this.href = href;
+         return this;
+      }
+
+      /**
+       * @see ResourceType#getType()
+       */
+      @Override
+      public Builder type(String type) {
+         this.type = type;
+         return this;
+      }
+
+      /**
+       * @see ResourceType#getLinks()
+       */
+      @Override
+      public Builder links(Set<Link> links) {
+         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
+         return this;
+      }
+
+      /**
+       * @see ResourceType#getLinks()
+       */
+      @Override
+      public Builder link(Link link) {
+         this.links.add(checkNotNull(link, "link"));
+         return this;
+      }
+
+      @Override
+      protected Builder fromResourceType(ResourceType<Resource> in) {
+         return Builder.class.cast(super.fromResourceType(in));
+      }
+
+      protected Builder fromResource(Resource in) {
+         return fromResourceType(in);
       }
    }
 
-   @XmlAttribute
-   protected URI href;
-   @XmlAttribute
-   protected String type;
-   @XmlElement(namespace = NS, name = "Link")
-   protected Set<Link> links = Sets.newLinkedHashSet();
-
    protected Resource(URI href) {
-      this.href = href;
+      super(href);
    }
 
    protected Resource() {
       // For JAXB
-   }
-
-   /**
-    * Contains the URI to the entity.
-    *
-    * An object reference, expressed in URL format. Because this URL includes the object identifier
-    * portion of the id attribute value, it uniquely identifies the object, persists for the life of
-    * the object, and is never reused. The value of the href attribute is a reference to a view of
-    * the object, and can be used to access a representation of the object that is valid in a
-    * particular context. Although URLs have a well-known syntax and a well-understood
-    * interpretation, a client should treat each href as an opaque string. The rules that govern how
-    * the server constructs href strings might change in future releases.
-    * 
-    * @return an opaque reference and should never be parsed
-    */
-   public URI getHref() {
-      return href;
-   }
-
-   /**
-    * Contains the type of the the entity.
-    *
-    * The object type, specified as a MIME content type, of the object that the link references.
-    * This attribute is present only for links to objects. It is not present for links to actions.
-    * 
-    * @return type definition, type, expressed as an HTTP Content-Type
-    */
-   public String getType() {
-      return type;
-   }
-
-   public void setType(String type) {
-      this.type = type;
-   }
-
-   /**
-    * Set of optional links to an entity or operation associated with this object.
-    */
-   public Set<Link>getLinks() {
-      return links;
-   }
-
-   public void setLinks(Set<Link> links) {
-      this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
-   }
-
-   public void addLink(Link link) {
-      this.links.add(checkNotNull(link, "link"));
-   }
-
-   /**
-    * @see #getHref()
-    */
-   public URI getURI() {
-      return getHref();
    }
 
    @Override
@@ -182,21 +123,7 @@ public class Resource<T extends Resource<T>> {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      Resource<?> that = Resource.class.cast(o);
-      return equal(this.href, that.href) && equal(this.links, that.links) && equal(this.type, that.type);
-   }
-
-   @Override
-   public int hashCode() {
-      return Objects.hashCode(href, links, type);
-   }
-
-   @Override
-   public String toString() {
-      return string().toString();
-   }
-
-   protected ToStringHelper string() {
-      return Objects.toStringHelper("").add("href", href).add("links", links).add("type", type);
+      Resource that = Resource.class.cast(o);
+      return super.equals(that);
    }
 }

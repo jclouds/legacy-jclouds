@@ -4,6 +4,8 @@ import static com.google.common.base.Objects.*;
 import static com.google.common.base.Preconditions.*;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.*;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -16,9 +18,10 @@ import com.google.common.base.Objects;
  * &lt;xs:complexType name="ErrorType"&gt;
  * </pre>
  *
- * @author Adrian Cole
+ * @author grkvlt@apache.org
  */
 @XmlRootElement(namespace = NS, name = "Error")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Error {
 
    public static Builder builder() {
@@ -94,15 +97,15 @@ public class Error {
    }
 
    @XmlAttribute
-   protected String message;
+   private String message;
    @XmlAttribute
-   protected int majorErrorCode;
+   private int majorErrorCode;
    @XmlAttribute
-   protected String minorErrorCode;
+   private String minorErrorCode;
    @XmlAttribute
-   protected String vendorSpecificErrorCode;
+   private String vendorSpecificErrorCode;
    @XmlAttribute
-   protected String stackTrace;
+   private String stackTrace;
 
    private Error(String message, int majorErrorCode, String minorErrorCode) {
       this.message = checkNotNull(message, "message");
