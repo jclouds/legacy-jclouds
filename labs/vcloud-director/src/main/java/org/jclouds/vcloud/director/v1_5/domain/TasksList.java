@@ -28,6 +28,8 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.jclouds.vcloud.director.v1_5.domain.Org.Builder;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -81,8 +83,85 @@ public class TasksList extends EntityType<TasksList> {
          return taskslist;
       }
 
+      /**
+       * @see EntityType#getName()
+       */
+      @Override
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
+
+      /**
+       * @see EntityType#getDescription()
+       */
+      @Override
+      public Builder description(String description) {
+         this.description = description;
+         return this;
+      }
+
+      /**
+       * @see EntityType#getId()
+       */
+      @Override
+      public Builder id(String id) {
+         this.id = id;
+         return this;
+      }
+
+      /**
+       * @see EntityType#getTasksInProgress()
+       */
+      @Override
+      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
+         this.tasksInProgress = tasksInProgress;
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getHref()
+       */
+      @Override
+      public Builder href(URI href) {
+         this.href = href;
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getType()
+       */
+      @Override
+      public Builder type(String type) {
+         this.type = type;
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getLinks()
+       */
+      @Override
+      public Builder links(Set<Link> links) {
+         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getLinks()
+       */
+      @Override
+      public Builder link(Link link) {
+         this.links.add(checkNotNull(link, "link"));
+         return this;
+      }
+
+      @Override
+      public Builder fromEntityType(EntityType<TasksList> in) {
+         return Builder.class.cast(super.fromEntityType(in));
+      }
+
       public Builder fromTasksList(TasksList in) {
-         return tasks(in.getTasks());
+         return fromEntityType(in).tasks(in.getTasks());
       }
    }
 
