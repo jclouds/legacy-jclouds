@@ -26,7 +26,6 @@ import com.google.common.base.Objects;
  * Session and its corresponding token
  * 
  * @author Adrian Cole
- * 
  */
 public class SessionWithToken {
 
