@@ -183,11 +183,11 @@ public class Task extends EntityType<Task> {
       }
 
       /**
-       * @see EntityType#getTasks()
+       * @see EntityType#getTasksInProgress()
        */
       @Override
-      public Builder tasks(TaskList tasks) {
-         this.tasks = tasks;
+      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
+         this.tasksInProgress = tasksInProgress;
          return this;
       }
 
@@ -228,13 +228,14 @@ public class Task extends EntityType<Task> {
       }
 
       @Override
-      public Builder fromEntity(EntityType<Task> in) {
-         return Builder.class.cast(super.fromEntity(in));
+      public Builder fromEntityType(EntityType<Task> in) {
+         return Builder.class.cast(super.fromEntityType(in));
       }
 
       public Builder fromTask(Task in) {
-         return fromEntity(in).error(in.getError()).org(in.getOrg()).progress(in.getProgress()).status(in.getStatus())
-               .operation(in.getOperation()).operationName(in.getOperationName());
+         return fromEntityType(in)
+	               .error(in.getError()).org(in.getOrg()).progress(in.getProgress()).status(in.getStatus())
+	               .operation(in.getOperation()).operationName(in.getOperationName());
       }
    }
 

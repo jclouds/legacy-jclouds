@@ -22,11 +22,9 @@ import static com.google.common.base.Objects.*;
 import static com.google.common.base.Preconditions.*;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.*;
 
-import java.util.Collection;
+import java.net.URI;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -39,52 +37,61 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@XmlRootElement(namespace = NS, name = "TaskList")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class TaskList {
+@XmlRootElement(namespace = NS, name = "TasksList")
+public class TasksList extends EntityType<TasksList> {
 
+   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder();
    }
 
-   public static class Builder {
+   public static class Builder extends EntityType.Builder<TasksList> {
 
       protected Set<Task> tasks = Sets.newLinkedHashSet();
 
       /**
-       * @see TaskList#getTasks()
+       * @see TasksList#getTasks()
        */
-      public Builder tasks(Collection<Task> tasks) {
+      public Builder tasks(Set<Task> tasks) {
          this.tasks = Sets.newLinkedHashSet(checkNotNull(tasks, "tasks"));
          return this;
       }
 
       /**
-       * @see TaskList#getTasks()
+       * @see TasksList#getTasks()
        */
       public Builder task(Task task) {
          this.tasks.add(checkNotNull(task, "task"));
          return this;
       }
 
-      public TaskList build() {
-         return new TaskList(tasks);
+      @Override
+      public TasksList build() {
+         TasksList taskslist = new TasksList(href, name, tasks);
+         taskslist.setDescription(description);
+         taskslist.setTasksInProgress(tasksInProgress);
+         taskslist.setId(id);
+         taskslist.setType(type);
+         taskslist.setLinks(links);
+         return taskslist;
       }
 
-      public Builder fromTaskList(TaskList in) {
+      public Builder fromTasksList(TasksList in) {
          return tasks(in.getTasks());
       }
    }
 
-   protected TaskList() {
+   protected TasksList() {
       // For JAXB and builder use
    }
 
-   protected TaskList(Set<Task> tasks) {
+   protected TasksList(URI href, String name, Set<Task> tasks) {
+      super(href, name);
       this.tasks = ImmutableSet.copyOf(tasks);
    }
 
@@ -101,17 +108,17 @@ public class TaskList {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      TaskList that = TaskList.class.cast(o);
-      return equal(this.tasks, that.tasks);
+      TasksList that = TasksList.class.cast(o);
+      return super.equals(that) && equal(this.tasks, that.tasks);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(tasks);
+      return super.hashCode() + Objects.hashCode(tasks);
    }
 
    @Override
-   public String toString() {
-      return Objects.toStringHelper("").add("tasks", tasks).toString();
+   public ToStringHelper string() {
+      return super.string().add("tasks", tasks);
    }
 }

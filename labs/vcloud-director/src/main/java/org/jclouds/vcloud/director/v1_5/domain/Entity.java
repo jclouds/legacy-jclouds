@@ -55,7 +55,7 @@ public class Entity extends EntityType<Entity> {
       public Entity build() {
          Entity entity = new Entity(href, name);
          entity.setDescription(description);
-         entity.setTasks(tasks);
+         entity.setTasksInProgress(tasksInProgress);
          entity.setId(id);
          entity.setType(type);
          entity.setLinks(links);
@@ -90,11 +90,11 @@ public class Entity extends EntityType<Entity> {
       }
 
       /**
-       * @see EntityType#getTasks()
+       * @see EntityType#getTasksInProgress()
        */
       @Override
-      public Builder tasks(TaskList tasks) {
-         this.tasks = tasks;
+      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
+         this.tasksInProgress = tasksInProgress;
          return this;
       }
 

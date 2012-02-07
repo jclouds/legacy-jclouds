@@ -49,7 +49,7 @@ public class ReferenceType<T extends ReferenceType<T>> {
    }
 
    public Builder<T> toBuilder() {
-      return new Builder<T>().fromReference(this);
+      return new Builder<T>().fromReferenceType(this);
    }
 
    public static class Builder<T extends ReferenceType<T>> {

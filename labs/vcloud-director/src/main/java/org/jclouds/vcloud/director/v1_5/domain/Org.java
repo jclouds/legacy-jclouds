@@ -75,7 +75,7 @@ public class Org extends EntityType<Org> {
          org.setId(id);
          org.setType(type);
          org.setLinks(links);
-         org.setTasks(tasks);
+         org.setTasksInProgress(tasksInProgress);
          return org;
       }
 
@@ -107,11 +107,11 @@ public class Org extends EntityType<Org> {
       }
 
       /**
-       * @see EntityType#getTasks()
+       * @see EntityType#getTasksInProgress()
        */
       @Override
-      public Builder tasks(TaskList tasks) {
-         this.tasks = tasks;
+      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
+         this.tasksInProgress = tasksInProgress;
          return this;
       }
 
@@ -152,12 +152,12 @@ public class Org extends EntityType<Org> {
       }
 
       @Override
-      public Builder fromEntity(EntityType<Org> in) {
-         return Builder.class.cast(super.fromEntity(in));
+      public Builder fromEntityType(EntityType<Org> in) {
+         return Builder.class.cast(super.fromEntityType(in));
       }
 
       public Builder fromOrg(Org in) {
-         return fromEntity(in).fullName(in.getFullName());
+         return fromEntityType(in).fullName(in.getFullName());
       }
    }
 
