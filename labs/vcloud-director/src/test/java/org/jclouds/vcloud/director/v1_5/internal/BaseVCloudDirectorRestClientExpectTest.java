@@ -65,10 +65,9 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
             .build()).build();
    }
 
-   protected HttpResponse getStandardPaylodResponse(String relativeFilePath) {
+   protected HttpResponse getStandardPaylodResponse(String relativeFilePath, String mediaType) {
       return HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResourceWithContentType(relativeFilePath, VCloudDirectorMediaType.ORGLIST_XML
-                  + ";version=1.5")).build();
+            .payload(payloadFromResourceWithContentType(relativeFilePath, mediaType+";version=1.5")).build();
    }
 
 }
