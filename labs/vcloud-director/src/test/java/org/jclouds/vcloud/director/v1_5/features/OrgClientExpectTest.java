@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 import java.net.URI;
 
@@ -28,8 +28,8 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
-import org.jclouds.vcloud.director.v1_5.domain.OrgLink;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -61,7 +61,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, orgListRequest, orgListResponse);
 
       assertEquals(client.getOrgClient().getOrgList(), OrgList.builder()
-              .addOrg(OrgLink.builder()
+              .org(Reference.builder()
                       .type("application/vnd.vmware.vcloud.org+xml")
                       .name("JClouds")
                       .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
@@ -95,41 +95,41 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
               .id("urn:vcloud:org:6f312e42-cd2b-488d-a2bb-97519cd57ed0")
               .type(VCloudDirectorMediaType.ORG_XML)
               .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-              .addLink(Link.builder()
+              .link(Link.builder()
                       .rel("down")
                       .type("application/vnd.vmware.vcloud.vdc+xml")
                       .name("Cluster01-JClouds")
                       .href(URI.create("https://vcloudbeta.bluelock.com/api/vdc/d16d333b-e3c0-4176-845d-a5ee6392df07"))
                       .build())
-              .addLink(Link.builder()
+              .link(Link.builder()
                       .rel("down")
                       .type("application/vnd.vmware.vcloud.tasksList+xml")
                       .href(URI.create("https://vcloudbeta.bluelock.com/api/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
                       .build())
-              .addLink(Link.builder()
+              .link(Link.builder()
                       .rel("down")
                       .type("application/vnd.vmware.vcloud.catalog+xml")
                       .name("Public")
                       .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/9e08c2f6-077a-42ce-bece-d5332e2ebb5c"))
                       .build())
-              .addLink(Link.builder()
+              .link(Link.builder()
                       .rel("down")
                       .type("application/vnd.vmware.vcloud.controlAccess+xml")
                       .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/catalog/9e08c2f6-077a-42ce-bece-d5332e2ebb5c/controlAccess/"))
                       .build())
-              .addLink(Link.builder()
+              .link(Link.builder()
                       .rel("down")
                       .type("application/vnd.vmware.vcloud.orgNetwork+xml")
                       .name("ilsolation01-Jclouds")
                       .href(URI.create("https://vcloudbeta.bluelock.com/api/network/f3ba8256-6f48-4512-aad6-600e85b4dc38"))
                       .build())
-              .addLink(Link.builder()
+              .link(Link.builder()
                       .rel("down")
                       .type("application/vnd.vmware.vcloud.orgNetwork+xml")
                       .name("internet01-Jclouds")
                       .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c"))
                       .build())
-              .addLink(Link.builder()
+              .link(Link.builder()
                       .rel("down")
                       .type("application/vnd.vmware.vcloud.metadata+xml")
                       .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata"))

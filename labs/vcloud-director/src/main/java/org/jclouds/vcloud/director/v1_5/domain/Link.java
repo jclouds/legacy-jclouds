@@ -1,7 +1,7 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
 
 import java.net.URI;
 import java.util.Map;
@@ -20,7 +20,7 @@ import com.google.common.base.Objects.ToStringHelper;
  *
  * @author Adrian Cole
  */
-public class Link extends Reference<Link> {
+public class Link extends ReferenceType<Link> {
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -35,7 +35,7 @@ public class Link extends Reference<Link> {
       return new Builder().fromLink(this);
    }
 
-   public static class Builder extends Reference.Builder<Link> {
+   public static class Builder extends ReferenceType.Builder<Link> {
 
       protected String rel;
 
@@ -47,11 +47,49 @@ public class Link extends Reference<Link> {
          return this;
       }
 
+      @Override
       public Link build() {
          Link link = new Link(href, rel);
          link.setId(id);
          link.setName(name);
          link.setType(type);
+         return link;
+      }
+
+      /**
+       * @see ReferenceType#getHref()
+       */
+      @Override
+      public Builder href(URI href) {
+         this.href = href;
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getId()
+       */
+      @Override
+      public Builder id(String id) {
+         this.id = id;
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getType()
+       */
+      @Override
+      public Builder type(String type) {
+         this.type = type;
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getName()
+       */
+      @Override
+      public Builder name(String name) {
+         this.name = name;
+         return this;
       }
 
       public Builder fromLink(Link in) {
@@ -61,13 +99,15 @@ public class Link extends Reference<Link> {
       /**
        * {@inheritDoc}
        */
-      public Builder fromReference(Reference<Link> in) {
+      @Override
+      public Builder fromReference(ReferenceType<Link> in) {
          return Builder.class.cast(super.fromReference(in));
       }
 
       /**
        * {@inheritDoc}
        */
+      @Override
       public Builder fromAttributes(Map<String, String> attributes) {
          super.fromAttributes(attributes);
          rel(attributes.get("rel"));
@@ -76,7 +116,7 @@ public class Link extends Reference<Link> {
    }
 
    @XmlAttribute
-   protected String rel;
+   private String rel;
 
    private Link(URI href, String rel) {
       super(href);

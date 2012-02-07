@@ -18,9 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.*;
 
 import java.util.Set;
 
@@ -49,12 +49,12 @@ public class OrgList {
 
    public static class Builder {
 
-      private Set<OrgLink> orgs = Sets.newLinkedHashSet();
+      private Set<Reference> orgs = Sets.newLinkedHashSet();
 
       /**
        * @see OrgList#getOrgs
        */
-      public Builder orgs(Set<OrgLink> orgs) {
+      public Builder orgs(Set<Reference> orgs) {
          this.orgs = Sets.newLinkedHashSet(checkNotNull(orgs, "orgs"));
          return this;
       }
@@ -62,7 +62,7 @@ public class OrgList {
       /**
        * @see OrgList#getOrgs
        */
-      public Builder addOrg(OrgLink org) {
+      public Builder org(Reference org) {
          orgs.add(checkNotNull(org, "org"));
          return this;
       }
@@ -80,14 +80,14 @@ public class OrgList {
       // For JAXB and builder use
    }
 
-   private OrgList(Set<OrgLink> orgs) {
+   private OrgList(Set<Reference> orgs) {
       this.orgs = ImmutableSet.copyOf(orgs);
    }
 
    @XmlElement(namespace = NS, name = "Org")
-   private Set<OrgLink> orgs = Sets.newLinkedHashSet();
+   private Set<Reference> orgs = Sets.newLinkedHashSet();
 
-   public Set<OrgLink> getOrgs() {
+   public Set<Reference> getOrgs() {
       return ImmutableSet.copyOf(orgs);
    }
 
@@ -98,7 +98,7 @@ public class OrgList {
       if (o == null || getClass() != o.getClass())
          return false;
       OrgList that = OrgList.class.cast(o);
-      return equal(orgs, that.orgs);
+      return equal(this.orgs, that.orgs);
    }
 
    @Override
