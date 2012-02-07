@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Objects.*;
 
 import com.google.common.base.Objects;
 
@@ -68,8 +68,8 @@ public class SessionWithToken {
 
    }
 
-   protected Session session;
-   protected String token;
+   private Session session;
+   private String token;
 
    protected SessionWithToken(String token, Session session) {
       this.session = session;

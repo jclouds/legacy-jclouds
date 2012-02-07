@@ -35,6 +35,11 @@ public interface VCloudDirectorMediaType {
    public final static String SESSION_XML = "application/vnd.vmware.vcloud.session+xml";
 
    public final static String ORGLIST_XML = "application/vnd.vmware.vcloud.orgList+xml";
+   
+   public final static String METADATA_XML = "application/vnd.vmware.vcloud.metadata+xml";
   
+   public static final String METADATAENTRY_XML = "TODO"; // TODO
+   
    public final static String ORG_XML = "application/vnd.vmware.vcloud.org+xml";
+
 }
