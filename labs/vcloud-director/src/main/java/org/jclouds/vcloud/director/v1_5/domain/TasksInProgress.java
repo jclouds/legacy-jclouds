@@ -18,12 +18,15 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.*;
 
+import java.util.Collection;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -32,63 +35,62 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
- * A list of organizations.
- * 
- * @author Adrian Cole
+ * @author grkvlt@apache.org
  */
-@XmlRootElement(namespace = NS, name = "OrgList")
-public class OrgList {
+@XmlRootElement(namespace = NS, name = "TasksInProgress")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class TasksInProgress {
 
    public static Builder builder() {
       return new Builder();
    }
 
    public Builder toBuilder() {
-      return new Builder().fromOrgList(this);
+      return new Builder();
    }
 
    public static class Builder {
 
-      private Set<Reference> orgs = Sets.newLinkedHashSet();
+      protected Set<Task> tasks = Sets.newLinkedHashSet();
 
       /**
-       * @see OrgList#getOrgs
+       * @see TasksInProgress#getTasks()
        */
-      public Builder orgs(Set<Reference> orgs) {
-         this.orgs = Sets.newLinkedHashSet(checkNotNull(orgs, "orgs"));
+      public Builder tasks(Set<Task> tasks) {
+         this.tasks = Sets.newLinkedHashSet(checkNotNull(tasks, "tasks"));
          return this;
       }
 
       /**
-       * @see OrgList#getOrgs
+       * @see TasksInProgress#getTasks()
        */
-      public Builder org(Reference org) {
-         orgs.add(checkNotNull(org, "org"));
+      public Builder task(Task task) {
+         this.tasks.add(checkNotNull(task, "task"));
          return this;
       }
 
-      public OrgList build() {
-         return new OrgList(orgs);
+      public TasksInProgress build() {
+         return new TasksInProgress(tasks);
       }
 
-      public Builder fromOrgList(OrgList in) {
-         return orgs(in.getOrgs());
+      public Builder fromTasksInProgress(TasksInProgress in) {
+         return tasks(in.getTasks());
       }
    }
 
-   private OrgList() {
+   protected TasksInProgress() {
       // For JAXB and builder use
    }
 
-   private OrgList(Set<Reference> orgs) {
-      this.orgs = ImmutableSet.copyOf(orgs);
+   protected TasksInProgress(Collection<Task> tasks) {
+      this.tasks = ImmutableSet.copyOf(tasks);
    }
 
-   @XmlElement(namespace = NS, name = "Org")
-   private Set<Reference> orgs = Sets.newLinkedHashSet();
+   @XmlElement(namespace = NS, name = "Task")
+   private Set<Task> tasks = Sets.newLinkedHashSet();
 
-   public Set<Reference> getOrgs() {
-      return ImmutableSet.copyOf(orgs);
+   public Set<Task> getTasks() {
+      return ImmutableSet.copyOf(tasks);
    }
 
    @Override
@@ -97,17 +99,18 @@ public class OrgList {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      OrgList that = OrgList.class.cast(o);
-      return equal(orgs, that.orgs);
+      TasksInProgress that = TasksInProgress.class.cast(o);
+      return equal(this.tasks, that.tasks);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(orgs);
+      return Objects.hashCode(tasks);
    }
 
    @Override
    public String toString() {
-      return Objects.toStringHelper("").add("orgs", orgs).toString();
+      return Objects.toStringHelper("").add("tasks", tasks).toString();
    }
 }
+
