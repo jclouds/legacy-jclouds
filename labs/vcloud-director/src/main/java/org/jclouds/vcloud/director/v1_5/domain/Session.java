@@ -18,13 +18,15 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.*;
 
 import java.net.URI;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -41,6 +43,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @XmlRootElement(namespace = NS, name = "Session")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Session {
 
    public static Builder builder() {

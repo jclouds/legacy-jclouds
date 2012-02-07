@@ -56,5 +56,18 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
       identity = String.format("%s@%s", user, org);
       credential = password;
    }
+   
+   protected HttpRequest getStandardRequest(String method, URI uri) {
+      return HttpRequest.builder().method(method).endpoint(uri).headers(
+            ImmutableMultimap.<String, String> builder()
+               .put("Accept", "*/*")
+               .put("x-vcloud-authorization",token)
+            .build()).build();
+   }
+
+   protected HttpResponse getStandardPayloadResponse(String relativeFilePath, String mediaType) {
+      return HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResourceWithContentType(relativeFilePath, mediaType+";version=1.5")).build();
+   }
 
 }
