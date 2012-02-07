@@ -4,18 +4,21 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
 
+import java.net.URI;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-@XmlRootElement(namespace = NS, name = "MetaDataList")
-public class Metadata {
+@XmlRootElement(namespace = NS, name = "Metadata")
+public class Metadata extends ResourceType<Metadata>{
 
+   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -24,28 +27,67 @@ public class Metadata {
       return new Builder().fromMetadataList(this);
    }
 
-   public static class Builder {
+   public static class Builder extends ResourceType.Builder<Metadata> {
 
-      private Set<MetadataEntry> metadata = Sets.newLinkedHashSet();
+      private Set<MetadataEntry> metadataEntries = Sets.newLinkedHashSet();
 
       /**
-       * @see OrgList#getOrgs
+       * @see Metadata#getMetadata()
        */
-      public Builder metadata(Set<MetadataEntry> orgs) {
-         this.metadata = Sets.newLinkedHashSet(checkNotNull(orgs, "metadata"));
+      public Builder metadata(Set<MetadataEntry> metadataEntries) {
+         this.metadataEntries = Sets.newLinkedHashSet(checkNotNull(metadataEntries, "metadataEntries"));
          return this;
       }
 
       /**
-       * @see OrgList#getOrgs
+       * @see Metadata#getMetadata()
        */
-      public Builder addMetadata(MetadataEntry org) {
-         metadata.add(checkNotNull(org, "metadatum"));
+      public Builder entry(MetadataEntry metadataEntry) {
+         metadataEntries.add(checkNotNull(metadataEntry, "metadataEntry"));
          return this;
       }
 
       public Metadata build() {
-         return new Metadata(metadata);
+         Metadata metadata = new Metadata(href, metadataEntries);
+         metadata.setType(type);
+         metadata.setLinks(links);
+         return metadata;
+      }
+      
+      /**
+       * @see ResourceType#getHref()
+       */
+      @Override
+      public Builder href(URI href) {
+         super.href(href);
+         return this;
+      }
+
+      /**
+       * @see ResourceType#getType()
+       */
+      @Override
+      public Builder type(String type) {
+         super.type(type);
+         return this;
+      }
+
+      /**
+       * @see ResourceType#getLinks()
+       */
+      @Override
+      public Builder links(Set<Link> links) {
+         super.links(Sets.newLinkedHashSet(checkNotNull(links, "links")));
+         return this;
+      }
+
+      /**
+       * @see ResourceType#getLinks()
+       */
+      @Override
+      public Builder link(Link link) {
+         super.link(link);
+         return this;
       }
 
       public Builder fromMetadataList(Metadata in) {
@@ -57,11 +99,12 @@ public class Metadata {
       // For JAXB and builder use
    }
 
-   private Metadata(Set<MetadataEntry> orgs) {
-      this.metadata = ImmutableSet.copyOf(orgs);
+   private Metadata(URI href, Set<MetadataEntry> metadataEntries) {
+      super(href);
+      this.metadata = ImmutableSet.copyOf(metadataEntries);
    }
 
-   @XmlElement(namespace = NS, name = "MetaData")
+   @XmlElement(namespace = NS, name = "MetadataEntry")
    private Set<MetadataEntry> metadata = Sets.newLinkedHashSet();
 
    public Set<MetadataEntry> getMetadata() {
@@ -70,22 +113,20 @@ public class Metadata {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o)
-         return true;
-      if (o == null || getClass() != o.getClass())
+      if (!super.equals(o))
          return false;
       Metadata that = Metadata.class.cast(o);
-      return equal(metadata, that.metadata);
+      return super.equals(that) && equal(metadata, that.metadata);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(metadata);
+      return super.hashCode() + Objects.hashCode(metadata);
    }
 
    @Override
-   public String toString() {
-      return Objects.toStringHelper("").add("metadata", metadata).toString();
+   public ToStringHelper string() {
+      return super.string().add("metadata", metadata);
    }
 
 }

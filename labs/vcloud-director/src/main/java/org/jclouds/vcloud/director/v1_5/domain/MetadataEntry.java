@@ -13,11 +13,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 @XmlRootElement(namespace = NS, name = "org/metadata")
-public class MetadataEntry extends BaseResource<MetadataEntry> {
+public class MetadataEntry extends ResourceType<MetadataEntry> {
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -25,14 +24,12 @@ public class MetadataEntry extends BaseResource<MetadataEntry> {
    }
 
    public Builder toBuilder() {
-      return new Builder().fromMetadatum(this);
+      return new Builder().fromMetadata(this);
    }
 
-   public static class Builder extends BaseResource.Builder<MetadataEntry> {
-
+   public static class Builder extends ResourceType.Builder<MetadataEntry> {
       private String key;
       private String value;
-      private Set<Link> links = Sets.newLinkedHashSet();
 
       /**
        * @see MetadataEntry#getKey
@@ -50,38 +47,51 @@ public class MetadataEntry extends BaseResource<MetadataEntry> {
          return this;
       }
       
-      /**
-       * @see MetadataEntry#?
-       */
-      public Builder links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
-         return this;
-      }
-
-      /**
-       * @see MetadataEntry#?
-       */
-      public Builder addLink(Link org) {
-         links.add(checkNotNull(org, "org"));
-         return this;
-      }
-
       public MetadataEntry build() {
-         return new MetadataEntry(href, type, key, value, links);
+         MetadataEntry metadataEntry = new MetadataEntry(href, key, value);
+         metadataEntry.setType(type);
+         metadataEntry.setLinks(links);
+         return metadataEntry;
       }
-
-      public Builder fromMetadatum(MetadataEntry in) {
-         return key(in.getKey()).value(in.getValue());
-      }
-
+      
+      /**
+       * @see ResourceType#getHref()
+       */
       @Override
       public Builder href(URI href) {
-         return Builder.class.cast(super.href(href));
+         super.href(href);
+         return this;
       }
 
+      /**
+       * @see ResourceType#getType()
+       */
       @Override
       public Builder type(String type) {
-         return Builder.class.cast(super.type(type));
+         super.type(type);
+         return this;
+      }
+
+      /**
+       * @see ResourceType#getLinks()
+       */
+      @Override
+      public Builder links(Set<Link> links) {
+         super.links(Sets.newLinkedHashSet(checkNotNull(links, "links")));
+         return this;
+      }
+
+      /**
+       * @see ResourceType#getLinks()
+       */
+      @Override
+      public Builder link(Link link) {
+         super.link(link);
+         return this;
+      }
+
+      public Builder fromMetadata(MetadataEntry in) {
+         return key(in.getKey()).value(in.getValue());
       }
 
    }
@@ -90,19 +100,16 @@ public class MetadataEntry extends BaseResource<MetadataEntry> {
       // For JAXB and builder use
    }
 
-   private MetadataEntry(URI href, String type, String key, String value, Set<Link> links) {
-      super(href, type);
-      this.key = key;
-      this.value = value;
-      this.links = ImmutableSet.copyOf(links);
+   private MetadataEntry(URI href, String key, String value) {
+      super(href);
+      this.key = checkNotNull(key, "key");
+      this.value = checkNotNull(value, "value");
    }
 
    @XmlAttribute
    private String key;
    @XmlElement(namespace = NS, name = "Value")
    private String value;
-   @XmlElement(namespace = NS, name = "Link")
-   private Set<Link> links = Sets.newLinkedHashSet();
 
    /**
     * 
@@ -120,20 +127,13 @@ public class MetadataEntry extends BaseResource<MetadataEntry> {
       return value;
    }
    
-   /**
-    * TODO
-    */
-   public Set<Link> getLinks() {
-      return ImmutableSet.copyOf(links);
-   }
-
 
    @Override
    public boolean equals(Object o) {
       if (!super.equals(o))
          return false;
       MetadataEntry that = MetadataEntry.class.cast(o);
-      return equal(key, that.key);
+      return super.equals(that) && equal(key, that.key);
    }
 
    @Override
