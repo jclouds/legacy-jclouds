@@ -49,12 +49,12 @@ public class OrgList {
 
    public static class Builder {
 
-      private Set<Link> orgs = Sets.newLinkedHashSet();
+      private Set<Reference> orgs = Sets.newLinkedHashSet();
 
       /**
        * @see OrgList#getOrgs
        */
-      public Builder orgs(Set<Link> orgs) {
+      public Builder orgs(Set<Reference> orgs) {
          this.orgs = Sets.newLinkedHashSet(checkNotNull(orgs, "orgs"));
          return this;
       }
@@ -62,7 +62,7 @@ public class OrgList {
       /**
        * @see OrgList#getOrgs
        */
-      public Builder addOrg(Link org) {
+      public Builder org(Reference org) {
          orgs.add(checkNotNull(org, "org"));
          return this;
       }
@@ -80,14 +80,14 @@ public class OrgList {
       // For JAXB and builder use
    }
 
-   private OrgList(Set<Link> orgs) {
+   private OrgList(Set<Reference> orgs) {
       this.orgs = ImmutableSet.copyOf(orgs);
    }
 
    @XmlElement(namespace = NS, name = "Org")
-   private Set<Link> orgs = Sets.newLinkedHashSet();
+   private Set<Reference> orgs = Sets.newLinkedHashSet();
 
-   public Set<Link> getOrgs() {
+   public Set<Reference> getOrgs() {
       return ImmutableSet.copyOf(orgs);
    }
 
