@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+
 import com.google.common.base.Objects;
 
 /**
@@ -41,6 +43,8 @@ import com.google.common.base.Objects;
 @XmlRootElement(namespace = XMLNS, name = "Error")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Error {
+   
+   public static final String MEDIA_TYPE = VCloudDirectorMediaType.ERROR;
 
    public static Builder builder() {
       return new Builder();
