@@ -50,6 +50,7 @@ public class Metadata extends ResourceType<Metadata>{
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromMetadataList(this);
    }
@@ -74,6 +75,7 @@ public class Metadata extends ResourceType<Metadata>{
          return this;
       }
 
+      @Override
       public Metadata build() {
          Metadata metadata = new Metadata(href, metadataEntries);
          metadata.setType(type);
@@ -140,7 +142,9 @@ public class Metadata extends ResourceType<Metadata>{
 
    @Override
    public boolean equals(Object o) {
-      if (!super.equals(o))
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
          return false;
       Metadata that = Metadata.class.cast(o);
       return super.equals(that) && equal(metadata, that.metadata);

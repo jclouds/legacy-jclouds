@@ -224,7 +224,9 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
 
    @Override
    public boolean equals(Object o) {
-      if (!super.equals(o))
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
          return false;
       EntityType<?> that = EntityType.class.cast(o);
       return super.equals(that) &&

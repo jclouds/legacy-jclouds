@@ -159,7 +159,9 @@ public class Link extends ReferenceType<Link> {
 
    @Override
    public boolean equals(Object o) {
-      if (!super.equals(o))
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
          return false;
       Link that = (Link) o;
       return super.equals(that) && equal(this.rel, that.rel);

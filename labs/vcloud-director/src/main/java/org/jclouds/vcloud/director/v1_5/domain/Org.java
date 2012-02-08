@@ -183,7 +183,9 @@ public class Org extends EntityType<Org> {
 
    @Override
    public boolean equals(Object o) {
-      if (!super.equals(o))
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
          return false;
       Org that = Org.class.cast(o);
       return super.equals(that) && equal(fullName, that.fullName);
