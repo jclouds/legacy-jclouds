@@ -18,9 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
 import java.util.Set;
@@ -41,7 +41,7 @@ import com.google.common.collect.Sets;
  *
  * @author danikov
  */
-@XmlRootElement(namespace = NS, name = "TODO")
+@XmlRootElement(namespace = XMLNS, name = "MetadataEntry")
 public class MetadataEntry extends ResourceType<MetadataEntry> {
 
    @SuppressWarnings("unchecked")
@@ -134,9 +134,9 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
       this.value = checkNotNull(value, "value");
    }
 
-   @XmlElement(namespace = NS, name = "Key")
+   @XmlElement(namespace = XMLNS, name = "Key")
    private String key;
-   @XmlElement(namespace = NS, name = "Value")
+   @XmlElement(namespace = XMLNS, name = "Value")
    private String value;
 
    /**

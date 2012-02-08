@@ -18,9 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
 import java.util.Set;
@@ -30,6 +30,8 @@ import javax.xml.bind.annotation.XmlElement;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
@@ -143,7 +145,6 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       /**
        * {@inheritDoc}
        */
-      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> fromResourceType(ResourceType<T> in) {
          return Builder.class.cast(super.fromResourceType(in));
@@ -156,9 +157,9 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       }
    }
 
-   @XmlElement(namespace = NS, name = "Description")
+   @XmlElement(namespace = XMLNS, name = "Description")
    private String description;
-   @XmlElement(namespace = NS, name = "TasksInProgress")
+   @XmlElement(namespace = XMLNS, name = "TasksInProgress")
    private TasksInProgress tasksInProgress;
    @XmlAttribute
    private String id;
@@ -211,12 +212,20 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
    }
 
    /**
-    * Contains the name of the the entity.
+    * Returns the unique UUID string for this entity.
     *
-    * The object type, specified as a MIME content type, of the object that the link references.
-    * This attribute is present only for links to objects. It is not present for links to actions.
-    * 
-    * @return type definition, type, expressed as an HTTP Content-Type
+    * Once we have an entity, the {@link #getId()} field is better suited to retrieving the
+    * id than {@link #getHref()}.
+    *
+    * @see ReferenceType#getUuid()
+    */
+   @Override
+   public String getUuid() {
+      return Iterables.getLast(Splitter.on(":").split(id));
+   }
+
+   /**
+    * Contains the name of the the entity.
     */
    public String getName() {
       return name;
@@ -231,7 +240,7 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       EntityType<?> that = EntityType.class.cast(o);
       return super.equals(that) &&
             equal(this.id, that.id) && equal(this.description, that.description) &&
-            equal(this.tasksInProgress, that.tasksInProgress);
+            equal(this.tasksInProgress, that.tasksInProgress) && equal(this.name, that.name);
    }
 
    @Override

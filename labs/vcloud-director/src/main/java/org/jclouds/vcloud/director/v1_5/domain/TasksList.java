@@ -20,7 +20,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.*;
 import static com.google.common.base.Preconditions.*;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
 import java.util.Set;
@@ -38,7 +38,7 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@XmlRootElement(namespace = NS, name = "TasksList")
+@XmlRootElement(namespace = XMLNS, name = "TasksList")
 public class TasksList extends EntityType<TasksList> {
 
    @SuppressWarnings("unchecked")
@@ -173,7 +173,7 @@ public class TasksList extends EntityType<TasksList> {
       this.tasks = ImmutableSet.copyOf(tasks);
    }
 
-   @XmlElement(namespace = NS, name = "Task")
+   @XmlElement(namespace = XMLNS, name = "Task")
    private Set<Task> tasks = Sets.newLinkedHashSet();
 
    public Set<Task> getTasks() {

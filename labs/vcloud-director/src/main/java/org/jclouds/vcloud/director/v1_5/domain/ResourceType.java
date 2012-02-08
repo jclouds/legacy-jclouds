@@ -20,7 +20,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.*;
 import static com.google.common.base.Preconditions.*;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
 import java.util.Set;
@@ -31,7 +31,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Splitter;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
@@ -46,7 +48,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ResourceType<T extends ResourceType<T>> {
+public class ResourceType<T extends ResourceType<T>> implements URISupplier {
 
    public static <T extends ResourceType<T>> Builder<T> builder() {
       return new Builder<T>();
@@ -110,7 +112,7 @@ public class ResourceType<T extends ResourceType<T>> {
    private URI href;
    @XmlAttribute
    private String type;
-   @XmlElement(namespace = NS, name = "Link")
+   @XmlElement(namespace = XMLNS, name = "Link")
    private Set<Link> links = Sets.newLinkedHashSet();
 
    protected ResourceType(URI href) {
@@ -136,6 +138,23 @@ public class ResourceType<T extends ResourceType<T>> {
     */
    public URI getHref() {
       return href;
+   }
+
+   /**
+    * @see URISupplier#getURI()
+    */
+   @Override
+   public URI getURI() {
+      return getHref();
+   }
+
+   /**
+    * Returns the unique UUID string for this resource.
+    *
+    * @see ReferenceType#getUuid()
+    */
+   public String getUuid() {
+      return Iterables.getLast(Splitter.on("/").split(href.getPath()));
    }
 
    /**
@@ -167,13 +186,6 @@ public class ResourceType<T extends ResourceType<T>> {
 
    public void addLink(Link link) {
       this.links.add(checkNotNull(link, "link"));
-   }
-
-   /**
-    * @see #getHref()
-    */
-   public URI getURI() {
-      return getHref();
    }
 
    @Override

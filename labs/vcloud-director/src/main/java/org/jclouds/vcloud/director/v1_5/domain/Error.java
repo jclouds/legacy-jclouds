@@ -20,12 +20,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.*;
 import static com.google.common.base.Preconditions.*;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.*;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -43,7 +38,7 @@ import com.google.common.base.Objects;
  *
  * @author grkvlt@apache.org
  */
-@XmlRootElement(namespace = NS, name = "Error")
+@XmlRootElement(namespace = XMLNS, name = "Error")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Error {
 

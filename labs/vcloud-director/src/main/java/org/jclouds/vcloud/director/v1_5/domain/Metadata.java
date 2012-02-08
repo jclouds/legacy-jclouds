@@ -18,9 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
 import java.util.Set;
@@ -42,7 +42,7 @@ import com.google.common.collect.Sets;
  *
  * @author danikov
  */
-@XmlRootElement(namespace = NS, name = "Metadata")
+@XmlRootElement(namespace = XMLNS, name = "Metadata")
 public class Metadata extends ResourceType<Metadata>{
 
    @SuppressWarnings("unchecked")
@@ -133,7 +133,7 @@ public class Metadata extends ResourceType<Metadata>{
       this.metadata = ImmutableSet.copyOf(metadataEntries);
    }
 
-   @XmlElement(namespace = NS, name = "MetadataEntry")
+   @XmlElement(namespace = XMLNS, name = "MetadataEntry")
    private Set<MetadataEntry> metadata = Sets.newLinkedHashSet();
 
    public Set<MetadataEntry> getMetadata() {
