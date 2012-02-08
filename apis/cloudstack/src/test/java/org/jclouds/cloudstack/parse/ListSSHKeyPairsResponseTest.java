@@ -18,8 +18,9 @@
  */
 package org.jclouds.cloudstack.parse;
 
-import java.util.Set;
-
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.jclouds.cloudstack.config.CloudStackParserModule;
 import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.json.BaseSetParserTest;
@@ -27,9 +28,7 @@ import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import java.util.Set;
 
 /**
  * @author Adrian Cole
@@ -57,10 +56,10 @@ public class ListSSHKeyPairsResponseTest extends BaseSetParserTest<SshKeyPair> {
    }
 
    @Override
-   @SelectJson("keypair")
+   @SelectJson("sshkeypair")
    public Set<SshKeyPair> expected() {
       return ImmutableSet.<SshKeyPair> of(SshKeyPair.builder().name("jclouds-keypair")
-            .fingerprint("43:6a:bd:46:e0:3d:3a:8d:ab:69:25:bb:b9:ca:9d:17").build());
+            .fingerprint("1c:06:74:52:3b:99:1c:95:5c:04:c2:f4:ba:77:6e:7b").build());
    }
 
 }

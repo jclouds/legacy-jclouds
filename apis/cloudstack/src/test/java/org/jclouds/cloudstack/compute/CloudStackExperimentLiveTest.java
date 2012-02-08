@@ -18,17 +18,6 @@
  */
 package org.jclouds.cloudstack.compute;
 
-import static com.google.common.collect.Iterables.concat;
-import static com.google.common.collect.Iterables.get;
-import static com.google.common.collect.Sets.newTreeSet;
-import static org.jclouds.cloudstack.options.CreateNetworkOptions.Builder.vlan;
-import static org.jclouds.cloudstack.options.ListNetworkOfferingsOptions.Builder.specifyVLAN;
-
-import java.net.URI;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.TrafficType;
@@ -38,7 +27,22 @@ import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.predicates.NodePredicates;
+import org.jclouds.crypto.SshKeys;
+import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Sets.newTreeSet;
+import static org.jclouds.cloudstack.options.CreateNetworkOptions.Builder.vlan;
+import static org.jclouds.cloudstack.options.ListNetworkOfferingsOptions.Builder.specifyVLAN;
 
 /**
  * 
@@ -120,6 +124,42 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
          if (network != null)
             domainAdminContext.getApi().getNetworkClient().deleteNetwork(network.getId());
       }
+   }
+
+   @Test
+   public void testCreateWindowsMachineWithKeyPairAndCheckIfTheGeneratedPasswordIsEncrypted() throws RunNodesException {
+      final Map<String, String> sshKey = SshKeys.generate();
+      final String publicKey = sshKey.get("public");
+
+      String keyPairName = prefix + "-windows-keypair";
+      client.getSSHKeyPairClient().deleteSSHKeyPair(keyPairName);
+      // client.getSSHKeyPairClient().registerSSHKeyPair(keyPairName, publicKey);
+      client.getSSHKeyPairClient().createSSHKeyPair(keyPairName);
+
+      String group = prefix + "-windows-test";
+      Template template = computeContext.getComputeService().templateBuilder()
+         .imageId("290").locationId("1")
+         .options(new CloudStackTemplateOptions().setupStaticNat(false).keyPair(keyPairName))
+         .build();
+
+      NodeMetadata node = null;
+      try {
+         node = getOnlyElement(computeContext.getComputeService()
+            .createNodesInGroup(group, 1, template));
+         
+         long jobId = client.getVirtualMachineClient()
+            .getPasswordForVirtualMachine(Long.parseLong(node.getId()));
+         // TODO: extrect the password from the async response
+
+         Assert.fail("Password: ...");
+
+      } finally {
+         if (node != null) {
+            computeContext.getComputeService().destroyNode(node.getId());
+         }
+
+      }
+
    }
 
 }

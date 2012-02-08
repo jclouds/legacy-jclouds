@@ -18,13 +18,7 @@
  */
 package org.jclouds.cloudstack.features;
 
-import java.util.Set;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.filters.AuthenticationFilter;
@@ -39,7 +33,11 @@ import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import java.util.Set;
 
 /**
  * Provides asynchronous access to cloudstack via their REST API.
@@ -120,6 +118,15 @@ public interface VirtualMachineAsyncClient {
    @SelectJson("jobid")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Long> resetPasswordForVirtualMachine(@QueryParam("id") long id);
+
+   /**
+    * @see VirtualMachineClient#getPasswordForVirtualMachine
+    */
+   @GET
+   @QueryParams(keys = "command", values = "getVMPassword")
+   @SelectJson("jobid")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Long> getPasswordForVirtualMachine(@QueryParam("id") long id);
 
    /**
     * @see VirtualMachineClient#changeServiceForVirtualMachine

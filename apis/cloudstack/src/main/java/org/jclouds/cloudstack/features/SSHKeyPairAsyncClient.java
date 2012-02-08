@@ -18,12 +18,6 @@
  */
 package org.jclouds.cloudstack.features;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import java.util.Set;
-
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.cloudstack.filters.AuthenticationFilter;
@@ -36,6 +30,12 @@ import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import java.util.Set;
 
 /**
  * Provides asynchronous access to CloudStack SSHKeyPair features.
