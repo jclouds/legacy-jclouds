@@ -29,7 +29,11 @@ package org.jclouds.vcloud.director.v1_5;
 public interface VCloudDirectorMediaType {
    public final static String NS = "http://www.vmware.com/vcloud/v1.5";
 
+   public final static String ANY = "*/*";
+
    public final static String SESSION_XML = "application/vnd.vmware.vcloud.session+xml";
+
+   public final static String ERROR_XML = "application/vnd.vmware.vcloud.error+xml";
 
    public final static String ORGLIST_XML = "application/vnd.vmware.vcloud.orgList+xml";
    

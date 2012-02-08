@@ -26,9 +26,13 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.BaseRestClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.testng.annotations.BeforeTest;
 
+import com.google.common.base.Function;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 
 /**
@@ -42,6 +46,7 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
    public static final String org = "JClouds";
    public static final String password = "password";
    public static final String token = "mIaR3/6Lna8DWImd7/JPR5rK8FcUHabt+G/UCJV5pJQ=";
+   public static final String endpoint = "http://localhost/api";
 
    protected DateService dateService;
 
@@ -50,6 +55,14 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
       dateService = Guice.createInjector().getInstance(DateService.class);
       assert dateService != null;
    }
+
+   protected static final Function<ReferenceType<?>, String> getUuidFromReference = new Function<ReferenceType<?>, String>() {
+      @Override
+      public String apply(ReferenceType<?> input) {
+         String uuid = Iterables.getLast(Splitter.on("/").split(input.getHref().getPath()));
+         return uuid;
+      }
+   };
 
    protected HttpRequest loginRequest = HttpRequest.builder()
          .method("POST")
@@ -75,17 +88,32 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
       credential = password;
    }
    
+   protected HttpRequest getStandardRequest(String method, String command) {
+      return getStandardRequest(method, URI.create(endpoint + command));
+   }
+
    protected HttpRequest getStandardRequest(String method, URI uri) {
-      return HttpRequest.builder().method(method).endpoint(uri).headers(
-            ImmutableMultimap.<String, String> builder()
-               .put("Accept", "*/*")
-               .put("x-vcloud-authorization",token)
-            .build()).build();
+      return getStandardRequest(method, uri, VCloudDirectorMediaType.ANY);
+   }
+
+   protected HttpRequest getStandardRequest(String method, URI uri, String mediaType) {
+      return HttpRequest.builder()
+            .method(method)
+            .endpoint(uri)
+            .headers(ImmutableMultimap.<String, String> builder()
+                  .put("Accept", mediaType)
+                  .put("x-vcloud-authorization", token)
+                  .build())
+            .build();
    }
 
    protected HttpResponse getStandardPayloadResponse(String relativeFilePath, String mediaType) {
-      return HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResourceWithContentType(relativeFilePath, mediaType+";version=1.5")).build();
+      return getStandardPayloadResponse(200, relativeFilePath, mediaType);
    }
 
+   protected HttpResponse getStandardPayloadResponse(int statusCode, String relativeFilePath, String mediaType) {
+      return HttpResponse.builder()
+            .statusCode(statusCode)
+            .payload(payloadFromResourceWithContentType(relativeFilePath, mediaType+";version=1.5")).build();
+   }
 }
