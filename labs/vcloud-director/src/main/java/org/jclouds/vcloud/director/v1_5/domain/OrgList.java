@@ -18,9 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.util.Set;
 
@@ -36,7 +36,7 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@XmlRootElement(namespace = NS, name = "OrgList")
+@XmlRootElement(namespace = XMLNS, name = "OrgList")
 public class OrgList {
 
    public static Builder builder() {
@@ -84,7 +84,7 @@ public class OrgList {
       this.orgs = ImmutableSet.copyOf(orgs);
    }
 
-   @XmlElement(namespace = NS, name = "Org")
+   @XmlElement(namespace = XMLNS, name = "Org")
    private Set<Reference> orgs = Sets.newLinkedHashSet();
 
    public Set<Reference> getOrgs() {

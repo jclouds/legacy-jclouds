@@ -43,7 +43,7 @@ public class SessionWithToken {
       protected String token;
 
       /**
-       * @see SessionWithToken#getType
+       * @see SessionWithToken#getSession()
        */
       public Builder session(Session session) {
          this.session = session;
@@ -51,7 +51,7 @@ public class SessionWithToken {
       }
 
       /**
-       * @see SessionWithToken#getHref
+       * @see SessionWithToken#getToken()
        */
       public Builder token(String token) {
          this.token = token;

@@ -20,7 +20,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.*;
 import static com.google.common.base.Preconditions.*;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
 import java.util.Set;
@@ -43,7 +43,7 @@ import com.google.common.collect.Sets;
  *
  * @author Adrian Cole
  */
-@XmlRootElement(namespace = NS, name = "Org")
+@XmlRootElement(namespace = XMLNS, name = "Org")
 public class Org extends EntityType<Org> {
 
    @SuppressWarnings("unchecked")
@@ -170,7 +170,7 @@ public class Org extends EntityType<Org> {
       this.fullName = fullName;
    }
 
-   @XmlElement(namespace = NS, name = "FullName")
+   @XmlElement(namespace = XMLNS, name = "FullName")
    private String fullName;
 
    /**
