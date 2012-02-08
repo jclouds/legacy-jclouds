@@ -1,1 +1,2 @@
-{ "listsshkeypairsresponse" : { "count":1 ,"keypair" : [  {"name":"jclouds-keypair","fingerprint":"43:6a:bd:46:e0:3d:3a:8d:ab:69:25:bb:b9:ca:9d:17"} ] } }
+{ "listsshkeypairsresponse" : { "count":1 ,"sshkeypair" : [
+   {"name":"jclouds-keypair","fingerprint":"1c:06:74:52:3b:99:1c:95:5c:04:c2:f4:ba:77:6e:7b"} ] } }
