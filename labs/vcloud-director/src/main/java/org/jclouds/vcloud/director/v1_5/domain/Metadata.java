@@ -28,6 +28,8 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
@@ -43,7 +45,9 @@ import com.google.common.collect.Sets;
  * @author danikov
  */
 @XmlRootElement(namespace = XMLNS, name = "Metadata")
-public class Metadata extends ResourceType<Metadata>{
+public class Metadata extends ResourceType<Metadata> {
+   
+   public static final String MEDIA_TYPE = VCloudDirectorMediaType.METADATA;
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {

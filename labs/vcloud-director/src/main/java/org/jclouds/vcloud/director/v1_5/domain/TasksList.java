@@ -28,6 +28,8 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
@@ -40,6 +42,8 @@ import com.google.common.collect.Sets;
  */
 @XmlRootElement(namespace = XMLNS, name = "TasksList")
 public class TasksList extends EntityType<TasksList> {
+   
+   public static final String MEDIA_TYPE = VCloudDirectorMediaType.TASKS_LIST;
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {

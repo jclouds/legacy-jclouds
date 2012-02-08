@@ -28,7 +28,6 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
@@ -80,7 +79,7 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
                .put("x-vcloud-authorization", token)
                .put("Set-Cookie", String.format("vcloud-token=%s; Secure; Path=/", token))
                .build())
-         .payload(payloadFromResourceWithContentType("/session.xml", VCloudDirectorMediaType.SESSION.getMediaType() + ";version=1.5"))
+         .payload(payloadFromResourceWithContentType("/session.xml", VCloudDirectorMediaType.SESSION + ";version=1.5"))
          .build();
 
    public BaseVCloudDirectorRestClientExpectTest() {
@@ -97,24 +96,24 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
       return getStandardRequest(method, uri, VCloudDirectorMediaType.ANY);
    }
 
-   protected HttpRequest getStandardRequest(String method, URI uri, VCloudDirectorMediaType mediaType) {
+   protected HttpRequest getStandardRequest(String method, URI uri, String mediaType) {
       return HttpRequest.builder()
             .method(method)
             .endpoint(uri)
             .headers(ImmutableMultimap.<String, String> builder()
-                  .put("Accept", mediaType.getMediaType())
+                  .put("Accept", mediaType)
                   .put("x-vcloud-authorization", token)
                   .build())
             .build();
    }
 
-   protected HttpResponse getStandardPayloadResponse(String relativeFilePath, VCloudDirectorMediaType mediaType) {
+   protected HttpResponse getStandardPayloadResponse(String relativeFilePath, String mediaType) {
       return getStandardPayloadResponse(200, relativeFilePath, mediaType);
    }
 
-   protected HttpResponse getStandardPayloadResponse(int statusCode, String relativeFilePath, VCloudDirectorMediaType mediaType) {
+   protected HttpResponse getStandardPayloadResponse(int statusCode, String relativeFilePath, String mediaType) {
       return HttpResponse.builder()
             .statusCode(statusCode)
-            .payload(payloadFromResourceWithContentType(relativeFilePath, mediaType.getMediaType()+";version=1.5")).build();
+            .payload(payloadFromResourceWithContentType(relativeFilePath, mediaType + ";version=1.5")).build();
    }
 }
