@@ -18,22 +18,20 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import java.net.URI;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
-import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
+import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xxOrNull;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -48,7 +46,7 @@ public interface OrgAsyncClient {
     * @see OrgClient#getOrgList
     */
    @GET
-   @Path("/org/")
+   @Path("/org")
    @Consumes
    @JAXBResponseParser
    ListenableFuture<OrgList> getOrgList();
@@ -57,27 +55,29 @@ public interface OrgAsyncClient {
     * @see OrgClient#getOrg
     */
    @GET
+   @Path("/org/{id}")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Org> getOrg(@EndpointParam URI uri);
+   @ExceptionParser(ThrowVCloudErrorOn4xxOrNull.class)
+   ListenableFuture<Org> getOrg(@PathParam("id") String orgId);
    
    /**
     * @see OrgClient#getMetadata
     */
    @GET
-   @Path("/metadata/")
+   @Path("/org/{id}/metadata")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Metadata> getMetadata(@EndpointParam URI orgRef);
+   @ExceptionParser(ThrowVCloudErrorOn4xxOrNull.class)
+   ListenableFuture<Metadata> getMetadata(@PathParam("id") String orgId);
 
    /**
     * @see OrgClient#getMetadataEntry
     */
    @GET
+   @Path("/org/{id}/metadata/{key}")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<MetadataEntry> getMetadataEntry(@EndpointParam URI metaDataRef);
+   @ExceptionParser(ThrowVCloudErrorOn4xxOrNull.class)
+   ListenableFuture<MetadataEntry> getMetadataEntry(@PathParam("id") String orgId, @PathParam("key") String key);
 }
