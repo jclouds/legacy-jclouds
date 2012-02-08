@@ -25,13 +25,13 @@ import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
+import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 
 /**
  * Provides synchronous access to Org.
  * <p/>
  * 
  * @see OrgAsyncClient
- * @see <a href= "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID=" />
  * @author Adrian Cole
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
@@ -50,6 +50,8 @@ public interface OrgClient {
     * @return the org or null if not found
     */
    Org getOrg(String orgId);
+
+   Org getOrg(ReferenceType<?> orgRef);
    
    /**
     * Retrieves an list of the organization's metadata
@@ -58,10 +60,14 @@ public interface OrgClient {
     */
    Metadata getMetadata(String orgId);
 
+   Metadata getMetadata(ReferenceType<?> orgRef);
+
    /**
     * Retrieves a metadata
     * 
     * @return the metadata or null if not found
     */
    MetadataEntry getMetadataEntry(String orgId, String key);
+
+   MetadataEntry getMetadataEntry(ReferenceType<?> orgRef, String key);
 }

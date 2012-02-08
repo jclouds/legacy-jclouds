@@ -37,25 +37,22 @@ import com.google.common.collect.Iterables;
  * @author grkvlt@apache.org
  */
 @Singleton
-public class ThrowVCloudErrorOn4xxOrNull implements Function<Exception, Object> {
+public class ThrowVCloudErrorOn4xx implements Function<Exception, Object> {
    @Inject
-   private ThrowVCloudErrorOn4xxOrNull() { }
+   private ThrowVCloudErrorOn4xx() { }
 
    @Override
    public Object apply(Exception from) {
       Iterable<HttpResponseException> throwables = Iterables.filter(Throwables.getCausalChain(from), HttpResponseException.class);
-      if (Iterables.size(throwables) == 1) {
-         HttpResponseException exception = Iterables.getOnlyElement(throwables);
-         if (exception.getResponse().getStatusCode() >= 400 && exception.getResponse().getStatusCode() < 500) {
-	         try {
-               Error error = JAXB.unmarshal(InputSuppliers.of(exception.getContent()).getInput(), Error.class);
-               throw new VCloudDirectorException(error);
-            } catch (IOException e) {
-               Throwables.propagate(e);
-            }
+      HttpResponseException exception = Iterables.getFirst(throwables, null);
+      if (exception != null && exception.getResponse().getStatusCode() >= 400 && exception.getResponse().getStatusCode() < 500) {
+         try {
+            Error error = JAXB.unmarshal(InputSuppliers.of(exception.getContent()).getInput(), Error.class);
+            throw new VCloudDirectorException(error);
+         } catch (IOException e) {
+            Throwables.propagate(e);
          }
       }
-      return null; // TODO is this correct?
+      throw Throwables.propagate(from);
    }
-
 }
