@@ -16,45 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.features;
+package org.jclouds.vcloud.director.v1_5.functions;
 
-import java.util.concurrent.TimeUnit;
+import java.net.URI;
 
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
-import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.TasksList;
+
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 
 /**
- * Provides synchronous access to {@link Task} objects.
- * 
- * @see TaskAsyncClient
  * @author grkvlt@apache.org
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface TaskClient {
+public class ReferenceToEndpoint implements Function<Object, URI> {
 
-   /**
-    * Retrieves a list of tasks.
-    * 
-    * @param orgId the unique id for the organization
-    * @return a list of tasks
-    */
-   TasksList getTaskList(String orgId);
-
-   /**
-    * Retrieves a task.
-    * 
-    * @return the task or null if not found
-    */
-   Task getTask(String taskId);
-
-   Task getTask(ReferenceType<?> taskRef);
-
-   /**
-    * Cancels a task.
-    */
-   void cancelTask(String taskId);
-
-   void cancelTask(ReferenceType<?> taskRef);
+   @Override
+   public URI apply(Object input) {
+      Preconditions.checkNotNull(input);
+      Preconditions.checkArgument(input instanceof ReferenceType<?>);
+      ReferenceType<?> reference = (ReferenceType<?>) input;
+      return reference.getURI();
+	};
 }

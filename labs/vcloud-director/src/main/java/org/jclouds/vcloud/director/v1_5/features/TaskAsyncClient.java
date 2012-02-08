@@ -18,8 +18,6 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import java.net.URI;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -30,10 +28,12 @@ import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xxOrNull;
+import org.jclouds.vcloud.director.v1_5.functions.ReferenceToEndpoint;
+import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -45,23 +45,43 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface TaskAsyncClient {
 
    /**
-    * @see TaskClient#getTaskList(URI)
+    * @see TaskClient#getTaskList(String)
     */
    @GET
    @Path("/tasksList/{id}")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xxOrNull.class)
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<TasksList> getTaskList(@PathParam("id") String orgId);
 
    /**
-    * @see TaskClient#getTask(URI)
+    * @see TaskClient#getTask(String id)
+    */
+   @GET
+   @Path("/task/{id}")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Task> getTask(@PathParam("id") String taskId);
+
+   /**
+    * @see TaskClient#getTask(ReferenceType<?>)
     */
    @GET
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xxOrNull.class)
-   ListenableFuture<Task> getTask(@EndpointParam URI taskHref);
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Task> getTask(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> taskRef);
+
+   /**
+    * @see TaskClient#cancelTask(URI)
+    */
+   @POST
+   @Path("/task/{id}/action/cancel")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Void> cancelTask(@PathParam("id") String taskId);
 
    /**
     * @see TaskClient#cancelTask(URI)
@@ -70,6 +90,6 @@ public interface TaskAsyncClient {
    @Path("/action/cancel")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xxOrNull.class)
-   void cancelTask(@EndpointParam URI taskHref);
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Void> cancelTask(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> taskRef);
 }
