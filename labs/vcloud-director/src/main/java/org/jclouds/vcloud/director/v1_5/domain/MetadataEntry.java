@@ -49,6 +49,7 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromMetadata(this);
    }
@@ -73,6 +74,7 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
          return this;
       }
       
+      @Override
       public MetadataEntry build() {
          MetadataEntry metadataEntry = new MetadataEntry(href, key, value);
          metadataEntry.setType(type);
@@ -132,13 +134,12 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
       this.value = checkNotNull(value, "value");
    }
 
-   @XmlElement(namespace = NS, name = "K")
+   @XmlElement(namespace = NS, name = "Key")
    private String key;
    @XmlElement(namespace = NS, name = "Value")
    private String value;
 
    /**
-    * 
     * @return key of the entry
     */
    public String getKey() {
@@ -146,17 +147,17 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
    }
 
    /**
-    * 
     * @return value of the entry
     */
    public String getValue() {
       return value;
    }
    
-
    @Override
    public boolean equals(Object o) {
-      if (!super.equals(o))
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
          return false;
       MetadataEntry that = MetadataEntry.class.cast(o);
       return super.equals(that) && equal(key, that.key);
