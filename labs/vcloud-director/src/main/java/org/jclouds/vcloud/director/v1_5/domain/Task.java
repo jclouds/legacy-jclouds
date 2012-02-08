@@ -461,10 +461,13 @@ public class Task extends EntityType<Task> {
 
    @Override
    public boolean equals(Object o) {
-      if (!super.equals(o))
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
          return false;
       Task that = Task.class.cast(o);
-      return super.equals(that) && equal(this.error, that.error) && equal(this.org, that.org) &&
+      return super.equals(that) &&
+            equal(this.error, that.error) && equal(this.org, that.org) &&
             equal(this.progress, that.progress) && equal(this.status, that.status) &&
             equal(this.operation, that.operation) && equal(this.operationName, that.operationName) &&
             equal(this.startTime, that.startTime) && equal(this.endTime, that.endTime) &&

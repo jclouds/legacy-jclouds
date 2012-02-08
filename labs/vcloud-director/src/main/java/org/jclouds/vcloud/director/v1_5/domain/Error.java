@@ -18,9 +18,14 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.*;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -107,17 +112,17 @@ public class Error {
 
       public Builder fromError(Error in) {
          return message(in.getMessage())
-                 .majorErrorCode(in.getMajorErrorCode())
-                 .minorErrorCode(in.getMinorErrorCode())
-                 .vendorSpecificErrorCode(in.getVendorSpecificErrorCode())
-                 .stackTrace(in.getStackTrace());
+               .majorErrorCode(in.getMajorErrorCode())
+               .minorErrorCode(in.getMinorErrorCode())
+               .vendorSpecificErrorCode(in.getVendorSpecificErrorCode())
+               .stackTrace(in.getStackTrace());
       }
    }
 
    @XmlAttribute
    private String message;
    @XmlAttribute
-   private int majorErrorCode;
+   private Integer majorErrorCode;
    @XmlAttribute
    private String minorErrorCode;
    @XmlAttribute
@@ -125,9 +130,9 @@ public class Error {
    @XmlAttribute
    private String stackTrace;
 
-   private Error(String message, int majorErrorCode, String minorErrorCode) {
+   private Error(String message, Integer majorErrorCode, String minorErrorCode) {
       this.message = checkNotNull(message, "message");
-      this.majorErrorCode = majorErrorCode;
+      this.majorErrorCode = checkNotNull(majorErrorCode, "majorErrorCode");
       this.minorErrorCode = checkNotNull(minorErrorCode, "minorErrorCode");
    }
 
@@ -145,7 +150,7 @@ public class Error {
    /**
     * The class of the error. Matches the HTTP status code.
     */
-   public int getMajorErrorCode() {
+   public Integer getMajorErrorCode() {
       return majorErrorCode;
    }
 
@@ -182,10 +187,11 @@ public class Error {
       this.stackTrace = stackTrace;
    }
 
-
-@Override
+   @Override
    public boolean equals(Object o) {
-      if (!super.equals(o))
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
          return false;
       Error that = (Error) o;
       return equal(this.message, that.message) &&
@@ -197,15 +203,14 @@ public class Error {
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(message, majorErrorCode, minorErrorCode, vendorSpecificErrorCode, stackTrace);
+      return Objects.hashCode(message, majorErrorCode, minorErrorCode, vendorSpecificErrorCode, stackTrace);
    }
 
    @Override
    public String toString() {
       return Objects.toStringHelper("")
-            .add("message", message)
-            .add("majorErrorCode", majorErrorCode)
-            .add("minorErrorCode", minorErrorCode)
+            .add("message", message).add("majorErrorCode", majorErrorCode).add("minorErrorCode", minorErrorCode)
+            .add("vendorSpecificErrorCode", vendorSpecificErrorCode).add("stackTrace", stackTrace)
             .toString();
    }
 }
