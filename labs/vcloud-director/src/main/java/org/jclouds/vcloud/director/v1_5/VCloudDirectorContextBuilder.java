@@ -27,7 +27,6 @@ import org.jclouds.rest.RestContextBuilder;
 import com.google.inject.Module;
 
 /**
- * 
  * @author Adrian Cole
  */
 public class VCloudDirectorContextBuilder extends RestContextBuilder<VCloudDirectorClient, VCloudDirectorAsyncClient> {
