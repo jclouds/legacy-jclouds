@@ -25,16 +25,16 @@ import java.net.URI;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Iterables;
 
 /**
  * Test the {@link TaskClient} by observing its side effects.
@@ -48,7 +48,7 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
    public void testTaskListForValidOrg() {
       HttpRequest orgListRequest = HttpRequest.builder()
               .method("GET")
-              .endpoint(URI.create("http://localhost/api/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+              .endpoint(URI.create(endpoint + "/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
               .headers(ImmutableMultimap.<String, String> builder()
                                 .put("Accept", "*/*")
                                 .put("x-vcloud-authorization", token)
@@ -57,14 +57,14 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
       HttpResponse orgListResponse = HttpResponse.builder()
               .statusCode(200)
-              .payload(payloadFromResourceWithContentType("/taskslist.xml", VCloudDirectorMediaType.TASKSLIST_XML + ";version=1.5"))
+              .payload(payloadFromResourceWithContentType("/task/taskslist.xml", VCloudDirectorMediaType.TASKSLIST_XML + ";version=1.5"))
               .build();
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, orgListRequest, orgListResponse);
 
-      String orgId =Iterables.getLast(Splitter.on("/").split(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0").getPath()));
+      String orgId = getUuidFromReference.apply(Reference.builder().href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0")).build());
       
-      assertEquals(client.getTaskClient().getTaskList(orgId), TasksList.builder()
+      TasksList expected = TasksList.builder()
               .name("Tasks Lists")
               .type("application/vnd.vmware.vcloud.tasksList+xml")
               .href(URI.create("https://vcloudbeta.bluelock.com/api/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
@@ -117,7 +117,79 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
                                 .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
                                 .build())
                           .build())
-              .build()
-      );
+              .build();
+
+      assertEquals(client.getTaskClient().getTaskList(orgId), expected);
+   }
+
+   @Test
+   public void testTaskListForInvalidOrgId() {
+      HttpRequest orgListRequest = HttpRequest.builder()
+              .method("GET")
+              .endpoint(URI.create(endpoint + "/tasksList/NOTAUUID"))
+              .headers(ImmutableMultimap.<String, String> builder()
+                                .put("Accept", "*/*")
+                                .put("x-vcloud-authorization", token)
+                                .build())
+              .build();
+
+      HttpResponse orgListResponse = HttpResponse.builder()
+              .statusCode(400)
+              .payload(payloadFromResourceWithContentType("/task/error400.xml", VCloudDirectorMediaType.ERROR_XML + ";version=1.5"))
+              .build();
+
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, orgListRequest, orgListResponse);
+
+      String orgId = "NOTAUUID";
+
+      Error expected = Error.builder()
+            .message("validation error on field 'id': String value has invalid format or length")
+            .majorErrorCode(400)
+            .minorErrorCode("BAD_REQUEST")
+            .build();
+      try {
+         client.getTaskClient().getTaskList(orgId);
+         fail("Should give HTTP 400 error");
+      } catch (VCloudDirectorException vde) {
+         assertEquals(vde.getError(), expected);
+      } catch (Exception e) {
+         fail("Should have thrown a VCloudDirectorException");
+      }
+   }
+
+   @Test
+   public void testTaskListForNotFoundOrgId() {
+      HttpRequest orgListRequest = HttpRequest.builder()
+            .method("GET")
+            .endpoint(URI.create(endpoint + "/tasksList/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"))
+            .headers(ImmutableMultimap.<String, String> builder()
+                              .put("Accept", "*/*")
+                              .put("x-vcloud-authorization", token)
+                              .build())
+            .build();
+
+      HttpResponse orgListResponse = HttpResponse.builder()
+            .statusCode(403)
+            .payload(payloadFromResourceWithContentType("/task/error403.xml", VCloudDirectorMediaType.ERROR_XML + ";version=1.5"))
+            .build();
+
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, orgListRequest, orgListResponse);
+
+      String orgId = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee";
+
+		Error expected = Error.builder()
+				.message("No access to entity \"com.vmware.vcloud.entity.org:aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee\".")
+				.majorErrorCode(403)
+				.minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
+				.build();
+
+		try {
+			client.getTaskClient().getTaskList(orgId);
+			fail("Should give HTTP 400 error");
+		} catch (VCloudDirectorException vde) {
+			assertEquals(vde.getError(), expected);
+		} catch (Exception e) {
+			fail("Should have thrown a VCloudDirectorException");
+		}
    }
 }
