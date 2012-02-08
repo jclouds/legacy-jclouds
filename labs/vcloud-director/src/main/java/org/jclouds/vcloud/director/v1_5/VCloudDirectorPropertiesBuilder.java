@@ -27,11 +27,12 @@ import java.util.Properties;
 import org.jclouds.PropertiesBuilder;
 
 /**
- * Builds properties used in VCloudDirector Clients
+ * Builds properties used in VCloudDirector clients
  * 
  * @author Adrian Cole
  */
 public class VCloudDirectorPropertiesBuilder extends PropertiesBuilder {
+
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
