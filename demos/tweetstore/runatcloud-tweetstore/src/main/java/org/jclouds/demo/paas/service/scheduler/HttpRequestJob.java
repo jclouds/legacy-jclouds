@@ -43,25 +43,27 @@ public class HttpRequestJob implements Job {
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        PlatformServices platform = getPlatform(context);
+        PlatformServices platform = JobContexts.getPlatform(context);
         RunnableHttpRequest request = platform.getScheduler().getHttpRequestFactory().create(
                 HttpRequest.builder()
-                .endpoint(getTargetUrl(platform.getBaseUrl(), context))
+                .endpoint(JobContexts.getTargetUrl(platform.getBaseUrl(), context))
                 .method("GET").build());
         request.run();
     }
 
-    private static URI getTargetUrl(String baseUrl, JobExecutionContext context) {
-        return URI.create(baseUrl + (String) checkNotNull(
-                context.getMergedJobDataMap().get(URL_ATTRIBUTE_NAME), URL_ATTRIBUTE_NAME));
-    }
-
-    private static PlatformServices getPlatform(JobExecutionContext jobContext) throws JobExecutionException {
-        try {
-            return PlatformServices.get((ServletContext) checkNotNull(
-                    jobContext.getScheduler().getContext().get(SERVLET_CONTEXT_KEY), SERVLET_CONTEXT_KEY));
-        } catch (SchedulerException exception) {
-            throw new JobExecutionException("Unable to get platform services from the job execution context", exception);
+    private static class JobContexts {
+        private static URI getTargetUrl(String baseUrl, JobExecutionContext context) {
+            return URI.create(baseUrl + (String) checkNotNull(
+                    context.getMergedJobDataMap().get(URL_ATTRIBUTE_NAME), URL_ATTRIBUTE_NAME));
+        }
+        
+        private static PlatformServices getPlatform(JobExecutionContext jobContext) throws JobExecutionException {
+            try {
+                return PlatformServices.get((ServletContext) checkNotNull(
+                        jobContext.getScheduler().getContext().get(SERVLET_CONTEXT_KEY), SERVLET_CONTEXT_KEY));
+            } catch (SchedulerException exception) {
+                throw new JobExecutionException("Unable to get platform services from the job execution context", exception);
+            }
         }
     }
 }
