@@ -7,20 +7,20 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICEXMLNSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIOXMLNS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
 import java.util.Date;
@@ -43,7 +43,7 @@ import com.google.common.collect.Sets;
  *
  * @author grkvlt@apache.org
  */
-@XmlRootElement(namespace = NS, name = "Task")
+@XmlRootElement(namespace = XMLNS, name = "Task")
 public class Task extends EntityType<Task> {
 
    @SuppressWarnings("unchecked")
@@ -282,17 +282,17 @@ public class Task extends EntityType<Task> {
       super(href, name);
    }
 
-   @XmlElement(namespace = NS, name = "Error")
+   @XmlElement(namespace = XMLNS, name = "Error")
    private Error error;
-   @XmlElement(namespace = NS, name = "Organization")
+   @XmlElement(namespace = XMLNS, name = "Organization")
    private Reference org;
-   @XmlElement(namespace = NS, name = "Progress")
+   @XmlElement(namespace = XMLNS, name = "Progress")
    private Integer progress;
-   @XmlElement(namespace = NS, name = "Owner")
+   @XmlElement(namespace = XMLNS, name = "Owner")
    private Reference owner;
-   @XmlElement(namespace = NS, name = "User")
+   @XmlElement(namespace = XMLNS, name = "User")
    private Reference user;
-   @XmlElement(namespace = NS, name = "Params")
+   @XmlElement(namespace = XMLNS, name = "Params")
    private Object params;
    @XmlAttribute
    private String status;

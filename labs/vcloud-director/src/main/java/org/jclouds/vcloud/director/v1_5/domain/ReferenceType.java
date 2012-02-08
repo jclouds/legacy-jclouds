@@ -28,7 +28,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Splitter;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.Iterables;
 
 /**
  * A reference to a resource.
@@ -42,7 +44,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author grkvlt@apache.org
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ReferenceType<T extends ReferenceType<T>> {
+public class ReferenceType<T extends ReferenceType<T>> implements URISupplier {
 
    public static <T extends ReferenceType<T>> Builder<T> builder() {
       return new Builder<T>();
@@ -157,6 +159,15 @@ public class ReferenceType<T extends ReferenceType<T>> {
    }
 
    /**
+    * Returns the unique UUID string for this reference.
+    *
+    * @see ResourceType#getUuid()
+    */
+   public String getUuid() {
+      return Iterables.getLast(Splitter.on("/").split(href.getPath()));
+   }
+
+   /**
     * Contains the name of the the entity.
     *
     * The object type, specified as a MIME content type, of the object that the link references.
@@ -189,8 +200,9 @@ public class ReferenceType<T extends ReferenceType<T>> {
    }
 
    /**
-    * @see #getHref()
+    * @see URISupplier#getURI()
     */
+   @Override
    public URI getURI() {
       return getHref();
    }
