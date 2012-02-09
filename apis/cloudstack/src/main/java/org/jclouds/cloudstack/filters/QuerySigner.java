@@ -18,23 +18,16 @@
  */
 package org.jclouds.cloudstack.filters;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-import javax.inject.Singleton;
-import javax.ws.rs.core.UriBuilder;
-
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Multimap;
 import org.jclouds.Constants;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.http.utils.ModifyRequest;
@@ -43,11 +36,15 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.util.Strings2;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Multimap;
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+import javax.ws.rs.core.UriBuilder;
+import java.util.Map.Entry;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * 
@@ -85,7 +82,7 @@ public class QuerySigner implements AuthenticationFilter, RequestSigner {
 
    public HttpRequest filter(HttpRequest request) throws HttpException {
       checkNotNull(request, "request must be present");
-      Multimap<String, String> decodedParams = ModifyRequest.parseQueryToMap(request.getEndpoint().getQuery());
+      Multimap<String, String> decodedParams = ModifyRequest.parseQueryToMap(request.getEndpoint().getRawQuery());
       addSigningParams(decodedParams);
       String stringToSign = createStringToSign(request, decodedParams);
       String signature = sign(stringToSign);

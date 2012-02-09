@@ -47,7 +47,7 @@ public class ReEncodeQueryWithDefaultURLEncoder implements HttpRequestFilter {
    public HttpRequest filter(HttpRequest request) throws HttpException {
       UriBuilder builder = builders.get();
       builder.uri(request.getEndpoint());
-      Multimap<String, String> map = ModifyRequest.parseQueryToMap(request.getEndpoint().getQuery());
+      Multimap<String, String> map = ModifyRequest.parseQueryToMap(request.getEndpoint().getRawQuery());
       builder.replaceQuery("");
       for (String key : map.keySet())
          builder.queryParam(key, getOnlyElement(map.get(key)));

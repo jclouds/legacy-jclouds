@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.features;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.sun.jersey.api.uri.UriComponent;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.crypto.SshKeys;
@@ -28,7 +29,6 @@ import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
 import java.net.URI;
-import java.net.URLEncoder;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -165,8 +165,8 @@ public class SSHKeyPairClientExpectTest extends BaseCloudStackRestClientExpectTe
             .method("GET")
             .endpoint(
                URI.create("http://localhost:8080/client/api?response=json&command=registerSSHKeyPair&" +
-                  "name=jclouds-keypair&publickey=" + URLEncoder.encode(publicKey) +
-                  "&apiKey=identity&signature=x6kHcaqhJW%2B7iMV4nLCRkm05AQ4%3D"))
+                  "name=jclouds-keypair&publickey=" + UriComponent.encode(publicKey, UriComponent.Type.QUERY_PARAM) +
+                  "&apiKey=identity&signature=g/6BXLnnvOMlKQBp1yM7GKlvfus%3D"))
             .headers(
                ImmutableMultimap.<String, String>builder()
                   .put("Accept", "application/json")
