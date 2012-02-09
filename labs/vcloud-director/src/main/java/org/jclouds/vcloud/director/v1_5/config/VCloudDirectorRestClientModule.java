@@ -85,6 +85,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
    protected void configure() {
       // session client is used directly for filters and retry handlers, so let's bind it explicitly
       bindClientAndAsyncClient(binder(), SessionClient.class, SessionAsyncClient.class);
+      bindClientAndAsyncClient(binder(), OrgClient.class, OrgAsyncClient.class);
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(InvalidateSessionAndRetryOn401AndLogoutOnClose.class);
       super.configure();
    }

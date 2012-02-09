@@ -39,6 +39,10 @@ public interface OrgClient {
 
    /**
     * Retrieves a list of organizations.
+    *
+    * <pre>
+    * GET /org
+    * </pre>
     * 
     * @return a list of organizations
     */
@@ -46,28 +50,36 @@ public interface OrgClient {
 
    /**
     * Retrieves an organization.
+    *
+    * <pre>
+    * GET /org/{id}
+    * </pre>
     * 
     * @return the org or null if not found
     */
-   Org getOrg(String orgId);
-
    Org getOrg(ReferenceType<?> orgRef);
+	// FIXME throws exception on not found currently
    
    /**
     * Retrieves an list of the organization's metadata
+    *
+    * <pre>
+    * GET /org/{id}/metadata
+    * </pre>
     * 
     * @return a list of metadata
     */
-   Metadata getMetadata(String orgId);
-
    Metadata getMetadata(ReferenceType<?> orgRef);
 
    /**
-    * Retrieves a metadata
+    * Retrieves a metadata entry.
+    *
+    * <pre>
+    * GET /org/{id}/metadata{key}
+    * </pre>
     * 
-    * @return the metadata or null if not found
+    * @return the metadata entry or null if not found
     */
-   MetadataEntry getMetadataEntry(String orgId, String key);
-
    MetadataEntry getMetadataEntry(ReferenceType<?> orgRef, String key);
+	// FIXME throws exception on not found currently
 }

@@ -55,16 +55,6 @@ public interface OrgAsyncClient {
    ListenableFuture<OrgList> getOrgList();
 
    /**
-    * @see OrgClient#getOrg(String)
-    */
-   @GET
-   @Path("/org/{id}")
-   @Consumes
-   @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Org> getOrg(@PathParam("id") String orgId);
-
-   /**
     * @see OrgClient#getOrg(ReferenceType)
     */
    @GET
@@ -72,16 +62,6 @@ public interface OrgAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Org> getOrg(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> orgRef);
-   
-   /**
-    * @see OrgClient#getMetadata(String)
-    */
-   @GET
-   @Path("/org/{id}/metadata")
-   @Consumes
-   @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Metadata> getMetadata(@PathParam("id") String orgId);
    
    /**
     * @see OrgClient#getMetadata(ReferenceType)
@@ -94,16 +74,6 @@ public interface OrgAsyncClient {
    ListenableFuture<Metadata> getMetadata(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> orgRef);
 
    /**
-    * @see OrgClient#getMetadataEntry(String, String)
-    */
-   @GET
-   @Path("/org/{id}/metadata/{key}")
-   @Consumes
-   @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<MetadataEntry> getMetadataEntry(@PathParam("id") String orgId, @PathParam("key") String key);
-
-   /**
     * @see OrgClient#getMetadataEntry(ReferenceType, String)
     */
    @GET
@@ -111,5 +81,6 @@ public interface OrgAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<MetadataEntry> getMetadataEntry(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> orgRef, @PathParam("key") String key);
+   ListenableFuture<MetadataEntry> getMetadataEntry(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> orgRef,
+         @PathParam("key") String key);
 }
