@@ -22,7 +22,16 @@ import java.util.Map;
 
 import org.jclouds.glesys.GleSYSAsyncClient;
 import org.jclouds.glesys.GleSYSClient;
-import org.jclouds.glesys.features.*;
+import org.jclouds.glesys.features.ArchiveAsyncClient;
+import org.jclouds.glesys.features.ArchiveClient;
+import org.jclouds.glesys.features.DomainAsyncClient;
+import org.jclouds.glesys.features.DomainClient;
+import org.jclouds.glesys.features.EmailAsyncClient;
+import org.jclouds.glesys.features.EmailClient;
+import org.jclouds.glesys.features.IpAsyncClient;
+import org.jclouds.glesys.features.IpClient;
+import org.jclouds.glesys.features.ServerAsyncClient;
+import org.jclouds.glesys.features.ServerClient;
 import org.jclouds.glesys.handlers.GleSYSErrorHandler;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
@@ -31,10 +40,13 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
+import org.jclouds.location.suppliers.ImplicitLocationSupplier;
+import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstZone;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Scopes;
 
 /**
  * Configures the GleSYS connection.
@@ -74,5 +86,10 @@ public class GleSYSRestClientModule extends RestClientModule<GleSYSClient, GleSY
    protected void bindRetryHandlers() {
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(BackoffLimitedRetryHandler.class);
    }
-
+   
+   @Override
+   protected void installLocations() {
+      super.installLocations();
+      bind(ImplicitLocationSupplier.class).to(OnlyLocationOrFirstZone.class).in(Scopes.SINGLETON);
+   }
 }

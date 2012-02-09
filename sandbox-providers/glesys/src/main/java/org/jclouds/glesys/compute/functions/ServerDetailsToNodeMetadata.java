@@ -102,7 +102,8 @@ public class ServerDetailsToNodeMetadata implements Function<ServerDetails, Node
       builder.ids(from.getId() + "");
       builder.name(from.getHostname());
       builder.hostname(from.getHostname());
-      builder.location(findLocationForServerDetails.apply(from));
+      Location location = findLocationForServerDetails.apply(from);
+      assert (location != null) : String.format("no location matched ServerDetails %s", from);
       builder.group(parseGroupFromName(from.getHostname()));
       builder.imageId(from.getTemplateName() + "");
       builder.operatingSystem(parseOperatingSystem(from));
