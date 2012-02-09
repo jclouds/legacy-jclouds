@@ -19,7 +19,6 @@
 package org.jclouds.cloudstack.compute;
 
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
-import org.jclouds.cloudstack.domain.EncryptedPassword;
 import org.jclouds.cloudstack.domain.EncryptedPasswordAndPrivateKey;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.SshKeyPair;
@@ -154,15 +153,15 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
          node = getOnlyElement(computeContext.getComputeService()
             .createNodesInGroup(group, 1, template));
 
-         EncryptedPassword password = client.getVirtualMachineClient()
+         String encryptedPassword = client.getVirtualMachineClient()
             .getEncryptedPasswordForVirtualMachine(Long.parseLong(node.getId()));
 
          Crypto crypto = new BouncyCastleCrypto();
          WindowsLoginCredentialsFromEncryptedData passwordDecrypt = new WindowsLoginCredentialsFromEncryptedData(crypto);
 
-         assertEquals(passwordDecrypt.apply(EncryptedPasswordAndPrivateKey.builder()
-            .encryptedPassword(password).privateKey(keyPair.getPrivateKey()).build())
-            .getPassword(), "bX7vvptvw");
+         assertEquals(passwordDecrypt.apply(
+            new EncryptedPasswordAndPrivateKey(encryptedPassword, keyPair.getPrivateKey())).getPassword(),
+            "bX7vvptvw");
 
       } finally {
          if (node != null) {
