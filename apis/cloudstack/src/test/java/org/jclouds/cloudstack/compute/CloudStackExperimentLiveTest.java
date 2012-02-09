@@ -131,7 +131,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
       }
    }
 
-   @Test
+   @Test(enabled = false)
    public void testCreateWindowsMachineWithKeyPairAndCheckIfTheGeneratedPasswordIsEncrypted()
       throws RunNodesException, NoSuchAlgorithmException, CertificateException {
       // final Map<String, String> sshKey = SshKeys.generate();
