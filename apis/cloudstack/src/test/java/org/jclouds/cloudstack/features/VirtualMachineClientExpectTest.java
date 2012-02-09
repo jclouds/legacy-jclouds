@@ -21,11 +21,17 @@ package org.jclouds.cloudstack.features;
 import com.google.common.collect.ImmutableMultimap;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.EncryptedPassword;
+import org.jclouds.cloudstack.domain.EncryptedPasswordAndPrivateKey;
+import org.jclouds.cloudstack.functions.WindowsLoginCredentialsFromEncryptedData;
+import org.jclouds.crypto.Crypto;
+import org.jclouds.encryption.bouncycastle.BouncyCastleCrypto;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
 import java.net.URI;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 import static org.testng.Assert.assertEquals;
 
@@ -37,7 +43,7 @@ import static org.testng.Assert.assertEquals;
 @Test(groups = "unit", testName = "VirtualMachineClientExpectTest")
 public class VirtualMachineClientExpectTest extends BaseCloudStackRestClientExpectTest<VirtualMachineClient> {
 
-   public void testGetPasswordForVirtualMachineWhenResponseIs2xx() {
+   public void testGetPasswordForVirtualMachineWhenResponseIs2xx() throws NoSuchAlgorithmException, CertificateException {
       String privateKey = "-----BEGIN RSA PRIVATE KEY-----\n" +
          "MIICXgIBAAKBgQDnaPKhTNgw7qPJVp3qsT+7XhhAbip25a0AnUgq8Fb9LPcZk00p\n" +
          "jm+m4JrKmDWKZWrHMNBhCNHMzvV9KrAXUMzL4s7mdEicbxTKratTYoyJM7a87bcZ\n" +
@@ -77,7 +83,11 @@ public class VirtualMachineClientExpectTest extends BaseCloudStackRestClientExpe
 
       assertEquals(actual, expected);
 
-      // TODO: decrypt the returned password using the private key
+      Crypto crypto = new BouncyCastleCrypto();
+      WindowsLoginCredentialsFromEncryptedData passwordDecrypt = new WindowsLoginCredentialsFromEncryptedData(crypto);
+
+      assertEquals(passwordDecrypt.apply(EncryptedPasswordAndPrivateKey.builder()
+         .encryptedPassword(actual).privateKey(privateKey).build()).getPassword(), "bX7vvptvw");
    }
 
    @Override
