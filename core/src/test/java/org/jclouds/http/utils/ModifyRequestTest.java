@@ -18,22 +18,23 @@
  */
 package org.jclouds.http.utils;
 
-import static org.jclouds.http.utils.ModifyRequest.parseQueryToMap;
-import static org.testng.Assert.assertEquals;
-
-import java.net.URI;
-
-import javax.ws.rs.core.MediaType;
-
-import org.jclouds.http.HttpRequest;
-import org.jclouds.io.Payload;
-import org.jclouds.io.Payloads;
-import org.testng.annotations.Test;
-
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
+import org.jclouds.util.Strings2;
+import org.testng.annotations.Test;
+
+import javax.ws.rs.core.MediaType;
+import java.net.URI;
+import java.util.Set;
+
+import static org.jclouds.http.utils.ModifyRequest.parseQueryToMap;
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author Adrian Cole
@@ -128,6 +129,19 @@ public class ModifyRequestTest {
       assert valueForV.equals("1.3") : "Expected the value for 'v' to be '1.3', found: " + valueForV;
       String valueForSig = Iterables.getOnlyElement(parsedMap.get("sig"));
       assert valueForSig.equals("123") : "Expected the value for 'v' to be '123', found: " + valueForSig;
+   }
+
+   @Test
+   public void testParseQueryEncodedWithDefaultJavaEncoder() {
+      String key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCc903twxU2zcQnIJdXv61RwZNZW94uId9qz08fgsBJsCOnHNIC4+L9k" +
+         "DOA2IHV9cUfEDBm1Be5TbpadWwSbS/05E+FARH2/MCO932UgcKUq5PGymS0249fLCBPci5zoLiG5vIym+1ij1hL/nHvkK99NIwe7io+Lmp" +
+         "9OcF3PTsm3Rgh5T09cRHGX9horp0VoAVa9vKJx6C1/IEHVnG8p0YPPa1lmemvx5kNBEiyoNQNYa34EiFkcJfP6rqNgvY8h/j4nE9SXoUCC" +
+         "/g6frhMFMOL0tzYqvz0Lczqm1Oh4RnSn3O9X4R934p28qqAobe337hmlLUdb6H5zuf+NwCh0HdZ";
+      String queryString = "publickey=" + Strings2.urlEncode(key);
+      Multimap<String, String> parsedMap = parseQueryToMap(queryString);
+
+      Set<String> expected = ImmutableSet.of(Strings2.urlEncode(key));
+      assertEquals(parsedMap.get("publickey"), expected);
    }
 
 }

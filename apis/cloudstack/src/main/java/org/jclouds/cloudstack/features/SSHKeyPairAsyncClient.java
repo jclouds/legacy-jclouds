@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.features;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.cloudstack.filters.AuthenticationFilter;
+import org.jclouds.cloudstack.filters.ReEncodeQueryWithDefaultURLEncoder;
 import org.jclouds.cloudstack.options.ListSSHKeyPairsOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.OnlyElement;
@@ -65,6 +66,7 @@ public interface SSHKeyPairAsyncClient {
    @QueryParams(keys = "command", values = "registerSSHKeyPair")
    @SelectJson("keypair")
    @Consumes(MediaType.APPLICATION_JSON)
+   @RequestFilters(ReEncodeQueryWithDefaultURLEncoder.class)
    ListenableFuture<SshKeyPair> registerSSHKeyPair(@QueryParam("name") String name, @QueryParam("publickey") String publicKey);
 
    /**
