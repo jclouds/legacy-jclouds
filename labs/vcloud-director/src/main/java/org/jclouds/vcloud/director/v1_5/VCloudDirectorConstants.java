@@ -26,6 +26,6 @@ package org.jclouds.vcloud.director.v1_5;
 public class VCloudDirectorConstants {
 
    /** The XML namespace used by the clients. */
-   public static final String XMLNS = "http://www.vmware.com/vcloud/v1.5";
+   public static final String VCLOUD_1_5_NS = "http://www.vmware.com/vcloud/v1.5";
 
 }

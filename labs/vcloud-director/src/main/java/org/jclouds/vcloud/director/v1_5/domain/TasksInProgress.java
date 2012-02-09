@@ -37,7 +37,7 @@ import com.google.common.collect.Sets;
 /**
  * @author grkvlt@apache.org
  */
-@XmlRootElement(namespace = XMLNS, name = "TasksInProgress")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "TasksInProgress")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TasksInProgress {
 
@@ -86,7 +86,7 @@ public class TasksInProgress {
       this.tasks = ImmutableSet.copyOf(tasks);
    }
 
-   @XmlElement(namespace = XMLNS, name = "Task")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Task")
    private Set<Task> tasks = Sets.newLinkedHashSet();
 
    public Set<Task> getTasks() {

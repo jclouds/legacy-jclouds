@@ -43,7 +43,7 @@ import com.google.common.collect.Sets;
  *
  * @author danikov
  */
-@XmlRootElement(namespace = XMLNS, name = "MetadataEntry")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "MetadataEntry")
 public class MetadataEntry extends ResourceType<MetadataEntry> {
    
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.METADATA_ENTRY;
@@ -138,9 +138,9 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
       this.value = checkNotNull(value, "value");
    }
 
-   @XmlElement(namespace = XMLNS, name = "Key")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Key")
    private String key;
-   @XmlElement(namespace = XMLNS, name = "Value")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Value")
    private String value;
 
    /**

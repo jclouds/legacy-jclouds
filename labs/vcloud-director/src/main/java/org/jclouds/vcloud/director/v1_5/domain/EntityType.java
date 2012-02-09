@@ -157,9 +157,9 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       }
    }
 
-   @XmlElement(namespace = XMLNS, name = "Description")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Description")
    private String description;
-   @XmlElement(namespace = XMLNS, name = "TasksInProgress")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "TasksInProgress")
    private TasksInProgress tasksInProgress;
    @XmlAttribute
    private String id;
@@ -209,19 +209,6 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
 
    public void setId(String id) {
       this.id = id;
-   }
-
-   /**
-    * Returns the unique UUID string for this entity.
-    *
-    * Once we have an entity, the {@link #getId()} field is better suited to retrieving the
-    * id than {@link #getHref()}.
-    *
-    * @see ReferenceType#getUuid()
-    */
-   @Override
-   public String getUuid() {
-      return Iterables.getLast(Splitter.on(":").split(id));
    }
 
    /**

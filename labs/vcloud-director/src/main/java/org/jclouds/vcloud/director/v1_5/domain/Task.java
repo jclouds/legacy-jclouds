@@ -45,7 +45,7 @@ import com.google.common.collect.Sets;
  *
  * @author grkvlt@apache.org
  */
-@XmlRootElement(namespace = XMLNS, name = "Task")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Task")
 public class Task extends EntityType<Task> {
    
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.TASK;
@@ -286,17 +286,17 @@ public class Task extends EntityType<Task> {
       super(href, name);
    }
 
-   @XmlElement(namespace = XMLNS, name = "Error")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Error")
    private Error error;
-   @XmlElement(namespace = XMLNS, name = "Organization")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Organization")
    private Reference org;
-   @XmlElement(namespace = XMLNS, name = "Progress")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Progress")
    private Integer progress;
-   @XmlElement(namespace = XMLNS, name = "Owner")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Owner")
    private Reference owner;
-   @XmlElement(namespace = XMLNS, name = "User")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "User")
    private Reference user;
-   @XmlElement(namespace = XMLNS, name = "Params")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Params")
    private Object params;
    @XmlAttribute
    private String status;

@@ -45,7 +45,7 @@ import com.google.common.collect.Sets;
  *
  * @author Adrian Cole
  */
-@XmlRootElement(namespace = XMLNS, name = "Org")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Org")
 public class Org extends EntityType<Org> {
    
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.ORG;
@@ -174,7 +174,7 @@ public class Org extends EntityType<Org> {
       this.fullName = fullName;
    }
 
-   @XmlElement(namespace = XMLNS, name = "FullName")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "FullName")
    private String fullName;
 
    /**

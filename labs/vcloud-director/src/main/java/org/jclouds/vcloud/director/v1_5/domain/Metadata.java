@@ -44,7 +44,7 @@ import com.google.common.collect.Sets;
  *
  * @author danikov
  */
-@XmlRootElement(namespace = XMLNS, name = "Metadata")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Metadata")
 public class Metadata extends ResourceType<Metadata> {
    
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.METADATA;
@@ -137,7 +137,7 @@ public class Metadata extends ResourceType<Metadata> {
       this.metadata = ImmutableSet.copyOf(metadataEntries);
    }
 
-   @XmlElement(namespace = XMLNS, name = "MetadataEntry")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "MetadataEntry")
    private Set<MetadataEntry> metadata = Sets.newLinkedHashSet();
 
    public Set<MetadataEntry> getMetadata() {
