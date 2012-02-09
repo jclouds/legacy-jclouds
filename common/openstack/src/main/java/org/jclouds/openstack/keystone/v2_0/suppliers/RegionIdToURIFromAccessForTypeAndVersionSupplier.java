@@ -20,6 +20,7 @@ package org.jclouds.openstack.keystone.v2_0.suppliers;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -59,14 +60,20 @@ public class RegionIdToURIFromAccessForTypeAndVersionSupplier implements RegionI
    @Override
    public Map<String, Supplier<URI>> get() {
       Access accessResponse = access.get();
-      Service service = Iterables.find(accessResponse.getServiceCatalog(), new Predicate<Service>() {
+      Service service = null;
+      try {
+         service = Iterables.find(accessResponse.getServiceCatalog(), new Predicate<Service>() {
 
-         @Override
-         public boolean apply(Service input) {
-            return input.getType().equals(apiType);
-         }
+            @Override
+            public boolean apply(Service input) {
+               return input.getType().equals(apiType);
+            }
 
-      });
+         });
+      } catch (NoSuchElementException e) {
+         throw new NoSuchElementException(String.format("apiType %s not found in catalog %s", apiType,
+               accessResponse.getServiceCatalog()));
+      }
       Map<String, Endpoint> regionIdToEndpoint = Maps.uniqueIndex(Iterables.filter(service.getEndpoints(),
                new Predicate<Endpoint>() {
 
