@@ -16,43 +16,46 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5;
+package org.jclouds.vcloud.director.v1_5.features;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.vcloud.director.v1_5.domain.Session;
-import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
-import org.jclouds.vcloud.director.v1_5.features.OrgClient;
-
-import com.google.inject.Provides;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 
 /**
- * Provides synchronous access to VCloudDirector.
+ * Provides synchronous access to Network.
  * <p/>
  * 
- * @see VCloudDirectorAsyncClient
- * @author Adrian Cole
+ * @see NetworkAsyncClient
+ * @see <a href= "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID=" />
+ * @author danikov
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface VCloudDirectorClient {
-   /**
-    * 
-    * @return the current login session
-    */
-   @Provides
-   Session getCurrentSession();
-   
-   /**
-    * @return synchronous access to Org features
-    */
-   @Delegate
-   OrgClient getOrgClient();
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
+public interface NetworkClient {
 
    /**
-    * @return synchronous access to Network features
+    * Retrieves a network.
+    * 
+    * @return the network or null if not found
     */
-   @Delegate
-   NetworkClient getNetworkClient();
+   OrgNetwork getNetwork(URI networkRef);
+   
+   /**
+    * Retrieves an list of the network's metadata
+    * 
+    * @return a list of metadata
+    */
+   Metadata getMetadata(URI networkRef);
+
+   /**
+    * Retrieves a metadata entry
+    * 
+    * @return the metadata entry, or null if not found
+    */
+   MetadataEntry getMetadataEntry(URI metaDataRef);
+
 }

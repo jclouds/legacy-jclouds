@@ -42,6 +42,8 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.annotations.Login;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
+import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgClient;
 import org.jclouds.vcloud.director.v1_5.functions.LoginUserInOrgWithPassword;
@@ -72,6 +74,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
             .put(OrgClient.class, OrgAsyncClient.class)
+            .put(NetworkClient.class, NetworkAsyncClient.class)
             .build();
 
    public VCloudDirectorRestClientModule() {
