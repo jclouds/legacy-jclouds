@@ -18,6 +18,8 @@
  */
 package org.jclouds.openstack.keystone.v2_0.functions;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -27,8 +29,6 @@ import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiAccessKeyCredentials;
 
 import com.google.common.base.Function;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 
 @Singleton
 public class AuthenticateApiAccessKeyCredentials implements Function<Credentials, Access> {
@@ -41,10 +41,10 @@ public class AuthenticateApiAccessKeyCredentials implements Function<Credentials
 
    @Override
    public Access apply(Credentials input) {
-      // TODO: tenantID may not be present
-      Iterable<String> tenantIdUsernameOrAccessKey = Splitter.on(':').split(input.identity);
-      String tenantId = Iterables.get(tenantIdUsernameOrAccessKey, 0);
-      String usernameOrAccessKey = Iterables.get(tenantIdUsernameOrAccessKey, 1);
+      checkArgument(input.identity.indexOf(':') != -1, "format is tenantId:accesskey");
+
+      String tenantId = input.identity.substring(0, input.identity.indexOf(':'));
+      String usernameOrAccessKey = input.identity.substring(input.identity.indexOf(':') + 1);
       String passwordOrSecretKey = input.credential;
 
       ApiAccessKeyCredentials apiAccessKeyCredentials = ApiAccessKeyCredentials.createWithAccessKeyAndSecretKey(
