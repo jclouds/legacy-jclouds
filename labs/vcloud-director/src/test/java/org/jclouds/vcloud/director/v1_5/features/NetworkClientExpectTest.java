@@ -24,16 +24,16 @@ import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.IpAddresses;
+import org.jclouds.vcloud.director.v1_5.domain.IpRange;
+import org.jclouds.vcloud.director.v1_5.domain.IpRanges;
 import org.jclouds.vcloud.director.v1_5.domain.IpScope;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
-import org.jclouds.vcloud.director.v1_5.domain.VAppNetwork;
-import org.jclouds.vcloud.director.v1_5.domain.Org;
-import org.jclouds.vcloud.director.v1_5.domain.OrgList;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.SyslogServerSettings;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -45,18 +45,12 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", singleThreaded = true, testName = "NetworkClientExpectTest")
 public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
    
-   /*
-      GET /network/{id}
-      GET /network/{id}/metadata
-      GET /network/{id}/metadata/{key}
-    */
-   
    @Test
    public void testWhenResponseIs2xxLoginReturnsValidNetwork() {
-      URI orgRef = URI.create("https://vcloudbeta.bluelock.com/api/network/NETWORK_KEY");
+      URI networkRef = URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c");
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", orgRef), 
+            getStandardRequest("GET", networkRef), 
             getStandardPayloadResponse("/network/network.xml", VCloudDirectorMediaType.ORG_NETWORK_XML));
       
       OrgNetwork expected = OrgNetwork
@@ -68,37 +62,41 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
          .link(Link.builder()
             .rel("up")
             .type("application/vnd.vmware.vcloud.org+xml")
-            .name("Cluster01-JClouds")
             .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
             .build())
          .link(Link.builder()
             .rel("down")
             .type("application/vnd.vmware.vcloud.metadata+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadat"))
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata"))
             .build())
          .description("")
          .configuration(NetworkConfiguration.builder()
-            .IpScope(IpScope.builder()
+            .ipScope(IpScope.builder()
                .isInherited(true)
-               .gateway("")
-               .netmask("")
-               .dns1("")
-               .dns2("")
-               .ipRange("", "")
+               .gateway("173.240.107.49")
+               .netmask("255.255.255.240")
+               .dns1("173.240.111.52")
+               .dns2("173.240.111.53")
+               .ipRanges(IpRanges.builder()
+                     .ipRange(IpRange.builder()
+                           .startAddress("173.240.107.50")
+                           .endAddress("173.240.107.62")
+                           .build())
+                     .build())
                .build())
             .fenceMode("bridged")
             .retainNetInfoAcrossDeployments(false)
-            .syslogServerSettings(null)
+            .syslogServerSettings(SyslogServerSettings.builder().build())
             .build())
-         .allowedExternalIpAddresses(null)
+         .allowedExternalIpAddresses(IpAddresses.builder().build())
          .build();
 
       assertEquals(client.getNetworkClient().getNetwork(networkRef), expected);
    }
    
    @Test
-   public void testWhenResponseIs2xxLoginReturnsValidMetadataList() {
-      URI orgRef = URI.create("https://vcloudbeta.bluelock.com/api/network/NETWORK_KEY");
+   public void testWhenResponseIs2xxLoginReturnsValidMetadata() {
+      URI orgRef = URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c");
       URI metaRef = URI.create(orgRef.toASCIIString()+"/metadata/");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
@@ -107,11 +105,11 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
       
       Metadata expected = Metadata.builder()
             .type("application/vnd.vmware.vcloud.metadata+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/network/NETWORK_KEY/metadata"))
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata"))
             .link(Link.builder()
                   .rel("up")
-                  .type("????????")
-                  .href(URI.create("??????"))
+                  .type("application/vnd.vmware.vcloud.network+xml")
+                  .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c"))
                   .build())
             .build();
 
@@ -119,8 +117,9 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
    }
    
    @Test(enabled=false) // No metadata in exemplar xml...
-   public void testWhenResponseIs2xxLoginReturnsValidMetadata() {
-      URI metadataRef = URI.create("https://vcloudbeta.bluelock.com/api/network/NETWORK_KEY/metadata/KEY");
+   public void testWhenResponseIs2xxLoginReturnsValidMetadataEntry() {
+      URI metadataRef = URI.create(
+            "https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata/KEY");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", metadataRef),
