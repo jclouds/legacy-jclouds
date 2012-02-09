@@ -167,7 +167,7 @@ public class ResourceType<T extends ResourceType<T>> implements URISupplier {
    /**
     * Set of optional links to an entity or operation associated with this object.
     */
-   public Set<Link>getLinks() {
+   public Set<Link> getLinks() {
       return links;
    }
 
