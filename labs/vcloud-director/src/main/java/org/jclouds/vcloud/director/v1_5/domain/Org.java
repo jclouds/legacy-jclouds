@@ -63,12 +63,37 @@ public class Org extends EntityType<Org> {
    public static class Builder extends EntityType.Builder<Org> {
 
       private String fullName;
+      private Boolean isEnabled;
 
       /**
        * @see Org#getFullName()
        */
       public Builder fullName(String fullName) {
          this.fullName = fullName;
+         return this;
+      }
+
+      /**
+       * @see Org#isEnabled()
+       */
+      public Builder isEnabled(Boolean isEnabled) {
+         this.isEnabled = isEnabled;
+         return this;
+      }
+
+      /**
+       * @see Org#isEnabled()
+       */
+      public Builder enabled() {
+         this.isEnabled = Boolean.TRUE;
+         return this;
+      }
+
+      /**
+       * @see Org#isEnabled()
+       */
+      public Builder disabled() {
+         this.isEnabled = Boolean.FALSE;
          return this;
       }
 
@@ -80,6 +105,7 @@ public class Org extends EntityType<Org> {
          org.setType(type);
          org.setLinks(links);
          org.setTasksInProgress(tasksInProgress);
+         org.setIsEnabled(isEnabled);
          return org;
       }
 
@@ -174,15 +200,27 @@ public class Org extends EntityType<Org> {
       this.fullName = fullName;
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "FullName")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "FullName", required = true)
    private String fullName;
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "IsEnabled")
+   private Boolean isEnabled;
 
    /**
-    * 
-    * @return fullName of the org
+    * Full name of the organization.
     */
    public String getFullName() {
       return fullName;
+   }
+
+   /**
+    * Full name of the organization.
+    */
+   public Boolean isEnabled() {
+      return isEnabled;
+   }
+
+   public void isEnabled(Boolean isEnabled) {
+      this.isEnabled = isEnabled;
    }
 
    @Override
@@ -192,16 +230,16 @@ public class Org extends EntityType<Org> {
       if (o == null || getClass() != o.getClass())
          return false;
       Org that = Org.class.cast(o);
-      return super.equals(that) && equal(fullName, that.fullName);
+      return super.equals(that) && equal(fullName, that.fullName) && equal(this.isEnabled, that.isEnabled);
    }
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(fullName);
+      return super.hashCode() + Objects.hashCode(fullName, isEnabled);
    }
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("fullName", fullName);
+      return super.string().add("fullName", fullName).add("isEnabled", isEnabled);
    }
 }
