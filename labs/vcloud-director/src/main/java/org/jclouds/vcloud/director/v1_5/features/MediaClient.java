@@ -26,6 +26,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
 
 /**
  * Provides synchronous access to Media.
@@ -46,6 +47,19 @@ public interface MediaClient {
    Media getMedia(URI mediaRef);
    
    /**
+    * Updates the name/description of a media.
+    * 
+    * @return a task. This operation is asynchronous and the user should monitor the returned 
+    * task status in order to check when it is completed.
+    */
+   Task updateMedia(URI mediaRef, Media media);
+   
+   /**
+    * Deletes a media.
+    */
+   void deleteMedia(URI mediaRef);
+   
+   /**
     * Retrieves an owner.
     * 
     * @return the owner or null if not found
@@ -58,6 +72,13 @@ public interface MediaClient {
     * @return a list of metadata
     */
    Metadata getMetadata(URI mediaRef);
+   /**
+    * Merges the metadata for a media with the information provided.
+    * 
+    * @return a task. This operation is asynchronous and the user should monitor the returned 
+    * task status in order to check when it is completed.
+    */
+   Task updateMetadata(URI mediaRef, Metadata metadata);
 
    /**
     * Retrieves a metadata entry
@@ -66,11 +87,18 @@ public interface MediaClient {
     */
    MetadataEntry getMetadataEntry(URI metaDataRef);
    
-   // TODO
-//   PUT /media/{id}   Updates the name/description of a media.
-//   DELETE /media/{id}   Deletes a media.
-//   POST /media/{id}/metadata  Merges the metadata for a media with the information provided.
-//   PUT /media/{id}/metadata/{key}   Sets the metadata for the particular key for the media to the value provided.
-//   DELETE /media/{id}/metadata/{key}   Deletes the metadata for the particular key for the media
+   /**
+    * Sets the metadata for the particular key for the media to the value provided
+    * 
+    * @return a task. This operation is asynchronous and the user should monitor the returned 
+    * task status in order to check when it is completed.
+    */
+   Task updateMetadataEntry(URI metaDataRef, MetadataEntry metadataEntry);
+   
+   /**
+    * Deletes a metadata entry.
+    */
+   void deleteMetadataEntry(URI metaDataRef);
+   
 
 }
