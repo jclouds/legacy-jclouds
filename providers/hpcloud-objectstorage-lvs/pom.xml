@@ -35,7 +35,7 @@
 
     <properties>
         <test.initializer>org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration.HPCloudObjectStorageLasVegasTestInitializer</test.initializer>
-        <test.hpcloud-objectstorage-lvs.endpoint>https://region-a.geo-1.objects.hpcloudsvc.com/auth</test.hpcloud-objectstorage-lvs.endpoint>
+        <test.hpcloud-objectstorage-lvs.endpoint>https://region-a.geo-1.identity.hpcloudsvc.com:35357</test.hpcloud-objectstorage-lvs.endpoint>
         <test.hpcloud-objectstorage-lvs.api-version>1.0</test.hpcloud-objectstorage-lvs.api-version>
         <test.hpcloud-objectstorage-lvs.build-version></test.hpcloud-objectstorage-lvs.build-version>
         <test.hpcloud-objectstorage-lvs.identity>FIXME_IDENTITY</test.hpcloud-objectstorage-lvs.identity>

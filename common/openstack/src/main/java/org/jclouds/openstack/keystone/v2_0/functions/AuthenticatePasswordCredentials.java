@@ -17,6 +17,7 @@
  * under the License.
  */
 package org.jclouds.openstack.keystone.v2_0.functions;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import javax.inject.Inject;
 
@@ -26,8 +27,6 @@ import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.PasswordCredentials;
 
 import com.google.common.base.Function;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 
 public class AuthenticatePasswordCredentials implements Function<Credentials, Access> {
    private final ServiceClient client;
@@ -39,10 +38,10 @@ public class AuthenticatePasswordCredentials implements Function<Credentials, Ac
 
    @Override
    public Access apply(Credentials input) {
-      // TODO: tenantID may not be present
-      Iterable<String> tenantIdUsernameOrAccessKey = Splitter.on(':').split(input.identity);
-      String tenantId = Iterables.get(tenantIdUsernameOrAccessKey, 0);
-      String usernameOrAccessKey = Iterables.get(tenantIdUsernameOrAccessKey, 1);
+      checkArgument(input.identity.indexOf(':') != -1, "format is tenantId:accesskey");
+
+      String tenantId = input.identity.substring(0, input.identity.indexOf(':'));
+      String usernameOrAccessKey = input.identity.substring(input.identity.indexOf(':') + 1);
       String passwordOrSecretKey = input.credential;
 
       PasswordCredentials passwordCredentials = PasswordCredentials.createWithUsernameAndPassword(usernameOrAccessKey,
