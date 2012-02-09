@@ -50,7 +50,7 @@ public class SimpleDateFormatDateService implements DateService {
    private static final SimpleDateFormat rfc822SimpleDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
 
    // @GuardedBy("this")
-   private static final SimpleDateFormat cSimpleDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss '+0000' yyyy", Locale.US);
+   private static final SimpleDateFormat cSimpleDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.US);
 
    static {
       iso8601SimpleDateFormat.setTimeZone(new SimpleTimeZone(0, "GMT"));
@@ -118,7 +118,12 @@ public class SimpleDateFormatDateService implements DateService {
    @Override
    public final String iso8601DateFormat(Date date) {
       synchronized (iso8601SimpleDateFormat) {
-         return iso8601SimpleDateFormat.format(date);
+         String parsed = iso8601SimpleDateFormat.format(date);
+         String tz = findTZ(parsed);
+         if (tz.equals("+0000")) {
+            parsed = trimTZ(parsed) + "Z";
+         }
+         return parsed;
       }
    }
 
@@ -130,9 +135,9 @@ public class SimpleDateFormatDateService implements DateService {
    @Override
    public final Date iso8601DateParse(String toParse) {
       String tz = findTZ(toParse);
-      toParse = trimTZ(toParse);
       toParse = trimToMillis(toParse);
-      toParse += tz; // Usable TZ added back
+      toParse = trimTZ(toParse);
+      toParse += tz;
       synchronized (iso8601SimpleDateFormat) {
          try {
             return iso8601SimpleDateFormat.parse(toParse);
@@ -145,8 +150,9 @@ public class SimpleDateFormatDateService implements DateService {
    @Override
    public final Date iso8601SecondsDateParse(String toParse) {
       String tz = findTZ(toParse);
+      toParse = trimToMillis(toParse);
       toParse = trimTZ(toParse);
-      toParse += tz; // Usable TZ added back
+      toParse += tz;
       synchronized (iso8601SecondsSimpleDateFormat) {
          try {
             return iso8601SecondsSimpleDateFormat.parse(toParse);
@@ -159,7 +165,12 @@ public class SimpleDateFormatDateService implements DateService {
    @Override
    public String iso8601SecondsDateFormat(Date date) {
       synchronized (iso8601SecondsSimpleDateFormat) {
-         return iso8601SecondsSimpleDateFormat.format(date);
+         String parsed = iso8601SecondsSimpleDateFormat.format(date);
+         String tz = findTZ(parsed);
+         if (tz.equals("+0000")) {
+            parsed = trimTZ(parsed) + "Z";
+         }
+         return parsed;
       }
    }
 
