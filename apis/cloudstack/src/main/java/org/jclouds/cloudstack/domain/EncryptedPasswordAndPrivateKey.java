@@ -23,33 +23,6 @@ package org.jclouds.cloudstack.domain;
  */
 public class EncryptedPasswordAndPrivateKey {
 
-   public static Builder builder() {
-      return new Builder();
-   }
-
-   public static class Builder {
-      private String encryptedPassword;
-      private String privateKey;
-      
-      public Builder encryptedPassword(String encryptedPassword) {
-         this.encryptedPassword = encryptedPassword;
-         return this;
-      }
-
-      public Builder encryptedPassword(EncryptedPassword password) {
-         return encryptedPassword(password.getEncryptedPassword());
-      }
-      
-      public Builder privateKey(String privateKey) {
-         this.privateKey = privateKey;
-         return this;
-      }
-      
-      public EncryptedPasswordAndPrivateKey build() {
-         return new EncryptedPasswordAndPrivateKey(encryptedPassword, privateKey);
-      }
-   }
-   
    private final String encryptedPassword;
    private final String privateKey;
 

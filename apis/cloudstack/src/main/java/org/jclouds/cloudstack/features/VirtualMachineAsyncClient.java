@@ -20,7 +20,6 @@ package org.jclouds.cloudstack.features;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
-import org.jclouds.cloudstack.domain.EncryptedPassword;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
@@ -125,9 +124,9 @@ public interface VirtualMachineAsyncClient {
     */
    @GET
    @QueryParams(keys = "command", values = "getVMPassword")
-   @SelectJson("password")
+   @SelectJson("encryptedpassword")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<EncryptedPassword> getEncryptedPasswordForVirtualMachine(@QueryParam("id") long id);
+   ListenableFuture<String> getEncryptedPasswordForVirtualMachine(@QueryParam("id") long id);
 
    /**
     * @see VirtualMachineClient#changeServiceForVirtualMachine

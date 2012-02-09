@@ -20,7 +20,6 @@ package org.jclouds.cloudstack.features;
 
 import com.google.common.collect.ImmutableMultimap;
 import org.jclouds.cloudstack.CloudStackContext;
-import org.jclouds.cloudstack.domain.EncryptedPassword;
 import org.jclouds.cloudstack.domain.EncryptedPasswordAndPrivateKey;
 import org.jclouds.cloudstack.functions.WindowsLoginCredentialsFromEncryptedData;
 import org.jclouds.crypto.Crypto;
@@ -76,18 +75,18 @@ public class VirtualMachineClientExpectTest extends BaseCloudStackRestClientExpe
             .payload(payloadFromResource("/getvmpasswordresponse.json"))
             .build());
 
-      EncryptedPassword actual = client.getEncryptedPasswordForVirtualMachine(1L);
-      EncryptedPassword expected = new EncryptedPassword("EFOwm8icZ4sEib4y6ntVHUKHZJQrGBdyPkL1L9lpFHYhs3JfAtL5E5bxBP5Er27bJyOZPjKFcInX\r\n" +
+      String actual = client.getEncryptedPasswordForVirtualMachine(1L);
+      String expected = "EFOwm8icZ4sEib4y6ntVHUKHZJQrGBdyPkL1L9lpFHYhs3JfAtL5E5bxBP5Er27bJyOZPjKFcInX\r\n" +
          "pQ0LZlQBZDd5/ac0NSoM6tAX3H30pYxNw4t2f9u8aJ48oOEvufgGxTTHnM9qHXD04lt+Ouql6i2q\r\n" +
-         "HxBqCxFkMZEla3LFieE=\r\n");
+         "HxBqCxFkMZEla3LFieE=\r\n";
 
       assertEquals(actual, expected);
 
       Crypto crypto = new BouncyCastleCrypto();
       WindowsLoginCredentialsFromEncryptedData passwordDecrypt = new WindowsLoginCredentialsFromEncryptedData(crypto);
 
-      assertEquals(passwordDecrypt.apply(EncryptedPasswordAndPrivateKey.builder()
-         .encryptedPassword(actual).privateKey(privateKey).build()).getPassword(), "bX7vvptvw");
+      assertEquals(passwordDecrypt.apply(
+         new EncryptedPasswordAndPrivateKey(actual, privateKey)).getPassword(), "bX7vvptvw");
    }
 
    @Override
