@@ -4,11 +4,20 @@
         "version": "5.0",
         "is64Bit": false
     },
-    
     "Centos 5 64-bit": {
         "family": "CENTOS",
         "version": "5.0",
         "is64Bit": true
+    },
+    "CentOS 5.5 x64": {
+        "family": "CENTOS",
+        "version": "5.5",
+        "is64Bit": true
+    },    
+    "CentOS 5.5 x86": {
+        "family": "CENTOS",
+        "version": "5.5",
+        "is64Bit": false
     },
     "Centos 6 32-bit": {
         "family": "CENTOS",
@@ -20,12 +29,27 @@
         "version": "6.0",
         "is64Bit": true
     },
+    "Centos 6 x64": {
+        "family": "CENTOS",
+        "version": "6.0",
+        "is64Bit": true
+    },
+    "Centos 6 x86": {
+        "family": "CENTOS",
+        "version": "6.0",
+        "is64Bit": false
+    },
     "Debian 5.0": {
         "family": "DEBIAN",
         "version": "5.0",
         "is64Bit": false
     },
     "Debian 5.0 64-bit": {
+        "family": "DEBIAN",
+        "version": "5.0",
+        "is64Bit": true
+    },
+    "Debian 5.0.1 x64": {
         "family": "DEBIAN",
         "version": "5.0",
         "is64Bit": true
@@ -40,9 +64,104 @@
         "version": "6.0",
         "is64Bit": true
     },
+    "Debian-6 x64": {
+        "family": "DEBIAN",
+        "version": "6.0",
+        "is64Bit": true
+    },
+    "Fedora Core 11": {
+        "family": "FEDORA",
+        "version": "",
+        "is64Bit": false
+    },
+    "Fedora Core 11 64-bit": {
+        "family": "FEDORA",
+        "version": "",
+        "is64Bit": true
+    },
+    "FreeBSD 8.2": {
+        "family": "FREEBSD",
+        "version": "",
+        "is64Bit": false
+    },
+    "Gentoo": {
+        "family": "GENTOO",
+        "version": "",        
+        "is64Bit": false
+    },
+    "Gentoo 10.1 x64": {
+        "family": "GENTOO",
+        "version": "",
+        "is64Bit": true
+    },
+    "Gentoo 64-bit": {
+        "family": "GENTOO",
+        "version": "",
+        "is64Bit": true
+    },
+    "Scientific Linux 6": {
+        "family": "SCIENTIFIC",
+        "version": "",
+        "is64Bit": false
+    },
+    "Scientific Linux 6 64-bit": {
+        "family": "SCIENTIFIC",
+        "version": "",
+        "is64Bit": true
+    },
+    "Slackware 12": {
+        "family": "SLACKWARE",
+        "version": "",
+        "is64Bit": false
+    },                             
+    "Ubuntu 10.04 LTS 32-bit": {
+        "family": "UBUNTU",
+        "version": "10.04",
+        "is64Bit": false
+    },
+    "Ubuntu 10.04 LTS 64-bit": {
+        "family": "UBUNTU",
+        "version": "10.04",
+        "is64Bit": true
+    },
+    "Ubuntu 10.10 x64": {
+        "family": "UBUNTU",
+        "version": "10.10",
+        "is64Bit": true
+    },        
     "Ubuntu 11.04 64-bit": {
         "family": "UBUNTU",
         "version": "11.04",
         "is64Bit": true
+    },  
+    "Ubuntu 11.04 x64": {
+        "family": "UBUNTU",
+        "version": "11.04",
+        "is64Bit": true
+    },                             
+    "Ubuntu 8.04 x64": {
+        "family": "UBUNTU",
+        "version": "8.04",
+        "is64Bit": true
+    },
+    "Windows Server 2008 R2 x64 std": {
+        "family": "WINDOWS",
+        "version": "2008 R2",
+        "is64Bit": true
+    },
+    "Windows Server 2008 R2 x64 web": {
+        "family": "WINDOWS",
+        "version": "2008 R2",
+        "is64Bit": true
+    },
+    "Windows Server 2008 x64 web": {
+        "family": "WINDOWS",
+        "version": "2008",
+        "is64Bit": true
+    },
+    "Windows Server 2008 x86 web": {
+        "family": "WINDOWS",
+        "version": "2008",
+        "is64Bit": false
     }
 }
