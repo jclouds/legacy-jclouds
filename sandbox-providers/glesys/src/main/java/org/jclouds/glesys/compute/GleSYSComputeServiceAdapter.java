@@ -158,7 +158,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
                      if (templatesSupported.size() > 0)
                         hardwareToReturn.add(new HardwareBuilder().ids(
                                  String.format("datacenter(%s)platform(%s)cpuCores(%d)memorySizeMB(%d)diskSizeGB(%d)",
-                                          datacenter, platformToArgs.getKey(), cpuCores, cpuCores, diskSizeGB)).ram(
+                                          datacenter, platformToArgs.getKey(), cpuCores, memorySizeMB, diskSizeGB)).ram(
                                  memorySizeMB).processors(ImmutableList.of(new Processor(cpuCores, 1.0))).volumes(
                                  ImmutableList.<Volume> of(new VolumeImpl((float) diskSizeGB, true, true))).hypervisor(
                                  platformToArgs.getKey()).location(
