@@ -29,12 +29,15 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
+import org.jclouds.blobstore.options.CreateContainerOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
+import org.jclouds.concurrent.Futures;
 import org.jclouds.domain.Location;
 import org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasAsyncClient;
 import org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClient;
+import org.jclouds.hpcloud.objectstorage.lvs.blobstore.functions.EnableCDNAndCache;
 import org.jclouds.openstack.swift.blobstore.SwiftAsyncBlobStore;
 import org.jclouds.openstack.swift.blobstore.functions.BlobStoreListContainerOptionsToListContainerOptions;
 import org.jclouds.openstack.swift.blobstore.functions.BlobToObject;
@@ -43,7 +46,9 @@ import org.jclouds.openstack.swift.blobstore.functions.ContainerToResourceMetada
 import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlob;
 import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlobMetadata;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * 
@@ -51,6 +56,7 @@ import com.google.common.base.Supplier;
  */
 @Singleton
 public class HPCloudObjectStorageLasVegasAsyncBlobStore extends SwiftAsyncBlobStore {
+   private final EnableCDNAndCache enableCDNAndCache;
 
    @Inject
    protected HPCloudObjectStorageLasVegasAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
@@ -60,10 +66,30 @@ public class HPCloudObjectStorageLasVegasAsyncBlobStore extends SwiftAsyncBlobSt
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob, BlobToObject blob2Object,
             ObjectToBlobMetadata object2BlobMd, BlobToHttpGetOptions blob2ObjectGetOptions,
-            Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
+            Provider<FetchBlobMetadata> fetchBlobMetadataProvider, EnableCDNAndCache enableCDNAndCache) {
       super(context, blobUtils, service, defaultLocation, locations, sync, async, container2ResourceMd,
                container2ContainerListOptions, container2ResourceList, object2Blob, blob2Object, object2BlobMd,
                blob2ObjectGetOptions, fetchBlobMetadataProvider);
+      this.enableCDNAndCache = enableCDNAndCache;
    }
 
+   @Override
+   public ListenableFuture<Boolean> createContainerInLocation(Location location, final String container,
+            CreateContainerOptions options) {
+
+      ListenableFuture<Boolean> returnVal = createContainerInLocation(location, container);
+      if (options.isPublicRead())
+         return Futures.compose(createContainerInLocation(location, container), new Function<Boolean, Boolean>() {
+
+            @Override
+            public Boolean apply(Boolean input) {
+               if (Boolean.TRUE.equals(input)) {
+                  return enableCDNAndCache.apply(container) != null;
+               }
+               return false;
+            }
+
+         }, service);
+      return returnVal;
+   }
 }

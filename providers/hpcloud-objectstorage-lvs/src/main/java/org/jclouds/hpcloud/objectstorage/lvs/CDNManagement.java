@@ -16,23 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration;
+package org.jclouds.hpcloud.objectstorage.lvs;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.jclouds.blobstore.integration.internal.BaseContainerLiveTest;
-import org.testng.annotations.Test;
+import javax.inject.Qualifier;
 
 /**
+ * Represents a component related to HP Cloud Services Content Delivery Network.
+ * 
+ * @see <a href="https://manage.hpcloud.com/pages/build/docs/object-storage/api">HP Cloud Object Storage API</a>
  * @author Jeremy Daggett
+ * 
  */
-@Test(groups = { "live" })
-public class HPCloudObjectStorageLasVegasContainerLiveTest extends BaseContainerLiveTest {
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface CDNManagement {
 
-	@Test(enabled = false)
-   //@Test(expectedExceptions=UnsupportedOperationException.class)
-   public void testPublicAccess() throws MalformedURLException, InterruptedException, IOException {
-      super.testPublicAccess();
-   }
 }

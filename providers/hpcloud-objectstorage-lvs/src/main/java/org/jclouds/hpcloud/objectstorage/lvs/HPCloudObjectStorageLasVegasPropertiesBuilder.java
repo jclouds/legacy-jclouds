@@ -24,7 +24,8 @@ import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 
 import java.util.Properties;
 
-import org.jclouds.openstack.OpenStackAuthAsyncClient;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
+import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.openstack.swift.SwiftPropertiesBuilder;
 
 /**
@@ -39,9 +40,12 @@ public class HPCloudObjectStorageLasVegasPropertiesBuilder extends SwiftProperti
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+      properties.setProperty(KeystoneProperties.SERVICE_TYPE, ServiceType.OBJECT_STORE);
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-NV");
-      properties.setProperty(PROPERTY_ENDPOINT, "https://region-a.geo-1.objects.hpcloudsvc.com/auth");
-      properties.setProperty(PROPERTY_API_VERSION, OpenStackAuthAsyncClient.VERSION);
+      properties.setProperty(PROPERTY_ENDPOINT, "https://region-a.geo-1.identity.hpcloudsvc.com");
+      properties.setProperty(PROPERTY_API_VERSION, "2.0");
+      
       return properties;
    }
+      
 }

@@ -16,23 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration;
+package org.jclouds.hpcloud.services;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.jclouds.blobstore.integration.internal.BaseContainerLiveTest;
-import org.testng.annotations.Test;
+import javax.inject.Qualifier;
 
 /**
+ * HP Extension Block Store Service
+ * 
  * @author Jeremy Daggett
+ * @see <a href="http://docs.openstack.org/api/openstack-typeentity-service/2.0/content/Identity-Service-Concepts-e1362.html"
+ *      />
+ * @see HPExtensionServiceType#BLOCK_STORE
  */
-@Test(groups = { "live" })
-public class HPCloudObjectStorageLasVegasContainerLiveTest extends BaseContainerLiveTest {
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface HPExtensionBlockStore {
 
-	@Test(enabled = false)
-   //@Test(expectedExceptions=UnsupportedOperationException.class)
-   public void testPublicAccess() throws MalformedURLException, InterruptedException, IOException {
-      super.testPublicAccess();
-   }
 }

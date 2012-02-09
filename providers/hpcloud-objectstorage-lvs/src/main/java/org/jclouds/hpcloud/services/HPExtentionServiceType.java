@@ -3,7 +3,7 @@
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
+ * to you under the Apache License, Name 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
@@ -16,23 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
+package org.jclouds.hpcloud.services;
 
-import org.jclouds.blobstore.integration.internal.BaseContainerLiveTest;
-import org.testng.annotations.Test;
+import org.jclouds.openstack.services.ServiceType;
 
 /**
+ * An HP Extension Service, such as CDN, or Block Store Service.
+ * A service provides one or more endpoints through which users can access resources and perform
+ * (presumably useful) operations.
+ * 
  * @author Jeremy Daggett
+ * @see <a href="http://docs.openstack.org/api/openstack-typeentity-service/2.0/content/Identity-Service-Concepts-e1362.html"
+ *      />
  */
-@Test(groups = { "live" })
-public class HPCloudObjectStorageLasVegasContainerLiveTest extends BaseContainerLiveTest {
+public interface HPExtentionServiceType extends ServiceType {
+   /**
+    * CDN
+    */
+   public static final String CDN = "hpext:cdn";
+   /**
+    * Block Storage
+    */
+   public static final String BLOCK_STORE = "hpext:block-store";
 
-	@Test(enabled = false)
-   //@Test(expectedExceptions=UnsupportedOperationException.class)
-   public void testPublicAccess() throws MalformedURLException, InterruptedException, IOException {
-      super.testPublicAccess();
-   }
 }
