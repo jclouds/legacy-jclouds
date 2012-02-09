@@ -18,12 +18,9 @@
  */
 package org.jclouds.cloudstack.features;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URLEncoder;
-
 import com.google.common.base.Functions;
 import com.google.inject.TypeLiteral;
+import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.ListSSHKeyPairsOptions;
 import org.jclouds.crypto.SshKeys;
 import org.jclouds.functions.IdentityFunction;
@@ -36,6 +33,12 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URLEncoder;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code SSHKeyPairAsyncClient}
@@ -112,7 +115,8 @@ public class SSHKeyPairAsyncClientTest extends BaseCloudStackAsyncClientTest<SSH
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
-      checkFilters(httpRequest);
+      assertEquals(httpRequest.getFilters().size(), 2);
+      assertEquals(httpRequest.getFilters().get(0).getClass(), QuerySigner.class);
    }
 
 
@@ -130,7 +134,6 @@ public class SSHKeyPairAsyncClientTest extends BaseCloudStackAsyncClientTest<SSH
       assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
-
    }
 
 

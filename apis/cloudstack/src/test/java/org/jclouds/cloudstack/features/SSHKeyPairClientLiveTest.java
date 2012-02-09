@@ -18,16 +18,18 @@
  */
 package org.jclouds.cloudstack.features;
 
-import static org.testng.Assert.assertEquals;
-
-import java.util.Map;
-import java.util.Set;
-
 import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.crypto.SshKeys;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.Map;
+import java.util.Set;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 /**
  * Tests behavior of {@code SSHKeyPairClient}
@@ -47,6 +49,7 @@ public class SSHKeyPairClientLiveTest extends BaseCloudStackClientLiveTest {
       client.getSSHKeyPairClient().deleteSSHKeyPair(keyPairName);
    }
 
+   @Test
    public void testListSSHKeyPairs() {
       final Set<SshKeyPair> sshKeyPairs = client.getSSHKeyPairClient().listSSHKeyPairs();
       for (SshKeyPair sshKeyPair : sshKeyPairs) {
@@ -54,8 +57,10 @@ public class SSHKeyPairClientLiveTest extends BaseCloudStackClientLiveTest {
       }
    }
 
+   @Test
    public void testCreateDeleteSSHKeyPair() {
       sshKeyPair = client.getSSHKeyPairClient().createSSHKeyPair(keyPairName);
+      assertNotNull(sshKeyPair.getPrivateKey());
       checkSSHKeyPair(sshKeyPair);
       client.getSSHKeyPairClient().deleteSSHKeyPair(sshKeyPair.getName());
 
@@ -65,25 +70,26 @@ public class SSHKeyPairClientLiveTest extends BaseCloudStackClientLiveTest {
       sshKeyPair = null;
    }
 
+   @Test
    public void testRegisterDeleteSSHKeyPair() {
       final Map<String, String> sshKey = SshKeys.generate();
       final String publicKey = sshKey.get("public");
 
       sshKeyPair = client.getSSHKeyPairClient().registerSSHKeyPair(keyPairName, publicKey);
+      assertNull(sshKeyPair.getPrivateKey());
       checkSSHKeyPair(sshKeyPair);
       client.getSSHKeyPairClient().deleteSSHKeyPair(keyPairName);
 
       assertEquals(client.getSSHKeyPairClient().getSSHKeyPair(sshKeyPair.getName()), null);
-
-      //FIXME: somehow the fingerprints aren't matching, so leaving this commented out for now
-      // assertEquals(SshKeys.fingerprintPublicKey(publicKey), sshKeyPair.getFingerprint());
+      assertEquals(SshKeys.fingerprintPublicKey(publicKey), sshKeyPair.getFingerprint());
 
       sshKeyPair = null;
    }
 
    protected void checkSSHKeyPair(SshKeyPair pair) {
       assert pair.getName() != null : pair;
-      assertEquals(pair.toString(), client.getSSHKeyPairClient().getSSHKeyPair(pair.getName()).toString());
+      assertEquals(pair.getFingerprint(),
+         client.getSSHKeyPairClient().getSSHKeyPair(pair.getName()).getFingerprint());
    }
 
 }

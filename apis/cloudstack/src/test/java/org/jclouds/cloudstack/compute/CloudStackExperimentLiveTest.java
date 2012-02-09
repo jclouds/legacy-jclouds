@@ -18,30 +18,38 @@
  */
 package org.jclouds.cloudstack.compute;
 
-import static com.google.common.collect.Iterables.concat;
-import static com.google.common.collect.Iterables.get;
-import static com.google.common.collect.Sets.newTreeSet;
-import static org.jclouds.cloudstack.options.CreateNetworkOptions.Builder.vlan;
-import static org.jclouds.cloudstack.options.ListNetworkOfferingsOptions.Builder.specifyVLAN;
-
-import java.net.URI;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
+import org.jclouds.cloudstack.domain.EncryptedPasswordAndPrivateKey;
 import org.jclouds.cloudstack.domain.Network;
+import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.cloudstack.domain.TrafficType;
 import org.jclouds.cloudstack.features.BaseCloudStackClientLiveTest;
+import org.jclouds.cloudstack.functions.WindowsLoginCredentialsFromEncryptedData;
 import org.jclouds.cloudstack.options.ListNetworksOptions;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.predicates.NodePredicates;
+import org.jclouds.crypto.Crypto;
+import org.jclouds.encryption.bouncycastle.BouncyCastleCrypto;
 import org.testng.annotations.Test;
 
+import java.net.URI;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Sets.newTreeSet;
+import static org.jclouds.cloudstack.options.CreateNetworkOptions.Builder.vlan;
+import static org.jclouds.cloudstack.options.ListNetworkOfferingsOptions.Builder.specifyVLAN;
+import static org.testng.Assert.assertEquals;
+
 /**
- * 
  * @author Adrian Cole
  */
 @Test(groups = "live", testName = "CloudStackExperimentLiveTest")
@@ -62,7 +70,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
 
       // Warning: the vlan id is not set in the response - using an workaround
       URI broadcastUri = URI.create("vlan://" + vlanId);
-      for(Network net : networks) {
+      for (Network net : networks) {
          if (broadcastUri.equals(net.getBroadcastURI())) {
             long jobId = domainAdminContext.getApi().getNetworkClient().deleteNetwork(net.getId());
             adminJobComplete.apply(jobId);
@@ -94,14 +102,14 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
 
          // find a network offering that supports vlans in our zone
          long offeringId = get(
-               context.getApi().getOfferingClient().listNetworkOfferings(specifyVLAN(true).zoneId(zoneId)), 0).getId();
+            context.getApi().getOfferingClient().listNetworkOfferings(specifyVLAN(true).zoneId(zoneId)), 0).getId();
 
          // create an arbitrary network
          network = domainAdminContext.getApi()
-               .getNetworkClient()
+            .getNetworkClient()
                // startIP/endIP/netmask/gateway must be specified together
-               .createNetworkInZone(zoneId, offeringId, group, group,
-                     vlan(vlanId).startIP("192.168.1.2").netmask("255.255.255.0").gateway("192.168.1.1"));
+            .createNetworkInZone(zoneId, offeringId, group, group,
+               vlan(vlanId).startIP("192.168.1.2").netmask("255.255.255.0").gateway("192.168.1.1"));
 
          // set options to specify this network id
          template.getOptions().as(CloudStackTemplateOptions.class).networkId(network.getId());
@@ -120,6 +128,48 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
          if (network != null)
             domainAdminContext.getApi().getNetworkClient().deleteNetwork(network.getId());
       }
+   }
+
+   @Test(enabled = false)
+   public void testCreateWindowsMachineWithKeyPairAndCheckIfTheGeneratedPasswordIsEncrypted()
+      throws RunNodesException, NoSuchAlgorithmException, CertificateException {
+      // final Map<String, String> sshKey = SshKeys.generate();
+      // final String publicKey = sshKey.get("public");
+
+      String keyPairName = prefix + "-windows-keypair";
+      client.getSSHKeyPairClient().deleteSSHKeyPair(keyPairName);
+      // client.getSSHKeyPairClient().registerSSHKeyPair(keyPairName, publicKey);
+
+      SshKeyPair keyPair = client.getSSHKeyPairClient().createSSHKeyPair(keyPairName);
+
+      String group = prefix + "-windows-test";
+      Template template = computeContext.getComputeService().templateBuilder()
+         .imageId("290").locationId("1")
+         .options(new CloudStackTemplateOptions().setupStaticNat(false).keyPair(keyPairName))
+         .build();
+
+      NodeMetadata node = null;
+      try {
+         node = getOnlyElement(computeContext.getComputeService()
+            .createNodesInGroup(group, 1, template));
+
+         String encryptedPassword = client.getVirtualMachineClient()
+            .getEncryptedPasswordForVirtualMachine(Long.parseLong(node.getId()));
+
+         Crypto crypto = new BouncyCastleCrypto();
+         WindowsLoginCredentialsFromEncryptedData passwordDecrypt = new WindowsLoginCredentialsFromEncryptedData(crypto);
+
+         assertEquals(passwordDecrypt.apply(
+            new EncryptedPasswordAndPrivateKey(encryptedPassword, keyPair.getPrivateKey())).getPassword(),
+            "bX7vvptvw");
+
+      } finally {
+         if (node != null) {
+            computeContext.getComputeService().destroyNode(node.getId());
+         }
+
+      }
+
    }
 
 }
