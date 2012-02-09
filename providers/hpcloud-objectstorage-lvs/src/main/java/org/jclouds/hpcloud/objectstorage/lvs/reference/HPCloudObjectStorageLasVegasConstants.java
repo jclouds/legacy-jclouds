@@ -25,5 +25,8 @@ package org.jclouds.hpcloud.objectstorage.lvs.reference;
  * @author Jeremy Daggett
  */
 public interface HPCloudObjectStorageLasVegasConstants {
-
+   /**
+    * The CDN Endpoint property
+    */
+   public static final String PROPERTY_CDN_ENDPOINT = "jclouds.hpcloud-objectstorage-lvs.cdn.endpoint";
 }

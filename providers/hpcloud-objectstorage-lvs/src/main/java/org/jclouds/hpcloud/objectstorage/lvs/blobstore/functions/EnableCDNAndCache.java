@@ -18,36 +18,36 @@
  */
 package org.jclouds.hpcloud.objectstorage.lvs.blobstore.functions;
 
+import java.net.URI;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.domain.MutableBlobMetadata;
-import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
-import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlobMetadata;
-import org.jclouds.openstack.swift.domain.ObjectInfo;
+import org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasClient;
+
+import com.google.common.base.Function;
+import com.google.common.cache.LoadingCache;
 
 /**
+ * 
  * @author Adrian Cole
  */
 @Singleton
-public class HPCloudObjectStorageLasVegasObjectToBlobMetadata extends ObjectToBlobMetadata {
-
-   private final PublicUriForObjectInfo publicUriForObjectInfo;
+public class EnableCDNAndCache implements Function<String, URI> {
+   private final LoadingCache<String, URI> cdnContainer;
+   private final HPCloudObjectStorageLasVegasClient sync;
 
    @Inject
-   public HPCloudObjectStorageLasVegasObjectToBlobMetadata(IfDirectoryReturnNameStrategy ifDirectoryReturnName,
-            PublicUriForObjectInfo publicUriForObjectInfo) {
-      super(ifDirectoryReturnName);
-      this.publicUriForObjectInfo = publicUriForObjectInfo;
-
+   public EnableCDNAndCache(HPCloudObjectStorageLasVegasClient sync, LoadingCache<String, URI> cdnContainer) {
+      this.sync = sync;
+      this.cdnContainer = cdnContainer;
    }
 
-   public MutableBlobMetadata apply(ObjectInfo from) {
-      if (from == null)
-         return null;
-      MutableBlobMetadata to = super.apply(from);
-      to.setPublicUri(publicUriForObjectInfo.apply(from));
-
-      return to;
+   @Override
+   public URI apply(String input) {
+      URI uri = sync.enableCDN(input);
+      cdnContainer.put(input, uri);
+      return uri;
    }
+
 }
