@@ -42,4 +42,6 @@ public interface VCloudDirectorMediaType {
    
    public final static String ORG_XML = "application/vnd.vmware.vcloud.org+xml";
 
+   public static final String ORG_NETWORK_XML = "application/vnd.vmware.vcloud.orgNetwork+xml";
+
 }
