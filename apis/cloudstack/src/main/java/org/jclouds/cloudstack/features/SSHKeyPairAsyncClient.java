@@ -18,15 +18,10 @@
  */
 package org.jclouds.cloudstack.features;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import java.util.Set;
-
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.cloudstack.filters.AuthenticationFilter;
+import org.jclouds.cloudstack.filters.ReEncodeQueryWithDefaultURLEncoder;
 import org.jclouds.cloudstack.options.ListSSHKeyPairsOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.OnlyElement;
@@ -36,6 +31,12 @@ import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import java.util.Set;
 
 /**
  * Provides asynchronous access to CloudStack SSHKeyPair features.
@@ -65,6 +66,7 @@ public interface SSHKeyPairAsyncClient {
    @QueryParams(keys = "command", values = "registerSSHKeyPair")
    @SelectJson("keypair")
    @Consumes(MediaType.APPLICATION_JSON)
+   @RequestFilters(ReEncodeQueryWithDefaultURLEncoder.class)
    ListenableFuture<SshKeyPair> registerSSHKeyPair(@QueryParam("name") String name, @QueryParam("publickey") String publicKey);
 
    /**

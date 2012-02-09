@@ -18,14 +18,14 @@
  */
 package org.jclouds.cloudstack.features;
 
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
 import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
 import org.jclouds.concurrent.Timeout;
+
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to CloudStack VirtualMachine features.
@@ -109,6 +109,17 @@ public interface VirtualMachineClient {
     * @return job id related to destroying the VM
     */
    Long resetPasswordForVirtualMachine(long id);
+
+
+   /**
+    * Return an encrypted password for the virtual machine. The command
+    * is asynchronous.
+    *
+    * @param id
+    *          the ID of the virtual machine
+    * @return encrypted password
+    */
+   String getEncryptedPasswordForVirtualMachine(long id);
 
    /**
     * Changes the service offering for a virtual machine. The virtual machine
