@@ -19,6 +19,7 @@
 package org.jclouds.cloudstack.features;
 
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.cloudstack.domain.EncryptedPassword;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
 import org.jclouds.cloudstack.options.ListVirtualMachinesOptions;
@@ -117,9 +118,9 @@ public interface VirtualMachineClient {
     *
     * @param id
     *          the ID of the virtual machine
-    * @return job id related to getting the encrypted password
+    * @return encrypted password
     */
-   Long getPasswordForVirtualMachine(long id);
+   EncryptedPassword getEncryptedPasswordForVirtualMachine(long id);
 
    /**
     * Changes the service offering for a virtual machine. The virtual machine
