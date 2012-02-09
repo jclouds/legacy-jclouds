@@ -51,7 +51,7 @@ public class OSTemplateToImage implements Function<OSTemplate, Image> {
       Builder builder = OperatingSystem.builder();
       builder.name(template.getName()).description(template.getName()).is64Bit(parsed.is64Bit).version(parsed.version)
                .family(parsed.family);
-      return new ImageBuilder().ids(template.getName()).description(template.getName())
-               .operatingSystem(builder.build()).build();
+      return new ImageBuilder().ids(template.getName()).name(template.getName()).description(template.getName())
+            .operatingSystem(builder.build()).build();
    }
 }

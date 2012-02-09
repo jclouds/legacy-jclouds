@@ -55,20 +55,24 @@ public class GleSYSTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
-            // TODO: this is an incomplete list until ParseOsFamilyVersion64BitFromImageName is
-            // complete
             switch (input.family) {
-               case UBUNTU:
-                  return (input.version.equals("")|| input.version.equals("11.04")) && input.is64Bit;
-               case DEBIAN:
-                  return input.version.equals("") || input.version.matches("[56].0");
-               case FEDORA:
-                  return input.version.equals("") || input.version.equals("13") || input.version.equals("15");
-               case CENTOS:
-                  return input.version.equals("") || input.version.equals("5") || input.version.equals("5.0")
-                           || input.version.equals("6.0");
-               default:
-                  return false;
+            case UBUNTU:
+               return input.version.equals("")
+                     || input.version.equals("10.04")
+                     || ((input.version.equals("8.04") || input.version.equals("11.04") || input.version
+                           .equals("10.10")) && input.is64Bit);
+            case DEBIAN:
+               return input.version.equals("") || input.version.matches("[56].0");
+            case FEDORA:
+               return input.version.equals("") || input.version.equals("13") || input.version.equals("15");
+            case CENTOS:
+               return input.version.equals("") || input.version.equals("5") || input.version.equals("5.5")
+                     || input.version.equals("5.0") || input.version.equals("6.0");
+            case WINDOWS:
+               return input.version.equals("") || input.version.equals("2008")
+                     || (input.version.equals("2008 R2") && input.is64Bit);
+            default:
+               return false;
             }
          }
 
@@ -78,7 +82,7 @@ public class GleSYSTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getId(), "11.04");
+      assertEquals(defaultTemplate.getImage().getId(), "Ubuntu 11.04 x64");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
@@ -93,6 +97,6 @@ public class GleSYSTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    @Override
    protected Set<String> getIso3166Codes() {
-      return ImmutableSet.<String> of("NL-NH","SE-N","US-NY","SE-AB");
+      return ImmutableSet.<String> of("NL-NH", "SE-N", "US-NY", "SE-AB");
    }
 }

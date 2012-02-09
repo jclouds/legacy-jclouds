@@ -38,7 +38,14 @@ public enum OsFamily {
     * 
     * Oracle Enterprise Linux
     */
-   OEL, OPENBSD, RHEL, SIGAR, SOLARIS, SUSE, TURBOLINUX, UBUNTU, WINDOWS;
+   OEL, OPENBSD, RHEL,
+   /**
+    * Scientific Linux
+    */
+   SCIENTIFIC,
+   SIGAR, 
+   SLACKWARE,
+   SOLARIS, SUSE, TURBOLINUX, UBUNTU, WINDOWS;
    public String value() {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
    }
