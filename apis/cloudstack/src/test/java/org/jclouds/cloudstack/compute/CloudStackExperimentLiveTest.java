@@ -19,7 +19,9 @@
 package org.jclouds.cloudstack.compute;
 
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
+import org.jclouds.cloudstack.domain.EncryptedPassword;
 import org.jclouds.cloudstack.domain.Network;
+import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.cloudstack.domain.TrafficType;
 import org.jclouds.cloudstack.features.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.options.ListNetworksOptions;
@@ -27,12 +29,10 @@ import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.predicates.NodePredicates;
-import org.jclouds.crypto.SshKeys;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.net.URI;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -128,13 +128,14 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test
    public void testCreateWindowsMachineWithKeyPairAndCheckIfTheGeneratedPasswordIsEncrypted() throws RunNodesException {
-      final Map<String, String> sshKey = SshKeys.generate();
-      final String publicKey = sshKey.get("public");
+      // final Map<String, String> sshKey = SshKeys.generate();
+      // final String publicKey = sshKey.get("public");
 
       String keyPairName = prefix + "-windows-keypair";
       client.getSSHKeyPairClient().deleteSSHKeyPair(keyPairName);
       // client.getSSHKeyPairClient().registerSSHKeyPair(keyPairName, publicKey);
-      client.getSSHKeyPairClient().createSSHKeyPair(keyPairName);
+
+      SshKeyPair keyPair = client.getSSHKeyPairClient().createSSHKeyPair(keyPairName);
 
       String group = prefix + "-windows-test";
       Template template = computeContext.getComputeService().templateBuilder()
@@ -147,11 +148,11 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
          node = getOnlyElement(computeContext.getComputeService()
             .createNodesInGroup(group, 1, template));
          
-         long jobId = client.getVirtualMachineClient()
-            .getPasswordForVirtualMachine(Long.parseLong(node.getId()));
-         // TODO: extrect the password from the async response
+         EncryptedPassword password = client.getVirtualMachineClient()
+            .getEncryptedPasswordForVirtualMachine(Long.parseLong(node.getId()));
 
-         Assert.fail("Password: ...");
+         Assert.fail("Private key:" + keyPair.getPrivateKey() + "\nPassword: " + password.getEncryptedPassword());
+         // TODO: decrypt the password
 
       } finally {
          if (node != null) {
