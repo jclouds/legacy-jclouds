@@ -18,20 +18,6 @@
  */
 package org.jclouds.http.utils;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
-
-import java.net.URI;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.jclouds.javax.annotation.Nullable;
-import javax.ws.rs.core.UriBuilder;
-
-import org.jclouds.http.HttpRequest;
-import org.jclouds.util.Strings2;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -39,6 +25,18 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.util.Strings2;
+
+import javax.ws.rs.core.UriBuilder;
+import java.net.URI;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Map;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
 
 /**
  * 
@@ -159,7 +157,7 @@ public class ModifyRequest {
          else
             map.put(in, null);
       } else {
-         String[] parts = Strings2.urlDecode(in).split("&");
+         String[] parts = in.split("&");
          for (String part : parts) {
             parseKeyValueFromStringToMap(part, map);
          }
@@ -172,7 +170,7 @@ public class ModifyRequest {
       int indexOfFirstEquals = stringToParse.indexOf('=');
       String key = indexOfFirstEquals == -1 ? stringToParse : stringToParse.substring(0, indexOfFirstEquals);
       String value = indexOfFirstEquals == -1 ? null : stringToParse.substring(indexOfFirstEquals + 1);
-      map.put(key, value);
+      map.put(key, Strings2.urlDecode(value));
    }
 
    public static String makeQueryLine(Multimap<String, String> params,

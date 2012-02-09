@@ -21,6 +21,7 @@ package org.jclouds.cloudstack.filters;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.sun.jersey.api.uri.UriBuilderImpl;
+import com.sun.jersey.api.uri.UriComponent;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
@@ -58,6 +59,7 @@ public class ReEncodeQueryWithJavaNetURLEncoderTest {
          }
 
       }).getInstance(ReEncodeQueryWithDefaultURLEncoder.class).filter(request);
-      assertEquals(request.getEndpoint().toASCIIString(), "http://localhost?foo=" + URLEncoder.encode(input));
+      assertEquals(request.getEndpoint().toASCIIString(), "http://localhost?foo=" +
+         UriComponent.encode(input, UriComponent.Type.QUERY_PARAM));
    }
 }
