@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 import java.net.URI;
 
@@ -33,6 +33,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.SyslogServerSettings;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
@@ -51,13 +52,13 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", networkRef), 
-            getStandardPayloadResponse("/network/network.xml", VCloudDirectorMediaType.ORG_NETWORK_XML));
+            getStandardPayloadResponse("/network/network.xml", VCloudDirectorMediaType.ORG_NETWORK));
       
       OrgNetwork expected = OrgNetwork
          .builder()
          .name("internet01-Jclouds")
          .id("urn:vcloud:network:55a677cf-ab3f-48ae-b880-fab90421980c")
-         .type(VCloudDirectorMediaType.ORG_NETWORK_XML)
+         .type(VCloudDirectorMediaType.ORG_NETWORK)
          .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c"))
          .link(Link.builder()
             .rel("up")
@@ -96,12 +97,12 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
    
    @Test
    public void testWhenResponseIs2xxLoginReturnsValidMetadata() {
-      URI orgRef = URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c");
-      URI metaRef = URI.create(orgRef.toASCIIString()+"/metadata/");
+      URI orgUri = URI.create(endpoint + "/network/55a677cf-ab3f-48ae-b880-fab90421980c");
+      URI metaUri = URI.create(orgUri.toASCIIString() + "/metadata/");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", metaRef),
-            getStandardPayloadResponse("/network/metadata.xml", VCloudDirectorMediaType.METADATA_XML));
+            getStandardRequest("GET", metaUri),
+            getStandardPayloadResponse("/network/metadata.xml", VCloudDirectorMediaType.METADATA));
       
       Metadata expected = Metadata.builder()
             .type("application/vnd.vmware.vcloud.metadata+xml")
@@ -113,21 +114,25 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
                   .build())
             .build();
 
-      assertEquals(client.getOrgClient().getMetadata(orgRef), expected);
+      // TODO change network client to use ReferenceType<?> params
+      Reference orgRef = Reference.builder().href(orgUri).build();
+
+      assertEquals(client.getNetworkClient().getMetadata(orgUri), expected);
    }
    
    @Test(enabled=false) // No metadata in exemplar xml...
    public void testWhenResponseIs2xxLoginReturnsValidMetadataEntry() {
-      URI metadataRef = URI.create(
-            "https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata/KEY");
+      URI metadataUri = URI.create(endpoint + "/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata/KEY");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", metadataRef),
-            getStandardPayloadResponse("/network/metadata.xml", VCloudDirectorMediaType.METADATAENTRY_XML));
+            getStandardRequest("GET", metadataUri),
+            getStandardPayloadResponse("/network/metadata.xml", VCloudDirectorMediaType.METADATA_ENTRY));
       
-      MetadataEntry expected = MetadataEntry.builder()
-            .build();
+      MetadataEntry expected = MetadataEntry.builder().build();
 
-      assertEquals(client.getOrgClient().getMetadataEntry(metadataRef), expected);
+      // TODO change network client to use ReferenceType<?> params
+      Reference orgRef = Reference.builder().href(metadataUri).build();
+
+      assertEquals(client.getNetworkClient().getMetadataEntry(metadataUri), expected);
    }
 }

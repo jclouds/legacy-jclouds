@@ -19,7 +19,7 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,7 +31,7 @@ import com.google.common.base.Objects;
  * 
  * @author danikov
  */
-@XmlRootElement(namespace = NS, name = "RouterInfo")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "RouterInfo")
 public class RouterInfo {
    public static Builder builder() {
       return new Builder();
@@ -71,7 +71,7 @@ public class RouterInfo {
    }
    
    
-   @XmlElement(namespace = NS, name = "ExternalIp")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "ExternalIp")
    private String externalIp;
    
    /**

@@ -19,7 +19,7 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -33,7 +33,7 @@ import com.google.common.base.Objects;
  * 
  * @author danikov
  */
-@XmlRootElement(namespace = NS, name = "IpScope")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "IpScope")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IpScope {
    
@@ -151,21 +151,21 @@ public class IpScope {
       this.isInherited = isInherited;
    }
 
-   @XmlElement(namespace = NS, name = "IsInherited")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "IsInherited")
    private boolean isInherited;
-   @XmlElement(namespace = NS, name = "Gateway")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Gateway")
    private String gateway;
-   @XmlElement(namespace = NS, name = "Netmask")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Netmask")
    private String netmask;
-   @XmlElement(namespace = NS, name = "Dns1")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Dns1")
    private String dns1;
-   @XmlElement(namespace = NS, name = "Dns2")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Dns2")
    private String dns2;
-   @XmlElement(namespace = NS, name = "DnsSuffix")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "DnsSuffix")
    private String dnsSuffix;
-   @XmlElement(namespace = NS, name = "IpRanges")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "IpRanges")
    private IpRanges ipRanges;
-   @XmlElement(namespace = NS, name = "AllocatedIpAddresses")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "AllocatedIpAddresses")
    private IpAddresses allocatedIpAddresses;
 
    /**

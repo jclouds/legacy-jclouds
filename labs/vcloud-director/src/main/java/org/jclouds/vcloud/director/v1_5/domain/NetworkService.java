@@ -19,7 +19,7 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,7 +31,7 @@ import com.google.common.base.Objects;
  * 
  * @author danikov
  */
-@XmlRootElement(namespace = NS, name = "NetworkService")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "NetworkService")
 public class NetworkService {
 
    public static Builder builder() {
@@ -69,7 +69,7 @@ public class NetworkService {
       // For JAXB and builder use
    }
 
-   @XmlElement(namespace = NS, name = "IsEnabled")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "IsEnabled")
    private boolean isEnabled;
 
    /**

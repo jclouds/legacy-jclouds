@@ -19,7 +19,7 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -34,7 +34,7 @@ import com.google.common.base.Objects;
  * 
  * @author danikov
  */
-@XmlRootElement(namespace = NS, name = "SyslogServerSettings")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "SyslogServerSettings")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SyslogServerSettings {
 
@@ -83,9 +83,9 @@ public class SyslogServerSettings {
       // For JAXB and builder use
    }
    
-   @XmlElement(namespace = NS, name = "SyslogServerIp1")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "SyslogServerIp1")
    private String syslogServerIp1;
-   @XmlElement(namespace = NS, name = "SyslogServerIp2")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "SyslogServerIp2")
    private String syslogServerIp2;
    
    /**

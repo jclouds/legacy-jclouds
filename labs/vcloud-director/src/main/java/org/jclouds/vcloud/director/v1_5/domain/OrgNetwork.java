@@ -18,9 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
 import java.util.Set;
@@ -28,13 +28,11 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jclouds.ovf.Network;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Sets;
 
-@XmlRootElement(namespace = NS, name = "OrgNetwork")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "OrgNetwork")
 public class OrgNetwork extends EntityType<OrgNetwork> {
    
    @SuppressWarnings("unchecked")
@@ -54,7 +52,7 @@ public class OrgNetwork extends EntityType<OrgNetwork> {
       private IpAddresses allowedExternalIpAddresses;
       
       /**
-       * @see Network#getConfiguration()
+       * @see OrgNetwork#getConfiguration()
        */
       public Builder configuration(NetworkConfiguration networkConfiguration) {
          this.networkConfiguration = networkConfiguration;
@@ -62,7 +60,7 @@ public class OrgNetwork extends EntityType<OrgNetwork> {
       }
       
       /**
-       * @see Network#getNetworkPool()
+       * @see OrgNetwork#getNetworkPool()
        */
       public Builder networkPool(ReferenceType<?> networkPool) {
          this.networkPool = networkPool;
@@ -70,7 +68,7 @@ public class OrgNetwork extends EntityType<OrgNetwork> {
       }
 
       /**
-       * @see Network#getAllowedExternalIpAddresses()
+       * @see OrgNetwork#getAllowedExternalIpAddresses()
        */
       public Builder allowedExternalIpAddresses(IpAddresses allowedExternalIpAddresses) {
          this.allowedExternalIpAddresses = allowedExternalIpAddresses;
@@ -183,11 +181,11 @@ public class OrgNetwork extends EntityType<OrgNetwork> {
       super(href, name);
    }
 
-   @XmlElement(namespace = NS, name = "Configuration")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Configuration")
    private NetworkConfiguration networkConfiguration;
-   @XmlElement(namespace = NS, name = "NetworkPool")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "NetworkPool")
    private ReferenceType<?> networkPool;
-   @XmlElement(namespace = NS, name = "AllowedExternalIpAddresses")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "AllowedExternalIpAddresses")
    private IpAddresses allowedExternalIpAddresses;
 
    /**
