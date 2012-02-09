@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 /**
  * Tests behavior of {@code SSHKeyPairClient}
@@ -58,6 +60,7 @@ public class SSHKeyPairClientLiveTest extends BaseCloudStackClientLiveTest {
    @Test
    public void testCreateDeleteSSHKeyPair() {
       sshKeyPair = client.getSSHKeyPairClient().createSSHKeyPair(keyPairName);
+      assertNotNull(sshKeyPair.getPrivateKey());
       checkSSHKeyPair(sshKeyPair);
       client.getSSHKeyPairClient().deleteSSHKeyPair(sshKeyPair.getName());
 
@@ -73,6 +76,7 @@ public class SSHKeyPairClientLiveTest extends BaseCloudStackClientLiveTest {
       final String publicKey = sshKey.get("public");
 
       sshKeyPair = client.getSSHKeyPairClient().registerSSHKeyPair(keyPairName, publicKey);
+      assertNull(sshKeyPair.getPrivateKey());
       checkSSHKeyPair(sshKeyPair);
       client.getSSHKeyPairClient().deleteSSHKeyPair(keyPairName);
 
@@ -84,7 +88,8 @@ public class SSHKeyPairClientLiveTest extends BaseCloudStackClientLiveTest {
 
    protected void checkSSHKeyPair(SshKeyPair pair) {
       assert pair.getName() != null : pair;
-      assertEquals(pair.toString(), client.getSSHKeyPairClient().getSSHKeyPair(pair.getName()).toString());
+      assertEquals(pair.getFingerprint(),
+         client.getSSHKeyPairClient().getSSHKeyPair(pair.getName()).getFingerprint());
    }
 
 }
