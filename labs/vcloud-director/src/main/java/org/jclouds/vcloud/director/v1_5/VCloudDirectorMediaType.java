@@ -38,7 +38,9 @@ public class VCloudDirectorMediaType {
 
    public static final String METADATA = "application/vnd.vmware.vcloud.metadata+xml";
 
-   public static final String METADATA_ENTRY = "*/*"; // TODO
+   public static final String METADATA_ENTRY = "*/*"; // No media type (?) 
+
+   public static final String METADATA_VALUE = "application/vnd.vmware.vcloud.metadata.value+xml";;
 
    public static final String ORG = "application/vnd.vmware.vcloud.org+xml";
 

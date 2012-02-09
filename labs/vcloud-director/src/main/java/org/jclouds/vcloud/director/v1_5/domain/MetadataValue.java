@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.Link.Builder;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -44,8 +44,8 @@ import com.google.common.collect.Sets;
  *
  * @author danikov
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "MetadataEntry")
-public class MetadataEntry extends ResourceType<MetadataEntry> {
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "MetadataValue")
+public class MetadataValue extends ResourceType<MetadataValue> {
    
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.METADATA_ENTRY;
 
@@ -56,45 +56,26 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
 
    @Override
    public Builder toBuilder() {
-      return new Builder().fromMetadataEntry(this);
+      return new Builder().fromMetadataValue(this);
    }
 
-   public static class Builder extends ResourceType.Builder<MetadataEntry> {
-      private String key;
-      private MetadataValue value;
+   public static class Builder extends ResourceType.Builder<MetadataValue> {
+      private String value;
 
       /**
-       * @see MetadataEntry#getKey()
+       * @see MetadataValue#getValue
        */
-      public Builder key(String key) {
-         this.key = key;
-         return this;
-      }
-
-      /**
-       * @see MetadataEntry#getValue()
-       */
-      public Builder value(MetadataValue value) {
-         this.value = value;
-         return this;
-      }
-
-      /**
-       * @see MetadataEntry#getKey()
-       * @see MetadataEntry#getValue()
-       */
-      public Builder entry(String key, MetadataValue value) {
-         this.key = key;
+      public Builder value(String value) {
          this.value = value;
          return this;
       }
       
       @Override
-      public MetadataEntry build() {
-         MetadataEntry metadataEntry = new MetadataEntry(href, key, value);
-         metadataEntry.setType(type);
-         metadataEntry.setLinks(links);
-         return metadataEntry;
+      public MetadataValue build() {
+         MetadataValue metadataValue = new MetadataValue(href, value);
+         metadataValue.setType(type);
+         metadataValue.setLinks(links);
+         return metadataValue;
       }
       
       /**
@@ -133,45 +114,35 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
          return this;
       }
 
-      public Builder fromMetadataEntry(MetadataEntry in) {
-         return fromResourceType(in).entry(key, value);
+      public Builder fromMetadataValue(MetadataValue in) {
+         return fromResourceType(in).value(value);
       }
 
       /**
        * {@inheritDoc}
        */
       @Override
-      public Builder fromResourceType(ResourceType<MetadataEntry> in) {
+      public Builder fromResourceType(ResourceType<MetadataValue> in) {
          return Builder.class.cast(super.fromResourceType(in));
       }
    }
 
-   private MetadataEntry() {
+   private MetadataValue() {
       // For JAXB and builder use
    }
 
-   private MetadataEntry(URI href, String key, MetadataValue value) {
+   private MetadataValue(URI href, String value) {
       super(href);
-      this.key = checkNotNull(key, "key");
       this.value = checkNotNull(value, "value");
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Key")
-   private String key;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Value")
-   private MetadataValue value;
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Value", required = true)
+   private String value;
 
    /**
-    * @return key of the entry
+    * The value.
     */
-   public String getKey() {
-      return key;
-   }
-
-   /**
-    * @return value of the entry
-    */
-   public MetadataValue getValue() {
+   public String getValue() {
       return value;
    }
    
@@ -181,17 +152,17 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      MetadataEntry that = MetadataEntry.class.cast(o);
-      return super.equals(that) && equal(key, that.key) && equal(this.value, that.value);
+      MetadataValue that = MetadataValue.class.cast(o);
+      return super.equals(that) && equal(this.value, that.value);
    }
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(key, value);
+      return super.hashCode() + Objects.hashCode(value);
    }
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("key", key).add("value", value);
+      return super.string().add("value", value);
    }
 }

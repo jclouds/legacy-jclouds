@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -56,7 +57,7 @@ public class Metadata extends ResourceType<Metadata> {
 
    @Override
    public Builder toBuilder() {
-      return new Builder().fromMetadataList(this);
+      return new Builder().fromMetadata(this);
    }
 
    public static class Builder extends ResourceType.Builder<Metadata> {
@@ -123,8 +124,16 @@ public class Metadata extends ResourceType<Metadata> {
          return this;
       }
 
-      public Builder fromMetadataList(Metadata in) {
-         return metadata(in.getMetadata());
+      public Builder fromMetadata(Metadata in) {
+         return fromResourceType(in).metadata(in.getMetadata());
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromResourceType(ResourceType<Metadata> in) {
+         return Builder.class.cast(super.fromResourceType(in));
       }
    }
 
@@ -134,14 +143,14 @@ public class Metadata extends ResourceType<Metadata> {
 
    private Metadata(URI href, Set<MetadataEntry> metadataEntries) {
       super(href);
-      this.metadata = ImmutableSet.copyOf(metadataEntries);
+      this.metadataEntries = ImmutableSet.copyOf(metadataEntries);
    }
 
    @XmlElement(namespace = VCLOUD_1_5_NS, name = "MetadataEntry")
-   private Set<MetadataEntry> metadata = Sets.newLinkedHashSet();
+   private Set<MetadataEntry> metadataEntries = Sets.newLinkedHashSet();
 
    public Set<MetadataEntry> getMetadata() {
-      return ImmutableSet.copyOf(metadata);
+      return ImmutableSet.copyOf(metadataEntries);
    }
 
    @Override
@@ -151,17 +160,17 @@ public class Metadata extends ResourceType<Metadata> {
       if (o == null || getClass() != o.getClass())
          return false;
       Metadata that = Metadata.class.cast(o);
-      return super.equals(that) && equal(metadata, that.metadata);
+      return super.equals(that) && equal(this.metadataEntries, that.metadataEntries);
    }
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(metadata);
+      return super.hashCode() + Objects.hashCode(metadataEntries);
    }
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("metadata", metadata);
+      return super.string().add("metadataEntries", metadataEntries);
    }
 
 }
