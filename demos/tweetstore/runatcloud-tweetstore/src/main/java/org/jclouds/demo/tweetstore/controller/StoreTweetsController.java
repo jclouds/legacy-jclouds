@@ -19,6 +19,8 @@
 package org.jclouds.demo.tweetstore.controller;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.nullToEmpty;
+import static org.jclouds.demo.paas.RunnableHttpRequest.PLATFORM_REQUEST_ORIGINATOR_HEADER;
 
 import java.io.IOException;
 import java.util.Map;
@@ -53,7 +55,6 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class StoreTweetsController extends HttpServlet {
-   public static final String AUTHORIZED_REQUEST_ORIGINATOR_HEADER = "X-RUNatcloud-Originator";
     
    private static final class StatusToBlob implements Function<Status, Blob> {
       private final BlobMap map;
@@ -110,8 +111,7 @@ public class StoreTweetsController extends HttpServlet {
 
    @Override
    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-       if (request.getHeader(AUTHORIZED_REQUEST_ORIGINATOR_HEADER) != null
-            && request.getHeader(AUTHORIZED_REQUEST_ORIGINATOR_HEADER).equals("twitter")) {
+       if (nullToEmpty(request.getHeader(PLATFORM_REQUEST_ORIGINATOR_HEADER)).equals("taskqueue-twitter")) {
          try {
             String contextName = checkNotNull(request.getHeader("context"), "missing header context");
             logger.info("retrieving tweets");

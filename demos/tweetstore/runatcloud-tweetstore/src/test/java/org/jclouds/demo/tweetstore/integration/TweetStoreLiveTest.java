@@ -19,7 +19,7 @@
 package org.jclouds.demo.tweetstore.integration;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.demo.tweetstore.controller.StoreTweetsController.AUTHORIZED_REQUEST_ORIGINATOR_HEADER;
+import static org.jclouds.demo.paas.RunnableHttpRequest.PLATFORM_REQUEST_ORIGINATOR_HEADER;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_BLOBSTORES;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER;
 import static org.jclouds.demo.tweetstore.reference.TwitterConstants.PROPERTY_TWITTER_ACCESSTOKEN;
@@ -199,7 +199,7 @@ public class TweetStoreLiveTest {
       for (String context : blobstores) {
          System.out.println("storing at context: " + context);
          HttpURLConnection connection = (HttpURLConnection) gurl.openConnection();
-         connection.addRequestProperty(AUTHORIZED_REQUEST_ORIGINATOR_HEADER, "twitter");
+         connection.addRequestProperty(PLATFORM_REQUEST_ORIGINATOR_HEADER, "taskqueue-twitter");
          connection.addRequestProperty("context", context);
          InputStream i = connection.getInputStream();
          String string = Strings2.toStringAndClose(i);
