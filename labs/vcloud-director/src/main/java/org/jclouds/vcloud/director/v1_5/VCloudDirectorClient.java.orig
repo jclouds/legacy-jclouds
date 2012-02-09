@@ -32,28 +32,27 @@ import com.google.inject.Provides;
 
 /**
  * Provides synchronous access to VCloudDirector.
- * <p/>
  * 
  * @see VCloudDirectorAsyncClient
  * @author Adrian Cole
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface VCloudDirectorClient {
+
    /**
-    * 
     * @return the current login session
     */
    @Provides
    Session getCurrentSession();
    
    /**
-    * @return synchronous access to {@link Org} features
+    * @return synchronous access to Org features
     */
    @Delegate
    OrgClient getOrgClient();
    
    /**
-    * @return synchronous access to {@link Task} features
+    * @return synchronous access to Task features
     */
    @Delegate
    TaskClient getTaskClient();
@@ -63,11 +62,4 @@ public interface VCloudDirectorClient {
     */
    @Delegate
    NetworkClient getNetworkClient();
-
-   /**
-    * @return synchronous access to {@link Catalog} features
-    */
-   @Delegate
-   CatalogClient getCatalogClient();
-
 }
