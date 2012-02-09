@@ -45,7 +45,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", URI.create("http://localhost/api/org/")), 
-            getStandardPayloadResponse("/org/orglist.xml", VCloudDirectorMediaType.ORGLIST_XML));
+            getStandardPayloadResponse("/org/orglist.xml", VCloudDirectorMediaType.ORGLIST_XML+";version=1.5"));
 
       OrgList expected = OrgList.builder()
             .org(Reference.builder()
@@ -64,7 +64,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", orgRef), 
-            getStandardPayloadResponse("/org/org.xml", VCloudDirectorMediaType.ORG_XML));
+            getStandardPayloadResponse("/org/org.xml", VCloudDirectorMediaType.ORG_XML+";version=1.5"));
       
       Org expected = Org
          .builder()
@@ -125,7 +125,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", metaRef),
-            getStandardPayloadResponse("/org/metadata.xml", VCloudDirectorMediaType.METADATA_XML));
+            getStandardPayloadResponse("/org/metadata.xml", VCloudDirectorMediaType.METADATA_XML+";version=1.5"));
       
       Metadata expected = Metadata.builder()
             .type("application/vnd.vmware.vcloud.metadata+xml")
@@ -146,7 +146,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", metadataRef),
-            getStandardPayloadResponse("/org/metadata.xml", VCloudDirectorMediaType.METADATAENTRY_XML));
+            getStandardPayloadResponse("/org/metadata.xml", VCloudDirectorMediaType.METADATAENTRY_XML+";version=1.5"));
       
       MetadataEntry expected = MetadataEntry.builder()
             .build();
