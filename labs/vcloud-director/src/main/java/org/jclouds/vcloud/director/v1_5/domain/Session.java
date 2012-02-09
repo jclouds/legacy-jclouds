@@ -44,7 +44,7 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@XmlRootElement(namespace = XMLNS, name = "Session")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Session")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Session {
    
@@ -124,7 +124,7 @@ public class Session {
       this.links = ImmutableSet.copyOf(links);
    }
 
-   @XmlElement(namespace = XMLNS, name = "Link")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Link")
    private Set<Link> links = Sets.newLinkedHashSet();
    @XmlAttribute
    private String user;

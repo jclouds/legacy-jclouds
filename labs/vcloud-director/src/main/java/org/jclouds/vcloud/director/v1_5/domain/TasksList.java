@@ -40,7 +40,7 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@XmlRootElement(namespace = XMLNS, name = "TasksList")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "TasksList")
 public class TasksList extends EntityType<TasksList> {
    
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.TASKS_LIST;
@@ -177,7 +177,7 @@ public class TasksList extends EntityType<TasksList> {
       this.tasks = ImmutableSet.copyOf(tasks);
    }
 
-   @XmlElement(namespace = XMLNS, name = "Task")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Task")
    private Set<Task> tasks = Sets.newLinkedHashSet();
 
    public Set<Task> getTasks() {

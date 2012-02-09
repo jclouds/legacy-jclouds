@@ -40,7 +40,7 @@ import com.google.common.base.Objects;
  *
  * @author grkvlt@apache.org
  */
-@XmlRootElement(namespace = XMLNS, name = "Error")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Error")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Error {
    

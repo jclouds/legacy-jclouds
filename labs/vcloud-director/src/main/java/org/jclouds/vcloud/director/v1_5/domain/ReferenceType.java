@@ -159,15 +159,6 @@ public class ReferenceType<T extends ReferenceType<T>> implements URISupplier {
    }
 
    /**
-    * Returns the unique UUID string for this reference.
-    *
-    * @see ResourceType#getUuid()
-    */
-   public String getUuid() {
-      return Iterables.getLast(Splitter.on("/").split(href.getPath()));
-   }
-
-   /**
     * Contains the name of the the entity.
     *
     * The object type, specified as a MIME content type, of the object that the link references.

@@ -112,7 +112,7 @@ public class ResourceType<T extends ResourceType<T>> implements URISupplier {
    private URI href;
    @XmlAttribute
    private String type;
-   @XmlElement(namespace = XMLNS, name = "Link")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Link")
    private Set<Link> links = Sets.newLinkedHashSet();
 
    protected ResourceType(URI href) {
@@ -146,15 +146,6 @@ public class ResourceType<T extends ResourceType<T>> implements URISupplier {
    @Override
    public URI getURI() {
       return getHref();
-   }
-
-   /**
-    * Returns the unique UUID string for this resource.
-    *
-    * @see ReferenceType#getUuid()
-    */
-   public String getUuid() {
-      return Iterables.getLast(Splitter.on("/").split(href.getPath()));
    }
 
    /**

@@ -38,7 +38,7 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@XmlRootElement(namespace = XMLNS, name = "OrgList")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "OrgList")
 public class OrgList {
    
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.ORG_LIST;
@@ -88,7 +88,7 @@ public class OrgList {
       this.orgs = ImmutableSet.copyOf(orgs);
    }
 
-   @XmlElement(namespace = XMLNS, name = "Org")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Org")
    private Set<Reference> orgs = Sets.newLinkedHashSet();
 
    public Set<Reference> getOrgs() {
