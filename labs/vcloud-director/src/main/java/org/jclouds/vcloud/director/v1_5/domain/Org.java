@@ -35,7 +35,7 @@ import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Sets;
 
 /**
- * iRepresents an organization.
+ * Represents an organization.
  *
  * Unit of multi-tenancy and a top-level container. Contain vDCs, TasksList, Catalogs and Shared Network entities.
  *

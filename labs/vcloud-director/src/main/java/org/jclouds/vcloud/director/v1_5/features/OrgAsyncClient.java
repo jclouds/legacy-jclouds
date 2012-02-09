@@ -83,4 +83,5 @@ public interface OrgAsyncClient {
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<MetadataEntry> getMetadataEntry(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> orgRef,
          @PathParam("key") String key);
+   
 }

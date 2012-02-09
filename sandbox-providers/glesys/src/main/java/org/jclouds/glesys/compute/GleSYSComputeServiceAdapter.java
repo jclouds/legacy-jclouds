@@ -103,7 +103,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
 
       ServerSpec.Builder builder = ServerSpec.builder();
       builder.datacenter(template.getLocation().getId());
-      builder.templateName(template.getImage().getName());
+      builder.templateName(template.getImage().getId());
       builder.platform(template.getHardware().getHypervisor());
       builder.diskSizeGB(Math.round(template.getHardware().getVolumes().get(0).getSize()));
       builder.cpuCores((int) template.getHardware().getProcessors().get(0).getCores());
@@ -158,7 +158,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
                      if (templatesSupported.size() > 0)
                         hardwareToReturn.add(new HardwareBuilder().ids(
                                  String.format("datacenter(%s)platform(%s)cpuCores(%d)memorySizeMB(%d)diskSizeGB(%d)",
-                                          datacenter, platformToArgs.getKey(), cpuCores, cpuCores, diskSizeGB)).ram(
+                                          datacenter, platformToArgs.getKey(), cpuCores, memorySizeMB, diskSizeGB)).ram(
                                  memorySizeMB).processors(ImmutableList.of(new Processor(cpuCores, 1.0))).volumes(
                                  ImmutableList.<Volume> of(new VolumeImpl((float) diskSizeGB, true, true))).hypervisor(
                                  platformToArgs.getKey()).location(

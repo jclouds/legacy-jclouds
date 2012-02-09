@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OrgNetwork xmlns="http://www.vmware.com/vcloud/v1.5" name="internet01-Jclouds" id="urn:vcloud:network:55a677cf-ab3f-48ae-b880-fab90421980c" type="application/vnd.vmware.vcloud.orgNetwork+xml" href="https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd">
+    <Link rel="up" type="application/vnd.vmware.vcloud.org+xml" href="https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml" href="https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata"/>
+    <Description/>
+    <Configuration>
+        <IpScope>
+            <IsInherited>true</IsInherited>
+            <Gateway>173.240.107.49</Gateway>
+            <Netmask>255.255.255.240</Netmask>
+            <Dns1>173.240.111.52</Dns1>
+            <Dns2>173.240.111.53</Dns2>
+            <IpRanges>
+                <IpRange>
+                    <StartAddress>173.240.107.50</StartAddress>
+                    <EndAddress>173.240.107.62</EndAddress>
+                </IpRange>
+            </IpRanges>
+        </IpScope>
+        <FenceMode>bridged</FenceMode>
+        <RetainNetInfoAcrossDeployments>false</RetainNetInfoAcrossDeployments>
+        <SyslogServerSettings/>
+    </Configuration>
+    <AllowedExternalIpAddresses/>
+</OrgNetwork>

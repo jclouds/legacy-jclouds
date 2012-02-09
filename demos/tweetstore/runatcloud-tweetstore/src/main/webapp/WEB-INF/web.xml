@@ -23,7 +23,12 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd"
     version="2.5">
     <display-name>jclouds-tweetstore</display-name>
-  
+
+    <context-param>
+        <param-name>quartz:scheduler-context-servlet-context-key</param-name>
+        <param-value>servlet-context</param-value>
+    </context-param>
+
     <!-- Servlets -->
     <filter>
         <filter-name>guiceFilter</filter-name>
@@ -34,10 +39,18 @@
         <filter-name>guiceFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-  
+
+    <!-- must be started first -->
     <listener>
-        <listener-class>org.jclouds.demo.tweetstore.config.GuiceServletConfig
-        </listener-class>
+        <listener-class>org.jclouds.demo.paas.config.PlatformServicesInitializer</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>org.quartz.ee.servlet.QuartzInitializerListener</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>org.jclouds.demo.tweetstore.config.GuiceServletConfig</listener-class>
     </listener>
   
     <welcome-file-list>

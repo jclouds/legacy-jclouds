@@ -1,4 +1,5 @@
 /**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
@@ -42,6 +43,8 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.annotations.Login;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
+import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskAsyncClient;
@@ -75,6 +78,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
             .put(OrgClient.class, OrgAsyncClient.class)
             .put(TaskClient.class, TaskAsyncClient.class)
+            .put(NetworkClient.class, NetworkAsyncClient.class)
             .build();
 
    public VCloudDirectorRestClientModule() {

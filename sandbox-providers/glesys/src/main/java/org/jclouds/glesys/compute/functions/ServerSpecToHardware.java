@@ -29,6 +29,7 @@ import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
+import org.jclouds.domain.Location;
 import org.jclouds.glesys.domain.ServerSpec;
 
 import com.google.common.base.Function;
@@ -50,10 +51,12 @@ public class ServerSpecToHardware implements Function<ServerSpec, Hardware> {
 
    @Override
    public Hardware apply(ServerSpec spec) {
+      Location location = findLocationForServerSpec.apply(spec);
+      assert (location != null) : String.format("no location matched ServerSpec %s", spec);
       return new HardwareBuilder().ids(spec.toString()).ram(spec.getMemorySizeMB()).processors(
                ImmutableList.of(new Processor(spec.getCpuCores(), 1.0))).volumes(
                ImmutableList.<Volume> of(new VolumeImpl((float) spec.getDiskSizeGB(), true, true))).hypervisor(
-               spec.getPlatform()).location(findLocationForServerSpec.apply(spec)).supportsImage(
+               spec.getPlatform()).location(location).supportsImage(
                ImagePredicates.idEquals(spec.getTemplateName())).build();
    }
 }

@@ -58,7 +58,6 @@ public interface OrgClient {
     * @return the org or null if not found
     */
    Org getOrg(ReferenceType<?> orgRef);
-	// FIXME throws exception on not found currently
    
    /**
     * Retrieves an list of the organization's metadata
@@ -81,5 +80,5 @@ public interface OrgClient {
     * @return the metadata entry or null if not found
     */
    MetadataEntry getMetadataEntry(ReferenceType<?> orgRef, String key);
-	// FIXME throws exception on not found currently
+
 }

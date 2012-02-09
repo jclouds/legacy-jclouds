@@ -48,7 +48,7 @@ public class GleSYSExperimentLiveTest extends BaseVersionedServiceLiveTest {
          context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet
                   .<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()));
 
-         assertEquals(context.getComputeService().listAssignableLocations().size(), 6);
+         assertEquals(context.getComputeService().listAssignableLocations().size(), 4);
 
       } finally {
          if (context != null)

@@ -44,13 +44,17 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = "unit", singleThreaded = true, testName = "OrgClientExpectTest")
 public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
    @Test
    public void testWhenResponseIs2xxLoginReturnsValidOrgList() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", "/org"),
             getStandardPayloadResponse("/org/orglist.xml", VCloudDirectorMediaType.ORG_LIST));
 
+<<<<<<< HEAD
       OrgList expected = OrgList.builder()
             .org(Reference.builder()
                .type("application/vnd.vmware.vcloud.org+xml")

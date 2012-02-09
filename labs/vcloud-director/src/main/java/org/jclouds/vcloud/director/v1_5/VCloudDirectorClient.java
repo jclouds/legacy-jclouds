@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
+import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 
@@ -54,4 +55,10 @@ public interface VCloudDirectorClient {
     */
    @Delegate
    TaskClient getTaskClient();
+
+   /**
+    * @return synchronous access to Network features
+    */
+   @Delegate
+   NetworkClient getNetworkClient();
 }
