@@ -1,0 +1,477 @@
+/**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+package org.jclouds.vcloud.director.v1_5.domain;
+
+import static com.google.common.base.Objects.equal;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import org.jclouds.ovf.Section;
+import org.w3c.dom.Element;
+
+import com.google.common.base.Objects;
+
+
+/**
+ * 
+ *                 Represents the lease settings section for a vApp.
+ *             
+ * 
+ * <p>Java class for LeaseSettingsSection complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="LeaseSettingsSection">
+ *   &lt;complexContent>
+ *     &lt;extension base="{http://schemas.dmtf.org/ovf/envelope/1}Section_Type">
+ *       &lt;sequence>
+ *         &lt;element name="Link" type="{http://www.vmware.com/vcloud/v1.5}LinkType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="DeploymentLeaseInSeconds" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+ *         &lt;element name="StorageLeaseInSeconds" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+ *         &lt;element name="DeploymentLeaseExpiration" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
+ *         &lt;element name="StorageLeaseExpiration" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
+ *         &lt;any processContents='lax' namespace='##other' maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="href" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
+ *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;anyAttribute processContents='lax'/>
+ *     &lt;/extension>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "LeaseSettingsSection", propOrder = {
+    "link",
+    "deploymentLeaseInSeconds",
+    "storageLeaseInSeconds",
+    "deploymentLeaseExpiration",
+    "storageLeaseExpiration",
+    "any"
+})
+public class LeaseSettingsSection<T extends LeaseSettingsSection<T>>
+    extends Section<T>
+
+{
+   public static <T extends LeaseSettingsSection<T>> Builder<T> builder() {
+      return new Builder<T>();
+   }
+
+   public Builder<T> toBuilder() {
+      return new Builder<T>().fromLeaseSettingsSection(this);
+   }
+
+   public static class Builder<T extends LeaseSettingsSection<T>> extends Section.Builder<T> {
+      
+      private List<Link> link;
+      private Integer deploymentLeaseInSeconds;
+      private Integer storageLeaseInSeconds;
+      private XMLGregorianCalendar deploymentLeaseExpiration;
+      private XMLGregorianCalendar storageLeaseExpiration;
+      private List<Object> any;
+      private String href;
+      private String type;
+
+      /**
+       * @see LeaseSettingsSection#getLink()
+       */
+      public Builder<T> link(List<Link> link) {
+         this.link = link;
+         return this;
+      }
+
+      /**
+       * @see LeaseSettingsSection#getDeploymentLeaseInSeconds()
+       */
+      public Builder<T> deploymentLeaseInSeconds(Integer deploymentLeaseInSeconds) {
+         this.deploymentLeaseInSeconds = deploymentLeaseInSeconds;
+         return this;
+      }
+
+      /**
+       * @see LeaseSettingsSection#getStorageLeaseInSeconds()
+       */
+      public Builder<T> storageLeaseInSeconds(Integer storageLeaseInSeconds) {
+         this.storageLeaseInSeconds = storageLeaseInSeconds;
+         return this;
+      }
+
+      /**
+       * @see LeaseSettingsSection#getDeploymentLeaseExpiration()
+       */
+      public Builder<T> deploymentLeaseExpiration(XMLGregorianCalendar deploymentLeaseExpiration) {
+         this.deploymentLeaseExpiration = deploymentLeaseExpiration;
+         return this;
+      }
+
+      /**
+       * @see LeaseSettingsSection#getStorageLeaseExpiration()
+       */
+      public Builder<T> storageLeaseExpiration(XMLGregorianCalendar storageLeaseExpiration) {
+         this.storageLeaseExpiration = storageLeaseExpiration;
+         return this;
+      }
+
+      /**
+       * @see LeaseSettingsSection#getAny()
+       */
+      public Builder<T> any(List<Object> any) {
+         this.any = any;
+         return this;
+      }
+
+      /**
+       * @see LeaseSettingsSection#getHref()
+       */
+      public Builder<T> href(String href) {
+         this.href = href;
+         return this;
+      }
+
+      /**
+       * @see LeaseSettingsSection#getType()
+       */
+      public Builder<T> type(String type) {
+         this.type = type;
+         return this;
+      }
+
+
+      public LeaseSettingsSection<T> build() {
+         LeaseSettingsSection<T> leaseSettingsSection = new LeaseSettingsSection<T>(link, any);
+         leaseSettingsSection.setDeploymentLeaseInSeconds(deploymentLeaseInSeconds);
+         leaseSettingsSection.setStorageLeaseInSeconds(storageLeaseInSeconds);
+         leaseSettingsSection.setDeploymentLeaseExpiration(deploymentLeaseExpiration);
+         leaseSettingsSection.setStorageLeaseExpiration(storageLeaseExpiration);
+         leaseSettingsSection.setHref(href);
+         leaseSettingsSection.setType(type);
+         return leaseSettingsSection;
+      }
+
+
+     /**
+      * {@inheritDoc}
+      */
+     @SuppressWarnings("unchecked")
+      public Builder<T> fromSection(Section<T> in) {
+          return Builder.class.cast(super.fromSection(in));
+      }
+      public Builder<T> fromLeaseSettingsSection(LeaseSettingsSection<T> in) {
+         return fromSection(in)
+            .link(in.getLink())
+            .deploymentLeaseInSeconds(in.getDeploymentLeaseInSeconds())
+            .storageLeaseInSeconds(in.getStorageLeaseInSeconds())
+            .deploymentLeaseExpiration(in.getDeploymentLeaseExpiration())
+            .storageLeaseExpiration(in.getStorageLeaseExpiration())
+            .any(in.getAny())
+            .href(in.getHref())
+            .type(in.getType());
+      }
+   }
+
+   private LeaseSettingsSection() {
+      // For JAXB and builder use
+   }
+
+   private LeaseSettingsSection(List<Link> link, List<Object> any) {
+      this.link = link;
+      this.any = any;
+   }
+
+
+    @XmlElement(name = "Link")
+    protected List<Link> link;
+    @XmlElement(name = "DeploymentLeaseInSeconds")
+    protected Integer deploymentLeaseInSeconds;
+    @XmlElement(name = "StorageLeaseInSeconds")
+    protected Integer storageLeaseInSeconds;
+    @XmlElement(name = "DeploymentLeaseExpiration")
+    @XmlSchemaType(name = "dateTime")
+    protected XMLGregorianCalendar deploymentLeaseExpiration;
+    @XmlElement(name = "StorageLeaseExpiration")
+    @XmlSchemaType(name = "dateTime")
+    protected XMLGregorianCalendar storageLeaseExpiration;
+    @XmlAnyElement(lax = true)
+    protected List<Object> any;
+    @XmlAttribute
+    @XmlSchemaType(name = "anyURI")
+    protected String href;
+    @XmlAttribute
+    protected String type;
+
+    /**
+     * Gets the value of the link property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the link property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getLink().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link LinkType }
+     * 
+     * 
+     */
+    public List<Link> getLink() {
+        if (link == null) {
+            link = new ArrayList<Link>();
+        }
+        return this.link;
+    }
+
+    /**
+     * Gets the value of the deploymentLeaseInSeconds property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getDeploymentLeaseInSeconds() {
+        return deploymentLeaseInSeconds;
+    }
+
+    /**
+     * Sets the value of the deploymentLeaseInSeconds property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setDeploymentLeaseInSeconds(Integer value) {
+        this.deploymentLeaseInSeconds = value;
+    }
+
+    /**
+     * Gets the value of the storageLeaseInSeconds property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getStorageLeaseInSeconds() {
+        return storageLeaseInSeconds;
+    }
+
+    /**
+     * Sets the value of the storageLeaseInSeconds property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setStorageLeaseInSeconds(Integer value) {
+        this.storageLeaseInSeconds = value;
+    }
+
+    /**
+     * Gets the value of the deploymentLeaseExpiration property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link XMLGregorianCalendar }
+     *     
+     */
+    public XMLGregorianCalendar getDeploymentLeaseExpiration() {
+        return deploymentLeaseExpiration;
+    }
+
+    /**
+     * Sets the value of the deploymentLeaseExpiration property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link XMLGregorianCalendar }
+     *     
+     */
+    public void setDeploymentLeaseExpiration(XMLGregorianCalendar value) {
+        this.deploymentLeaseExpiration = value;
+    }
+
+    /**
+     * Gets the value of the storageLeaseExpiration property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link XMLGregorianCalendar }
+     *     
+     */
+    public XMLGregorianCalendar getStorageLeaseExpiration() {
+        return storageLeaseExpiration;
+    }
+
+    /**
+     * Sets the value of the storageLeaseExpiration property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link XMLGregorianCalendar }
+     *     
+     */
+    public void setStorageLeaseExpiration(XMLGregorianCalendar value) {
+        this.storageLeaseExpiration = value;
+    }
+
+    /**
+     * Gets the value of the any property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the any property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getAny().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Object }
+     * {@link Element }
+     * 
+     * 
+     */
+    public List<Object> getAny() {
+        if (any == null) {
+            any = new ArrayList<Object>();
+        }
+        return this.any;
+    }
+
+    /**
+     * Gets the value of the href property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getHref() {
+        return href;
+    }
+
+    /**
+     * Sets the value of the href property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setHref(String value) {
+        this.href = value;
+    }
+
+    /**
+     * Gets the value of the type property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Sets the value of the type property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setType(String value) {
+        this.type = value;
+    }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+          return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      LeaseSettingsSection<?> that = LeaseSettingsSection.class.cast(o);
+      return equal(link, that.link) && 
+           equal(deploymentLeaseInSeconds, that.deploymentLeaseInSeconds) && 
+           equal(storageLeaseInSeconds, that.storageLeaseInSeconds) && 
+           equal(deploymentLeaseExpiration, that.deploymentLeaseExpiration) && 
+           equal(storageLeaseExpiration, that.storageLeaseExpiration) && 
+           equal(any, that.any) && 
+           equal(href, that.href) && 
+           equal(type, that.type);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(link, 
+           deploymentLeaseInSeconds, 
+           storageLeaseInSeconds, 
+           deploymentLeaseExpiration, 
+           storageLeaseExpiration, 
+           any, 
+           href, 
+           type);
+   }
+
+   @Override
+   public String toString() {
+      return Objects.toStringHelper("")
+            .add("link", link)
+            .add("deploymentLeaseInSeconds", deploymentLeaseInSeconds)
+            .add("storageLeaseInSeconds", storageLeaseInSeconds)
+            .add("deploymentLeaseExpiration", deploymentLeaseExpiration)
+            .add("storageLeaseExpiration", storageLeaseExpiration)
+            .add("any", any)
+            .add("href", href)
+            .add("type", type).toString();
+   }
+
+}
