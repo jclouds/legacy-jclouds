@@ -19,6 +19,7 @@
 package org.jclouds.glesys.compute.internal;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Properties;
 
 import org.jclouds.compute.ComputeService;
@@ -31,6 +32,7 @@ import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.BaseRestClientExpectTest;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
@@ -51,8 +53,7 @@ public abstract class BaseGleSYSComputeServiceExpectTest extends BaseRestClientE
    @Override
    public ComputeService createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
       return new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, identity, credential,
-               ImmutableSet.<Module> of(new ExpectModule(fn), new NullLoggingModule(), module), props)
-               .getComputeService();
+            ImmutableSet.<Module> of(new ExpectModule(fn), new NullLoggingModule(), module), props).getComputeService();
    }
 
    protected PasswordProvider passwordGenerator() {
@@ -65,28 +66,47 @@ public abstract class BaseGleSYSComputeServiceExpectTest extends BaseRestClientE
    }
 
    protected Injector injectorForKnownArgumentsAndConstantPassword() {
-      return computeContextForKnownArgumentsAndConstantPassword().utils().injector();
+      return injectorForKnownArgumentsAndConstantPassword(ImmutableMap.<HttpRequest, HttpResponse> of());
+   }
+
+   protected Injector injectorForKnownArgumentsAndConstantPassword(Map<HttpRequest, HttpResponse> requestsResponses) {
+      return computeContextForKnownArgumentsAndConstantPassword(requestsResponses).utils().injector();
+   }
+
+   protected ComputeServiceContext computeContextForKnownArgumentsAndConstantPassword(
+         Map<HttpRequest, HttpResponse> requestsResponses) {
+      return requestsSendResponses(
+            ImmutableMap
+                  .<HttpRequest, HttpResponse> builder()
+                  .put(HttpRequest
+                        .builder()
+                        .method("GET")
+                        .endpoint(URI.create("https://api.glesys.com/server/templates/format/json"))
+                        .headers(
+                              ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                                    .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
+                        HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_templates.json"))
+                              .build())
+                  .put(HttpRequest
+                        .builder()
+                        .method("GET")
+                        .endpoint(URI.create("https://api.glesys.com/server/allowedarguments/format/json"))
+                        .headers(
+                              ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                                    .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
+                        HttpResponse.builder().statusCode(204)
+                              .payload(payloadFromResource("/server_allowed_arguments.json")).build())
+                  .putAll(requestsResponses).build(), new AbstractModule() {
+
+               @Override
+               protected void configure() {
+                  bind(PasswordProvider.class).toInstance(passwordGenerator());
+               }
+
+            }).getContext();
    }
 
    protected ComputeServiceContext computeContextForKnownArgumentsAndConstantPassword() {
-      return requestsSendResponses(
-               HttpRequest.builder().method("GET").endpoint(
-                        URI.create("https://api.glesys.com/server/templates/format/json")).headers(
-                        ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put(
-                                 "Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
-               HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_templates.json")).build(),
-               HttpRequest.builder().method("GET").endpoint(
-                        URI.create("https://api.glesys.com/server/allowedarguments/format/json")).headers(
-                        ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put(
-                                 "Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
-               HttpResponse.builder().statusCode(204).payload(payloadFromResource("/server_allowed_arguments.json"))
-                        .build(), new AbstractModule() {
-
-                  @Override
-                  protected void configure() {
-                     bind(PasswordProvider.class).toInstance(passwordGenerator());
-                  }
-
-               }).getContext();
+      return computeContextForKnownArgumentsAndConstantPassword(ImmutableMap.<HttpRequest, HttpResponse> of());
    }
 }

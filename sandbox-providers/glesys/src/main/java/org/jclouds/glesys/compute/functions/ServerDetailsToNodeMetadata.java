@@ -53,6 +53,7 @@ import org.jclouds.util.InetAddresses2.IsPrivateIPAddress;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -113,14 +114,14 @@ public class ServerDetailsToNodeMetadata implements Function<ServerDetails, Node
                from.getPlatform()).build());
       builder.state(serverStateToNodeState.get(client.getServerClient().getServerStatus(from.getId(),
                ServerStatusOptions.Builder.state()).getState()));
-      Iterable<String> addresses = Iterables.transform(from.getIps(), new Function<Ip, String>() {
+      Iterable<String> addresses = Iterables.filter(Iterables.transform(from.getIps(), new Function<Ip, String>() {
 
          @Override
          public String apply(Ip arg0) {
-            return arg0.getIp();
+            return Strings.emptyToNull(arg0.getIp());
          }
 
-      });
+      }), Predicates.notNull());
       builder.publicAddresses(Iterables.filter(addresses, Predicates.not(IsPrivateIPAddress.INSTANCE)));
       builder.privateAddresses(Iterables.filter(addresses, IsPrivateIPAddress.INSTANCE));
       return builder.build();

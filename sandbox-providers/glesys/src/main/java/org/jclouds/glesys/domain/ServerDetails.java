@@ -18,13 +18,12 @@
  */
 package org.jclouds.glesys.domain;
 
-import com.google.common.collect.ImmutableList;
-import com.google.gson.annotations.SerializedName;
-
-import java.util.Arrays;
-import java.util.List;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Detailed information about a server such as cpuCores, hardware configuration
@@ -46,7 +45,7 @@ public class ServerDetails extends Server {
       private int diskSizeGB;
       private int transferGB;
       private Cost cost;
-      private List<Ip> ips;
+      private Set<Ip> ips = ImmutableSet.of();
 
       public Builder description(String description) {
          this.description = description;
@@ -84,11 +83,11 @@ public class ServerDetails extends Server {
       }
 
       public Builder ips(Ip... ips) {
-         return ips(Arrays.asList(ips));
+         return ips(ImmutableSet.copyOf(ips));
       }
 
-      public Builder ips(List<Ip> ips) {
-         this.ips = ips;
+      public Builder ips(Iterable<Ip> ips) {
+         this.ips = ImmutableSet.copyOf(ips);
          return this;
       }
 
@@ -140,10 +139,10 @@ public class ServerDetails extends Server {
    private final int transferGB;
    private final Cost cost;
    @SerializedName("iplist")
-   private final List<Ip> ips;
+   private final Set<Ip> ips;
 
    public ServerDetails(String id, String hostname, String datacenter, String platform, String templateName,
-                        String description, int cpuCores, int memorySizeMB, int diskSizeGB, int transferGB, Cost cost, List<Ip> ips) {
+                        String description, int cpuCores, int memorySizeMB, int diskSizeGB, int transferGB, Cost cost, Set<Ip> ips) {
       super(id, hostname, datacenter, platform);
       this.templateName = checkNotNull(templateName, "template");
       this.description = description;
@@ -152,7 +151,7 @@ public class ServerDetails extends Server {
       this.diskSizeGB = diskSizeGB;
       this.transferGB = transferGB;
       this.cost = checkNotNull(cost, "cost");
-      this.ips = ips == null ? ImmutableList.<Ip>of() : ips;
+      this.ips = ImmutableSet.<Ip>copyOf(ips);
    }
 
    /**
@@ -200,7 +199,7 @@ public class ServerDetails extends Server {
    /**
     * @return the ip addresses assigned to the server
     */
-   public List<Ip> getIps() {
+   public Set<Ip> getIps() {
       return ips;
    }
 

@@ -20,6 +20,7 @@
 package org.jclouds.glesys.domain;
 
 import com.google.common.base.Objects;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents an ip address used by a server.
@@ -70,7 +71,8 @@ public class Ip {
          return ip(from.getIp()).version(from.getVersion()).cost(from.getCost());
       }
    }
-
+   
+   @SerializedName("ipaddress")
    protected final String ip;
    protected final int version;
    protected final double cost;

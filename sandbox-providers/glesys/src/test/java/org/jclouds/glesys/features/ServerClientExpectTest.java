@@ -146,19 +146,19 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server1ssg-1.1").build())).build(),
+                        .put("serverid", "xm3276891").build())).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_details.json")).build()).getServerClient();
 
-      ServerDetails actual = client.getServerDetails("server1ssg-1.1");
+      ServerDetails actual = client.getServerDetails("xm3276891");
       assertEquals(actual.toString(), expectedServerDetails().toString());
    }
 
-   private ServerDetails expectedServerDetails() {
-      Ip ip = Ip.builder().version4().ip("31.192.226.45").cost(2.0).build();
-      Cost cost = Cost.builder().amount(6.38).currency("EUR").timePeriod("month").build();
-      return ServerDetails.builder().id("vz1375882").transferGB(50).hostname("jclouds-unit").cpuCores(1).memorySizeMB(128)
-            .diskSizeGB(5).description("unit test server").datacenter("Falkenberg").platform("OpenVZ")
-            .templateName("Debian 6.0 64-bit").cost(cost).ips(ip).build();
+   public static ServerDetails expectedServerDetails() {
+      Ip ip = Ip.builder().version4().ip("109.74.10.45").cost(2.0).build();
+      Cost cost = Cost.builder().amount(13.22).currency("EUR").timePeriod("month").build();
+      return ServerDetails.builder().id("xm3276891").transferGB(50).hostname("glesys-s-6dd").cpuCores(1).memorySizeMB(512)
+            .diskSizeGB(5).description("glesys-s-6dd").datacenter("Falkenberg").platform("Xen")
+            .templateName("Ubuntu 11.04 x64").cost(cost).ips(ip).build();
    }
 
    @Test
@@ -169,10 +169,10 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server111").build())).build(),
+                        .put("serverid", "xm3276891").build())).build(),
             HttpResponse.builder().statusCode(404).build()).getServerClient();
 
-      assertNull(client.getServerDetails("server111"));
+      assertNull(client.getServerDetails("xm3276891"));
    }
 
    @Test
@@ -243,10 +243,10 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server111").build())).build(),
+                        .put("serverid", "xm3276891").build())).build(),
             HttpResponse.builder().statusCode(206).build()).getServerClient();
 
-      client.editServer("server111");
+      client.editServer("xm3276891");
    }
 
    @Test
@@ -257,7 +257,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server111")
+                        .put("serverid", "xm3276891")
                         .put("description", "Description-of-server")
                         .put("disksize", "1")
                         .put("memorysize", "512")
@@ -269,7 +269,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
       EditServerOptions options =
             EditServerOptions.Builder.description("Description-of-server").diskSizeGB(1).memorySizeMB(512).cpuCores(1).hostname("jclouds-test");
 
-      client.editServer("server111", options);
+      client.editServer("xm3276891", options);
    }
    
    @Test
@@ -280,11 +280,11 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server111")
+                        .put("serverid", "xm3276891")
                         .put("hostname", "hostname1").build())).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_details.json")).build()).getServerClient();
       
-      assertEquals(client.cloneServer("server111", "hostname1"), expectedServerDetails());
+      assertEquals(client.cloneServer("xm3276891", "hostname1"), expectedServerDetails());
    }
 
    @Test
@@ -295,7 +295,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server111")
+                        .put("serverid", "xm3276891")
                         .put("hostname", "hostname1")
                         .put("description", "Description-of-server")
                         .put("disksize", "1")
@@ -304,7 +304,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_details.json")).build()).getServerClient();
       CloneServerOptions options = (CloneServerOptions) CloneServerOptions.Builder.description("Description-of-server").diskSizeGB(1).memorySizeMB(512).cpuCores(1);
 
-      assertEquals(client.cloneServer("server111", "hostname1", options), expectedServerDetails());
+      assertEquals(client.cloneServer("xm3276891", "hostname1", options), expectedServerDetails());
    }
 
    @Test(expectedExceptions = {ResourceNotFoundException.class})
@@ -315,11 +315,11 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server111")
+                        .put("serverid", "xm3276891")
                         .put("hostname", "hostname1").build())).build(),
             HttpResponse.builder().statusCode(404).build()).getServerClient();
 
-      client.cloneServer("server111", "hostname1");
+      client.cloneServer("xm3276891", "hostname1");
    }
 
    public void testGetServerStatusWhenResponseIs2xx() throws Exception {
@@ -329,11 +329,11 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("Accept", "application/json")
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
                   .payload(newUrlEncodedFormPayload(ImmutableMultimap.<String, String>builder()
-                        .put("serverid", "server111").build())).build(),
+                        .put("serverid", "xm3276891").build())).build(),
             HttpResponse.builder().statusCode(206).payload(payloadFromResource("/server_status.json")).build())
             .getServerClient();
 
-      assertEquals(client.getServerStatus("server111"), expectedServerStatus());
+      assertEquals(client.getServerStatus("xm3276891"), expectedServerStatus());
    }
 
    public void testGetServerStatusWithOptsWhenResponseIs2xx() throws Exception {
@@ -539,9 +539,9 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
 
    private ServerStatus expectedServerStatus() {
       ResourceUsage cpu = ResourceUsage.builder().unit("cores").max(1.0).usage(0.0).build();
-      ResourceUsage disk = ResourceUsage.builder().unit("MB").usage(371.0).max(5120).build();
-      ResourceUsage memory = ResourceUsage.builder().unit("MB").usage(3.0).max(128).build();
-      ServerUptime uptime = ServerUptime.builder().current(23).unit("seconds").build();
+      ResourceUsage disk = ResourceUsage.builder().unit("GB").usage(0.0).max(5).build();
+      ResourceUsage memory = ResourceUsage.builder().unit("MB").usage(0.0).max(512).build();
+      ServerUptime uptime = ServerUptime.builder().current(0).unit("seconds").build();
       return ServerStatus.builder().state(Server.State.RUNNING).uptime(uptime).
             cpu(cpu).disk(disk).memory(memory).build();
    }
