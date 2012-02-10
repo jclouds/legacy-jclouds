@@ -36,7 +36,7 @@ public class VCloudDirectorPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_ENDPOINT, "http://localhost/api");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://vcloudbeta.bluelock.com/api");
       properties.setProperty(PROPERTY_SESSION_INTERVAL, 30*60 + "");
       properties.setProperty(PROPERTY_API_VERSION, "1.5");
       return properties;

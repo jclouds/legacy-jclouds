@@ -67,191 +67,36 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", "/org"),
             getStandardPayloadResponse("/org/orglist.xml", VCloudDirectorMediaType.ORG_LIST));
+
       Reference org = Iterables.getOnlyElement(client.getOrgClient().getOrgList().getOrgs());
       
       client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", org.getHref()),
             getStandardPayloadResponse("/org/org.xml", VCloudDirectorMediaType.ORG));
 
-      Org expected = Org
-         .builder()
-         .name("JClouds")
-         .description("")
-         .fullName("JClouds")
-         .id("urn:vcloud:org:6f312e42-cd2b-488d-a2bb-97519cd57ed0")
-         .type("application/vnd.vmware.vcloud.org+xml")
-         .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.vdc+xml")
-            .name("Cluster01-JClouds")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/vdc/d16d333b-e3c0-4176-845d-a5ee6392df07"))
-            .build())
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.tasksList+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-            .build())
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.catalog+xml")
-            .name("Public")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/9e08c2f6-077a-42ce-bece-d5332e2ebb5c"))
-            .build())
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.controlAccess+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/catalog/9e08c2f6-077a-42ce-bece-d5332e2ebb5c/controlAccess/"))
-            .build())
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.orgNetwork+xml")
-            .name("ilsolation01-Jclouds")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/network/f3ba8256-6f48-4512-aad6-600e85b4dc38"))
-            .build())
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.orgNetwork+xml")
-            .name("internet01-Jclouds")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c"))
-            .build())
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.metadata+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata"))
-            .build())
-         .build();
+      Org expected = org();
 
       assertEquals(client.getOrgClient().getOrg(org), expected);
    }
 
    @Test
-   public void testWhenResponseIs2xxLoginReturnsValidOrgFromListById() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", "/org"),
-            getStandardPayloadResponse("/org/orglist.xml", VCloudDirectorMediaType.ORG_LIST));
-      Reference org = Iterables.getOnlyElement(client.getOrgClient().getOrgList().getOrgs());
-      client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", "/org/" + org.getUuid()),
-            getStandardPayloadResponse("/org/org.xml", VCloudDirectorMediaType.ORG));
-
-      Org expected = Org
-         .builder()
-         .name("JClouds")
-         .description("")
-         .fullName("JClouds")
-         .id("urn:vcloud:org:6f312e42-cd2b-488d-a2bb-97519cd57ed0")
-         .type("application/vnd.vmware.vcloud.org+xml")
-         .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.vdc+xml")
-            .name("Cluster01-JClouds")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/vdc/d16d333b-e3c0-4176-845d-a5ee6392df07"))
-            .build())
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.tasksList+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-            .build())
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.catalog+xml")
-            .name("Public")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/9e08c2f6-077a-42ce-bece-d5332e2ebb5c"))
-            .build())
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.controlAccess+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/catalog/9e08c2f6-077a-42ce-bece-d5332e2ebb5c/controlAccess/"))
-            .build())
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.orgNetwork+xml")
-            .name("ilsolation01-Jclouds")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/network/f3ba8256-6f48-4512-aad6-600e85b4dc38"))
-            .build())
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.orgNetwork+xml")
-            .name("internet01-Jclouds")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c"))
-            .build())
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.metadata+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata"))
-            .build())
-         .build();
-
-      assertEquals(org.getUuid(), "6f312e42-cd2b-488d-a2bb-97519cd57ed0");
-      assertEquals(client.getOrgClient().getOrg(org.getUuid()), expected);
-   }
-
-   @Test
    public void testWhenResponseIs2xxLoginReturnsValidOrg() {
-      URI orgRef = URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
+      URI orgUri = URI.create(endpoint + "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"),
             getStandardPayloadResponse("/org/org.xml", VCloudDirectorMediaType.ORG));
       
-      Org expected = Org
-         .builder()
-         .name("JClouds")
-         .description("")
-         .fullName("JClouds")
-         .id("urn:vcloud:org:6f312e42-cd2b-488d-a2bb-97519cd57ed0")
-         .type("application/vnd.vmware.vcloud.org+xml")
-         .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.vdc+xml")
-            .name("Cluster01-JClouds")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/vdc/d16d333b-e3c0-4176-845d-a5ee6392df07"))
-            .build())
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.tasksList+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-            .build())
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.catalog+xml")
-            .name("Public")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/9e08c2f6-077a-42ce-bece-d5332e2ebb5c"))
-            .build())
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.controlAccess+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/catalog/9e08c2f6-077a-42ce-bece-d5332e2ebb5c/controlAccess/"))
-            .build())
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.orgNetwork+xml")
-            .name("ilsolation01-Jclouds")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/network/f3ba8256-6f48-4512-aad6-600e85b4dc38"))
-            .build())
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.orgNetwork+xml")
-            .name("internet01-Jclouds")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c"))
-            .build())
-         .link(Link.builder()
-            .rel("down")
-            .type("application/vnd.vmware.vcloud.metadata+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata"))
-            .build())
-         .build();
+      Org expected = org();
 
-      String orgId = getUuidFromReference.apply(Reference.builder().href(orgRef).build());
-      assertEquals(client.getOrgClient().getOrg(orgId), expected);
+      Reference orgRef = Reference.builder().href(orgUri).build();
+
+      assertEquals(client.getOrgClient().getOrg(orgRef), expected);
    }
 
    @Test
    public void testWhenResponseIs400ForInvalidOrgId() {
-      URI orgRef = URI.create("https://vcloudbeta.bluelock.com/api/org/NOTAUUID");
+      URI orgUri = URI.create(endpoint + "/org/NOTAUUID");
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
             getStandardRequest("GET", "/org/NOTAUUID"),
@@ -263,9 +108,9 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .minorErrorCode("BAD_REQUEST")
             .build();
 
-      String orgId = getUuidFromReference.apply(Reference.builder().href(orgRef).build());
+      Reference orgRef = Reference.builder().href(orgUri).build();
       try {
-         client.getOrgClient().getOrg(orgId);
+         client.getOrgClient().getOrg(orgRef);
          fail("Should give HTTP 400 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -276,7 +121,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
 
    @Test
    public void testWhenResponseIs403ForCatalogIdUsedAsOrgId() {
-      URI orgRef = URI.create("https://vcloudbeta.bluelock.com/api/org/9e08c2f6-077a-42ce-bece-d5332e2ebb5c");
+      URI orgUri = URI.create(endpoint + "/org/9e08c2f6-077a-42ce-bece-d5332e2ebb5c");
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
             getStandardRequest("GET", "/org/9e08c2f6-077a-42ce-bece-d5332e2ebb5c"),
@@ -288,9 +133,10 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
             .build();
 
-      String orgId = getUuidFromReference.apply(Reference.builder().href(orgRef).build());
+      Reference orgRef = Reference.builder().href(orgUri).build();
+
       try {
-         client.getOrgClient().getOrg(orgId);
+         client.getOrgClient().getOrg(orgRef);
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -301,7 +147,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
 
    @Test
    public void testWhenResponseIs403ForFakeOrgId() {
-      URI orgRef = URI.create("https://vcloudbeta.bluelock.com/api/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
+      URI orgUri = URI.create(endpoint + "/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
             getStandardRequest("GET", "/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"),
@@ -313,9 +159,10 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
             .build();
 
-      String orgId = getUuidFromReference.apply(Reference.builder().href(orgRef).build());
+      Reference orgRef = Reference.builder().href(orgUri).build();
+
       try {
-         client.getOrgClient().getOrg(orgId);
+         client.getOrgClient().getOrg(orgRef);
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -326,7 +173,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
    
    @Test
    public void testWhenResponseIs2xxLoginReturnsValidMetadataList() {
-      URI orgRef = URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
+      URI orgUri = URI.create(endpoint + "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata"),
@@ -342,13 +189,14 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
                   .build())
             .build();
 
-      String orgId = getUuidFromReference.apply(Reference.builder().href(orgRef).build());
-      assertEquals(client.getOrgClient().getMetadata(orgId), expected);
+       Reference orgRef = Reference.builder().href(orgUri).build();
+ 
+       assertEquals(client.getOrgClient().getMetadata(orgRef), expected);
    }
    
    @Test(enabled=false) // No metadata in exemplar xml...
    public void testWhenResponseIs2xxLoginReturnsValidMetadata() {
-      URI orgRef = URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
+      URI orgUri = URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata/KEY"),
@@ -358,7 +206,58 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .key("KEY")
             .build();
 
-      String orgId = getUuidFromReference.apply(Reference.builder().href(orgRef).build());
-      assertEquals(client.getOrgClient().getMetadataEntry(orgId, "KEY"), expected);
+      Reference orgRef = Reference.builder().href(orgUri).build();
+
+      assertEquals(client.getOrgClient().getMetadataEntry(orgRef, "KEY"), expected);
+   }
+
+   public static Org org() {
+      return Org.builder()
+         .name("JClouds")
+         .description("")
+         .fullName("JClouds")
+         .id("urn:vcloud:org:6f312e42-cd2b-488d-a2bb-97519cd57ed0")
+         .type("application/vnd.vmware.vcloud.org+xml")
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+         .link(Link.builder()
+            .rel("down")
+            .type("application/vnd.vmware.vcloud.vdc+xml")
+            .name("Cluster01-JClouds")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/vdc/d16d333b-e3c0-4176-845d-a5ee6392df07"))
+            .build())
+         .link(Link.builder()
+            .rel("down")
+            .type("application/vnd.vmware.vcloud.tasksList+xml")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+            .build())
+         .link(Link.builder()
+            .rel("down")
+            .type("application/vnd.vmware.vcloud.catalog+xml")
+            .name("Public")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/9e08c2f6-077a-42ce-bece-d5332e2ebb5c"))
+            .build())
+         .link(Link.builder()
+            .rel("down")
+            .type("application/vnd.vmware.vcloud.controlAccess+xml")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/catalog/9e08c2f6-077a-42ce-bece-d5332e2ebb5c/controlAccess/"))
+            .build())
+         .link(Link.builder()
+            .rel("down")
+            .type("application/vnd.vmware.vcloud.orgNetwork+xml")
+            .name("ilsolation01-Jclouds")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/network/f3ba8256-6f48-4512-aad6-600e85b4dc38"))
+            .build())
+         .link(Link.builder()
+            .rel("down")
+            .type("application/vnd.vmware.vcloud.orgNetwork+xml")
+            .name("internet01-Jclouds")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c"))
+            .build())
+         .link(Link.builder()
+            .rel("down")
+            .type("application/vnd.vmware.vcloud.metadata+xml")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata"))
+            .build())
+         .build();
    }
 }

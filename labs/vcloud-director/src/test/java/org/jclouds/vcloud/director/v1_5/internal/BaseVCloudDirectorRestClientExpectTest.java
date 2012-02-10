@@ -46,7 +46,7 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
    public static final String org = "JClouds";
    public static final String password = "password";
    public static final String token = "mIaR3/6Lna8DWImd7/JPR5rK8FcUHabt+G/UCJV5pJQ=";
-   public static final String endpoint = "http://localhost/api";
+   public static final String endpoint = "https://vcloudbeta.bluelock.com/api";
 
    protected DateService dateService;
 
@@ -56,17 +56,9 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
       assert dateService != null;
    }
 
-   protected static final Function<ReferenceType<?>, String> getUuidFromReference = new Function<ReferenceType<?>, String>() {
-      @Override
-      public String apply(ReferenceType<?> input) {
-         String uuid = Iterables.getLast(Splitter.on("/").split(input.getHref().getPath()));
-         return uuid;
-      }
-   };
-
    protected HttpRequest loginRequest = HttpRequest.builder()
          .method("POST")
-         .endpoint(URI.create("http://localhost/api/sessions"))
+         .endpoint(URI.create(endpoint + "/sessions"))
          .headers(ImmutableMultimap.<String, String>builder()
                .put("Accept", "*/*")
                .put("Authorization", "Basic YWRyaWFuQGpjbG91ZHMub3JnQEpDbG91ZHM6cGFzc3dvcmQ=")

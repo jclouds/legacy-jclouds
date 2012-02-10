@@ -36,25 +36,33 @@ public interface TaskClient {
 
    /**
     * Retrieves a list of tasks.
+    *
+    * <pre>
+    * GET /tasksList/{id}
+    * </pre>
     * 
     * @param orgId the unique id for the organization
     * @return a list of tasks
     */
-   TasksList getTaskList(String orgId);
+   TasksList getTaskList(ReferenceType<?> orgRef);
 
    /**
     * Retrieves a task.
+    *
+    * <pre>
+    * GET /task/{id}
+    * </pre>
     * 
     * @return the task or null if not found
     */
-   Task getTask(String taskId);
-
    Task getTask(ReferenceType<?> taskRef);
 
    /**
     * Cancels a task.
+    *
+    * <pre>
+    * POST /task/{id}/action/cancel
+    * </pre>
     */
-   void cancelTask(String taskId);
-
    void cancelTask(ReferenceType<?> taskRef);
 }
