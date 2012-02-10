@@ -219,7 +219,7 @@ public class Org extends EntityType<Org> {
       return isEnabled;
    }
 
-   public void isEnabled(Boolean isEnabled) {
+   public void setIsEnabled(Boolean isEnabled) {
       this.isEnabled = isEnabled;
    }
 

@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.Link.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -61,7 +60,7 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
 
    public static class Builder extends ResourceType.Builder<MetadataEntry> {
       private String key;
-      private MetadataValue value;
+      private String value;
 
       /**
        * @see MetadataEntry#getKey()
@@ -74,7 +73,7 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
       /**
        * @see MetadataEntry#getValue()
        */
-      public Builder value(MetadataValue value) {
+      public Builder value(String value) {
          this.value = value;
          return this;
       }
@@ -83,7 +82,7 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
        * @see MetadataEntry#getKey()
        * @see MetadataEntry#getValue()
        */
-      public Builder entry(String key, MetadataValue value) {
+      public Builder entry(String key, String value) {
          this.key = key;
          this.value = value;
          return this;
@@ -150,7 +149,7 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
       // For JAXB and builder use
    }
 
-   private MetadataEntry(URI href, String key, MetadataValue value) {
+   private MetadataEntry(URI href, String key, String value) {
       super(href);
       this.key = checkNotNull(key, "key");
       this.value = checkNotNull(value, "value");
@@ -159,7 +158,7 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
    @XmlElement(namespace = VCLOUD_1_5_NS, name = "Key")
    private String key;
    @XmlElement(namespace = VCLOUD_1_5_NS, name = "Value")
-   private MetadataValue value;
+   private String value;
 
    /**
     * @return key of the entry
@@ -171,7 +170,7 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
    /**
     * @return value of the entry
     */
-   public MetadataValue getValue() {
+   public String getValue() {
       return value;
    }
    

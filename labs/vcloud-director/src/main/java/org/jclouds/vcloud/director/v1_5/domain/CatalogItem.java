@@ -43,7 +43,7 @@ import com.google.common.collect.Sets;
  *
  * @author grkvlt@apache.org
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Catalog")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "CatalogItem")
 public class CatalogItem extends EntityType<CatalogItem> {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.CATALOG_ITEM;
@@ -197,14 +197,16 @@ public class CatalogItem extends EntityType<CatalogItem> {
    private List<Property> properties = Lists.newArrayList();
 
    /**
-    * Gets the value of the entity property.
+    * A reference to a VappTemplate or Media object.
     */
    public Reference getEntity() {
       return entity;
    }
 
    /**
-    * Gets the value of the properties property.
+    * User-specified key/value pair.
+    *
+    * This element has been superseded by the {@link Metadata} element, which is the preferred way to specify key/value pairs for objects.
     */
    public List<Property> getProperties() {
       return this.properties;

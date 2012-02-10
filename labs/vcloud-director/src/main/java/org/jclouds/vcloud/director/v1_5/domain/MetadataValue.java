@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -42,7 +41,7 @@ import com.google.common.collect.Sets;
  * &lt;xs:complexType name="MetadataType"&gt;
  * </pre>
  *
- * @author danikov
+ * @author grkvlt@apache.org
  */
 @XmlRootElement(namespace = VCLOUD_1_5_NS, name = "MetadataValue")
 public class MetadataValue extends ResourceType<MetadataValue> {
