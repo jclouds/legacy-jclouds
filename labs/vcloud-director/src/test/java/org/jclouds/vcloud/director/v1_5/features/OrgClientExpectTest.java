@@ -18,12 +18,14 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
@@ -44,7 +46,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
    public void testWhenResponseIs2xxLoginReturnsValidOrgList() {
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", URI.create("http://localhost/api/org/")), 
+            getStandardRequest("GET", "/org"),
             getStandardPayloadResponse("/org/orglist.xml", VCloudDirectorMediaType.ORGLIST_XML+";version=1.5"));
 
       OrgList expected = OrgList.builder()
@@ -63,7 +65,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       URI orgRef = URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", orgRef), 
+            getStandardRequest("GET", "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"),
             getStandardPayloadResponse("/org/org.xml", VCloudDirectorMediaType.ORG_XML+";version=1.5"));
       
       Org expected = Org
@@ -115,16 +117,91 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .build())
          .build();
 
-      assertEquals(client.getOrgClient().getOrg(orgRef), expected);
+      String orgId = getUuidFromReference.apply(Reference.builder().href(orgRef).build());
+      assertEquals(client.getOrgClient().getOrg(orgId), expected);
+   }
+
+   @Test
+   public void testWhenResponseIs400ForInvalidOrgId() {
+      URI orgRef = URI.create("https://vcloudbeta.bluelock.com/api/org/NOTAUUID");
+
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
+            getStandardRequest("GET", "/org/NOTAUUID"),
+            getStandardPayloadResponse(400, "/org/error400.xml", VCloudDirectorMediaType.ERROR_XML));
+
+      Error expected = Error.builder()
+            .message("validation error on field 'id': String value has invalid format or length")
+            .majorErrorCode(400)
+            .minorErrorCode("BAD_REQUEST")
+            .build();
+
+      String orgId = getUuidFromReference.apply(Reference.builder().href(orgRef).build());
+      try {
+         client.getOrgClient().getOrg(orgId);
+         fail("Should give HTTP 400 error");
+      } catch (VCloudDirectorException vde) {
+         assertEquals(vde.getError(), expected);
+      } catch (Exception e) {
+         fail("Should have thrown a VCloudDirectorException");
+      }
+   }
+
+   @Test
+   public void testWhenResponseIs403ForCatalogIdUsedAsOrgId() {
+      URI orgRef = URI.create("https://vcloudbeta.bluelock.com/api/org/9e08c2f6-077a-42ce-bece-d5332e2ebb5c");
+
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
+            getStandardRequest("GET", "/org/9e08c2f6-077a-42ce-bece-d5332e2ebb5c"),
+            getStandardPayloadResponse(403, "/org/error403-catalog.xml", VCloudDirectorMediaType.ERROR_XML));
+
+      Error expected = Error.builder()
+            .message("No access to entity &quot;com.vmware.vcloud.entity.org:9e08c2f6-077a-42ce-bece-d5332e2ebb5c&quot;.")
+            .majorErrorCode(403)
+            .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
+            .build();
+
+      String orgId = getUuidFromReference.apply(Reference.builder().href(orgRef).build());
+      try {
+         client.getOrgClient().getOrg(orgId);
+         fail("Should give HTTP 403 error");
+      } catch (VCloudDirectorException vde) {
+         assertEquals(vde.getError(), expected);
+      } catch (Exception e) {
+         fail("Should have thrown a VCloudDirectorException");
+      }
+   }
+
+   @Test
+   public void testWhenResponseIs403ForFakeOrgId() {
+      URI orgRef = URI.create("https://vcloudbeta.bluelock.com/api/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
+
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
+            getStandardRequest("GET", "/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"),
+            getStandardPayloadResponse(403, "/org/error403-fake.xml", VCloudDirectorMediaType.ERROR_XML));
+
+      Error expected = Error.builder()
+            .message("No access to entity &quot;com.vmware.vcloud.entity.org:aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee&quot;.")
+            .majorErrorCode(403)
+            .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
+            .build();
+
+      String orgId = getUuidFromReference.apply(Reference.builder().href(orgRef).build());
+      try {
+         client.getOrgClient().getOrg(orgId);
+         fail("Should give HTTP 403 error");
+      } catch (VCloudDirectorException vde) {
+         assertEquals(vde.getError(), expected);
+      } catch (Exception e) {
+         fail("Should have thrown a VCloudDirectorException");
+      }
    }
    
    @Test
    public void testWhenResponseIs2xxLoginReturnsValidMetadataList() {
       URI orgRef = URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
-      URI metaRef = URI.create(orgRef.toASCIIString()+"/metadata/");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", metaRef),
+            getStandardRequest("GET", "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata"),
             getStandardPayloadResponse("/org/metadata.xml", VCloudDirectorMediaType.METADATA_XML+";version=1.5"));
       
       Metadata expected = Metadata.builder()
@@ -137,20 +214,23 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
                   .build())
             .build();
 
-      assertEquals(client.getOrgClient().getMetadata(orgRef), expected);
+      String orgId = getUuidFromReference.apply(Reference.builder().href(orgRef).build());
+      assertEquals(client.getOrgClient().getMetadata(orgId), expected);
    }
    
    @Test(enabled=false) // No metadata in exemplar xml...
    public void testWhenResponseIs2xxLoginReturnsValidMetadata() {
-      URI metadataRef = URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata/KEY");
+      URI orgRef = URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", metadataRef),
+            getStandardRequest("GET", "i/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata/KEY"),
             getStandardPayloadResponse("/org/metadata.xml", VCloudDirectorMediaType.METADATAENTRY_XML+";version=1.5"));
       
       MetadataEntry expected = MetadataEntry.builder()
+            .key("KEY")
             .build();
 
-      assertEquals(client.getOrgClient().getMetadataEntry(metadataRef), expected);
+      String orgId = getUuidFromReference.apply(Reference.builder().href(orgRef).build());
+      assertEquals(client.getOrgClient().getMetadataEntry(orgId, "KEY"), expected);
    }
 }
