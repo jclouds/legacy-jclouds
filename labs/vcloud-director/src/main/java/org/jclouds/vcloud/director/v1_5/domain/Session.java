@@ -31,6 +31,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -45,6 +47,8 @@ import com.google.common.collect.Sets;
 @XmlRootElement(namespace = XMLNS, name = "Session")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Session {
+   
+   public static final String MEDIA_TYPE = VCloudDirectorMediaType.SESSION;
 
    public static Builder builder() {
       return new Builder();

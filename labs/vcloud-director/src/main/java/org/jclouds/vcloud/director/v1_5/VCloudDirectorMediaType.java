@@ -26,24 +26,26 @@ package org.jclouds.vcloud.director.v1_5;
  * 
  * @see javax.ws.rs.core.MediaType;
  */
-public enum VCloudDirectorMediaType {
-   ANY("*/*"),
-   SESSION("application/vnd.vmware.vcloud.session+xml"),
-   ERROR("application/vnd.vmware.vcloud.error+xml"),
-   ORG_LIST("application/vnd.vmware.vcloud.orgList+xml"),
-   METADATA("application/vnd.vmware.vcloud.metadata+xml"),
-   METADATA_ENTRY("*/*"), // TODO
-   ORG("application/vnd.vmware.vcloud.org+xml"),
-   TASKS_LIST("application/vnd.vmware.vcloud.tasksList+xml"),
-   TASK("application/vnd.vmware.vcloud.task+xml");
+public class VCloudDirectorMediaType {
 
-   private final String mediaType;
+    public static final String ANY = "*/*";
 
-   private VCloudDirectorMediaType(String mediaType) {
-      this.mediaType = mediaType;
-   }
+    public static final String SESSION = "application/vnd.vmware.vcloud.session+xml";
 
-   public String getMediaType() {
-      return mediaType;
-   }
+    public static final String ERROR = "application/vnd.vmware.vcloud.error+xml";
+
+    public static final String ORG_LIST = "application/vnd.vmware.vcloud.orgList+xml";
+
+    public static final String METADATA = "application/vnd.vmware.vcloud.metadata+xml";
+
+    public static final String METADATA_ENTRY = "*/*"; // TODO
+
+    public static final String ORG = "application/vnd.vmware.vcloud.org+xml";
+
+    public static final String TASKS_LIST = "application/vnd.vmware.vcloud.tasksList+xml";
+
+    public static final String TASK = "application/vnd.vmware.vcloud.task+xml";
+
+    public static final String ORG_NETWORK = "application/vnd.vmware.vcloud.orgNetwork+xml";
+
 }

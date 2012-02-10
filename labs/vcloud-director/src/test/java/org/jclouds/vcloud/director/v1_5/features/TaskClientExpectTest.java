@@ -57,7 +57,7 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
       HttpResponse taskResponse = HttpResponse.builder()
               .statusCode(200)
-              .payload(payloadFromResourceWithContentType("/task/taskslist.xml", VCloudDirectorMediaType.TASKS_LIST.getMediaType() + ";version=1.5"))
+              .payload(payloadFromResourceWithContentType("/task/taskslist.xml", VCloudDirectorMediaType.TASKS_LIST + ";version=1.5"))
               .build();
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse);
@@ -135,7 +135,7 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
       HttpResponse taskResponse = HttpResponse.builder()
               .statusCode(400)
-              .payload(payloadFromResourceWithContentType("/task/error400.xml", VCloudDirectorMediaType.ERROR.getMediaType() + ";version=1.5"))
+              .payload(payloadFromResourceWithContentType("/task/error400.xml", VCloudDirectorMediaType.ERROR + ";version=1.5"))
               .build();
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse);
@@ -170,7 +170,7 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
       HttpResponse taskResponse = HttpResponse.builder()
             .statusCode(403)
-            .payload(payloadFromResourceWithContentType("/task/error403.xml", VCloudDirectorMediaType.ERROR.getMediaType() + ";version=1.5"))
+            .payload(payloadFromResourceWithContentType("/task/error403.xml", VCloudDirectorMediaType.ERROR + ";version=1.5"))
             .build();
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse);
@@ -206,7 +206,7 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
       HttpResponse taskResponse = HttpResponse.builder()
               .statusCode(200)
-              .payload(payloadFromResourceWithContentType("/task/task.xml", VCloudDirectorMediaType.TASK.getMediaType() + ";version=1.5"))
+              .payload(payloadFromResourceWithContentType("/task/task.xml", VCloudDirectorMediaType.TASK + ";version=1.5"))
               .build();
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse);
@@ -257,7 +257,7 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
       HttpResponse taskResponse = HttpResponse.builder()
               .statusCode(200)
-              .payload(payloadFromResourceWithContentType("/task/task.xml", VCloudDirectorMediaType.TASK.getMediaType() + ";version=1.5"))
+              .payload(payloadFromResourceWithContentType("/task/task.xml", VCloudDirectorMediaType.TASK + ";version=1.5"))
               .build();
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse);

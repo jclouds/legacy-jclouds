@@ -72,8 +72,7 @@ public class SessionClientExpectTest extends BaseRestClientExpectTest<SessionCli
                ImmutableMultimap.<String, String> builder().put("x-vcloud-authorization", token).put("Set-Cookie",
                         String.format("vcloud-token=%s; Secure; Path=/", token)).build())
                .payload(
-                        payloadFromResourceWithContentType("/session.xml", VCloudDirectorMediaType.SESSION.getMediaType()
-                                 + ";version=1.5")).build()
+                        payloadFromResourceWithContentType("/session.xml", VCloudDirectorMediaType.SESSION + ";version=1.5")).build()
 
       );
 
@@ -97,8 +96,7 @@ public class SessionClientExpectTest extends BaseRestClientExpectTest<SessionCli
 
       HttpResponse.builder().statusCode(200)
                .payload(
-                        payloadFromResourceWithContentType("/session.xml", VCloudDirectorMediaType.SESSION.getMediaType()
-                                 + ";version=1.5")).build()
+                        payloadFromResourceWithContentType("/session.xml", VCloudDirectorMediaType.SESSION + ";version=1.5")).build()
 
       );
 
