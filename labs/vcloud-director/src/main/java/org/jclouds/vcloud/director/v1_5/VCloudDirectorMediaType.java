@@ -28,24 +28,34 @@ package org.jclouds.vcloud.director.v1_5;
  */
 public class VCloudDirectorMediaType {
 
-    public static final String ANY = "*/*";
+   public static final String ANY = "*/*";
 
-    public static final String SESSION = "application/vnd.vmware.vcloud.session+xml";
+   public static final String SESSION = "application/vnd.vmware.vcloud.session+xml";
 
-    public static final String ERROR = "application/vnd.vmware.vcloud.error+xml";
+   public static final String ERROR = "application/vnd.vmware.vcloud.error+xml";
 
-    public static final String ORG_LIST = "application/vnd.vmware.vcloud.orgList+xml";
+   public static final String ORG_LIST = "application/vnd.vmware.vcloud.orgList+xml";
 
-    public static final String METADATA = "application/vnd.vmware.vcloud.metadata+xml";
+   public static final String METADATA = "application/vnd.vmware.vcloud.metadata+xml";
 
-    public static final String METADATA_ENTRY = "*/*"; // TODO
+   public static final String METADATA_ENTRY = "*/*"; // TODO
 
-    public static final String ORG = "application/vnd.vmware.vcloud.org+xml";
+   public static final String ORG = "application/vnd.vmware.vcloud.org+xml";
 
-    public static final String TASKS_LIST = "application/vnd.vmware.vcloud.tasksList+xml";
+   public static final String TASKS_LIST = "application/vnd.vmware.vcloud.tasksList+xml";
 
-    public static final String TASK = "application/vnd.vmware.vcloud.task+xml";
+   public static final String TASK = "application/vnd.vmware.vcloud.task+xml";
 
-    public static final String ORG_NETWORK = "application/vnd.vmware.vcloud.orgNetwork+xml";
+   public static final String ORG_NETWORK = "application/vnd.vmware.vcloud.orgNetwork+xml";
+
+   public static final String CATALOG = "application/vnd.vmware.vcloud.catalog+xml";
+
+   public static final String CATALOG_ITEM = "application/vnd.vmware.vcloud.catalogItem+xml";
+
+   public static final String CATALOG_ITEMS = "application/vnd.vmware.vcloud.catalogItems+xml";
+
+   public static final String CATALOGS_LIST = "application/vnd.vmware.vcloud.catalogsList+xml";
+
+   public static final String PROPERTY = "application/vnd.vmware.vcloud.property+xml";
 
 }
