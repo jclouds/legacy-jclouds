@@ -28,7 +28,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.xml.XMLParser;
 
 /**
@@ -49,6 +48,7 @@ public class JAXBParser implements XMLParser {
       try {
          JAXBContext context = JAXBContext.newInstance(type);
          Marshaller marshaller = context.createMarshaller();
+         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
          StringWriter writer = new StringWriter();
          marshaller.marshal(src, writer);
          return writer.toString();
@@ -57,7 +57,6 @@ public class JAXBParser implements XMLParser {
       }
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public <T> T fromXML(final String xml, final Class<T> type) throws IOException {
       try {

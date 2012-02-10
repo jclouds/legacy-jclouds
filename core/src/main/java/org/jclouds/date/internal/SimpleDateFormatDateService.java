@@ -17,8 +17,7 @@
  * under the License.
  */
 package org.jclouds.date.internal;
-import static org.jclouds.date.internal.DateUtils.trimToMillis;
-import static org.jclouds.date.internal.DateUtils.trimTZ;
+import static org.jclouds.date.internal.DateUtils.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,20 +41,16 @@ public class SimpleDateFormatDateService implements DateService {
     * guard against the lack of thread safety.
     */
    // @GuardedBy("this")
-   private static final SimpleDateFormat iso8601SecondsSimpleDateFormat = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+   private static final SimpleDateFormat iso8601SecondsSimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
 
    // @GuardedBy("this")
-   private static final SimpleDateFormat iso8601SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-            Locale.US);
+   private static final SimpleDateFormat iso8601SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
 
    // @GuardedBy("this")
-   private static final SimpleDateFormat rfc822SimpleDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z",
-            Locale.US);
+   private static final SimpleDateFormat rfc822SimpleDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
 
    // @GuardedBy("this")
-   private static final SimpleDateFormat cSimpleDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss '+0000' yyyy",
-            Locale.US);
+   private static final SimpleDateFormat cSimpleDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.US);
 
    static {
       iso8601SimpleDateFormat.setTimeZone(new SimpleTimeZone(0, "GMT"));
@@ -64,83 +59,105 @@ public class SimpleDateFormatDateService implements DateService {
       cSimpleDateFormat.setTimeZone(new SimpleTimeZone(0, "GMT"));
    }
 
+   @Override
    public final Date fromSeconds(long seconds) {
       return new Date(seconds * 1000);
    }
 
+   @Override
    public final String cDateFormat(Date date) {
       synchronized (cSimpleDateFormat) {
          return cSimpleDateFormat.format(date);
       }
    }
 
+   @Override
    public final String cDateFormat() {
       return cDateFormat(new Date());
    }
 
+   @Override
    public final Date cDateParse(String toParse) {
       synchronized (cSimpleDateFormat) {
          try {
             return cSimpleDateFormat.parse(toParse);
-         } catch (ParseException e) {
-            throw new RuntimeException(e);
+         } catch (ParseException pe) {
+            throw new RuntimeException("Error parsing data at " + pe.getErrorOffset(), pe);
          }
       }
    }
 
+   @Override
    public final String rfc822DateFormat(Date date) {
       synchronized (rfc822SimpleDateFormat) {
          return rfc822SimpleDateFormat.format(date);
       }
    }
 
+   @Override
    public final String rfc822DateFormat() {
       return rfc822DateFormat(new Date());
    }
 
+   @Override
    public final Date rfc822DateParse(String toParse) {
       synchronized (rfc822SimpleDateFormat) {
          try {
             return rfc822SimpleDateFormat.parse(toParse);
-         } catch (ParseException e) {
-            throw new RuntimeException(e);
+         } catch (ParseException pe) {
+            throw new RuntimeException("Error parsing data at " + pe.getErrorOffset(), pe);
          }
       }
    }
 
+   @Override
    public final String iso8601SecondsDateFormat() {
       return iso8601SecondsDateFormat(new Date());
    }
 
+   @Override
    public final String iso8601DateFormat(Date date) {
       synchronized (iso8601SimpleDateFormat) {
-         return iso8601SimpleDateFormat.format(date);
+         String parsed = iso8601SimpleDateFormat.format(date);
+         String tz = findTZ(parsed);
+         if (tz.equals("+0000")) {
+            parsed = trimTZ(parsed) + "Z";
+         }
+         return parsed;
       }
    }
 
+   @Override
    public final String iso8601DateFormat() {
       return iso8601DateFormat(new Date());
    }
 
+   @Override
    public final Date iso8601DateParse(String toParse) {
-      toParse = trimTZ(toParse);
+      String tz = findTZ(toParse);
       toParse = trimToMillis(toParse);
+      toParse = trimTZ(toParse);
+      toParse += tz;
       synchronized (iso8601SimpleDateFormat) {
          try {
             return iso8601SimpleDateFormat.parse(toParse);
-         } catch (ParseException e) {
-            throw new RuntimeException(e);
+         } catch (ParseException pe) {
+            throw new RuntimeException("Error parsing data at " + pe.getErrorOffset(), pe);
          }
       }
    }
 
+   @Override
    public final Date iso8601SecondsDateParse(String toParse) {
+      String tz = findTZ(toParse);
+      toParse = trimToMillis(toParse);
       toParse = trimTZ(toParse);
+      toParse += tz;
       synchronized (iso8601SecondsSimpleDateFormat) {
          try {
             return iso8601SecondsSimpleDateFormat.parse(toParse);
-         } catch (ParseException e) {
-            throw new RuntimeException(e);
+         } catch (ParseException pe) {
+            throw new RuntimeException("Error parsing data at " + pe.getErrorOffset(), pe);
          }
       }
    }
@@ -148,7 +165,12 @@ public class SimpleDateFormatDateService implements DateService {
    @Override
    public String iso8601SecondsDateFormat(Date date) {
       synchronized (iso8601SecondsSimpleDateFormat) {
-         return iso8601SecondsSimpleDateFormat.format(date);
+         String parsed = iso8601SecondsSimpleDateFormat.format(date);
+         String tz = findTZ(parsed);
+         if (tz.equals("+0000")) {
+            parsed = trimTZ(parsed) + "Z";
+         }
+         return parsed;
       }
    }
 

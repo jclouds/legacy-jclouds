@@ -11,16 +11,16 @@
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIOXMLNS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
 import java.util.Date;
@@ -29,6 +29,8 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -43,8 +45,10 @@ import com.google.common.collect.Sets;
  *
  * @author grkvlt@apache.org
  */
-@XmlRootElement(namespace = NS, name = "Task")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Task")
 public class Task extends EntityType<Task> {
+   
+   public static final String MEDIA_TYPE = VCloudDirectorMediaType.TASK;
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -59,7 +63,10 @@ public class Task extends EntityType<Task> {
    public static class Builder extends EntityType.Builder<Task> {
 
       private Error error;
-      private Org org;
+      private Reference org;
+      private Reference owner;
+      private Reference user;
+      private Object params;
       private Integer progress;
       private String status;
       private String operation;
@@ -79,8 +86,32 @@ public class Task extends EntityType<Task> {
       /**
        * @see Task#getOrg()
        */
-      public Builder org(Org org) {
+      public Builder org(Reference org) {
          this.org = org;
+         return this;
+      }
+
+      /**
+       * @see Task#getOwner()
+       */
+      public Builder owner(Reference owner) {
+         this.owner = owner;
+         return this;
+      }
+
+      /**
+       * @see Task#getUser()
+       */
+      public Builder user(Reference user) {
+         this.user = user;
+         return this;
+      }
+
+      /**
+       * @see Task#getParams()
+       */
+      public Builder params(Object params) {
+         this.params = params;
          return this;
       }
 
@@ -143,8 +174,16 @@ public class Task extends EntityType<Task> {
       @Override
       public Task build() {
          Task task = new Task(href, name);
+         task.setDescription(description);
+         task.setTasksInProgress(tasksInProgress);
+         task.setId(id);
+         task.setType(type);
+         task.setLinks(links);
          task.setError(error);
          task.setOrg(org);
+         task.setOwner(owner);
+         task.setUser(user);
+         task.setParams(params);
          task.setProgress(progress);
          task.setStatus(status);
          task.setOperation(operation);
@@ -247,31 +286,34 @@ public class Task extends EntityType<Task> {
       super(href, name);
    }
 
-   @XmlElement(namespace = NS, name = "Error")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Error")
    private Error error;
-   @XmlElement(namespace = NS, name = "Organization")
-   private Org org;
-   @XmlElement(namespace = NS, name = "Progress")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Organization")
+   private Reference org;
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Progress")
    private Integer progress;
-   @XmlElement(namespace = NS, name = "Owner")
-   private Entity owner;
-   @XmlElement(namespace = NS, name = "User")
-   private Entity user;
-   @XmlElement(namespace = NS, name = "Params")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Owner")
+   private Reference owner;
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "User")
+   private Reference user;
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Params")
    private Object params;
-   @XmlAttribute(namespace = NS, name = "status")
+   @XmlAttribute
    private String status;
-   @XmlAttribute(namespace = NS, name = "operation")
+   @XmlAttribute
    private String operation;
-   @XmlAttribute(namespace = NS, name = "operationName")
+   @XmlAttribute
    private String operationName;
-   @XmlAttribute(namespace = NS, name = "startTime")
+   @XmlAttribute
    private Date startTime;
-   @XmlAttribute(namespace = NS, name = "endTime")
+   @XmlAttribute
    private Date endTime;
-   @XmlAttribute(namespace = NS, name = "expiryTime")
+   @XmlAttribute
    private Date expiryTime;
    
+   /**
+    * Represents an error information if the task failed.
+    */
    public Error getError() {
       return error;
    }
@@ -280,14 +322,56 @@ public class Task extends EntityType<Task> {
       this.error = error;
    }
 
-   public Org getOrg() {
+   /**
+    * The organization that started the task.
+    */
+   public Reference getOrg() {
       return org;
    }
 
-   public void setOrg(Org org) {
+   public void setOrg(Reference org) {
       this.org = org;
    }
 
+   /**
+    * Reference to the owner of the task.
+    */
+   public Reference getOwner() {
+      return owner;
+   }
+
+   public void setOwner(Reference owner) {
+      this.owner = owner;
+   }
+
+   /**
+    * The user who started the task.
+    */
+   public Reference getUser() {
+      return user;
+   }
+
+   public void setUser(Reference user) {
+      this.user = user;
+   }
+
+   /**
+    * The parameters with which this task has been run.
+    */
+   public Object getParams() {
+      return params;
+   }
+
+   public void setParams(Object params) {
+      this.params = params;
+   }
+
+   /**
+    * The progress of a long running asynchronous task.
+    *
+    * The value is between 0 - 100. Not all tasks have progress, the value is not
+    * present for task which progress is not available.
+    */
    public Integer getProgress() {
       return progress;
    }
@@ -296,6 +380,20 @@ public class Task extends EntityType<Task> {
       this.progress = progress;
    }
 
+   /**
+    * The execution status of the task.
+    *
+    * One of:
+    * <ul>
+    * <li>queued - The task has been queued for execution.
+    * <li>preRunning - The task is awaiting preprocessing or, if it is a blocking task, administrative action.
+    * <li>running - The task is runnning.
+    * <li>success - The task completed with a status of success.
+    * <li>error - The task encountered an error while running.
+    * <li>canceled - The task was canceled by the owner or an administrator.
+    * <li>aborted - The task was aborted by an administrative action.
+    * </ul>
+    */
    public String getStatus() {
       return status;
    }
@@ -304,6 +402,9 @@ public class Task extends EntityType<Task> {
       this.status = status;
    }
 
+   /**
+    * The display name of the operation that is tracked by this task.
+    */
    public String getOperation() {
       return operation;
    }
@@ -312,6 +413,9 @@ public class Task extends EntityType<Task> {
       this.operation = operation;
    }
 
+   /**
+    * The name of the operation that is tracked by this task.
+    */
    public String getOperationName() {
       return operationName;
    }
@@ -320,6 +424,11 @@ public class Task extends EntityType<Task> {
       this.operationName = operationName;
    }
 
+   /**
+    * The date and time the system started executing the task.
+    *
+    * May not be present if the task hasn't been executed yet.
+    */
    public Date getStartTime() {
       return startTime;
    }
@@ -328,6 +437,11 @@ public class Task extends EntityType<Task> {
       this.startTime = startTime;
    }
 
+   /**
+    * The date and time that processing of the task was completed.
+    *
+    * May not be present if the task is still being executed.
+    */
    public Date getEndTime() {
       return endTime;
    }
@@ -336,6 +450,11 @@ public class Task extends EntityType<Task> {
       this.endTime = endTime;
    }
 
+   /**
+    * The date and time at which the task resource will be destroyed and no longer available for retrieval.
+    *
+    * May not be present if the task has not been executed or is still being executed.
+    */
    public Date getExpiryTime() {
       return expiryTime;
    }
@@ -346,10 +465,13 @@ public class Task extends EntityType<Task> {
 
    @Override
    public boolean equals(Object o) {
-      if (!super.equals(o))
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
          return false;
       Task that = Task.class.cast(o);
-      return super.equals(that) && equal(this.error, that.error) && equal(this.org, that.org) &&
+      return super.equals(that) &&
+            equal(this.error, that.error) && equal(this.org, that.org) &&
             equal(this.progress, that.progress) && equal(this.status, that.status) &&
             equal(this.operation, that.operation) && equal(this.operationName, that.operationName) &&
             equal(this.startTime, that.startTime) && equal(this.endTime, that.endTime) &&

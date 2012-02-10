@@ -18,27 +18,27 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import java.net.URI;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
+import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
+import org.jclouds.vcloud.director.v1_5.functions.ReferenceToEndpoint;
+import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
-
  * @see OrgClient
  * @author Adrian Cole
  */
@@ -46,39 +46,41 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface OrgAsyncClient {
 
    /**
-    * @see OrgClient#getOrgList
+    * @see OrgClient#getOrgList()
     */
    @GET
-   @Path("/org/")
+   @Path("/org")
    @Consumes
    @JAXBResponseParser
    ListenableFuture<OrgList> getOrgList();
 
    /**
-    * @see OrgClient#getOrg
+    * @see OrgClient#getOrg(ReferenceType)
     */
    @GET
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Org> getOrg(@EndpointParam URI uri);
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Org> getOrg(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> orgRef);
    
    /**
-    * @see OrgClient#getMetadata
+    * @see OrgClient#getMetadata(ReferenceType)
     */
    @GET
-   @Path("/metadata/")
+   @Path("/metadata")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Metadata> getMetadata(@EndpointParam URI orgRef);
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Metadata> getMetadata(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> orgRef);
 
    /**
-    * @see OrgClient#getMetadataEntry
+    * @see OrgClient#getMetadataEntry(ReferenceType, String)
     */
    @GET
+   @Path("/metadata/{key}")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<MetadataEntry> getMetadataEntry(@EndpointParam URI metaDataRef);
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<MetadataEntry> getMetadataEntry(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> orgRef,
+         @PathParam("key") String key);
 }

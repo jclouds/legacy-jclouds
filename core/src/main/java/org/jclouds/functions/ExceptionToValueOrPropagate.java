@@ -44,7 +44,6 @@ public class ExceptionToValueOrPropagate<E extends Exception, T> implements Func
       this.value = value;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public T apply(Exception from) {
       checkNotNull(from, "exception");

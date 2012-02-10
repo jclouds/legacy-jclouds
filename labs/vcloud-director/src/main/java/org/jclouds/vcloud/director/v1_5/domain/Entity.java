@@ -147,7 +147,9 @@ public class Entity extends EntityType<Entity> {
 
    @Override
    public boolean equals(Object o) {
-      if (!super.equals(o))
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
          return false;
       Entity that = Entity.class.cast(o);
       return super.equals(that);

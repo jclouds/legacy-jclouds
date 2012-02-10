@@ -20,7 +20,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.*;
 import static com.google.common.base.Preconditions.*;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
 import java.util.Set;
@@ -28,7 +28,10 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -37,8 +40,10 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@XmlRootElement(namespace = NS, name = "TasksList")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "TasksList")
 public class TasksList extends EntityType<TasksList> {
+   
+   public static final String MEDIA_TYPE = VCloudDirectorMediaType.TASKS_LIST;
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -81,8 +86,85 @@ public class TasksList extends EntityType<TasksList> {
          return taskslist;
       }
 
+      /**
+       * @see EntityType#getName()
+       */
+      @Override
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
+
+      /**
+       * @see EntityType#getDescription()
+       */
+      @Override
+      public Builder description(String description) {
+         this.description = description;
+         return this;
+      }
+
+      /**
+       * @see EntityType#getId()
+       */
+      @Override
+      public Builder id(String id) {
+         this.id = id;
+         return this;
+      }
+
+      /**
+       * @see EntityType#getTasksInProgress()
+       */
+      @Override
+      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
+         this.tasksInProgress = tasksInProgress;
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getHref()
+       */
+      @Override
+      public Builder href(URI href) {
+         this.href = href;
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getType()
+       */
+      @Override
+      public Builder type(String type) {
+         this.type = type;
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getLinks()
+       */
+      @Override
+      public Builder links(Set<Link> links) {
+         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getLinks()
+       */
+      @Override
+      public Builder link(Link link) {
+         this.links.add(checkNotNull(link, "link"));
+         return this;
+      }
+
+      @Override
+      public Builder fromEntityType(EntityType<TasksList> in) {
+         return Builder.class.cast(super.fromEntityType(in));
+      }
+
       public Builder fromTasksList(TasksList in) {
-         return tasks(in.getTasks());
+         return fromEntityType(in).tasks(in.getTasks());
       }
    }
 
@@ -95,7 +177,7 @@ public class TasksList extends EntityType<TasksList> {
       this.tasks = ImmutableSet.copyOf(tasks);
    }
 
-   @XmlElement(namespace = NS, name = "Task")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Task")
    private Set<Task> tasks = Sets.newLinkedHashSet();
 
    public Set<Task> getTasks() {

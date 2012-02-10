@@ -19,7 +19,7 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -33,7 +33,7 @@ import com.google.common.base.Objects;
  * 
  * @author danikov
  */
-@XmlRootElement(namespace = NS, name = "NetworkConfiguration")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "NetworkConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class NetworkConfiguration{
 
@@ -138,19 +138,19 @@ public class NetworkConfiguration{
       this.fenceMode = fenceMode;
    }
 
-   @XmlElement(namespace = NS, name = "IpScope")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "IpScope")
    private IpScope ipScope;
-   @XmlElement(namespace = NS, name = "ParentNetwork")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "ParentNetwork")
    private ReferenceType<?> parentNetwork;
-   @XmlElement(namespace = NS, name = "FenceMode")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "FenceMode")
    private String fenceMode;
-   @XmlElement(namespace = NS, name = "RetainNetInfoAcrossDeployments")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "RetainNetInfoAcrossDeployments")
    private boolean retainNetInfoAcrossDeployments = false;
-   @XmlElement(namespace = NS, name = "Features")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Features")
    private NetworkFeatures features;
-   @XmlElement(namespace = NS, name = "SyslogServerSettings")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "SyslogServerSettings")
    private SyslogServerSettings syslogServerSettings;
-   @XmlElement(namespace = NS, name = "RouterInfo")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "RouterInfo")
    private RouterInfo routerInfo;
 
    /**

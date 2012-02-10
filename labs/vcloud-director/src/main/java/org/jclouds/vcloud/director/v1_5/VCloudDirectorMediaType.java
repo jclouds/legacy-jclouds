@@ -18,30 +18,46 @@
  */
 package org.jclouds.vcloud.director.v1_5;
 
-import javax.ws.rs.core.MediaType;
-
 /**
- * Resource Types used in VCloud
+ * Resource Types used in VCloud.
  * 
- * <br/>
  * The object type, specified as a MIME content type, of the object that the link references. This
  * attribute is present only for links to objects. It is not present for links to actions.
  * 
- * @see MediaType
+ * @see javax.ws.rs.core.MediaType;
  */
-public interface VCloudDirectorMediaType {
-   public final static String NS = "http://www.vmware.com/vcloud/v1.5";
+public class VCloudDirectorMediaType {
 
-   public final static String SESSION_XML = "application/vnd.vmware.vcloud.session+xml";
+   public static final String ANY = "*/*";
 
-   public final static String ORGLIST_XML = "application/vnd.vmware.vcloud.orgList+xml";
-   
-   public final static String METADATA_XML = "application/vnd.vmware.vcloud.metadata+xml";
-  
-   public static final String METADATAENTRY_XML = "TODO"; // TODO
-   
-   public final static String ORG_XML = "application/vnd.vmware.vcloud.org+xml";
+   public static final String SESSION = "application/vnd.vmware.vcloud.session+xml";
 
-   public static final String ORG_NETWORK_XML = "application/vnd.vmware.vcloud.orgNetwork+xml";
+   public static final String ERROR = "application/vnd.vmware.vcloud.error+xml";
+
+   public static final String ORG_LIST = "application/vnd.vmware.vcloud.orgList+xml";
+
+   public static final String METADATA = "application/vnd.vmware.vcloud.metadata+xml";
+
+   public static final String METADATA_ENTRY = "*/*"; // No media type (?) 
+
+   public static final String METADATA_VALUE = "application/vnd.vmware.vcloud.metadata.value+xml";;
+
+   public static final String ORG = "application/vnd.vmware.vcloud.org+xml";
+
+   public static final String TASKS_LIST = "application/vnd.vmware.vcloud.tasksList+xml";
+
+   public static final String TASK = "application/vnd.vmware.vcloud.task+xml";
+
+   public static final String ORG_NETWORK = "application/vnd.vmware.vcloud.orgNetwork+xml";
+
+   public static final String CATALOG = "application/vnd.vmware.vcloud.catalog+xml";
+
+   public static final String CATALOG_ITEM = "application/vnd.vmware.vcloud.catalogItem+xml";
+
+   public static final String CATALOG_ITEMS = "application/vnd.vmware.vcloud.catalogItems+xml";
+
+   public static final String CATALOGS_LIST = "application/vnd.vmware.vcloud.catalogsList+xml";
+
+   public static final String PROPERTY = "application/vnd.vmware.vcloud.property+xml";
 
 }

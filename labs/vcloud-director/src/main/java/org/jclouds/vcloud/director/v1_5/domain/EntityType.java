@@ -18,9 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
 import java.util.Set;
@@ -143,7 +143,6 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       /**
        * {@inheritDoc}
        */
-      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> fromResourceType(ResourceType<T> in) {
          return Builder.class.cast(super.fromResourceType(in));
@@ -156,9 +155,9 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       }
    }
 
-   @XmlElement(namespace = NS, name = "Description")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Description")
    private String description;
-   @XmlElement(namespace = NS, name = "TasksInProgress")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "TasksInProgress")
    private TasksInProgress tasksInProgress;
    @XmlAttribute
    private String id;
@@ -212,11 +211,6 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
 
    /**
     * Contains the name of the the entity.
-    *
-    * The object type, specified as a MIME content type, of the object that the link references.
-    * This attribute is present only for links to objects. It is not present for links to actions.
-    * 
-    * @return type definition, type, expressed as an HTTP Content-Type
     */
    public String getName() {
       return name;
@@ -224,12 +218,14 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
 
    @Override
    public boolean equals(Object o) {
-      if (!super.equals(o))
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
          return false;
       EntityType<?> that = EntityType.class.cast(o);
       return super.equals(that) &&
             equal(this.id, that.id) && equal(this.description, that.description) &&
-            equal(this.tasksInProgress, that.tasksInProgress);
+            equal(this.tasksInProgress, that.tasksInProgress) && equal(this.name, that.name);
    }
 
    @Override

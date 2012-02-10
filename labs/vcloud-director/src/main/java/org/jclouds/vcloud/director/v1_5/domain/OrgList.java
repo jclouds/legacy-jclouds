@@ -18,14 +18,16 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -36,8 +38,10 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@XmlRootElement(namespace = NS, name = "OrgList")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "OrgList")
 public class OrgList {
+   
+   public static final String MEDIA_TYPE = VCloudDirectorMediaType.ORG_LIST;
 
    public static Builder builder() {
       return new Builder();
@@ -84,7 +88,7 @@ public class OrgList {
       this.orgs = ImmutableSet.copyOf(orgs);
    }
 
-   @XmlElement(namespace = NS, name = "Org")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Org")
    private Set<Reference> orgs = Sets.newLinkedHashSet();
 
    public Set<Reference> getOrgs() {

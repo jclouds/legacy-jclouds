@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Error xmlns="http://www.vmware.com/vcloud/v1.5" minorErrorCode="ACCESS_TO_RESOURCE_IS_FORBIDDEN" message="No access to entity &quot;com.vmware.vcloud.entity.org:9e08c2f6-077a-42ce-bece-d5332e2ebb5c&quot;." majorErrorCode="403" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd"></Error>
