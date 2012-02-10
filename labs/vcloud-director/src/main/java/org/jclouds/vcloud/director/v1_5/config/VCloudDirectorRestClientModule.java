@@ -42,6 +42,8 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.annotations.Login;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
+import org.jclouds.vcloud.director.v1_5.features.CatalogAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgAsyncClient;
@@ -75,8 +77,9 @@ import com.google.inject.name.Named;
 public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirectorClient, VCloudDirectorAsyncClient> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-            .put(OrgClient.class, OrgAsyncClient.class)
+            .put(CatalogClient.class, CatalogAsyncClient.class)
             .put(NetworkClient.class, NetworkAsyncClient.class)
+            .put(OrgClient.class, OrgAsyncClient.class)
             .put(TaskClient.class, TaskAsyncClient.class)
             .build();
 

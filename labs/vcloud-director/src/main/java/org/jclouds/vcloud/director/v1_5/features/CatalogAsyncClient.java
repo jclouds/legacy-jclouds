@@ -27,17 +27,18 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
-import org.jclouds.rest.annotations.Payload;
-import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
@@ -58,7 +59,6 @@ public interface CatalogAsyncClient {
     */
    @GET
    @Consumes
-   @Produces(VCloudDirectorMediaType.CATALOG)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Catalog> getCatalog(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> catalogRef);
@@ -73,15 +73,14 @@ public interface CatalogAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<CatalogItem> addCatalogItem(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> catalogRef,
-         @PayloadParam("catalogItem") CatalogItem catalogItem);
-
+         @BinderParam(BindToXMLPayload.class) CatalogItem catalogItem);
+   
    /**
     * Returns the metadata associated with the catalog.
     */
    @GET
    @Path("/metadata")
    @Consumes
-   @Produces(VCloudDirectorMediaType.METADATA)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Metadata> getCatalogMetadata(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> catalogRef);
@@ -92,7 +91,6 @@ public interface CatalogAsyncClient {
    @GET
    @Path("/metadata/{key}")
    @Consumes
-   @Produces(VCloudDirectorMediaType.METADATA_ENTRY)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<MetadataEntry> getCatalogMetadataEntry(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> catalogRef,
@@ -103,7 +101,6 @@ public interface CatalogAsyncClient {
     */
    @GET
    @Consumes
-   @Produces(VCloudDirectorMediaType.CATALOG_ITEM)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<CatalogItem> getCatalogItem(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> catalogItemRef);
@@ -117,7 +114,7 @@ public interface CatalogAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<CatalogItem> updateCatalogItem(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> catalogItemRef,
-         @PayloadParam("catalogItem") CatalogItem catalogItem);
+         @BinderParam(BindToXMLPayload.class)  CatalogItem catalogItem);
 
    /**
     * Deletes a catalog item.
@@ -134,7 +131,6 @@ public interface CatalogAsyncClient {
    @GET
    @Path("/metadata")
    @Consumes
-   @Produces(VCloudDirectorMediaType.METADATA)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Metadata> getCatalogItemMetadata(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> catalogItemRef);
@@ -149,7 +145,7 @@ public interface CatalogAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> mergeCatalogItemMetadata(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> catalogItemRef,
-         @PayloadParam("catalogItemMetadata") Metadata catalogItemMetadata);
+         @BinderParam(BindToXMLPayload.class)  Metadata catalogItemMetadata);
 
    /**
     * Returns the metadata associated with the catalog item for the specified key.
@@ -157,7 +153,6 @@ public interface CatalogAsyncClient {
    @GET
    @Path("/metadata/{key}")
    @Consumes
-   @Produces(VCloudDirectorMediaType.METADATA_ENTRY)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<MetadataEntry> getCatalogItemMetadataEntry(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> catalogItemRef,
@@ -168,12 +163,12 @@ public interface CatalogAsyncClient {
     */
    @PUT
    @Path("/metadata/{key}")
-   @Consumes /* (VCloudDirectorMediaType.METADATA_VALUE) */
+   @Consumes(VCloudDirectorMediaType.METADATA_VALUE)
    @Produces(VCloudDirectorMediaType.TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> setCatalogItemMetadataEntry(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> catalogItemRef,
-         @PathParam("key") String key, @PayloadParam("metadataValue") /* MetadataValue */ Object metadataValue);
+         @PathParam("key") String key, @BinderParam(BindToXMLPayload.class) MetadataValue metadataValue);
 
    /**
     * Deletes the metadata for the particular key for the catalog item.
@@ -181,7 +176,6 @@ public interface CatalogAsyncClient {
    @DELETE
    @Path("/metadata/{key}")
    @Consumes
-   @Produces(VCloudDirectorMediaType.TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> deleteCatalogItemMetadataEntry(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> catalogItemRef,

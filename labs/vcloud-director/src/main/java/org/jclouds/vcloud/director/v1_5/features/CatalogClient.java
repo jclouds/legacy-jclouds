@@ -25,6 +25,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 
@@ -173,7 +174,7 @@ public interface CatalogClient {
     * @param value the metadata value
     * @return a task for the set operation
     */
-   Task setCatalogItemMetadataEntry(ReferenceType<?> catalogItemRef, String key, /* MetadataValue */ Object value);
+   Task setCatalogItemMetadataEntry(ReferenceType<?> catalogItemRef, String key, MetadataValue value);
 
    /**
     * Deletes the metadata for the particular key for the catalog item.

@@ -59,4 +59,10 @@ public interface VCloudDirectorAsyncClient {
     */
    @Delegate
    NetworkAsyncClient getNetworkClient();
+   
+   /**
+    * @return asynchronous access to Catalog features
+    */
+   @Delegate
+   CatalogAsyncClient getCatalogClient();
 }
