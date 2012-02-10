@@ -20,7 +20,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.util.Set;
 
@@ -36,7 +36,7 @@ import com.google.common.collect.Sets;
  * 
  * @author danikov
  */
-@XmlRootElement(namespace = NS, name = "IpRanges")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "IpRanges")
 public class IpRanges {
 
    public static Builder builder() {
@@ -83,7 +83,7 @@ public class IpRanges {
       this.ipRanges = ImmutableSet.copyOf(ipRanges);
    }
 
-   @XmlElement(namespace = NS, name = "IpRange")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "IpRange")
    private Set<IpRange> ipRanges = Sets.newLinkedHashSet();
 
    public Set<IpRange> getIpRanges() {

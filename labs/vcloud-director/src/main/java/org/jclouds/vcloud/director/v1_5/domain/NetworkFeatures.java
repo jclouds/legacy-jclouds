@@ -20,7 +20,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.util.Set;
 
@@ -36,7 +36,7 @@ import com.google.common.collect.Sets;
  * 
  * @author danikov
  */
-@XmlRootElement(namespace = NS, name = "Features")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Features")
 public class NetworkFeatures {
 
    public static Builder builder() {
@@ -82,7 +82,7 @@ public class NetworkFeatures {
       // For JAXB and builder use
    }
 
-   @XmlElement(namespace = NS, name = "NetworkService")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "NetworkService")
    private Set<NetworkService> services = Sets.newLinkedHashSet();
 
    /**
