@@ -82,17 +82,17 @@ public class DateServiceTest extends PerformanceTest {
       // Constant time test values, each TestData item must contain matching
       // times!
       testData = new TestData[] {
-            new TestData("2009-03-12T02:00:07.000Z", "2009-03-12T02:00:07-04:00", "2009-03-12T02:00:07Z",
+            new TestData("2009-03-12T02:00:07.000Z", "2009-03-12T06:00:07+0400", "2009-03-12T02:00:07Z",
                   "Thu, 12 Mar 2009 02:00:07 GMT", "Thu Mar 12 02:00:07 +0000 2009", new Date(1236823207000l)),
-            new TestData("2009-03-12T02:00:07.000Z", "2009-03-12T02:00:07+04:00", "2009-03-12T02:00:07Z",
+            new TestData("2009-03-12T02:00:07.000Z", "2009-03-12T06:00:07+0400", "2009-03-12T02:00:07Z",
                   "Thu, 12 Mar 2009 02:00:07 GMT", "Thu Mar 12 02:00:07 +0000 2009", new Date(1236823207000l)),
-            new TestData("2009-03-14T04:00:07.000Z", "2009-03-14T04:00:07Z+04:00", "2009-03-14T04:00:07Z",
+            new TestData("2009-03-14T04:00:07.000Z", "2009-03-14T08:00:07+0400", "2009-03-14T04:00:07Z",
                   "Sat, 14 Mar 2009 04:00:07 GMT", "Thu Mar 14 04:00:07 +0000 2009", new Date(1237003207000l)),
-            new TestData("2009-03-16T06:00:07.000Z", "2009-03-16T06:00:07Z+04:00", "2009-03-16T06:00:07Z",
+            new TestData("2009-03-16T06:00:07.000Z", "2009-03-16T10:00:07+0400", "2009-03-16T06:00:07Z",
                   "Mon, 16 Mar 2009 06:00:07 GMT", "Thu Mar 16 06:00:07 +0000 2009", new Date(1237183207000l)),
-            new TestData("2009-03-18T08:00:07.000Z", "2009-03-18T08:00:07Z+04:00", "2009-03-18T08:00:07Z",
+            new TestData("2009-03-18T08:00:07.000Z", "2009-03-18T12:00:07+0400", "2009-03-18T08:00:07Z",
                   "Wed, 18 Mar 2009 08:00:07 GMT", "Thu Mar 18 08:00:07 +0000 2009", new Date(1237363207000l)),
-            new TestData("2009-03-20T10:00:07.000Z", "2009-03-20T10:00:07Z+04:00", "2009-03-20T10:00:07Z",
+            new TestData("2009-03-20T10:00:07.000Z", "2009-03-20T14:00:07+0400", "2009-03-20T10:00:07Z",
                   "Fri, 20 Mar 2009 10:00:07 GMT", "Thu Mar 20 10:00:07 +0000 2009", new Date(1237543207000l)) };
    }
 
@@ -160,13 +160,12 @@ public class DateServiceTest extends PerformanceTest {
    void testFromSeconds() throws ExecutionException, InterruptedException {
       long seconds = 1254008225;
       Date date = dateService.fromSeconds(seconds);
-      assertEquals(dateService.rfc822DateFormat(date), "Sat, 26 Sep 2009 23:37:05 GMT");
+      assertEquals(dateService.iso8601SecondsDateFormat(date), "2009-09-26T23:37:05Z");
    }
 
    @Test
-   void testTzWithExtraZ() throws ExecutionException, InterruptedException {
-      assertEquals(dateService.iso8601SecondsDateParse("2011-05-26T06:14:13-04:00").getTime(), 1306390453000l);
-      assertEquals(dateService.iso8601SecondsDateParse("2011-05-26T06:14:13-04:00Z").getTime(), 1306390453000l);
+   void testTz() throws ExecutionException, InterruptedException {
+      assertEquals(dateService.iso8601SecondsDateParse("2011-05-26T02:14:13-04:00").getTime(), 1306390453000l);
    }
 
    @Test

@@ -42,10 +42,14 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.annotations.Login;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
+import org.jclouds.vcloud.director.v1_5.features.CatalogAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgClient;
+import org.jclouds.vcloud.director.v1_5.features.TaskAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 import org.jclouds.vcloud.director.v1_5.functions.LoginUserInOrgWithPassword;
 import org.jclouds.vcloud.director.v1_5.handlers.InvalidateSessionAndRetryOn401AndLogoutOnClose;
 import org.jclouds.vcloud.director.v1_5.handlers.VCloudDirectorErrorHandler;
@@ -73,8 +77,10 @@ import com.google.inject.name.Named;
 public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirectorClient, VCloudDirectorAsyncClient> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-            .put(OrgClient.class, OrgAsyncClient.class)
+            .put(CatalogClient.class, CatalogAsyncClient.class)
             .put(NetworkClient.class, NetworkAsyncClient.class)
+            .put(OrgClient.class, OrgAsyncClient.class)
+            .put(TaskClient.class, TaskAsyncClient.class)
             .build();
 
    public VCloudDirectorRestClientModule() {
@@ -85,8 +91,8 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
    protected void configure() {
       // session client is used directly for filters and retry handlers, so let's bind it explicitly
       bindClientAndAsyncClient(binder(), SessionClient.class, SessionAsyncClient.class);
-      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(
-               InvalidateSessionAndRetryOn401AndLogoutOnClose.class);
+      bindClientAndAsyncClient(binder(), OrgClient.class, OrgAsyncClient.class);
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(InvalidateSessionAndRetryOn401AndLogoutOnClose.class);
       super.configure();
    }
 

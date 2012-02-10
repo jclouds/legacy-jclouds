@@ -16,10 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
- package org.jclouds.vcloud.director.v1_5.domain;
+package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,7 +31,7 @@ import com.google.common.base.Objects;
  * 
  * @author danikov
  */
-@XmlRootElement(namespace = NS, name = "IpRange")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "IpRange")
 public class IpRange {
    
    public static Builder builder() {
@@ -82,9 +82,9 @@ public class IpRange {
    }
    
    
-   @XmlElement(namespace = NS, name = "StartAddress")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "StartAddress")
    private String startAddress;
-   @XmlElement(namespace = NS, name = "EndAddress")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "EndAddress")
    private String endAddress;
    
    /**

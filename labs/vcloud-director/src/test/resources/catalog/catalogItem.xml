@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CatalogItem xmlns="http://www.vmware.com/vcloud/v1.5" name="newCatalogItem" id="urn:vcloud:catalogitem:a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df" type="application/vnd.vmware.vcloud.catalogItem+xml" href="https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd">
+    <Link rel="up" type="application/vnd.vmware.vcloud.catalog+xml" href="https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml" href="https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata"/>
+    <Link rel="edit" type="application/vnd.vmware.vcloud.catalogItem+xml" href="https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"/>
+    <Link rel="remove" href="https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"/>
+    <Description>New Catalog Item</Description>
+    <Entity type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="ubuntu10" href="https://vcloudbeta.bluelock.com/api/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9"/>
+</CatalogItem>

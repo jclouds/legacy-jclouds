@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -26,13 +25,13 @@ import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
+import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 
 /**
  * Provides synchronous access to Org.
  * <p/>
  * 
  * @see OrgAsyncClient
- * @see <a href= "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID=" />
  * @author Adrian Cole
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
@@ -40,6 +39,10 @@ public interface OrgClient {
 
    /**
     * Retrieves a list of organizations.
+    *
+    * <pre>
+    * GET /org
+    * </pre>
     * 
     * @return a list of organizations
     */
@@ -47,22 +50,36 @@ public interface OrgClient {
 
    /**
     * Retrieves an organization.
+    *
+    * <pre>
+    * GET /org/{id}
+    * </pre>
     * 
     * @return the org or null if not found
     */
-   Org getOrg(URI orgHref);
+   Org getOrg(ReferenceType<?> orgRef);
+	// FIXME throws exception on not found currently
    
    /**
     * Retrieves an list of the organization's metadata
+    *
+    * <pre>
+    * GET /org/{id}/metadata
+    * </pre>
     * 
     * @return a list of metadata
     */
-   Metadata getMetadata(URI orgRef);
+   Metadata getMetadata(ReferenceType<?> orgRef);
 
    /**
-    * Retrieves a metadata
+    * Retrieves a metadata entry.
+    *
+    * <pre>
+    * GET /org/{id}/metadata{key}
+    * </pre>
     * 
-    * @return the metadata or null if not found
+    * @return the metadata entry or null if not found
     */
-   MetadataEntry getMetadataEntry(URI metaDataRef);
+   MetadataEntry getMetadataEntry(ReferenceType<?> orgRef, String key);
+	// FIXME throws exception on not found currently
 }

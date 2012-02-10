@@ -20,7 +20,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.*;
 import static com.google.common.base.Preconditions.*;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
 import java.util.Set;
@@ -30,6 +30,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -42,9 +44,11 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@XmlRootElement(namespace = NS, name = "Session")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Session")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Session {
+   
+   public static final String MEDIA_TYPE = VCloudDirectorMediaType.SESSION;
 
    public static Builder builder() {
       return new Builder();
@@ -120,7 +124,7 @@ public class Session {
       this.links = ImmutableSet.copyOf(links);
    }
 
-   @XmlElement(namespace = NS, name = "Link")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Link")
    private Set<Link> links = Sets.newLinkedHashSet();
    @XmlAttribute
    private String user;

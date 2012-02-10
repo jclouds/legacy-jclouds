@@ -18,6 +18,7 @@
  */
 package org.jclouds.date.joda;
 
+import static org.jclouds.date.internal.DateUtils.*;
 import static org.jclouds.date.internal.DateUtils.trimToMillis;
 import static org.jclouds.date.internal.DateUtils.trimTZ;
 
@@ -41,16 +42,16 @@ import org.joda.time.format.DateTimeFormatter;
 public class JodaDateService implements DateService {
 
    private static final DateTimeFormatter rfc822DateFormatter = DateTimeFormat.forPattern(
-            "EEE, dd MMM yyyy HH:mm:ss 'GMT'").withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));
+            "EEE, dd MMM yyyy HH:mm:ss z").withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));
 
    private static final DateTimeFormatter cDateFormatter = DateTimeFormat
-            .forPattern("EEE MMM dd HH:mm:ss '+0000' yyyy").withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));
+            .forPattern("EEE MMM dd HH:mm:ss Z yyyy").withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));
 
    private static final DateTimeFormatter iso8601SecondsDateFormatter = DateTimeFormat.forPattern(
-            "yyyy-MM-dd'T'HH:mm:ss'Z'").withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));
+            "yyyy-MM-dd'T'HH:mm:ssZ").withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));
 
    private static final DateTimeFormatter iso8601DateFormatter = DateTimeFormat.forPattern(
-            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));
+            "yyyy-MM-dd'T'HH:mm:ss.SSSZ").withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));
 
    public final Date fromSeconds(long seconds) {
       return new Date(seconds * 1000);
@@ -81,7 +82,12 @@ public class JodaDateService implements DateService {
    }
 
    public final String iso8601SecondsDateFormat(Date dateTime) {
-      return iso8601SecondsDateFormatter.print(new DateTime(dateTime));
+      String parsed = iso8601SecondsDateFormatter.print(new DateTime(dateTime));
+      String tz = findTZ(parsed);
+      if (tz.equals("+0000")) {
+         parsed = trimTZ(parsed) + "Z";
+      }
+      return parsed;
    }
 
    public final String iso8601SecondsDateFormat() {
@@ -89,7 +95,12 @@ public class JodaDateService implements DateService {
    }
 
    public final String iso8601DateFormat(Date date) {
-      return iso8601DateFormatter.print(new DateTime(date));
+      String parsed = iso8601DateFormatter.print(new DateTime(date));
+      String tz = findTZ(parsed);
+      if (tz.equals("+0000")) {
+         parsed = trimTZ(parsed) + "Z";
+      }
+      return parsed;
    }
 
    public final String iso8601DateFormat() {
@@ -97,13 +108,18 @@ public class JodaDateService implements DateService {
    }
 
    public final Date iso8601DateParse(String toParse) {
-      toParse = trimTZ(toParse);
+      String tz = findTZ(toParse);
       toParse = trimToMillis(toParse);
+      toParse = trimTZ(toParse);
+      toParse += tz;
       return iso8601DateFormatter.parseDateTime(toParse).toDate();
    }
 
    public final Date iso8601SecondsDateParse(String toParse) {
+      String tz = findTZ(toParse);
+      toParse = trimToMillis(toParse);
       toParse = trimTZ(toParse);
+      toParse += tz;
       return iso8601SecondsDateFormatter.parseDateTime(toParse).toDate();
    }
 }

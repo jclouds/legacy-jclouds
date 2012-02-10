@@ -18,7 +18,7 @@
  */
 package org.jclouds.rest.binders;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 import java.net.URI;
 
@@ -52,8 +52,7 @@ public class BindToXMLPayloadTest {
 
       HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
       request = binder.bindToRequest(request, obj);
-      assertEquals(request.getPayload().getRawContent(), XMLParser.DEFAULT_XML_HEADER
-            + "<test><elem>Hello World</elem></test>");
+      assertEquals(request.getPayload().getRawContent(), XMLParser.DEFAULT_XML_HEADER + "\n<test>\n    <elem>Hello World</elem>\n</test>\n");
       assertEquals(request.getPayload().getContentMetadata().getContentType(), MediaType.APPLICATION_XML);
    }
 
@@ -72,8 +71,7 @@ public class BindToXMLPayloadTest {
             .build();
 
       request = binder.bindToRequest(request, obj);
-      assertEquals(request.getPayload().getRawContent(), XMLParser.DEFAULT_XML_HEADER
-            + "<test><elem>Hello World</elem></test>");
+      assertEquals(request.getPayload().getRawContent(), XMLParser.DEFAULT_XML_HEADER + "\n<test>\n    <elem>Hello World</elem>\n</test>\n");
       assertEquals(request.getPayload().getContentMetadata().getContentType(), MediaType.APPLICATION_XML);
    }
 

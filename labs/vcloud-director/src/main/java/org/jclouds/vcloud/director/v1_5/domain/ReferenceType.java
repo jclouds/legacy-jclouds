@@ -42,7 +42,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author grkvlt@apache.org
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ReferenceType<T extends ReferenceType<T>> {
+public class ReferenceType<T extends ReferenceType<T>> implements URISupplier {
 
    public static <T extends ReferenceType<T>> Builder<T> builder() {
       return new Builder<T>();
@@ -189,8 +189,9 @@ public class ReferenceType<T extends ReferenceType<T>> {
    }
 
    /**
-    * @see #getHref()
+    * @see URISupplier#getURI()
     */
+   @Override
    public URI getURI() {
       return getHref();
    }

@@ -18,8 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
 
 import java.net.URI;
 import java.util.Map;
@@ -159,7 +159,9 @@ public class Link extends ReferenceType<Link> {
 
    @Override
    public boolean equals(Object o) {
-      if (!super.equals(o))
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
          return false;
       Link that = (Link) o;
       return super.equals(that) && equal(this.rel, that.rel);

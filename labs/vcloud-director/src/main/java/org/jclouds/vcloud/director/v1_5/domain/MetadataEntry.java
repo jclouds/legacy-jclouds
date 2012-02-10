@@ -18,15 +18,17 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NS;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -41,16 +43,19 @@ import com.google.common.collect.Sets;
  *
  * @author danikov
  */
-@XmlRootElement(namespace = NS, name = "TODO")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "MetadataEntry")
 public class MetadataEntry extends ResourceType<MetadataEntry> {
+   
+   public static final String MEDIA_TYPE = VCloudDirectorMediaType.METADATA_ENTRY;
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
-      return new Builder().fromMetadata(this);
+      return new Builder().fromMetadataEntry(this);
    }
 
    public static class Builder extends ResourceType.Builder<MetadataEntry> {
@@ -58,7 +63,7 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
       private String value;
 
       /**
-       * @see MetadataEntry#getKey
+       * @see MetadataEntry#getKey()
        */
       public Builder key(String key) {
          this.key = key;
@@ -66,13 +71,24 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
       }
 
       /**
-       * @see MetadataEntry#getValue
+       * @see MetadataEntry#getValue()
        */
       public Builder value(String value) {
          this.value = value;
          return this;
       }
+
+      /**
+       * @see MetadataEntry#getKey()
+       * @see MetadataEntry#getValue()
+       */
+      public Builder entry(String key, String value) {
+         this.key = key;
+         this.value = value;
+         return this;
+      }
       
+      @Override
       public MetadataEntry build() {
          MetadataEntry metadataEntry = new MetadataEntry(href, key, value);
          metadataEntry.setType(type);
@@ -116,10 +132,17 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
          return this;
       }
 
-      public Builder fromMetadata(MetadataEntry in) {
-         return key(in.getKey()).value(in.getValue());
+      public Builder fromMetadataEntry(MetadataEntry in) {
+         return fromResourceType(in).entry(key, value);
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromResourceType(ResourceType<MetadataEntry> in) {
+         return Builder.class.cast(super.fromResourceType(in));
+      }
    }
 
    private MetadataEntry() {
@@ -132,13 +155,12 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
       this.value = checkNotNull(value, "value");
    }
 
-   @XmlElement(namespace = NS, name = "K")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Key")
    private String key;
-   @XmlElement(namespace = NS, name = "Value")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Value")
    private String value;
 
    /**
-    * 
     * @return key of the entry
     */
    public String getKey() {
@@ -146,25 +168,25 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
    }
 
    /**
-    * 
     * @return value of the entry
     */
    public String getValue() {
       return value;
    }
    
-
    @Override
    public boolean equals(Object o) {
-      if (!super.equals(o))
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
          return false;
       MetadataEntry that = MetadataEntry.class.cast(o);
-      return super.equals(that) && equal(key, that.key);
+      return super.equals(that) && equal(key, that.key) && equal(this.value, that.value);
    }
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(key);
+      return super.hashCode() + Objects.hashCode(key, value);
    }
 
    @Override

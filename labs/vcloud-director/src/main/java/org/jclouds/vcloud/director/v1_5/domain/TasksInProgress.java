@@ -11,7 +11,7 @@
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIOXMLNS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
@@ -20,7 +20,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.*;
 import static com.google.common.base.Preconditions.*;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.util.Collection;
 import java.util.Set;
@@ -37,7 +37,7 @@ import com.google.common.collect.Sets;
 /**
  * @author grkvlt@apache.org
  */
-@XmlRootElement(namespace = NS, name = "TasksInProgress")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "TasksInProgress")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TasksInProgress {
 
@@ -86,7 +86,7 @@ public class TasksInProgress {
       this.tasks = ImmutableSet.copyOf(tasks);
    }
 
-   @XmlElement(namespace = NS, name = "Task")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Task")
    private Set<Task> tasks = Sets.newLinkedHashSet();
 
    public Set<Task> getTasks() {

@@ -45,7 +45,7 @@ public class ListStoragePoolsResponseTest extends BaseItemParserTest<Set<Storage
    @Override
    @SelectJson("storagepool")
    public Set<StoragePool> expected() {
-      Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+      Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+02:00"));
       c.set(Calendar.YEAR, 2011);
       c.set(Calendar.MONTH, Calendar.NOVEMBER);
       c.set(Calendar.DAY_OF_MONTH, 26);

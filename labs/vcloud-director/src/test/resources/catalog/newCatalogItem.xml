@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CatalogItem name="newCatalogItem" xmlns="http://www.vmware.com/vcloud/v1.5">
+    <Description>New Catalog Item</Description>
+    <Entity type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="ubuntu10" href="https://vcloudbeta.bluelock.com/api/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9"/>
+</CatalogItem>

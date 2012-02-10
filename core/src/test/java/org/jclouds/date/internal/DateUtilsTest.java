@@ -42,7 +42,7 @@ public class DateUtilsTest {
    // TODO: this test is failing on my jvm which is in IST
    @Test(enabled = false)
    public void testTrimsToMillisNoTimezone() {
-      assertEquals("NO_MILLIS", DateUtils.trimToMillis("NO_MILLISZ"));
+      assertEquals("NO_MILLIS", DateUtils.trimToMillis("NO_MILLIS"));
       assertEquals("NO_MILLIS.1", DateUtils.trimToMillis("NO_MILLIS.1"));
       assertEquals("NO_MILLIS.12", DateUtils.trimToMillis("NO_MILLIS.12"));
       assertEquals("NO_MILLIS.123", DateUtils.trimToMillis("NO_MILLIS.123"));

@@ -23,8 +23,10 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
+import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgClient;
+import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 
 import com.google.inject.Provides;
 
@@ -45,14 +47,27 @@ public interface VCloudDirectorClient {
    Session getCurrentSession();
    
    /**
-    * @return synchronous access to Org features
+    * @return synchronous access to {@link Org} features
     */
    @Delegate
    OrgClient getOrgClient();
+   
+   /**
+    * @return synchronous access to {@link Task} features
+    */
+   @Delegate
+   TaskClient getTaskClient();
 
    /**
     * @return synchronous access to Network features
     */
    @Delegate
    NetworkClient getNetworkClient();
+
+   /**
+    * @return synchronous access to {@link Catalog} features
+    */
+   @Delegate
+   CatalogClient getCatalogClient();
+
 }

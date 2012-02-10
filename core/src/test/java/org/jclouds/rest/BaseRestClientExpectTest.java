@@ -418,7 +418,6 @@ public abstract class BaseRestClientExpectTest<S> {
    protected String identity = "identity";
    protected String credential = "credential";
 
-   @SuppressWarnings("unchecked")
    private RestContextSpec<S, ?> makeContextSpec() {
       if (getClass().isAnnotationPresent(RegisterContext.class))
          return (RestContextSpec<S, ?>) contextSpec(provider, "http://mock", "1", "", "", "userfoo", null, getClass()
