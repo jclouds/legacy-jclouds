@@ -42,7 +42,7 @@ public class GleSYSTemplateOptionsTest {
    @Test
    public void testDefaultip() {
       TemplateOptions options = new GleSYSTemplateOptions();
-      assertEquals(options.as(GleSYSTemplateOptions.class).getIp(), null);
+      assertEquals(options.as(GleSYSTemplateOptions.class).getIp(), "any");
    }
 
    @Test

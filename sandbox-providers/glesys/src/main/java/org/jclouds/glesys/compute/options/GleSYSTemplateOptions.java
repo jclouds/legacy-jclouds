@@ -51,7 +51,7 @@ import com.google.common.net.InetAddresses;
  */
 public class GleSYSTemplateOptions extends TemplateOptions implements Cloneable {
 
-   protected String ip;
+   protected String ip = "any";
 
    @Override
    public GleSYSTemplateOptions clone() {
@@ -76,7 +76,7 @@ public class GleSYSTemplateOptions extends TemplateOptions implements Cloneable 
     */
    public TemplateOptions ip(String ip) {
       if (ip != null)
-         checkArgument(InetAddresses.isInetAddress(ip), "ip %s is not valid", ip);
+         checkArgument("any".equals(ip) || InetAddresses.isInetAddress(ip), "ip %s is not valid", ip);
       this.ip = ip;
       return this;
    }

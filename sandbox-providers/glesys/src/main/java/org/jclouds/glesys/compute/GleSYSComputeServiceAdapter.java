@@ -105,6 +105,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
       builder.datacenter(template.getLocation().getId());
       builder.templateName(template.getImage().getId());
       builder.platform(template.getHardware().getHypervisor());
+      builder.memorySizeMB(template.getHardware().getRam());
       builder.diskSizeGB(Math.round(template.getHardware().getVolumes().get(0).getSize()));
       builder.cpuCores((int) template.getHardware().getProcessors().get(0).getCores());
       builder.transferGB(50);// TODO: add to template options with default value

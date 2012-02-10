@@ -18,22 +18,22 @@
  */
 package org.jclouds.glesys;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reportMatcher;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.verify;
 
 import java.net.URI;
 
 import org.easymock.IArgumentMatcher;
+import org.jclouds.glesys.handlers.GleSYSErrorHandler;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.glesys.handlers.GleSYSErrorHandler;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
@@ -47,20 +47,21 @@ import com.google.inject.Guice;
 public class GleSYSErrorHandlerTest {
 
    @Test
-   public void test500MakesResourceNotFoundExceptionOnUnableToDeterminePackage() {
-      assertCodeMakes(
-            "GET",
-            URI.create("https://api.glesys.com/foo"),
-            500,
-            "",
-            "{\"error\":\"Unable to determine package for 'node2102835255.me.org'.\"}",
-            ResourceNotFoundException.class);
-   }
-
-   @Test
    public void test401MakesAuthorizationException() {
       assertCodeMakes("GET", URI.create("https://api.glesys.com/foo"), 401, "", "Unauthorized",
             AuthorizationException.class);
+
+   }
+
+   @Test
+   public void test400MakesResourceNotFoundExceptionOnCouldNotFind() {
+      assertCodeMakes(
+            "POST",
+            URI.create("https://api.glesys.com/domain/delete/format/json"),
+            400,
+            "",
+            "{\"response\":{\"status\":{\"code\":400,\"timestamp\":\"2012-02-10T12:07:56+01:00\",\"text\":\"Could not find domain on this account.\n\"},\"debug\":{\"input\":{\"domainname\":\"email-test.jclouds.org\"}}}}",
+            ResourceNotFoundException.class);
    }
 
    @Test
