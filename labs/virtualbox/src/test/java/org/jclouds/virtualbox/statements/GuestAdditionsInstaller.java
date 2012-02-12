@@ -30,6 +30,7 @@ import org.virtualbox_4_1.VirtualBoxManager;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
@@ -77,9 +78,9 @@ public class GuestAdditionsInstaller implements Function<String, IMachine> {
       try {
          execFuture.get();
       } catch (InterruptedException e) {
-         e.printStackTrace();
+         Throwables.propagate(e);
       } catch (ExecutionException e) {
-         e.printStackTrace();
+         Throwables.propagate(e);
       }
       return vm;
    }
