@@ -24,6 +24,8 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.inject.Inject;
+
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.SshClient;
@@ -32,6 +34,7 @@ import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.MasterSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.predicates.GuestAdditionsInstaller;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.*;
 
@@ -50,7 +53,8 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-
+   
+   private final ComputeServiceContext context;
    private final Supplier<VirtualBoxManager> manager;
    private final CreateAndRegisterMachineFromIsoIfNotAlreadyExists createAndRegisterMachineFromIsoIfNotAlreadyExists;
 
@@ -64,10 +68,11 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
    private final MachineUtils machineUtils;
 
    @Inject
-   public CreateAndInstallVm(Supplier<VirtualBoxManager> manager,
+   public CreateAndInstallVm(ComputeServiceContext context, Supplier<VirtualBoxManager> manager,
          CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
          Predicate<SshClient> sshResponds, Function<IMachine, SshClient> sshClientForIMachine,
          ExecutionType executionType, MachineUtils machineUtils, @Preconfiguration LoadingCache<IsoSpec, URI> preConfiguration) {
+      this.context = context;
       this.manager = manager;
       this.createAndRegisterMachineFromIsoIfNotAlreadyExists = CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
       this.sshResponds = sshResponds;
@@ -98,6 +103,9 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
       logger.debug(">> awaiting installation to finish node(%s)", vmName);
 
       checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh", vmName);
+      
+      logger.debug(">> awaiting installation of guest additions on vm: %s", vmName);
+      checkState(new GuestAdditionsInstaller(context).apply(vmName));
 
       logger.debug("<< installation of image complete. Powering down node(%s)", vmName);
       ensureMachineHasPowerDown(vmName);

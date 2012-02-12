@@ -32,7 +32,7 @@ import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
 @Test(groups = "unit")
-public class GuestAdditionsInstallationTest {
+public class InstallGuestAdditionsTest {
   @Test
   public void testUnix() throws IOException {
 	  InstallGuestAdditions statement = new InstallGuestAdditions("4.1.6");
