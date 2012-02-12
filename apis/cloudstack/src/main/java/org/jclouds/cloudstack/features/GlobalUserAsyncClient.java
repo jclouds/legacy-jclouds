@@ -19,13 +19,11 @@
 package org.jclouds.cloudstack.features;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import org.jclouds.cloudstack.collections.Integration;
 import org.jclouds.cloudstack.domain.ApiKeyPair;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.options.CreateUserOptions;
 import org.jclouds.cloudstack.options.UpdateUserOptions;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -68,7 +66,6 @@ public interface GlobalUserAsyncClient extends DomainUserAsyncClient {
    @GET
    @QueryParams(keys = "command", values = "registerUserKeys")
    @SelectJson("userkeys")
-   @Endpoint(Integration.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<ApiKeyPair> registerUserKeys(@QueryParam("id") long userId);
