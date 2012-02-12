@@ -38,7 +38,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Iterables;
 
 /**
- * Allows us to test a client via its side effects.
+ * Allows us to test the {@link OrgClient} via its side effects.
  * 
  * @author Adrian Cole
  */
@@ -234,7 +234,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .rel("down")
             .type("application/vnd.vmware.vcloud.catalog+xml")
             .name("Public")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/9e08c2f6-077a-42ce-bece-d5332e2ebb5c"))
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
             .build())
          .link(Link.builder()
             .rel("down")

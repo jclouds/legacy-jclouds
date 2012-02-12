@@ -22,11 +22,11 @@ import java.util.Properties;
 
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorAsyncClient;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorAsyncClient;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -60,5 +60,4 @@ public class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTe
       if (context != null)
          context.close();
    }
-
 }

@@ -22,6 +22,8 @@ import static com.google.common.base.Objects.*;
 import static com.google.common.base.Preconditions.*;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -39,6 +41,17 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author Adrian Cole
  */
 public class Link extends ReferenceType<Link> {
+
+   public static final class Rel {
+      public static final String UP = "up";
+      public static final String DOWN = "down";
+      public static final String EDIT = "edit";
+      public static final String DELETE = "delete";
+
+      public static final List<String> ALL = Arrays.asList(
+               UP, DOWN, EDIT, DELETE
+         );
+   }
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -133,7 +146,7 @@ public class Link extends ReferenceType<Link> {
       }
    }
 
-   @XmlAttribute
+   @XmlAttribute(required = true)
    private String rel;
 
    private Link(URI href, String rel) {
