@@ -35,6 +35,7 @@ import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.virtualbox_4_1.IMachine;
@@ -104,9 +105,9 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
          }
       }
 
-      // nodeMetadataBuilder.imageId("");
-      // nodeMetadataBuilder.group("");
-
+      LoginCredentials loginCredentials = new LoginCredentials("toor", "password", null, true);
+      nodeMetadataBuilder.credentials(loginCredentials);
+      
       return nodeMetadataBuilder.build();
    }
 
