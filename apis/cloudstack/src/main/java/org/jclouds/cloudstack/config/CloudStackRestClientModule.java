@@ -18,16 +18,17 @@
  */
 package org.jclouds.cloudstack.config;
 
-import static com.google.common.base.Throwables.propagate;
-import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
-
-import java.net.URI;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-import javax.ws.rs.core.UriBuilder;
-
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Inject;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Named;
 import org.jclouds.Constants;
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
@@ -35,7 +36,6 @@ import org.jclouds.cloudstack.CloudStackDomainAsyncClient;
 import org.jclouds.cloudstack.CloudStackDomainClient;
 import org.jclouds.cloudstack.CloudStackGlobalAsyncClient;
 import org.jclouds.cloudstack.CloudStackGlobalClient;
-import org.jclouds.cloudstack.collections.Integration;
 import org.jclouds.cloudstack.domain.LoginResponse;
 import org.jclouds.cloudstack.features.AccountAsyncClient;
 import org.jclouds.cloudstack.features.AccountClient;
@@ -139,18 +139,12 @@ import org.jclouds.rest.config.BinderUtils;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.internal.RestContextImpl;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Inject;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
-import com.google.inject.name.Named;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
+import static com.google.common.base.Throwables.propagate;
+import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 
 /**
  * Configures the cloudstack connection.
@@ -252,26 +246,6 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(CloudStackErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(CloudStackErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(CloudStackErrorHandler.class);
-   }
-
-   @Singleton
-   @Provides
-   @Integration
-   protected Supplier<URI> providesIntegrationEndpoint(@Provider final Supplier<URI> provider,
-            @Named("jclouds.cloudstack.integration-api-port") final int port,
-            final com.google.inject.Provider<UriBuilder> uriBuilder) {
-      return Suppliers.compose(new Function<URI, URI>() {
-
-         @Override
-         public URI apply(URI input) {
-            URI normal = provider.get();
-            return uriBuilder.get().scheme(normal.getScheme()).host(normal.getHost()).path("/").port(port).build();
-         }
-         
-         public String toString(){
-            return "getIntegrationEndpoint()";
-         }
-      }, provider);
    }
 
    @Singleton
