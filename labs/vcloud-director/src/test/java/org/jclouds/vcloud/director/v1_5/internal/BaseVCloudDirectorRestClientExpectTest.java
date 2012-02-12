@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.internal;
 
+import static org.testng.Assert.*;
+
 import java.net.URI;
 
 import org.jclouds.date.DateService;
@@ -26,13 +28,9 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.BaseRestClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeGroups;
 
-import com.google.common.base.Function;
-import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 
 /**
@@ -48,12 +46,12 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
    public static final String token = "mIaR3/6Lna8DWImd7/JPR5rK8FcUHabt+G/UCJV5pJQ=";
    public static final String endpoint = "https://vcloudbeta.bluelock.com/api";
 
-   protected DateService dateService;
+   protected static DateService dateService;
 
-   @BeforeClass
-   protected void setUpInjector() {
+   @BeforeGroups("unit")
+   protected static void setUpInjector() {
       dateService = Guice.createInjector().getInstance(DateService.class);
-      assert dateService != null;
+      assertNotNull(dateService);
    }
 
    protected HttpRequest loginRequest = HttpRequest.builder()
@@ -80,12 +78,16 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
       credential = password;
    }
    
-   protected HttpRequest getStandardRequest(String method, String command) {
-      return getStandardRequest(method, URI.create(endpoint + command));
+   protected HttpRequest getStandardRequest(String method, String path) {
+      return getStandardRequest(method, path, VCloudDirectorMediaType.ANY);
    }
 
    protected HttpRequest getStandardRequest(String method, URI uri) {
       return getStandardRequest(method, uri, VCloudDirectorMediaType.ANY);
+   }
+
+   protected HttpRequest getStandardRequest(String method, String path, String mediaType) {
+      return getStandardRequest(method, URI.create(endpoint + path), VCloudDirectorMediaType.ANY);
    }
 
    protected HttpRequest getStandardRequest(String method, URI uri, String mediaType) {
@@ -99,6 +101,31 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
             .build();
    }
 
+   protected HttpRequest getStandardRequestWithPayload(String method, String path, String relativeFilePath, String mediaType) {
+      return getStandardRequestWithPayload(method, path, VCloudDirectorMediaType.ANY, relativeFilePath, mediaType);
+   }
+   
+   protected HttpRequest getStandardRequestWithPayload(String method, URI uri, String relativeFilePath, String mediaType) {
+      return getStandardRequestWithPayload(method, uri, VCloudDirectorMediaType.ANY, relativeFilePath, mediaType);
+   }
+
+   protected HttpRequest getStandardRequestWithPayload(String method, String path, String acceptType, String relativeFilePath, String mediaType) {
+      URI uri = URI.create(endpoint + path);
+      return getStandardRequestWithPayload(method, uri, acceptType, relativeFilePath, mediaType);
+   }
+
+   protected HttpRequest getStandardRequestWithPayload(String method, URI uri, String acceptType, String relativeFilePath, String mediaType) {
+      return HttpRequest.builder()
+            .method(method)
+            .endpoint(uri)
+            .headers(ImmutableMultimap.<String, String> builder()
+                  .put("Accept", acceptType)
+                  .put("x-vcloud-authorization", token)
+                  .build())
+            .payload(payloadFromResourceWithContentType(relativeFilePath, mediaType))
+            .build();
+   }
+
    protected HttpResponse getStandardPayloadResponse(String relativeFilePath, String mediaType) {
       return getStandardPayloadResponse(200, relativeFilePath, mediaType);
    }
@@ -106,6 +133,7 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
    protected HttpResponse getStandardPayloadResponse(int statusCode, String relativeFilePath, String mediaType) {
       return HttpResponse.builder()
             .statusCode(statusCode)
-            .payload(payloadFromResourceWithContentType(relativeFilePath, mediaType + ";version=1.5")).build();
+            .payload(payloadFromResourceWithContentType(relativeFilePath, mediaType + ";version=1.5"))
+            .build();
    }
 }

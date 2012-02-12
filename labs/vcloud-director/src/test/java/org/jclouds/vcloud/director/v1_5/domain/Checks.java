@@ -34,12 +34,12 @@ import com.google.common.collect.Iterables;
  */
 public class Checks {
 
-   protected void checkEntityType(EntityType<?> entity) {
+   public static void checkEntityType(EntityType<?> entity) {
       // Check required fields
       assertNotNull(entity.getName(), "The Name attribute of an EntityType must be set");
 
       // Check optional fields
-//      String description = entity.getDescription(); // ???
+      // NOTE description cannot be checked
       TasksInProgress tasksInProgress = entity.getTasksInProgress();
       if (tasksInProgress != null && tasksInProgress.getTasks() != null && !tasksInProgress.getTasks().isEmpty()) {
          for (Task task : tasksInProgress.getTasks()) checkTask(task);
@@ -49,7 +49,7 @@ public class Checks {
       checkResourceType(entity);
    }
 
-   protected void checkReferenceType(ReferenceType<?> reference) {
+   public static void checkReferenceType(ReferenceType<?> reference) {
       // Check required fields
       assertNotNull(reference.getHref(), "The Href attribute of a ReferenceType must be set");
 
@@ -58,10 +58,10 @@ public class Checks {
       if (id != null) checkId(id);
       String type = reference.getType();
       if (type != null) checkType(type);
-//      String name = reference.getName(); // ???
+      // NOTE name cannot be checked
    }
 
-   protected void checkResourceType(ResourceType<?> resource) {
+   public static void checkResourceType(ResourceType<?> resource) {
       // Check optional fields
       URI href = resource.getHref();
       if (href != null) checkHref(href);
@@ -73,7 +73,7 @@ public class Checks {
       }
    }
 
-   protected void checkId(String id) {
+   public static void checkId(String id) {
       Iterable<String> parts = Splitter.on(':').split(id);
       assertEquals(Iterables.size(parts), 4, "The Id must be well formed");
       assertEquals(Iterables.get(parts, 0), "urn", "The Id must start with 'urn'");
@@ -86,20 +86,22 @@ public class Checks {
       }
    }
 
-   protected void checkType(String type) {
+   public static void checkType(String type) {
       assertTrue(VCloudDirectorMediaType.ALL.contains(type), "The Type must be a valid media type");
    }
 
-   protected void checkHref(URI href) {
+   // NOTE this does not currently check anything
+   public static void checkHref(URI href) {
       String uri = href.toASCIIString();
       String auth = href.getAuthority();
       String host = href.getHost();
       String path = href.getPath();
-//      assertEquals(auth + "://" + host + path, endpoint, "The Href must contain the provider endpoint");
-//      assertTrue(uri.startsWith(endpoint), "The Href must contain the provider endpoint");
+      // TODO inject the endpoint of the provider here for rudimentary checks as below
+      // assertEquals(auth + "://" + host + path, endpoint, "The Href must contain the provider endpoint");
+      // assertTrue(uri.startsWith(endpoint), "The Href must contain the provider endpoint");
    }
 
-   protected void checkLink(Link link) {
+   public static void checkLink(Link link) {
       // Check required fields
       assertNotNull(link.getRel(), "The Rel attribute of a Link must be set");
       assertTrue(Link.Rel.ALL.contains(link.getRel()), "The Rel attribute of a Link must be one of the allowed list");
@@ -108,41 +110,44 @@ public class Checks {
       checkReferenceType(link);
    }
 
-   protected void checkTask(Task task) {
+   public static void checkTask(Task task) {
       // Check required fields
       assertNotNull(task.getStatus(), "The Status attribute of a Task must be set");
       assertTrue(Task.Status.ALL.contains(task.getStatus()), "The Status of a Task must be one of the allowed list");
 
       // Check optional fields
-//      String operation = task.getOperation(); // ???
-//      String operationName = task.getOperationName(); // ???;
-//      Date startTime = task.getStartTime(); // ???
-//      Date endTime = task.getEndTime(); // ???
-//      Date expiryTime = task.getExpiryTime(); // ???
-//      ReferenceType<?> owner = task.getOwner(); // ???
+      // NOTE operation cannot be checked
+      // NOTE operationName cannot be checked
+      // NOTE startTime cannot be checked
+      // NOTE endTime cannot be checked
+      // NOTE expiryTimecannot be checked
+      ReferenceType<?> owner = task.getOwner();
+      if (owner != null) checkReferenceType(owner);
       Error error = task.getError();
       if (error != null) checkError(error);
-//      ReferenceType<?> user = task.getUser(); // ???
-//      ReferenceType<?> organization = task.getOrg(); // ???
+      ReferenceType<?> user = task.getUser();
+      if (user != null) checkReferenceType(user);
+      ReferenceType<?> org = task.getOrg();
+      if (org != null) checkReferenceType(org);
       Integer progress = task.getProgress();
       if (progress != null) checkProgress(progress);
-//      Object params = task.getParams(); // ???
+      // NOTE params cannot be checked
 
       // Check parent type
       checkEntityType(task);
    }
 
-   protected void checkProgress(Integer progress) {
+   public static void checkProgress(Integer progress) {
       assertTrue(progress >= 0 && progress <= 100, "The Progress attribute must be between 0 and 100");
    }
 
-   protected void checkError(Error error) {
+   public static void checkError(Error error) {
       // Check required fields
       assertNotNull(error.getMessage(), "The Message attribute of an Error must be set");
       assertNotNull(error.getMajorErrorCode(), "The MajorErrorCode attribute of an Error must be set");
       assertNotNull(error.getMinorErrorCode(), "The MinorErrorCode attribute of an Error must be set");
       
-//      String vendorSpecificErrorCode = error.getVendorSpecificErrorCode(); // ???
-//      String stackTrace = error.getStackTrace(); // ???
+      // NOTE vendorSpecificErrorCode cannot be checked
+      // NOTE stackTrace cannot be checked
    }
 }

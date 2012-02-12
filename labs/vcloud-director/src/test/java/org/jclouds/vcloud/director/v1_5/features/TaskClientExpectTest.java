@@ -1,15 +1,15 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- *(Link.builder().regarding copyright ownership.  jclouds licenses this file
+ * regarding copyright ownership.  jclouds licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless(Link.builder().required by applicable law or agreed to in writing,
+ * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
@@ -80,55 +80,8 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
               .name("Tasks Lists")
               .type("application/vnd.vmware.vcloud.tasksList+xml")
               .href(URI.create("https://vcloudbeta.bluelock.com/api/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-              .task(Task.builder()
-                    .type("application/vnd.vmware.vcloud.task+xml")
-                    .name("task")
-                    .id("urn:vcloud:task:5fcd2af3-d0ec-45ce-9451-8c585a2c766b")
-                    .href(URI.create("https://vcloudbeta.bluelock.com/api/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b"))
-                    .status("success")
-                    .operation("Created Catalog QunyingTestCatalog(7212e451-76e1-4631-b2de-ba1dfd8080e4)")
-                    .operationName("catalogCreateCatalog")
-                    .startTime(dateService.iso8601DateParse("2012-02-07T00:16:28.450-05:00"))
-                    .endTime(dateService.iso8601DateParse("2012-02-07T00:16:28.867-05:00"))
-                    .expiryTime(dateService.iso8601DateParse("2012-05-07T00:16:28.450-04:00"))
-                    .owner(Reference.builder()
-                          .type("application/vnd.vmware.vcloud.catalog+xml")
-                          .name("QunyingTestCatalog")
-                          .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
-                          .build())
-                    .user(Reference.builder()
-                          .type("application/vnd.vmware.admin.user+xml")
-                          .name("JClouds")
-                          .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-                          .build())
-                    .org(Reference.builder()
-                          .type("application/vnd.vmware.vcloud.org+xml")
-                          .name("JClouds")
-                          .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-                          .build())
-                    .build())
-                    .task(Task.builder()
-                          .type("application/vnd.vmware.vcloud.task+xml")
-                          .name("task")
-                          .id("urn:vcloud:task:bd22e745-9c2a-4f82-a954-0e35b6f76ba5")
-                          .href(URI.create("https://vcloudbeta.bluelock.com/api/task/bd22e745-9c2a-4f82-a954-0e35b6f76ba5"))
-                          .status("success")
-                          .operation("Enabled User (967d317c-4273-4a95-b8a4-bf63b78e9c69)")
-                          .operationName("jobEnable")
-                          .startTime(dateService.iso8601DateParse("2012-02-06T17:30:38.507-05:00"))
-                          .endTime(dateService.iso8601DateParse("2012-02-06T17:30:38.507-05:00"))
-                          .expiryTime(dateService.iso8601DateParse("2012-05-06T17:30:38.507-04:00"))
-                          .user(Reference.builder()
-                                .type("application/vnd.vmware.admin.user+xml")
-                                .name("adrian@jclouds.org")
-                                .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/8c360b93-ed25-4c9a-8e24-d48cd9966d93"))
-                                .build())
-                          .org(Reference.builder()
-                                .type("application/vnd.vmware.vcloud.org+xml")
-                                .name("JClouds")
-                                .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-                                .build())
-                          .build())
+              .task(taskOne())
+              .task(taskTwo())
               .build();
 
       Reference orgRef = Reference.builder().href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0")).build();
@@ -248,41 +201,11 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse);
 
-      Reference taskRef = Reference.builder()
-            .type("application/vnd.vmware.vcloud.task+xml")
-            .name("task")
-            .href(URI.create(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b"))
-            .build();
+      URI taskUri = URI.create(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b");
       
-      Task expected = Task.builder()
-              .type("application/vnd.vmware.vcloud.task+xml")
-              .name("task")
-              .id("urn:vcloud:task:5fcd2af3-d0ec-45ce-9451-8c585a2c766b")
-              .href(URI.create("https://vcloudbeta.bluelock.com/api/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b"))
-              .status("success")
-              .operation("Created Catalog QunyingTestCatalog(7212e451-76e1-4631-b2de-ba1dfd8080e4)")
-              .operationName("catalogCreateCatalog")
-              .startTime(dateService.iso8601DateParse("2012-02-07T00:16:28.450-05:00"))
-              .endTime(dateService.iso8601DateParse("2012-02-07T00:16:28.867-05:00"))
-              .expiryTime(dateService.iso8601DateParse("2012-05-07T00:16:28.450-04:00"))
-              .owner(Reference.builder()
-                    .type("application/vnd.vmware.vcloud.catalog+xml")
-                    .name("QunyingTestCatalog")
-                    .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
-                    .build())
-              .user(Reference.builder()
-                    .type("application/vnd.vmware.admin.user+xml")
-                    .name("JClouds")
-                    .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-                    .build())
-              .org(Reference.builder()
-                    .type("application/vnd.vmware.vcloud.org+xml")
-                    .name("JClouds")
-                    .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-                    .build())
-              .build();
+      Task expected = taskOne();
 
-      assertEquals(client.getTaskClient().getTask(taskRef), expected);
+      assertEquals(client.getTaskClient().getTask(taskUri), expected);
    }
 
    @Test
@@ -296,18 +219,70 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
                               .build())
             .build();
 
-    HttpResponse taskResponse = HttpResponse.builder()
+      HttpResponse taskResponse = HttpResponse.builder()
             .statusCode(200)
             .build();
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse);
 
-      Reference taskRef = Reference.builder()
-            .type("application/vnd.vmware.vcloud.task+xml")
-            .name("task")
-            .href(URI.create(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b"))
-            .build();
+      URI taskUri = URI.create(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b");
       
-      client.getTaskClient().cancelTask(taskRef);
+      client.getTaskClient().cancelTask(taskUri);
+   }
+
+   public static Task taskOne() {
+      return Task.builder()
+		            .type("application/vnd.vmware.vcloud.task+xml")
+		            .name("task")
+		            .id("urn:vcloud:task:5fcd2af3-d0ec-45ce-9451-8c585a2c766b")
+		            .href(URI.create("https://vcloudbeta.bluelock.com/api/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b"))
+		            .status("success")
+		            .operation("Created Catalog QunyingTestCatalog(7212e451-76e1-4631-b2de-ba1dfd8080e4)")
+		            .operationName("catalogCreateCatalog")
+		            .startTime(dateService.iso8601DateParse("2012-02-07T00:16:28.450-05:00"))
+		            .endTime(dateService.iso8601DateParse("2012-02-07T00:16:28.867-05:00"))
+		            .expiryTime(dateService.iso8601DateParse("2012-05-07T00:16:28.450-04:00"))
+		            .owner(Reference.builder()
+		                  .type("application/vnd.vmware.vcloud.catalog+xml")
+		                  .name("QunyingTestCatalog")
+		                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
+		                  .build())
+		            .user(Reference.builder()
+		                  .type("application/vnd.vmware.admin.user+xml")
+		                  .name("JClouds")
+		                  .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+		                  .build())
+		            .org(Reference.builder()
+		                  .type("application/vnd.vmware.vcloud.org+xml")
+		                  .name("JClouds")
+		                  .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+		                  .build())
+		            .build();
+   }
+   
+   public static Task taskTwo() {
+      return Task.builder()
+		            .type("application/vnd.vmware.vcloud.task+xml")
+		            .name("task")
+		            .id("urn:vcloud:task:bd22e745-9c2a-4f82-a954-0e35b6f76ba5")
+		            .href(URI.create("https://vcloudbeta.bluelock.com/api/task/bd22e745-9c2a-4f82-a954-0e35b6f76ba5"))
+		            .status("success")
+		            .operation("Enabled User (967d317c-4273-4a95-b8a4-bf63b78e9c69)")
+		            .operationName("jobEnable")
+		            .startTime(dateService.iso8601DateParse("2012-02-06T17:30:38.507-05:00"))
+		            .endTime(dateService.iso8601DateParse("2012-02-06T17:30:38.507-05:00"))
+		            .expiryTime(dateService.iso8601DateParse("2012-05-06T17:30:38.507-04:00"))
+		            .user(Reference.builder()
+		                  .type("application/vnd.vmware.admin.user+xml")
+		                  .name("adrian@jclouds.org")
+		                  .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/8c360b93-ed25-4c9a-8e24-d48cd9966d93"))
+		                  .build())
+		            .org(Reference.builder()
+		                  .type("application/vnd.vmware.vcloud.org+xml")
+		                  .name("JClouds")
+		                  .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+		                  .build())
+		            .build();
    }
 }
+		

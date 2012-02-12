@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,24 +18,11 @@
  */
 package org.jclouds.vcloud.director.v1_5;
 
-import static org.testng.Assert.assertEquals;
-
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
-import org.jclouds.vcloud.director.v1_5.login.SessionClientExpectTest;
-import org.testng.annotations.Test;
-
 /**
- * @author Adrian Cole
+ * @author grkvlt@apache.org
  */
-@Test(groups = "unit", testName = "VCloudDirectorClient")
-public class VCloudDirectorClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+public class VCloudDirectorLiveTestConstants {
 
-   public void testRestClientModuleWorksProperly() throws Exception {
-
-      VCloudDirectorClient clientWhenSessionsExist = requestSendsResponse(loginRequest, sessionResponse);
-
-      assertEquals(clientWhenSessionsExist.getCurrentSession(), SessionClientExpectTest.SESSION);
-
-   }
+   public static final String FIELD_NOT_NULL_FMT = "The %s field of the %s must not be null";
 
 }
