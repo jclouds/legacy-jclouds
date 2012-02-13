@@ -60,7 +60,7 @@ public interface VCloudDirectorClient {
    TaskClient getTaskClient();
 
    /**
-    * @return synchronous access to Network features
+    * @return synchronous access to {@link Network} features
     */
    @Delegate
    NetworkClient getNetworkClient();
