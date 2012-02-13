@@ -1,8 +1,2 @@
-HTTP/1.1 400 Bad Request
-Date: Mon, 13 Feb 2012 14:52:25 GMT
-Content-Type: application/vnd.vmware.vcloud.error+xml;version=1.5
-Date: Mon, 13 Feb 2012 14:52:25 GMT
-Content-Length: 401
-
 <?xml version="1.0" encoding="UTF-8"?>
 <Error xmlns="http://www.vmware.com/vcloud/v1.5" minorErrorCode="BAD_REQUEST" message="validation error on field 'id': String value has invalid format or length" majorErrorCode="400" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://mycloud.greenhousedata.com/api/v1.5/schema/master.xsd"></Error>
