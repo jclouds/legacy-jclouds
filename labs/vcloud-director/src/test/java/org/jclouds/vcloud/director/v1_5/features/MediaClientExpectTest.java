@@ -28,6 +28,8 @@ import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.Owner;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -41,17 +43,91 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    
    @Test
    public void testWhenResponseIs2xxLoginReturnsValidMedia() {
-      URI mediaRef = URI.create("https://vcloudbeta.bluelock.com/api/media/KEY");
+      URI mediaUri = URI.create(endpoint + "/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", mediaRef), 
+            getStandardRequest("GET", mediaUri), 
             getStandardPayloadResponse("/media/media.xml", VCloudDirectorMediaType.MEDIA_XML));
       
-      Media expected = Media
-         .builder()
-         .build();
+      Media expected = media();
 
-      assertEquals(client.getMediaClient().getMedia(mediaRef), expected);
+      assertEquals(client.getMediaClient().getMedia(mediaUri), expected);
+   }
+   
+   public void testWhenResponseIs400ForInvalidNetworkId() {
+      URI mediaUri = URI.create(endpoint + "/media/NOTAUUID");
+ 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
+            getStandardRequest("GET", mediaUri),
+            getStandardPayloadResponse(400, "/media/error400.xml", VCloudDirectorMediaType.ERROR));
+ 
+      Error expected = Error.builder()
+            .message("validation error on field 'id': String value has invalid format or length")
+            .majorErrorCode(400)
+            .minorErrorCode("BAD_REQUEST")
+            .build();
+ 
+      Reference mediaRef = Reference.builder().href(mediaUri).build();
+      try {
+         client.getMediaClient().getMedia(mediaRef);
+         fail("Should give HTTP 400 error");
+      } catch (VCloudDirectorException vde) {
+         assertEquals(vde.getError(), expected);
+      } catch (Exception e) {
+         fail("Should have thrown a VCloudDirectorException");
+      }
+   }
+ 
+   @Test
+   public void testWhenResponseIs403ForCatalogIdUsedAsMediaId() {
+      URI mediaUri = URI.create(endpoint + "/media/e9cd3387-ac57-4d27-a481-9bee75e0690f");
+ 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
+            getStandardRequest("GET", mediaUri),
+            getStandardPayloadResponse(403, "/media/error403-catalog.xml", VCloudDirectorMediaType.ERROR));
+ 
+      Error expected = Error.builder()
+            .message("This operation is denied.")
+            .majorErrorCode(403)
+            .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
+            .build();
+ 
+      Reference mediaRef = Reference.builder().href(mediaUri).build();
+ 
+      try {
+         client.getMediaClient().getMedia(mediaRef);
+         fail("Should give HTTP 403 error");
+      } catch (VCloudDirectorException vde) {
+         assertEquals(vde.getError(), expected);
+      } catch (Exception e) {
+         fail("Should have thrown a VCloudDirectorException");
+      }
+   }
+ 
+   @Test
+   public void testWhenResponseIs403ForFakeNetworkId() {
+      URI mediaUri = URI.create(endpoint + "/media/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
+ 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
+            getStandardRequest("GET", mediaUri),
+            getStandardPayloadResponse(403, "/media/error403-fake.xml", VCloudDirectorMediaType.ERROR));
+ 
+      Error expected = Error.builder()
+            .message("No access to entity \"(com.vmware.vcloud.entity.media:aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee)\"")
+            .majorErrorCode(403)
+            .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
+            .build();
+ 
+      Reference mediaRef = Reference.builder().href(mediaUri).build();
+ 
+      try {
+         client.getMediaClient().getMedia(mediaRef);
+         fail("Should give HTTP 403 error");
+      } catch (VCloudDirectorException vde) {
+         assertEquals(vde.getError(), expected);
+      } catch (Exception e) {
+         fail("Should have thrown a VCloudDirectorException");
+      }
    }
    
    @Test
@@ -89,5 +165,54 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
             .build();
 
       assertEquals(client.getMediaClient().getMetadataEntry(metadataRef), expected);
+   }
+   
+   private static Media media() {
+      return Media.builder()
+         .size(175163392)
+         .imageType("iso")
+         .status(1)
+         .name("DansTestMedia")
+         .id("urn:vcloud:media:794eb334-754e-4917-b5a0-5df85cbd61d1")
+         .href(URI.create("https://mycloud.greenhousedata.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1"))
+         .link(Link.builder()
+            .rel("up")
+            .type("application/vnd.vmware.vcloud.vdc+xml")
+            .href(URI.create("https://mycloud.greenhousedata.com/api/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f"))
+            .build())
+         .link(Link.builder()
+            .rel("catalogItem")
+            .type("application/vnd.vmware.vcloud.catalogItem+xml")
+            .href(URI.create("https://mycloud.greenhousedata.com/api/catalogItem/1979d680-304e-4118-9283-9210c3b3ed8d"))
+            .build())
+         .link(Link.builder()
+            .rel("remove")
+            .href(URI.create("https://mycloud.greenhousedata.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1"))
+            .build())
+         .link(Link.builder()
+            .rel("edit")
+            .type("application/vnd.vmware.vcloud.media+xml")
+            .href(URI.create("https://mycloud.greenhousedata.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1"))
+            .build())
+         .link(Link.builder()
+            .rel("down")
+            .type("application/vnd.vmware.vcloud.owner+xml")
+            .href(URI.create("https://mycloud.greenhousedata.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1/owner"))
+            .build())
+         .link(Link.builder()
+            .rel("down")
+            .type("application/vnd.vmware.vcloud.metadata+xml")
+            .href(URI.create("https://mycloud.greenhousedata.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1/metadata"))
+            .build())
+         .description("Windows 2003 R2 Disk2 Standard 32bit &amp; 64bit")
+         .owner(Owner.builder()
+            .type("application/vnd.vmware.vcloud.owner+xml")
+            .user(Reference.builder()
+               .type("application/vnd.vmware.admin.user+xml")
+               .name("acole")
+               .href(URI.create("https://mycloud.greenhousedata.com/api/admin/user/c090335b-708c-4c1c-9e3d-89560d002120"))
+               .build())
+            .build())
+         .build();
    }
 }
