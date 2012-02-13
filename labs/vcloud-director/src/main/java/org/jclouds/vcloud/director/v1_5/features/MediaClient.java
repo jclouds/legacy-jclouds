@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -26,6 +25,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
+import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 
 /**
@@ -44,7 +44,7 @@ public interface MediaClient {
     * 
     * @return the media or null if not found
     */
-   Media getMedia(URI mediaRef);
+   Media getMedia(ReferenceType<?> mediaRef);
    
    /**
     * Updates the name/description of a media.
@@ -52,40 +52,40 @@ public interface MediaClient {
     * @return a task. This operation is asynchronous and the user should monitor the returned 
     * task status in order to check when it is completed.
     */
-   Task updateMedia(URI mediaRef, Media media);
+   Task updateMedia(ReferenceType<?> mediaRef, Media media);
    
    /**
     * Deletes a media.
     */
-   void deleteMedia(URI mediaRef);
+   void deleteMedia(ReferenceType<?> mediaRef);
    
    /**
     * Retrieves an owner.
     * 
     * @return the owner or null if not found
     */
-   Owner getOwner(URI mediaRef);
+   Owner getOwner(ReferenceType<?> mediaRef);
    
    /**
     * Retrieves an list of the media's metadata
     * 
     * @return a list of metadata
     */
-   Metadata getMetadata(URI mediaRef);
+   Metadata getMetadata(ReferenceType<?> mediaRef);
    /**
     * Merges the metadata for a media with the information provided.
     * 
     * @return a task. This operation is asynchronous and the user should monitor the returned 
     * task status in order to check when it is completed.
     */
-   Task updateMetadata(URI mediaRef, Metadata metadata);
+   Task updateMetadata(ReferenceType<?> mediaRef, Metadata metadata);
 
    /**
     * Retrieves a metadata entry
     * 
     * @return the metadata entry, or null if not found
     */
-   MetadataEntry getMetadataEntry(URI metaDataRef);
+   MetadataEntry getMetadataEntry(ReferenceType<?> mediaRef, String key);
    
    /**
     * Sets the metadata for the particular key for the media to the value provided
@@ -93,12 +93,12 @@ public interface MediaClient {
     * @return a task. This operation is asynchronous and the user should monitor the returned 
     * task status in order to check when it is completed.
     */
-   Task updateMetadataEntry(URI metaDataRef, MetadataEntry metadataEntry);
+   Task updateMetadataEntry(ReferenceType<?> mediaRef, String key, MetadataEntry metadataEntry);
    
    /**
     * Deletes a metadata entry.
     */
-   void deleteMetadataEntry(URI metaDataRef);
+   void deleteMetadataEntry(ReferenceType<?> mediaRef, String key);
    
 
 }
