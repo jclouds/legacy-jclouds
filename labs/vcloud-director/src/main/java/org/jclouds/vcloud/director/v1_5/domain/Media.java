@@ -21,6 +21,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
+import java.net.URI;
+import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -110,6 +113,94 @@ public class Media
          media.setImageType(imageType);
          media.setSize(size);
          return media;
+      }
+      
+      /**
+       * @see ResourceEntityType#getFiles()
+       */
+      public Builder files(FilesList files) {
+         super.files(files);
+         return this;
+      }
+
+      /**
+       * @see ResourceEntityType#getStatus()
+       */
+      public Builder status(Integer status) {
+         super.status(status);
+         return this;
+      }
+      
+      /**
+       * @see EntityType#getName()
+       */
+      @Override
+      public Builder name(String name) {
+         super.name(name);
+         return this;
+      }
+
+      /**
+       * @see EntityType#getDescription()
+       */
+      @Override
+      public Builder description(String description) {
+         super.description(description);
+         return this;
+      }
+
+      /**
+       * @see EntityType#getId()
+       */
+      @Override
+      public Builder id(String id) {
+         super.id(id);
+         return this;
+      }
+
+      /**
+       * @see EntityType#getTasksInProgress()
+       */
+      @Override
+      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
+         super.tasksInProgress(tasksInProgress);
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getHref()
+       */
+      @Override
+      public Builder href(URI href) {
+         super.href(href);
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getType()
+       */
+      @Override
+      public Builder type(String type) {
+         super.type(type);
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getLinks()
+       */
+      @Override
+      public Builder links(Set<Link> links) {
+         super.links(links);
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getLinks()
+       */
+      @Override
+      public Builder link(Link link) {
+         super.link(link);
+         return this;
       }
 
 
