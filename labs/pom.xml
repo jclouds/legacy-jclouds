@@ -35,5 +35,6 @@
        <module>openstack-nova</module>
        <module>virtualbox</module>
        <module>vcloud-director</module>
+       <module>glesys</module>
     </modules>
 </project>
