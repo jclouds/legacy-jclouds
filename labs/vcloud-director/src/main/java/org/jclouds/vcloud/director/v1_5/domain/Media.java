@@ -20,6 +20,7 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.Set;
@@ -28,6 +29,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
@@ -60,9 +62,8 @@ import com.google.common.base.Objects;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Media", propOrder = {
-    "owner"
-})
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Media")
+@XmlType(propOrder = {"owner"})
 public class Media
     extends ResourceEntityType<Media>
 
@@ -220,7 +221,7 @@ public class Media
       super();
    }
 
-    @XmlElement(name = "Owner")
+    @XmlElement(namespace = VCLOUD_1_5_NS, name = "Owner")
     protected Owner owner;
     @XmlAttribute(required = true)
     protected String imageType;

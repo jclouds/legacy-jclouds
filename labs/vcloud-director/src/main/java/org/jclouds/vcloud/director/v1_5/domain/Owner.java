@@ -28,6 +28,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
@@ -59,9 +60,8 @@ import com.google.common.collect.Sets;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Owner", propOrder = {
-    "user"
-})
+@XmlRootElement(name = "Owner")
+@XmlType(propOrder = {"user"})
 public class Owner
     extends ResourceType<Owner>
 
