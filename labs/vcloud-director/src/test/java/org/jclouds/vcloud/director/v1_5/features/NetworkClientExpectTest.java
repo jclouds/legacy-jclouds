@@ -41,6 +41,8 @@ import org.jclouds.vcloud.director.v1_5.domain.SyslogServerSettings;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
  * Allows us to test a client via its side effects.
  * 
@@ -157,6 +159,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
                   .type("application/vnd.vmware.vcloud.network+xml")
                   .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c"))
                   .build())
+            .metadata(ImmutableSet.of(MetadataEntry.builder().entry("key", "value").build()))
             .build();
 
        Reference networkRef = Reference.builder().href(networkUri).build();
@@ -173,7 +176,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             getStandardPayloadResponse("/network/metadataEntry.xml", VCloudDirectorMediaType.METADATA_ENTRY));
       
       MetadataEntry expected = MetadataEntry.builder()
-            .key("KEY")
+            .entry("key", "value")
             .build();
 
       Reference networkRef = Reference.builder().href(networkUri).build();
