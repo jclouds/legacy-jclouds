@@ -59,7 +59,7 @@ import com.google.common.base.Objects;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FilesList", propOrder = {
-    "file"
+    "files"
 })
 public class FilesList {
    public static Builder builder() {
