@@ -53,11 +53,13 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
             getStandardPayloadResponse("/media/media.xml", VCloudDirectorMediaType.MEDIA_XML));
       
       Media expected = media();
+      
+      Reference mediaRef = Reference.builder().href(mediaUri).build();
 
-      assertEquals(client.getMediaClient().getMedia(mediaUri), expected);
+      assertEquals(client.getMediaClient().getMedia(mediaRef), expected);
    }
    
-   public void testWhenResponseIs400ForInvalidNetworkId() {
+   public void testWhenResponseIs400ForInvalidMediaId() {
       URI mediaUri = URI.create(endpoint + "/media/NOTAUUID");
  
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
@@ -69,9 +71,11 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
             .majorErrorCode(400)
             .minorErrorCode("BAD_REQUEST")
             .build();
+      
+      Reference mediaRef = Reference.builder().href(mediaUri).build();
  
       try {
-         client.getMediaClient().getMedia(mediaUri);
+         client.getMediaClient().getMedia(mediaRef);
          fail("Should give HTTP 400 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -89,13 +93,15 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
             getStandardPayloadResponse(403, "/media/error403-catalog.xml", VCloudDirectorMediaType.ERROR));
  
       Error expected = Error.builder()
-            .message("This operation is denied.")
+            .message("No access to entity \"(com.vmware.vcloud.entity.media:e9cd3387-ac57-4d27-a481-9bee75e0690f)\".")
             .majorErrorCode(403)
             .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
             .build();
+      
+      Reference mediaRef = Reference.builder().href(mediaUri).build();
  
       try {
-         client.getMediaClient().getMedia(mediaUri);
+         client.getMediaClient().getMedia(mediaRef);
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -105,7 +111,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    }
  
    @Test
-   public void testWhenResponseIs403ForFakeNetworkId() {
+   public void testWhenResponseIs403ForFakeMediaId() {
       URI mediaUri = URI.create(endpoint + "/media/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
  
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
@@ -113,13 +119,15 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
             getStandardPayloadResponse(403, "/media/error403-fake.xml", VCloudDirectorMediaType.ERROR));
  
       Error expected = Error.builder()
-            .message("No access to entity \"(com.vmware.vcloud.entity.media:aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee)\"")
+            .message("No access to entity \"(com.vmware.vcloud.entity.media:aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee)\".")
             .majorErrorCode(403)
             .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
             .build();
+      
+      Reference mediaRef = Reference.builder().href(mediaUri).build();
  
       try {
-         client.getMediaClient().getMedia(mediaUri);
+         client.getMediaClient().getMedia(mediaRef);
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -129,21 +137,39 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    }
    
    @Test
+   public void testWhenResponseIs2xxLoginReturnsValidOwner() {
+      URI mediaUri = URI.create(endpoint + "/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
+      URI metadataUri = URI.create(mediaUri.toASCIIString()+"/owner");
+
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+            getStandardRequest("GET", metadataUri), 
+            getStandardPayloadResponse("/media/owner.xml", VCloudDirectorMediaType.OWNER));
+      
+      Owner expected = media().getOwner();
+      
+      Reference mediaRef = Reference.builder().href(mediaUri).build();
+
+      assertEquals(client.getMediaClient().getOwner(mediaRef), expected);
+   }
+   
+   @Test
    public void testWhenResponseIs2xxLoginReturnsValidMetadata() {
-      URI mediaRef = URI.create("https://vcloudbeta.bluelock.com/api/media/KEY");
-      URI metaRef = URI.create(mediaRef.toASCIIString()+"/metadata/");
+      URI mediaUri = URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
+      URI metadataUri = URI.create(mediaUri.toASCIIString()+"/metadata");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", metaRef),
+            getStandardRequest("GET", metadataUri),
             getStandardPayloadResponse("/media/metadata.xml", VCloudDirectorMediaType.METADATA));
+      
+      Reference mediaRef = Reference.builder().href(mediaUri).build();
       
       Metadata expected = Metadata.builder()
             .type("application/vnd.vmware.vcloud.metadata+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/media/KEY/metadata"))
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1/metadata"))
             .link(Link.builder()
                   .rel("up")
-                  .type("application/vnd.vmware.vcloud.network+xml")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/media/KEY"))
+                  .type("application/vnd.vmware.vcloud.media+xml")
+                  .href(URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1"))
                   .build())
             .build();
 
@@ -152,17 +178,19 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    
    @Test(enabled=false) // No metadata in exemplar xml...
    public void testWhenResponseIs2xxLoginReturnsValidMetadataEntry() {
-      URI metadataRef = URI.create(
-            "https://vcloudbeta.bluelock.com/api/media/KEY/metadata/KEY");
+      URI mediaUri = URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
+      URI metadataUri = URI.create(mediaUri.toASCIIString()+"/metadata/key");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", metadataRef),
+            getStandardRequest("GET", metadataUri),
             getStandardPayloadResponse("/media/metadataEntry.xml", VCloudDirectorMediaType.METADATA_ENTRY));
       
       MetadataEntry expected = MetadataEntry.builder()
             .build();
+      
+      Reference mediaRef = Reference.builder().href(mediaUri).build();
 
-      assertEquals(client.getMediaClient().getMetadataEntry(metadataRef), expected);
+      assertEquals(client.getMediaClient().getMetadataEntry(mediaRef, "key"), expected);
    }
    
    private static Media media() {
