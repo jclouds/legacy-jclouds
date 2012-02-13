@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
 /**
@@ -157,7 +158,11 @@ public class Statements {
             String directory) {
       return new PipeHttpResponseToTarxpzfIntoDirectory(method, endpoint, headers, directory);
    }
-
+   
+   public static Statement extractTargzIntoDirectory(URI targz, String directory) {
+      return extractTargzIntoDirectory("GET", targz, ImmutableMultimap.<String, String>of(), directory);
+   }
+   
    /**
     * unzip the data received from the request parameters.
     * 
@@ -172,6 +177,10 @@ public class Statements {
    public static Statement extractZipIntoDirectory(String method, URI endpoint, Multimap<String, String> headers,
             String directory) {
       return new UnzipHttpResponseIntoDirectory(method, endpoint, headers, directory);
+   }
+
+   public static Statement saveHttpResponseTo(URI source, String dir, String file) {
+      return new SaveHttpResponseTo(dir, file, "GET", source, ImmutableMultimap.<String, String> of());
    }
 
    /**

@@ -84,7 +84,7 @@ cat >> /tmp/$USER/scripttest/temp.txt <<'END_OF_FILE'
 hello world
 END_OF_FILE
 
-find / || exit 1
+find /
 
 END_OF_SCRIPT
    

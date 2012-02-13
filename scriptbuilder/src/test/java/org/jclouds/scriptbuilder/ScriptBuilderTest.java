@@ -18,9 +18,9 @@
  */
 package org.jclouds.scriptbuilder;
 
-import static org.jclouds.scriptbuilder.domain.Statements.call;
+import static org.jclouds.scriptbuilder.ScriptBuilder.call;
+import static org.jclouds.scriptbuilder.ScriptBuilder.findPid;
 import static org.jclouds.scriptbuilder.domain.Statements.appendFile;
-import static org.jclouds.scriptbuilder.domain.Statements.findPid;
 import static org.jclouds.scriptbuilder.domain.Statements.interpret;
 import static org.jclouds.scriptbuilder.domain.Statements.kill;
 import static org.jclouds.scriptbuilder.domain.Statements.newStatementList;
@@ -49,50 +49,53 @@ import com.google.common.io.Resources;
 public class ScriptBuilderTest {
 
    ScriptBuilder testScriptBuilder = new ScriptBuilder()
-            .unsetEnvironmentVariable("runtime")
-            .addEnvironmentVariableScope("default", ImmutableMap.of("runtime", "Moo"))
-            .addStatement(
-                     switchArg(
-                              1,
-                              ImmutableMap
-                                       .of(
-                                                "start",
-                                                newStatementList(call("default"),
-                                                         interpret("echo start {varl}RUNTIME{varr}{lf}")),
-                                                "stop",
-                                                newStatementList(call("default"),
-                                                         interpret("echo stop {varl}RUNTIME{varr}{lf}")),
-                                                "status",
-                                                newStatementList(
-                                                         appendFile("{tmp}{fs}{uid}{fs}scripttest{fs}temp.txt",
-                                                                  ImmutableList.<String> of("hello world")),
-                                                         interpret("echo {vq}the following should be []: [{varl}RUNTIME{varr}]{vq}{lf}")))));
+         .unsetEnvironmentVariable("runtime")
+         .addEnvironmentVariableScope("default", ImmutableMap.of("runtime", "Moo"))
+         .addStatement(
+               switchArg(1, ImmutableMap.of(
+                     "start",
+                     newStatementList(call("default"), interpret("echo start {varl}RUNTIME{varr}{lf}")),
+                     "stop",
+                     newStatementList(call("default"), interpret("echo stop {varl}RUNTIME{varr}{lf}")),
+                     "status",
+                     newStatementList(
+                           appendFile("{tmp}{fs}{uid}{fs}scripttest{fs}temp.txt",
+                                 ImmutableList.<String> of("hello world")),
+                           interpret("echo {vq}the following should be []: [{varl}RUNTIME{varr}]{vq}{lf}")))));
 
    @Test
    public void testBuildSimpleWindows() throws MalformedURLException, IOException {
-      assertEquals(testScriptBuilder.render(OsFamily.WINDOWS), CharStreams.toString(Resources.newReaderSupplier(
-               Resources.getResource("test_script." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
+      assertEquals(
+            testScriptBuilder.render(OsFamily.WINDOWS),
+            CharStreams.toString(Resources.newReaderSupplier(
+                  Resources.getResource("test_script." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
    }
 
    @Test
    public void testBuildSimpleUNIX() throws MalformedURLException, IOException {
-      assertEquals(testScriptBuilder.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources
-               .getResource("test_script." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+      assertEquals(
+            testScriptBuilder.render(OsFamily.UNIX),
+            CharStreams.toString(Resources.newReaderSupplier(
+                  Resources.getResource("test_script." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
    }
 
    ScriptBuilder findPidBuilder = new ScriptBuilder().addStatement(findPid("{args}")).addStatement(
-            interpret("echo {varl}FOUND_PID{varr}{lf}"));
+         interpret("echo {varl}FOUND_PID{varr}{lf}"));
 
    @Test
    public void testFindPidWindows() throws MalformedURLException, IOException {
-      assertEquals(findPidBuilder.render(OsFamily.WINDOWS), CharStreams.toString(Resources.newReaderSupplier(Resources
-               .getResource("test_find_pid." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
+      assertEquals(
+            findPidBuilder.render(OsFamily.WINDOWS),
+            CharStreams.toString(Resources.newReaderSupplier(
+                  Resources.getResource("test_find_pid." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
    }
 
    @Test
    public void testFindPidUNIX() throws MalformedURLException, IOException {
-      assertEquals(findPidBuilder.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources
-               .getResource("test_find_pid." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+      assertEquals(
+            findPidBuilder.render(OsFamily.UNIX),
+            CharStreams.toString(Resources.newReaderSupplier(
+                  Resources.getResource("test_find_pid." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
    }
 
    ScriptBuilder seekAndDestroyBuilder = new ScriptBuilder().addStatement(findPid("{args}")).addStatement(kill());
@@ -100,22 +103,24 @@ public class ScriptBuilderTest {
    @Test
    public void testSeekAndDestroyWindows() throws MalformedURLException, IOException {
       assertEquals(seekAndDestroyBuilder.render(OsFamily.WINDOWS), CharStreams.toString(Resources.newReaderSupplier(
-               Resources.getResource("test_seek_and_destroy." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
+            Resources.getResource("test_seek_and_destroy." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
    }
 
    @Test
    public void testSeekAndDestroyUNIX() throws MalformedURLException, IOException {
-      assertEquals(seekAndDestroyBuilder.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(
-               Resources.getResource("test_seek_and_destroy." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+      assertEquals(
+            seekAndDestroyBuilder.render(OsFamily.UNIX),
+            CharStreams.toString(Resources.newReaderSupplier(
+                  Resources.getResource("test_seek_and_destroy." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
    }
 
    @Test
    public void testSwitchOn() {
       ScriptBuilder builder = new ScriptBuilder();
-      builder.addStatement(switchArg(1, ImmutableMap.of("start", interpret("echo started{lf}"), "stop",
-               interpret("echo stopped{lf}"))));
+      builder.addStatement(switchArg(1,
+            ImmutableMap.of("start", interpret("echo started{lf}"), "stop", interpret("echo stopped{lf}"))));
       assertEquals(builder.statements, ImmutableList.of(new SwitchArg(1, ImmutableMap.of("start",
-               interpret("echo started{lf}"), "stop", interpret("echo stopped{lf}")))));
+            interpret("echo started{lf}"), "stop", interpret("echo stopped{lf}")))));
    }
 
    @Test
