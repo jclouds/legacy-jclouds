@@ -72,7 +72,7 @@ public interface VCloudDirectorClient {
    CatalogClient getCatalogClient();
 
    /**
-    * @return synchronous access to Media features
+    * @return synchronous access to {@link Media} features
     */
    @Delegate
    MediaClient getMediaClient();
