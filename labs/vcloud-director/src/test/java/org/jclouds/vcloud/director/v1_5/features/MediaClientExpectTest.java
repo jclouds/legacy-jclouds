@@ -19,11 +19,14 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
@@ -67,9 +70,8 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
             .minorErrorCode("BAD_REQUEST")
             .build();
  
-      Reference mediaRef = Reference.builder().href(mediaUri).build();
       try {
-         client.getMediaClient().getMedia(mediaRef);
+         client.getMediaClient().getMedia(mediaUri);
          fail("Should give HTTP 400 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -92,10 +94,8 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
             .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
             .build();
  
-      Reference mediaRef = Reference.builder().href(mediaUri).build();
- 
       try {
-         client.getMediaClient().getMedia(mediaRef);
+         client.getMediaClient().getMedia(mediaUri);
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -118,10 +118,8 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
             .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
             .build();
  
-      Reference mediaRef = Reference.builder().href(mediaUri).build();
- 
       try {
-         client.getMediaClient().getMedia(mediaRef);
+         client.getMediaClient().getMedia(mediaUri);
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -137,7 +135,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", metaRef),
-            getStandardPayloadResponse("/media/metadata.xml", VCloudDirectorMediaType.METADATA_XML));
+            getStandardPayloadResponse("/media/metadata.xml", VCloudDirectorMediaType.METADATA));
       
       Metadata expected = Metadata.builder()
             .type("application/vnd.vmware.vcloud.metadata+xml")
@@ -159,7 +157,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", metadataRef),
-            getStandardPayloadResponse("/media/metadataEntry.xml", VCloudDirectorMediaType.METADATAENTRY_XML));
+            getStandardPayloadResponse("/media/metadataEntry.xml", VCloudDirectorMediaType.METADATA_ENTRY));
       
       MetadataEntry expected = MetadataEntry.builder()
             .build();
