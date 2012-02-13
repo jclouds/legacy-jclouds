@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 
+import com.google.common.collect.ForwardingList;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 
@@ -30,7 +31,7 @@ import com.google.common.collect.ImmutableList.Builder;
  * 
  * @author Adrian Cole
  */
-public class StatementList implements Statement, AcceptsStatementVisitor {
+public class StatementList extends ForwardingList<Statement> implements Statement, AcceptsStatementVisitor {
 
    public final List<Statement> statements;
 
@@ -44,7 +45,7 @@ public class StatementList implements Statement, AcceptsStatementVisitor {
 
    public String render(OsFamily family) {
       StringBuilder statementsBuilder = new StringBuilder();
-      for (Statement statement : statements) {
+      for (Statement statement : delegate()) {
          statementsBuilder.append(statement.render(family));
       }
       return statementsBuilder.toString();
@@ -53,41 +54,21 @@ public class StatementList implements Statement, AcceptsStatementVisitor {
    @Override
    public Iterable<String> functionDependencies(OsFamily family) {
       Builder<String> functions = ImmutableList.<String> builder();
-      for (Statement statement : statements) {
+      for (Statement statement : delegate()) {
          functions.addAll(statement.functionDependencies(family));
       }
       return functions.build();
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((statements == null) ? 0 : statements.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      StatementList other = (StatementList) obj;
-      if (statements == null) {
-         if (other.statements != null)
-            return false;
-      } else if (!statements.equals(other.statements))
-         return false;
-      return true;
-   }
-
-   @Override
    public void accept(StatementVisitor visitor) {
-      for (Statement statement : statements) {
+      for (Statement statement : delegate()) {
          visitor.visit(statement);
       }
+   }
+
+   @Override
+   public List<Statement> delegate() {
+      return statements;
    }
 }

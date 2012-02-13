@@ -18,7 +18,7 @@
  */
 package org.jclouds.scriptbuilder.domain;
 
-import static org.jclouds.scriptbuilder.domain.Statements.call;
+import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.jclouds.scriptbuilder.domain.Statements.appendFile;
 import static org.jclouds.scriptbuilder.domain.Statements.createRunScript;
 import static org.testng.Assert.assertEquals;
@@ -43,10 +43,10 @@ public class CreateRunScriptTest {
             "{tmp}{fs}{uid}{fs}scripttest",
             ImmutableList
                      .<Statement> of(
-                              call("echo hello"),
+                              exec("echo hello"),
                               appendFile("{tmp}{fs}{uid}{fs}scripttest{fs}temp.txt", ImmutableList
                                        .<String> of("hello world")),
-                              call("echo {varl}JAVA_HOME{varr}{fs}bin{fs}java -DinstanceName={varl}INSTANCE_NAME{varr} myServer.Main")));
+                              exec("echo {varl}JAVA_HOME{varr}{fs}bin{fs}java -DinstanceName={varl}INSTANCE_NAME{varr} myServer.Main")));
 
    public void testUNIX() throws IOException {
       assertEquals(statement.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources

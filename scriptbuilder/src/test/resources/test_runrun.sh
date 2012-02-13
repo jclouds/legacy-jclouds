@@ -15,13 +15,13 @@ END_OF_SCRIPT
 # add desired commands from the user
 cat >> /tmp/$USER/scripttest/yahooprod.sh <<'END_OF_SCRIPT'
 cd /tmp/$USER/scripttest
-echo hello || return 1
+echo hello
 
 cat >> /tmp/$USER/scripttest/temp.txt <<'END_OF_FILE'
 hello world
 END_OF_FILE
 
-echo $JAVA_HOME/bin/java -DinstanceName=$INSTANCE_NAME myServer.Main || return 1
+echo $JAVA_HOME/bin/java -DinstanceName=$INSTANCE_NAME myServer.Main
 
 END_OF_SCRIPT
 
