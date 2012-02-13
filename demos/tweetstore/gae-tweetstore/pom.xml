@@ -28,8 +28,8 @@
     </parent>
     <artifactId>jclouds-demo-gae-tweetstore</artifactId>
     <packaging>war</packaging>
-    <name>JClouds TweetStore for Google App Engine</name>
-    <description>JClouds TweetStore for Google App Engine using Guice for Dependency Injection</description>
+    <name>jclouds TweetStore for Google App Engine</name>
+    <description>jclouds TweetStore for Google App Engine using Guice for Dependency Injection</description>
 
     <properties>
         <!--

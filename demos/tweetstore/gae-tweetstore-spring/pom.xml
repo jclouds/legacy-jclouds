@@ -28,7 +28,7 @@
     </parent>
     <artifactId>jclouds-demo-gae-tweetstore-spring</artifactId>
     <packaging>war</packaging>
-    <name>Spring version of JClouds TweetStore for Google App Engine</name>
+    <name>jclouds TweetStore for Google App Engine (Spring)</name>
     <description>JClouds TweetStore for Google App Engine using Spring for Dependency Injection</description>
 
     <properties>
