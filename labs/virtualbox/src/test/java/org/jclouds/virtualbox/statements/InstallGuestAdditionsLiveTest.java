@@ -19,20 +19,19 @@
 
 package org.jclouds.virtualbox.statements;
 
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
-
+import com.google.common.base.CaseFormat;
+import com.google.inject.Injector;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.base.CaseFormat;
-import com.google.inject.Injector;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 
 /**
  * @author Andrea Turli
  */
-@Test(groups = "live", singleThreaded = true, testName = "InstallGuestAdditionsTest")
-public class InstallGuestAdditionsTest extends BaseVirtualBoxClientLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "InstallGuestAdditionsLiveTest")
+public class InstallGuestAdditionsLiveTest extends BaseVirtualBoxClientLiveTest {
 
    private String vmName;
    
