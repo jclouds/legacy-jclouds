@@ -25,8 +25,9 @@ import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
-import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.Test;
@@ -38,14 +39,19 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "live", "apitests" }, testName = "NetworkClientLiveTest")
 public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
+   
+   // @Before populate
+   String networkId = "55a677cf-ab3f-48ae-b880-fab90421980c";
+   String catalogId = "9e08c2f6-077a-42ce-bece-d5332e2ebb5c";
 
    @Test(testName = "GET /network/{id}")
    public void testWhenResponseIs2xxLoginReturnsValidNetwork() {
       Reference networkRef = Reference.builder()
-            .href(URI.create(endpoint + "/network/55a677cf-ab3f-48ae-b880-fab90421980c")).build();
+            .href(URI.create(endpoint + "/network/"+networkId)).build();
       
-      assertEquals(context.getApi().getNetworkClient().getNetwork(networkRef), 
-            NetworkClientExpectTest.orgNetwork());
+      OrgNetwork network = context.getApi().getNetworkClient().getNetwork(networkRef);
+      
+      //TODO assert network is valid
    }
    
    @Test(testName = "GET /network/NOTAUUID")
@@ -72,7 +78,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /network/{catalog_id}")
    public void testWhenResponseIs403ForCatalogIdUsedAsNetworkId() {
       Reference networkRef = Reference.builder()
-            .href(URI.create(endpoint + "/network/9e08c2f6-077a-42ce-bece-d5332e2ebb5c")).build();
+            .href(URI.create(endpoint + "/network"+catalogId)).build();
 
       Error expected = Error.builder()
             .message("This operation is denied.")
@@ -114,19 +120,26 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /network/{id}/metadata")
    public void testWhenResponseIs2xxLoginReturnsValidMetadataList() {
       Reference networkRef = Reference.builder()
-            .href(URI.create(endpoint + "/network/55a677cf-ab3f-48ae-b880-fab90421980c")).build();
+            .href(URI.create(endpoint + "/network/"+networkId)).build();
       
-      Metadata expected = Metadata.builder()
-            .type("application/vnd.vmware.vcloud.metadata+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata"))
-            .link(Link.builder()
-                  .rel("up")
-                  .type("application/vnd.vmware.vcloud.network+xml")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c"))
-                  .build())
-            .build();
+      Metadata expected = context.getApi().getNetworkClient().getMetadata(networkRef);
  
-       assertEquals(context.getApi().getNetworkClient().getMetadata(networkRef), expected);
+      // assert metadata is valid
+      // assert has metadata in order to support subsequent test
+      // assign metadata key (todo- ordering)
+   }
+   
+   String metadataKey = "key";
+   
+   //TODO depends on previous
+   @Test(testName = "GET /network/{id}/metadata")
+   public void testWhenResponseIs2xxLoginReturnsValidMetadataEntry() {
+      Reference networkRef = Reference.builder()
+            .href(URI.create(endpoint + "/network/"+networkId)).build();
+      
+      MetadataEntry expected = context.getApi().getNetworkClient().getMetadataEntry(networkRef, metadataKey);
+ 
+      // assert metadataEntry is valid
    }
 
 }
