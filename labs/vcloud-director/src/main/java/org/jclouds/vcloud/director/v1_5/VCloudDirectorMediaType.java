@@ -44,7 +44,7 @@ public class VCloudDirectorMediaType {
 
    public static final String METADATA_ENTRY = "*/*"; // No media type (?) 
 
-   public static final String METADATA_VALUE = "application/vnd.vmware.vcloud.metadata.value+xml";;
+   public static final String METADATA_VALUE = "application/vnd.vmware.vcloud.metadata.value+xml";
 
    public static final String ORG = "application/vnd.vmware.vcloud.org+xml";
 
@@ -72,14 +72,31 @@ public class VCloudDirectorMediaType {
    
    public static final String VDC = "application/vnd.vmware.vcloud.vdc+xml";
 
+   public static final String CAPTURE_VAPP_PARAMS = 
+         "application/vnd.vmware.vcloud.captureVAppParams+xml";
+   
+   public static final String CLONE_VPP_PARAMS = 
+         "application/vnd.vmware.vcloud.cloneVAppParams+xml";
+   
+   public static final String CLONE_VAPP_TEMPLATE_PARAMS = 
+         "application/vnd.vmware.vcloud.cloneVAppTemplateParams+xml";
    public static final String ADMIN_USER = "application/vnd.vmware.admin.user+xml";
-
+   
+   public static final String COMPOSE_VAPP_PARAMS = 
+         "application/vnd.vmware.vcloud.composeVAppParams+xml";
+   
+   public static final String INSTANTIATE_VAPP_TEMPLATE_PARAMS = 
+         "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml";
+         
+   public static final String UPLOAD_VAPP_TEMPLATE_PARAMS = 
+         "application/vnd.vmware.vcloud.uploadVAppTemplateParams+xml";
+         
    public static final String QUERY_RESULT_RECORDS = "application/vnd.vmware.vcloud.query.records+xml";
  
    public static final String QUERY_RESULT_REFERENCES = "application/vnd.vmware.vcloud.query.references+xml";
 
-   public static final String QUERY_RESULT_ID_RECORDS = "application/vnd.vmware.vcloud.query.idrecords+xml";
-   
+   public static final String QUERY_RESULT_ID_RECORDS = "application/vnd.vmware.vcloud.query.idrecords+xml";   
+         
    public static final String CONTROL_ACCESS = "application/vnd.vmware.vcloud.controlAccess+xml";
 
    /**
@@ -91,8 +108,12 @@ public class VCloudDirectorMediaType {
             SESSION, ERROR, ORG_LIST, METADATA, METADATA_ENTRY,
             METADATA_VALUE, ORG, TASKS_LIST, TASK, NETWORK, ORG_NETWORK,
             CATALOG, CATALOG_ITEM, CATALOG_ITEMS, CATALOGS_LIST, PROPERTY,
-            MEDIA, OWNER, VDC, ADMIN_USER, QUERY_RESULT_RECORDS,
-            QUERY_RESULT_REFERENCES, QUERY_RESULT_ID_RECORDS,
+            MEDIA, OWNER, VDC, ADMIN_USER,
+            CAPTURE_VAPP_PARAMS, CLONE_VPP_PARAMS, CLONE_VAPP_TEMPLATE_PARAMS,
+            COMPOSE_VAPP_PARAMS, INSTANTIATE_VAPP_TEMPLATE_PARAMS,
+            UPLOAD_VAPP_TEMPLATE_PARAMS, 
+            QUERY_RESULT_RECORDS, QUERY_RESULT_REFERENCES, QUERY_RESULT_ID_RECORDS,
             CONTROL_ACCESS
       );
+
 }
