@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.internal;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
 
@@ -90,6 +90,16 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
       return getStandardRequest(method, URI.create(endpoint + path), VCloudDirectorMediaType.ANY);
    }
 
+   protected HttpRequest getStandardPayloadRequest(String method, String command, String relativeFilePath, 
+         String postMediaType) {
+      return getStandardPayloadRequest(method, URI.create(endpoint + command), relativeFilePath, postMediaType);
+   }
+   
+   protected HttpRequest getStandardPayloadRequest(String method, URI uri, String relativeFilePath, 
+         String postMediaType) {
+      return getStandardPayloadRequest(method, uri, VCloudDirectorMediaType.ANY, relativeFilePath, postMediaType);
+   }
+   
    protected HttpRequest getStandardRequest(String method, URI uri, String mediaType) {
       return HttpRequest.builder()
             .method(method)
@@ -98,6 +108,19 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
                   .put("Accept", mediaType)
                   .put("x-vcloud-authorization", token)
                   .build())
+            .build();
+   }
+   
+   protected HttpRequest getStandardPayloadRequest(String method, URI uri, String mediaType, 
+         String relativeFilePath, String postMediaType) {
+      return HttpRequest.builder()
+            .method(method)
+            .endpoint(uri)
+            .headers(ImmutableMultimap.<String, String> builder()
+                  .put("Accept", mediaType)
+                  .put("x-vcloud-authorization", token)
+                  .build())
+            .payload(payloadFromResourceWithContentType(relativeFilePath, postMediaType + ";version=1.5"))
             .build();
    }
 
