@@ -125,7 +125,7 @@ public class Metadata extends ResourceType<Metadata> {
       }
 
       public Builder fromMetadata(Metadata in) {
-         return fromResourceType(in).metadata(in.getMetadata());
+         return fromResourceType(in).metadata(in.getMetadataEntries());
       }
 
       /**
@@ -149,7 +149,7 @@ public class Metadata extends ResourceType<Metadata> {
    @XmlElement(namespace = VCLOUD_1_5_NS, name = "MetadataEntry")
    private Set<MetadataEntry> metadataEntries = Sets.newLinkedHashSet();
 
-   public Set<MetadataEntry> getMetadata() {
+   public Set<MetadataEntry> getMetadataEntries() {
       return ImmutableSet.copyOf(metadataEntries);
    }
 

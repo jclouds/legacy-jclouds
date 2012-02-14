@@ -18,6 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Resource Types used in VCloud.
  * 
@@ -60,4 +63,9 @@ public class VCloudDirectorMediaType {
 
    public static final String PROPERTY = "application/vnd.vmware.vcloud.property+xml";
 
+   public static final List<String> ALL = Arrays.asList(
+        SESSION, ERROR, ORG_LIST, METADATA, METADATA_ENTRY,
+        METADATA_VALUE, ORG, TASKS_LIST, TASK, ORG_NETWORK,
+        CATALOG, CATALOG_ITEM, CATALOG_ITEMS, CATALOGS_LIST, PROPERTY
+     );
 }

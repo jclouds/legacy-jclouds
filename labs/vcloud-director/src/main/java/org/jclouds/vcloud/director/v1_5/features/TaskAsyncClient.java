@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.net.URI;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -54,13 +56,13 @@ public interface TaskAsyncClient {
    ListenableFuture<TasksList> getTaskList(@EndpointParam(parser = OrgReferenceToTaskListEndpoint.class) ReferenceType<?> orgRef);
 
    /**
-    * @see TaskClient#getTask(ReferenceType<?>)
+    * @see TaskClient#getTask(URI)
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> getTask(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> taskRef);
+   ListenableFuture<Task> getTask(@EndpointParam URI taskUri);
 
    /**
     * @see TaskClient#cancelTask(URI)
@@ -70,5 +72,5 @@ public interface TaskAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Void> cancelTask(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> taskRef);
+   ListenableFuture<Void> cancelTask(@EndpointParam URI taskUri);
 }

@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -55,7 +56,7 @@ public interface TaskClient {
     * 
     * @return the task or null if not found
     */
-   Task getTask(ReferenceType<?> taskRef);
+   Task getTask(URI taskUri);
 
    /**
     * Cancels a task.
@@ -64,5 +65,5 @@ public interface TaskClient {
     * POST /task/{id}/action/cancel
     * </pre>
     */
-   void cancelTask(ReferenceType<?> taskRef);
+   void cancelTask(URI taskUri);
 }

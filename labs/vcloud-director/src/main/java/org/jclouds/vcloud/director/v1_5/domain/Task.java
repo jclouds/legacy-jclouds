@@ -23,7 +23,9 @@ import static com.google.common.base.Preconditions.*;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -49,6 +51,21 @@ import com.google.common.collect.Sets;
 public class Task extends EntityType<Task> {
    
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.TASK;
+   
+   public static class Status {
+		public static final String QUEUED = "queued";
+		public static final String PRE_RUNNING = "preRunning";
+		public static final String RUNNING = "running";
+		public static final String SUCCESS = "success";
+		public static final String ERROR = "error";
+		public static final String CANCELED = "canceled";
+		public static final String ABORTED = "aborted";
+
+		public static final List<String> ALL = Arrays.asList(
+		         QUEUED, PRE_RUNNING, RUNNING, SUCCESS,
+		         ERROR, CANCELED, ABORTED
+		   );
+   }
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {

@@ -49,7 +49,7 @@ public interface OrgAsyncClient {
     * @see OrgClient#getOrgList()
     */
    @GET
-   @Path("/org")
+   @Path("/org/")
    @Consumes
    @JAXBResponseParser
    ListenableFuture<OrgList> getOrgList();
@@ -71,7 +71,7 @@ public interface OrgAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Metadata> getMetadata(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> orgRef);
+   ListenableFuture<Metadata> getOrgMetadata(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> orgRef);
 
    /**
     * @see OrgClient#getMetadataEntry(ReferenceType, String)
@@ -81,6 +81,6 @@ public interface OrgAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<MetadataEntry> getMetadataEntry(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> orgRef,
+   ListenableFuture<MetadataEntry> getOrgMetadataEntry(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> orgRef,
          @PathParam("key") String key);
 }

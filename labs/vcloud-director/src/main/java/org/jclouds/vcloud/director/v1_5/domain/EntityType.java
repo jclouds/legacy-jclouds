@@ -161,7 +161,7 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
    private TasksInProgress tasksInProgress;
    @XmlAttribute
    private String id;
-   @XmlAttribute
+   @XmlAttribute(required = true)
    private String name;
 
    protected EntityType(URI href, String name) {
