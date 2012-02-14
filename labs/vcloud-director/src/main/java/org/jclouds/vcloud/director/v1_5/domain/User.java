@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,14 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
+
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
+
+import java.net.URI;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 
 /**
  * 
@@ -119,7 +126,7 @@ public class User
       private Integer deployedVmQuota;
       private Reference role;
       private String password;
-      private GroupsList groupReferences;
+      private Object /* GroupsList */ groupReferences;
 
       /**
        * @see User#getFullName()
@@ -260,7 +267,7 @@ public class User
       /**
        * @see User#getGroupReferences()
        */
-      public Builder groupReferences(GroupsList groupReferences) {
+      public Builder groupReferences(Object /* GroupsList */ groupReferences) {
          this.groupReferences = groupReferences;
          return this;
       }
@@ -353,16 +360,16 @@ public class User
             .fullName(in.getFullName())
             .emailAddress(in.getEmailAddress())
             .telephone(in.getTelephone())
-            .isEnabled(in.getIsEnabled())
-            .isLocked(in.getIsLocked())
-            .im(in.getIm())
+            .isEnabled(in.isEnabled())
+            .isLocked(in.isLocked())
+            .im(in.getIM())
             .nameInSource(in.getNameInSource())
-            .isAlertEnabled(in.getIsAlertEnabled())
+            .isAlertEnabled(in.isAlertEnabled())
             .alertEmailPrefix(in.getAlertEmailPrefix())
             .alertEmail(in.getAlertEmail())
-            .isExternal(in.getIsExternal())
-            .isDefaultCached(in.getIsDefaultCached())
-            .isGroupRole(in.getIsGroupRole())
+            .isExternal(in.isExternal())
+            .isDefaultCached(in.isDefaultCached())
+            .isGroupRole(in.isGroupRole())
             .storedVmQuota(in.getStoredVmQuota())
             .deployedVmQuota(in.getDeployedVmQuota())
             .role(in.getRole())
@@ -415,7 +422,7 @@ public class User
     @XmlElement(name = "Password")
     protected String password;
     @XmlElement(name = "GroupReferences")
-    protected GroupsList groupReferences;
+    protected Object /* GroupsList */ groupReferences;
 
     /**
      * Gets the value of the fullName property.
@@ -497,7 +504,7 @@ public class User
      *     {@link Boolean }
      *     
      */
-    public Boolean isIsEnabled() {
+    public Boolean isEnabled() {
         return isEnabled;
     }
 
@@ -521,7 +528,7 @@ public class User
      *     {@link Boolean }
      *     
      */
-    public Boolean isIsLocked() {
+    public Boolean isLocked() {
         return isLocked;
     }
 
@@ -593,7 +600,7 @@ public class User
      *     {@link Boolean }
      *     
      */
-    public Boolean isIsAlertEnabled() {
+    public Boolean isAlertEnabled() {
         return isAlertEnabled;
     }
 
@@ -665,7 +672,7 @@ public class User
      *     {@link Boolean }
      *     
      */
-    public Boolean isIsExternal() {
+    public Boolean isExternal() {
         return isExternal;
     }
 
@@ -689,7 +696,7 @@ public class User
      *     {@link Boolean }
      *     
      */
-    public Boolean isIsDefaultCached() {
+    public Boolean isDefaultCached() {
         return isDefaultCached;
     }
 
@@ -713,7 +720,7 @@ public class User
      *     {@link Boolean }
      *     
      */
-    public Boolean isIsGroupRole() {
+    public Boolean isGroupRole() {
         return isGroupRole;
     }
 
@@ -833,7 +840,7 @@ public class User
      *     {@link GroupsList }
      *     
      */
-    public GroupsList getGroupReferences() {
+    public Object /* GroupsList */ getGroupReferences() {
         return groupReferences;
     }
 
@@ -845,7 +852,7 @@ public class User
      *     {@link GroupsList }
      *     
      */
-    public void setGroupReferences(GroupsList value) {
+    public void setGroupReferences(Object /* GroupsList */ value) {
         this.groupReferences = value;
     }
 

@@ -28,10 +28,10 @@ import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
+import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -39,63 +39,62 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
- * Represents the results from a vCloud query as records.
+ * Represents the results from a vCloud query as references.
  * 
  * <pre>
- * &lt;complexType name="QueryResultRecords" /&gt;
+ * &lt;complexType name="QueryResultReferences" /&gt;
  * </pre>
  * 
  * @author grkvlt@apache.org
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "QueryResultRecords")
-public class QueryResultRecords<T extends QueryResultRecordType<T>> extends ContainerType<QueryResultRecords<T>> {
+public class QueryResultReferences<T extends ReferenceType<T>> extends ContainerType<QueryResultReferences<T>> {
 
-   public static final String MEDIA_TYPE = VCloudDirectorMediaType.QUERY_RESULT_RECORDS;
+   public static final String MEDIA_TYPE = VCloudDirectorMediaType.QUERY_RESULT_REFERENCES;
 
-   public static <T extends QueryResultRecordType<T>> Builder<T> builder() {
+   public static <T extends ReferenceType<T>> Builder<T> builder() {
       return new Builder<T>();
    }
 
    @Override
    public Builder<T> toBuilder() {
-      return new Builder<T>().fromQueryResultRecords(this);
+      return new Builder<T>().fromQueryResultReferences(this);
    }
 
-   public static class Builder<T extends QueryResultRecordType<T>> extends ContainerType.Builder<QueryResultRecords<T>> {
+   public static class Builder<T extends ReferenceType<T>> extends ContainerType.Builder<QueryResultReferences<T>> {
 
-      private List<T> records = Lists.newArrayList();
+      protected List<T> references = Lists.newArrayList();
 
       /**
-       * @see QueryResultRecords#getRecords()
+       * @see QueryResultReferences#getReferences()
        */
-      public Builder<T> records(List<T> records) {
-         this.records = records;
+      public Builder<T> references(List<T> references) {
+         this.references = references;
          return this;
       }
 
       /**
-       * @see QueryResultRecords#getRecords()
+       * @see QueryResultReferences#getReferences()
        */
-      public Builder<T> record(T record) {
-         this.records.add(record);
+      public Builder<T> reference(T reference) {
+         this.references.add(reference);
          return this;
       }
 
       @Override
-      public QueryResultRecords<T> build() {
-         QueryResultRecords<T> queryResultRecords = new QueryResultRecords<T>(href);
-         queryResultRecords.setRecords(records);
-         queryResultRecords.setName(name);
-         queryResultRecords.setPage(page);
-         queryResultRecords.setPageSize(pageSize);
-         queryResultRecords.setTotal(total);
-         queryResultRecords.setType(type);
-         queryResultRecords.setLinks(links);
-         return queryResultRecords;
+      public QueryResultReferences<T> build() {
+         QueryResultReferences<T> queryResultReferences = new QueryResultReferences<T>(href);
+         queryResultReferences.setReferences(references);
+         queryResultReferences.setName(name);
+         queryResultReferences.setPage(page);
+         queryResultReferences.setPageSize(pageSize);
+         queryResultReferences.setTotal(total);
+         queryResultReferences.setType(type);
+         queryResultReferences.setLinks(links);
+         return queryResultReferences;
       }
 
       /**
-       * @see ContainerType#getName()
+       * @see Container#getName()
        */
       @Override
       public Builder<T> name(String name) {
@@ -104,7 +103,7 @@ public class QueryResultRecords<T extends QueryResultRecordType<T>> extends Cont
       }
 
       /**
-       * @see ContainerType#getPage()
+       * @see Container#getPage()
        */
       @Override
       public Builder<T> page(Integer page) {
@@ -113,20 +112,11 @@ public class QueryResultRecords<T extends QueryResultRecordType<T>> extends Cont
       }
 
       /**
-       * @see ContainerType#getPageSize()
+       * @see Container#getPageSize()
        */
       @Override
       public Builder<T> pageSize(Integer pageSize) {
          this.pageSize = pageSize;
-         return this;
-      }
-
-      /**
-       * @see ContainerType#getTotal()
-       */
-      @Override
-      public Builder<T> total(Long total) {
-         this.total = total;
          return this;
       }
 
@@ -167,39 +157,39 @@ public class QueryResultRecords<T extends QueryResultRecordType<T>> extends Cont
       }
 
       @Override
-      public Builder<T> fromContainerType(ContainerType<QueryResultRecords<T>> in) {
+      public Builder<T> fromContainerType(ContainerType<QueryResultReferences<T>> in) {
          return Builder.class.cast(super.fromContainerType(in));
       }
 
-      public Builder<T> fromQueryResultRecords(QueryResultRecords<T> in) {
-         return fromContainerType(in).records(in.getRecords());
+      public Builder<T> fromQueryResultReferences(QueryResultReferences<T> in) {
+         return fromContainerType(in).references(in.getReferences());
       }
    }
 
-   protected QueryResultRecords() {
+   protected QueryResultReferences() {
       // For JAXB and builder use
    }
 
-   protected QueryResultRecords(URI href) {
+   protected QueryResultReferences(URI href) {
       super(href);
    }
 
-   @XmlElementRef
-   protected List<T> records;
+   @XmlElementRef(name = "Reference", namespace = VCLOUD_1_5_NS)
+   protected List<T> references;
 
    /**
-    * Set of records representing query results.
+    * Set of references representing query results.
     */
-   public List<T> getRecords() {
-      return records;
+   public List<T> getReferences() {
+      return references;
    }
 
-   public void setRecords(List<T> records) {
-      this.records = Lists.newArrayList(checkNotNull(records, "records"));
+   public void setReferences(List<T> references) {
+      this.references = Lists.newArrayList(checkNotNull(references, "references"));
    }
 
-   public void addRecords(T record) {
-      this.records.add(checkNotNull(record, "record"));
+   public void addReference(T reference) {
+      this.references.add(checkNotNull(reference, "reference"));
    }
 
    @Override
@@ -208,18 +198,18 @@ public class QueryResultRecords<T extends QueryResultRecordType<T>> extends Cont
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      QueryResultRecords<T> that = QueryResultRecords.class.cast(o);
-      return super.equals(that) && equal(this.records, that.records);
+      QueryResultReferences<T> that = QueryResultReferences.class.cast(o);
+      return super.equals(that) && equal(this.references, that.references);
    }
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(records);
+      return super.hashCode() + Objects.hashCode(references);
    }
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("records", records);
+      return super.string().add("references", references);
    }
 
 }

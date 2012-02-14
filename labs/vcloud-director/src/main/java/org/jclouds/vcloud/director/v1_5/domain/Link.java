@@ -48,9 +48,15 @@ public class Link extends ReferenceType<Link> {
       public static final String EDIT = "edit";
       public static final String DELETE = "delete";
       public static final String TASK_CANCEL = "task:cancel";
+      public static final String ALTERNATE = "alternate";
+      public static final String NEXT_PAGE = "nextPage";
+      public static final String PREVIOUS_PAGE = "previousPage";
+      public static final String LAST_PAGE = "lastPage";
+      public static final String FIRST_PAGE = "firstPage";
 
       public static final List<String> ALL = Arrays.asList(
-               UP, DOWN, EDIT, DELETE, TASK_CANCEL
+               UP, DOWN, EDIT, DELETE, TASK_CANCEL, ALTERNATE,
+               NEXT_PAGE, PREVIOUS_PAGE, LAST_PAGE, FIRST_PAGE
          );
    }
 

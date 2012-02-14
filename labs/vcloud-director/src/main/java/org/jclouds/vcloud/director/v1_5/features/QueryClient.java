@@ -18,13 +18,11 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
-import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.TasksList;
+import org.jclouds.vcloud.director.v1_5.domain.query.CatalogReferences;
+import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 
 /**
  * Provides synchronous access to The REST API query interface.
@@ -39,10 +37,12 @@ public interface QueryClient {
     * REST API General queries handler.
     *
     * <pre>
-    * GET /query/
+    * GET /query
     * </pre>
     */
-   ContainerType query(String queryParams);
+   QueryResultRecords query(String type, String filter);
+
+   QueryResultRecords query(Integer page, Integer pageSize, String format, String type, String filter);
 
    /**
     * Retrieves a list of Catalogs by using REST API general QueryHandler.
@@ -52,11 +52,15 @@ public interface QueryClient {
     * Default format is references.
     *
     * <pre>
-    * GET /catalogs/query/
+    * GET /catalogs/query
     * </pre>
-    * 
-    * @param orgId the unique id for the organization
-    * @return a list of tasks
     */
-   ContainerType catalogsQuery(ReferenceType<?> orgRef);
+   QueryResultRecords catalogsQuery(String filter);
+
+   QueryResultRecords catalogsQuery(Integer page, Integer pageSize, String format, String filter);
+
+   CatalogReferences catalogReferencesQuery(String filter);
+
+   CatalogReferences catalogReferencesQuery(Integer page, Integer pageSize, String filter);
+   
 }
