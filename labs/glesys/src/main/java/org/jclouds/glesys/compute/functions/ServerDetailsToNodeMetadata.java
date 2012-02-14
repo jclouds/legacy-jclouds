@@ -109,7 +109,7 @@ public class ServerDetailsToNodeMetadata implements Function<ServerDetails, Node
             .processors(ImmutableList.of(new Processor(from.getCpuCores(), 1.0)))
             .volumes(ImmutableList.<Volume> of(new VolumeImpl((float) from.getDiskSizeGB(), true, true)))
             .hypervisor(from.getPlatform()).build());
-      builder.state(from.getState() != null ? serverStateToNodeState.get(from.getState()) : NodeState.PENDING);
+      builder.state(serverStateToNodeState.get(from.getState()));
       Iterable<String> addresses = Iterables.filter(Iterables.transform(from.getIps(), new Function<Ip, String>() {
 
          @Override

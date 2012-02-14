@@ -159,7 +159,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
       Cost cost = Cost.builder().amount(13.22).currency("EUR").timePeriod("month").build();
       return ServerDetails.builder().id("xm3276891").transferGB(50).hostname("glesys-s-6dd").cpuCores(1).memorySizeMB(512)
             .diskSizeGB(5).description("glesys-s-6dd").datacenter("Falkenberg").platform("Xen")
-            .templateName("Ubuntu 11.04 x64").cost(cost).ips(ip).build();
+            .templateName("Ubuntu 11.04 x64").state(Server.State.LOCKED).cost(cost).ips(ip).build();
    }
 
    @Test

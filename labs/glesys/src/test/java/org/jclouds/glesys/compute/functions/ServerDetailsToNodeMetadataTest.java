@@ -68,20 +68,7 @@ public class ServerDetailsToNodeMetadataTest extends BaseGleSYSComputeServiceExp
                         HttpResponse
                               .builder()
                               .statusCode(200)
-                              .payload(
-                                    payloadFromString("{\"response\":{\"status\":{\"code\":200,\"timestamp\":\"2012-02-10T11:28:50+01:00\",\"text\":\"OK\"},\"server\":{\"state\":\"running\"},\"debug\":{\"input\":{\"serverid\":\"xm3276891\",\"statustype\":\"state\"}}}}"))
-                              .build())
-                  .put(HttpRequest
-                        .builder()
-                        .method("POST")
-                        .endpoint(URI.create("https://api.glesys.com/server/status/format/json"))
-                        .headers(
-                              ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                                    .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-                        .payload(
-                              newUrlEncodedFormPayload(ImmutableMultimap.<String, String> builder()
-                                    .put("serverid", "xm3276891").put("statustype", "state").build())).build(),
-                        HttpResponse.builder().statusCode(206).payload(payloadFromResource("/server_status.json"))
+                              .payload(payloadFromResource("/server_details.json"))
                               .build()).build()
 
       ).getInstance(ServerDetailsToNodeMetadata.class);
