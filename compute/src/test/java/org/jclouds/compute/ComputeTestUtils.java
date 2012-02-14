@@ -31,9 +31,7 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.rest.HttpClient;
-import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Charsets;
@@ -46,9 +44,6 @@ import com.google.common.io.Files;
  * @author Adrian Cole
  */
 public class ComputeTestUtils {
-   public static Statement buildScript(OperatingSystem os) {
-      return RunScriptData.installJavaAndCurl(os);
-   }
 
    public static Map<String, String> setupKeyPair() throws FileNotFoundException, IOException {
       String secretKeyFile;

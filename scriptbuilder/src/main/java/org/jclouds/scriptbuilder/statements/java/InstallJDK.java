@@ -44,7 +44,7 @@ public class InstallJDK {
       return new FromURL(url);
    }
 
-   static class FromURL extends StatementList {
+   public static class FromURL extends StatementList {
 
       public static final URI JDK7_URL = URI.create(System.getProperty("jdk7-url",
             "http://download.oracle.com/otn-pub/java/jdk/7/jdk-7-linux-x64.tar.gz"));

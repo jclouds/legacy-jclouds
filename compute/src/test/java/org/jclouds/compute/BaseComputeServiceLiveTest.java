@@ -31,10 +31,8 @@ import static com.google.common.collect.Sets.newTreeSet;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.util.logging.Logger.getAnonymousLogger;
-import static org.jclouds.compute.ComputeTestUtils.buildScript;
 import static org.jclouds.compute.RunScriptData.JBOSS7_URL;
 import static org.jclouds.compute.RunScriptData.JBOSS_HOME;
-import static org.jclouds.compute.RunScriptData.JDK7_URL;
 import static org.jclouds.compute.RunScriptData.installAdminUserJBossAndOpenPorts;
 import static org.jclouds.compute.RunScriptData.startJBoss;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.nameTask;
@@ -78,7 +76,6 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
@@ -93,6 +90,7 @@ import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.scriptbuilder.domain.SaveHttpResponseTo;
 import org.jclouds.scriptbuilder.domain.Statements;
+import org.jclouds.scriptbuilder.statements.java.InstallJDK;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
@@ -210,8 +208,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
    @Test(enabled = true, expectedExceptions = NoSuchElementException.class)
    public void testCorrectExceptionRunningNodesNotFound() throws Exception {
-      client.runScriptOnNodesMatching(runningInGroup("zebras-are-awesome"), buildScript(new OperatingSystem.Builder()
-            .family(OsFamily.UBUNTU).description("ffoo").build()));
+      client.runScriptOnNodesMatching(runningInGroup("zebras-are-awesome"), InstallJDK.fromURL());
    }
 
    // since surefire and eclipse don't otherwise guarantee the order, we are
@@ -373,7 +370,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
    protected static Template addRunScriptToTemplate(Template template) {
       template.getOptions().runScript(
-            Statements.newStatementList(AdminAccess.standard(), buildScript(template.getImage().getOperatingSystem())));
+            Statements.newStatementList(AdminAccess.standard(), InstallJDK.fromURL()));
       return template;
    }
 
@@ -437,7 +434,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String group, OperatingSystem os,
          LoginCredentials creds) throws RunScriptOnNodesException {
-      return client.runScriptOnNodesMatching(runningInGroup(group), buildScript(os), overrideLoginCredentials(creds)
+      return client.runScriptOnNodesMatching(runningInGroup(group), InstallJDK.fromURL(), overrideLoginCredentials(creds)
             .nameTask("runScriptWithCreds"));
    }
 
@@ -679,7 +676,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
                            format("ls %s/bundles/org/jboss/as/osgi/configadmin/main|sed -e 's/.*-//g' -e 's/.jar//g'",
                                  JBOSS_HOME)), configureSeconds));
 
-         for (Entry<String, URI> download : ImmutableMap.<String, URI> of("jboss7", JBOSS7_URL, "jdk7", JDK7_URL)
+         for (Entry<String, URI> download : ImmutableMap.<String, URI> of("jboss7", JBOSS7_URL, "jdk7", InstallJDK.FromURL.JDK7_URL)
                .entrySet()) {
             // note we cannot use nslookup until we've configured the system, as
             // it may have not been present checking the address of the download

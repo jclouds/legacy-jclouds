@@ -73,18 +73,68 @@ export INSTANCE_NAME='runScriptWithCreds'
 export INSTANCE_NAME='$INSTANCE_NAME'
 export INSTANCE_HOME='$INSTANCE_HOME'
 export LOG_DIR='$LOG_DIR'
+function abort {
+   echo "aborting: \$@" 1>&2
+   exit 1
+}
+alias apt-get-install="apt-get install -f -y -qq --force-yes"
+alias apt-get-upgrade="(apt-get update -qq&&apt-get upgrade -y -qq)"
+
+function ensure_cmd_or_install_package_apt(){
+  local cmd=\$1
+  local pkg=\$2
+  
+  hash \$cmd 2>/dev/null || apt-get-install \$pkg || ( apt-get-upgrade && apt-get-install \$pkg )
+}
+
+function ensure_cmd_or_install_package_yum(){
+  local cmd=\$1
+  local pkg=\$2
+  hash \$cmd 2>/dev/null || yum --nogpgcheck -y ensure \$pkg
+}
+
+function ensure_netutils_apt() {
+  ensure_cmd_or_install_package_apt nslookup dnsutils
+  ensure_cmd_or_install_package_apt curl curl
+}
+
+function ensure_netutils_yum() {
+  ensure_cmd_or_install_package_yum nslookup bind-utils
+  ensure_cmd_or_install_package_yum curl curl
+}
+
+# most network services require that the hostname is in
+# the /etc/hosts file, or they won't operate
+function ensure_hostname_in_hosts() {
+  egrep -q `hostname` /etc/hosts || awk -v hostname=`hostname` 'END { print \$1" "hostname }' /proc/net/arp >> /etc/hosts
+}
+
+# download locations for many services are at public dns
+function ensure_can_resolve_public_dns() {
+  nslookup yahoo.com > /dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf
+}
+
+function setupPublicCurl() {
+  ensure_hostname_in_hosts
+  if hash apt-get 2>/dev/null; then
+    ensure_netutils_apt
+  elif hash yum 2>/dev/null; then
+    ensure_netutils_yum
+  else
+    abort "we only support apt-get and yum right now... please contribute!"
+    return 1
+  fi
+  ensure_can_resolve_public_dns
+  return 0  
+}
 END_OF_SCRIPT
    
    # add desired commands from the user
    cat >> $INSTANCE_HOME/runScriptWithCreds.sh <<'END_OF_SCRIPT'
 cd $INSTANCE_HOME
-which nslookup >&- 2>&-|| apt-get install -f -y -qq --force-yes dnsutils|| (apt-get update -qq&&apt-get upgrade -y -qq)&&apt-get install -f -y -qq --force-yes dnsutils
-grep `hostname` /etc/hosts >/dev/null || awk -v hostname=`hostname` 'END { print $1" "hostname }' /proc/net/arp >> /etc/hosts
-nslookup yahoo.com >/dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf
-which curl >&- 2>&-|| apt-get install -f -y -qq --force-yes curl|| (apt-get update -qq&&apt-get upgrade -y -qq)&&apt-get install -f -y -qq --force-yes curl
-mkdir -p /usr/local/jdk
-curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://download.oracle.com/otn-pub/java/jdk/7u2-b13/jdk-7u2-linux-x64.tar.gz |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
-mv /usr/local/jdk1.7*/* /usr/local/jdk/
+setupPublicCurl || exit 1
+curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://download.oracle.com/otn-pub/java/jdk/7/jdk-7-linux-x64.tar.gz |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
+mv /usr/local/jdk* /usr/local/jdk/
 test -n "$SUDO_USER" && 
 cat >> /home/$SUDO_USER/.bashrc <<'END_OF_FILE'
 export JAVA_HOME=/usr/local/jdk
