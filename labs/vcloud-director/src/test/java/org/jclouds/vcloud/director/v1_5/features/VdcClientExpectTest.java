@@ -29,6 +29,7 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AvailableNetworks;
 import org.jclouds.vcloud.director.v1_5.domain.Capabilities;
 import org.jclouds.vcloud.director.v1_5.domain.CapacityWithUsage;
+import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.ComputeCapacity;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
@@ -116,6 +117,56 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
          fail("Should have thrown a VCloudDirectorException");
       }
    }
+   
+   @Test
+   public void testWhenResponseIs2xxLoginCaptureVAppSucceeds() {
+      URI vdcUri = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/captureVApp");
+      
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+            getStandardPayloadRequest("POST", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/captureVApp", 
+                  "/vdc/params/captureVApp", VCloudDirectorMediaType.CAPTURE_VAPP_PARAMS),
+            getStandardPayloadResponse("/vdc/vdc.xml", VCloudDirectorMediaType.VDC));
+      
+      Vdc expected = vdc();
+
+      Reference vdcRef = Reference.builder().href(vdcUri).build();
+
+      assertEquals(client.getVdcClient().captureVApp(vdcRef, params), expected);
+   }
+   
+   @Test
+   public void testWhenResponseIs4xxForCaptureVAppNoParams() {
+      URI vdcUri = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/captureVApp");
+
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
+            getStandardRequest("POST", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/captureVApp"),
+            getStandardPayloadResponse(400, "/vdc/param/error400.xml", VCloudDirectorMediaType.ERROR));
+
+      Error expected = Error.builder()
+            .message("?")
+            .majorErrorCode(400)
+            .minorErrorCode("BAD_REQUEST")
+            .build();
+
+      Reference vdcRef = Reference.builder().href(vdcUri).build();
+      try {
+         client.getVdcClient().captureVApp(vdcRef, null);
+         fail("Should give HTTP 400 error");
+      } catch (VCloudDirectorException vde) {
+         assertEquals(vde.getError(), expected);
+      } catch (Exception e) {
+         fail("Should have thrown a VCloudDirectorException");
+      }
+   }
+   
+// POST /vdc/{id}/action/captureVApp
+// POST /vdc/{id}/action/cloneMedia
+// POST /vdc/{id}/action/cloneVApp
+// POST /vdc/{id}/action/cloneVAppTemplate
+// POST /vdc/{id}/action/composeVApp
+// POST /vdc/{id}/action/instantiateVAppTemplate
+// POST /vdc/{id}/action/uploadVAppTemplate
+// POST /vdc/{id}/media
    
    @Test
    public void testWhenResponseIs2xxLoginReturnsValidMetadataList() {
