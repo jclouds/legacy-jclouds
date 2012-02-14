@@ -18,12 +18,9 @@
  */
 package org.jclouds.compute.predicates;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Resource;
-import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
@@ -31,52 +28,42 @@ import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 
 /**
  * 
- * Tests to see if a node is active.
  * 
  * @author Adrian Cole
- * @see RefreshAndDoubleCheckOnFailUnlessStateInvalid
  */
-@Deprecated
-@Singleton
-public class NodePresentAndInIntendedState implements Predicate<NodeMetadata> {
+public class TrueIfNullOrTerminatedRefreshAndDoubleCheckOnFalse implements Predicate<AtomicReference<NodeMetadata>> {
 
    private final GetNodeMetadataStrategy client;
-   private final NodeState intended;
-   private final Set<NodeState> invalids;
+
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public NodePresentAndInIntendedState(NodeState intended, GetNodeMetadataStrategy client) {
-      this(intended, ImmutableSet.of(NodeState.ERROR), client);
-   }
-
-   public NodePresentAndInIntendedState(NodeState intended, Set<NodeState> invalids, GetNodeMetadataStrategy client) {
-      this.intended = intended;
+   public TrueIfNullOrTerminatedRefreshAndDoubleCheckOnFalse(GetNodeMetadataStrategy client) {
       this.client = client;
-      this.invalids = invalids;
    }
 
-   public boolean apply(NodeMetadata node) {
-      logger.trace("looking for state on node %s", checkNotNull(node, "node"));
+   public boolean apply(AtomicReference<NodeMetadata> atomicNode) {
+      NodeMetadata node = atomicNode.get();
+      if (checkState(node))
+         return true;
       node = refresh(node);
+      atomicNode.set(node);
+      return checkState(node);
+   }
+
+   public boolean checkState(NodeMetadata node) {
       if (node == null)
-         return false;
-      logger.trace("%s: looking for node state %s: currently: %s", node.getId(), intended, node.getState());
-      if (invalids.contains(node.getState()))
-         throw new IllegalStateException("node " + node.getId() + " in location " + node.getLocation()
-                  + " is in invalid state "+node.getState());
-      return node.getState() == intended;
+         return true;
+      logger.trace("%s: looking for node state %s: currently: %s", node.getId(), NodeState.TERMINATED, node.getState());
+      return node.getState() == NodeState.TERMINATED;
    }
 
    private NodeMetadata refresh(NodeMetadata node) {
-      if (node == null || node.getId() == null)
-         return null;
       return client.getNode(node.getId());
    }
 }

@@ -31,8 +31,10 @@ import com.google.inject.Inject;
  * Tests to see if a node is running.
  * 
  * @author Adrian Cole
+ * @see AtomicNodeRunning
  */
 @Singleton
+@Deprecated
 public class NodeRunning extends NodePresentAndInIntendedState {
 
    @Inject
