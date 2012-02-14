@@ -34,7 +34,7 @@ public class Server implements Comparable<Server> {
    
    public static enum State {
 
-      RUNNING, STOPPED, UNRECOGNIZED;
+      RUNNING, LOCKED, STOPPED, UNRECOGNIZED;
 
       public String value() {
          return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
