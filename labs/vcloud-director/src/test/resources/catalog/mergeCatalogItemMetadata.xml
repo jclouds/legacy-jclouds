@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Metadata xmlns="http://www.vmware.com/vcloud/v1.5">
+    <MetadataEntry>
+        <Key>KEY</Key>
+        <Value>VALUE</Value>
+    </MetadataEntry>
+</Metadata>

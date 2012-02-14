@@ -108,7 +108,7 @@ public class ReferenceType<T extends ReferenceType<T>> implements URISupplier {
       }
    }
 
-   @XmlAttribute
+   @XmlAttribute(required = true)
    private URI href;
    @XmlAttribute
    private String id;

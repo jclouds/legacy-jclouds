@@ -69,7 +69,7 @@ public interface OrgClient {
     * 
     * @return a list of metadata
     */
-   Metadata getMetadata(ReferenceType<?> orgRef);
+   Metadata getOrgMetadata(ReferenceType<?> orgRef);
 
    /**
     * Retrieves a metadata entry.
@@ -80,6 +80,6 @@ public interface OrgClient {
     * 
     * @return the metadata entry or null if not found
     */
-   MetadataEntry getMetadataEntry(ReferenceType<?> orgRef, String key);
+   MetadataEntry getOrgMetadataEntry(ReferenceType<?> orgRef, String key);
 	// FIXME throws exception on not found currently
 }
