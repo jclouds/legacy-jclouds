@@ -71,7 +71,7 @@ public class VCloudDirectorMediaType {
    public static final String OWNER = "application/vnd.vmware.vcloud.owner+xml";
    
    public static final String VDC = "application/vnd.vmware.vcloud.vdc+xml";
-   
+
    public static final String ADMIN_USER = "application/vnd.vmware.admin.user+xml";
 
    public static final String QUERY_RESULT_RECORDS = "application/vnd.vmware.vcloud.query.records+xml";
