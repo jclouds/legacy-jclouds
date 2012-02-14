@@ -132,7 +132,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       try {
          return Iterables.find(images.get(), new FindImageForServer(from)).getOperatingSystem();
       } catch (NoSuchElementException e) {
-         logger.warn("could not find a matching image for server %s in location %s", from, location);
+         logger.warn("could not find a matching image for server %s in location %s", from, location.get());
       }
       return null;
    }
