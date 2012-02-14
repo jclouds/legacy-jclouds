@@ -23,21 +23,20 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 
 /**
  * 
- * Tests to see if a node is suspended.
+ * Tests to see if a node is running.
  * 
  * @author Adrian Cole
- * @see AtomicNodeSuspended
  */
 @Singleton
-@Deprecated
-public class NodeSuspended extends NodePresentAndInIntendedState {
+public class AtomicNodeRunning extends RefreshAndDoubleCheckOnFailUnlessStateInvalid {
 
    @Inject
-   public NodeSuspended(GetNodeMetadataStrategy client) {
-      super(NodeState.SUSPENDED, client);
+   public AtomicNodeRunning(GetNodeMetadataStrategy client) {
+      super(NodeState.RUNNING, ImmutableSet.of(NodeState.ERROR, NodeState.TERMINATED), client);
    }
 }

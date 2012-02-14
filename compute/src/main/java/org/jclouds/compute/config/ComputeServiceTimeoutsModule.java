@@ -20,10 +20,13 @@ package org.jclouds.compute.config;
 
 import static com.google.common.base.Predicates.not;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.predicates.AtomicNodeRunning;
 import org.jclouds.compute.predicates.NodeRunning;
 import org.jclouds.compute.predicates.NodeSuspended;
 import org.jclouds.compute.predicates.NodeTerminated;
@@ -46,6 +49,32 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
    @Provides
    @Singleton
    @Named("NODE_RUNNING")
+   protected Predicate<AtomicReference<NodeMetadata>> nodeRunning(AtomicNodeRunning stateRunning, Timeouts timeouts) {
+      return timeouts.nodeRunning == 0 ? stateRunning : new RetryablePredicate<AtomicReference<NodeMetadata>>(stateRunning,
+            timeouts.nodeRunning);
+   }
+
+   @Provides
+   @Singleton
+   @Named("NODE_TERMINATED")
+   protected Predicate<AtomicReference<NodeMetadata>> serverTerminated(AtomicNodeRunning stateTerminated, Timeouts timeouts) {
+      return timeouts.nodeTerminated == 0 ? stateTerminated : new RetryablePredicate<AtomicReference<NodeMetadata>>(stateTerminated,
+            timeouts.nodeTerminated);
+   }
+   
+
+   @Provides
+   @Singleton
+   @Named("NODE_SUSPENDED")
+   protected Predicate<AtomicReference<NodeMetadata>> serverSuspended(AtomicNodeRunning stateSuspended, Timeouts timeouts) {
+      return timeouts.nodeSuspended == 0 ? stateSuspended : new RetryablePredicate<AtomicReference<NodeMetadata>>(stateSuspended,
+            timeouts.nodeSuspended);
+   }
+   
+   @Provides
+   @Singleton
+   @Named("NODE_RUNNING")
+   @Deprecated
    protected Predicate<NodeMetadata> nodeRunning(NodeRunning stateRunning, Timeouts timeouts) {
       return timeouts.nodeRunning == 0 ? stateRunning : new RetryablePredicate<NodeMetadata>(stateRunning,
             timeouts.nodeRunning);
@@ -54,6 +83,7 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
    @Provides
    @Singleton
    @Named("NODE_TERMINATED")
+   @Deprecated
    protected Predicate<NodeMetadata> serverTerminated(NodeTerminated stateTerminated, Timeouts timeouts) {
       return timeouts.nodeTerminated == 0 ? stateTerminated : new RetryablePredicate<NodeMetadata>(stateTerminated,
             timeouts.nodeTerminated);
@@ -63,6 +93,7 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
    @Provides
    @Singleton
    @Named("NODE_SUSPENDED")
+   @Deprecated
    protected Predicate<NodeMetadata> serverSuspended(NodeSuspended stateSuspended, Timeouts timeouts) {
       return timeouts.nodeSuspended == 0 ? stateSuspended : new RetryablePredicate<NodeMetadata>(stateSuspended,
             timeouts.nodeSuspended);

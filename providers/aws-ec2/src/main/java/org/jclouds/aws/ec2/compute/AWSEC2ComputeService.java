@@ -25,9 +25,9 @@ import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_GENERAT
 
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -100,9 +100,9 @@ public class AWSEC2ComputeService extends EC2ComputeService {
             DestroyNodeStrategy destroyNodeStrategy, ResumeNodeStrategy startNodeStrategy,
             SuspendNodeStrategy stopNodeStrategy, Provider<TemplateBuilder> templateBuilderProvider,
             Provider<TemplateOptions> templateOptionsProvider,
-            @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
-            @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
-            @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended,
+            @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
+            @Named("NODE_TERMINATED") Predicate<AtomicReference<NodeMetadata>> nodeTerminated,
+            @Named("NODE_SUSPENDED") Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
             InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
             RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
             PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,

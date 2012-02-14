@@ -24,10 +24,11 @@ import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.util.Preconditions2.checkNotEmpty;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -71,8 +72,8 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableMultimap.Builder;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Adrian Cole
@@ -91,9 +92,9 @@ public class EC2ComputeService extends BaseComputeService {
          RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
          ResumeNodeStrategy startNodeStrategy, SuspendNodeStrategy stopNodeStrategy,
          Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
-         @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
-         @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
-         @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended,
+         @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
+         @Named("NODE_TERMINATED") Predicate<AtomicReference<NodeMetadata>> nodeTerminated,
+         @Named("NODE_SUSPENDED") Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
          InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
          RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
          PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,

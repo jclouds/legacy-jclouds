@@ -21,6 +21,7 @@ package org.jclouds.gogrid.compute;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -68,9 +69,9 @@ public class GoGridComputeService extends BaseComputeService {
          RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
          ResumeNodeStrategy resumeNodeStrategy, SuspendNodeStrategy suspendNodeStrategy,
          Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
-         @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
-         @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
-         @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended,
+         @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
+         @Named("NODE_TERMINATED") Predicate<AtomicReference<NodeMetadata>> nodeTerminated,
+         @Named("NODE_SUSPENDED") Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
          InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, InitAdminAccess initAdminAccess,
          RunScriptOnNode.Factory runScriptOnNodeFactory, PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {

@@ -30,14 +30,12 @@ import com.google.inject.Inject;
  * Tests to see if a node is suspended.
  * 
  * @author Adrian Cole
- * @see AtomicNodeSuspended
  */
 @Singleton
-@Deprecated
-public class NodeSuspended extends NodePresentAndInIntendedState {
+public class AtomicNodeSuspended extends RefreshAndDoubleCheckOnFailUnlessStateInvalid {
 
    @Inject
-   public NodeSuspended(GetNodeMetadataStrategy client) {
+   public AtomicNodeSuspended(GetNodeMetadataStrategy client) {
       super(NodeState.SUSPENDED, client);
    }
 }

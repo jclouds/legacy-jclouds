@@ -18,9 +18,8 @@
  */
 package org.jclouds.compute.predicates;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Resource;
 import javax.inject.Singleton;
@@ -39,11 +38,9 @@ import com.google.inject.Inject;
  * Tests to see if a node is active.
  * 
  * @author Adrian Cole
- * @see RefreshAndDoubleCheckOnFailUnlessStateInvalid
  */
-@Deprecated
 @Singleton
-public class NodePresentAndInIntendedState implements Predicate<NodeMetadata> {
+public class RefreshAndDoubleCheckOnFailUnlessStateInvalid implements Predicate<AtomicReference<NodeMetadata>> {
 
    private final GetNodeMetadataStrategy client;
    private final NodeState intended;
@@ -52,19 +49,26 @@ public class NodePresentAndInIntendedState implements Predicate<NodeMetadata> {
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public NodePresentAndInIntendedState(NodeState intended, GetNodeMetadataStrategy client) {
+   public RefreshAndDoubleCheckOnFailUnlessStateInvalid(NodeState intended, GetNodeMetadataStrategy client) {
       this(intended, ImmutableSet.of(NodeState.ERROR), client);
    }
 
-   public NodePresentAndInIntendedState(NodeState intended, Set<NodeState> invalids, GetNodeMetadataStrategy client) {
+   public RefreshAndDoubleCheckOnFailUnlessStateInvalid(NodeState intended, Set<NodeState> invalids, GetNodeMetadataStrategy client) {
       this.intended = intended;
       this.client = client;
       this.invalids = invalids;
    }
 
-   public boolean apply(NodeMetadata node) {
-      logger.trace("looking for state on node %s", checkNotNull(node, "node"));
+   public boolean apply(AtomicReference<NodeMetadata> atomicNode) {
+      NodeMetadata node = atomicNode.get();
+      if (checkState(node))
+         return true;
       node = refresh(node);
+      atomicNode.set(node);
+      return checkState(node);
+   }
+
+   public boolean checkState(NodeMetadata node) {
       if (node == null)
          return false;
       logger.trace("%s: looking for node state %s: currently: %s", node.getId(), intended, node.getState());

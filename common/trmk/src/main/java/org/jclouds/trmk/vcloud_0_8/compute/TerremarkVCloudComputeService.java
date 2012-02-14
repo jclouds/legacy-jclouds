@@ -21,6 +21,7 @@ package org.jclouds.trmk.vcloud_0_8.compute;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -71,9 +72,9 @@ public class TerremarkVCloudComputeService extends BaseComputeService {
          RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
          ResumeNodeStrategy resumeNodeStrategy, SuspendNodeStrategy suspendNodeStrategy,
          Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
-         @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
-         @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
-         @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended,
+         @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
+         @Named("NODE_TERMINATED") Predicate<AtomicReference<NodeMetadata>> nodeTerminated,
+         @Named("NODE_SUSPENDED") Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
          InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
          RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
          PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,

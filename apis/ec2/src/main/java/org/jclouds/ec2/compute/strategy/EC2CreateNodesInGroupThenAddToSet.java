@@ -26,6 +26,7 @@ import static org.jclouds.ec2.compute.util.EC2ComputeUtils.getZoneFromLocationOr
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -80,7 +81,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
    @VisibleForTesting
    final EC2Client client;
    @VisibleForTesting
-   final Predicate<NodeMetadata> nodeRunning;
+   final Predicate<AtomicReference<NodeMetadata>> nodeRunning;
    @VisibleForTesting
    final LoadingCache<RegionAndName, String> elasticIpCache;
    @VisibleForTesting
@@ -101,7 +102,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
             EC2Client client,
             @Named("ELASTICIP")
             LoadingCache<RegionAndName, String> elasticIpCache, 
-            @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
+            @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
             Provider<TemplateBuilder> templateBuilderProvider,
             CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
             InstancePresent instancePresent, Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
@@ -197,7 +198,8 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
 
          // block until instance is running
          logger.debug(">> awaiting status running instance(%s)", coordinates);
-         nodeRunning.apply(runningInstanceToNodeMetadata.apply(startedInstance));
+         AtomicReference<NodeMetadata> node = new AtomicReference<NodeMetadata>(runningInstanceToNodeMetadata.apply(startedInstance));
+         nodeRunning.apply(node);
          logger.trace("<< running instance(%s)", coordinates);
          logger.debug(">> associating elastic IP %s to instance %s", ip, coordinates);
          client.getElasticIPAddressServices().associateAddressInRegion(region, ip, id);

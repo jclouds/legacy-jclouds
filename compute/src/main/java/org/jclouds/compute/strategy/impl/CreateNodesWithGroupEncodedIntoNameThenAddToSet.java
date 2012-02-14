@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -60,7 +61,7 @@ import com.google.common.collect.Multimap;
 @Singleton
 public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNodesInGroupThenAddToSet {
 
-   private class AddNode implements Callable<NodeMetadata> {
+   private class AddNode implements Callable<AtomicReference<NodeMetadata>> {
       private final String name;
       private final String group;
       private final Template template;
@@ -72,14 +73,14 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
       }
 
       @Override
-      public NodeMetadata call() throws Exception {
+      public AtomicReference<NodeMetadata> call() throws Exception {
          NodeMetadata node = null;
          logger.debug(">> adding node location(%s) name(%s) image(%s) hardware(%s)",
                   template.getLocation().getId(), name, template.getImage().getProviderId(), template.getHardware()
                            .getProviderId());
          node = addNodeWithGroupStrategy.createNodeWithGroupEncodedIntoName(group, name, template);
          logger.debug("<< %s node(%s)", node.getState(), node.getId());
-         return node;
+         return new AtomicReference<NodeMetadata>(node);
       }
 
       public String toString() {

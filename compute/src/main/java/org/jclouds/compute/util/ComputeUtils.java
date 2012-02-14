@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -60,7 +61,7 @@ public class ComputeUtils {
       Map<NodeMetadata, Future<Void>> responses = newLinkedHashMap();
       for (NodeMetadata node : runningNodes) {
          responses.put(node, executor.submit(customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory.create(
-                  options, node, goodNodes, badNodes, customizationResponses)));
+                  options, new AtomicReference<NodeMetadata>(node), goodNodes, badNodes, customizationResponses)));
       }
       return responses;
    }
