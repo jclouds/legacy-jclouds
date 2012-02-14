@@ -63,7 +63,7 @@ public class VCloudDirectorMediaType {
 
    public static final String PROPERTY = "application/vnd.vmware.vcloud.property+xml";
 
-   public static final String MEDIA_XML = "application/vnd.vmware.vcloud.media+xml";
+   public static final String MEDIA = "application/vnd.vmware.vcloud.media+xml";
 
    public static final String OWNER = "application/vnd.vmware.vcloud.owner+xml";
 
