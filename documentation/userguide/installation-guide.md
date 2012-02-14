@@ -9,7 +9,7 @@ title: Installation
   * download [lein](https://github.com/technomancy/leiningen/raw/stable/bin/lein leins) and make it executable
   * create a __project.clj__ file with the below contents
 {% highlight clojure %}
-(defproject deps "1" :dependencies [[org.jclouds/jclouds-all "1.1.1"] [org.jclouds.driver/jclouds-sshj "1.1.1"]])
+(defproject deps "1" :dependencies [[org.jclouds/jclouds-all "1.3.1"] [org.jclouds.driver/jclouds-sshj "1.3.1"]])
 {% endhighlight %}
   * execute __lein deps__ which will fill a lib dir with all the jclouds jars
 
@@ -25,12 +25,12 @@ the following your project's __pom.xml__:
    <dependency>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-allcompute</artifactId>
-        <version>1.1.1</version>
+        <version>1.3.1</version>
    </dependency>
    <dependency>
        <groupId>org.jclouds</groupId>
        <artifactId>jclouds-allblobstore</artifactId>
-       <version>1.1.1</version>
+       <version>1.3.1</version>
    </dependency>
 </dependencies>
 {% endhighlight %}
@@ -44,10 +44,10 @@ Then, add jclouds to your __build.xml__ as shown below:
 <artifact:dependencies pathId="jclouds.classpath">
  <dependency groupId="org.jclouds"
 			 artifactId="jclouds-allcompute"
-			version="1.1.1" />
+			version="1.3.1" />
  <dependency groupId="org.jclouds"
 			 artifactId="jclouds-allblobstore"
-			version="1.1.1" />
+			version="1.3.1" />
 </artifact:dependencies>
 {% endhighlight %}
 
@@ -67,8 +67,8 @@ When you runt this script, it will build a __lib__ directory full of jars you ca
     <delete dir="lib" />
     <mkdir dir="lib" />
     <artifact:dependencies filesetId="jclouds.fileset" versionsId="dependency.versions">
-      <dependency groupId="org.jclouds.provider" artifactId="aws-s3" version="1.1.1" />
-      <dependency groupId="org.jclouds.driver" artifactId="jclouds-gae" version="1.1.1" />
+      <dependency groupId="org.jclouds.provider" artifactId="aws-s3" version="1.3.1" />
+      <dependency groupId="org.jclouds.driver" artifactId="jclouds-gae" version="1.3.1" />
     </artifact:dependencies>
     <copy todir="lib" verbose="true">
       <fileset refid="jclouds.fileset"/>
@@ -102,8 +102,8 @@ Or, for older versions of jclouds (pre-1.2) supporting clojure 1.2 only, as foll
 {% highlight clojure %}
 :dependencies [[org.clojure/clojure "1.2.0"]
                [org.clojure/clojure-contrib "1.2.0"]
-               [org.jclouds/jclouds-allcompute "1.1.1"]
-               [org.jclouds/jclouds-allblobstore "1.1.1"]]
+               [org.jclouds/jclouds-allcompute "1.3.1"]
+               [org.jclouds/jclouds-allblobstore "1.3.1"]]
 {% endhighlight %}
 
 ### making your own lib dir
@@ -124,8 +124,8 @@ Or, for older versions of jclouds (pre-1.2) supporting clojure 1.2 only, as foll
     <delete dir="lib" />
     <mkdir dir="lib" />
     <artifact:dependencies filesetId="jclouds.fileset" versionsId="dependency.versions">
-      <dependency groupId="org.jclouds.provider" artifactId="aws-s3" version="1.1.1" />
-      <dependency groupId="org.jclouds.driver" artifactId="jclouds-gae" version="1.1.1" />
+      <dependency groupId="org.jclouds.provider" artifactId="aws-s3" version="1.3.1" />
+      <dependency groupId="org.jclouds.driver" artifactId="jclouds-gae" version="1.3.1" />
     </artifact:dependencies>
 
     <copy todir="lib" verbose="true">
