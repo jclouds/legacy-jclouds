@@ -25,15 +25,19 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
-import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.binders.BindToXMLPayload;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
@@ -63,18 +67,21 @@ public interface MediaAsyncClient {
     * @see MediaClient#updateMedia(ReferenceType, Media))
     */
    @PUT
-   @Consumes
+   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(VCloudDirectorMediaType.MEDIA)
    @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> updateMedia(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> mediaRef, 
-         @PayloadParam("Media") Media media);
+         @BinderParam(BindToXMLPayload.class) Media media);
    
    /**
    * @see MediaClient#deleteMedia(ReferenceType))
    */
    @DELETE
-   @Consumes
+   @Consumes(VCloudDirectorMediaType.TASK)
    @JAXBResponseParser
-   ListenableFuture<Void> deleteMedia(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> mediaRef);
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Task> deleteMedia(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> mediaRef);
    
    /**
     * @see MediaClient#getOwner(ReferenceType)
@@ -87,7 +94,7 @@ public interface MediaAsyncClient {
    ListenableFuture<Owner> getOwner(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> mediaRef);
    
    /**
-    * @see MediaClient#getMetadata()
+    * @see MediaClient#getMetadata(ReferenceType))
     */
    @GET
    @Path("/metadata")
@@ -97,41 +104,47 @@ public interface MediaAsyncClient {
    ListenableFuture<Metadata> getMetadata(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> mediaRef);
    
    /**
-    * @see MediaClient#updateMetadata()
+    * @see MediaClient#mergeMetadata(ReferenceType, Metadata))
     */
    @POST
-   @Consumes
+   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(VCloudDirectorMediaType.METADATA)
    @JAXBResponseParser
-   ListenableFuture<Task> updateMetadata(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> mediaRef,
-            @PayloadParam("Metadata") Metadata metadata);
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Task> mergeMetadata(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> mediaRef,
+         @BinderParam(BindToXMLPayload.class) Metadata metadata);
 
    /**
-    * @see MediaClient#getMetadataEntry()
+    * @see MediaClient#getMetadataEntry(ReferenceType, String))
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<MetadataEntry> getMetadataEntry(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> mediaRef,
-         @PathParam("key") String key);
+         @BinderParam(BindToXMLPayload.class) String key);
    
    /**
-    * @see MediaClient#updateMedia()
+    * @see MediaClient#setMetadata(ReferenceType, String, MetadataEntry))
     */
    @PUT
-   @Consumes
+   @Path("/metadata/{key}")
+   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(VCloudDirectorMediaType.METADATA_VALUE)
    @JAXBResponseParser
-   ListenableFuture<Task> updateMetadataEntry(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> metaDataRef,
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Task> setMetadata(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> metaDataRef,
          @PathParam("key") String key, 
-         @PayloadParam("MetadataEntry") MetadataEntry metadataEntry);
+         @BinderParam(BindToXMLPayload.class) MetadataValue metadataValue);
    
    /**
-    * @see MediaClient#deleteMetadataEntry()
+    * @see MediaClient#deleteMetadataEntry(ReferenceType, String))
     */
     @DELETE
-    @Consumes
+    @Consumes(VCloudDirectorMediaType.TASK)
     @JAXBResponseParser
-    ListenableFuture<Void> deleteMetadataEntry(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> metaDataRef,
+    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+    ListenableFuture<Task> deleteMetadataEntry(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> metaDataRef,
           @PathParam("key") String key);
    
 }

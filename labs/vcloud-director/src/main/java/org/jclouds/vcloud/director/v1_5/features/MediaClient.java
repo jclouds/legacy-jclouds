@@ -24,6 +24,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
@@ -57,7 +58,7 @@ public interface MediaClient {
    /**
     * Deletes a media.
     */
-   void deleteMedia(ReferenceType<?> mediaRef);
+   Task deleteMedia(ReferenceType<?> mediaRef);
    
    /**
     * Retrieves an owner.
@@ -78,7 +79,7 @@ public interface MediaClient {
     * @return a task. This operation is asynchronous and the user should monitor the returned 
     * task status in order to check when it is completed.
     */
-   Task updateMetadata(ReferenceType<?> mediaRef, Metadata metadata);
+   Task mergeMetadata(ReferenceType<?> mediaRef, Metadata metadata);
 
    /**
     * Retrieves a metadata entry
@@ -88,17 +89,21 @@ public interface MediaClient {
    MetadataEntry getMetadataEntry(ReferenceType<?> mediaRef, String key);
    
    /**
-    * Sets the metadata for the particular key for the media to the value provided
+    * Sets the metadata for the particular key for the media to the value provided. 
+    * Note: this will replace any existing metadata information
     * 
     * @return a task. This operation is asynchronous and the user should monitor the returned 
     * task status in order to check when it is completed.
     */
-   Task updateMetadataEntry(ReferenceType<?> mediaRef, String key, MetadataEntry metadataEntry);
+   Task setMetadata(ReferenceType<?> mediaRef, String key, MetadataValue metadataEntry);
    
    /**
     * Deletes a metadata entry.
+    * 
+    * @return a task. This operation is asynchronous and the user should monitor the returned 
+    * task status in order to check when it is completed.
     */
-   void deleteMetadataEntry(ReferenceType<?> mediaRef, String key);
+   Task deleteMetadataEntry(ReferenceType<?> mediaRef, String key);
    
 
 }
