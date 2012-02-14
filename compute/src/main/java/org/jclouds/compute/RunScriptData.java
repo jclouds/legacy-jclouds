@@ -23,23 +23,21 @@ import static org.jclouds.compute.util.ComputeServiceUtils.extractTargzIntoDirec
 import static org.jclouds.scriptbuilder.domain.Statements.appendFile;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.jclouds.scriptbuilder.domain.Statements.interpret;
-import static org.jclouds.scriptbuilder.domain.Statements.newStatementList;
 
 import java.io.IOException;
 import java.net.URI;
 
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.predicates.OperatingSystemPredicates;
 import org.jclouds.scriptbuilder.InitBuilder;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
+import org.jclouds.scriptbuilder.statements.java.InstallJDK;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -47,23 +45,10 @@ import com.google.common.collect.ImmutableSet;
  */
 public class RunScriptData {
 
-   public static final URI JDK7_URL = URI.create(System.getProperty("test.jdk7-url",
-         "http://download.oracle.com/otn-pub/java/jdk/7u2-b13/jdk-7u2-linux-x64.tar.gz"));
    public static final URI JBOSS7_URL = URI.create(System.getProperty("test.jboss7-url",//
          "http://download.jboss.org/jbossas/7.0/jboss-as-7.0.2.Final/jboss-as-web-7.0.2.Final.tar.gz"));
 
    public static String JBOSS_HOME = "/usr/local/jboss";
-
-   public static Statement installJavaAndCurl(OperatingSystem os) {
-      if (os == null || OperatingSystemPredicates.supportsApt().apply(os))
-         return APT_RUN_SCRIPT;
-      else if (OperatingSystemPredicates.supportsYum().apply(os))
-         return YUM_RUN_SCRIPT;
-      else if (OperatingSystemPredicates.supportsZypper().apply(os))
-         return ZYPPER_RUN_SCRIPT;
-      else
-         throw new IllegalArgumentException("don't know how to handle" + os.toString());
-   }
 
    public static Statement authorizePortsInIpTables(int... ports) {
       Builder<Statement> builder = ImmutableList.<Statement> builder();
@@ -76,7 +61,7 @@ public class RunScriptData {
    public static StatementList installAdminUserJBossAndOpenPorts(OperatingSystem os) throws IOException {
       return new StatementList(//
                         AdminAccess.builder().adminUsername("web").build(),//
-                        installJavaAndCurl(os),//
+                        InstallJDK.fromURL(),//
                         authorizePortsInIpTables(22, 8080),//
                         extractTargzIntoDirectory(JBOSS7_URL, "/usr/local"),//
                         exec("{md} " + JBOSS_HOME), exec("mv /usr/local/jboss-*/* " + JBOSS_HOME),//
@@ -109,67 +94,10 @@ public class RunScriptData {
                                  .toString())));
    }
    
-   public static Statement normalizeHostAndDNSConfig() {
-      return newStatementList(//
-               addHostnameToEtcHostsIfMissing(),//
-               addDnsToResolverIfMissing());
-   }
-
-   public static Statement addHostnameToEtcHostsIfMissing() {
-      return exec("grep `hostname` /etc/hosts >/dev/null || awk -v hostname=`hostname` 'END { print $1\" \"hostname }' /proc/net/arp >> /etc/hosts");
-   }
-
-   public static Statement addDnsToResolverIfMissing() {
-      return exec("nslookup yahoo.com >/dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf");
-   }
-
    // TODO make this a cli option
    private static Statement changeStandaloneConfigToListenOnAllIPAddresses() {
       return exec(format(
                         "(cd %s/standalone/configuration && sed 's~inet-address value=.*/~any-address/~g' standalone.xml > standalone.xml.new && mv standalone.xml.new standalone.xml)",
                         JBOSS_HOME));
    }
-   
-   public static final ImmutableSet<String> exportJavaHomeAndAddToPath = ImmutableSet.of(
-         "export JAVA_HOME=/usr/local/jdk", "export PATH=$JAVA_HOME/bin:$PATH");
-
-   public static final Statement JDK7_INSTALL_TGZ = newStatementList(//
-         exec("{md} /usr/local/jdk"), extractTargzIntoDirectory(JDK7_URL, "/usr/local"),//
-         exec("mv /usr/local/jdk1.7*/* /usr/local/jdk/"),//
-         exec("test -n \"$SUDO_USER\" && "), appendFile("/home/$SUDO_USER/.bashrc", exportJavaHomeAndAddToPath),//
-         appendFile("/etc/bashrc", exportJavaHomeAndAddToPath),//
-         appendFile("$HOME/.bashrc", exportJavaHomeAndAddToPath),//
-         appendFile("/etc/skel/.bashrc", exportJavaHomeAndAddToPath),//
-         // TODO:
-         // eventhough we are setting the above, sometimes images (ex.
-         // cloudservers ubuntu) kick out of .bashrc (ex. [ -z "$PS1" ] &&
-         // return), for this reason, we should also explicitly link.
-         // A better way would be to update using alternatives or the like
-         exec("ln -fs /usr/local/jdk/bin/java /usr/bin/java"));
-  
-   public static String aptInstall = "apt-get install -f -y -qq --force-yes";
-
-   public static String aptInstallLazyUpgrade(String packageName) {
-      return aptInstall + " " + packageName + "|| (" + "apt-get update -qq&&" + "apt-get upgrade -y -qq" + ")&&"
-               + aptInstall + " " + packageName;
-   }
-
-   public static final Statement APT_RUN_SCRIPT = newStatementList(//
-         exec("which nslookup >&- 2>&-|| " + aptInstallLazyUpgrade("dnsutils")),//
-         normalizeHostAndDNSConfig(),//
-         exec("which curl >&- 2>&-|| " + aptInstallLazyUpgrade("curl")),//
-         JDK7_INSTALL_TGZ);
-
-   public static String yumInstall = "yum --nogpgcheck -y install";
-
-   public static final Statement YUM_RUN_SCRIPT = newStatementList(//
-         exec("which nslookup >&- 2>&-|| " + yumInstall + " bind-utils"),//
-         normalizeHostAndDNSConfig(),//
-         exec("which curl >&- 2>&-|| " + yumInstall + " curl"),//
-         JDK7_INSTALL_TGZ);
-
-   public static final Statement ZYPPER_RUN_SCRIPT = newStatementList(//
-         normalizeHostAndDNSConfig(),//
-         exec("which curl >&- 2>&-|| zypper install curl"),//
-         JDK7_INSTALL_TGZ);
 }

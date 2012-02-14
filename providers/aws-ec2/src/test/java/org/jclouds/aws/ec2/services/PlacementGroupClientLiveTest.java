@@ -21,7 +21,6 @@ package org.jclouds.aws.ec2.services;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newTreeSet;
-import static org.jclouds.compute.ComputeTestUtils.buildScript;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -50,6 +49,7 @@ import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.scriptbuilder.domain.Statements;
+import org.jclouds.scriptbuilder.statements.java.InstallJDK;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterTest;
@@ -149,8 +149,7 @@ public class PlacementGroupClientLiveTest extends BaseVersionedServiceLiveTest {
       assertEquals(template.getImage().getUserMetadata().get("hypervisor"), "xen");
       
       template.getOptions().runScript(
-               Statements.newStatementList(AdminAccess.standard(),
-                        buildScript(template.getImage().getOperatingSystem())));
+               Statements.newStatementList(AdminAccess.standard(), InstallJDK.fromURL()));
 
       String group = PREFIX + "cccluster";
       context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
