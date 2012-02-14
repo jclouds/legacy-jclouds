@@ -63,6 +63,11 @@ public class GleSYSErrorHandler implements HttpErrorHandler {
          case 404:
             exception = new ResourceNotFoundException(message, exception);
             break;
+         case 500:
+            if (message.indexOf("Locked") != -1) {
+               exception = new IllegalStateException(message, exception);
+            }
+            break;
          }
       } finally {
          if (response.getPayload() != null)

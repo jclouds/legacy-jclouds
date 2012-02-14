@@ -67,6 +67,7 @@ public class ServerDetailsToNodeMetadata implements Function<ServerDetails, Node
    protected Logger logger = Logger.NULL;
    public static final Map<ServerDetails.State, NodeState> serverStateToNodeState = ImmutableMap
          .<ServerDetails.State, NodeState> builder().put(ServerDetails.State.STOPPED, NodeState.SUSPENDED)
+         .put(ServerDetails.State.LOCKED, NodeState.PENDING)
          .put(ServerDetails.State.RUNNING, NodeState.RUNNING)
          .put(ServerDetails.State.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
 
@@ -108,7 +109,7 @@ public class ServerDetailsToNodeMetadata implements Function<ServerDetails, Node
             .processors(ImmutableList.of(new Processor(from.getCpuCores(), 1.0)))
             .volumes(ImmutableList.<Volume> of(new VolumeImpl((float) from.getDiskSizeGB(), true, true)))
             .hypervisor(from.getPlatform()).build());
-      builder.state(from.getState() != null ? serverStateToNodeState.get(from.getState()) : NodeState.UNRECOGNIZED);
+      builder.state(from.getState() != null ? serverStateToNodeState.get(from.getState()) : NodeState.PENDING);
       Iterable<String> addresses = Iterables.filter(Iterables.transform(from.getIps(), new Function<Ip, String>() {
 
          @Override

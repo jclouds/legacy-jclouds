@@ -51,6 +51,16 @@ public class GleSYSErrorHandlerTest {
       assertCodeMakes("GET", URI.create("https://api.glesys.com/foo"), 401, "", "Unauthorized",
             AuthorizationException.class);
    }
+   @Test
+   public void test500LockedMakesIllegalStateException() {
+      assertCodeMakes(
+            "POST",
+            URI.create("https://api.glesys.com/server/destroy/format/json"),
+            500,
+            "",
+            "{\"response\":{\"status\":{\"code\":606,\"timestamp\":\"2012-02-14T15:48:39+01:00\",\"text\":\"Server Locked\"},\"debug\":{\"input\":{\"serverid\":\"xm3270596\",\"keepip\":\"0\"}}}}",
+            IllegalStateException.class);
+   }
 
    @Test
    public void test400MakesResourceNotFoundExceptionOnCouldNotFind() {

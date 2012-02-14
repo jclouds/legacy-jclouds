@@ -46,6 +46,7 @@ import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.glesys.GleSYSAsyncClient;
@@ -60,8 +61,10 @@ import org.jclouds.glesys.options.CreateServerOptions;
 import org.jclouds.glesys.options.DestroyServerOptions;
 import org.jclouds.location.predicates.LocationPredicates;
 import org.jclouds.logging.Logger;
+import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -82,16 +85,18 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
    private final GleSYSClient client;
    private final GleSYSAsyncClient aclient;
    private final ExecutorService userThreads;
+   private final Timeouts timeouts;
    private final Supplier<Set<? extends Location>> locations;
    private final Provider<String> passwordProvider;
 
    @Inject
    public GleSYSComputeServiceAdapter(GleSYSClient client, GleSYSAsyncClient aclient,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads, Timeouts timeouts,
          @Memoized Supplier<Set<? extends Location>> locations, @Named("PASSWORD") Provider<String> passwordProvider) {
       this.client = checkNotNull(client, "client");
       this.aclient = checkNotNull(aclient, "aclient");
       this.userThreads = checkNotNull(userThreads, "userThreads");
+      this.timeouts = checkNotNull(timeouts, "timeouts");
       this.locations = checkNotNull(locations, "locations");
       this.passwordProvider = checkNotNull(passwordProvider, "passwordProvider");
    }
@@ -128,7 +133,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
       logger.debug(">> creating new Server spec(%s) name(%s) options(%s)", spec, name, createServerOptions);
       ServerDetails result = client.getServerClient().createServerWithHostnameAndRootPassword(spec, name, password,
             createServerOptions);
-      logger.trace("<< ServerDetails(%s)", result.getId());
+      logger.trace("<< server(%s)", result.getId());
 
       return new NodeAndInitialCredentials<ServerDetails>(result, result.getId() + "", LoginCredentials.builder()
             .password(password).build());
@@ -220,7 +225,19 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
 
    @Override
    public void destroyNode(String id) {
-      client.getServerClient().destroyServer(id, DestroyServerOptions.Builder.discardIp());
+      new RetryablePredicate<String>(new Predicate<String>() {
+
+         @Override
+         public boolean apply(String arg0) {
+            try {
+               client.getServerClient().destroyServer(arg0, DestroyServerOptions.Builder.discardIp());
+               return true;
+            } catch (IllegalStateException e) {
+               return false;
+            }
+         }
+
+      }, timeouts.nodeTerminated).apply(id);
    }
 
    @Override
