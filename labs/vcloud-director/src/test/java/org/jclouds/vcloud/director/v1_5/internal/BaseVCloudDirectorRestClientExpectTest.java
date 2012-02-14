@@ -120,7 +120,7 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
                   .put("Accept", mediaType)
                   .put("x-vcloud-authorization", token)
                   .build())
-            .payload(payloadFromResourceWithContentType(relativeFilePath, postMediaType + ";version=1.5"))
+            .payload(payloadFromResourceWithContentType(relativeFilePath, postMediaType))
             .build();
    }
 
