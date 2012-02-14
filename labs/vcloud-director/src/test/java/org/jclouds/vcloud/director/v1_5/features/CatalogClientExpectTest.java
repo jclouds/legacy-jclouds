@@ -116,9 +116,21 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
    @Test
    public void testGetCatalogMetadata() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata"),
-            getStandardPayloadResponse("/catalog/catalogMetadata.xml", VCloudDirectorMediaType.METADATA));
+      HttpRequest catalogRequest = HttpRequest.builder()
+            .method("GET")
+            .endpoint(URI.create(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata"))
+            .headers(ImmutableMultimap.<String, String> builder()
+                              .put("Accept", "*/*")
+                              .put("x-vcloud-authorization", token)
+                              .build())
+            .build();
+
+      HttpResponse catalogResponse = HttpResponse.builder()
+              .statusCode(200)
+              .payload(payloadFromResourceWithContentType("/catalog/catalogMetadata.xml", VCloudDirectorMediaType.METADATA))
+            .build();
+
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogRequest, catalogResponse);
 
       Reference catalogRef = Reference.builder()
             .type("application/vnd.vmware.vcloud.catalog+xml")
@@ -142,9 +154,21 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
    @Test
    public void testGetCatalogMetadataEntry() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata/KEY"),
-            getStandardPayloadResponse("/catalog/catalogMetadataEntry.xml", VCloudDirectorMediaType.METADATA_ENTRY));
+      HttpRequest catalogRequest = HttpRequest.builder()
+            .method("GET")
+            .endpoint(URI.create(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata/KEY"))
+            .headers(ImmutableMultimap.<String, String> builder()
+                              .put("Accept", "*/*")
+                              .put("x-vcloud-authorization", token)
+                              .build())
+            .build();
+
+      HttpResponse catalogResponse = HttpResponse.builder()
+              .statusCode(200)
+              .payload(payloadFromResourceWithContentType("/catalog/catalogMetadataEntry.xml", VCloudDirectorMediaType.METADATA_ENTRY))
+            .build();
+
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogRequest, catalogResponse);
 
       Reference catalogRef = Reference.builder()
             .type("application/vnd.vmware.vcloud.catalog+xml")
@@ -159,9 +183,21 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
    
    @Test
    public void testGetCatalogItem() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
-            getStandardRequest("GET", "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"),
-            getStandardPayloadResponse("/catalog/catalogItem.xml", VCloudDirectorMediaType.CATALOG_ITEM));
+      HttpRequest catalogItemRequest = HttpRequest.builder()
+            .method("GET")
+            .endpoint(URI.create(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
+            .headers(ImmutableMultimap.<String, String> builder()
+                              .put("Accept", "*/*")
+                              .put("x-vcloud-authorization", token)
+                              .build())
+            .build();
+
+      HttpResponse catalogItemResponse = HttpResponse.builder()
+              .statusCode(200)
+              .payload(payloadFromResourceWithContentType("/catalog/catalogItem.xml", VCloudDirectorMediaType.CATALOG_ITEM))
+            .build();
+
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
 
 		Reference catalogItemReference =	Reference.builder()
 			      .type("application/vnd.vmware.vcloud.catalogItem+xml")
@@ -232,9 +268,21 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
    @Test
    public void testGetCatalogItemMetadata() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata"),
-            getStandardPayloadResponse("/catalog/catalogItemMetadata.xml", VCloudDirectorMediaType.METADATA));
+      HttpRequest catalogItemRequest = HttpRequest.builder()
+            .method("GET")
+            .endpoint(URI.create(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata"))
+            .headers(ImmutableMultimap.<String, String> builder()
+                              .put("Accept", "*/*")
+                              .put("x-vcloud-authorization", token)
+                              .build())
+            .build();
+
+      HttpResponse catalogItemResponse = HttpResponse.builder()
+              .statusCode(200)
+              .payload(payloadFromResourceWithContentType("/catalog/catalogItemMetadata.xml", VCloudDirectorMediaType.METADATA))
+            .build();
+
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
 
       Reference catalogItemReference = Reference.builder()
             .type("application/vnd.vmware.vcloud.catalogItem+xml")
@@ -290,10 +338,22 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
    @Test
    public void testGetCatalogItemMetadataEntry() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY"),
-            getStandardPayloadResponse("/catalog/catalogItemMetadataEntry.xml", VCloudDirectorMediaType.METADATA_ENTRY));
+      HttpRequest catalogItemRequest = HttpRequest.builder()
+            .method("GET")
+            .endpoint(URI.create(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY"))
+            .headers(ImmutableMultimap.<String, String> builder()
+                              .put("Accept", "*/*")
+                              .put("x-vcloud-authorization", token)
+                              .build())
+            .build();
 
+      HttpResponse catalogItemResponse = HttpResponse.builder()
+              .statusCode(200)
+              .payload(payloadFromResourceWithContentType("/catalog/catalogItemMetadataEntry.xml", VCloudDirectorMediaType.METADATA_ENTRY + ";version=1.5"))
+            .build();
+
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
+      
       Reference catalogItemReference = Reference.builder()
             .type("application/vnd.vmware.vcloud.catalogItem+xml")
             .name("ubuntu10")
@@ -307,10 +367,22 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
    @Test
    public void testSetCatalogItemMetadataEntry() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequestWithPayload("PUT", "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY", VCloudDirectorMediaType.TASK,
-                  "/catalog/setCatalogItemMetadataValue.xml", VCloudDirectorMediaType.METADATA_VALUE),
-            getStandardPayloadResponse("/catalog/setMetadataValueTask.xml", VCloudDirectorMediaType.TASK));
+      HttpRequest catalogItemRequest = HttpRequest.builder()
+            .method("PUT")
+            .endpoint(URI.create(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY"))
+            .headers(ImmutableMultimap.<String, String> builder()
+                              .put("Accept", "application/vnd.vmware.vcloud.task+xml")
+                              .put("x-vcloud-authorization", token)
+                              .build())
+            .payload(payloadFromResourceWithContentType("/catalog/setCatalogItemMetadataValue.xml", VCloudDirectorMediaType.METADATA_VALUE))
+            .build();
+
+      HttpResponse catalogItemResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/catalog/setMetadataValueTask.xml", VCloudDirectorMediaType.TASK + ";version=1.5"))
+            .build();
+
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
 
       Reference catalogItemReference = Reference.builder()
             .type("application/vnd.vmware.vcloud.catalogItem+xml")
@@ -323,14 +395,25 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
       Task expected = setMetadataValueTask();
       
       assertEquals(client.getCatalogClient().setCatalogItemMetadataEntry(catalogItemReference, "KEY", value), expected);
-      
    }
 
    @Test
    public void testDeleteCatalogItemMetadataEntry() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("DELETE", "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY", VCloudDirectorMediaType.TASK),
-            getStandardPayloadResponse("/catalog/deleteMetadataEntryTask.xml", VCloudDirectorMediaType.TASK));
+      HttpRequest catalogItemRequest = HttpRequest.builder()
+            .method("DELETE")
+            .endpoint(URI.create(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY"))
+            .headers(ImmutableMultimap.<String, String> builder()
+                              .put("Accept", "*/*")
+                              .put("x-vcloud-authorization", token)
+                              .build())
+            .build();
+
+      HttpResponse catalogItemResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResourceWithContentType("/catalog/deleteMetadataEntryTask.xml", VCloudDirectorMediaType.TASK))
+            .build();
+
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
 
       Reference catalogItemReference = Reference.builder()
             .type("application/vnd.vmware.vcloud.catalogItem+xml")
