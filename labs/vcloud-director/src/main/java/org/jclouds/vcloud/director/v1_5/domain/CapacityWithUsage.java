@@ -43,8 +43,8 @@ import com.google.common.base.Objects;
  *   &lt;complexContent>
  *     &lt;extension base="{http://www.vmware.com/vcloud/v1.5}CapacityType">
  *       &lt;sequence>
- *         &lt;element name="Used" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
- *         &lt;element name="Overhead" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
+ *         &lt;element name="Used" type="{http://www.w3.org/2001/XMLSchema}Long" minOccurs="0"/>
+ *         &lt;element name="Overhead" type="{http://www.w3.org/2001/XMLSchema}Long" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;anyAttribute processContents='lax' namespace='##other'/>
  *     &lt;/extension>
@@ -121,7 +121,7 @@ public class CapacityWithUsage extends CapacityType<CapacityWithUsage>
       /**
        * @see CapacityType#getLimit()
        */
-      public Builder limit(long limit) {
+      public Builder limit(Long limit) {
          this.limit = limit;
          return this;
       }

@@ -45,8 +45,8 @@ import com.google.common.base.Objects;
  *     &lt;extension base="{http://www.vmware.com/vcloud/v1.5}VCloudExtensibleType">
  *       &lt;sequence>
  *         &lt;element name="Units" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="Allocated" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
- *         &lt;element name="Limit" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="Allocated" type="{http://www.w3.org/2001/XMLSchema}Long" minOccurs="0"/>
+ *         &lt;element name="Limit" type="{http://www.w3.org/2001/XMLSchema}Long"/>
  *       &lt;/sequence>
  *       &lt;anyAttribute processContents='lax' namespace='##other'/>
  *     &lt;/extension>
@@ -79,7 +79,7 @@ public class CapacityType<T extends CapacityType<T>> {
       
       protected String units;
       protected Long allocated;
-      protected long limit;
+      protected Long limit;
 
       /**
        * @see CapacityType#getUnits()
@@ -100,7 +100,7 @@ public class CapacityType<T extends CapacityType<T>> {
       /**
        * @see CapacityType#getLimit()
        */
-      public Builder<T> limit(long limit) {
+      public Builder<T> limit(Long limit) {
          this.limit = limit;
          return this;
       }
@@ -137,7 +137,7 @@ public class CapacityType<T extends CapacityType<T>> {
     @XmlElement(name = "Allocated")
     protected Long allocated;
     @XmlElement(name = "Limit")
-    protected long limit;
+    protected Long limit;
 
     /**
      * Gets the value of the units property.
@@ -191,7 +191,7 @@ public class CapacityType<T extends CapacityType<T>> {
      * Gets the value of the limit property.
      * 
      */
-    public long getLimit() {
+    public Long getLimit() {
         return limit;
     }
 
@@ -199,7 +199,7 @@ public class CapacityType<T extends CapacityType<T>> {
      * Sets the value of the limit property.
      * 
      */
-    public void setLimit(long value) {
+    public void setLimit(Long value) {
         this.limit = value;
     }
 

@@ -20,14 +20,16 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.testng.collections.Lists;
 
 import com.google.common.base.Objects;
 
@@ -46,7 +48,7 @@ import com.google.common.base.Objects;
  *   &lt;complexContent>
  *     &lt;extension base="{http://www.vmware.com/vcloud/v1.5}VCloudExtensibleType">
  *       &lt;sequence>
- *         &lt;element name="ResourceEntity" type="{http://www.vmware.com/vcloud/v1.5}ReferenceType<?>Type" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="ResourceEntity" type="{http://www.vmware.com/vcloud/v1.5}ReferenceType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;anyAttribute processContents='lax' namespace='##other'/>
  *     &lt;/extension>
@@ -58,7 +60,7 @@ import com.google.common.base.Objects;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ResourceEntities", propOrder = {
-    "resourceEntity"
+    "resourceEntities"
 })
 public class ResourceEntities {
    public static Builder builder() {
@@ -71,25 +73,32 @@ public class ResourceEntities {
 
    public static class Builder {
       
-      private List<ReferenceType<?>> resourceEntity;
-
+      private List<Reference> resourceEntities = Lists.newArrayList();
+      
       /**
-       * @see ResourceEntities#getResourceEntity()
+       * @see ResourceEntities#getResourceEntities()
        */
-      public Builder resourceEntity(List<ReferenceType<?>> resourceEntity) {
-         this.resourceEntity = resourceEntity;
+      public Builder resourceEntities(List<Reference> resourceEntities) {
+         this.resourceEntities = Lists.newArrayList(checkNotNull(resourceEntities, "resourceEntities"));
          return this;
       }
 
+      /**
+       * @see ResourceEntities#getResourceEntities()
+       */
+      public Builder resourceEntity(Reference resourceEntity) {
+         resourceEntities.add(checkNotNull(resourceEntity, "resourceEntity"));
+         return this;
+      }
 
       public ResourceEntities build() {
-         ResourceEntities resourceEntities = new ResourceEntities(resourceEntity);
+         ResourceEntities resourceEntities = new ResourceEntities(this.resourceEntities);
          return resourceEntities;
       }
 
 
       public Builder fromResourceEntities(ResourceEntities in) {
-         return resourceEntity(in.getResourceEntity());
+         return resourceEntities(in.getResourceEntities());
       }
    }
 
@@ -97,13 +106,13 @@ public class ResourceEntities {
       // For JAXB and builder use
    }
 
-   private ResourceEntities(List<ReferenceType<?>> resourceEntity) {
-      this.resourceEntity = resourceEntity;
+   private ResourceEntities(List<Reference> resourceEntity) {
+      this.resourceEntities = resourceEntity;
    }
 
 
     @XmlElement(name = "ResourceEntity")
-    protected List<ReferenceType<?>> resourceEntity;
+    protected List<Reference> resourceEntities;
 
     /**
      * Gets the value of the resourceEntity property.
@@ -123,15 +132,15 @@ public class ResourceEntities {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link ReferenceType<?>Type }
+     * {@link ReferenceType }
      * 
      * 
      */
-    public List<ReferenceType<?>> getResourceEntity() {
-        if (resourceEntity == null) {
-            resourceEntity = new ArrayList<ReferenceType<?>>();
+    public List<Reference> getResourceEntities() {
+        if (resourceEntities == null) {
+            resourceEntities = Lists.newArrayList();
         }
-        return this.resourceEntity;
+        return this.resourceEntities;
     }
 
    @Override
@@ -141,18 +150,18 @@ public class ResourceEntities {
       if (o == null || getClass() != o.getClass())
          return false;
       ResourceEntities that = ResourceEntities.class.cast(o);
-      return equal(resourceEntity, that.resourceEntity);
+      return equal(resourceEntities, that.resourceEntities);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(resourceEntity);
+      return Objects.hashCode(resourceEntities);
    }
 
    @Override
    public String toString() {
       return Objects.toStringHelper("")
-            .add("resourceEntity", resourceEntity).toString();
+            .add("resourceEntity", resourceEntities).toString();
    }
 
 }

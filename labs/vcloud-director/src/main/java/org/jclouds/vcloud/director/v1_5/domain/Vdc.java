@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
@@ -71,7 +72,8 @@ import com.google.common.collect.Sets;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Vdc", propOrder = {
+@XmlRootElement(name = "Vdc")
+@XmlType(propOrder = {
     "allocationModel",
     "storageCapacity",
     "computeCapacity",
@@ -217,7 +219,22 @@ public class Vdc
          vdc.setStatus(status);
          return vdc;
       }
+      
+      /**
+       * @see EntityType#getName()
+       */
+      public Builder name(String name) {
+         super.name(name);
+         return this;
+      }
 
+      /**
+       * @see EntityType#getDescription()
+       */
+      public Builder description(String description) {
+         super.description(description);
+         return this;
+      }
 
       /**
        * @see EntityType#getId()

@@ -20,14 +20,16 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.testng.collections.Lists;
 
 import com.google.common.base.Objects;
 
@@ -58,7 +60,7 @@ import com.google.common.base.Objects;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SupportedHardwareVersions", propOrder = {
-    "supportedHardwareVersion"
+    "supportedHardwareVersions"
 })
 public class SupportedHardwareVersions {
    public static Builder builder() {
@@ -71,25 +73,32 @@ public class SupportedHardwareVersions {
 
    public static class Builder {
       
-      private List<String> supportedHardwareVersion;
+      private List<String> supportedHardwareVersions = Lists.newArrayList();
 
       /**
-       * @see SupportedHardwareVersions#getSupportedHardwareVersion()
+       * @see SupportedHardwareVersions#getSupportedHardwareVersions()
        */
-      public Builder supportedHardwareVersion(List<String> supportedHardwareVersion) {
-         this.supportedHardwareVersion = supportedHardwareVersion;
+      public Builder supportedHardwareVersions(List<String> supportedHardwareVersions) {
+         this.supportedHardwareVersions = Lists.newArrayList(checkNotNull(supportedHardwareVersions, "supportedHardwareVersions"));
+         return this;
+      }
+      
+      /**
+       * @see SupportedHardwareVersions#getSupportedHardwareVersions()
+       */
+      public Builder supportedHardwareVersion(String supportedHardwareVersion) {
+         supportedHardwareVersions.add(checkNotNull(supportedHardwareVersion, "supportedHardwareVersion"));
          return this;
       }
 
-
       public SupportedHardwareVersions build() {
-         SupportedHardwareVersions supportedHardwareVersions = new SupportedHardwareVersions(supportedHardwareVersion);
+         SupportedHardwareVersions supportedHardwareVersions = new SupportedHardwareVersions(this.supportedHardwareVersions);
          return supportedHardwareVersions;
       }
 
 
       public Builder fromSupportedHardwareVersions(SupportedHardwareVersions in) {
-         return supportedHardwareVersion(in.getSupportedHardwareVersion());
+         return supportedHardwareVersions(in.getSupportedHardwareVersions());
       }
    }
 
@@ -97,13 +106,13 @@ public class SupportedHardwareVersions {
       // For JAXB and builder use
    }
 
-   private SupportedHardwareVersions(List<String> supportedHardwareVersion) {
-      this.supportedHardwareVersion = supportedHardwareVersion;
+   private SupportedHardwareVersions(List<String> supportedHardwareVersions) {
+      this.supportedHardwareVersions = supportedHardwareVersions;
    }
 
 
     @XmlElement(name = "SupportedHardwareVersion")
-    protected List<String> supportedHardwareVersion;
+    protected List<String> supportedHardwareVersions;
 
     /**
      * Gets the value of the supportedHardwareVersion property.
@@ -127,11 +136,11 @@ public class SupportedHardwareVersions {
      * 
      * 
      */
-    public List<String> getSupportedHardwareVersion() {
-        if (supportedHardwareVersion == null) {
-            supportedHardwareVersion = new ArrayList<String>();
+    public List<String> getSupportedHardwareVersions() {
+        if (supportedHardwareVersions == null) {
+            supportedHardwareVersions = Lists.newArrayList();
         }
-        return this.supportedHardwareVersion;
+        return this.supportedHardwareVersions;
     }
 
    @Override
@@ -141,18 +150,18 @@ public class SupportedHardwareVersions {
       if (o == null || getClass() != o.getClass())
          return false;
       SupportedHardwareVersions that = SupportedHardwareVersions.class.cast(o);
-      return equal(supportedHardwareVersion, that.supportedHardwareVersion);
+      return equal(supportedHardwareVersions, that.supportedHardwareVersions);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(supportedHardwareVersion);
+      return Objects.hashCode(supportedHardwareVersions);
    }
 
    @Override
    public String toString() {
       return Objects.toStringHelper("")
-            .add("supportedHardwareVersion", supportedHardwareVersion).toString();
+            .add("supportedHardwareVersion", supportedHardwareVersions).toString();
    }
 
 }

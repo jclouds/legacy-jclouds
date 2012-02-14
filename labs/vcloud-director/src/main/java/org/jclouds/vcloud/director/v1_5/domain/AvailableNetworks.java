@@ -20,14 +20,16 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.testng.collections.Lists;
 
 import com.google.common.base.Objects;
 
@@ -58,7 +60,7 @@ import com.google.common.base.Objects;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AvailableNetworks", propOrder = {
-    "network"
+    "networks"
 })
 public class AvailableNetworks {
    public static Builder builder() {
@@ -71,25 +73,32 @@ public class AvailableNetworks {
 
    public static class Builder {
       
-      private List<Reference> network;
+      private List<Reference> networks = Lists.newArrayList();
 
       /**
-       * @see AvailableNetworks#getNetwork()
+       * @see AvailableNetworks#getNetworks()
        */
-      public Builder network(List<Reference> network) {
-         this.network = network;
+      public Builder networks(List<Reference> networks) {
+         this.networks = Lists.newArrayList(checkNotNull(networks, "networks"));
          return this;
       }
 
+      /**
+       * @see AvailableNetworks#getNetworks()
+       */
+      public Builder network(Reference network) {
+         networks.add(checkNotNull(network, "network"));
+         return this;
+      }
 
       public AvailableNetworks build() {
-         AvailableNetworks availableNetworks = new AvailableNetworks(network);
+         AvailableNetworks availableNetworks = new AvailableNetworks(networks);
          return availableNetworks;
       }
 
 
       public Builder fromAvailableNetworks(AvailableNetworks in) {
-         return network(in.getNetwork());
+         return networks(in.getNetworks());
       }
    }
 
@@ -97,13 +106,13 @@ public class AvailableNetworks {
       // For JAXB and builder use
    }
 
-   private AvailableNetworks(List<Reference> network) {
-      this.network = network;
+   private AvailableNetworks(List<Reference> networks) {
+      this.networks = networks;
    }
 
 
     @XmlElement(name = "Network")
-    protected List<Reference> network;
+    protected List<Reference> networks;
 
     /**
      * Gets the value of the network property.
@@ -127,11 +136,11 @@ public class AvailableNetworks {
      * 
      * 
      */
-    public List<Reference> getNetwork() {
-        if (network == null) {
-            network = new ArrayList<Reference>();
+    public List<Reference> getNetworks() {
+        if (networks == null) {
+            networks = Lists.newArrayList();
         }
-        return this.network;
+        return this.networks;
     }
 
    @Override
@@ -141,18 +150,18 @@ public class AvailableNetworks {
       if (o == null || getClass() != o.getClass())
          return false;
       AvailableNetworks that = AvailableNetworks.class.cast(o);
-      return equal(network, that.network);
+      return equal(networks, that.networks);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(network);
+      return Objects.hashCode(networks);
    }
 
    @Override
    public String toString() {
       return Objects.toStringHelper("")
-            .add("network", network).toString();
+            .add("network", networks).toString();
    }
 
 }
