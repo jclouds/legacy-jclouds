@@ -66,6 +66,15 @@ public interface VdcClient {
    Vdc getVdc(Reference vdcRef);
    
    /**
+    * Captures a vApp into vApp template. 
+    * The status of vApp template will be in UNRESOLVED(0) until the capture task is finished.
+    * 
+    * @return a VApp resource which will contain a task. 
+    * The user should should wait for this task to finish to be able to use the vApp.
+    */
+   VAppTemplate captureVApp(Reference vdcRef, CloneMediaParams params);
+   
+   /**
     * Clones a media into new one. 
     * The status of the returned media is UNRESOLVED(0) until the task for cloning finish.
     * 

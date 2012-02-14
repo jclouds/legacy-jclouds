@@ -29,6 +29,7 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneMediaParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
@@ -63,6 +64,17 @@ public interface VdcAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Vdc> getVdc(@EndpointParam(parser = ReferenceToEndpoint.class) Reference vdcRef);
+   
+   /**
+    * @see VdcClient#captureVApp(Reference, CaptureVAppParams)
+    */
+   @POST
+   @Path("/action/captureVApp")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Media> captureVApp(@EndpointParam(parser = ReferenceToEndpoint.class) Reference vdcRef,
+         @PayloadParam(value = "?") CaptureVAppParams params);
    
    /**
     * @see VdcClient#cloneMedia(Reference, CloneMediaParams)
