@@ -28,6 +28,8 @@ import org.jclouds.http.annotation.ServerError;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
+import org.jclouds.openstack.nova.v1_1.features.FlavorAsyncClient;
+import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerClient;
 import org.jclouds.openstack.nova.v1_1.handlers.NovaErrorHandler;
@@ -47,6 +49,7 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
             .put(ServerClient.class, ServerAsyncClient.class)//
+            .put(FlavorClient.class, FlavorAsyncClient.class)
             .build();
 
    public NovaRestClientModule() {
