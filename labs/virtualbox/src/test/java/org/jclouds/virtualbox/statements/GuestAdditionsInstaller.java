@@ -1,6 +1,5 @@
 package org.jclouds.virtualbox.statements;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 
 import java.util.concurrent.ExecutionException;

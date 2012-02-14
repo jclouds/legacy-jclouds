@@ -18,7 +18,7 @@
  */
 package org.jclouds.virtualbox.statements;
 
-import org.jclouds.scriptbuilder.domain.Call;
+import org.jclouds.scriptbuilder.ScriptBuilder;
 import org.jclouds.scriptbuilder.domain.Statement;
 
 /**
@@ -35,6 +35,6 @@ public class Statements {
     *           - the vm name
     */
    public static Statement exportIpAddressFromVmNamed(String vmName) {
-      return new Call("exportIpAddressFromVmNamed", vmName);
+      return ScriptBuilder.call("exportIpAddressFromVmNamed", vmName);
    }
  }

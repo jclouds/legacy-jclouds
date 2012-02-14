@@ -22,21 +22,36 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
+import org.jclouds.scriptbuilder.InitBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
+import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.virtualbox.statements.InstallGuestAdditions;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
 @Test(groups = "unit")
 public class InstallGuestAdditionsTest {
-  @Test
-  public void testUnix() throws IOException {
-	  InstallGuestAdditions statement = new InstallGuestAdditions("4.1.6");
-	  assertEquals(statement.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources
-           .getResource("test_guest_additions_installer." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
-  }
+   @Test
+   public void testUnixByItself() throws IOException {
+      InstallGuestAdditions statement = new InstallGuestAdditions("4.1.6");
+      assertEquals(statement.render(OsFamily.UNIX),
+            CharStreams.toString(Resources.newReaderSupplier(
+                  Resources.getResource("test_guest_additions_installer." + ShellToken.SH.to(OsFamily.UNIX)),
+                  Charsets.UTF_8)));
+   }
+
+   @Test
+   public void testUnixInInitScript() throws IOException {
+      Statement statement = new InitBuilder("install_guest_additions", ImmutableSet.<Statement> of(),
+            ImmutableSet.<Statement> of(new InstallGuestAdditions("4.1.6")));
+
+      assertEquals(statement.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(
+            Resources.getResource("test_guest_additions_installer_init." + ShellToken.SH.to(OsFamily.UNIX)),
+            Charsets.UTF_8)));
+   }
 }

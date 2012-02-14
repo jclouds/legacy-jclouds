@@ -22,34 +22,31 @@ package org.jclouds.virtualbox.statements;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.scriptbuilder.domain.Statements.call;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
+import static org.jclouds.scriptbuilder.domain.Statements.saveHttpResponseTo;
 
 import java.net.URI;
-import java.util.Collections;
 
-import org.jclouds.scriptbuilder.ScriptBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
-import org.jclouds.scriptbuilder.domain.SaveHttpResponseTo;
-import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.scriptbuilder.domain.StatementList;
 
-import com.google.common.collect.ImmutableMultimap;
-
-public class InstallGuestAdditions implements Statement {
-
-   private final String vboxVersion;
-   private final String mountPoint;
+public class InstallGuestAdditions extends StatementList {
 
    public InstallGuestAdditions(String vboxVersion) {
-      this(vboxVersion, "/mnt");
+      this(vboxVersion, "/mnt", "VBoxGuestAdditions_" + vboxVersion + ".iso");
    }
 
-   public InstallGuestAdditions(String vboxVersion, String mountPoint) {
-      this.vboxVersion = checkNotNull(vboxVersion, "vboxVersion");
-      this.mountPoint = checkNotNull(mountPoint, "mountPoint");
+   public InstallGuestAdditions(String vboxVersion, String mountPoint, String vboxGuestAdditionsIso) {
+      this(URI.create("http://download.virtualbox.org/virtualbox/" + vboxVersion + "/" + vboxGuestAdditionsIso),
+            mountPoint, vboxGuestAdditionsIso);
    }
 
-   @Override
-   public Iterable<String> functionDependencies(OsFamily family) {
-      return Collections.emptyList();
+   public InstallGuestAdditions(URI download, String mountPoint, String vboxGuestAdditionsIso) {
+      super(call("setupPublicCurl"), //
+            saveHttpResponseTo(download, "{tmp}{fs}", vboxGuestAdditionsIso),//
+            exec(String.format("mount -o loop {tmp}{fs}%s %s", vboxGuestAdditionsIso, mountPoint)),
+            call("installModuleAssistantIfNeeded"), //
+            exec(String.format("%s%s", mountPoint, "/VBoxLinuxAdditions.run")), //
+            exec(String.format("umount %s", mountPoint)));
    }
 
    @Override
@@ -57,19 +54,6 @@ public class InstallGuestAdditions implements Statement {
       checkNotNull(family, "family");
       if (family == OsFamily.WINDOWS)
          throw new UnsupportedOperationException("windows not yet implemented");
-
-      String vboxGuestAdditionsIso = "VBoxGuestAdditions_" + vboxVersion + ".iso";
-      ScriptBuilder scriptBuilder = new ScriptBuilder()
-            .addStatement(
-                  new SaveHttpResponseTo("{tmp}{fs}", vboxGuestAdditionsIso, "GET", URI
-                        .create("http://download.virtualbox.org/virtualbox/" + vboxVersion + "/"
-                              + vboxGuestAdditionsIso), ImmutableMultimap.<String, String> of()))
-            .addStatement(exec(String.format("mount -o loop {tmp}{fs}%s %s", vboxGuestAdditionsIso, mountPoint)))
-            .addStatement(call("installModuleAssistantIfNeeded"))
-            .addStatement(exec(String.format("%s%s", mountPoint, "/VBoxLinuxAdditions.run")))
-            .addStatement(exec(String.format("umount %s", mountPoint)));
-
-      return scriptBuilder.render(family);
+      return super.render(family);
    }
-
 }
