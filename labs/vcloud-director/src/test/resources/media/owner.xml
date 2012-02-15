@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Owner xmlns="http://www.vmware.com/vcloud/v1.5" type="application/vnd.vmware.vcloud.owner+xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://mycloud.greenhousedata.com/api/v1.5/schema/master.xsd">
+    <Link rel="up" type="application/vnd.vmware.vcloud.media+xml" href="https://mycloud.greenhousedata.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1"/>
+    <User type="application/vnd.vmware.admin.user+xml" name="acole" href="https://mycloud.greenhousedata.com/api/admin/user/c090335b-708c-4c1c-9e3d-89560d002120"/>
+</Owner>

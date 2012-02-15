@@ -43,26 +43,32 @@ public interface VCloudDirectorAsyncClient {
    Session getCurrentSession();
 
    /**
-    * @return asynchronous access to Org features
+    * @return asynchronous access to {@link Org} features
     */
    @Delegate
    OrgAsyncClient getOrgClient();
    
    /**
-    * @return asynchronous access to Task features
+    * @return asynchronous access to {@link Task} features
     */
    @Delegate
    TaskAsyncClient getTaskClient();
    
    /**
-    * @return asynchronous access to Network features
+    * @return asynchronous access to {@link Network} features
     */
    @Delegate
    NetworkAsyncClient getNetworkClient();
    
    /**
-    * @return asynchronous access to Catalog features
+    * @return asynchronous access to {@link Catalog} features
     */
    @Delegate
    CatalogAsyncClient getCatalogClient();
+   
+   /**
+    * @return asynchronous access to {@link Media} features
+    */
+   @Delegate
+   CatalogAsyncClient getMediaClient();
 }

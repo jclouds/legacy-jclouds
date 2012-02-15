@@ -44,6 +44,8 @@ import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 import org.jclouds.vcloud.director.v1_5.features.CatalogAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
+import org.jclouds.vcloud.director.v1_5.features.MediaAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.MediaClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgAsyncClient;
@@ -80,6 +82,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
             .put(CatalogClient.class, CatalogAsyncClient.class)
             .put(NetworkClient.class, NetworkAsyncClient.class)
             .put(OrgClient.class, OrgAsyncClient.class)
+            .put(MediaClient.class, MediaAsyncClient.class)
             .put(TaskClient.class, TaskAsyncClient.class)
             .build();
 

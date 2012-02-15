@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Metadata type="application/vnd.vmware.vcloud.metadata+xml" href="https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1/metadata" xmlns="http://www.vmware.com/vcloud/v1.5">
+    <Link rel="up" type="application/vnd.vmware.vcloud.media+xml" href="https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1"/>
+    <MetadataEntry>
+        <Key>key</Key>
+        <Value>value</Value>
+    </MetadataEntry>
+</Metadata>
