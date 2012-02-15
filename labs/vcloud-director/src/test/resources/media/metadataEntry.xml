@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MetadataEntry xmlns="http://www.vmware.com/vcloud/v1.5" href="https://vcloudbeta.bluelock.com/api/cmedia/794eb334-754e-4917-b5a0-5df85cbd61d1/metadata/key" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd">
+    <Link rel="up" type="application/vnd.vmware.vcloud.metadata+xml" href="https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1/metadata"/>
+    <Key>key</Key>
+    <Value>value</Value>
+</MetadataEntry>
