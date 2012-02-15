@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.director.v1_5.internal;
 
 import static org.testng.Assert.assertNotNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 
@@ -30,7 +31,9 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.testng.annotations.BeforeGroups;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import com.google.inject.Guice;
 
 /**
@@ -97,7 +100,7 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
    
    protected HttpRequest getStandardPayloadRequest(String method, URI uri, String relativeFilePath, 
          String postMediaType) {
-      return getStandardPayloadRequest(method, uri, VCloudDirectorMediaType.ANY, relativeFilePath, postMediaType);
+      return getStandardRequestWithPayload(method, uri, VCloudDirectorMediaType.ANY, relativeFilePath, postMediaType);
    }
    
    protected HttpRequest getStandardRequest(String method, URI uri, String mediaType) {
@@ -111,19 +114,6 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
             .build();
    }
    
-   protected HttpRequest getStandardPayloadRequest(String method, URI uri, String mediaType, 
-         String relativeFilePath, String postMediaType) {
-      return HttpRequest.builder()
-            .method(method)
-            .endpoint(uri)
-            .headers(ImmutableMultimap.<String, String> builder()
-                  .put("Accept", mediaType)
-                  .put("x-vcloud-authorization", token)
-                  .build())
-            .payload(payloadFromResourceWithContentType(relativeFilePath, postMediaType))
-            .build();
-   }
-
    protected HttpRequest getStandardRequestWithPayload(String method, String path, String relativeFilePath, String mediaType) {
       return getStandardRequestWithPayload(method, path, VCloudDirectorMediaType.ANY, relativeFilePath, mediaType);
    }
@@ -158,5 +148,69 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
             .statusCode(statusCode)
             .payload(payloadFromResourceWithContentType(relativeFilePath, mediaType + ";version=1.5"))
             .build();
+   }
+      
+   /**
+    * Implicitly adds x-vcloud-authorization header with token. 
+    * Provides convenience methods for priming a HttpRequest.Builder for vCloud testing
+    *
+    * @author danikov
+    *
+    */
+   protected class VcloudHttpRequestPrimer {
+      private Multimap<String, String> headers = ArrayListMultimap.create();
+      private HttpRequest.Builder builder = HttpRequest.builder();
+      
+      public VcloudHttpRequestPrimer() {
+      }
+
+      public VcloudHttpRequestPrimer apiCommand(String method, String command) {
+         builder.method(method).endpoint(URI.create(endpoint + command));
+         return this;
+      }
+      
+      public VcloudHttpRequestPrimer xmlFilePayload(String relativeFilePath, String mediaType) {
+         builder.payload(payloadFromResourceWithContentType(relativeFilePath, mediaType));
+         return this;
+      }
+      
+      public VcloudHttpRequestPrimer headers(Multimap<String, String> headers) {
+         this.headers.putAll(ImmutableMultimap.copyOf(checkNotNull(headers, "headers")));
+         return this;
+      }
+      
+      public VcloudHttpRequestPrimer acceptAnyMedia() {
+         return acceptMedia(VCloudDirectorMediaType.ANY);
+      }
+      
+      public VcloudHttpRequestPrimer acceptMedia(String media) {
+         return header("Accept", media);
+      }
+      
+      public VcloudHttpRequestPrimer header(String name, String value) {
+         headers.put(checkNotNull(name, "header.name"), checkNotNull(value, "header.value"));
+         return this;
+      }
+      
+      public HttpRequest.Builder httpRequestBuilder() {
+         header("x-vcloud-authorization", token);
+         builder.headers(headers);
+         return builder;
+      }
+   }
+   
+   protected class VcloudHttpResponsePrimer {
+      private HttpResponse.Builder builder = HttpResponse.builder();
+
+      public VcloudHttpResponsePrimer() {
+      }
+
+      public VcloudHttpResponsePrimer xmlFilePayload(String relativeFilePath, String mediaType) {
+         builder.payload(payloadFromResourceWithContentType(relativeFilePath, mediaType));
+         return this;
+      }
+      public HttpResponse.Builder httpResponseBuilder() {
+         return builder;
+      }
    }
 }
