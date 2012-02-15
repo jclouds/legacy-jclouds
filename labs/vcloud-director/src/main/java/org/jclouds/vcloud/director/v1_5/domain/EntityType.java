@@ -143,6 +143,7 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       /**
        * {@inheritDoc}
        */
+      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> fromResourceType(ResourceType<T> in) {
          return Builder.class.cast(super.fromResourceType(in));

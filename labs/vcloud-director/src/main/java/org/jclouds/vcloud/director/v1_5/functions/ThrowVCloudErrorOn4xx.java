@@ -45,7 +45,7 @@ public class ThrowVCloudErrorOn4xx implements Function<Exception, Object> {
    public Object apply(Exception from) {
       Iterable<HttpResponseException> throwables = Iterables.filter(Throwables.getCausalChain(from), HttpResponseException.class);
       HttpResponseException exception = Iterables.getFirst(throwables, null);
-      if (exception != null && exception.getResponse().getStatusCode() >= 400 && exception.getResponse().getStatusCode() < 500) {
+      if (exception != null && exception.getResponse() != null && exception.getResponse().getStatusCode() >= 400 && exception.getResponse().getStatusCode() < 500) {
          try {
             Error error = JAXB.unmarshal(InputSuppliers.of(exception.getContent()).getInput(), Error.class);
             throw new VCloudDirectorException(error);
