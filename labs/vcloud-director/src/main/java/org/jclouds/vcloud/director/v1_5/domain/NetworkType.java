@@ -32,46 +32,34 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Sets;
 
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "OrgNetwork")
-public class OrgNetwork extends NetworkType<OrgNetwork> {
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "NetworkType")
+public class NetworkType<T extends NetworkType<T>> extends EntityType<T> {
    
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   public static <T extends NetworkType<T>> Builder<T> builder() {
+      return new Builder<T>();
    }
 
    @Override
-   public Builder toBuilder() {
-      return new Builder().fromOrgNetwork(this);
+   public Builder<T> toBuilder() {
+      return new Builder<T>().fromNetworkType(this);
    }
 
-   public static class Builder extends NetworkType.Builder<OrgNetwork> {
+   public static class Builder<T extends NetworkType<T>> extends EntityType.Builder<T> {
 
-      private ReferenceType<?> networkPool;
-      private IpAddresses allowedExternalIpAddresses;
+      protected NetworkConfiguration networkConfiguration;
       
       /**
-       * @see OrgNetwork#getNetworkPool()
+       * @see NetworkType#getConfiguration()
        */
-      public Builder networkPool(ReferenceType<?> networkPool) {
-         this.networkPool = networkPool;
-         return this;
-      }
-
-      /**
-       * @see OrgNetwork#getAllowedExternalIpAddresses()
-       */
-      public Builder allowedExternalIpAddresses(IpAddresses allowedExternalIpAddresses) {
-         this.allowedExternalIpAddresses = allowedExternalIpAddresses;
+      public Builder<T> configuration(NetworkConfiguration networkConfiguration) {
+         this.networkConfiguration = networkConfiguration;
          return this;
       }
       
       @Override
-      public OrgNetwork build() {
-         OrgNetwork network = new OrgNetwork(href, name);
+      public NetworkType<T> build() {
+         NetworkType<T> network = new NetworkType<T>(href, name);
          network.setConfiguration(networkConfiguration);
-         network.setNetworkPool(networkPool);
-         network.setAllowedExternalIpAddresses(allowedExternalIpAddresses);
          network.setDescription(description);
          network.setId(id);
          network.setType(type);
@@ -79,20 +67,12 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
          network.setTasksInProgress(tasksInProgress);
          return network;
       }
-      
-      /**
-       * @see NetworkType#getConfiguration()
-       */
-      public Builder configuration(NetworkConfiguration networkConfiguration) {
-         this.networkConfiguration = networkConfiguration;
-         return this;
-      }
 
       /**
        * @see EntityType#getName()
        */
       @Override
-      public Builder name(String name) {
+      public Builder<T> name(String name) {
          this.name = name;
          return this;
       }
@@ -101,7 +81,7 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
        * @see EntityType#getDescription()
        */
       @Override
-      public Builder description(String description) {
+      public Builder<T> description(String description) {
          this.description = description;
          return this;
       }
@@ -110,7 +90,7 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
        * @see EntityType#getId()
        */
       @Override
-      public Builder id(String id) {
+      public Builder<T> id(String id) {
          this.id = id;
          return this;
       }
@@ -119,7 +99,7 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
        * @see EntityType#getTasksInProgress()
        */
       @Override
-      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
+      public Builder<T> tasksInProgress(TasksInProgress tasksInProgress) {
          this.tasksInProgress = tasksInProgress;
          return this;
       }
@@ -128,7 +108,7 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
        * @see ReferenceType#getHref()
        */
       @Override
-      public Builder href(URI href) {
+      public Builder<T> href(URI href) {
          this.href = href;
          return this;
       }
@@ -137,7 +117,7 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
        * @see ReferenceType#getType()
        */
       @Override
-      public Builder type(String type) {
+      public Builder<T> type(String type) {
          this.type = type;
          return this;
       }
@@ -146,7 +126,7 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
        * @see ReferenceType#getLinks()
        */
       @Override
-      public Builder links(Set<Link> links) {
+      public Builder<T> links(Set<Link> links) {
          this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
          return this;
       }
@@ -155,76 +135,63 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
        * @see ReferenceType#getLinks()
        */
       @Override
-      public Builder link(Link link) {
+      public Builder<T> link(Link link) {
          this.links.add(checkNotNull(link, "link"));
          return this;
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      @SuppressWarnings("unchecked")
       @Override
-      public Builder fromEntityType(EntityType<OrgNetwork> in) {
+      public Builder<T> fromEntityType(EntityType<T> in) {
          return Builder.class.cast(super.fromEntityType(in));
       }
 
-      public Builder fromOrgNetwork(OrgNetwork in) {
-         return fromEntityType(in).configuration(in.getConfiguration())
-               .networkPool(in.getNetworkPool())
-               .allowedExternalIpAddresses(in.getAllowedExternalIpAddresses());
+      public Builder<T> fromNetworkType(NetworkType<T> in) {
+         return fromEntityType(in).configuration(in.getConfiguration());
       }
    }
 
-   private OrgNetwork() {
+   protected NetworkType() {
       // For JAXB and builder use
    }
    
-   private OrgNetwork(URI href, String name) {
+   protected NetworkType(URI href, String name) {
       super(href, name);
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "NetworkPool")
-   private ReferenceType<?> networkPool;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "AllowedExternalIpAddresses")
-   private IpAddresses allowedExternalIpAddresses;
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Configuration")
+   private NetworkConfiguration networkConfiguration;
 
    /**
-    * @return optional network pool
+    * @return optional configuration
     */
-   public ReferenceType<?> getNetworkPool() {
-      return networkPool;
+   public NetworkConfiguration getConfiguration() {
+      return networkConfiguration;
    }
    
-   public void setNetworkPool(ReferenceType<?> networkPool) {
-      this.networkPool = networkPool;
-   }
-   
-   /**
-    * @return optional network pool
-    */
-   public IpAddresses getAllowedExternalIpAddresses() {
-      return allowedExternalIpAddresses;
-   }
-   
-   public void setAllowedExternalIpAddresses(IpAddresses allowedExternalIpAddresses) {
-      this.allowedExternalIpAddresses = allowedExternalIpAddresses;
+   public void setConfiguration(NetworkConfiguration networkConfiguration) {
+      this.networkConfiguration = networkConfiguration;
    }
    
    @Override
    public boolean equals(Object o) {
       if (!super.equals(o))
          return false;
-      OrgNetwork that = OrgNetwork.class.cast(o);
-      return super.equals(that) && equal(networkPool, that.networkPool) && 
-            equal(allowedExternalIpAddresses, that.allowedExternalIpAddresses);
+      NetworkType<?> that = NetworkType.class.cast(o);
+      return super.equals(that) && equal(networkConfiguration, that.networkConfiguration);
    }
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(networkPool, allowedExternalIpAddresses);
+      return super.hashCode() + Objects.hashCode(networkConfiguration);
    }
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("networkPool", networkPool)
-            .add("allowedExternalIpAddresses", allowedExternalIpAddresses);
+      return super.string().add("configuration", networkConfiguration);
    }
 
 }
