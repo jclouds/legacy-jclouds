@@ -169,7 +169,8 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
                   for (int memorySizeMB : platformToArgs.getValue().getMemorySizesInMB()) {
                      ImmutableSet.Builder<String> templatesSupportedBuilder = ImmutableSet.<String> builder();
                      for (OSTemplate template : images) {
-                        if (diskSizeGB >= template.getMinDiskSize() && memorySizeMB >= template.getMinMemSize())
+                        if (template.getPlatform().equals(platformToArgs.getKey())
+                              && diskSizeGB >= template.getMinDiskSize() && memorySizeMB >= template.getMinMemSize())
                            templatesSupportedBuilder.add(template.getName());
                      }
                      ImmutableSet<String> templatesSupported = templatesSupportedBuilder.build();

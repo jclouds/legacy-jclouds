@@ -88,7 +88,7 @@ public class GleSYSComputeServiceContextModule
    // 128MB is perhaps too little ram
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.minRam(512).osFamily(OsFamily.UBUNTU).osVersionMatches("1[10].[10][04]").os64Bit(true);
+      return template.minRam(512).osFamily(OsFamily.UBUNTU).hypervisorMatches("OpenVZ").osVersionMatches("1[10].[10][04]").os64Bit(true);
    }
 
    @Named("PASSWORD")

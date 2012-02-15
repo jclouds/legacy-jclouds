@@ -82,13 +82,13 @@ public class GleSYSTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getId(), "Ubuntu 11.04 x64");
+      assertEquals(defaultTemplate.getImage().getId(), "Ubuntu 11.04 64-bit");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
       assertEquals(defaultTemplate.getHardware().getRam(), 512);
-      assertEquals(defaultTemplate.getHardware().getHypervisor(), "Xen");
+      assertEquals(defaultTemplate.getHardware().getHypervisor(), "OpenVZ");
       assertEquals(getSpace(defaultTemplate.getHardware()), 5.0d);
       assertEquals(defaultTemplate.getHardware().getVolumes().get(0).getType(), Volume.Type.LOCAL);
       // test that we bound the correct templateoptions in guice
