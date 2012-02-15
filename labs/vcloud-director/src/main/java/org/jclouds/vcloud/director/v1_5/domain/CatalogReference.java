@@ -6,8 +6,7 @@ import java.net.URI;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "catalogReference")
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "CatalogReference")
 public class CatalogReference extends ReferenceType<CatalogReference> {
 
    @SuppressWarnings("unchecked")
@@ -91,7 +90,7 @@ public class CatalogReference extends ReferenceType<CatalogReference> {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      Reference that = Reference.class.cast(o);
+      CatalogReference that = CatalogReference.class.cast(o);
       return super.equals(that);
    }
 }

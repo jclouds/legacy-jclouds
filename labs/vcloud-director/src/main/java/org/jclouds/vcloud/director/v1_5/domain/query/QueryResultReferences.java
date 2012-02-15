@@ -21,15 +21,16 @@ package org.jclouds.vcloud.director.v1_5.domain.query;
 
 import static com.google.common.base.Objects.*;
 import static com.google.common.base.Preconditions.*;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.CatalogReference;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 
@@ -121,6 +122,15 @@ public class QueryResultReferences<T extends ReferenceType<T>> extends Container
       }
 
       /**
+       * @see Container#getTotal()
+       */
+      @Override
+      public Builder<T> total(Long total) {
+         this.total = total;
+         return this;
+      }
+
+      /**
        * @see ResourceType#getHref()
        */
       @Override
@@ -174,7 +184,10 @@ public class QueryResultReferences<T extends ReferenceType<T>> extends Container
       super(href);
    }
 
-   @XmlElementRef(name = "Reference", namespace = VCLOUD_1_5_NS)
+   // NOTE add other types as they are used. probably not the best way to do this.
+   @XmlElementRefs({
+       @XmlElementRef(type = CatalogReference.class)
+   })
    protected List<T> references;
 
    /**
