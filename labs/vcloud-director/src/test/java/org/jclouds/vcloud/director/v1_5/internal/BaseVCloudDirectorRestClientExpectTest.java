@@ -18,8 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.internal;
 
-import static org.testng.Assert.assertNotNull;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
 
@@ -31,8 +31,8 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.testng.annotations.BeforeGroups;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.Guice;
 
@@ -158,7 +158,7 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
     *
     */
    protected class VcloudHttpRequestPrimer {
-      private Multimap<String, String> headers = ArrayListMultimap.create();
+      private Multimap<String, String> headers = LinkedListMultimap.create();
       private HttpRequest.Builder builder = HttpRequest.builder();
       
       public VcloudHttpRequestPrimer() {

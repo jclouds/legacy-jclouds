@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Media xmlns="http://www.vmware.com/vcloud/v1.5" size="175163392" imageType="iso" status="1" name="DansTestMedia" id="urn:vcloud:media:794eb334-754e-4917-b5a0-5df85cbd61d1" type="application/vnd.vmware.vcloud.media+xml" href="https://mycloud.greenhousedata.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://mycloud.greenhousedata.com/api/v1.5/schema/master.xsd">
+    <Link rel="up" type="application/vnd.vmware.vcloud.vdc+xml" href="https://mycloud.greenhousedata.com/api/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f"/>
+    <Link rel="catalogItem" type="application/vnd.vmware.vcloud.catalogItem+xml" href="https://mycloud.greenhousedata.com/api/catalogItem/1979d680-304e-4118-9283-9210c3b3ed8d"/>
+    <Link rel="remove" href="https://mycloud.greenhousedata.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1"/>
+    <Link rel="edit" type="application/vnd.vmware.vcloud.media+xml" href="https://mycloud.greenhousedata.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.owner+xml" href="https://mycloud.greenhousedata.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1/owner"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml" href="https://mycloud.greenhousedata.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1/metadata"/>
+    <Description>Windows 2003 R2 Disk2 Standard 32bit &amp; 64bit</Description>
+    <Owner type="application/vnd.vmware.vcloud.owner+xml">
+        <User type="application/vnd.vmware.admin.user+xml" name="acole" href="https://mycloud.greenhousedata.com/api/admin/user/c090335b-708c-4c1c-9e3d-89560d002120"/>
+    </Owner>
+</Media>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Media size="175163392" imageType="iso" xmlns="http://www.vmware.com/vcloud/v1.5">
+    <Owner>
+        <User type="application/vnd.vmware.admin.user+xml" name="acole" href="https://mycloud.greenhousedata.com/api/admin/user/c090335b-708c-4c1c-9e3d-89560d002120"/>
+    </Owner>
+</Media>
