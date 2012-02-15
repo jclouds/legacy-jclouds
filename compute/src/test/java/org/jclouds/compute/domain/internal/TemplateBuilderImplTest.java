@@ -824,6 +824,7 @@ public class TemplateBuilderImplTest {
                         .ids("Ubuntu 11.04 x64")
                         .name("Ubuntu 11.04 x64")
                         .description("Ubuntu 11.04 x64")
+                        .location(defaultLocation)
                         .operatingSystem(
                               OperatingSystem.builder().name("Ubuntu 11.04 x64").description("Ubuntu 11.04 x64")
                                     .is64Bit(true).version("11.04").family(OsFamily.UBUNTU).build()).build(),
@@ -831,6 +832,7 @@ public class TemplateBuilderImplTest {
                         .ids("Ubuntu 11.04 64-bit")
                         .name("Ubuntu 11.04 64-bit")
                         .description("Ubuntu 11.04 64-bit")
+                        .location(defaultLocation)
                         .operatingSystem(
                               OperatingSystem.builder().name("Ubuntu 11.04 64-bit").description("Ubuntu 11.04 64-bit")
                                     .is64Bit(true).version("11.04").family(OsFamily.UBUNTU).build()).build()));
@@ -868,6 +870,7 @@ public class TemplateBuilderImplTest {
          }
 
       };
+      expect(defaultLocation.getId()).andReturn("region").anyTimes();
 
       replay(defaultLocation);
 
