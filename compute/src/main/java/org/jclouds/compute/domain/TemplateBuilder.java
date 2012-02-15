@@ -68,6 +68,11 @@ public interface TemplateBuilder {
     * configure this template to the largest hardware, based on cores, ram, then disk
     */
    TemplateBuilder biggest();
+   
+   /**
+    * Configure this template to have an hypervisor that matches the regular expression
+    */
+   TemplateBuilder hypervisorMatches(String hypervisorRegex);
 
    /**
     * Configure this template to use a specific operating system image.

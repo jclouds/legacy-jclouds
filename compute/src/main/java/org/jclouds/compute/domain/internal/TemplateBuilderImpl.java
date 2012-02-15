@@ -89,6 +89,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @VisibleForTesting
    protected String hardwareId;
    @VisibleForTesting
+   protected String hypervisor;
+   @VisibleForTesting
    protected String imageVersion;
    @VisibleForTesting
    protected OsFamily osFamily;
@@ -347,12 +349,17 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          return "imageDescription(" + imageDescription + ")";
       }
    };
+   
    private final Predicate<Hardware> hardwareIdPredicate = new Predicate<Hardware>() {
       @Override
       public boolean apply(Hardware input) {
          boolean returnVal = true;
          if (hardwareId != null) {
             returnVal = hardwareId.equals(input.getId());
+            // match our input params so that the later predicates pass.
+            if (returnVal) {
+               fromHardware(input);
+            }
          }
          return returnVal;
       }
@@ -360,6 +367,26 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       @Override
       public String toString() {
          return "hardwareId(" + hardwareId + ")";
+      }
+   };
+   
+   private final Predicate<Hardware> hypervisorPredicate = new Predicate<Hardware>() {
+      @Override
+      public boolean apply(Hardware input) {
+         boolean returnVal = true;
+         if (hypervisor != null) {
+            if (input.getHypervisor() == null)
+               returnVal = false;
+            else
+               returnVal = input.getHypervisor().contains(hypervisor)
+                     || input.getHypervisor().matches(hypervisor);
+         }
+         return returnVal;
+      }
+
+      @Override
+      public String toString() {
+         return "hypervisorMatches(" + hypervisor + ")";
       }
    };
 
@@ -406,6 +433,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                   return locationPredicate.toString();
                }
             });
+         if (hypervisor != null)
+            predicates.add(hypervisorPredicate);
          predicates.add(hardwareCoresPredicate);
          predicates.add(hardwareRamPredicate);
       }
@@ -466,6 +495,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          this.location = hardware.getLocation();
       this.minCores = getCores(hardware);
       this.minRam = hardware.getRam();
+      this.hypervisor = hardware.getHypervisor();
       return this;
    }
 
@@ -901,9 +931,19 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @Override
    public TemplateBuilder hardwareId(String hardwareId) {
       this.hardwareId = hardwareId;
+      this.hypervisor = null;
       return this;
    }
-
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public TemplateBuilder hypervisorMatches(String hypervisor) {
+      this.hypervisor = hypervisor;
+      return this;
+   }
+   
    /**
     * {@inheritDoc}
     */
@@ -916,10 +956,10 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
    @VisibleForTesting
    boolean nothingChangedExceptOptions() {
-      return osFamily == null && location == null && imageId == null && hardwareId == null && osName == null
-            && imagePredicate == null && osDescription == null && imageVersion == null && osVersion == null
-            && osArch == null && os64Bit == null && imageName == null && imageDescription == null && minCores == 0
-            && minRam == 0 && !biggest && !fastest;
+      return osFamily == null && location == null && imageId == null && hardwareId == null && hypervisor == null
+            && osName == null && imagePredicate == null && osDescription == null && imageVersion == null
+            && osVersion == null && osArch == null && os64Bit == null && imageName == null && imageDescription == null
+            && minCores == 0 && minRam == 0 && !biggest && !fastest;
    }
 
    /**
@@ -936,7 +976,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             + imageDescription + ", imageId=" + imageId + ", imagePredicate=" + imagePredicate + ", imageVersion=" + imageVersion + ", location=" + location
             + ", minCores=" + minCores + ", minRam=" + minRam + ", osFamily=" + osFamily + ", osName=" + osName
             + ", osDescription=" + osDescription + ", osVersion=" + osVersion + ", osArch=" + osArch + ", os64Bit="
-            + os64Bit + ", hardwareId=" + hardwareId + "]";
+            + os64Bit + ", hardwareId=" + hardwareId + ", hypervisor=" + hypervisor + "]";
    }
 
    @Override
