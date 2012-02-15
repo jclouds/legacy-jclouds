@@ -69,10 +69,12 @@ public class VCloudDirectorMediaType {
 
    public static final String OWNER = "application/vnd.vmware.vcloud.owner+xml";
 
+   public static final String QUERY_RESULT_RECORDS = "application/vnd.vmware.vcloud.query.records+xml";
+
    public static final List<String> ALL = Arrays.asList(
         SESSION, ERROR, ORG_LIST, METADATA, METADATA_ENTRY,
         METADATA_VALUE, ORG, TASKS_LIST, TASK, ORG_NETWORK,
         CATALOG, CATALOG_ITEM, CATALOG_ITEMS, CATALOGS_LIST, PROPERTY,
-        MEDIA, OWNER
+        MEDIA, OWNER, QUERY_RESULT_RECORDS
      );
 }

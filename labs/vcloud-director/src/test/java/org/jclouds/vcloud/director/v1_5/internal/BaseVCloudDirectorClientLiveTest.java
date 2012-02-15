@@ -125,3 +125,4 @@ public class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTe
       taskClient.cancelTask(taskUri);
    }
 }
+

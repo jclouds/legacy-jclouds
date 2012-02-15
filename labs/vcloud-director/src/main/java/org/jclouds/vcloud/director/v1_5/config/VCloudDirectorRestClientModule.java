@@ -17,8 +17,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.config;
 
-import static com.google.common.base.Throwables.propagate;
-import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+import static com.google.common.base.Throwables.*;
+import static org.jclouds.rest.config.BinderUtils.*;
 
 import java.net.URI;
 import java.util.Map;
@@ -50,6 +50,8 @@ import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgClient;
+import org.jclouds.vcloud.director.v1_5.features.QueryAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.QueryClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 import org.jclouds.vcloud.director.v1_5.functions.LoginUserInOrgWithPassword;
@@ -82,6 +84,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
             .put(CatalogClient.class, CatalogAsyncClient.class)
             .put(NetworkClient.class, NetworkAsyncClient.class)
             .put(OrgClient.class, OrgAsyncClient.class)
+            .put(QueryClient.class, QueryAsyncClient.class)
             .put(MediaClient.class, MediaAsyncClient.class)
             .put(TaskClient.class, TaskAsyncClient.class)
             .build();

@@ -105,7 +105,7 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       }
 
       /**
-       * @see ReferenceType#getHref()
+       * @see ResourceType#getHref()
        */
       @Override
       public Builder<T> href(URI href) {
@@ -114,7 +114,7 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       }
 
       /**
-       * @see ReferenceType#getType()
+       * @see ResourceType#getType()
        */
       @Override
       public Builder<T> type(String type) {
@@ -123,7 +123,7 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see ResourceType#getLinks()
        */
       @Override
       public Builder<T> links(Set<Link> links) {
@@ -132,7 +132,7 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see ResourceType#getLinks()
        */
       @Override
       public Builder<T> link(Link link) {
