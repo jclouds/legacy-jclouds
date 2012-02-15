@@ -54,7 +54,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       //TODO assert network is valid
    }
    
-   @Test(testName = "GET /network/NOTAUUID")
+   @Test(testName = "GET /network/NOTAUUID", enabled=false)
    public void testWhenResponseIs400ForInvalidNetworkId() {
       Reference networkRef = Reference.builder()
             .href(URI.create(endpoint + "/network/NOTAUUID")).build();
@@ -75,7 +75,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
-   @Test(testName = "GET /network/{catalog_id}")
+   @Test(testName = "GET /network/{catalog_id}", enabled=false)
    public void testWhenResponseIs403ForCatalogIdUsedAsNetworkId() {
       Reference networkRef = Reference.builder()
             .href(URI.create(endpoint + "/network"+catalogId)).build();
@@ -132,7 +132,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    String metadataKey = "key";
    
    //TODO depends on previous
-   @Test(testName = "GET /network/{id}/metadata")
+   @Test(testName = "GET /network/{id}/metadata", enabled=false)
    public void testWhenResponseIs2xxLoginReturnsValidMetadataEntry() {
       Reference networkRef = Reference.builder()
             .href(URI.create(endpoint + "/network/"+networkId)).build();
