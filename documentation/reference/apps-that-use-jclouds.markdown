@@ -16,6 +16,9 @@ title: A List of applications that use jclouds
   * [Red Hat](https://openshift.redhat.com/app/flex)
     * uses jclouds to deploy OpenShift Flex applications to Terremark, Rackspace and EC2
 
+  * [EnterpriseDB](http://www.enterprisedb.com/products-services-training/products-overview/postgres-plus-cloud-database)
+    * is using jclouds in their DBaaS public and private cloud offering, Postgres Plus Cloud Database
+
   * [ I N F I N I S P A N](http://www.jboss.org/infinispan)
     * utilizes jclouds to persist the state of the grid to blobstores such as  Amazon S3
 
