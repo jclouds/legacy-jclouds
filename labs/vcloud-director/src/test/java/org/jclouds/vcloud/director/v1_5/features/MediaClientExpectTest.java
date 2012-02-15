@@ -137,7 +137,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
                .acceptAnyMedia()
                .httpRequestBuilder().build(), 
             new VcloudHttpResponsePrimer()
-               .xmlFilePayload("/media/error403-fake.xm", VCloudDirectorMediaType.ERROR)
+               .xmlFilePayload("/media/error403-fake.xml", VCloudDirectorMediaType.ERROR)
                .httpResponseBuilder().statusCode(403).build());
  
       Error expected = Error.builder()
@@ -165,17 +165,18 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer()
                .apiCommand("PUT", "/media/794eb334-754e-4917-b5a0-5df85cbd61d1")
-               .xmlFilePayload("/media/media.xml", VCloudDirectorMediaType.MEDIA)
-               .acceptMedia(VCloudDirectorMediaType.MEDIA)
+               .xmlFilePayload("/media/updateMedia.xml", VCloudDirectorMediaType.MEDIA)
+               .acceptMedia(VCloudDirectorMediaType.TASK)
                .httpRequestBuilder().build(), 
             new VcloudHttpResponsePrimer()
-               .xmlFilePayload("/media/media.xml", VCloudDirectorMediaType.MEDIA)
+               .xmlFilePayload("/media/updateMediaTask.xml", VCloudDirectorMediaType.TASK)
                .httpResponseBuilder().build());
       
-      Media expected = media();
+      Media update = updateMedia();
+      Task expected = updateMediaTask();
       Reference mediaRef = Reference.builder().href(mediaUri).build();
 
-      assertEquals(client.getMediaClient().updateMedia(mediaRef, expected), expected);
+      assertEquals(client.getMediaClient().updateMedia(mediaRef, update), expected);
    }
    
    @Test
@@ -185,16 +186,13 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("DELETE", "/media/794eb334-754e-4917-b5a0-5df85cbd61d1")
-               .acceptAnyMedia()
+               .acceptMedia(VCloudDirectorMediaType.TASK)
                .httpRequestBuilder().build(), 
             new VcloudHttpResponsePrimer()
                .xmlFilePayload("/media/deleteMediaTask.xml", VCloudDirectorMediaType.TASK)
                .httpResponseBuilder().build());
       
-      Task expected = Task.builder()
-         
-         .build();
-      
+      Task expected = deleteMediaTask();
       Reference mediaRef = Reference.builder().href(mediaUri).build();
 
       assertEquals(client.getMediaClient().deleteMedia(mediaRef), expected);
@@ -236,14 +234,11 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       
       Reference mediaRef = Reference.builder().href(mediaUri).build();
       Metadata inputMetadata = metadata();
-      Task expectedTask = Task.builder()
-         
-         .build();
+      Task expectedTask = mergeMetadataTask();
 
       assertEquals(client.getMediaClient().mergeMetadata(mediaRef, inputMetadata), expectedTask);
    }
    
-   @Test(enabled=false) // No metadata in exemplar xml...
    public void testWhenResponseIs2xxLoginReturnsValidMetadataEntry() {
       URI mediaUri = URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
       
@@ -256,8 +251,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
                .xmlFilePayload("/media/metadataEntry.xml", VCloudDirectorMediaType.METADATA_ENTRY)
                .httpResponseBuilder().build());
       
-      MetadataEntry expected = MetadataEntry.builder()
-            .build();
+      MetadataEntry expected = metadataEntry();
       
       Reference mediaRef = Reference.builder().href(mediaUri).build();
 
@@ -266,7 +260,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    
    @Test
    public void testWhenResponseIs2xxLoginSetMetadataReturnsValidTask() {
-      URI mediaUri = URI.create("https://vcloudbeta.bluelock.com/api/media/");
+      URI mediaUri = URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -281,28 +275,26 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       Reference mediaRef = Reference.builder().href(mediaUri).build();
       MetadataValue inputMetadataValue = MetadataValue.builder().value("value").build();
       
-      Task expectedTask = setMetadataTask();
+      Task expectedTask = setMetadataEntryTask();
 
       assertEquals(client.getMediaClient().setMetadata(mediaRef, "key", inputMetadataValue), expectedTask);
    }
    
    @Test
-   public void testWhenResponseIs2xxLoginDeleteMetadataReturnsValidTask() {
+   public void testWhenResponseIs2xxLoginDeleteMetadataEntryReturnsValidTask() {
       URI mediaUri = URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("DELETE", "/media/794eb334-754e-4917-b5a0-5df85cbd61d1/metadata/key")
-               .acceptAnyMedia()
+               .acceptMedia(VCloudDirectorMediaType.TASK)
                .httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer()
-               .xmlFilePayload("/media/deleteMetadataTask.xml", VCloudDirectorMediaType.TASK)
+               .xmlFilePayload("/media/deleteMetadataEntryTask.xml", VCloudDirectorMediaType.TASK)
                .httpResponseBuilder().build());
       
       Reference mediaRef = Reference.builder().href(mediaUri).build();
-      Task expectedTask = Task.builder()
-         
-         .build();
+      Task expectedTask = deleteMetadataEntryTask();
 
       assertEquals(client.getMediaClient().deleteMetadataEntry(mediaRef, "key"), expectedTask);
    }
@@ -369,6 +361,86 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
          .build();
    }
    
+   private static Media updateMedia() {
+      return Media.builder()
+         .size(175163392)
+         .imageType("iso")
+         .owner(Owner.builder()
+            .user(Reference.builder()
+               .type("application/vnd.vmware.admin.user+xml")
+               .name("acole")
+               .href(URI.create("https://mycloud.greenhousedata.com/api/admin/user/c090335b-708c-4c1c-9e3d-89560d002120"))
+               .build())
+            .build())
+         .build();
+   }
+   
+   private static Task updateMediaTask() {
+      return Task.builder()
+            .name("task")
+            .id("urn:vcloud:task:c6dca927-eab4-41fa-ad6a-3ac58602541c")
+            .type("application/vnd.vmware.vcloud.task+xml")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/task/c6dca927-eab4-41fa-ad6a-3ac58602541c"))
+            .status("running")
+            .startTime(dateService.iso8601DateParse("2012-02-13T06:35:08.011-05:00"))
+            .expiryTime(dateService.iso8601DateParse("2012-05-13T06:35:08.011-04:00"))
+            .operationName("mediaUpdate")
+            .operation("Updating Media (794eb334-754e-4917-b5a0-5df85cbd61d1)")
+            .link(Link.builder()
+                  .rel("task:cancel")
+                  .href(URI.create("https://vcloudbeta.bluelock.com/api/task/c6dca927-eab4-41fa-ad6a-3ac58602541c/action/cancel"))
+                  .build())
+            .owner(Reference.builder()
+                  .type("application/vnd.vmware.vcloud.media+xml")
+                  .name("")
+                  .href(URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1"))
+                  .build())
+            .user(Reference.builder()
+                  .type("application/vnd.vmware.admin.user+xml")
+                  .name("adk@cloudsoftcorp.com")
+                  .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/e9eb1b29-0404-4c5e-8ef7-e584acc51da9"))
+                  .build())
+            .org(Reference.builder()
+                  .type("application/vnd.vmware.vcloud.org+xml")
+                  .name("JClouds")
+                  .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+                  .build())
+            .build();
+   }
+   
+   public static Task deleteMediaTask() {
+      return Task.builder()
+         .name("task")
+         .id("urn:vcloud:task:c6dca927-eab4-41fa-ad6a-3ac58602541c")
+         .type("application/vnd.vmware.vcloud.task+xml")
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/task/c6dca927-eab4-41fa-ad6a-3ac58602541c"))
+         .status("running")
+         .startTime(dateService.iso8601DateParse("2012-02-13T06:35:08.011-05:00"))
+         .expiryTime(dateService.iso8601DateParse("2012-05-13T06:35:08.011-04:00"))
+         .operationName("mediaDelete")
+         .operation("Deleting Media (794eb334-754e-4917-b5a0-5df85cbd61d1)")
+         .link(Link.builder()
+               .rel("task:cancel")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/task/c6dca927-eab4-41fa-ad6a-3ac58602541c/action/cancel"))
+               .build())
+         .owner(Reference.builder()
+               .type("application/vnd.vmware.vcloud.media+xml")
+               .name("")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1"))
+               .build())
+         .user(Reference.builder()
+               .type("application/vnd.vmware.admin.user+xml")
+               .name("adk@cloudsoftcorp.com")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/e9eb1b29-0404-4c5e-8ef7-e584acc51da9"))
+               .build())
+         .org(Reference.builder()
+               .type("application/vnd.vmware.vcloud.org+xml")
+               .name("JClouds")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+               .build())
+         .build();
+   }
+   
    private static Owner owner() {
       return Owner.builder()
       .type("application/vnd.vmware.vcloud.owner+xml")
@@ -389,10 +461,55 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
             .type("application/vnd.vmware.vcloud.media+xml")
             .href(URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1"))
             .build())
+         .entry(MetadataEntry.builder().key("key").value("value").build())
          .build();
    }
    
-   private Task setMetadataTask() {
+   private static MetadataEntry metadataEntry() {
+      return MetadataEntry.builder()
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/cmedia/794eb334-754e-4917-b5a0-5df85cbd61d1/metadata/key"))
+            .link(Link.builder()
+               .rel("up")
+               .type("application/vnd.vmware.vcloud.metadata+xml")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1/metadata"))
+               .build())
+            .key("key").value("value").build();
+   }
+   
+   private Task mergeMetadataTask() {
+      return Task.builder()
+         .status("running")
+         .startTime(dateService.iso8601DateParse("2012-02-13T06:35:08.011-05:00"))
+         .operationName("metadataMerge")
+         .operation("Merging metadata for Media (794eb334-754e-4917-b5a0-5df85cbd61d1)")
+         .expiryTime(dateService.iso8601DateParse("2012-05-13T06:35:08.011-04:00"))
+         .name("task")
+         .id("urn:vcloud:task:c6dca927-eab4-41fa-ad6a-3ac58602541c")
+         .type("application/vnd.vmware.vcloud.task+xml")
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/task/c6dca927-eab4-41fa-ad6a-3ac58602541c"))
+         .link(Link.builder()
+            .rel("task:cancel")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/task/c6dca927-eab4-41fa-ad6a-3ac58602541c/action/cancel"))
+            .build())
+         .owner(Reference.builder()
+            .type("application/vnd.vmware.vcloud.media+xml")
+            .name("")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1"))
+            .build())
+         .user(Reference.builder()
+               .type("application/vnd.vmware.admin.user+xml")
+               .name("adk@cloudsoftcorp.com")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/e9eb1b29-0404-4c5e-8ef7-e584acc51da9"))
+               .build())
+         .org(Reference.builder()
+               .type("application/vnd.vmware.vcloud.org+xml")
+               .name("JClouds")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+               .build())
+         .build();
+   }
+   
+   private Task setMetadataEntryTask() {
       return Task.builder()
          .status("running")
          .startTime(dateService.iso8601DateParse("2012-02-13T06:35:08.011-05:00"))
@@ -412,6 +529,39 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
             .name("")
             .href(URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1"))
             .build())
+         .user(Reference.builder()
+               .type("application/vnd.vmware.admin.user+xml")
+               .name("adk@cloudsoftcorp.com")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/e9eb1b29-0404-4c5e-8ef7-e584acc51da9"))
+               .build())
+         .org(Reference.builder()
+               .type("application/vnd.vmware.vcloud.org+xml")
+               .name("JClouds")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+               .build())
+         .build();
+   }
+   
+   public static Task deleteMetadataEntryTask() {
+      return Task.builder()
+         .name("task")
+         .id("urn:vcloud:task:c6dca927-eab4-41fa-ad6a-3ac58602541c")
+         .type("application/vnd.vmware.vcloud.task+xml")
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/task/c6dca927-eab4-41fa-ad6a-3ac58602541c"))
+         .status("running")
+         .startTime(dateService.iso8601DateParse("2012-02-13T06:35:08.011-05:00"))
+         .expiryTime(dateService.iso8601DateParse("2012-05-13T06:35:08.011-04:00"))
+         .operationName("metadataDelete")
+         .operation("Deleting metadata for Media (794eb334-754e-4917-b5a0-5df85cbd61d1)")
+         .link(Link.builder()
+               .rel("task:cancel")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/task/c6dca927-eab4-41fa-ad6a-3ac58602541c/action/cancel"))
+               .build())
+         .owner(Reference.builder()
+               .type("application/vnd.vmware.vcloud.media+xml")
+               .name("")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1"))
+               .build())
          .user(Reference.builder()
                .type("application/vnd.vmware.admin.user+xml")
                .name("adk@cloudsoftcorp.com")
