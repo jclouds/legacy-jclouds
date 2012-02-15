@@ -70,6 +70,7 @@ public class VCloudDirectorMediaType {
    public static final List<String> ALL = Arrays.asList(
         SESSION, ERROR, ORG_LIST, METADATA, METADATA_ENTRY,
         METADATA_VALUE, ORG, TASKS_LIST, TASK, ORG_NETWORK,
-        CATALOG, CATALOG_ITEM, CATALOG_ITEMS, CATALOGS_LIST, PROPERTY
+        CATALOG, CATALOG_ITEM, CATALOG_ITEMS, CATALOGS_LIST, PROPERTY,
+        MEDIA, OWNER
      );
 }
