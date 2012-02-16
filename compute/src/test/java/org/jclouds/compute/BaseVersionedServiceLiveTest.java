@@ -52,6 +52,7 @@ public abstract class BaseVersionedServiceLiveTest extends BaseRestClientLiveTes
       return overrides;
    }
 
+   @Override
    @BeforeClass
    protected void setupCredentials() {
       super.setupCredentials();
