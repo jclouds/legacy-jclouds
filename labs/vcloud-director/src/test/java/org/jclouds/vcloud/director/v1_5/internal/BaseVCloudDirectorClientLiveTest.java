@@ -22,7 +22,7 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.sshj.config.SshjSshClientModule;
@@ -62,7 +62,7 @@ public class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTe
       setupCredentials();
       Properties overrides = setupProperties();
       context = new RestContextFactory().createContext(provider, identity, credential,
-               ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule()), overrides);
+               ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
    }
 
    @AfterGroups(groups = "live")
