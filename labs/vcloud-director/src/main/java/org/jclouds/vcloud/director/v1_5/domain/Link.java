@@ -47,10 +47,13 @@ public class Link extends ReferenceType<Link> {
       public static final String DOWN = "down";
       public static final String EDIT = "edit";
       public static final String DELETE = "delete";
+      public static final String ADD = "add";
+      public static final String REMOVE = "remove";
+      public static final String CATALOG_ITEM = "catalogItem";
       public static final String TASK_CANCEL = "task:cancel";
 
       public static final List<String> ALL = Arrays.asList(
-               UP, DOWN, EDIT, DELETE, TASK_CANCEL
+               UP, DOWN, EDIT, DELETE, ADD, REMOVE, CATALOG_ITEM, TASK_CANCEL
          );
    }
 
