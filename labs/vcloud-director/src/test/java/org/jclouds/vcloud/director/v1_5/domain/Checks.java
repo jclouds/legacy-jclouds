@@ -27,12 +27,6 @@ import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
 import com.google.common.base.Splitter;
