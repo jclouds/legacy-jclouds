@@ -42,6 +42,11 @@
     <test.vcloud-director.image-id></test.vcloud-director.image-id>
     <test.vcloud-director.image.login-user></test.vcloud-director.image.login-user>
     <test.vcloud-director.image.authenticate-sudo></test.vcloud-director.image.authenticate-sudo>
+    <test.vcloud-director.catalog-name></test.vcloud-director.catalog-name>
+    <test.vcloud-director.media-id></test.vcloud-director.media-id>
+    <test.vcloud-director.vapptemplate-id></test.vcloud-director.vapptemplate-id>
+    <test.vcloud-director.network-id></test.vcloud-director.network-id>
+    <test.vcloud-director.vdc-id></test.vcloud-director.vdc-id>
   </properties>
 
   <dependencies>
@@ -109,6 +114,11 @@
                     <test.vcloud-director.image-id>${test.vcloud-director.image-id}</test.vcloud-director.image-id>
                     <test.vcloud-director.image.login-user>${test.vcloud-director.image.login-user}</test.vcloud-director.image.login-user>
                     <test.vcloud-director.image.authenticate-sudo>${test.vcloud-director.image.authenticate-sudo}</test.vcloud-director.image.authenticate-sudo>
+                    <test.vcloud-director.catalog-name>${test.vcloud-director.catalog-name}</test.vcloud-director.catalog-name>
+                    <test.vcloud-director.media-id>${test.vcloud-director.media-id}</test.vcloud-director.media-id>
+                    <test.vcloud-director.vapptemplate-id>${test.vcloud-director.vapptemplate-id}</test.vcloud-director.vapptemplate-id>
+                    <test.vcloud-director.network-id>${test.vcloud-director.network-id}</test.vcloud-director.network-id>
+                    <test.vcloud-director.vdc-id>${test.vcloud-director.vdc-id}</test.vcloud-director.vdc-id>
                   </systemPropertyVariables>
                 </configuration>
               </execution>
