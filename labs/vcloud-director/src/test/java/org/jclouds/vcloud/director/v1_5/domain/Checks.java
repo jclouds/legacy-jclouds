@@ -27,6 +27,12 @@ import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
 import com.google.common.base.Splitter;
@@ -37,6 +43,18 @@ import com.google.common.collect.Iterables;
  */
 public class Checks {
 
+   public static void checkResourceEntityType(ResourceEntityType<?> resourceEntity) {
+      // Check optional fields
+      // NOTE status cannot be checked (TODO: doesn't status have a range of valid values?)
+      FilesList files = resourceEntity.getFiles();
+      if (files != null && files.getFiles() != null && !files.getFiles().isEmpty()) {
+         for (File file : files.getFiles()) checkFile(file);
+      }
+      
+      // Check parent type
+      checkEntityType(resourceEntity);
+   }
+   
    public static void checkEntityType(EntityType<?> entity) {
       // Check required fields
       assertNotNull(entity.getName(), "The Name attribute of an EntityType must be set");
@@ -75,7 +93,7 @@ public class Checks {
          for (Link link : links) checkLink(link);
       }
    }
-
+   
    public static void checkId(String id) {
       Iterable<String> parts = Splitter.on(':').split(id);
       assertEquals(Iterables.size(parts), 4, "The Id must be well formed");
@@ -145,6 +163,22 @@ public class Checks {
       // Check parent type
       checkEntityType(task);
    }
+   
+   public static void checkFile(File file) {
+      // Check optional fields
+      // NOTE checksum be checked
+      Long size = file.getSize();
+      if(size != null) {
+         assertTrue(file.size >= 0, "File size must be greater than or equal to 0");
+      }
+      Long bytesTransferred = file.getBytesTransferred();
+      if(bytesTransferred != null) {
+         assertTrue(bytesTransferred >= 0, "Bytes transferred must be greater than or equal to 0");
+      }
+      
+      // Check parent type
+      checkEntityType(file);
+   }
 
    public static void checkProgress(Integer progress) {
       assertTrue(progress >= 0 && progress <= 100, "The Progress attribute must be between 0 and 100");
@@ -158,5 +192,10 @@ public class Checks {
       
       // NOTE vendorSpecificErrorCode cannot be checked
       // NOTE stackTrace cannot be checked
+   }
+
+   public static void checkImageType(String imageType) {
+      assertTrue(Media.ImageType.ALL.contains(imageType), 
+            "The Image type of a Media must be one of the allowed list");
    }
 }
