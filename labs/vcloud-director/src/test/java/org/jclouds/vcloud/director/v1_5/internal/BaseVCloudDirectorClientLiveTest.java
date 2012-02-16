@@ -77,4 +77,3 @@ public class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTe
          context.close();
    }
 }
-

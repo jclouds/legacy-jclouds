@@ -49,6 +49,7 @@ public class Link extends ReferenceType<Link> {
       public static final String ADD = "add";
       public static final String DELETE = "delete";
       public static final String REMOVE = "remove";
+      public static final String CATALOG_ITEM = "catalogItem";
       public static final String TASK_CANCEL = "task:cancel";
       public static final String ALTERNATE = "alternate";
       public static final String NEXT_PAGE = "nextPage";
@@ -57,9 +58,9 @@ public class Link extends ReferenceType<Link> {
       public static final String FIRST_PAGE = "firstPage";
 
       public static final List<String> ALL = Arrays.asList(
-               UP, DOWN, EDIT, ADD, DELETE, TASK_CANCEL, ALTERNATE,
+               UP, DOWN, EDIT, DELETE, TASK_CANCEL, ALTERNATE,
+               ADD, REMOVE, CATALOG_ITEM,
                NEXT_PAGE, PREVIOUS_PAGE, LAST_PAGE, FIRST_PAGE,
-               REMOVE
          );
    }
 

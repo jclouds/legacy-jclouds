@@ -18,16 +18,13 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.*;
-import static org.testng.Assert.*;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkTask;
+import static org.testng.Assert.assertFalse;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
