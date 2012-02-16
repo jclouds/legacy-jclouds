@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
@@ -82,11 +81,11 @@ public interface MediaClient {
    Task mergeMetadata(Reference mediaRef, Metadata metadata);
 
    /**
-    * Retrieves a metadata entry
+    * Retrieves a metadata value
     * 
-    * @return the metadata entry, or null if not found
+    * @return the metadata value, or null if not found
     */
-   MetadataEntry getMetadataEntry(Reference mediaRef, String key);
+   MetadataValue getMetadataValue(Reference mediaRef, String key);
    
    /**
     * Sets the metadata for the particular key for the media to the value provided. 
@@ -95,7 +94,7 @@ public interface MediaClient {
     * @return a task. This operation is asynchronous and the user should monitor the returned 
     * task status in order to check when it is completed.
     */
-   Task setMetadata(Reference mediaRef, String key, MetadataValue metadataEntry);
+   Task setMetadata(Reference mediaRef, String key, MetadataValue metadataValue);
    
    /**
     * Deletes a metadata entry.
