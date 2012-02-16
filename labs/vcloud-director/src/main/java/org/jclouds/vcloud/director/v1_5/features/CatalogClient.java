@@ -24,7 +24,6 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
@@ -84,9 +83,9 @@ public interface CatalogClient {
     *
     * @param catalogRef the reference for the catalog
     * @param key the metadata entry key
-    * @return the catalog metadata entry
+    * @return the catalog metadata value
     */
-   MetadataEntry getCatalogMetadataEntry(ReferenceType<?> catalogRef, String key);
+   MetadataValue getCatalogMetadataValue(ReferenceType<?> catalogRef, String key);
 
    /**
     * Retrieves a catalog item.
@@ -158,9 +157,9 @@ public interface CatalogClient {
     *
     * @param catalogItemRef the reference for the catalog item
     * @param key the metadata entry key
-    * @return the catalog item metadata entry
+    * @return the catalog item metadata value
     */
-   MetadataEntry getCatalogItemMetadataEntry(ReferenceType<?> catalogItemRef, String key);
+   MetadataValue getCatalogItemMetadataValue(ReferenceType<?> catalogItemRef, String key);
 
    /**
     * Sets the metadata for the particular key for the catalog item to the value provided.
@@ -174,7 +173,7 @@ public interface CatalogClient {
     * @param value the metadata value
     * @return a task for the set operation
     */
-   Task setCatalogItemMetadataEntry(ReferenceType<?> catalogItemRef, String key, MetadataValue value);
+   Task setCatalogItemMetadataValue(ReferenceType<?> catalogItemRef, String key, MetadataValue value);
 
    /**
     * Deletes the metadata for the particular key for the catalog item.
@@ -187,5 +186,5 @@ public interface CatalogClient {
     * @param key the metadata entry key
     * @return a task for the delete operation
     */
-   Task deleteCatalogItemMetadataEntry(ReferenceType<?> catalogItemRef, String key);
+   Task deleteCatalogItemMetadataValue(ReferenceType<?> catalogItemRef, String key);
 }

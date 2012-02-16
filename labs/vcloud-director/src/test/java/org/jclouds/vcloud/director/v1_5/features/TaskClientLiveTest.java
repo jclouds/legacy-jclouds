@@ -29,6 +29,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -45,8 +46,14 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     * Convenience references to API clients.
     */
 
-   private final OrgClient orgClient = context.getApi().getOrgClient();
-   private final TaskClient taskClient = context.getApi().getTaskClient();
+   private OrgClient orgClient;
+   private TaskClient taskClient;
+
+   @BeforeGroups(groups = { "live" })
+   public void setupClients() {
+      orgClient = context.getApi().getOrgClient();
+      taskClient = context.getApi().getTaskClient();
+   }
 
    /*
     * Shared state between dependant tests.
@@ -69,7 +76,7 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // NOTE The environment MUST have ...
       
       // Check required elements and attributes
-      assertFalse(Iterables.isEmpty(taskList.getTasks()), "There must always be Task elements in the TaskList");
+      assertFalse(Iterables.isEmpty(taskList.getTasks()), String.format(NOT_EMPTY_OBJECT_FMT, "Task", "TaskList"));
       
       for (Task task : taskList.getTasks()) {
          checkTask(task);

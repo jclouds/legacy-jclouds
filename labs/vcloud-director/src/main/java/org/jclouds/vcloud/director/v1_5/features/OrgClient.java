@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
@@ -58,7 +58,6 @@ public interface OrgClient {
     * @return the org or null if not found
     */
    Org getOrg(ReferenceType<?> orgRef);
-	// FIXME throws exception on not found currently
    
    /**
     * Retrieves an list of the organization's metadata
@@ -80,6 +79,5 @@ public interface OrgClient {
     * 
     * @return the metadata entry or null if not found
     */
-   MetadataEntry getOrgMetadataEntry(ReferenceType<?> orgRef, String key);
-	// FIXME throws exception on not found currently
+   MetadataValue getOrgMetadataValue(ReferenceType<?> orgRef, String key);
 }

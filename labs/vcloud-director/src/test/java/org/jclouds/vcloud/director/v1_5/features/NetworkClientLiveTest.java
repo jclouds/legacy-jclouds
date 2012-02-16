@@ -18,8 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 import java.net.URI;
 
@@ -30,15 +29,27 @@ import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code NetworkClient}
+ * Tests behavior of {@link NetworkClient}
  * 
  * @author danikov
  */
 @Test(groups = { "live", "apitests" }, testName = "NetworkClientLiveTest")
 public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
+
+   /*
+    * Convenience references to API clients.
+    */
+
+   private NetworkClient networkClient;
+
+   @BeforeGroups(groups = { "live" })
+   public void setupClients() {
+      networkClient = context.getApi().getNetworkClient();
+   }
    
    // @Before populate
    String networkId = "55a677cf-ab3f-48ae-b880-fab90421980c";
@@ -49,7 +60,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Reference networkRef = Reference.builder()
             .href(URI.create(endpoint + "/network/"+networkId)).build();
       
-      OrgNetwork network = context.getApi().getNetworkClient().getNetwork(networkRef);
+      OrgNetwork network = networkClient.getNetwork(networkRef);
       
       //TODO assert network is valid
    }
@@ -66,7 +77,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .build();
       
       try {
-         context.getApi().getNetworkClient().getNetwork(networkRef);
+         networkClient.getNetwork(networkRef);
          fail("Should give HTTP 400 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -87,7 +98,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .build();
 
       try {
-         context.getApi().getNetworkClient().getNetwork(networkRef);
+         networkClient.getNetwork(networkRef);
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -108,7 +119,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .build();
 
       try {
-         context.getApi().getNetworkClient().getNetwork(networkRef);
+         networkClient.getNetwork(networkRef);
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -137,7 +148,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Reference networkRef = Reference.builder()
             .href(URI.create(endpoint + "/network/"+networkId)).build();
       
-      MetadataEntry expected = context.getApi().getNetworkClient().getMetadataEntry(networkRef, metadataKey);
+      MetadataEntry expected = networkClient.getMetadataEntry(networkRef, metadataKey);
  
       // assert metadataEntry is valid
    }
