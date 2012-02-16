@@ -18,14 +18,11 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.*;
-import static org.testng.Assert.*;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkTask;
+import static org.testng.Assert.assertFalse;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
@@ -55,11 +52,11 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "GET /tasksList/{id}")
    public void testGetTaskList() {
-      orgList = getOrgList();
+      orgList = context.getApi().getOrgClient().getOrgList();
       orgRef = Iterables.getFirst(orgList.getOrgs(), null);
       
       // Call the method being tested
-      taskList = getTaskList(orgRef);
+      taskList = context.getApi().getTaskClient().getTaskList(orgRef);
       
       // NOTE The environment MUST have ...
       
@@ -76,7 +73,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       taskUri = Iterables.getFirst(taskList.getTasks(), null).getHref();
 
       // Call the method being tested
-      task = getTask(taskUri);
+      task = context.getApi().getTaskClient().getTask(taskUri);
 
       // Check required elements and attributes
       checkTask(task);
@@ -85,6 +82,6 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /task/{id}/metadata/", dependsOnMethods = { "testGetTask" })
    public void testCancelTask() {
       // Call the method being tested
-      cancelTask(taskUri);
+      context.getApi().getTaskClient().cancelTask(taskUri);
    }
 }

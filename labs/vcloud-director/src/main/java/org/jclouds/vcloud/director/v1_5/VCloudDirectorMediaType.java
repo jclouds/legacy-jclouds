@@ -68,11 +68,15 @@ public class VCloudDirectorMediaType {
    public static final String MEDIA = "application/vnd.vmware.vcloud.media+xml";
 
    public static final String OWNER = "application/vnd.vmware.vcloud.owner+xml";
+   
+   public static final String VDC = "application/vnd.vmware.vcloud.vdc+xml";
+   
+   public static final String ADMIN_USER = "application/vnd.vmware.admin.user+xml";
 
    public static final List<String> ALL = Arrays.asList(
         SESSION, ERROR, ORG_LIST, METADATA, METADATA_ENTRY,
         METADATA_VALUE, ORG, TASKS_LIST, TASK, ORG_NETWORK,
         CATALOG, CATALOG_ITEM, CATALOG_ITEMS, CATALOGS_LIST, PROPERTY,
-        MEDIA, OWNER
+        MEDIA, OWNER, VDC, ADMIN_USER
      );
 }
