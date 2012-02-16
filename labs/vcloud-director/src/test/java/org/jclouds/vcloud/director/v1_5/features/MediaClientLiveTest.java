@@ -80,7 +80,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    protected MediaClient mediaClient;
 
    /*
-    * Shared state between dependant tests.
+    * Shared state between dependent tests.
     */
    private Reference mediaRef;
    private Media media;
