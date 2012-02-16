@@ -18,7 +18,10 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.net.URI;
 import java.util.Set;
@@ -87,7 +90,9 @@ public class Checks {
    }
 
    public static void checkType(String type) {
-      assertTrue(VCloudDirectorMediaType.ALL.contains(type), "The Type must be a valid media type");
+      assertTrue(VCloudDirectorMediaType.ALL.contains(type), 
+            String.format("The Type (%s) must be a valid media type  - %s", type, 
+                  Iterables.toString(VCloudDirectorMediaType.ALL)));
    }
 
    // NOTE this does not currently check anything
@@ -104,7 +109,9 @@ public class Checks {
    public static void checkLink(Link link) {
       // Check required fields
       assertNotNull(link.getRel(), "The Rel attribute of a Link must be set");
-      assertTrue(Link.Rel.ALL.contains(link.getRel()), "The Rel attribute of a Link must be one of the allowed list");
+      assertTrue(Link.Rel.ALL.contains(link.getRel()), 
+            String.format("The Rel attribute (%s) of a Link must be one of the allowed list - %s", 
+                  link.getRel(), Iterables.toString(Link.Rel.ALL)));
 
       // Check parent type
       checkReferenceType(link);
@@ -113,7 +120,9 @@ public class Checks {
    public static void checkTask(Task task) {
       // Check required fields
       assertNotNull(task.getStatus(), "The Status attribute of a Task must be set");
-      assertTrue(Task.Status.ALL.contains(task.getStatus()), "The Status of a Task must be one of the allowed list");
+      assertTrue(Task.Status.ALL.contains(task.getStatus().toString()), 
+            String.format("The Status of a Task (%s) must be one of the allowed list - %s", 
+            task.getStatus().toString(), Iterables.toString(Task.Status.ALL)));
 
       // Check optional fields
       // NOTE operation cannot be checked
