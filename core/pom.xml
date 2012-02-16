@@ -127,7 +127,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.*;version=${project.version}</Export-Package>
+                        <Export-Package>org.jclouds*;version=${project.version}</Export-Package>
                         <DynamicImport-Package>org.jclouds.*</DynamicImport-Package>
                     </instructions>
                 </configuration>

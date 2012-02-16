@@ -24,26 +24,26 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.3.2-SNAPSHOT</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
-  <groupId>org.jclouds.api</groupId>
+  <groupId>org.jclouds.labs</groupId>
   <artifactId>openstack-nova</artifactId>
   <name>jcloud openstack-nova api</name>
   <description>jclouds components to access an implementation of OpenStack Nova</description>
   <packaging>bundle</packaging>
 
   <properties>
-    <test.openstack-nova.endpoint>http://localhost:8774/v1.1/</test.openstack-nova.endpoint>
-    <test.openstack-nova.api-version>v1.1</test.openstack-nova.api-version>
+    <!-- keystone endpoint -->
+    <test.openstack-nova.endpoint>http://localhost:5000</test.openstack-nova.endpoint>
+    <!-- keystone version -->
+    <test.openstack-nova.api-version>1.1</test.openstack-nova.api-version>
     <test.openstack-nova.build-version></test.openstack-nova.build-version>
     <test.openstack-nova.identity>FIXME_IDENTITY</test.openstack-nova.identity>
     <test.openstack-nova.credential>FIXME_CREDENTIALS</test.openstack-nova.credential>
     <test.openstack-nova.image-id></test.openstack-nova.image-id>
     <test.openstack-nova.image.login-user></test.openstack-nova.image.login-user>
     <test.openstack-nova.image.authenticate-sudo></test.openstack-nova.image.authenticate-sudo>
-    <test.ssh.keyfile.public></test.ssh.keyfile.public>
-    <test.ssh.keyfile.private></test.ssh.keyfile.private>
   </properties>
 
   <dependencies>
@@ -86,8 +86,14 @@
     </dependency>
     <dependency>
       <groupId>org.jclouds.driver</groupId>
-      <artifactId>jclouds-log4j</artifactId>
+      <artifactId>jclouds-slf4j</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>0.9.29</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -100,12 +106,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <dependencies>
-              <dependency>
-                <groupId>org.apache.maven.surefire</groupId>
-                <artifactId>surefire-testng</artifactId>
-              </dependency>
-            </dependencies>
             <executions>
               <execution>
                 <id>integration</id>
@@ -123,8 +123,6 @@
                     <test.openstack-nova.image-id>${test.openstack-nova.image-id}</test.openstack-nova.image-id>
                     <test.openstack-nova.image.login-user>${test.openstack-nova.image.login-user}</test.openstack-nova.image.login-user>
                     <test.openstack-nova.image.authenticate-sudo>${test.openstack-nova.image.authenticate-sudo}</test.openstack-nova.image.authenticate-sudo>
-                    <test.ssh.keyfile.public>${test.ssh.keyfile.public}</test.ssh.keyfile.public>
-                    <test.ssh.keyfile.private>${test.ssh.keyfile.private}</test.ssh.keyfile.private>
                   </systemPropertyVariables>
                 </configuration>
               </execution>
@@ -143,8 +141,13 @@
         <configuration>
           <instructions>
             <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.jclouds.openstack.nova.v1_1.*;version="${project.version}"</Export-Package>
-            <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+            <Export-Package>org.jclouds.openstack.nova.v1_1*;version="${project.version}"</Export-Package>
+            <Import-Package>            
+                        org.jclouds.compute.internal;version="${project.version}",
+                        org.jclouds.rest.internal;version="${project.version}",
+                        org.jclouds*;version="${project.version}",
+                                *
+                        </Import-Package>
           </instructions>
         </configuration>
       </plugin>
