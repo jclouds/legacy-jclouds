@@ -159,7 +159,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
                   .type("application/vnd.vmware.vcloud.network+xml")
                   .href(URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c"))
                   .build())
-            .metadata(ImmutableSet.of(MetadataEntry.builder().entry("key", "value").build()))
+            .entries(ImmutableSet.of(MetadataEntry.builder().entry("key", "value").build()))
             .build();
 
        Reference networkRef = Reference.builder().href(networkUri).build();

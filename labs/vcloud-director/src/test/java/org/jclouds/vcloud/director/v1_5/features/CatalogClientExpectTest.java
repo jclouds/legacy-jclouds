@@ -146,7 +146,7 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
                   .type("application/vnd.vmware.vcloud.catalog+xml")
                   .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
                   .build())
-            .metadata(ImmutableSet.of(metadataEntry()))
+            .entries(ImmutableSet.of(metadataEntry()))
             .build();
       
       assertEquals(client.getCatalogClient().getCatalogMetadata(catalogRef), expected);
@@ -298,7 +298,7 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
                   .type("application/vnd.vmware.vcloud.catalogItem+xml")
                   .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
                   .build())
-            .metadata(ImmutableSet.of(itemMetadataEntry()))
+            .entries(ImmutableSet.of(itemMetadataEntry()))
             .build();
       
       assertEquals(client.getCatalogClient().getCatalogItemMetadata(catalogItemReference), expected);
