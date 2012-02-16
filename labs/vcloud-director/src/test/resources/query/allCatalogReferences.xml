@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CatalogReferences xmlns="http://www.vmware.com/vcloud/v1.5" total="4" pageSize="25" page="1" name="catalog" type="application/vnd.vmware.vcloud.query.references+xml" href="https://vcloudbeta.bluelock.com/api/catalogs/query?page=1&amp;pageSize=25&amp;format=references" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd">
+    <Link rel="alternate" type="application/vnd.vmware.vcloud.query.records+xml" href="https://vcloudbeta.bluelock.com/api/catalogs/query?page=1&amp;pageSize=25&amp;format=records"/>
+    <Link rel="alternate" type="application/vnd.vmware.vcloud.query.idrecords+xml" href="https://vcloudbeta.bluelock.com/api/catalogs/query?page=1&amp;pageSize=25&amp;format=idrecords"/>
+    <CatalogReference type="application/vnd.vmware.vcloud.catalog+xml" name="QunyingTestCatalog" id="urn:vcloud:catalog:7212e451-76e1-4631-b2de-ba1dfd8080e4" href="https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"/>
+    <CatalogReference type="application/vnd.vmware.vcloud.catalog+xml" name="Public" id="urn:vcloud:catalog:9e08c2f6-077a-42ce-bece-d5332e2ebb5c" href="https://vcloudbeta.bluelock.com/api/catalog/9e08c2f6-077a-42ce-bece-d5332e2ebb5c"/>
+    <CatalogReference type="application/vnd.vmware.vcloud.catalog+xml" name="dantest" id="urn:vcloud:catalog:b542aff4-9f97-4f51-a126-4330fbf62f02" href="https://vcloudbeta.bluelock.com/api/catalog/b542aff4-9f97-4f51-a126-4330fbf62f02"/>
+    <CatalogReference type="application/vnd.vmware.vcloud.catalog+xml" name="test" id="urn:vcloud:catalog:b7289d54-4ca4-497f-9a93-2d4afc97e3da" href="https://vcloudbeta.bluelock.com/api/catalog/b7289d54-4ca4-497f-9a93-2d4afc97e3da"/>
+</CatalogReferences>
