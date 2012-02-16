@@ -91,7 +91,6 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @BeforeGroups(groups = { "live" }, dependsOnMethods = { "setupClient" })
    public void before() {
-      String mediaId = "68dc01a4-6c76-4177-9f19-ec12bf94287c"; // TODO: inject
       mediaRef = Reference.builder()
             .type("application/vnd.vmware.vcloud.media+xml")
             .name("")
@@ -100,6 +99,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .build();
       mediaClient = context.getApi().getMediaClient();
       taskTester = new RetryablePredicate<URI>(new TaskSuccess(context), 10, 1, TimeUnit.SECONDS);
+      
       mediaClient.setMetadata(mediaRef, "key", MetadataValue.builder().value("value").build());
    }
    
