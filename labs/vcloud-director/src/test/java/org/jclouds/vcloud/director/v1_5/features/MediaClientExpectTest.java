@@ -251,11 +251,11 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
                .xmlFilePayload("/media/metadataEntry.xml", VCloudDirectorMediaType.METADATA_ENTRY)
                .httpResponseBuilder().build());
       
-      MetadataEntry expected = metadataEntry();
+      MetadataValue expected = metadataValue();
       
       Reference mediaRef = Reference.builder().href(mediaUri).build();
 
-      assertEquals(client.getMediaClient().getMetadataEntry(mediaRef, "key"), expected);
+      assertEquals(client.getMediaClient().getMetadataValue(mediaRef, "key"), expected);
    }
    
    @Test
@@ -465,15 +465,15 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
          .build();
    }
    
-   private static MetadataEntry metadataEntry() {
-      return MetadataEntry.builder()
+   private static MetadataValue metadataValue() {
+      return MetadataValue.builder()
             .href(URI.create("https://vcloudbeta.bluelock.com/api/cmedia/794eb334-754e-4917-b5a0-5df85cbd61d1/metadata/key"))
             .link(Link.builder()
                .rel("up")
                .type("application/vnd.vmware.vcloud.metadata+xml")
                .href(URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1/metadata"))
                .build())
-            .key("key").value("value").build();
+            .value("value").build();
    }
    
    private Task mergeMetadataTask() {
