@@ -116,8 +116,8 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.aws.simpledb.*;version="${project.version}"</Export-Package>
-                        <Import-Package>org.jclouds.*;version="${project.version}",*</Import-Package>
+                        <Export-Package>org.jclouds.aws.simpledb*;version="${project.version}"</Export-Package>
+                        <Import-Package>org.jclouds*;version="${project.version}",*</Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
