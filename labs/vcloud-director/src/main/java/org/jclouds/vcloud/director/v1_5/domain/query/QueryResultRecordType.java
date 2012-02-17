@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.namespace.QName;
 
 import org.jclouds.vcloud.director.v1_5.domain.Link;
@@ -51,6 +52,10 @@ import com.google.common.collect.Sets;
  * @author grkvlt@apache.org
  */
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlSeeAlso({
+   QueryResultCatalogRecord.class,
+   QueryResultNetworkRecord.class,
+})
 public class QueryResultRecordType<T extends QueryResultRecordType<T>> {
 
    public static <T extends QueryResultRecordType<T>> Builder<T> builder() {

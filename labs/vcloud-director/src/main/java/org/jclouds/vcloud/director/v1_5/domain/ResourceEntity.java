@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,16 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
+
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
+
+import java.net.URI;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 
 /**
  * 
@@ -57,16 +63,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "ResourceEntity", propOrder = {
     "files"
 })
-@XmlSeeAlso({
-    MediaType.class,
-    VAppTemplateType.class,
-    AbstractVAppType.class,
-    NetworkPoolType.class
-})
-public class ResourceEntity
-    extends EntityType<ResourceEntity>
+public class ResourceEntity extends EntityType<ResourceEntity> {
 
-{
    @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
@@ -78,13 +76,13 @@ public class ResourceEntity
 
    public static class Builder extends EntityType.Builder<ResourceEntity> {
       
-      private FilesList files;
+      private Object /* FilesList */ files;
       private Integer status;
 
       /**
        * @see ResourceEntity#getFiles()
        */
-      public Builder files(FilesList files) {
+      public Builder files(Object /* FilesList */ files) {
          this.files = files;
          return this;
       }
@@ -172,14 +170,14 @@ public class ResourceEntity
       }
    }
 
-   private ResourceEntity() {
+   protected ResourceEntity() {
       // For JAXB and builder use
    }
 
 
 
     @XmlElement(name = "Files")
-    protected FilesList files;
+    protected Object /* FilesList */ files;
     @XmlAttribute
     protected Integer status;
 
@@ -191,7 +189,7 @@ public class ResourceEntity
      *     {@link FilesList }
      *     
      */
-    public FilesList getFiles() {
+    public Object /* FilesList */ getFiles() {
         return files;
     }
 
@@ -203,7 +201,7 @@ public class ResourceEntity
      *     {@link FilesList }
      *     
      */
-    public void setFiles(FilesList value) {
+    public void setFiles(Object /* FilesList */ value) {
         this.files = value;
     }
 

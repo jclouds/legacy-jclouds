@@ -18,59 +18,81 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import java.net.URI;
-
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 
-import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
-import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.TasksList;
+import org.jclouds.vcloud.director.v1_5.domain.query.CatalogReferences;
+import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.OrgReferenceToTaskListEndpoint;
-import org.jclouds.vcloud.director.v1_5.functions.ReferenceToEndpoint;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * @see TaskClient
+ * @see QueryClient
  * @author grkvlt@apache.org
  */
 @RequestFilters(AddVCloudAuthorizationToRequest.class)
 public interface QueryAsyncClient {
 
    /**
-    * @see TaskClient#getTaskList(ReferenceType<?>)
+    * REST API General queries handler.
     */
    @GET
+   @Path("/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<TasksList> getTaskList(@EndpointParam(parser = OrgReferenceToTaskListEndpoint.class) ReferenceType<?> orgRef);
+   ListenableFuture<QueryResultRecords> query(@QueryParam("type") String type, @QueryParam("filter") String filter);
+
+   @GET
+   @Path("/query")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<QueryResultRecords> query(@QueryParam("page") Integer page, @QueryParam("pageSize") Integer pageSize,
+         @QueryParam("format") String format, @QueryParam("type") String type, @QueryParam("filter") String filter);
 
    /**
-    * @see TaskClient#getTask(URI)
+    * Retrieves a list of Catalogs by using REST API general QueryHandler.
     */
    @GET
+   @Path("/catalogs/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> getTask(@EndpointParam URI taskUri);
+   ListenableFuture<QueryResultRecords> catalogsQuery(@QueryParam("filter") String filter);
 
-   /**
-    * @see TaskClient#cancelTask(URI)
-    */
-   @POST
-   @Path("/action/cancel")
+   @GET
+   @Path("/catalogs/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Void> cancelTask(@EndpointParam URI taskUri);
+   ListenableFuture<QueryResultRecords> catalogsQuery(@QueryParam("page") Integer page, @QueryParam("pageSize") Integer pageSize,
+         @QueryParam("format") String format, @QueryParam("filter") String filter);
+
+   @GET
+   @Path("/catalogs/query")
+   @Consumes
+   @DefaultValue("references")
+   @QueryParam("format")
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<CatalogReferences> catalogReferencesQuery(@QueryParam("filter") String filter);
+
+   @GET
+   @Path("/catalogs/query")
+   @Consumes
+   @DefaultValue("references")
+   @QueryParam("format")
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<CatalogReferences> catalogReferencesQuery(@QueryParam("page") Integer page, @QueryParam("pageSize") Integer pageSize,
+         @QueryParam("filter") String filter);
 }
