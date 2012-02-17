@@ -21,12 +21,14 @@ package org.jclouds.vcloud.director.v1_5.domain.query;
 
 import static com.google.common.base.Objects.*;
 import static com.google.common.base.Preconditions.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
 import java.util.Date;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 
 import org.jclouds.vcloud.director.v1_5.domain.Link;
@@ -44,6 +46,7 @@ import com.google.common.collect.Sets;
  * 
  * @author grkvlt@apache.org
  */
+@XmlRootElement(name = "CatalogRecord", namespace = VCLOUD_1_5_NS)
 public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultCatalogRecord> {
 
    @SuppressWarnings("unchecked")
@@ -66,7 +69,7 @@ public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultC
       private String ownerName;
       private Integer numberOfVAppTemplates;
       private Integer numberOfMedia;
-      private String owner;
+      private URI owner;
 
       /**
        * @see QueryResultCatalogRecord#getName()
@@ -167,7 +170,7 @@ public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultC
       /**
        * @see QueryResultCatalogRecord#getOwner()
        */
-      public Builder owner(String owner) {
+      public Builder owner(URI owner) {
          this.owner = owner;
          return this;
       }
@@ -272,7 +275,7 @@ public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultC
    @XmlAttribute
    protected Integer numberOfMedia;
    @XmlAttribute
-   protected String owner;
+   protected URI owner;
 
    /**
     * Gets the value of the name property.
@@ -365,11 +368,11 @@ public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultC
    /**
     * Gets the value of the owner property.
     */
-   public String getOwner() {
+   public URI getOwner() {
       return owner;
    }
 
-   public void setOwner(String value) {
+   public void setOwner(URI value) {
       this.owner = value;
    }
 

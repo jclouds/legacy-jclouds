@@ -25,12 +25,10 @@ import java.net.URI;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.Error;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.TasksList;
+import org.jclouds.vcloud.director.v1_5.domain.Link;
+import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultCatalogRecord;
+import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -46,7 +44,78 @@ public class QueryClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
 
    @Test
    public void testQueryCatalogNoParam() {
-      assertTrue(true);
+      HttpRequest queryRequest = HttpRequest.builder()
+              .method("GET")
+              .endpoint(URI.create(endpoint + "/catalogs/query?filter="))
+              .headers(ImmutableMultimap.<String, String> builder()
+                                .put("Accept", "*/*")
+                                .put("x-vcloud-authorization", token)
+                                .build())
+              .build();
+
+      HttpResponse queryResponse= HttpResponse.builder()
+              .statusCode(200)
+              .payload(payloadFromResourceWithContentType("/query/allCatalogs.xml", VCloudDirectorMediaType.QUERY_RESULT_RECORDS + ";version=1.5"))
+              .build();
+
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, queryRequest, queryResponse);
+      
+      QueryResultRecords<QueryResultCatalogRecord> expected = QueryResultRecords.<QueryResultCatalogRecord>builder()
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogs/query?page=1&pageSize=25&format=records"))
+            .type("application/vnd.vmware.vcloud.query.records+xml")
+            .name("catalog")
+            .page(1)
+            .pageSize(25)
+            .total(3L)
+            .link(Link.builder()
+                        .rel("alternate")
+                        .type("application/vnd.vmware.vcloud.query.references+xml")
+                        .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogs/query?page=1&pageSize=25&format=references"))
+                        .build())
+            .link(Link.builder()
+                        .rel("alternate")
+                        .type("application/vnd.vmware.vcloud.query.idrecords+xml")
+                        .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogs/query?page=1&pageSize=25&format=idrecords"))
+                        .build())
+            .record(QueryResultCatalogRecord.builder()
+                        .ownerName("qunying.huang@enstratus.com")
+                        .owner(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/967d317c-4273-4a95-b8a4-bf63b78e9c69"))
+                        .orgName("JClouds")
+                        .numberOfVAppTemplates(0)
+                        .numberOfMedia(0)
+                        .name("QunyingTestCatalog")
+                        .shared()
+                        .notPublished()
+                        .creationDate(dateService.iso8601DateParse("2012-02-07T00:16:28.323-05:00"))
+                        .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
+                        .build())
+            .record(QueryResultCatalogRecord.builder()
+                        .ownerName("system")
+                        .owner(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/0ebf2453-5e95-48ab-b223-02671965ee91"))
+                        .orgName("Bluelock")
+                        .numberOfVAppTemplates(0)
+                        .numberOfMedia(0)
+                        .name("Public")
+                        .notShared()
+                        .published()
+                        .creationDate(dateService.iso8601DateParse("2011-09-28T13:45:44.207-04:00"))
+                        .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/9e08c2f6-077a-42ce-bece-d5332e2ebb5c"))
+                        .build())
+            .record(QueryResultCatalogRecord.builder()
+                        .ownerName("adk@cloudsoftcorp.com")
+                        .owner(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/e9eb1b29-0404-4c5e-8ef7-e584acc51da9"))
+                        .orgName("JClouds")
+                        .numberOfVAppTemplates(0)
+                        .numberOfMedia(0)
+                        .name("test")
+                        .shared()
+                        .notPublished()
+                        .creationDate(dateService.iso8601DateParse("2012-02-09T12:32:17.723-05:00"))
+                        .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/b7289d54-4ca4-497f-9a93-2d4afc97e3da"))
+                        .build())
+            .build();
+      
+      assertEquals(client.getQueryClient().catalogsQuery(""), expected);
    }
 }
 		

@@ -75,10 +75,15 @@ public class VCloudDirectorMediaType {
 
    public static final String QUERY_RESULT_RECORDS = "application/vnd.vmware.vcloud.query.records+xml";
  
+   public static final String QUERY_RESULT_REFERENCES = "application/vnd.vmware.vcloud.query.references+xml";
+
+   public static final String QUERY_RESULT_ID_RECORDS = "application/vnd.vmware.vcloud.query.idrecords+xml";
+
    public static final List<String> ALL = Arrays.asList(
-        SESSION, ERROR, ORG_LIST, METADATA, METADATA_ENTRY,
-        METADATA_VALUE, ORG, TASKS_LIST, TASK, ORG_NETWORK,
-        CATALOG, CATALOG_ITEM, CATALOG_ITEMS, CATALOGS_LIST, PROPERTY,
-        MEDIA, OWNER, VDC, ADMIN_USER, QUERY_RESULT_RECORDS
-     );
+            SESSION, ERROR, ORG_LIST, METADATA, METADATA_ENTRY,
+            METADATA_VALUE, ORG, TASKS_LIST, TASK, ORG_NETWORK,
+            CATALOG, CATALOG_ITEM, CATALOG_ITEMS, CATALOGS_LIST, PROPERTY,
+            MEDIA, OWNER, VDC, ADMIN_USER, QUERY_RESULT_RECORDS,
+            QUERY_RESULT_REFERENCES, QUERY_RESULT_ID_RECORDS
+      );
 }
