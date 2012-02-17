@@ -66,7 +66,7 @@ public class Metadata extends ResourceType<Metadata> {
       /**
        * @see Metadata#getMetadata()
        */
-      public Builder metadata(Set<MetadataEntry> metadataEntries) {
+      public Builder entries(Set<MetadataEntry> metadataEntries) {
          this.metadataEntries = Sets.newLinkedHashSet(checkNotNull(metadataEntries, "metadataEntries"));
          return this;
       }
@@ -78,7 +78,7 @@ public class Metadata extends ResourceType<Metadata> {
          metadataEntries.add(checkNotNull(metadataEntry, "metadataEntry"));
          return this;
       }
-
+      
       @Override
       public Metadata build() {
          Metadata metadata = new Metadata(href, metadataEntries);
@@ -124,7 +124,7 @@ public class Metadata extends ResourceType<Metadata> {
       }
 
       public Builder fromMetadata(Metadata in) {
-         return fromResourceType(in).metadata(in.getMetadataEntries());
+         return fromResourceType(in).entries(in.getMetadataEntries());
       }
 
       /**
