@@ -29,6 +29,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -45,7 +46,12 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     * Convenience references to API clients.
     */
 
-   private final OrgClient orgClient = context.getApi().getOrgClient();
+   private OrgClient orgClient;
+
+   @BeforeGroups(groups = { "live" })
+   public void setupClients() {
+      orgClient = context.getApi().getOrgClient();
+   }
 
    /*
     * Shared state between dependant tests.

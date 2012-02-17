@@ -19,15 +19,17 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
+import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.vcloud.director.v1_5.domain.query.CatalogReferences;
+import org.jclouds.vcloud.director.v1_5.domain.query.QueryList;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
@@ -39,11 +41,27 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author grkvlt@apache.org
  */
 @RequestFilters(AddVCloudAuthorizationToRequest.class)
+@SkipEncoding({ '=' })
+@SuppressWarnings("rawtypes")
 public interface QueryAsyncClient {
 
    /**
     * REST API General queries handler.
     */
+   @GET
+   @Path("/query")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<QueryList> queryList();
+
+   @GET
+   @Path("/query")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<QueryResultRecords> queryAll(@QueryParam("type") String type);
+
    @GET
    @Path("/query")
    @Consumes
@@ -67,6 +85,13 @@ public interface QueryAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<QueryResultRecords> catalogsQueryAll();
+
+   @GET
+   @Path("/catalogs/query")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<QueryResultRecords> catalogsQuery(@QueryParam("filter") String filter);
 
    @GET
@@ -75,13 +100,20 @@ public interface QueryAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<QueryResultRecords> catalogsQuery(@QueryParam("page") Integer page, @QueryParam("pageSize") Integer pageSize,
-         @QueryParam("format") String format, @QueryParam("filter") String filter);
+         @QueryParam("filter") String filter);
 
    @GET
    @Path("/catalogs/query")
    @Consumes
-   @DefaultValue("references")
-   @QueryParam("format")
+   @QueryParams(keys = { "format" }, values = { "references" })
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<CatalogReferences> catalogReferencesQueryAll();
+
+   @GET
+   @Path("/catalogs/query")
+   @Consumes
+   @QueryParams(keys = { "format" }, values = { "references" })
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<CatalogReferences> catalogReferencesQuery(@QueryParam("filter") String filter);
@@ -89,8 +121,7 @@ public interface QueryAsyncClient {
    @GET
    @Path("/catalogs/query")
    @Consumes
-   @DefaultValue("references")
-   @QueryParam("format")
+   @QueryParams(keys = { "format" }, values = { "references" })
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<CatalogReferences> catalogReferencesQuery(@QueryParam("page") Integer page, @QueryParam("pageSize") Integer pageSize,

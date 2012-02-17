@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.*;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -70,6 +71,24 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
       }
 
       /**
+       * @see QueryResultReferences#getReferences()
+       */
+      @Override
+      public Builder references(List<CatalogReference> references) {
+         this.references = references;
+         return this;
+      }
+
+      /**
+       * @see QueryResultReferences#getReferences()
+       */
+      @Override
+      public Builder reference(CatalogReference reference) {
+         this.references.add(reference);
+         return this;
+      }
+
+      /**
        * @see Container#getName()
        */
       @Override
@@ -93,6 +112,15 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
       @Override
       public Builder pageSize(Integer pageSize) {
          this.pageSize = pageSize;
+         return this;
+      }
+
+      /**
+       * @see Container#getTotal()
+       */
+      @Override
+      public Builder total(Long total) {
+         this.total = total;
          return this;
       }
 
@@ -134,11 +162,11 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
 
       @Override
       public Builder fromQueryResultReferences(QueryResultReferences<CatalogReference> in) {
-         return Builder.class.cast(super.fromContainerType(in));
+         return Builder.class.cast(super.fromQueryResultReferences(in));
       }
 
       public Builder fromCatalogReferences(CatalogReferences in) {
-         return Builder.class.cast(fromQueryResultReferences(in).references(in.getReferences()));
+         return fromQueryResultReferences(in);
       }
    }
 

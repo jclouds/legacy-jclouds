@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -121,9 +121,9 @@ public class Checks {
    public static void checkLink(Link link) {
       // Check required fields
       assertNotNull(link.getRel(), "The Rel attribute of a Link must be set");
-      assertTrue(Link.Rel.ALL.contains(link.getRel()), 
-            String.format("The Rel attribute (%s) of a Link must be one of the allowed list - %s", 
-                  link.getRel(), Iterables.toString(Link.Rel.ALL)));
+      // XXX choose one
+      assertTrue(Link.Rel.ALL.contains(link.getRel()), String.format("The Rel attribute of a Link must be from the allowed list: %s", Iterables.toString(Link.Rel.ALL)));
+      assertTrue(Link.Rel.ALL.contains(link.getRel()), String.format("The Rel attribute of a Link cannot be '%s'", link.getRel()));
 
       // Check parent type
       checkReferenceType(link);
@@ -132,9 +132,9 @@ public class Checks {
    public static void checkTask(Task task) {
       // Check required fields
       assertNotNull(task.getStatus(), "The Status attribute of a Task must be set");
-      assertTrue(Task.Status.ALL.contains(task.getStatus().toString()), 
-            String.format("The Status of a Task (%s) must be one of the allowed list - %s", 
-            task.getStatus().toString(), Iterables.toString(Task.Status.ALL)));
+      // XXX choose one
+      assertTrue(Task.Status.ALL.contains(task.getStatus()), String.format("The Status of a Task must be from the allowed list: %s", Iterables.toString(Task.Status.ALL)));
+      assertTrue(Task.Status.ALL.contains(task.getStatus()), String.format("The Status of a Task cannot be '%s'", task.getStatus()));
 
       // Check optional fields
       // NOTE operation cannot be checked
@@ -174,6 +174,24 @@ public class Checks {
       checkEntityType(file);
    }
 
+   public static void checkMetadata(Metadata metadata) {
+      Set<MetadataEntry> metadataEntries = metadata.getMetadataEntries();
+      if (metadataEntries != null && !metadataEntries.isEmpty()) {
+         for (MetadataEntry metadataEntry : metadataEntries) checkMetadataEntry(metadataEntry);
+      }
+
+      // Check parent type
+      checkResourceType(metadata);
+   }
+
+   public static void checkMetadataEntry(MetadataEntry metadataEntry) {+      // Check required fields
+      assertNotNull(metadataEntry.getKey(), "The Key attribute of a MetadataEntry must be set");
+      assertNotNull(metadataEntry.getValue(), "The Value attribute of a MetadataEntry must be set");
+
+      // Check parent type
+      checkResourceType(metadataEntry);
+   }
+
    public static void checkProgress(Integer progress) {
       assertTrue(progress >= 0 && progress <= 100, "The Progress attribute must be between 0 and 100");
    }
@@ -186,6 +204,27 @@ public class Checks {
       
       // NOTE vendorSpecificErrorCode cannot be checked
       // NOTE stackTrace cannot be checked
+   }
+
+   public static void checkCatalog(Catalog catalog) {
+      // Check optional elements/attributes
+      Entity owner = catalog.getOwner();
+      if (owner != null) checkEntityType(owner);
+      CatalogItems catalogItems = catalog.getCatalogItems();
+      if (catalogItems != null) {
+         for (Reference catalogItemReference : catalogItems.getCatalogItems()) {
+            checkReferenceType(catalogItemReference);
+         }
+      }
+      // NOTE isPublished cannot be checked
+      
+      // Check parent type
+      checkEntityType(catalog);
+   }
+
+   public static void checkCatalogItem(CatalogItem catalogItem) {
+      // Check parent type
+      checkEntityType(catalogItem);
    }
 
    public static void checkImageType(String imageType) {
