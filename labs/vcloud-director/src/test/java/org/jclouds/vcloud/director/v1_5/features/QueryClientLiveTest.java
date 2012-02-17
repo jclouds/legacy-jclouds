@@ -18,16 +18,13 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
 import static org.testng.Assert.*;
 
-import java.net.URI;
-
-import org.jclouds.vcloud.director.v1_5.domain.OrgList;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.TasksList;
+import org.jclouds.vcloud.director.v1_5.domain.query.CatalogReferences;
+import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -45,8 +42,8 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private CatalogClient catalogClient;
    private QueryClient queryClient;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClients() {
+   @BeforeClass(inheritGroups = true)
+   public void setupRequiredClients() {
       catalogClient = context.getApi().getCatalogClient();
       queryClient = context.getApi().getQueryClient();
    }
@@ -55,14 +52,18 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     * Shared state between dependant tests.
     */
 
-   private OrgList orgList;
-   private Reference orgRef;
-   private TasksList taskList;
-   private Task task;
-   private URI taskUri;
+   private QueryResultRecords<?> catalogRecords;
+   private CatalogReferences catalogReferences;
 
-   @Test(testName = "GET /catalogs/query/")
-   public void testQueryCatalogNoParam() {
-      assertTrue(true);
+   @Test(testName = "GET /catalogs/query")
+   public void testQueryAllCatalogs() {
+      catalogRecords = queryClient.catalogsQueryAll();
+      assertFalse(catalogRecords.getRecords().isEmpty(), String.format(NOT_EMPTY_OBJECT_FMT, "CatalogRecord", "QueryResultRecords"));
+   }
+
+   @Test(testName = "GET /catalogs/query?format=references", dependsOnMethods = { "testQueryAllCatalogs" })
+   public void testQueryAllCatalogReferences() {
+      catalogReferences = queryClient.catalogReferencesQueryAll();
+      assertFalse(catalogReferences.getReferences().isEmpty(), String.format(NOT_EMPTY_OBJECT_FMT, "CatalogReference", "CatalogReferences"));
    }
 }

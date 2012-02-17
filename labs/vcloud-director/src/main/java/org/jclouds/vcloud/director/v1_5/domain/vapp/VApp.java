@@ -18,51 +18,15 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.vapp;
 
-import static com.google.common.base.Objects.*;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
-import org.jclouds.vcloud.director.v1_5.domain.Owner;
-
-import com.google.common.base.Objects;
-
 /**
- * 
- *                 Represents a vApp.
- *             
- * 
- * <p>Java class for VApp complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * Represents a vApp.
  * 
  * <pre>
- * &lt;complexType name="VApp">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.vmware.com/vcloud/v1.5}AbstractVApp">
- *       &lt;sequence>
- *         &lt;element name="Owner" type="{http://www.vmware.com/vcloud/v1.5}OwnerType" minOccurs="0"/>
- *         &lt;element name="InMaintenanceMode" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
- *         &lt;element name="Children" type="{http://www.vmware.com/vcloud/v1.5}VAppChildrenType" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="ovfDescriptorUploaded" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="VApp" /&gt;
  * </pre>
  * 
- * 
+ * @author grkvlt@apache.org
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "VApp", propOrder = {
-    "owner",
-    "inMaintenanceMode",
-    "children"
-})
 public class VApp extends AbstractVAppType {
 //   
 //   @SuppressWarnings("unchecked")

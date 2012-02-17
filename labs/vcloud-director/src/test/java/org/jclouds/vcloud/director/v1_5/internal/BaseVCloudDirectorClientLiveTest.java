@@ -18,7 +18,10 @@
  */
 package org.jclouds.vcloud.director.v1_5.internal;
 
+import java.net.URI;
 import java.util.Properties;
+
+import javax.inject.Inject;
 
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -27,11 +30,12 @@ import org.jclouds.rest.RestContextFactory;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
@@ -42,11 +46,23 @@ import com.google.inject.Module;
  */
 @Test(groups = "live")
 public class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTest {
-   public BaseVCloudDirectorClientLiveTest() {
-      provider = "vcloud-director";
+
+   protected BaseVCloudDirectorClientLiveTest() {
+      this.provider = "vcloud-director";
    }
+
+   protected TaskSuccess successTester;
    
    protected RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context;
+
+   @BeforeClass(groups = { "live" })
+   public void setupContext() {
+      setupCredentials();
+      Properties overrides = setupProperties();
+      context = new RestContextFactory().createContext(provider, identity, credential,
+               ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
+      successTester = new TaskSuccess(context,1000L);
+   }
 
    protected String catalogName;
    protected String mediaId;
@@ -55,7 +71,6 @@ public class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTe
    protected String vDCId;
 
    @Override
-   @BeforeClass
    protected void setupCredentials() {
       super.setupCredentials();
       catalogName = System.getProperty("test." + provider + ".catalog-name", "Public");
@@ -63,14 +78,6 @@ public class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTe
       vAppTemplateId = System.getProperty("test." + provider + ".vapptemplate-id");
       networkId = System.getProperty("test." + provider + ".network-id");
       vDCId = System.getProperty("test." + provider + ".vdc-id");
-   }
-
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new RestContextFactory().createContext(provider, identity, credential,
-               ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
    }
 
    @AfterGroups(groups = "live")

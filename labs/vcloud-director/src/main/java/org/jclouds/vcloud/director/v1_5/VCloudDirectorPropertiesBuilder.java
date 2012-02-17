@@ -18,9 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+import static org.jclouds.Constants.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.util.Properties;
 
@@ -37,8 +36,20 @@ public class VCloudDirectorPropertiesBuilder extends PropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ENDPOINT, "https://vcloudbeta.bluelock.com/api");
-      properties.setProperty(PROPERTY_SESSION_INTERVAL, 30*60 + "");
+      properties.setProperty(PROPERTY_SESSION_INTERVAL, Integer.toString(30 * 60));
       properties.setProperty(PROPERTY_API_VERSION, "1.5");
+
+      properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE,
+            String.format("http://www.vmware.com/vcloud/v${%s}", PROPERTY_VCLOUD_VERSION_SCHEMA));
+      properties.setProperty(PROPERTY_SESSION_INTERVAL, Integer.toString(8 * 60));
+      properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA, "https://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd");
+      properties.setProperty("jclouds.dns_name_length_min", "1");
+      properties.setProperty("jclouds.dns_name_length_max", "80");
+      
+      // TODO integrate these with the {@link ComputeTimeouts} instead of having a single timeout for everything.
+      properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, Long.toString(1200l * 1000l));
+      properties.setProperty(PROPERTY_SESSION_INTERVAL, Integer.toString(300));
+
       return properties;
    }
 

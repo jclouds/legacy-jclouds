@@ -29,7 +29,7 @@ import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -46,8 +46,8 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    private NetworkClient networkClient;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClients() {
+   @BeforeClass(inheritGroups = true)
+   public void setupRequiredClients() {
       networkClient = context.getApi().getNetworkClient();
    }
    

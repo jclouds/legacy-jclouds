@@ -18,25 +18,28 @@
  */
 package org.jclouds.vcloud.director.v1_5.predicates;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
+
 import java.net.URI;
 
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
+import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TaskInErrorStateException;
-import org.jclouds.vcloud.director.v1_5.domain.TaskStatus;
 import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 
 import com.google.common.base.Predicate;
 import com.google.inject.Inject;
+import com.google.inject.Provides;
+import com.google.inject.name.Named;
 
 /**
- * 
  * Tests to see if a task succeeds.
  * 
  * @author Adrian Cole
@@ -45,26 +48,34 @@ import com.google.inject.Inject;
 public class TaskSuccess implements Predicate<URI> {
 
    private final TaskClient taskClient;
+   private Predicate<URI> retryable;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public TaskSuccess(RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context) {
+   public TaskSuccess(RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context,
+         @Named(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED) long completed) {
       this.taskClient = context.getApi().getTaskClient();
+      this.retryable = new RetryablePredicate<URI>(new Predicate<URI>() {
+         @Override
+         public boolean apply(URI taskUri) {
+            logger.trace("looking for status on task %s", taskUri);
+            Task task = taskClient.getTask(taskUri);
+            // perhaps task isn't available, yet
+            if (task == null)
+               return false;
+            logger.trace("%s: looking for status %s: currently: %s", task, Task.Status.SUCCESS, task.getStatus());
+            if (task.getStatus().equals(Task.Status.ERROR))
+               throw new TaskInErrorStateException(task);
+            return task.getStatus().equals(Task.Status.SUCCESS);
+         }
+      }, completed);
    }
 
-   public boolean apply(URI taskUri) {
-      logger.trace("looking for status on task %s", taskUri);
-
-      Task task = taskClient.getTask(taskUri);
-      // perhaps task isn't available, yet
-      if (task == null)
-         return false;
-      logger.trace("%s: looking for status %s: currently: %s", task, TaskStatus.SUCCESS, task.getStatus());
-      if (task.getStatus() == TaskStatus.ERROR)
-         throw new TaskInErrorStateException(task);
-      return task.getStatus() == TaskStatus.SUCCESS;
+   /** @see Predicate#apply(Object) */
+   @Override
+   public boolean apply(URI input) {
+      return retryable.apply(input);
    }
-
 }
