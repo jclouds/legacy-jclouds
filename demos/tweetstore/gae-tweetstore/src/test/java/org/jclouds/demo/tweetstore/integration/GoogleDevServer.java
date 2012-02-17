@@ -19,6 +19,7 @@
 package org.jclouds.demo.tweetstore.integration;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.Closeables.closeQuietly;
 import static java.lang.String.format;
 
 import java.io.File;
@@ -45,7 +46,7 @@ public class GoogleDevServer {
         String filename = String.format(
                 "%1$s/WEB-INF/jclouds.properties", warfile);
         System.err.println("file: " + filename);
-        props.store(new FileOutputStream(filename), "test");
+        storeProperties(filename, props);
         assert new File(filename).exists();
         this.server = new Thread(new Runnable() {
             public void run() {
@@ -62,6 +63,15 @@ public class GoogleDevServer {
         });
         server.start();
         TimeUnit.SECONDS.sleep(30);
+    }
+
+    private static void storeProperties(String filename, Properties props) throws IOException {
+        FileOutputStream targetFile = new FileOutputStream(filename);
+        try {
+            props.store(targetFile, "test");
+        } finally {
+            closeQuietly(targetFile);
+        }
     }
 
     public void stop() throws Exception {

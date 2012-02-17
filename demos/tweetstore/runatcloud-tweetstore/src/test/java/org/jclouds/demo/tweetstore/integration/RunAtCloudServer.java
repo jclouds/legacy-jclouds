@@ -18,6 +18,8 @@
  */
 package org.jclouds.demo.tweetstore.integration;
 
+import static com.google.common.io.Closeables.closeQuietly;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -29,9 +31,9 @@ import javax.servlet.ServletException;
 import org.apache.commons.cli.ParseException;
 
 /**
- * Basic functionality to start a local google app engine instance.
+ * Basic functionality to start a local RUN@cloud instance.
  *
- * @author Adrian Cole
+ * @author Andrew Phillips
  */
 public class RunAtCloudServer {
     protected StaxSdkAppServer2 server;
@@ -42,12 +44,21 @@ public class RunAtCloudServer {
         String filename = String.format(
                 "%1$s/WEB-INF/jclouds.properties", warfile);
         System.err.println("file: " + filename);
-        props.store(new FileOutputStream(filename), "test");
+        storeProperties(filename, props);
         assert new File(filename).exists();
         server = StaxSdkAppServer2.createServer(new String[] { "-web", warfile, "-port", port, "-env", environments,
                 "-dir", serverBaseDirectory }, new String[0], Thread.currentThread().getContextClassLoader());
         server.start();
         TimeUnit.SECONDS.sleep(30);
+    }
+
+    private static void storeProperties(String filename, Properties props) throws IOException {
+        FileOutputStream targetFile = new FileOutputStream(filename);
+        try {
+            props.store(targetFile, "test");
+        } finally {
+            closeQuietly(targetFile);
+        }
     }
 
     public void stop() throws Exception {
