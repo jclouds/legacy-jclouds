@@ -32,8 +32,9 @@
     <description>jclouds TweetStore for RedHat's OpenShift Express using Guice for Dependency Injection</description>
 
     <properties>
-        <test.rhcloud.address>localhost</test.rhcloud.address>
-        <test.rhcloud.port>8088</test.rhcloud.port>
+        <rhcloud.jboss.version>7.0.2.Final</rhcloud.jboss.version>
+        <rhcloud.jboss.address>localhost</rhcloud.jboss.address>
+        <rhcloud.jboss.port>8088</rhcloud.jboss.port>
         <jclouds.tweetstore.container>jclouds-rhcloud-tweetstore</jclouds.tweetstore.container>
     </properties>
 
@@ -45,27 +46,21 @@
         </dependency>
 
         <!-- OpenShift Express uses JBoss AS 7 -->
-        <!--dependency>
-            <groupId>org.jboss.embedded</groupId>
-            <artifactId>jboss-embedded</artifactId>
-            <version>beta3.SP12</version>
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-embedded</artifactId>
+            <version>${rhcloud.jboss.version}</version>
             <scope>test</scope>
-        </dependency-->
+            <exclusions>
+              <!-- loading the LogManager here leads to ClassCastExceptions because
+                the server uses a different classloader -->
+            	<exclusion>
+            		<artifactId>jboss-logmanager</artifactId>
+            		<groupId>org.jboss.logmanager</groupId>
+            	</exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
-
-    <!--repositories>
-        <!- - net.stax:stax-appserver is not in central - ->
-        <repository>
-            <id>bees-snapshots</id>
-            <url>http://repository-cloudbees.forge.cloudbees.com/public-snapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases> 
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories-->
 
     <profiles>
         <profile>
@@ -97,12 +92,19 @@
                                         <test.cloudonestorage.credential>${test.cloudonestorage.credential}</test.cloudonestorage.credential>
                                         <test.ninefold-storage.identity>${test.ninefold-storage.identity}</test.ninefold-storage.identity>
                                         <test.ninefold-storage.credential>${test.ninefold-storage.credential}</test.ninefold-storage.credential>
-                                        <rhcloud.address>${test.rhcloud.address}</rhcloud.address>
-                                        <rhcloud.port>${test.rhcloud.port}</rhcloud.port>
+                                        <rhcloud.jboss.home>${rhcloud.jboss.home}</rhcloud.jboss.home>
+                                        <rhcloud.jboss.address>${rhcloud.jboss.address}</rhcloud.jboss.address>
+                                        <rhcloud.jboss.port>${rhcloud.jboss.port}</rhcloud.jboss.port>
                                         <jclouds.tweetstore.blobstores>${jclouds.tweetstore.blobstores}</jclouds.tweetstore.blobstores>
                                         <jclouds.tweetstore.container>test.${jclouds.tweetstore.container}</jclouds.tweetstore.container>
-                                        <warfile>${project.build.directory}/${project.artifactId}</warfile>
+                                        <jboss.embedded.root>${project.build.directory}/rhcloud-jboss</jboss.embedded.root>
+                                        <jboss.server.config.dir>${project.basedir}/src/test/resources/jbossas7/configuration</jboss.server.config.dir>
+                                        <warfile>${project.build.directory}/${project.build.finalName}</warfile>
                                     </systemPropertyVariables>
+                                    <environmentVariables>
+                                        <OPENSHIFT_INTERNAL_IP>${rhcloud.jboss.address}</OPENSHIFT_INTERNAL_IP>
+                                        <OPENSHIFT_INTERNAL_PORT>${rhcloud.jboss.port}</OPENSHIFT_INTERNAL_PORT>
+                                    </environmentVariables>
                                 </configuration>
                             </execution>
                         </executions>

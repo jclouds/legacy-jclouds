@@ -62,10 +62,10 @@ import com.google.common.collect.Maps;
 import com.google.inject.Module;
 
 /**
- * Starts up the Google App Engine for Java Development environment and deploys an application which
- * tests accesses twitter and blobstores.
+ * Starts up a JBoss AS 7 server (simulating OpenShift Express) and deploys 
+ * an application which tests accesses twitter and blobstores.
  * 
- * @author Adrian Cole
+ * @author Andrew Phillips
  */
 @Test(groups = "live", singleThreaded = true)
 public class TweetStoreLiveTest {
@@ -170,28 +170,28 @@ public class TweetStoreLiveTest {
     }
    
    @BeforeTest(dependsOnMethods = "clearAndCreateContainers")
-   @Parameters({ "warfile", "rhcloud.address", "rhcloud.port" })
-   public void startDevAppServer(final String warfile, final String address, final String port) throws Exception {
+   @Parameters({ "warfile", "rhcloud.jboss.address", "rhcloud.jboss.port", "rhcloud.jboss.home" })
+   public void startDevAppServer(final String warfile, final String address, final String port,
+           String serverHome) throws Exception {
       url = new URL(String.format("http://%s:%s", address, port));
 
       server = new RhcloudServer();
-//      server.writePropertiesAndStartServer(address, port, warfile, "itest", 
-//              serverBaseDirectory, props);
+      server.writePropertiesAndStartServer(warfile, serverHome, props);
    }
 
-   @Test(enabled = false)
+   @Test
    public void shouldPass() throws InterruptedException, IOException {
       InputStream i = url.openStream();
       String string = Strings2.toStringAndClose(i);
       assert string.indexOf("Welcome") >= 0 : string;
    }
 
-   @Test(dependsOnMethods = "shouldPass", expectedExceptions = IOException.class, enabled = false)
+   @Test(dependsOnMethods = "shouldPass", expectedExceptions = IOException.class)
    public void shouldFail() throws InterruptedException, IOException {
       new URL(url, "/store/do").openStream();
    }
 
-   @Test(dependsOnMethods = "shouldFail", enabled = false)
+   @Test(dependsOnMethods = "shouldFail")
    public void testPrimeContainers() throws IOException, InterruptedException {
       URL gurl = new URL(url, "/store/do");
 
@@ -213,7 +213,7 @@ public class TweetStoreLiveTest {
       }
    }
 
-   @Test(invocationCount = 5, dependsOnMethods = "testPrimeContainers", enabled = false)
+   @Test(invocationCount = 5, dependsOnMethods = "testPrimeContainers")
    public void testSerial() throws InterruptedException, IOException {
       URL gurl = new URL(url, "/tweets/get");
       InputStream i = gurl.openStream();
@@ -221,7 +221,7 @@ public class TweetStoreLiveTest {
       assert string.indexOf("Tweets in Clouds") >= 0 : string;
    }
 
-   @Test(invocationCount = 10, dependsOnMethods = "testPrimeContainers", threadPoolSize = 3, enabled = false)
+   @Test(invocationCount = 10, dependsOnMethods = "testPrimeContainers", threadPoolSize = 3)
    public void testParallel() throws InterruptedException, IOException {
       URL gurl = new URL(url, "/tweets/get");
       InputStream i = gurl.openStream();
