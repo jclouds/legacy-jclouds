@@ -18,8 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 import java.net.URI;
 
@@ -30,26 +29,34 @@ import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code NetworkClient}
+ * Tests behavior of {@link NetworkClient}
  * 
  * @author danikov
  */
 @Test(groups = { "live", "apitests" }, testName = "NetworkClientLiveTest")
 public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
-   
-   // @Before populate
-   String networkId = "55a677cf-ab3f-48ae-b880-fab90421980c";
-   String catalogId = "9e08c2f6-077a-42ce-bece-d5332e2ebb5c";
 
+   /*
+    * Convenience references to API clients.
+    */
+
+   private NetworkClient networkClient;
+
+   @BeforeClass(inheritGroups = true)
+   public void setupRequiredClients() {
+      networkClient = context.getApi().getNetworkClient();
+   }
+   
    @Test(testName = "GET /network/{id}")
    public void testWhenResponseIs2xxLoginReturnsValidNetwork() {
       Reference networkRef = Reference.builder()
-            .href(URI.create(endpoint + "/network/"+networkId)).build();
+            .href(URI.create(endpoint + "/network/" + networkId)).build();
       
-      OrgNetwork network = context.getApi().getNetworkClient().getNetwork(networkRef);
+      OrgNetwork network = networkClient.getNetwork(networkRef);
       
       //TODO assert network is valid
    }
@@ -66,7 +73,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .build();
       
       try {
-         context.getApi().getNetworkClient().getNetwork(networkRef);
+         networkClient.getNetwork(networkRef);
          fail("Should give HTTP 400 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -77,8 +84,9 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "GET /network/{catalog_id}", enabled=false)
    public void testWhenResponseIs403ForCatalogIdUsedAsNetworkId() {
+      String catalogId = "7212e451-76e1-4631-b2de-ba1dfd8080e4";
       Reference networkRef = Reference.builder()
-            .href(URI.create(endpoint + "/network"+catalogId)).build();
+            .href(URI.create(endpoint + "/network/" + catalogId)).build();
 
       Error expected = Error.builder()
             .message("This operation is denied.")
@@ -87,7 +95,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .build();
 
       try {
-         context.getApi().getNetworkClient().getNetwork(networkRef);
+         networkClient.getNetwork(networkRef);
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -108,7 +116,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .build();
 
       try {
-         context.getApi().getNetworkClient().getNetwork(networkRef);
+         networkClient.getNetwork(networkRef);
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -120,7 +128,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /network/{id}/metadata")
    public void testWhenResponseIs2xxLoginReturnsValidMetadataList() {
       Reference networkRef = Reference.builder()
-            .href(URI.create(endpoint + "/network/"+networkId)).build();
+            .href(URI.create(endpoint + "/network/" + networkId)).build();
       
       Metadata expected = context.getApi().getNetworkClient().getMetadata(networkRef);
  
@@ -135,9 +143,9 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /network/{id}/metadata", enabled=false)
    public void testWhenResponseIs2xxLoginReturnsValidMetadataEntry() {
       Reference networkRef = Reference.builder()
-            .href(URI.create(endpoint + "/network/"+networkId)).build();
+            .href(URI.create(endpoint + "/network/" + networkId)).build();
       
-      MetadataEntry expected = context.getApi().getNetworkClient().getMetadataEntry(networkRef, metadataKey);
+      MetadataEntry expected = networkClient.getMetadataEntry(networkRef, metadataKey);
  
       // assert metadataEntry is valid
    }

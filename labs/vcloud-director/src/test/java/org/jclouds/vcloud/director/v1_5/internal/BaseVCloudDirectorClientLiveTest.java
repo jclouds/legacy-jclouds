@@ -18,7 +18,10 @@
  */
 package org.jclouds.vcloud.director.v1_5.internal;
 
+import java.net.URI;
 import java.util.Properties;
+
+import javax.inject.Inject;
 
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -27,32 +30,54 @@ import org.jclouds.rest.RestContextFactory;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
 import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
 /**
- * Tests behavior of {@code VCloudDirectorClient}
+ * Tests behavior of {@link VCloudDirectorClient} and acts as parent for other client live tests.
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live")
 public class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTest {
-   public BaseVCloudDirectorClientLiveTest() {
-      provider = "vcloud-director";
+
+   protected BaseVCloudDirectorClientLiveTest() {
+      this.provider = "vcloud-director";
    }
+
+   protected TaskSuccess successTester;
    
    protected RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
+   @BeforeClass(groups = { "live" })
+   public void setupContext() {
       setupCredentials();
       Properties overrides = setupProperties();
       context = new RestContextFactory().createContext(provider, identity, credential,
                ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
+      successTester = new TaskSuccess(context,1000L);
+   }
+
+   protected String catalogName;
+   protected String mediaId;
+   protected String vAppTemplateId;
+   protected String networkId;
+   protected String vDCId;
+
+   @Override
+   protected void setupCredentials() {
+      super.setupCredentials();
+      catalogName = System.getProperty("test." + provider + ".catalog-name", "Public");
+      mediaId = System.getProperty("test." + provider + ".media-id");
+      vAppTemplateId = System.getProperty("test." + provider + ".vapptemplate-id");
+      networkId = System.getProperty("test." + provider + ".network-id");
+      vDCId = System.getProperty("test." + provider + ".vdc-id");
    }
 
    @AfterGroups(groups = "live")

@@ -1,31 +1,13 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jclouds.vcloud.director.v1_5.domain;
+
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
 
-/**
- * A reference to a resource.
- * 
- * @author grkvlt@apache.org
- */
-public class Reference extends ReferenceType<Reference> {
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "CatalogReference")
+public class CatalogReference extends ReferenceType<CatalogReference> {
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -34,14 +16,14 @@ public class Reference extends ReferenceType<Reference> {
 
    @Override
    public Builder toBuilder() {
-      return new Builder().fromReference(this);
+      return new Builder().fromCatalogReference(this);
    }
 
-   public static class Builder extends ReferenceType.Builder<Reference> {
+   public static class Builder extends ReferenceType.Builder<CatalogReference> {
 
       @Override
-      public Reference build() {
-         Reference reference = new Reference(href);
+      public CatalogReference build() {
+         CatalogReference reference = new CatalogReference(href);
          reference.setId(id);
          reference.setName(name);
          reference.setType(type);
@@ -85,20 +67,20 @@ public class Reference extends ReferenceType<Reference> {
       }
 
       @Override
-      public Builder fromReferenceType(ReferenceType<Reference> in) {
+      protected Builder fromReferenceType(ReferenceType<CatalogReference> in) {
          return Builder.class.cast(super.fromReferenceType(in));
       }
 
-      public Builder fromReference(Reference in) {
+      protected Builder fromCatalogReference(CatalogReference in) {
          return fromReferenceType(in);
       }
    }
 
-   protected Reference(URI href) {
+   protected CatalogReference(URI href) {
       super(href);
    }
 
-   protected Reference() {
+   protected CatalogReference() {
       // For JAXB
    }
 
@@ -108,7 +90,7 @@ public class Reference extends ReferenceType<Reference> {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      Reference that = Reference.class.cast(o);
+      CatalogReference that = CatalogReference.class.cast(o);
       return super.equals(that);
    }
 }
