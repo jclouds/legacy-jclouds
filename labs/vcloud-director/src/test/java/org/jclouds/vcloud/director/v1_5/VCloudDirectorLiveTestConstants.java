@@ -47,7 +47,7 @@ public class VCloudDirectorLiveTestConstants {
    
    public static final String REQUIRED_VALUE_OBJECT_FMT = "ERR-03: The %s field of the %s must not be '%s'; allowed values: %s";
 
-   public static final String REQUIRED_VALUE_FMT = "ERR-04: The %s field must not be '%sr'; allowed values: %s";
+   public static final String REQUIRED_VALUE_FMT = "ERR-04: The %s field must not be '%s'; allowed values: %s";
 
    public static final String MUST_BE_WELL_FORMED_FMT = "ERR-05: The %s field must be well formed: '%s'";
 

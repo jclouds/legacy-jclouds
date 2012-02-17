@@ -34,7 +34,7 @@ import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.query.CatalogReferences;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -54,6 +54,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    private CatalogClient catalogClient;
    private QueryClient queryClient;
+   private MediaClient mediaClient;
 
    /*
     * Shared state between dependant tests.
@@ -67,11 +68,13 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private CatalogItem newCatalogItem;
    private Metadata catalogMetadata;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClients() {
+   @BeforeClass(inheritGroups = true)
+   public void setupRequiredClients() {
       catalogClient = context.getApi().getCatalogClient();
       queryClient = context.getApi().getQueryClient();
+      mediaClient = context.getApi().getMediaClient();
    }
+
    private Metadata catalogItemMetadata;
 
    @Test(testName = "GET /catalog/{id}")
@@ -152,9 +155,8 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          }
       });
       MetadataValue metadataValue = catalogClient.getCatalogMetadataValue(catalogRef, "KEY");
-      // XXX
       assertEquals(metadataValue.getValue(), existingMetadataEntry.getValue(),
-            "The MetadataValue for KEY should have the same Value as the existing MetadataEntry");
+            String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", existingMetadataEntry.getValue(), metadataValue.getValue()));
       checkMetadataValue(metadataValue);
    }
 
@@ -162,8 +164,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void testGetCatalogItemMetadata() {
       resetCatalogItemMetadata(catalogItemRef);
       catalogItemMetadata = catalogClient.getCatalogItemMetadata(catalogItemRef);
-      // XXX
-      assertEquals(catalogItemMetadata.getMetadataEntries().size(), 1, "There should be a single MetadataEntry");
+      assertEquals(catalogItemMetadata.getMetadataEntries().size(), 1, String.format(MUST_EXIST_FMT, "MetadataEntry", "CatalogItem"));
       checkMetadata(catalogItemMetadata);
    }
 
@@ -176,9 +177,8 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       Task mergeCatalogItemMetadata = catalogClient.mergeCatalogItemMetadata(catalogItemRef, newMetadata);
       checkTask(mergeCatalogItemMetadata);
-      // TODO requires code from dan to be merged
-//      assertTrue(taskTester.apply(mergeCatalogItemMetadata.getHref()),
-//            String.format(TASK_COMPLETE_TIMELY, "mergeCatalogItemMetadata"));
+      assertTrue(successTester.apply(mergeCatalogItemMetadata.getHref()),
+            String.format(TASK_COMPLETE_TIMELY, "mergeCatalogItemMetadata"));
       
       Metadata mergedCatalogItemMetadata = catalogClient.getCatalogItemMetadata(catalogItemRef);
       // XXX

@@ -16,80 +16,51 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
+import static com.google.common.base.Objects.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 
-
 /**
- * 
- *                 Represents a media.
- *             
- * 
- * <p>Java class for Media complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * Represents a media.
  * 
  * <pre>
- * &lt;complexType name="Media">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.vmware.com/vcloud/v1.5}ResourceEntityType">
- *       &lt;sequence>
- *         &lt;element name="Owner" type="{http://www.vmware.com/vcloud/v1.5}OwnerType" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="imageType" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="size" use="required" type="{http://www.w3.org/2001/XMLSchema}long" />
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="Media" /&gt;
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Media")
-@XmlType(propOrder = {"owner"})
-public class Media
-    extends ResourceEntityType<Media>
+public class Media extends ResourceEntityType<Media> {
 
-{
    public static final class ImageType {
       public static final String ISO = "iso";
       public static final String FLOPPY = "floppy";
 
-      public static final List<String> ALL = Arrays.asList(
-            ISO, FLOPPY
-         );
+      public static final List<String> ALL = Arrays.asList(ISO, FLOPPY);
    }
-   
+
    @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromMedia(this);
    }
 
    public static class Builder extends ResourceEntityType.Builder<Media> {
-      
+
       private Owner owner;
       private String imageType;
       private long size;
@@ -118,7 +89,7 @@ public class Media
          return this;
       }
 
-
+      @Override
       public Media build() {
          Media media = new Media();
          media.setOwner(owner);
@@ -126,10 +97,11 @@ public class Media
          media.setSize(size);
          return media;
       }
-      
+
       /**
        * @see ResourceEntityType#getFiles()
        */
+      @Override
       public Builder files(FilesList files) {
          super.files(files);
          return this;
@@ -138,11 +110,12 @@ public class Media
       /**
        * @see ResourceEntityType#getStatus()
        */
+      @Override
       public Builder status(Integer status) {
          super.status(status);
          return this;
       }
-      
+
       /**
        * @see EntityType#getName()
        */
@@ -215,16 +188,13 @@ public class Media
          return this;
       }
 
-
       @Override
       public Builder fromResourceEntityType(ResourceEntityType<Media> in) {
-          return Builder.class.cast(super.fromResourceEntityType(in));
+         return Builder.class.cast(super.fromResourceEntityType(in));
       }
+
       public Builder fromMedia(Media in) {
-         return fromResourceEntityType(in)
-            .owner(in.getOwner())
-            .imageType(in.getImageType())
-            .size(in.getSize());
+         return fromResourceEntityType(in).owner(in.getOwner()).imageType(in.getImageType()).size(in.getSize());
       }
    }
 
@@ -232,102 +202,65 @@ public class Media
       super();
    }
 
-    @XmlElement(namespace = VCLOUD_1_5_NS, name = "Owner")
-    protected Owner owner;
-    @XmlAttribute(required = true)
-    protected String imageType;
-    @XmlAttribute(required = true)
-    protected long size;
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Owner")
+   protected Owner owner;
+   @XmlAttribute(required = true)
+   protected String imageType;
+   @XmlAttribute(required = true)
+   protected long size;
 
-    /**
-     * Gets the value of the owner property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Owner }
-     *     
-     */
-    public Owner getOwner() {
-        return owner;
-    }
+   /**
+    * Gets the value of the owner property.
+    */
+   public Owner getOwner() {
+      return owner;
+   }
 
-    /**
-     * Sets the value of the owner property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Owner }
-     *     
-     */
-    public void setOwner(Owner value) {
-        this.owner = value;
-    }
+   public void setOwner(Owner value) {
+      this.owner = value;
+   }
 
-    /**
-     * Gets the value of the imageType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getImageType() {
-        return imageType;
-    }
+   /**
+    * Gets the value of the imageType property.
+    */
+   public String getImageType() {
+      return imageType;
+   }
 
-    /**
-     * Sets the value of the imageType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setImageType(String value) {
-        this.imageType = value;
-    }
+   public void setImageType(String value) {
+      this.imageType = value;
+   }
 
-    /**
-     * Gets the value of the size property.
-     * 
-     */
-    public long getSize() {
-        return size;
-    }
+   /**
+    * Gets the value of the size property.
+    */
+   public long getSize() {
+      return size;
+   }
 
-    /**
-     * Sets the value of the size property.
-     * 
-     */
-    public void setSize(long value) {
-        this.size = value;
-    }
+   public void setSize(long value) {
+      this.size = value;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       Media that = Media.class.cast(o);
-      return equal(owner, that.owner) && 
-           equal(imageType, that.imageType) && 
-           equal(size, that.size);
+      return super.equals(that) &&
+            equal(this.owner, that.owner) && equal(this.imageType, that.imageType) && equal(this.size, that.size);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(owner, 
-           imageType, 
-           size);
+      return super.hashCode() + Objects.hashCode(owner, imageType, size);
    }
 
    @Override
-   public String toString() {
-      return Objects.toStringHelper("")
-            .add("owner", owner)
-            .add("imageType", imageType)
-            .add("size", size).toString();
+   public ToStringHelper string() {
+      return super.string().add("owner", owner).add("imageType", imageType).add("size", size);
    }
 
 }

@@ -29,7 +29,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -49,8 +49,8 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private OrgClient orgClient;
    private TaskClient taskClient;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClients() {
+   @BeforeClass(inheritGroups = true)
+   public void setupRequiredClients() {
       orgClient = context.getApi().getOrgClient();
       taskClient = context.getApi().getTaskClient();
    }

@@ -27,8 +27,8 @@ import org.jclouds.rest.RestContextFactory;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -41,21 +41,24 @@ import com.google.inject.Module;
  */
 @Test(groups = "live")
 public class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTest {
-   public BaseVCloudDirectorClientLiveTest() {
+
+   protected BaseVCloudDirectorClientLiveTest() {
       provider = "vcloud-director";
    }
+
+   protected TaskSuccess successTester;
    
    protected RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
+   @BeforeClass(groups = { "live" })
+   public void setupContext() {
       setupCredentials();
       Properties overrides = setupProperties();
       context = new RestContextFactory().createContext(provider, identity, credential,
                ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
+      successTester = new TaskSuccess(context, 1000L);
    }
 
-   @AfterGroups(groups = "live")
    protected void tearDown() {
       if (context != null)
          context.close();

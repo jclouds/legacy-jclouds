@@ -27,22 +27,33 @@ import org.jclouds.vcloud.director.v1_5.domain.Task;
 public class VCloudDirectorException extends RuntimeException {
 
    /** The serialVersionUID. */
-   private static final long serialVersionUID = -3200853408568729058L;
+   private static final long serialVersionUID = -5292516858598372960L;
 
    private final Error error;
+   private final Task task;
 
    public VCloudDirectorException(Error error) {
       super("Error: " + error.getMessage());
       this.error = error;
+      this.task = null;
    }
 
    public VCloudDirectorException(Task task) {
       super("Task error: " + task.getError().getMessage());
       this.error = task.getError();
+      this.task = task;
    }
 
    public Error getError() {
       return error;
+   }
+
+   public boolean hasTask() {
+      return task != null;
+   }
+
+   public Task getTask() {
+      return task;
    }
 
 }

@@ -147,13 +147,6 @@ public class Task extends EntityType<Task> {
          this.status = status;
          return this;
       }
-      
-      /**
-       * @see Task#getStatus()
-       */
-      public Builder status(TaskStatus status) {
-         return this.status(status.toString());
-      }
 
       /**
        * @see Task#getOperation()
@@ -418,14 +411,10 @@ public class Task extends EntityType<Task> {
     * <li>aborted - The task was aborted by an administrative action.
     * </ul>
     */
-   public TaskStatus getStatus() {
-      return TaskStatus.fromValue(status);
+   public String getStatus() {
+      return status;
    }
    
-   public void setStatus(TaskStatus status) {
-      this.setStatus(status.toString());
-   }
-
    public void setStatus(String status) {
       this.status = status;
    }
