@@ -23,22 +23,31 @@ package org.jclouds.vcloud.director.v1_5;
  */
 public class VCloudDirectorLiveTestConstants {
 
-   public static final String NOT_NULL_OBJECT_FMT = "The %s field of the %s must not be null";
+   public static final String NOT_NULL_OBJECT_FMT = "ERR-01: The %s field of the %s must not be null";
+   public static final String ERR_01 = NOT_NULL_OBJECT_FMT;
    
-   public static final String NOT_EMPTY_OBJECT_FMT = "One or more %s fields of the %s must be present";
+   public static final String NOT_EMPTY_OBJECT_FMT = "ERR-02: One or more %s fields of the %s must be present";
+   public static final String ERR_02 = NOT_EMPTY_OBJECT_FMT;
    
-   public static final String REQUIRED_VALUE_OBJECT_FMT = "The %s field of the %s must not be '%s'";
+   public static final String REQUIRED_VALUE_OBJECT_FMT = "ERR-03: The %s field of the %s must not be '%s'; allowed values: %s";
+   public static final String ERR_03 = REQUIRED_VALUE_OBJECT_FMT;
 
-   public static final String REQUIRED_VALUE_FMT = "The %s field must not be '%s'";
+   public static final String REQUIRED_VALUE_FMT = "ERR-04: The %s field must not be '%sr'; allowed values: %s";
+   public static final String ERR_04 = REQUIRED_VALUE_FMT;
 
-   public static final String MUST_BE_WELL_FORMED_FMT = "The %s field must be well formed: '%s'";
+   public static final String MUST_BE_WELL_FORMED_FMT = "ERR-05: The %s field must be well formed: '%s'";
+   public static final String ERR_05 = MUST_BE_WELL_FORMED_FMT;
 
-   public static final String MUST_EXIST_FMT = "The '%s' %s must exist";
+   public static final String MUST_EXIST_FMT = "ERR-06: The '%s' %s must exist";
+   public static final String ERR_06 = MUST_EXIST_FMT;
    
-   public static final String MUST_CONTAIN_FMT = "The %s field must contain '%s': '%s'";
+   public static final String MUST_CONTAIN_FMT = "ERR-07: The %s field must contain '%s': '%s'";
+   public static final String ERR_07 = MUST_CONTAIN_FMT;
 
-   public static final String CONDITION_FMT = "The %s field must be %s: '%s'";
+   public static final String CONDITION_FMT = "ERR-08: The %s field must be %s: '%s'";
+   public static final String ERR_08 = CONDITION_FMT;
 
-   public static final String CORRECT_VALUE_OBJECT_FMT = "The %s field of the %s must be '%s': '%s'";
+   public static final String CORRECT_VALUE_OBJECT_FMT = "ERR-09: The %s field of the %s must be '%s': '%s'";
+   public static final String ERR_09 = CORRECT_VALUE_OBJECT_FMT;
 
 }
