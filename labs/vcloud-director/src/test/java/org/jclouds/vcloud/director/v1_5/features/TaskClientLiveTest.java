@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.*;
 import static org.testng.Assert.*;
 
@@ -29,6 +28,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -45,8 +45,14 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     * Convenience references to API clients.
     */
 
-   private final OrgClient orgClient = context.getApi().getOrgClient();
-   private final TaskClient taskClient = context.getApi().getTaskClient();
+   private OrgClient orgClient;
+   private TaskClient taskClient;
+
+   @BeforeGroups(groups = { "live" })
+   public void setupClients() {
+      orgClient = context.getApi().getOrgClient();
+      taskClient = context.getApi().getTaskClient();
+   }
 
    /*
     * Shared state between dependant tests.

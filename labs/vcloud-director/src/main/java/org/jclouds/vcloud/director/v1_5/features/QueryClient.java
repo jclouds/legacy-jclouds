@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.query.CatalogReferences;
+import org.jclouds.vcloud.director.v1_5.domain.query.QueryList;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 
 /**
@@ -40,6 +41,10 @@ public interface QueryClient {
     * GET /query
     * </pre>
     */
+   QueryList queryList();
+   
+   QueryResultRecords queryAll(String type);
+
    QueryResultRecords query(String type, String filter);
 
    QueryResultRecords query(Integer page, Integer pageSize, String format, String type, String filter);
@@ -55,9 +60,13 @@ public interface QueryClient {
     * GET /catalogs/query
     * </pre>
     */
+   QueryResultRecords catalogsQueryAll();
+
    QueryResultRecords catalogsQuery(String filter);
 
-   QueryResultRecords catalogsQuery(Integer page, Integer pageSize, String format, String filter);
+   QueryResultRecords catalogsQuery(Integer page, Integer pageSize, String filter);
+
+   CatalogReferences catalogReferencesQueryAll();
 
    CatalogReferences catalogReferencesQuery(String filter);
 
