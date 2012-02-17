@@ -18,45 +18,35 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkTask;
-import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.*;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.domain.OrgList;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableMultimap;
 
 /**
- * Tests live behavior of {@link CatalogClient}.
+ * Test the {@link TaskClient} by observing its side effects.
  * 
  * @author grkvlt@apache.org
  */
-@Test(groups = { "live", "apitests" }, testName = "CatalogClientLiveTest")
-public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
+@Test(groups = "unit", singleThreaded = true, testName = "QueryClientExpectTest")
+public class QueryClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
 
-   /*
-    * Convenience references to API clients.
-    */
-  
-   private final CatalogClient catalogClient = context.getApi().getCatalogClient();
-   private final QueryClient queryClient = context.getApi().getQueryClient();
-  
-   /*
-    * Shared state between dependant tests.
-    */
-  
-   private Reference catalogRef;
-   private Catalog catalog;
-  
-   @Test(testName = "GET /catalog/{id}")
-   public void testGetTaskList() {
-      catalogRef = null;
-      catalog = catalogClient.getCatalog(catalogRef);
+   @Test
+   public void testQueryCatalogNoParam() {
+      assertTrue(true);
    }
 }
+		

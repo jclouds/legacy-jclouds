@@ -18,11 +18,14 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkTask;
-import static org.testng.Assert.assertFalse;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.*;
+import static org.testng.Assert.*;
 
 import java.net.URI;
 
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
@@ -33,30 +36,32 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Iterables;
 
 /**
- * Tests live behavior of {@link CatalogClient}.
- * 
- * @author grkvlt@apache.org
- */
-@Test(groups = { "live", "apitests" }, testName = "CatalogClientLiveTest")
-public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
+* Tests live behavior of {@link QueryClient}.
+* 
+* @author grkvlt@apache.org
+*/
+@Test(groups = { "live", "apitests" }, testName = "QueryClientLiveTest")
+public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    /*
     * Convenience references to API clients.
     */
-  
+
    private final CatalogClient catalogClient = context.getApi().getCatalogClient();
    private final QueryClient queryClient = context.getApi().getQueryClient();
-  
+
    /*
     * Shared state between dependant tests.
     */
-  
-   private Reference catalogRef;
-   private Catalog catalog;
-  
-   @Test(testName = "GET /catalog/{id}")
-   public void testGetTaskList() {
-      catalogRef = null;
-      catalog = catalogClient.getCatalog(catalogRef);
+
+   private OrgList orgList;
+   private Reference orgRef;
+   private TasksList taskList;
+   private Task task;
+   private URI taskUri;
+
+   @Test(testName = "GET /catalogs/query/")
+   public void testQueryCatalogNoParam() {
+      assertTrue(true);
    }
 }

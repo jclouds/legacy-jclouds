@@ -32,7 +32,6 @@ import javax.xml.bind.annotation.XmlElement;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
