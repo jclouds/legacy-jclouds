@@ -188,7 +188,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
                   .type("application/vnd.vmware.vcloud.org+xml")
                   .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
                   .build())
-            .metadata(ImmutableSet.of(metadataEntry()))
+            .entries(ImmutableSet.of(metadataEntry()))
             .build();
 
        Reference orgRef = Reference.builder().href(orgUri).build();

@@ -23,6 +23,8 @@ import static com.google.common.base.Objects.equal;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -68,6 +70,15 @@ public class Media
     extends ResourceEntityType<Media>
 
 {
+   public static final class ImageType {
+      public static final String ISO = "iso";
+      public static final String FLOPPY = "floppy";
+
+      public static final List<String> ALL = Arrays.asList(
+            ISO, ISO
+         );
+   }
+   
    @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();

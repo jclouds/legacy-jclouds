@@ -75,7 +75,7 @@ public class FilesList {
       private List<File> files;
 
       /**
-       * @see FilesList#getFile()
+       * @see FilesList#getFiles()
        */
       public Builder file(List<File> file) {
          this.files = file;
@@ -90,7 +90,7 @@ public class FilesList {
 
 
       public Builder fromFilesList(FilesList in) {
-         return file(in.getFile());
+         return file(in.getFiles());
       }
    }
 
@@ -128,7 +128,7 @@ public class FilesList {
      * 
      * 
      */
-    public List<File> getFile() {
+    public List<File> getFiles() {
         if (files == null) {
             files = new ArrayList<File>();
         }
