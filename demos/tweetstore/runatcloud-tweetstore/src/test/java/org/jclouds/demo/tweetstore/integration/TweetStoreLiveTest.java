@@ -62,10 +62,10 @@ import com.google.common.collect.Maps;
 import com.google.inject.Module;
 
 /**
- * Starts up the Google App Engine for Java Development environment and deploys an application which
+ * Starts up the RUN@cloud for Java Development environment and deploys an application which
  * tests accesses twitter and blobstores.
  * 
- * @author Adrian Cole
+ * @author Andrew Phillips
  */
 @Test(groups = "live", singleThreaded = true)
 public class TweetStoreLiveTest {
