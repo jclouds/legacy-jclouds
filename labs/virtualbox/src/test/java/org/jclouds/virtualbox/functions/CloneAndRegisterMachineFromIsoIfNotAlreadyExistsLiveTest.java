@@ -33,6 +33,7 @@ import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.functions.CloneAndRegisterMachineFromIMachineIfNotAlreadyExists;
 import org.jclouds.virtualbox.functions.CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
@@ -138,4 +139,5 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
                .findMachine(sourceMachineSpec.getVmSpec().getVmId());
       }
    }
+
 }

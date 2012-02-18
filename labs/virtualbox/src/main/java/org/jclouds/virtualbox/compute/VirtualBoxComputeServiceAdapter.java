@@ -185,7 +185,6 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
       } catch (Exception e) {
          e.printStackTrace();
-         e.printStackTrace();
       }
    }
 }
