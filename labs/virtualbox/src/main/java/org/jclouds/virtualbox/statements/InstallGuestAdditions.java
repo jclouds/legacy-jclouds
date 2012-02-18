@@ -51,8 +51,7 @@ public class InstallGuestAdditions extends StatementList {
 
    @Override
    public String render(OsFamily family) {
-      checkNotNull(family, "family");
-      if (family == OsFamily.WINDOWS)
+      if (checkNotNull(family, "family") == OsFamily.WINDOWS)
          throw new UnsupportedOperationException("windows not yet implemented");
       return super.render(family);
    }

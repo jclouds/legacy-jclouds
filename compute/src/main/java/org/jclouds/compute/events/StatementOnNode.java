@@ -16,50 +16,42 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.compute.domain;
+package org.jclouds.compute.events;
 
-import org.jclouds.compute.config.CustomizationResponse;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.scriptbuilder.domain.Statement;
+
+import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
+
  * @author Adrian Cole
  */
-public class ExecResponse implements CustomizationResponse {
+@Beta
+public class StatementOnNode {
+   protected final Statement statement;
+   protected final NodeMetadata node;
 
-   private final String output;
-   private final String error;
-   private final int exitStatus;
-
-   public ExecResponse(String output, String error, int exitStatus) {
-      this.output = output;
-      this.error = error;
-      this.exitStatus = exitStatus;
+   public StatementOnNode(Statement statement, NodeMetadata node) {
+      this.statement = checkNotNull(statement, "statement");
+      this.node = checkNotNull(node, "node");
    }
 
-   public String getError() {
-      return error;
+   public Statement getStatement() {
+      return statement;
    }
 
-   public String getOutput() {
-      return output;
-   }
-
-   /**
-    * @see #getExitStatus
-    */
-   @Deprecated
-   public int getExitCode() {
-      return exitStatus;
-   }
-
-   public int getExitStatus() {
-      return exitStatus;
+   public NodeMetadata getNode() {
+      return node;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(output, error, exitStatus);
+      return Objects.hashCode(statement, node);
    }
 
    @Override
@@ -68,15 +60,17 @@ public class ExecResponse implements CustomizationResponse {
          return false;
       if (!o.getClass().equals(getClass()))
          return false;
-      ExecResponse that = ExecResponse.class.cast(o);
-      return Objects.equal(this.output, that.output) && Objects.equal(this.error, that.error)
-            && Objects.equal(this.exitStatus, that.exitStatus);
+      StatementOnNode that = StatementOnNode.class.cast(o);
+      return Objects.equal(this.statement, that.statement) && Objects.equal(this.node, that.node);
    }
 
    @Override
    public String toString() {
-      return Objects.toStringHelper("").add("output", output).add("error", error).add("exitStatus", exitStatus)
-            .toString();
+      return string().toString();
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper(this).add("statement", statement).add("node", node.getId());
    }
 
 }

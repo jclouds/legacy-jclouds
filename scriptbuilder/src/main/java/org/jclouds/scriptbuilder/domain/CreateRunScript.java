@@ -22,23 +22,27 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.instanceOf;
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
+import static java.lang.String.format;
+import static org.jclouds.scriptbuilder.domain.Statements.appendFile;
+import static org.jclouds.scriptbuilder.domain.Statements.createOrOverwriteFile;
+import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.jclouds.scriptbuilder.domain.Statements.interpret;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Pattern;
 
 import org.jclouds.scriptbuilder.ExitInsteadOfReturn;
 import org.jclouds.scriptbuilder.ScriptBuilder;
 import org.jclouds.scriptbuilder.util.Utils;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 
 /**
  * Creates a run script
@@ -46,7 +50,7 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  */
 public class CreateRunScript extends StatementList {
-   public final static String MARKER = "END_OF_SCRIPT";
+   public final static String DELIMETER = "END_OF_JCLOUDS_SCRIPT";
    final String instanceName;
    final Iterable<String> exports;
    final String pwd;
@@ -58,44 +62,17 @@ public class CreateRunScript extends StatementList {
       this.pwd = checkNotNull(pwd, "pwd").replaceAll("[/\\\\]", "{fs}");
    }
 
-   public static class AddTitleToFile implements Statement {
-      final String title;
-      final String file;
-
-      public AddTitleToFile(String title, String file) {
-         this.title = checkNotNull(title, "title");
-         this.file = checkNotNull(file, "file");
-      }
-
-      public static final Map<OsFamily, String> OS_TO_TITLE_PATTERN = ImmutableMap.of(OsFamily.UNIX,
-            "echo \"PROMPT_COMMAND='echo -ne \\\"\\033]0;{title}\\007\\\"'\">>{file}\n", OsFamily.WINDOWS,
-            "echo title {title}>>{file}\r\n");
-
-      @Override
-      public Iterable<String> functionDependencies(OsFamily family) {
-         return Collections.emptyList();
-      }
-
-      @Override
-      public String render(OsFamily family) {
-         return addSpaceToEnsureWeDontAccidentallyRedirectFd(Utils.replaceTokens(OS_TO_TITLE_PATTERN.get(family),
-               ImmutableMap.of("title", title, "file", file)));
-      }
-   }
-
-   public static class AddExportToFile implements Statement {
+   public static class AddExport implements Statement {
       final String export;
       final String value;
-      final String file;
 
-      public AddExportToFile(String export, String value, String file) {
+      public AddExport(String export, String value) {
          this.export = checkNotNull(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, export), "export");
          this.value = checkNotNull(value, "value");
-         this.file = checkNotNull(file, "file");
       }
 
       public static final Map<OsFamily, String> OS_TO_EXPORT_PATTERN = ImmutableMap.of(OsFamily.UNIX,
-            "echo \"export {export}='{value}'\">>{file}\n", OsFamily.WINDOWS, "echo set {export}={value}>>{file}\r\n");
+            "export {export}='{value}'\n", OsFamily.WINDOWS, "set {export}={value}\r\n");
 
       @Override
       public Iterable<String> functionDependencies(OsFamily family) {
@@ -104,23 +81,9 @@ public class CreateRunScript extends StatementList {
 
       @Override
       public String render(OsFamily family) {
-         return addSpaceToEnsureWeDontAccidentallyRedirectFd(Utils.replaceTokens(OS_TO_EXPORT_PATTERN.get(family),
-               ImmutableMap.of("export", export, "value", value, "file", file)));
+         return Utils
+               .replaceTokens(OS_TO_EXPORT_PATTERN.get(family), ImmutableMap.of("export", export, "value", value));
       }
-   }
-
-   public static String escapeVarTokens(String toEscape, OsFamily family) {
-      Map<String, String> inputToEscape = newHashMap();
-      for (ShellToken token : ImmutableList.of(ShellToken.VARL, ShellToken.VARR)) {
-         if (!token.to(family).equals("")) {
-            String tokenS = "{" + token.toString().toLowerCase() + "}";
-            inputToEscape.put(tokenS, "{escvar}" + tokenS);
-         }
-      }
-      for (Entry<String, String> entry : inputToEscape.entrySet()) {
-         toEscape = toEscape.replace(entry.getKey(), entry.getValue());
-      }
-      return toEscape;
    }
 
    @Override
@@ -128,113 +91,81 @@ public class CreateRunScript extends StatementList {
       return Collections.emptyList();
    }
 
-   public static final Map<OsFamily, String> OS_TO_CHMOD_PATTERN = ImmutableMap.of(OsFamily.UNIX, "chmod u+x {file}\n",
-         OsFamily.WINDOWS, "");
-
    @Override
    public String render(OsFamily family) {
+      if (checkNotNull(family, "family") == OsFamily.WINDOWS)
+         throw new UnsupportedOperationException("windows not yet implemented");
       List<Statement> statements = newArrayList();
-      Map<String, String> tokenMap = ShellToken.tokenValueMap(family);
+      final Map<String, String> tokenMap = ShellToken.tokenValueMap(family);
       String runScript = Utils.replaceTokens(pwd + "{fs}" + instanceName + ".{sh}", tokenMap);
       statements.add(interpret(String.format("{md} %s{lf}", pwd)));
-      if (family == OsFamily.UNIX) {
-         StringBuilder builder = new StringBuilder();
-         builder.append("\n");
-         addUnixRunScriptHeader(family, runScript, builder);
-         builder.append("\n");
-         addUnixRunScript(runScript, builder);
-         builder.append("\n");
-         addUnixRunScriptFooter(family, runScript, builder);
-         builder.append("\n");
-         statements.add(interpret(builder.toString()));
-      } else {
-         statements.add(interpret(String.format("{rm} %s 2{closeFd}{lf}", runScript)));
-         for (String line : Splitter.on(ShellToken.LF.to(family)).split(ShellToken.BEGIN_SCRIPT.to(family))) {
-            if (!line.equals(""))
-               statements.add(appendToFile(line, runScript, family));
-         }
-         statements.add(new AddTitleToFile(instanceName, runScript));
-         statements.add(appendToFile(Utils.writeZeroPath(family).replace(ShellToken.LF.to(family), ""), runScript,
-               family));
-         statements.add(new AddExportToFile("instanceName", instanceName, runScript));
-         for (String export : exports) {
-            statements.add(new AddExportToFile(export, Utils.replaceTokens(
-                  "{varl}" + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, export) + "{varr}", tokenMap),
-                  runScript));
-         }
-         statements.add(appendToFile("{cd} " + pwd, runScript, family));
-         statements.addAll(statements);
-         for (String line : Splitter.on(ShellToken.LF.to(family)).split(ShellToken.END_SCRIPT.to(family))) {
-            if (!line.equals(""))
-               statements.add(appendToFile(line, runScript, family));
-         }
-      }
-      statements
-            .add(interpret(Utils.replaceTokens(OS_TO_CHMOD_PATTERN.get(family), ImmutableMap.of("file", runScript))));
+      StringBuilder builder = new StringBuilder();
+      builder.append("\n");
+      addUnixRunScriptHeader(runScript, builder);
+      builder.append("\n");
+      addUnixRunScript(runScript, builder);
+      builder.append("\n");
+      addUnixRunScriptFooter(runScript, builder);
+      builder.append("\n");
+      statements.add(interpret(builder.toString()));
+      statements.add(exec("chmod u+x " + runScript));
       return new StatementList(statements).render(family);
    }
 
-   private void addUnixRunScriptFooter(OsFamily family, String runScript, StringBuilder builder) {
+   private void addUnixRunScriptFooter(String runScript, StringBuilder builder) {
       builder.append("# add runscript footer\n");
-      builder.append("cat >> ").append(runScript).append(" <<'").append(MARKER).append("'\n");
-      builder.append(ShellToken.END_SCRIPT.to(family));
-      builder.append(MARKER).append("\n");
+      Iterable<String> endScript = Splitter.on(ShellToken.LF.to(OsFamily.UNIX)).split(
+            ShellToken.END_SCRIPT.to(OsFamily.UNIX));
+      builder.append(appendFile(runScript, endScript, DELIMETER).render(OsFamily.UNIX));
    }
 
    private void addUnixRunScript(String runScript, StringBuilder builder) {
       builder.append("# add desired commands from the user\n");
-      builder.append("cat >> ").append(runScript).append(" <<'").append(MARKER).append("'\n");
-      builder.append("cd ").append(pwd).append("\n");
+      Builder<String> userCommands = ImmutableList.<String>builder();
+      userCommands.add("cd " + pwd);
       for (Statement statement : statements) {
          if (statement instanceof Call
                || (statement instanceof StatementList && any(StatementList.class.cast(statement).delegate(),
                      instanceOf(Call.class)))) {
             statement = new ExitInsteadOfReturn(statement);
          }
-         builder.append(statement.render(OsFamily.UNIX)).append("\n");
+         userCommands.addAll(Splitter.on('\n').split(statement.render(OsFamily.UNIX)));
       }
-      builder.append(MARKER).append("\n");
+      builder.append(appendFile(runScript, userCommands.build(), DELIMETER).render(OsFamily.UNIX));
    }
 
-   private void addUnixRunScriptHeader(OsFamily family, String runScript, StringBuilder builder) {
+   private void addUnixRunScriptHeader(String runScript, StringBuilder builder) {
       builder.append("# create runscript header\n");
-      builder.append("cat > ").append(runScript).append(" <<").append(MARKER).append("\n");
-      builder.append(ShellToken.BEGIN_SCRIPT.to(family));
-      builder.append("PROMPT_COMMAND='echo -ne \"\\033]0;").append(instanceName).append("\\007\"'\n");
-      builder.append(Utils.writeZeroPath(family));
-      builder.append("export INSTANCE_NAME='").append(instanceName).append("'\n");
-      for (String export : exports) {
-         String variableNameInUpper = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, export);
-         builder.append("export ").append(variableNameInUpper).append("='$").append(variableNameInUpper).append("'\n");
-      }
+
+      Builder<String> beginningOfFile = ImmutableList.<String> builder();
+      beginningOfFile.addAll(Splitter.on(ShellToken.LF.to(OsFamily.UNIX)).split(
+            ShellToken.BEGIN_SCRIPT.to(OsFamily.UNIX)));
+      beginningOfFile.add(format("PROMPT_COMMAND='echo -ne \\\"\\033]0;%s\\007\\\"'", instanceName));
+      beginningOfFile.add(Utils.writeZeroPath(OsFamily.UNIX));
+      beginningOfFile.add(format("export INSTANCE_NAME='%s'", instanceName));
+      builder.append(createOrOverwriteFile(runScript, beginningOfFile.build(), DELIMETER).render(OsFamily.UNIX));
+
+      // expanding variables here.
+      builder.append(AppendFile.builder().path(runScript).delimeter(DELIMETER).expandVariables(true)
+            .lines(Iterables.transform(exports, new Function<String, String>() {
+
+               @Override
+               public String apply(String export) {
+                  String variableNameInUpper = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, export);
+                  return new StringBuilder().append("export ").append(variableNameInUpper).append("='$")
+                        .append(variableNameInUpper).append("'").toString();
+               }
+            })).build().render(OsFamily.UNIX));
 
       Map<String, String> functionsToWrite = ScriptBuilder.resolveFunctionDependenciesForStatements(
-            ImmutableMap.<String, String> of("abort", Utils.writeFunctionFromResource("abort", family)), statements,
-            family);
+            ImmutableMap.<String, String> of("abort", Utils.writeFunctionFromResource("abort", OsFamily.UNIX)),
+            statements, OsFamily.UNIX);
+
       // if there are more functions than simply abort
       if (functionsToWrite.size() > 1) {
-         StringBuilder inNeedOfEscaping = new StringBuilder();
-         ScriptBuilder.writeFunctions(functionsToWrite, family, inNeedOfEscaping);
-         builder.append(inNeedOfEscaping.toString().replace("$", "\\$"));
+         StringBuilder functions = new StringBuilder();
+         ScriptBuilder.writeFunctions(functionsToWrite, OsFamily.UNIX, functions);
+         builder.append(appendFile(runScript, functions.toString(), DELIMETER).render(OsFamily.UNIX));
       }
-      builder.append(MARKER).append("\n");
    }
-
-   private Statement appendToFile(String line, String runScript, OsFamily family) {
-      String quote = "";
-      if (!ShellToken.VQ.to(family).equals("")) {
-         quote = "'";
-      } else {
-         line = escapeVarTokens(line, family);
-      }
-      return interpret(addSpaceToEnsureWeDontAccidentallyRedirectFd(String.format("echo %s%s%s>>%s{lf}", quote, line,
-            quote, runScript)));
-   }
-
-   public static final Pattern REDIRECT_FD_PATTERN = Pattern.compile(".*[0-2]>>.*");
-
-   static String addSpaceToEnsureWeDontAccidentallyRedirectFd(String line) {
-      return REDIRECT_FD_PATTERN.matcher(line).matches() ? line.replace(">>", " >>") : line;
-   }
-
 }

@@ -39,7 +39,7 @@ public class GuestAdditionsInstaller implements Predicate<String> {
       ListenableFuture<ExecResponse> execFuture = context.getComputeService().submitScriptOnNode(vmName,
             new InstallGuestAdditions(vboxVersion), RunScriptOptions.NONE);
       ExecResponse execResponse = Futures.getUnchecked(execFuture);
-      return execResponse == null ? false : execResponse.getExitCode() == 0;
+      return execResponse == null ? false : execResponse.getExitStatus() == 0;
    }
 
 }

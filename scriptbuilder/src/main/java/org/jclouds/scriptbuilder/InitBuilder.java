@@ -38,8 +38,10 @@ import com.google.common.collect.Iterables;
 /**
  * Creates an init script file
  * 
+ * @see InitScript
  * @author Adrian Cole
  */
+@Deprecated
 public class InitBuilder extends ScriptBuilder {
 
    private final String instanceName;
@@ -53,8 +55,8 @@ public class InitBuilder extends ScriptBuilder {
    }
 
    public InitBuilder(String instanceName, Iterable<Statement> initStatements, Iterable<Statement> statements) {
-      this(instanceName, String.format("{varl}HOME{varr}{fs}instances{fs}%s", instanceName), String.format(
-            "{varl}HOME{varr}{fs}instances{fs}%s", instanceName), ImmutableMap.<String, String> of(), initStatements,
+      this(instanceName, String.format("{tmp}{fs}{varl}INSTANCE_NAME{varr}", instanceName), String.format(
+            "{tmp}{fs}{varl}INSTANCE_NAME{varr}", instanceName), ImmutableMap.<String, String> of(), initStatements,
             statements);
    }
 

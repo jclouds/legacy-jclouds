@@ -103,7 +103,7 @@ public enum ShellToken {
                case WINDOWS:
                   return "   exit /b 0\r\n";
                case UNIX:
-                  return "   return 0\n}\n";
+                  return "   return $?\n}\n";
             }
          case ESCVAR:
             switch (family) {
@@ -173,7 +173,7 @@ public enum ShellToken {
                case WINDOWS:
                   return "exit /b 0\r\n";
                case UNIX:
-                  return "exit 0\n";
+                  return "exit $?\n";
             }
          case EXPORT:
             switch (family) {

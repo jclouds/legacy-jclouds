@@ -256,7 +256,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
          response = future.get(3, TimeUnit.MINUTES);
 
-         assert response.getExitCode() == 0 : node.getId() + ": " + response;
+         assert response.getExitStatus() == 0 : node.getId() + ": " + response;
 
          node = client.getNodeMetadata(node.getId());
          // test that the node updated to the correct admin user!
@@ -265,7 +265,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
          weCanCancelTasks(node);
 
-         assert response.getExitCode() == 0 : node.getId() + ": " + response;
+         assert response.getExitStatus() == 0 : node.getId() + ": " + response;
 
          response = client.runScriptOnNode(node.getId(), "echo $USER", wrapInInitScript(false).runAsRoot(false));
 
@@ -304,11 +304,11 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
          assert false : node.getId() + ": " + response;
       } catch (TimeoutException e) {
          assert !future.isDone();
-         response = client.runScriptOnNode(node.getId(), Statements.exec("./sleeper status"), wrapInInitScript(false)
+         response = client.runScriptOnNode(node.getId(), Statements.exec("/tmp/init-sleeper status"), wrapInInitScript(false)
                .runAsRoot(false));
          assert !response.getOutput().trim().equals("") : node.getId() + ": " + response;
          future.cancel(true);
-         response = client.runScriptOnNode(node.getId(), Statements.exec("./sleeper status"), wrapInInitScript(false)
+         response = client.runScriptOnNode(node.getId(), Statements.exec("/tmp/init-sleeper status"), wrapInInitScript(false)
                .runAsRoot(false));
          assert response.getOutput().trim().equals("") : node.getId() + ": " + response;
          try {
@@ -592,10 +592,10 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
       IPSocket socket = new IPSocket(Iterables.get(node.getPublicAddresses(), 0), 8080);
       assert preciseSocketTester.apply(socket) : String.format("failed to open socket %s on node %s:%n%s%s", socket,
-            node, init(node, processName, "tail"), init(node, processName, "tailerr"));
+            node, init(node, processName, "stdout"), init(node, processName, "stderr"));
       stats.socketOpenMilliseconds = watch.elapsedTime(TimeUnit.MILLISECONDS);
 
-      exec = init(node, processName, "tail");
+      exec = init(node, processName, "stdout");
 
       Matcher matcher = parseReported.matcher(exec.getOutput());
       if (matcher.find())
@@ -606,7 +606,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
    }
 
    public ExecResponse init(NodeMetadata node, String processName, String command) {
-      return client.runScriptOnNode(node.getId(), "./" + processName + " "+command, runAsRoot(false)
+      return client.runScriptOnNode(node.getId(), "/tmp/init-" + processName + " "+command, runAsRoot(false)
             .wrapInInitScript(false));
    }
 
@@ -716,13 +716,13 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
          }), "jboss", node, JBOSS_PATTERN);
 
-         client.runScriptOnNode(nodeId, "./jboss stop", runAsRoot(false).wrapInInitScript(false));
+         client.runScriptOnNode(nodeId, "/tmp/init-jboss stop", runAsRoot(false).wrapInInitScript(false));
 
          trackAvailabilityOfProcessOnNode(context.utils().userExecutor().submit(new Callable<ExecResponse>() {
 
             @Override
             public ExecResponse call() {
-               return client.runScriptOnNode(nodeId, "./jboss start", runAsRoot(false).wrapInInitScript(false));
+               return client.runScriptOnNode(nodeId, "/tmp/init-jboss start", runAsRoot(false).wrapInInitScript(false));
             }
 
             @Override

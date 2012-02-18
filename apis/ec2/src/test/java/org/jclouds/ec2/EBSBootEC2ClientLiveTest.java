@@ -40,6 +40,8 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.Image;
+import org.jclouds.ec2.domain.Image.Architecture;
+import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.IpProtocol;
@@ -49,8 +51,6 @@ import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.domain.Snapshot;
 import org.jclouds.ec2.domain.Volume;
-import org.jclouds.ec2.domain.Image.Architecture;
-import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.ec2.predicates.InstanceStateRunning;
 import org.jclouds.ec2.predicates.InstanceStateStopped;
@@ -65,9 +65,8 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.scriptbuilder.InitBuilder;
+import org.jclouds.scriptbuilder.InitScript;
 import org.jclouds.scriptbuilder.domain.OsFamily;
-import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
@@ -77,7 +76,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -256,12 +254,12 @@ public class EBSBootEC2ClientLiveTest extends BaseVersionedServiceLiveTest {
    @BeforeTest
    void makeScript() {
 
-      mkEbsBoot = new InitBuilder(
-            "mkebsboot",// name of the script
-            "/tmp",// working directory
-            "/tmp/logs",// location of stdout.log and stderr.log
-            ImmutableMap.of("imageDir", "/mnt/tmp", "ebsDevice", "/dev/sdh", "ebsMountPoint", "/mnt/ebs"),
-            ImmutableList.<Statement> of(Statements
+      mkEbsBoot = InitScript.builder()
+            .name("mkebsboot")
+            .home("/tmp")
+            .logDir("/tmp/logs")
+            .exportVariables(ImmutableMap.of("imageDir", "/mnt/tmp", "ebsDevice", "/dev/sdh", "ebsMountPoint", "/mnt/ebs"))
+            .run(Statements
                   .interpret(
                         "echo creating a filesystem and mounting the ebs volume",
                         "{md} {varl}IMAGE_DIR{varr} {varl}EBS_MOUNT_POINT{varr}",
@@ -275,7 +273,7 @@ public class EBSBootEC2ClientLiveTest extends BaseVersionedServiceLiveTest {
                         "echo copying the local working copy to the ebs mount", "{cd} {varl}IMAGE_DIR{varr}",
                         "tar -cSf - * | tar xf - -C {varl}EBS_MOUNT_POINT{varr}", "echo size of ebs",
                         "du -sk {varl}EBS_MOUNT_POINT{varr}", "echo size of source", "du -sk {varl}IMAGE_DIR{varr}",
-                        "rm -rf {varl}IMAGE_DIR{varr}/*", "umount {varl}EBS_MOUNT_POINT{varr}", "echo " + SCRIPT_END)))
+                        "rm -rf {varl}IMAGE_DIR{varr}/*", "umount {varl}EBS_MOUNT_POINT{varr}", "echo " + SCRIPT_END)).build()
             .render(OsFamily.UNIX);
    }
 

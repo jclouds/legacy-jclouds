@@ -8,12 +8,12 @@ function abort {
    exit 1
 }
 function default {
-   export INSTANCE_NAME="adminUpdate"
-export INSTANCE_HOME="/tmp/adminUpdate"
+   export INSTANCE_NAME="testcall"
+export INSTANCE_HOME="/tmp/$INSTANCE_NAME"
 export LOG_DIR="$INSTANCE_HOME"
    return $?
 }
-function adminUpdate {
+function testcall {
       return $?
 }
 function findPid {
@@ -58,62 +58,65 @@ export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
 case $1 in
 init)
    default || exit 1
-   adminUpdate || exit 1
+   testcall || exit 1
+   echo hello
    mkdir -p $INSTANCE_HOME
    
    # create runscript header
-   cat > $INSTANCE_HOME/adminUpdate.sh <<-'END_OF_JCLOUDS_SCRIPT'
+   cat > $INSTANCE_HOME/testcall.sh <<-'END_OF_JCLOUDS_SCRIPT'
 	#!/bin/bash
 	set +u
 	shopt -s xpg_echo
 	shopt -s expand_aliases
 	
-	PROMPT_COMMAND='echo -ne \"\033]0;adminUpdate\007\"'
+	PROMPT_COMMAND='echo -ne \"\033]0;testcall\007\"'
 	export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
 
-	export INSTANCE_NAME='adminUpdate'
+	export INSTANCE_NAME='testcall'
 END_OF_JCLOUDS_SCRIPT
-   cat >> $INSTANCE_HOME/adminUpdate.sh <<-END_OF_JCLOUDS_SCRIPT
+   cat >> $INSTANCE_HOME/testcall.sh <<-END_OF_JCLOUDS_SCRIPT
 	export INSTANCE_NAME='$INSTANCE_NAME'
 	export INSTANCE_HOME='$INSTANCE_HOME'
 	export LOG_DIR='$LOG_DIR'
 END_OF_JCLOUDS_SCRIPT
+   cat >> $INSTANCE_HOME/testcall.sh <<-'END_OF_JCLOUDS_SCRIPT'
+	function abort {
+   echo "aborting: $@" 1>&2
+   exit 1
+}
+function sourceEnvFile {
+   [ $# -eq 1 ] || {
+      abort "sourceEnvFile requires a parameter of the file to source"
+      return 1
+   }
+   local ENV_FILE="$1"; shift
+   . "$ENV_FILE" || {
+      abort "Please append 'return 0' to the end of '$ENV_FILE'"
+      return 1
+   }
+   return 0
+}
+
+END_OF_JCLOUDS_SCRIPT
    
    # add desired commands from the user
-   cat >> $INSTANCE_HOME/adminUpdate.sh <<-'END_OF_JCLOUDS_SCRIPT'
+   cat >> $INSTANCE_HOME/testcall.sh <<-'END_OF_JCLOUDS_SCRIPT'
 	cd $INSTANCE_HOME
 	rm -f $INSTANCE_HOME/rc
 	trap 'echo $?>$INSTANCE_HOME/rc' 0 1 2 3 15
-	cat > /etc/sudoers <<-'END_OF_JCLOUDS_FILE'
-		root ALL = (ALL) ALL
-		%wheel ALL = (ALL) NOPASSWD:ALL
-	END_OF_JCLOUDS_FILE
-	chmod 0440 /etc/sudoers
-	mkdir -p /home/users
-	groupadd -f wheel
-	useradd -s /bin/bash -g wheel -m  -d /home/users/foo -p 'crypt(randompassword)' foo
-	mkdir -p /home/users/foo/.ssh
-	cat >> /home/users/foo/.ssh/authorized_keys <<-'END_OF_JCLOUDS_FILE'
-		publicKey
-	END_OF_JCLOUDS_FILE
-	chmod 600 /home/users/foo/.ssh/authorized_keys
-	chown -R foo /home/users/foo
-	exec 3<> /etc/ssh/sshd_config && awk -v TEXT="PasswordAuthentication no
-	PermitRootLogin no
-	" 'BEGIN {print TEXT}{print}' /etc/ssh/sshd_config >&3
-	hash service 2>/dev/null && service ssh reload || /etc/init.d/ssh* reload
-	awk -v user=^${SUDO_USER:=${USER}}: -v password='crypt(randompassword)' 'BEGIN { FS=OFS=":" } $0 ~ user { $2 = password } 1' /etc/shadow >/etc/shadow.${SUDO_USER:=${USER}}
-	test -f /etc/shadow.${SUDO_USER:=${USER}} && mv /etc/shadow.${SUDO_USER:=${USER}} /etc/shadow
+	sourceEnvFile foo || exit 1
+	
+	find /
 	
 END_OF_JCLOUDS_SCRIPT
    
    # add runscript footer
-   cat >> $INSTANCE_HOME/adminUpdate.sh <<-'END_OF_JCLOUDS_SCRIPT'
+   cat >> $INSTANCE_HOME/testcall.sh <<-'END_OF_JCLOUDS_SCRIPT'
 	exit $?
 	
 END_OF_JCLOUDS_SCRIPT
    
-   chmod u+x $INSTANCE_HOME/adminUpdate.sh
+   chmod u+x $INSTANCE_HOME/testcall.sh
    ;;
 status)
    default || exit 1

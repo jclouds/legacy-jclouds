@@ -9,12 +9,12 @@ function abort {
 }
 function default {
    export INSTANCE_NAME="install_guest_additions"
-export INSTANCE_HOME="$HOME/instances/install_guest_additions"
-export LOG_DIR="$HOME/instances/install_guest_additions"
-   return 0
+export INSTANCE_HOME="/tmp/$INSTANCE_NAME"
+export LOG_DIR="$INSTANCE_HOME"
+   return $?
 }
 function install_guest_additions {
-      return 0
+      return $?
 }
 function findPid {
    unset FOUND_PID;
@@ -62,35 +62,41 @@ init)
    mkdir -p $INSTANCE_HOME
    
    # create runscript header
-   cat > $INSTANCE_HOME/install_guest_additions.sh <<END_OF_SCRIPT
-#!/bin/bash
-set +u
-shopt -s xpg_echo
-shopt -s expand_aliases
-PROMPT_COMMAND='echo -ne "\033]0;install_guest_additions\007"'
-export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
-export INSTANCE_NAME='install_guest_additions'
-export INSTANCE_NAME='$INSTANCE_NAME'
-export INSTANCE_HOME='$INSTANCE_HOME'
-export LOG_DIR='$LOG_DIR'
-function abort {
-   echo "aborting: \$@" 1>&2
+   cat > $INSTANCE_HOME/install_guest_additions.sh <<-'END_OF_JCLOUDS_SCRIPT'
+	#!/bin/bash
+	set +u
+	shopt -s xpg_echo
+	shopt -s expand_aliases
+	
+	PROMPT_COMMAND='echo -ne \"\033]0;install_guest_additions\007\"'
+	export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
+
+	export INSTANCE_NAME='install_guest_additions'
+END_OF_JCLOUDS_SCRIPT
+   cat >> $INSTANCE_HOME/install_guest_additions.sh <<-END_OF_JCLOUDS_SCRIPT
+	export INSTANCE_NAME='$INSTANCE_NAME'
+	export INSTANCE_HOME='$INSTANCE_HOME'
+	export LOG_DIR='$LOG_DIR'
+END_OF_JCLOUDS_SCRIPT
+   cat >> $INSTANCE_HOME/install_guest_additions.sh <<-'END_OF_JCLOUDS_SCRIPT'
+	function abort {
+   echo "aborting: $@" 1>&2
    exit 1
 }
 alias apt-get-install="apt-get install -f -y -qq --force-yes"
 alias apt-get-upgrade="(apt-get update -qq&&apt-get upgrade -y -qq)"
 
 function ensure_cmd_or_install_package_apt(){
-  local cmd=\$1
-  local pkg=\$2
+  local cmd=$1
+  local pkg=$2
   
-  hash \$cmd 2>/dev/null || apt-get-install \$pkg || ( apt-get-upgrade && apt-get-install \$pkg )
+  hash $cmd 2>/dev/null || apt-get-install $pkg || ( apt-get-upgrade && apt-get-install $pkg )
 }
 
 function ensure_cmd_or_install_package_yum(){
-  local cmd=\$1
-  local pkg=\$2
-  hash \$cmd 2>/dev/null || yum --nogpgcheck -y ensure \$pkg
+  local cmd=$1
+  local pkg=$2
+  hash $cmd 2>/dev/null || yum --nogpgcheck -y ensure $pkg
 }
 
 function ensure_netutils_apt() {
@@ -106,7 +112,7 @@ function ensure_netutils_yum() {
 # most network services require that the hostname is in
 # the /etc/hosts file, or they won't operate
 function ensure_hostname_in_hosts() {
-  egrep -q `hostname` /etc/hosts || awk -v hostname=`hostname` 'END { print \$1" "hostname }' /proc/net/arp >> /etc/hosts
+  egrep -q `hostname` /etc/hosts || awk -v hostname=`hostname` 'END { print $1" "hostname }' /proc/net/arp >> /etc/hosts
 }
 
 # download locations for many services are at public dns
@@ -130,31 +136,40 @@ function setupPublicCurl() {
 function installModuleAssistantIfNeeded {
    unset OSNAME;
    local OSNAME=`lsb_release -d -s | cut -d ' ' -f 1`; shift
-   if [ \$OSNAME = 'Ubuntu' ]
+   if [ $OSNAME = 'Ubuntu' ]
    then
       echo "OS is Ubuntu"
       apt-get -f -y -qq --force-yes install build-essential module-assistant;
       m-a prepare -i
    fi
 }
-END_OF_SCRIPT
+
+END_OF_JCLOUDS_SCRIPT
    
    # add desired commands from the user
-   cat >> $INSTANCE_HOME/install_guest_additions.sh <<'END_OF_SCRIPT'
-cd $INSTANCE_HOME
-setupPublicCurl || exit 1
-(mkdir -p /tmp/ && cd /tmp/ && [ ! -f VBoxGuestAdditions_4.1.6.iso ] && curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -C - -X GET  http://download.virtualbox.org/virtualbox/4.1.6/VBoxGuestAdditions_4.1.6.iso >VBoxGuestAdditions_4.1.6.iso)
-mount -o loop /tmp/VBoxGuestAdditions_4.1.6.iso /mnt
-installModuleAssistantIfNeeded || exit 1
-/mnt/VBoxLinuxAdditions.run
-umount /mnt
-
-END_OF_SCRIPT
+   cat >> $INSTANCE_HOME/install_guest_additions.sh <<-'END_OF_JCLOUDS_SCRIPT'
+	cd $INSTANCE_HOME
+	rm -f $INSTANCE_HOME/rc
+	trap 'echo $?>$INSTANCE_HOME/rc' 0 1 2 3 15
+	setupPublicCurl || exit 1
+	
+	(mkdir -p /tmp/ && cd /tmp/ && [ ! -f VBoxGuestAdditions_4.1.6.iso ] && curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -C - -X GET  http://download.virtualbox.org/virtualbox/4.1.6/VBoxGuestAdditions_4.1.6.iso >VBoxGuestAdditions_4.1.6.iso)
+	
+	mount -o loop /tmp/VBoxGuestAdditions_4.1.6.iso /mnt
+	
+	installModuleAssistantIfNeeded || exit 1
+	
+	/mnt/VBoxLinuxAdditions.run
+	
+	umount /mnt
+	
+END_OF_JCLOUDS_SCRIPT
    
    # add runscript footer
-   cat >> $INSTANCE_HOME/install_guest_additions.sh <<'END_OF_SCRIPT'
-exit 0
-END_OF_SCRIPT
+   cat >> $INSTANCE_HOME/install_guest_additions.sh <<-'END_OF_JCLOUDS_SCRIPT'
+	exit $?
+	
+END_OF_JCLOUDS_SCRIPT
    
    chmod u+x $INSTANCE_HOME/install_guest_additions.sh
    ;;
@@ -175,6 +190,17 @@ start)
    default || exit 1
    forget $INSTANCE_NAME $INSTANCE_HOME/$INSTANCE_NAME.sh $LOG_DIR || exit 1
    ;;
+stdout)
+   default || exit 1
+   cat $LOG_DIR/stdout.log
+   ;;
+stderr)
+   default || exit 1
+   cat $LOG_DIR/stderr.log
+   ;;
+exitstatus)
+   default || exit 1
+   [ -f $LOG_DIR/rc ] && cat $LOG_DIR/rc;;
 tail)
    default || exit 1
    tail $LOG_DIR/stdout.log
@@ -188,4 +214,4 @@ run)
    $INSTANCE_HOME/$INSTANCE_NAME.sh
    ;;
 esac
-exit 0
+exit $?

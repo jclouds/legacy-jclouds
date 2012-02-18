@@ -53,7 +53,7 @@ public class SshAvailable implements Predicate<String> {
       try {
          if (context.getComputeService()
                .runScriptOnNode(nodeId, "id", wrapInInitScript(false).runAsRoot(false))
-               .getExitCode() == 0) {
+               .getExitStatus() == 0) {
             logger.debug("Got response from ssh daemon running on %s", nodeId);
             sshDaemonIsRunning = true;
          }

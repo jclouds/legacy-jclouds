@@ -26,6 +26,9 @@ import javax.inject.Named;
 
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.events.StatementOnNodeFailure;
+import org.jclouds.compute.events.StatementOnNodeCompletion;
+import org.jclouds.compute.events.StatementOnNodeSubmission;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
@@ -36,6 +39,8 @@ import org.jclouds.ssh.SshClient;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Throwables;
+import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
@@ -51,6 +56,7 @@ public class RunScriptOnNodeUsingSsh implements RunScriptOnNode {
    protected Logger logger = Logger.NULL;
 
    protected final Function<NodeMetadata, SshClient> sshFactory;
+   protected final EventBus eventBus;
    protected final NodeMetadata node;
    protected final Statement statement;
    protected final boolean runAsRoot;
@@ -58,9 +64,10 @@ public class RunScriptOnNodeUsingSsh implements RunScriptOnNode {
    protected SshClient ssh;
 
    @AssistedInject
-   public RunScriptOnNodeUsingSsh(Function<NodeMetadata, SshClient> sshFactory, @Assisted NodeMetadata node,
-         @Assisted Statement statement, @Assisted RunScriptOptions options) {
+   public RunScriptOnNodeUsingSsh(Function<NodeMetadata, SshClient> sshFactory, EventBus eventBus,
+         @Assisted NodeMetadata node, @Assisted Statement statement, @Assisted RunScriptOptions options) {
       this.sshFactory = checkNotNull(sshFactory, "sshFactory");
+      this.eventBus = checkNotNull(eventBus, "eventBus");
       this.node = checkNotNull(node, "node");
       this.statement = checkNotNull(statement, "statement");
       this.runAsRoot = options.shouldRunAsRoot();
@@ -72,13 +79,20 @@ public class RunScriptOnNodeUsingSsh implements RunScriptOnNode {
       try {
          ssh.connect();
          ExecResponse returnVal;
+         eventBus.post(new StatementOnNodeSubmission(statement, node));
          String command = (runAsRoot) ? execAsRoot(statement.render(OsFamily.UNIX)) : execScriptAsDefaultUser(statement
                .render(OsFamily.UNIX));
-         returnVal = runCommand(command);
+         try {
+            returnVal = runCommand(command);
+         } catch (Throwable e) {
+            eventBus.post(new StatementOnNodeFailure(statement, node, e));
+            throw Throwables.propagate(e);
+         }
+         eventBus.post(new StatementOnNodeCompletion(statement, node, returnVal));
          if (logger.isTraceEnabled())
             logger.trace("<< %s[%s]", statement, returnVal);
          else
-            logger.debug("<< %s(%d)", statement, returnVal.getExitCode());
+            logger.debug("<< %s(%d)", statement, returnVal.getExitStatus());
          return returnVal;
       } finally {
          if (ssh != null)

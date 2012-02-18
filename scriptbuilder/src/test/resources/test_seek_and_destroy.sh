@@ -28,4 +28,4 @@ findPid $@ || exit 1
    echo stopping $FOUND_PID
    kill -9 $FOUND_PID
 }
-exit 0
+exit $?

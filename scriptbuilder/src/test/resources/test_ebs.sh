@@ -11,13 +11,13 @@ function default {
    export INSTANCE_NAME="mkebsboot"
 export INSTANCE_HOME="/tmp"
 export LOG_DIR="/tmp/logs"
-   return 0
+   return $?
 }
 function mkebsboot {
    export IMAGE_DIR="/mnt/tmp"
 export EBS_DEVICE="/dev/sdh"
 export EBS_MOUNT_POINT="/mnt/ebs"
-   return 0
+   return $?
 }
 function findPid {
    unset FOUND_PID;
@@ -65,50 +65,55 @@ init)
    mkdir -p $INSTANCE_HOME
    
    # create runscript header
-   cat > $INSTANCE_HOME/mkebsboot.sh <<END_OF_SCRIPT
-#!/bin/bash
-set +u
-shopt -s xpg_echo
-shopt -s expand_aliases
-PROMPT_COMMAND='echo -ne "\033]0;mkebsboot\007"'
-export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
-export INSTANCE_NAME='mkebsboot'
-export IMAGE_DIR='$IMAGE_DIR'
-export EBS_DEVICE='$EBS_DEVICE'
-export EBS_MOUNT_POINT='$EBS_MOUNT_POINT'
-export INSTANCE_NAME='$INSTANCE_NAME'
-export INSTANCE_HOME='$INSTANCE_HOME'
-export LOG_DIR='$LOG_DIR'
-END_OF_SCRIPT
+   cat > $INSTANCE_HOME/mkebsboot.sh <<-'END_OF_JCLOUDS_SCRIPT'
+	#!/bin/bash
+	set +u
+	shopt -s xpg_echo
+	shopt -s expand_aliases
+	
+	PROMPT_COMMAND='echo -ne \"\033]0;mkebsboot\007\"'
+	export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
+
+	export INSTANCE_NAME='mkebsboot'
+END_OF_JCLOUDS_SCRIPT
+   cat >> $INSTANCE_HOME/mkebsboot.sh <<-END_OF_JCLOUDS_SCRIPT
+	export IMAGE_DIR='$IMAGE_DIR'
+	export EBS_DEVICE='$EBS_DEVICE'
+	export EBS_MOUNT_POINT='$EBS_MOUNT_POINT'
+	export INSTANCE_NAME='$INSTANCE_NAME'
+	export INSTANCE_HOME='$INSTANCE_HOME'
+	export LOG_DIR='$LOG_DIR'
+END_OF_JCLOUDS_SCRIPT
    
    # add desired commands from the user
-   cat >> $INSTANCE_HOME/mkebsboot.sh <<'END_OF_SCRIPT'
-cd $INSTANCE_HOME
-echo creating a filesystem and mounting the ebs volume
-mkdir -p $IMAGE_DIR $EBS_MOUNT_POINT
-rm -rf $IMAGE_DIR/*
-yes| mkfs -t ext3 $EBS_DEVICE 2>&-
-mount $EBS_DEVICE $EBS_MOUNT_POINT
-echo making a local working copy of the boot disk
-rsync -ax --exclude /ubuntu/.bash_history --exclude /home/*/.bash_history --exclude /etc/ssh/ssh_host_* --exclude /etc/ssh/moduli --exclude /etc/udev/rules.d/*persistent-net.rules --exclude /var/lib/ec2/* --exclude=/mnt/* --exclude=/proc/* --exclude=/tmp/* --exclude=/dev/log / $IMAGE_DIR
-echo preparing the local working copy
-touch $IMAGE_DIR/etc/init.d/ec2-init-user-data
-echo copying the local working copy to the ebs mount
-cd $IMAGE_DIR
-tar -cSf - * | tar xf - -C $EBS_MOUNT_POINT
-echo size of ebs
-du -sk $EBS_MOUNT_POINT
-echo size of source
-du -sk $IMAGE_DIR
-rm -rf $IMAGE_DIR/*
-umount $EBS_MOUNT_POINT
-echo ----COMPLETE----
-END_OF_SCRIPT
+   cat >> $INSTANCE_HOME/mkebsboot.sh <<-'END_OF_JCLOUDS_SCRIPT'
+	cd $INSTANCE_HOME
+	echo creating a filesystem and mounting the ebs volume
+	mkdir -p $IMAGE_DIR $EBS_MOUNT_POINT
+	rm -rf $IMAGE_DIR/*
+	yes| mkfs -t ext3 $EBS_DEVICE 2>&-
+	mount $EBS_DEVICE $EBS_MOUNT_POINT
+	echo making a local working copy of the boot disk
+	rsync -ax --exclude /ubuntu/.bash_history --exclude /home/*/.bash_history --exclude /etc/ssh/ssh_host_* --exclude /etc/ssh/moduli --exclude /etc/udev/rules.d/*persistent-net.rules --exclude /var/lib/ec2/* --exclude=/mnt/* --exclude=/proc/* --exclude=/tmp/* --exclude=/dev/log / $IMAGE_DIR
+	echo preparing the local working copy
+	touch $IMAGE_DIR/etc/init.d/ec2-init-user-data
+	echo copying the local working copy to the ebs mount
+	cd $IMAGE_DIR
+	tar -cSf - * | tar xf - -C $EBS_MOUNT_POINT
+	echo size of ebs
+	du -sk $EBS_MOUNT_POINT
+	echo size of source
+	du -sk $IMAGE_DIR
+	rm -rf $IMAGE_DIR/*
+	umount $EBS_MOUNT_POINT
+	echo ----COMPLETE----
+END_OF_JCLOUDS_SCRIPT
    
    # add runscript footer
-   cat >> $INSTANCE_HOME/mkebsboot.sh <<'END_OF_SCRIPT'
-exit 0
-END_OF_SCRIPT
+   cat >> $INSTANCE_HOME/mkebsboot.sh <<-'END_OF_JCLOUDS_SCRIPT'
+	exit $?
+	
+END_OF_JCLOUDS_SCRIPT
    
    chmod u+x $INSTANCE_HOME/mkebsboot.sh
    ;;
@@ -142,4 +147,4 @@ run)
    $INSTANCE_HOME/$INSTANCE_NAME.sh
    ;;
 esac
-exit 0
+exit $?

@@ -19,7 +19,7 @@
 package org.jclouds.scriptbuilder.statements.login;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.scriptbuilder.domain.Statements.appendFile;
+import static org.jclouds.scriptbuilder.domain.Statements.createOrOverwriteFile;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
@@ -45,8 +45,7 @@ public class Sudoers implements Statement {
       if (family == OsFamily.WINDOWS)
          throw new UnsupportedOperationException("windows not yet implemented");
       Builder<Statement> statements = ImmutableList.<Statement> builder();
-      statements.add(exec("{rm} " + sudoers));
-      statements.add(appendFile(sudoers, ImmutableSet.of("root ALL = (ALL) ALL", "%wheel ALL = (ALL) NOPASSWD:ALL")));
+      statements.add(createOrOverwriteFile(sudoers, ImmutableSet.of("root ALL = (ALL) ALL", "%wheel ALL = (ALL) NOPASSWD:ALL")));
       statements.add(exec("chmod 0440 " + sudoers));
       return new StatementList(statements.build()).render(family);
    }

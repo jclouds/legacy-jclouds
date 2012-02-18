@@ -44,11 +44,11 @@ public class ScriptStatusReturnsZero implements Predicate<ScriptStatusReturnsZer
       logger.trace("looking for [%s] state on %s@%s", commandUsingClient.command, commandUsingClient.client
                .getUsername(), commandUsingClient.client.getHostAddress());
       ExecResponse response = refresh(commandUsingClient);
-      while (response.getExitCode() == -1)
+      while (response.getExitStatus() == -1)
          response = refresh(commandUsingClient);
       logger.trace("%s@%s: looking for exit code 0: currently: %s", commandUsingClient.client.getUsername(),
-               commandUsingClient.client.getHostAddress(), response.getExitCode());
-      return 0 == response.getExitCode();
+               commandUsingClient.client.getHostAddress(), response.getExitStatus());
+      return 0 == response.getExitStatus();
    }
 
    private ExecResponse refresh(CommandUsingClient commandUsingClient) {

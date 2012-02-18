@@ -16,31 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.scriptbuilder.statements.login;
+package org.jclouds.compute.events;
 
-import static org.testng.Assert.assertEquals;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.scriptbuilder.domain.OsFamily;
-import org.testng.annotations.Test;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.scriptbuilder.domain.Statement;
+
+import com.google.common.annotations.Beta;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
+ * A statement that failed execution on a node.
+ * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
-public class SudoStatementsTest {
+@Beta
+public class StatementOnNodeFailure extends StatementOnNode {
 
-   public void testCreateWheelUNIX() {
-      assertEquals(
-               SudoStatements.createWheel().render(OsFamily.UNIX),
-               "cat > /etc/sudoers <<-'END_OF_JCLOUDS_FILE'\n"+
-               "\troot ALL = (ALL) ALL\n"+
-               "\t%wheel ALL = (ALL) NOPASSWD:ALL\n"+
-               "END_OF_JCLOUDS_FILE\n"+
-               "chmod 0440 /etc/sudoers\n");
+   private final Throwable cause;
+
+   public StatementOnNodeFailure(Statement statement, NodeMetadata node, Throwable cause) {
+      super(statement, node);
+      this.cause = checkNotNull(cause, "cause");
    }
 
-   @Test(expectedExceptions = UnsupportedOperationException.class)
-   public void testCreateWheelWindowsNotSupported() {
-      SudoStatements.createWheel().render(OsFamily.WINDOWS);
+   public Throwable getCause() {
+      return cause;
+   }
+   
+   @Override
+   protected ToStringHelper string() {
+      return super.string().add("cause", cause.getMessage());
    }
 }

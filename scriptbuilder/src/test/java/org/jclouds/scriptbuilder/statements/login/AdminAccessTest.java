@@ -19,6 +19,7 @@
 package org.jclouds.scriptbuilder.statements.login;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
 
@@ -76,9 +77,9 @@ public class AdminAccessTest {
    public void testCreateWheelWindowsNotSupported() {
       AdminAccess.standard().init(TestConfiguration.INSTANCE).render(OsFamily.WINDOWS);
    }
-   
-   @Test(expectedExceptions=IllegalArgumentException.class)
-   //for issue 682
+
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   // for issue 682
    public void testRootNotAllowed() throws IOException {
       TestConfiguration.INSTANCE.reset();
       try {
@@ -86,6 +87,36 @@ public class AdminAccessTest {
       } finally {
          TestConfiguration.INSTANCE.reset();
       }
+   }
+
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testFamilyRequiredAllowed() throws IOException {
+      AdminAccess.standard().render(null);
+   }
+
+   public void testWhenUninitializedLazyInitWithDefaultConfiguration() throws IOException {
+      AdminAccess access = AdminAccess.standard();
+      // before rendered, holder is empty
+      assertEquals(access.config.getAdminUsername(), null);
+      assertEquals(access.config.getAdminPassword(), null);
+      assertEquals(access.config.getAdminPublicKey(), null);
+      assertEquals(access.config.getAdminPrivateKey(), null);
+      assertEquals(access.config.getLoginPassword(), null);
+      access.render(OsFamily.UNIX);
+      // DefaultConfiguration
+      try {
+         assertEquals(access.config.getAdminUsername(), System.getProperty("user.name"));
+         assertNotNull(access.config.getAdminPassword());
+         assertNotNull(access.config.getAdminPublicKey());
+         assertNotNull(access.config.getAdminPrivateKey());
+         assertNotNull(access.config.getLoginPassword());
+      } catch (AssertionError e) {
+         throw e;
+      } catch (Throwable e) {
+         // we are catching throwables here, in case the test runner doesn't
+         // have ssh keys setup
+      }
+
    }
 
 }

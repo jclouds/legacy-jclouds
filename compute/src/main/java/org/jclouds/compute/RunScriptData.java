@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.scriptbuilder.InitBuilder;
+import org.jclouds.scriptbuilder.InitScript;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
 import org.jclouds.scriptbuilder.statements.java.InstallJDK;
@@ -71,15 +71,13 @@ public class RunScriptData {
    }
    
    // NOTE do not name this the same as your login user, or the init process may kill you!
-   public static InitBuilder startJBoss(String configuration) {
-      return new InitBuilder(
-               "jboss",
-               JBOSS_HOME,
-               JBOSS_HOME,
-               ImmutableMap.of("jbossHome", JBOSS_HOME),
-               ImmutableList.<Statement>of(appendFile(JBOSS_HOME + "/standalone/configuration/standalone-custom.xml", Splitter.on('\n').split(configuration))),
-               ImmutableList
-                        .<Statement> of(interpret(new StringBuilder().append("java ").append(' ')
+   public static InitScript startJBoss(String configuration) {
+      return InitScript.builder()
+               .name("jboss")
+               .home(JBOSS_HOME)
+               .exportVariables(ImmutableMap.of("jbossHome", JBOSS_HOME))
+               .init(appendFile(JBOSS_HOME + "/standalone/configuration/standalone-custom.xml", Splitter.on('\n').split(configuration)))
+               .run(interpret(new StringBuilder().append("java ").append(' ')
                                  .append("-server -Xms128m -Xmx128m -XX:MaxPermSize=128m -Djava.net.preferIPv4Stack=true -XX:+UseFastAccessorMethods -XX:+TieredCompilation -Xverify:none -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000").append(' ')
                                  .append("-Djboss.modules.system.pkgs=org.jboss.byteman").append(' ')
                                  .append("-Dorg.jboss.boot.log.file=$JBOSS_HOME/standalone/log/boot.log").append(' ')
@@ -91,7 +89,7 @@ public class RunScriptData {
                                  .append("org.jboss.as.standalone").append(' ')
                                  .append("-Djboss.home.dir=$JBOSS_HOME").append(' ')
                                  .append("--server-config=standalone-custom.xml")
-                                 .toString())));
+                                 .toString())).build();
    }
    
    // TODO make this a cli option

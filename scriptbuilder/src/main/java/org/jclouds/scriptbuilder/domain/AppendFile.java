@@ -23,13 +23,12 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.scriptbuilder.domain.Statements.interpret;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -38,21 +37,66 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 public class AppendFile implements Statement {
-   public static final String MARKER = "END_OF_FILE";
+   public static final String DELIMETER = "END_OF_JCLOUDS_FILE";
 
-   final String path;
-   final Iterable<String> lines;
-   final String marker;
-
-   public AppendFile(String path, Iterable<String> lines) {
-      this(path, lines, MARKER);
+   public static Builder builder() {
+      return new Builder();
    }
 
-   public AppendFile(String path, Iterable<String> lines, String marker) {
+   public static class Builder {
+      protected String path;
+      protected Iterable<String> lines = ImmutableSet.of();
+      protected String delimeter = DELIMETER;
+      protected boolean expandVariables;
+
+      /**
+       * @see AppendFile#getPath()
+       */
+      public Builder path(String path) {
+         this.path = path;
+         return this;
+      }
+
+      /**
+       * @see AppendFile#getLines()
+       */
+      public Builder lines(Iterable<String> lines) {
+         this.lines = ImmutableList.copyOf(lines);
+         return this;
+      }
+
+      /**
+       * @see AppendFile#getDelimeter()
+       */
+      public Builder delimeter(String delimeter) {
+         this.delimeter = delimeter;
+         return this;
+      }
+
+      /**
+       * @see AppendFile#shouldExpandVariables()
+       */
+      public Builder expandVariables(boolean expandVariables) {
+         this.expandVariables = expandVariables;
+         return this;
+      }
+
+      public AppendFile build() {
+         return new AppendFile(path, lines, delimeter, expandVariables);
+      }
+   }
+
+   protected final String path;
+   protected final Iterable<String> lines;
+   protected final String delimeter;
+   protected final boolean expandVariables;
+
+   protected AppendFile(String path, Iterable<String> lines, String delimeter, boolean expandVariables) {
       this.path = checkNotNull(path, "path");
       this.lines = checkNotNull(lines, "lines");
-      this.marker = checkNotNull(marker, "marker");
+      this.delimeter = checkNotNull(delimeter, "delimeter");
       checkState(Iterables.size(lines) > 0, "you must pass something to execute");
+      this.expandVariables = expandVariables;
    }
 
    public static String escapeVarTokens(String toEscape, OsFamily family) {
@@ -76,35 +120,45 @@ public class AppendFile implements Statement {
 
    @Override
    public String render(OsFamily family) {
-      List<Statement> statements = Lists.newArrayList();
       if (family == OsFamily.UNIX) {
-         StringBuilder builder = new StringBuilder();
-         hereFile(path, builder);
-         statements.add(interpret(builder.toString()));
+         return interpret(hereFile()).render(family);
       } else {
-         for (String line : lines) {
-            statements.add(appendToFile(line, path, family));
-         }
+         return interpret(appendToWindowsFile()).render(family);
       }
-      return new StatementList(statements).render(family);
    }
 
-   protected void hereFile(String path, StringBuilder builder) {
-      builder.append("cat >> ").append(path).append(" <<'").append(marker).append("'\n");
+   protected String appendToWindowsFile() {
+      StringBuilder builder = new StringBuilder();
       for (String line : lines) {
-         builder.append(line).append("\n");
+         builder.append(appendLineToWindowsFile(line, path));
       }
-      builder.append(marker).append("\n");
+      return builder.toString();
    }
 
-   protected Statement appendToFile(String line, String path, OsFamily family) {
+   protected String hereFile() {
+      StringBuilder hereFile = startHereFile();
+      for (String line : lines) {
+         hereFile.append('\t').append(line).append("\n");
+      }
+      hereFile.append(delimeter).append("\n");
+      return hereFile.toString();
+   }
+
+   public StringBuilder startHereFile() {
+      StringBuilder hereFile = new StringBuilder().append("cat >> ").append(path);
+      if (expandVariables)
+         return hereFile.append(" <<-").append(delimeter).append("\n");
+      return hereFile.append(" <<-'").append(delimeter).append("'\n");
+   }
+
+   protected String appendLineToWindowsFile(String line, String path) {
       String quote = "";
-      if (!ShellToken.VQ.to(family).equals("")) {
+      if (!ShellToken.VQ.to(OsFamily.WINDOWS).equals("")) {
          quote = "'";
       } else {
-         line = escapeVarTokens(line, family);
+         line = escapeVarTokens(line, OsFamily.WINDOWS);
       }
-      return interpret(String.format("echo %s%s%s >>%s{lf}", quote, line, quote, path));
+      return String.format("echo %s%s%s >>%s{lf}", quote, line, quote, path);
    }
 
 }
