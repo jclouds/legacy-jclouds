@@ -23,6 +23,7 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 
 /**
@@ -64,24 +65,28 @@ public class Statements {
       return new Call(function, args);
    }
 
+   public static Statement appendFile(String path, String line, String delimeter) {
+      return AppendFile.builder().path(path).lines(ImmutableSet.of(line)).delimeter(delimeter).build();
+   }
+
    public static Statement appendFile(String path, Iterable<String> lines) {
-       return new AppendFile(path, lines);
-    }
+      return AppendFile.builder().path(path).lines(lines).build();
+   }
 
-    public static Statement appendFile(String path, Iterable<String> lines, String marker) {
-       return new AppendFile(path, lines, marker);
-    }
+   public static Statement appendFile(String path, Iterable<String> lines, String delimeter) {
+      return AppendFile.builder().path(path).lines(lines).delimeter(delimeter).build();
+   }
 
-    public static Statement createOrOverwriteFile(String path, Iterable<String> lines) {
-        return new CreateOrOverwriteFile(path, lines);
-     }
+   public static Statement createOrOverwriteFile(String path, Iterable<String> lines) {
+      return CreateOrOverwriteFile.builder().path(path).lines(lines).build();
+   }
 
-     public static Statement createOrOverwriteFile(String path, Iterable<String> lines, String marker) {
-        return new CreateOrOverwriteFile(path, lines, marker);
-     }
+   public static Statement createOrOverwriteFile(String path, Iterable<String> lines, String delimeter) {
+      return CreateOrOverwriteFile.builder().path(path).lines(lines).delimeter(delimeter).build();
+   }
 
    public static CreateRunScript createRunScript(String instanceName, Iterable<String> exports, String pwd,
-            Iterable<Statement> statements) {// TODO: convert so
+         Iterable<Statement> statements) {// TODO: convert so
       // that
       // createRunScript
       // can take from a
@@ -101,7 +106,8 @@ public class Statements {
 
    /**
     * 
-    * Runs the script in a way that it can be matched later with {@link #findPid}
+    * Runs the script in a way that it can be matched later with
+    * {@link #findPid}
     * 
     * @param instanceName
     *           - what to match the process on
@@ -119,7 +125,8 @@ public class Statements {
    }
 
    /**
-    * Kills the pid and subprocesses related to the variable {@code FOUND_PID} if set.
+    * Kills the pid and subprocesses related to the variable {@code FOUND_PID}
+    * if set.
     * 
     * @see #findPid
     */
@@ -128,7 +135,8 @@ public class Statements {
    }
 
    /**
-    * statement can have multiple newlines, note you should use {@code lf} to be portable
+    * statement can have multiple newlines, note you should use {@code lf} to be
+    * portable
     * 
     * @see ShellToken
     */
@@ -155,14 +163,14 @@ public class Statements {
     * @param directory
     */
    public static Statement extractTargzIntoDirectory(String method, URI endpoint, Multimap<String, String> headers,
-            String directory) {
+         String directory) {
       return new PipeHttpResponseToTarxpzfIntoDirectory(method, endpoint, headers, directory);
    }
-   
+
    public static Statement extractTargzIntoDirectory(URI targz, String directory) {
-      return extractTargzIntoDirectory("GET", targz, ImmutableMultimap.<String, String>of(), directory);
+      return extractTargzIntoDirectory("GET", targz, ImmutableMultimap.<String, String> of(), directory);
    }
-   
+
    /**
     * unzip the data received from the request parameters.
     * 
@@ -175,7 +183,7 @@ public class Statements {
     * @param directory
     */
    public static Statement extractZipIntoDirectory(String method, URI endpoint, Multimap<String, String> headers,
-            String directory) {
+         String directory) {
       return new UnzipHttpResponseIntoDirectory(method, endpoint, headers, directory);
    }
 

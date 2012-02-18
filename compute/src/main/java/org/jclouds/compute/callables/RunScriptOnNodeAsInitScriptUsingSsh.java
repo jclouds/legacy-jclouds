@@ -21,19 +21,15 @@ package org.jclouds.compute.callables;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import java.util.Collections;
-
-import javax.annotation.Resource;
-import javax.inject.Named;
-
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
+import org.jclouds.compute.events.InitScriptOnNodeSubmission;
+import org.jclouds.compute.events.StatementOnNodeCompletion;
+import org.jclouds.compute.events.StatementOnNodeFailure;
 import org.jclouds.compute.options.RunScriptOptions;
-import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.logging.Logger;
-import org.jclouds.scriptbuilder.InitBuilder;
+import org.jclouds.scriptbuilder.InitScript;
 import org.jclouds.scriptbuilder.domain.AdminAccessVisitor;
 import org.jclouds.scriptbuilder.domain.AppendFile;
 import org.jclouds.scriptbuilder.domain.OsFamily;
@@ -45,6 +41,8 @@ import org.jclouds.ssh.SshException;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
+import com.google.common.base.Throwables;
+import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
@@ -53,28 +51,18 @@ import com.google.inject.assistedinject.AssistedInject;
  * @author Adrian Cole
  */
 public class RunScriptOnNodeAsInitScriptUsingSsh extends SudoAwareInitManager implements RunScriptOnNode {
-   @Resource
-   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-   protected Logger logger = Logger.NULL;
 
-   protected final String initFile;
-
-   /**
-    * @return the absolute path to the file on disk relating to this task.
-    */
-   public String getInitFile() {
-      return initFile;
-   }
+   protected final EventBus eventBus;
 
    @AssistedInject
-   public RunScriptOnNodeAsInitScriptUsingSsh(Function<NodeMetadata, SshClient> sshFactory,
+   public RunScriptOnNodeAsInitScriptUsingSsh(Function<NodeMetadata, SshClient> sshFactory, EventBus eventBus,
             InitScriptConfigurationForTasks initScriptConfiguration, @Assisted NodeMetadata node,
             @Assisted Statement script, @Assisted RunScriptOptions options) {
       super(sshFactory, options.shouldRunAsRoot(), checkNotNull(node, "node"),
-               checkNotNull(script, "script") instanceof InitBuilder ? InitBuilder.class.cast(script)
+               initScriptConfiguration, checkNotNull(script, "script") instanceof InitScript ? InitScript.class.cast(script)
                         : createInitScript(checkNotNull(initScriptConfiguration, "initScriptConfiguration"), options
                                  .getTaskName(), script));
-      this.initFile = String.format(initScriptConfiguration.getInitScriptPattern(), init.getInstanceName());
+      this.eventBus = checkNotNull(eventBus, "eventBus");
    }
 
    @Override
@@ -88,19 +76,20 @@ public class RunScriptOnNodeAsInitScriptUsingSsh extends SudoAwareInitManager im
       checkState(ssh != null, "please call init() before invoking call");
       try {
          ssh.connect();
-         return doCall();
+         ExecResponse returnVal = doCall();
+         eventBus.post(new StatementOnNodeCompletion(init, node, returnVal));
+         return returnVal;
       } finally {
          if (ssh != null)
             ssh.disconnect();
       }
    }
 
-   public static InitBuilder createInitScript(InitScriptConfigurationForTasks config, String name, Statement script) {
+   public static InitScript createInitScript(InitScriptConfigurationForTasks config, String name, Statement script) {
       if (name == null) {
          name = "jclouds-script-" + config.getAnonymousTaskSuffixSupplier().get();
       }
-      return new InitBuilder(name, config.getBasedir() + "/" + name, config.getBasedir() + "/" + name, Collections
-               .<String, String> emptyMap(), Collections.singleton(script));
+      return InitScript.builder().name(name).home(config.getBasedir() + "/" + name).run(script).build();
    }
 
    protected void refreshSshIfNewAdminCredentialsConfigured(AdminAccess input) {
@@ -115,34 +104,41 @@ public class RunScriptOnNodeAsInitScriptUsingSsh extends SudoAwareInitManager im
    }
 
    protected ExecResponse doCall() {
+      eventBus.post(new InitScriptOnNodeSubmission(init, node));
       try {
-         ssh.put(initFile, init.render(OsFamily.UNIX));
-      } catch (SshException e) {
-         // If there's a problem with the sftp configuration, we can try via ssh exec
-         if (logger.isTraceEnabled())
-            logger.warn(e, "<< (%s) problem using sftp [%s], attempting via sshexec", ssh.toString(), e.getMessage());
-         else
-            logger.warn("<< (%s) problem using sftp [%s], attempting via sshexec", ssh.toString(), e.getMessage());
-         ssh.disconnect();
-         ssh.connect();
-         ssh.exec("rm " + initFile);
-         ssh.exec(Statements.appendFile(initFile, Splitter.on('\n').split(init.render(OsFamily.UNIX)),
-                  AppendFile.MARKER + "_" + init.getInstanceName()).render(OsFamily.UNIX));
-      }
-
-      ssh.exec("chmod 755 " + initFile);
-      setupLinkToInitFile();
-
-      runAction("init");
-      init.getInitStatement().accept(new AdminAccessVisitor() {
-
-         @Override
-         public void visit(AdminAccess input) {
-            refreshSshIfNewAdminCredentialsConfigured(input);
+         try {
+            ssh.put(initFile, init.render(OsFamily.UNIX));
+         } catch (SshException e) {
+            // If there's a problem with the sftp configuration, we can try via
+            // ssh exec
+            if (logger.isTraceEnabled())
+               logger.warn(e, "<< (%s) problem using sftp [%s], attempting via sshexec", ssh.toString(), e.getMessage());
+            else
+               logger.warn("<< (%s) problem using sftp [%s], attempting via sshexec", ssh.toString(), e.getMessage());
+            ssh.disconnect();
+            ssh.connect();
+            ssh.exec("rm " + initFile);
+            ssh.exec(Statements.appendFile(initFile, Splitter.on('\n').split(init.render(OsFamily.UNIX)),
+                  AppendFile.DELIMETER + "_" + init.getInstanceName()).render(OsFamily.UNIX));
          }
 
-      });
-      return runAction("start");
+         ssh.exec("chmod 755 " + initFile);
+         setupLinkToInitFile();
+
+         runAction("init");
+         init.getInitStatement().accept(new AdminAccessVisitor() {
+
+            @Override
+            public void visit(AdminAccess input) {
+               refreshSshIfNewAdminCredentialsConfigured(input);
+            }
+
+         });
+         return runAction("start");
+      } catch (Throwable e) {
+         eventBus.post(new StatementOnNodeFailure(init, node, e));
+         throw Throwables.propagate(e);
+      }
    }
 
    protected void setupLinkToInitFile() {

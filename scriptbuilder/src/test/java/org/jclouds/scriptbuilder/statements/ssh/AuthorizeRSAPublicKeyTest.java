@@ -34,26 +34,46 @@ public class AuthorizeRSAPublicKeyTest {
    public void testAuthorizeRSAPublicKeyUNIXCurrentUser() {
       assertEquals(
                new AuthorizeRSAPublicKeys(ImmutableSet.of("ssh-dss AAAAB")).render(OsFamily.UNIX),
-               "mkdir -p ~/.ssh\ncat >> ~/.ssh/authorized_keys <<'END_OF_FILE'\nssh-dss AAAAB\nEND_OF_FILE\nchmod 600 ~/.ssh/authorized_keys\n");
+               "mkdir -p ~/.ssh\n"+
+               "cat >> ~/.ssh/authorized_keys <<-'END_OF_JCLOUDS_FILE'\n"+
+               "\tssh-dss AAAAB\n"+
+               "END_OF_JCLOUDS_FILE\n"+
+               "chmod 600 ~/.ssh/authorized_keys\n");
    }
 
    public void testAuthorizeRSAPublicKeyUNIXCurrentUserWith2Keys() {
       assertEquals(
                new AuthorizeRSAPublicKeys(ImmutableSet.of("ssh-dss AAAAB", "ssh-dss CCCCD")).render(OsFamily.UNIX),
-               "mkdir -p ~/.ssh\ncat >> ~/.ssh/authorized_keys <<'END_OF_FILE'\nssh-dss AAAAB\n\nssh-dss CCCCD\nEND_OF_FILE\nchmod 600 ~/.ssh/authorized_keys\n");
+               "mkdir -p ~/.ssh\n"+
+               "cat >> ~/.ssh/authorized_keys <<-'END_OF_JCLOUDS_FILE'\n"+
+               "\tssh-dss AAAAB\n"+
+               "\t\n"+
+               "\tssh-dss CCCCD\n"+
+               "END_OF_JCLOUDS_FILE\n"+
+               "chmod 600 ~/.ssh/authorized_keys\n");
    }
 
    public void testAuthorizeRSAPublicKeyUNIXSpecifiedDir() {
       assertEquals(
                new AuthorizeRSAPublicKeys("/home/me/.ssh", ImmutableSet.of("ssh-dss AAAAB")).render(OsFamily.UNIX),
-               "mkdir -p /home/me/.ssh\ncat >> /home/me/.ssh/authorized_keys <<'END_OF_FILE'\nssh-dss AAAAB\nEND_OF_FILE\nchmod 600 /home/me/.ssh/authorized_keys\n");
+               "mkdir -p /home/me/.ssh\n"+
+               "cat >> /home/me/.ssh/authorized_keys <<-'END_OF_JCLOUDS_FILE'\n"+
+               "\tssh-dss AAAAB\n"+
+               "END_OF_JCLOUDS_FILE\n"+
+               "chmod 600 /home/me/.ssh/authorized_keys\n");
    }
 
    public void testAuthorizeRSAPublicKeyUNIXSpecifiedDirWith2Keys() {
       assertEquals(
                new AuthorizeRSAPublicKeys("/home/me/.ssh", ImmutableSet.of("ssh-dss AAAAB", "ssh-dss CCCCD"))
                         .render(OsFamily.UNIX),
-               "mkdir -p /home/me/.ssh\ncat >> /home/me/.ssh/authorized_keys <<'END_OF_FILE'\nssh-dss AAAAB\n\nssh-dss CCCCD\nEND_OF_FILE\nchmod 600 /home/me/.ssh/authorized_keys\n");
+                        "mkdir -p /home/me/.ssh\n"+
+                              "cat >> /home/me/.ssh/authorized_keys <<-'END_OF_JCLOUDS_FILE'\n"+
+                              "\tssh-dss AAAAB\n"+
+                              "\t\n"+
+                              "\tssh-dss CCCCD\n"+
+                              "END_OF_JCLOUDS_FILE\n"+
+                              "chmod 600 /home/me/.ssh/authorized_keys\n");
    }
 
    @Test(expectedExceptions = UnsupportedOperationException.class)

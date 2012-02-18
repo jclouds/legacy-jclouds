@@ -54,8 +54,7 @@ public class InstallGuestAdditions implements Statement {
 
    @Override
    public String render(OsFamily family) {
-      checkNotNull(family, "family");
-      if (family == OsFamily.WINDOWS)
+      if (checkNotNull(family, "family") == OsFamily.WINDOWS)
          throw new UnsupportedOperationException("windows not yet implemented");
       
       String vboxGuestAdditionsIso = "VBoxGuestAdditions_" + vboxVersion + ".iso";

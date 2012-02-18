@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.scriptbuilder.InitBuilder;
+import org.jclouds.scriptbuilder.InitScript;
 
 import com.google.common.base.Supplier;
 import com.google.inject.Inject;
@@ -104,8 +104,8 @@ public class InitScriptConfigurationForTasks {
     * 
     * @return the naming convention of init scripts. ex. {@code /tmp/init-%s}, noting logs are under
     *         the basedir/%s where %s is the taskName
-    * @see InitBuilder#getHomeDir
-    * @see InitBuilder#getLogDir
+    * @see InitScript#getHomeDir
+    * @see InitScript#getLogDir
     */
    public String getInitScriptPattern() {
       return initScriptPattern;

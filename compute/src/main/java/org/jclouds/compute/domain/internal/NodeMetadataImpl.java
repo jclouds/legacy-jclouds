@@ -220,7 +220,6 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((hardware == null) ? 0 : hardware.hashCode());
       result = prime * result + ((os == null) ? 0 : os.hashCode());
-      result = prime * result + ((credentials == null) ? 0 : credentials.hashCode());
       return result;
    }
 
@@ -269,11 +268,6 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
          if (other.os != null)
             return false;
       } else if (!os.equals(other.os))
-         return false;
-      if (credentials == null) {
-         if (other.credentials != null)
-            return false;
-      } else if (!credentials.equals(other.credentials))
          return false;
       return true;
    }

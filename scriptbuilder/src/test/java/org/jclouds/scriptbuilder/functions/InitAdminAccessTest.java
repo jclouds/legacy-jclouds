@@ -18,18 +18,16 @@
  */
 package org.jclouds.scriptbuilder.functions;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
-import org.jclouds.scriptbuilder.InitBuilder;
-import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.scriptbuilder.InitScript;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -100,9 +98,9 @@ public class InitAdminAccessTest {
       replay(configuration);
       replay(statement);
       replay(newStatement);
-      
-      InitBuilder testInitBuilder = new InitBuilder("mkebsboot", "/mnt/tmp", "/mnt/tmp", ImmutableMap.of("tmpDir",
-      "/mnt/tmp"), ImmutableList.<Statement> of(statement));
+
+      InitScript testInitBuilder = InitScript.builder().name("mkebsboot").home("/mnt/tmp")
+            .exportVariables(ImmutableMap.of("tmpDir", "/mnt/tmp")).run(statement).build();
       
       InitAdminAccess initAdminAccess = new InitAdminAccess(configuration);
 

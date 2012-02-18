@@ -34,12 +34,15 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.eventbus.EventBus;
 
 /**
  * @author Adam Lowe
  */
 @Test(groups = { "unit" }, singleThreaded = true)
 public class RunScriptOnNodeUsingSshTest {
+   EventBus eventBus = new EventBus();
+
    private SshClient sshClient;
    private NodeMetadata node;
    private Function<NodeMetadata, SshClient> sshFactory;
@@ -59,7 +62,7 @@ public class RunScriptOnNodeUsingSshTest {
    }
 
    public void simpleTest() {
-      RunScriptOnNodeUsingSsh testMe = new RunScriptOnNodeUsingSsh(sshFactory, node, exec("echo $USER\necho $USER"),
+      RunScriptOnNodeUsingSsh testMe = new RunScriptOnNodeUsingSsh(sshFactory, eventBus, node, exec("echo $USER\necho $USER"),
             wrapInInitScript(false).runAsRoot(false));
 
       testMe.init();
@@ -75,7 +78,7 @@ public class RunScriptOnNodeUsingSshTest {
    }
 
    public void simpleRootTest() {
-      RunScriptOnNodeUsingSsh testMe = new RunScriptOnNodeUsingSsh(sshFactory, node, exec("echo $USER\necho $USER"),
+      RunScriptOnNodeUsingSsh testMe = new RunScriptOnNodeUsingSsh(sshFactory, eventBus, node, exec("echo $USER\necho $USER"),
             wrapInInitScript(false).runAsRoot(true));
 
       testMe.init();
@@ -97,7 +100,7 @@ public class RunScriptOnNodeUsingSshTest {
       expect(node.getCredentials()).andReturn(new LoginCredentials("tester", "testpassword!", null, true))
             .atLeastOnce();
       replay(node);
-      RunScriptOnNodeUsingSsh testMe = new RunScriptOnNodeUsingSsh(sshFactory, node, exec("echo $USER\necho $USER"),
+      RunScriptOnNodeUsingSsh testMe = new RunScriptOnNodeUsingSsh(sshFactory, eventBus, node, exec("echo $USER\necho $USER"),
             wrapInInitScript(false).runAsRoot(true));
       testMe.init();
 
@@ -114,7 +117,7 @@ public class RunScriptOnNodeUsingSshTest {
    }
 
    public void testUserAddAsRoot() {
-      RunScriptOnNodeUsingSsh testMe = new RunScriptOnNodeUsingSsh(sshFactory, node, UserAdd.builder()
+      RunScriptOnNodeUsingSsh testMe = new RunScriptOnNodeUsingSsh(sshFactory, eventBus, node, UserAdd.builder()
             .login("testuser").build(), wrapInInitScript(false).runAsRoot(true).overrideLoginPassword("test"));
 
       testMe.init();

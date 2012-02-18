@@ -67,8 +67,8 @@ public class RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements C
       tainted = true;
       try {
          ExecResponse exec = runScriptOnNode.call();
-         logger.trace("<< script output for node(%s): %s", runScriptOnNode.getNode().getId(), exec);
          logger.debug("<< options applied node(%s)", runScriptOnNode.getNode().getId());
+         logger.trace("<< script output for node(%s): %s", runScriptOnNode.getNode().getId(), exec);
          goodNodes.put(runScriptOnNode.getNode(), exec);
          return exec;
       } catch (Exception e) {

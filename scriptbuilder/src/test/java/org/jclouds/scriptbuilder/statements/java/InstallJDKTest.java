@@ -23,14 +23,13 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.net.URI;
 
-import org.jclouds.scriptbuilder.InitBuilder;
+import org.jclouds.scriptbuilder.InitScript;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
@@ -48,11 +47,10 @@ public class InstallJDKTest {
    }
 
    public void testInstallJDKUNIXInScriptBuilderSourcesSetupPublicCurl() throws IOException {
-      assertEquals(
-            new InitBuilder("install_jdk", ImmutableSet.<Statement> of(), ImmutableSet.<Statement> of(InstallJDK
-                  .fromURL())).render(OsFamily.UNIX),
+      assertEquals(InitScript.builder().name("install_jdk").run(InstallJDK.fromURL()).build().render(OsFamily.UNIX),
             CharStreams.toString(Resources.newReaderSupplier(
-                  Resources.getResource("test_install_jdk_scriptbuilder." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+                  Resources.getResource("test_install_jdk_scriptbuilder." + ShellToken.SH.to(OsFamily.UNIX)),
+                  Charsets.UTF_8)));
    }
 
    public void testInstallJDKUNIXWithURL() throws IOException {

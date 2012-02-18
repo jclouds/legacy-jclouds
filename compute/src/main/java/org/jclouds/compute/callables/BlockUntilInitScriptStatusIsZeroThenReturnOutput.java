@@ -21,6 +21,7 @@ package org.jclouds.compute.callables;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -30,22 +31,28 @@ import javax.annotation.Resource;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.events.StatementOnNodeCompletion;
+import org.jclouds.compute.events.StatementOnNodeFailure;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.scriptbuilder.InitBuilder;
+import org.jclouds.scriptbuilder.InitScript;
 import org.jclouds.ssh.SshClient;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
+import com.google.common.eventbus.EventBus;
+import com.google.common.primitives.Ints;
 import com.google.common.util.concurrent.AbstractFuture;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
 /**
- * A future that works in tandem with a task that was invoked by {@link InitBuilder}
+ * A future that works in tandem with a task that was invoked by
+ * {@link InitScript}
  * 
  * @author Adrian Cole
  */
@@ -60,23 +67,31 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFu
    protected Logger logger = Logger.NULL;
 
    private final ExecutorService userThreads;
+   private final EventBus eventBus;
    private final SudoAwareInitManager commandRunner;
-   private final RetryablePredicate<String> notRunningAnymore;
 
-   private boolean shouldCancel;
+   public SudoAwareInitManager getCommandRunner() {
+      return commandRunner;
+   }
+
+   private final RetryablePredicate<String> notRunningAnymore;
 
    @Inject
    public BlockUntilInitScriptStatusIsZeroThenReturnOutput(
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
-            ComputeServiceConstants.InitStatusProperties properties,
-            final ScriptStatusReturnsZero stateRunning, @Assisted final SudoAwareInitManager commandRunner) {
-      
-      long retryMaxWait = TimeUnit.DAYS.toMillis(365); // arbitrarily high value, but Long.MAX_VALUE doesn't work!
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads, EventBus eventBus,
+         ComputeServiceConstants.InitStatusProperties properties, final ScriptStatusReturnsZero stateRunning,
+         @Assisted final SudoAwareInitManager commandRunner) {
+
+      long retryMaxWait = TimeUnit.DAYS.toMillis(365); // arbitrarily high
+                                                       // value, but
+                                                       // Long.MAX_VALUE doesn't
+                                                       // work!
       long retryInitialPeriod = properties.initStatusInitialPeriod;
       long retryMaxPeriod = properties.initStatusMaxPeriod;
-      
+
       this.commandRunner = checkNotNull(commandRunner, "commandRunner");
       this.userThreads = checkNotNull(userThreads, "userThreads");
+      this.eventBus = checkNotNull(eventBus, "eventBus");
       this.notRunningAnymore = new RetryablePredicate<String>(new Predicate<String>() {
 
          @Override
@@ -85,13 +100,13 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFu
          }
       }, retryMaxWait, retryInitialPeriod, retryMaxPeriod, TimeUnit.MILLISECONDS) {
          /**
-          * make sure we stop the retry loop if someone cancelled the future, this keeps threads
-          * from being consumed on dead tasks
+          * make sure we stop the retry loop if someone cancelled the future,
+          * this keeps threads from being consumed on dead tasks
           */
          @Override
          protected boolean atOrAfter(Date end) {
-            if (shouldCancel)
-               Throwables.propagate(new TimeoutException("cancelled"));
+            if (isCancelled())
+               Throwables.propagate(new CancellationException("cancelled"));
             return super.atOrAfter(end);
          }
       };
@@ -105,20 +120,28 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFu
    }
 
    /**
-    * Submits a thread that will either set the result of the future or the exception that took
-    * place
+    * Submits a thread that will either set the result of the future or the
+    * exception that took place
     */
    public BlockUntilInitScriptStatusIsZeroThenReturnOutput init() {
       userThreads.submit(new Runnable() {
          @Override
          public void run() {
             try {
-               boolean complete = notRunningAnymore.apply("status");
-               String stdout = commandRunner.runAction("tail").getOutput();
-               String stderr = commandRunner.runAction("tailerr").getOutput();
-               // TODO make ScriptBuilder save exit status on nuhup
-               logger.debug("<< complete(%s) status(%s)", commandRunner.getStatement().getInstanceName(), complete);
-               set(new ExecResponse(stdout, stderr, complete && !shouldCancel ? 0 : -1));
+               notRunningAnymore.apply("status");
+               String stdout = commandRunner.runAction("stdout").getOutput();
+               String stderr = commandRunner.runAction("stderr").getOutput();
+               Integer exitStatus = Ints.tryParse(commandRunner.runAction("exitstatus").getOutput().trim());
+               ExecResponse exec = new ExecResponse(stdout, stderr, exitStatus == null ? -1 : exitStatus);
+               if (exitStatus == null) {
+                  Integer pid = Ints.tryParse(commandRunner.runAction("status").getOutput().trim());
+                  throw new ScriptStillRunningException(String.format("%s still running: pid(%s), last status: %s",
+                        BlockUntilInitScriptStatusIsZeroThenReturnOutput.this, pid, exec),
+                        BlockUntilInitScriptStatusIsZeroThenReturnOutput.this);
+               }
+               logger.debug("<< complete(%s) status(%s)", commandRunner.getStatement().getInstanceName(), exitStatus);
+               set(exec);
+            } catch (CancellationException e) {
             } catch (Exception e) {
                setException(e);
             }
@@ -128,71 +151,53 @@ public class BlockUntilInitScriptStatusIsZeroThenReturnOutput extends AbstractFu
    }
 
    @Override
+   protected boolean set(ExecResponse value) {
+      eventBus.post(new StatementOnNodeCompletion(getCommandRunner().getStatement(), getCommandRunner().getNode(),
+            value));
+      return super.set(value);
+   }
+
+   @Override
    protected void interruptTask() {
       logger.debug("<< cancelled(%s)", commandRunner.getStatement().getInstanceName());
-      commandRunner.refreshAndRunAction("stop");
-      shouldCancel = true;
+      ExecResponse returnVal = commandRunner.refreshAndRunAction("stop");
+      CancellationException e = new CancellationException(String.format(
+            "cancelled %s on node: %s; stop command had exit status: %s", getCommandRunner().getStatement()
+                  .getInstanceName(), getCommandRunner().getNode().getId(), returnVal));
+      eventBus.post(new StatementOnNodeFailure(getCommandRunner().getStatement(), getCommandRunner().getNode(), e));
       super.interruptTask();
    }
 
    @Override
    public String toString() {
-      return String.format("running task[%s]", commandRunner);
+      return Objects.toStringHelper(this).add("commandRunner", commandRunner).toString();
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((commandRunner == null) ? 0 : commandRunner.hashCode());
-      result = prime * result + ((logger == null) ? 0 : logger.hashCode());
-      result = prime * result + ((notRunningAnymore == null) ? 0 : notRunningAnymore.hashCode());
-      result = prime * result + (shouldCancel ? 1231 : 1237);
-      result = prime * result + ((userThreads == null) ? 0 : userThreads.hashCode());
-      return result;
+      return Objects.hashCode(commandRunner);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
+   public boolean equals(Object o) {
+      if (o == null)
          return false;
-      if (getClass() != obj.getClass())
+      if (!o.getClass().equals(getClass()))
          return false;
-      BlockUntilInitScriptStatusIsZeroThenReturnOutput other = (BlockUntilInitScriptStatusIsZeroThenReturnOutput) obj;
-      if (commandRunner == null) {
-         if (other.commandRunner != null)
-            return false;
-      } else if (!commandRunner.equals(other.commandRunner))
-         return false;
-      if (logger == null) {
-         if (other.logger != null)
-            return false;
-      } else if (!logger.equals(other.logger))
-         return false;
-      if (notRunningAnymore == null) {
-         if (other.notRunningAnymore != null)
-            return false;
-      } else if (!notRunningAnymore.equals(other.notRunningAnymore))
-         return false;
-      if (shouldCancel != other.shouldCancel)
-         return false;
-      if (userThreads == null) {
-         if (other.userThreads != null)
-            return false;
-      } else if (!userThreads.equals(other.userThreads))
-         return false;
-      return true;
+      BlockUntilInitScriptStatusIsZeroThenReturnOutput that = BlockUntilInitScriptStatusIsZeroThenReturnOutput.class
+            .cast(o);
+      return Objects.equal(this.commandRunner, that.commandRunner);
    }
 
    @Override
    public ExecResponse get(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException,
-            ExecutionException {
+         ExecutionException {
       try {
          return super.get(timeout, unit);
       } catch (TimeoutException e) {
-         throw new ScriptStillRunningException(timeout, unit, this);
+         ScriptStillRunningException exception = new ScriptStillRunningException(timeout, unit, this);
+         exception.initCause(e);
+         throw exception;
       }
    }
 

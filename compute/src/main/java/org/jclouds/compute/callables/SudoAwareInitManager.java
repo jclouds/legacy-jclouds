@@ -28,7 +28,7 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.scriptbuilder.InitBuilder;
+import org.jclouds.scriptbuilder.InitScript;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -47,16 +47,25 @@ public class SudoAwareInitManager {
    protected Logger computeLogger = Logger.NULL;
    protected Logger logger = Logger.NULL;
    protected NodeMetadata node;
-   protected final InitBuilder init;
+   protected final String initFile;
+   protected final InitScript init;
    protected final boolean runAsRoot;
    protected final Function<NodeMetadata, SshClient> sshFactory;
    protected SshClient ssh;
 
+   /**
+    * @return the absolute path to the file on disk relating to this task.
+    */
+   public String getInitFile() {
+      return initFile;
+   }
+   
    public SudoAwareInitManager(Function<NodeMetadata, SshClient> sshFactory, boolean runAsRoot, NodeMetadata node,
-         InitBuilder init) {
+         InitScriptConfigurationForTasks initScriptConfiguration, InitScript init) {
       this.sshFactory = checkNotNull(sshFactory, "sshFactory");
       this.runAsRoot = runAsRoot;
       this.node = checkNotNull(node, "node");
+      this.initFile = String.format(initScriptConfiguration.getInitScriptPattern(), init.getInstanceName());
       this.init = checkNotNull(init, "init");
    }
 
@@ -82,41 +91,44 @@ public class SudoAwareInitManager {
             : execScriptAsDefaultUser(action);
       returnVal = runCommand(command);
       if ("status".equals(action))
-         logger.trace("<< %s(%d)", action, returnVal.getExitCode());
+         logger.trace("<< %s(%d)", action, returnVal.getExitStatus());
       else if (computeLogger.isTraceEnabled())
          computeLogger.trace("<< %s[%s]", action, returnVal);
       else
-         computeLogger.debug("<< %s(%d)", action, returnVal.getExitCode());
+         computeLogger.debug("<< %s(%d)", action, returnVal.getExitStatus());
       return returnVal;
    }
 
    ExecResponse runCommand(String command) {
-      String statement = String.format(">> running [%s] as %s@%s", command.replace(
+      String statement = String.format("[%s] as %s@%s", command.replace(
             node.getCredentials().getPassword() != null ? node.getCredentials().getPassword() : "XXXXX", "XXXXX"), ssh
             .getUsername(), ssh.getHostAddress());
       if (command.endsWith("status"))
-         logger.trace(statement);
-      else
-         computeLogger.debug(statement);
-      return ssh.exec(command);
+         logger.trace(">> running " + statement);
+      else 
+         computeLogger.debug(">> running " + statement);
+      ExecResponse returnVal = ssh.exec(command);
+      if (!command.endsWith("status"))
+         checkState(returnVal.getExitStatus() == 0, "error running %s; returnVal !=0: %s", statement, returnVal);
+      return returnVal;
    }
 
    @VisibleForTesting
    String execScriptAsRoot(String action) {
       String command;
       if (node.getCredentials().identity.equals("root")) {
-         command = "./" + init.getInstanceName() + " " + action;
+         command = initFile + " " + action;
       } else if (node.getCredentials().shouldAuthenticateSudo()) {
-         command = String.format("echo '%s'|sudo -S ./%s %s", node.getCredentials().getPassword(),
-               init.getInstanceName(), action);
+         command = String.format("echo '%s'|sudo -S %s %s", node.getCredentials().getPassword(),
+               initFile, action);
       } else {
-         command = "sudo ./" + init.getInstanceName() + " " + action;
+         command = "sudo " + initFile + " " + action;
       }
       return command;
    }
 
    protected String execScriptAsDefaultUser(String action) {
-      return "./" + init.getInstanceName() + " " + action;
+      return initFile + " " + action;
    }
 
    public NodeMetadata getNode() {
@@ -125,11 +137,11 @@ public class SudoAwareInitManager {
 
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).add("node", node).add("name", init.getInstanceName())
+      return Objects.toStringHelper(this).add("node", node.getId()).add("name", init.getInstanceName())
             .add("runAsRoot", runAsRoot).toString();
    }
 
-   public InitBuilder getStatement() {
+   public InitScript getStatement() {
       return init;
    }
 }

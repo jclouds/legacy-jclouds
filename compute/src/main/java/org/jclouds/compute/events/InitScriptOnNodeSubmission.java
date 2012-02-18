@@ -16,31 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.scriptbuilder.statements.login;
+package org.jclouds.compute.events;
 
-import static org.testng.Assert.assertEquals;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.scriptbuilder.InitScript;
 
-import org.jclouds.scriptbuilder.domain.OsFamily;
-import org.testng.annotations.Test;
+import com.google.common.annotations.Beta;
 
 /**
+ * An init script was submitted to a node for exectuion.
+ * <p/>
+ * Note this does not guarantee that there was success, nor that the init script started.
+ * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
-public class SudoStatementsTest {
+@Beta
+public class InitScriptOnNodeSubmission extends StatementOnNodeSubmission {
 
-   public void testCreateWheelUNIX() {
-      assertEquals(
-               SudoStatements.createWheel().render(OsFamily.UNIX),
-               "cat > /etc/sudoers <<-'END_OF_JCLOUDS_FILE'\n"+
-               "\troot ALL = (ALL) ALL\n"+
-               "\t%wheel ALL = (ALL) NOPASSWD:ALL\n"+
-               "END_OF_JCLOUDS_FILE\n"+
-               "chmod 0440 /etc/sudoers\n");
+   public InitScriptOnNodeSubmission(InitScript statement, NodeMetadata node) {
+      super(statement, node);
+   }
+   
+   public InitScript getStatement() {
+      return InitScript.class.cast(statement);
    }
 
-   @Test(expectedExceptions = UnsupportedOperationException.class)
-   public void testCreateWheelWindowsNotSupported() {
-      SudoStatements.createWheel().render(OsFamily.WINDOWS);
-   }
 }

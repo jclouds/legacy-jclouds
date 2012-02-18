@@ -49,7 +49,7 @@ public class SshdConfig implements Statement {
       Statement prependSshdConfig = exec(String.format(
                "exec 3<> %1$s && awk -v TEXT=\"%2$s\n\" 'BEGIN {print TEXT}{print}' %1$s >&3", sshdConfig,
                linesToPrepend));
-      Statement reloadSshdConfig = exec("/etc/init.d/sshd reload||/etc/init.d/ssh reload");
+      Statement reloadSshdConfig = exec("hash service 2>/dev/null && service ssh reload || /etc/init.d/ssh* reload");
       return newStatementList(prependSshdConfig, reloadSshdConfig).render(family);
    }
 

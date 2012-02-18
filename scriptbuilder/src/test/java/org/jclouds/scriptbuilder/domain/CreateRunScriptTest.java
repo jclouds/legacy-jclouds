@@ -53,16 +53,9 @@ public class CreateRunScriptTest {
                .getResource("test_runrun." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
    }
 
-   public void testWINDOWS() throws IOException {
-      assertEquals(statement.render(OsFamily.WINDOWS), CharStreams.toString(Resources.newReaderSupplier(Resources
-               .getResource("test_runrun." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
-   }
-
-   public void testRedirectGuard() {
-      assertEquals(CreateRunScript.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo>>"), "foo>>");
-      assertEquals(CreateRunScript.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo0>>"), "foo0 >>");
-      assertEquals(CreateRunScript.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo1>>"), "foo1 >>");
-      assertEquals(CreateRunScript.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo2>>"), "foo2 >>");
+   @Test(expectedExceptions = UnsupportedOperationException.class)
+   public void testWINDOWSUnimplemented() throws IOException {
+      statement.render(OsFamily.WINDOWS);
    }
 
 }

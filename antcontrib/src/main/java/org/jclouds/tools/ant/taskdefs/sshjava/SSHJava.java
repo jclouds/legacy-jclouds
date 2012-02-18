@@ -47,7 +47,7 @@ import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.Environment.Variable;
-import org.jclouds.scriptbuilder.InitBuilder;
+import org.jclouds.scriptbuilder.InitScript;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
 import org.jclouds.scriptbuilder.domain.Statement;
@@ -237,13 +237,13 @@ public class SSHJava extends Java {
    private int sshexecRedirectStreams(Statement statement) throws IOException {
       exec.setStreamHandler(redirector.createHandler());
       log("starting java as:\n" + statement.render(osFamily), Project.MSG_VERBOSE);
-      int rc;
+      int exitStatus;
       try {
-         rc = sshexec(statement.render(osFamily));
+         exitStatus = sshexec(statement.render(osFamily));
       } finally {
          redirector.complete();
       }
-      return rc;
+      return exitStatus;
    }
 
    private void mkdirAndCopyTo(String destination, Iterable<FileSet> sets) {
@@ -373,8 +373,8 @@ public class SSHJava extends Java {
                   Joiner.on(' ').join(commandLine.getJavaCommand().getArguments()));
       }
 
-      InitBuilder testInitBuilder = new InitBuilder(id, basedir, basedir, envVariables,
-               ImmutableList.<Statement> of(Statements.interpret( commandBuilder.toString())));
+      InitScript testInitBuilder = InitScript.builder().name(id).home(basedir).exportVariables(envVariables)
+            .run(Statements.interpret( commandBuilder.toString())).build();
       return testInitBuilder.render(osFamily);
    }
 

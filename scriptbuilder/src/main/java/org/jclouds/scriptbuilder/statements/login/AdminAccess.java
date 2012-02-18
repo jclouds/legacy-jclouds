@@ -19,27 +19,30 @@
 package org.jclouds.scriptbuilder.statements.login;
 
 import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.crypto.Sha512Crypt;
 import org.jclouds.domain.Credentials;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
 import org.jclouds.scriptbuilder.statements.ssh.SshStatements;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
+import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.inject.ImplementedBy;
 
@@ -288,7 +291,8 @@ public class AdminAccess implements Statement {
       }
    }
 
-   private Config config;
+   @VisibleForTesting
+   Config config;
 
    protected AdminAccess(Config in) {
       this.config = checkNotNull(in, "in");
@@ -344,14 +348,19 @@ public class AdminAccess implements Statement {
       checkNotNull(family, "family");
       if (family == OsFamily.WINDOWS)
          throw new UnsupportedOperationException("windows not yet implemented");
+      checkArgument(!"root".equals(config.getAdminUsername()), "cannot create admin user 'root'; " +
+            "ensure jclouds is not running as root, or specify an explicit non-root username in AdminAccess");
+      if (Iterables.any(
+            Lists.newArrayList(config.getAdminUsername(), config.getAdminPassword(), config.getAdminPublicKey(),
+                  config.getAdminPrivateKey(), config.getLoginPassword()), Predicates.isNull()))
+         init(new DefaultConfiguration());
+
       checkNotNull(config.getAdminUsername(), "adminUsername");
-      Preconditions.checkArgument(!"root".equals(config.getAdminUsername()), "cannot create admin user 'root'; " +
-      		"ensure jclouds is not running as root, or specify an explicit non-root username in AdminAccess");
       checkNotNull(config.getAdminPassword(), "adminPassword");
       checkNotNull(config.getAdminPublicKey(), "adminPublicKey");
       checkNotNull(config.getAdminPrivateKey(), "adminPrivateKey");
       checkNotNull(config.getLoginPassword(), "loginPassword");
-
+      
       ImmutableList.Builder<Statement> statements = ImmutableList.<Statement> builder();
       UserAdd.Builder userBuilder = UserAdd.builder();
       userBuilder.login(config.getAdminUsername());

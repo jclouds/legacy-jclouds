@@ -19,7 +19,9 @@
 package org.jclouds.scriptbuilder;
 
 import static org.jclouds.scriptbuilder.domain.Statements.appendFile;
+import static org.jclouds.scriptbuilder.domain.Statements.call;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
+import static org.jclouds.scriptbuilder.domain.Statements.interpret;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -27,8 +29,6 @@ import java.net.MalformedURLException;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
-import org.jclouds.scriptbuilder.domain.Statement;
-import org.jclouds.scriptbuilder.domain.Statements;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
@@ -38,47 +38,42 @@ import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 
 /**
- * Tests possible uses of InitBuilder
+ * Tests possible uses of InitScript
  * 
  * @author Adrian Cole
  */
-public class InitBuilderTest {
+public class InitScriptTest {
+   InitScript testInitScript = InitScript
+         .builder()
+         .name("mkebsboot")
+         .home("/mnt/tmp")
+         .exportVariables(ImmutableMap.of("tmpDir", "/mnt/tmp"))
+         .run(appendFile("{tmp}{fs}{uid}{fs}scripttest{fs}temp.txt", ImmutableList.<String> of("hello world")),
+               exec("find /")).build();
 
-   InitBuilder testInitBuilder = new InitBuilder("mkebsboot", "/mnt/tmp", "/mnt/tmp", ImmutableMap.of("tmpDir",
-         "/mnt/tmp"), ImmutableList.<Statement> of(
-         appendFile("{tmp}{fs}{uid}{fs}scripttest{fs}temp.txt", ImmutableList.<String> of("hello world")),
-         exec("find /")));
-
-   @Test(expectedExceptions = UnsupportedOperationException.class)
    public void testBuildSimpleWindows() throws MalformedURLException, IOException {
-      testInitBuilder.render(OsFamily.WINDOWS);
+      assertEquals(
+            testInitScript.render(OsFamily.WINDOWS),
+            CharStreams.toString(Resources.newReaderSupplier(
+                  Resources.getResource("test_init." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
    }
 
-   @Test
    public void testBuildSimpleUNIX() throws MalformedURLException, IOException {
       assertEquals(
-            testInitBuilder.render(OsFamily.UNIX),
+            testInitScript.render(OsFamily.UNIX),
             CharStreams.toString(Resources.newReaderSupplier(
                   Resources.getResource("test_init." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
    }
 
-   @Test
    public void testBuildEBS() throws MalformedURLException, IOException {
-      assertEquals(
-            new InitBuilder("mkebsboot",// name of the script
-                  "/tmp",// working directory
-                  "/tmp/logs",// location of stdout.log and stderr.log
-                  ImmutableMap.of("imageDir", "/mnt/tmp", "ebsDevice", "/dev/sdh", "ebsMountPoint", "/mnt/ebs"),// variables
-                                                                                                                // used
-                                                                                                                // inside
-                                                                                                                // of
-                                                                                                                // the
-                                                                                                                // script
-                  ImmutableList.<Statement> of(Statements
-                        .interpret(
-                              "echo creating a filesystem and mounting the ebs volume",// what
-                                                                                       // to
-                                                                                       // execute
+      assertEquals(InitScript
+            .builder()
+            .name("mkebsboot")
+            .home("tmp")
+            .logDir("/tmp/logs")
+            .exportVariables(ImmutableMap.of("imageDir", "/mnt/tmp", "ebsDevice", "/dev/sdh", "ebsMountPoint", "/mnt/ebs"))
+            .run(interpret(
+                              "echo creating a filesystem and mounting the ebs volume",
                               "{md} {varl}IMAGE_DIR{varr} {varl}EBS_MOUNT_POINT{varr}",
                               "rm -rf {varl}IMAGE_DIR{varr}/*",
                               "yes| mkfs -t ext3 {varl}EBS_DEVICE{varr} 2>&-",
@@ -91,8 +86,20 @@ public class InitBuilderTest {
                               "tar -cSf - * | tar xf - -C {varl}EBS_MOUNT_POINT{varr}", "echo size of ebs",
                               "du -sk {varl}EBS_MOUNT_POINT{varr}", "echo size of source",
                               "du -sk {varl}IMAGE_DIR{varr}", "rm -rf {varl}IMAGE_DIR{varr}/*",
-                              "umount {varl}EBS_MOUNT_POINT{varr}", "echo ----COMPLETE----"))).render(OsFamily.UNIX),
+                              "umount {varl}EBS_MOUNT_POINT{varr}", "echo ----COMPLETE----")).build().render(OsFamily.UNIX),
             CharStreams.toString(Resources.newReaderSupplier(
                   Resources.getResource("test_ebs." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
    }
+
+   InitScript testCallInRun = InitScript.builder().name("testcall").init(exec("echo hello"))
+         .run(call("sourceEnvFile", "foo"), exec("find /")).build();
+
+   @Test
+   public void testCallInRunUNIX() throws MalformedURLException, IOException {
+      assertEquals(
+            testCallInRun.render(OsFamily.UNIX),
+            CharStreams.toString(Resources.newReaderSupplier(
+                  Resources.getResource("test_init_script." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+   }
+
 }
