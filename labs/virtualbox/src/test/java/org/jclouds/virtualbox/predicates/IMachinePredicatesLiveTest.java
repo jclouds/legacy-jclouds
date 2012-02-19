@@ -96,17 +96,6 @@ public class IMachinePredicatesLiveTest extends BaseVirtualBoxClientLiveTest {
       assertTrue(isLinkedClone().apply(clone));
    }
 
-   /*
-    * public void testFullClone() { IMachine master =
-    * context.utils().injector().
-    * getInstance(CreateAndRegisterMachineFromIsoIfNotAlreadyExists.class)
-    * .apply(masterSpec); IMachine clone = new
-    * CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir,
-    * cloneSpec, !IS_LINKED_CLONE).apply(master);
-    * 
-    * assertFalse(new IsLinkedClone(manager).apply(clone)); }
-    */
-
    @BeforeMethod
    @AfterMethod
    void cleanUpVms() {
