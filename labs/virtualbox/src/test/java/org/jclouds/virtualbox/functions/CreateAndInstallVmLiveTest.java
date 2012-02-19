@@ -19,10 +19,19 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.CaseFormat;
-import com.google.common.base.Function;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Nullable;
+
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
@@ -30,25 +39,35 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
+import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
-import org.jclouds.virtualbox.domain.*;
+import org.jclouds.virtualbox.domain.ExecutionType;
+import org.jclouds.virtualbox.domain.HardDisk;
+import org.jclouds.virtualbox.domain.IsoSpec;
+import org.jclouds.virtualbox.domain.MasterSpec;
+import org.jclouds.virtualbox.domain.NatAdapter;
+import org.jclouds.virtualbox.domain.NetworkSpec;
+import org.jclouds.virtualbox.domain.StorageController;
+import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.predicates.SshResponds;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.StorageBus;
 
-import javax.annotation.Nullable;
-import java.util.Map;
-import java.util.Set;
-
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.collect.Iterables.any;
-import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
-import static org.testng.Assert.assertTrue;
+import com.google.common.base.CaseFormat;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * @author Andrea Turli, Mattias Holmqvist
@@ -61,7 +80,12 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
          .createInjector(new GsonModule()).getInstance(Json.class));
 
    private VmSpec vmSpecification;
+   private MasterSpec masterSpec;
+   private Injector injector;
+   private Function<IMachine, SshClient> sshClientForIMachine;
+   private Predicate<SshClient> sshResponds;
 
+   
    @Override
    @BeforeClass(groups = "live")
    public void setupClient() {
@@ -76,28 +100,31 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
               .attachISO(0, 0, operatingSystemIso)
               .attachHardDisk(hardDisk)
               .attachISO(1, 1, guestAdditionsIso).build();
-      vmSpecification = VmSpec.builder().id("jclouds-image-create-and-install-vm-test").name(vmName).memoryMB(512).osTypeId("")
+      vmSpecification = VmSpec.builder().id(vmName).name(vmName).memoryMB(512).osTypeId("")
               .controller(ideController)
               .forceOverwrite(true)
               .cleanUpMode(CleanupMode.Full).build();
-   }
-
-   public void testCreateImageMachineFromIso() throws Exception {
-      Injector injector = context.utils().injector();
+      
+      injector = context.utils().injector();
       Function<String, String> configProperties = injector
             .getInstance(ValueOfConfigurationKeyOrNull.class);
 
-      MasterSpec masterSpec = MasterSpec.builder().vm(vmSpecification)
-              .iso(IsoSpec.builder()
-                      .sourcePath(operatingSystemIso)
-                      .installationScript(configProperties
-                              .apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE)
-                              .replace("HOSTNAME", vmSpecification.getVmName()))
-                      .build())
-              .network(NetworkSpec.builder()
-                      .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build())
-                      .build()).build();
-      IMachine imageMachine = injector.getInstance(CreateAndInstallVm.class).apply(masterSpec);
+      masterSpec = MasterSpec.builder().vm(vmSpecification)
+            .iso(IsoSpec.builder()
+                    .sourcePath(operatingSystemIso)
+                    .installationScript(configProperties
+                            .apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE)
+                            .replace("HOSTNAME", vmSpecification.getVmName()))
+                    .build())
+            .network(NetworkSpec.builder()
+                    .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build())
+                    .build()).build();      
+      
+      undoVm(vmSpecification);
+   }
+
+   public void testCreateImageMachineFromIso() throws Exception {
+      IMachine imageMachine = getVmWithGuestAdditionsInstalled();
 
       IMachineToImage iMachineToImage = new IMachineToImage(manager, map);
       Image newImage = iMachineToImage.apply(imageMachine);
@@ -106,6 +133,33 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
       Set<? extends Image> images = context.getComputeService().listImages();
       Iterable<String> imageIds = transform(images, extractId());
       assertTrue(any(imageIds, equalTo(newImage.getId())));
+   }
+   
+   @Test
+   public void testGuestAdditionsAreInstalled() throws Exception {
+      try {
+         IMachine machine = getVmWithGuestAdditionsInstalled();
+         
+         machineUtils.applyForMachine(machine.getName(), new LaunchMachineIfNotAlreadyRunning(manager.get(), ExecutionType.GUI, ""));
+         sshClientForIMachine = injector.getInstance(IMachineToSshClient.class);
+         SshClient client = sshClientForIMachine.apply(machine);
+         
+         sshResponds = injector.getInstance(SshResponds.class);
+         checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh", machine.getName());
+         
+         assertTrue(machineUtils.lockSessionOnMachineAndApply(machine.getName(), LockType.Shared, new Function<ISession, Boolean>() {
+            @Override
+            public Boolean apply(ISession session) {
+               String vboxVersion = Iterables.get(Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
+               return session.getMachine().getGuestPropertyValue("/VirtualBox/GuestAdd/Version").equals(vboxVersion);
+            }
+         }));
+      } finally {
+         for (VmSpec spec : ImmutableSet.of(
+               vmSpecification)) {
+            ensureMachineHasPowerDown(spec.getVmName());
+         }
+      }
    }
 
    private Function<Image, String> extractId() {
@@ -118,10 +172,37 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
       };
    }
 
+   private IMachine getVmWithGuestAdditionsInstalled() {
+      try {
+         Injector injector = context.utils().injector();
+         return injector.getInstance(
+               CreateAndInstallVm.class).apply(
+               masterSpec);
+      } catch (IllegalStateException e) {
+         // already created
+         return manager.get().getVBox()
+               .findMachine(masterSpec.getVmSpec().getVmId());
+      }
+   }
+   
+   private void ensureMachineHasPowerDown(String vmName) {
+      machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new Function<ISession, Void>() {
+         @Override
+         public Void apply(ISession session) {
+            IProgress powerDownProgress = session.getConsole().powerDown();
+            powerDownProgress.waitForCompletion(-1);
+            return null;
+         }
+      });
+   }
+   
    @Override
    @AfterClass(groups = "live")
    protected void tearDown() throws Exception {
-      undoVm(vmSpecification);
+      for (VmSpec spec : ImmutableSet.of(
+            vmSpecification)) {
+         undoVm(spec);
+      }
       super.tearDown();
    }
 }
