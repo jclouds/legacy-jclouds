@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
@@ -144,5 +145,28 @@ public class Suppliers2 {
       }
 
       private static final long serialVersionUID = 0;
+
+      @Override
+      public int hashCode() {
+         return Objects.hashCode(delegate, durationNanos);
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null)
+            return false;
+         if (getClass() != obj.getClass())
+            return false;
+         ExpiringMemoizingSupplier<?> that = ExpiringMemoizingSupplier.class.cast(obj);
+         return Objects.equal(delegate, that.delegate) && Objects.equal(durationNanos, that.durationNanos);
+      }
+
+      @Override
+      public String toString() {
+         return Objects.toStringHelper(this).add("delegate", delegate).add("durationNanos", durationNanos).toString();
+      }
+
    }
 }
