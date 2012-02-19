@@ -37,6 +37,7 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshClient.Factory;
 
 import com.google.common.base.Function;
+import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 
 /**
@@ -50,11 +51,12 @@ public class UtilsImpl extends org.jclouds.rest.internal.UtilsImpl implements Ut
    private final Function<NodeMetadata, SshClient> sshForNode;
 
    @Inject
-   UtilsImpl(Injector injector, Json json, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient, Crypto encryption,
-         DateService date, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
-         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads, LoggerFactory loggerFactory,
-         Function<NodeMetadata, SshClient> sshForNode) {
-      super(injector, json, simpleClient, simpleAsyncClient, encryption, date, userThreads, ioThreads, loggerFactory);
+   UtilsImpl(Injector injector, Json json, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
+         Crypto encryption, DateService date, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
+         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads, EventBus eventBus,
+         LoggerFactory loggerFactory, Function<NodeMetadata, SshClient> sshForNode) {
+      super(injector, json, simpleClient, simpleAsyncClient, encryption, date, userThreads, ioThreads, eventBus,
+            loggerFactory);
       this.sshForNode = sshForNode;
    }
 
