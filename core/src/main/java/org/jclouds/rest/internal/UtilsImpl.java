@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.common.annotations.Beta;
+import com.google.common.eventbus.EventBus;
 import com.google.inject.Injector;
 import org.jclouds.Constants;
 import org.jclouds.crypto.Crypto;
@@ -49,14 +50,15 @@ public class UtilsImpl implements Utils {
    private final DateService date;
    private final ExecutorService userExecutor;
    private final ExecutorService ioExecutor;
+   private final EventBus eventBus;
    private final LoggerFactory loggerFactory;
    private Injector injector;
 
    @Inject
    protected UtilsImpl(Injector injector, Json json, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
-         Crypto encryption, DateService date,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
-         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads, LoggerFactory loggerFactory) {
+         Crypto encryption, DateService date, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
+         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads, EventBus eventBus,
+         LoggerFactory loggerFactory) {
       this.injector = injector;
       this.json = json;
       this.simpleClient = simpleClient;
@@ -65,6 +67,7 @@ public class UtilsImpl implements Utils {
       this.date = date;
       this.userExecutor = userThreads;
       this.ioExecutor = ioThreads;
+      this.eventBus = eventBus;
       this.loggerFactory = loggerFactory;
    }
 
@@ -127,7 +130,17 @@ public class UtilsImpl implements Utils {
    public ExecutorService userExecutor() {
       return userExecutor;
    }
-
+   
+   @Override
+   public EventBus getEventBus() {
+      return eventBus;
+   }
+   
+   @Override
+   public EventBus eventBus() {
+      return eventBus;
+   }
+   
    @Override
    public LoggerFactory getLoggerFactory() {
       return loggerFactory;
