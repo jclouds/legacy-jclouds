@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -42,13 +42,17 @@ public class VCloudDirectorPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE,
             String.format("http://www.vmware.com/vcloud/v${%s}", PROPERTY_VCLOUD_VERSION_SCHEMA));
       properties.setProperty(PROPERTY_SESSION_INTERVAL, Integer.toString(8 * 60));
-      properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA, "https://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd");
-      properties.setProperty("jclouds.dns_name_length_min", "1");
-      properties.setProperty("jclouds.dns_name_length_max", "80");
+      properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA, PROPERTY_ENDPOINT + "/v1.5/schema/master.xsd");
+      properties.setProperty(PROPERTY_VCLOUD_DNS_NAME_LEN_MIN, "1");
+      properties.setProperty(PROPERTY_VCLOUD_DNS_NAME_LEN_MAX, "80");
       
       // TODO integrate these with the {@link ComputeTimeouts} instead of having a single timeout for everything.
       properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, Long.toString(1200l * 1000l));
       properties.setProperty(PROPERTY_SESSION_INTERVAL, Integer.toString(300));
+
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_CATALOG, "Public");
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_VDC, "FIXME");
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "FIXME");
 
       return properties;
    }

@@ -79,6 +79,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "GET /catalog/{id}")
    public void testGetCatalog() {
+      // TODO use property from default property set
       CatalogReferences catalogReferences = queryClient.catalogReferencesQuery(String.format("name==%s", catalogName));
       assertEquals(Iterables.size(catalogReferences.getReferences()), 1, String.format(MUST_EXIST_FMT, catalogName, "Catalog"));
       catalogRef = Iterables.getOnlyElement(catalogReferences.getReferences());

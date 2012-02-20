@@ -59,7 +59,7 @@ public class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTe
       Properties overrides = setupProperties();
       context = new RestContextFactory().createContext(provider, identity, credential,
                ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
-      successTester = new TaskSuccess(context, 1000L); // NOTE is this required?
+//      successTester = new TaskSuccess(context, 1000L); // NOTE is this required?
    }
 
    protected void tearDown() {

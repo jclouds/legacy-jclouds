@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -53,5 +53,11 @@ public class VCloudDirectorConstants {
 
    /** TODO javadoc */
    public static final String PROPERTY_VCLOUD_XML_SCHEMA = "jclouds.vcloud.xml.schema";
+
+   /** TODO javadoc */
+   public static final String PROPERTY_VCLOUD_DNS_NAME_LEN_MIN = "jclouds.dns_name_length_min";
+
+   /** TODO javadoc */
+   public static final String PROPERTY_VCLOUD_DNS_NAME_LEN_MAX = "jclouds.dns_name_length_max";
 
 }
