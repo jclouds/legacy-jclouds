@@ -40,14 +40,10 @@ import org.testng.annotations.Test;
 @Test(groups = { "live", "apitests" }, testName = "NetworkClientLiveTest")
 public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
-   // @Before populate
-   String networkId = "55a677cf-ab3f-48ae-b880-fab90421980c";
-   String catalogId = "9e08c2f6-077a-42ce-bece-d5332e2ebb5c";
-
    @Test(testName = "GET /network/{id}")
    public void testWhenResponseIs2xxLoginReturnsValidNetwork() {
       Reference networkRef = Reference.builder()
-            .href(URI.create(endpoint + "/network/"+networkId)).build();
+            .href(URI.create(endpoint + "/network/" + networkId)).build();
       
       OrgNetwork network = context.getApi().getNetworkClient().getNetwork(networkRef);
       
@@ -77,8 +73,8 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "GET /network/{catalog_id}", enabled=false)
    public void testWhenResponseIs403ForCatalogIdUsedAsNetworkId() {
-      Reference networkRef = Reference.builder()
-            .href(URI.create(endpoint + "/network"+catalogId)).build();
+      String catalogId = "7212e451-76e1-4631-b2de-ba1dfd8080e4";
+      Reference networkRef = Reference.builder().href(URI.create(endpoint + "/network/" + catalogId)).build();
 
       Error expected = Error.builder()
             .message("This operation is denied.")
@@ -120,7 +116,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /network/{id}/metadata")
    public void testWhenResponseIs2xxLoginReturnsValidMetadataList() {
       Reference networkRef = Reference.builder()
-            .href(URI.create(endpoint + "/network/"+networkId)).build();
+            .href(URI.create(endpoint + "/network/" + networkId)).build();
       
       Metadata expected = context.getApi().getNetworkClient().getMetadata(networkRef);
  
@@ -135,7 +131,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /network/{id}/metadata", enabled=false)
    public void testWhenResponseIs2xxLoginReturnsValidMetadataEntry() {
       Reference networkRef = Reference.builder()
-            .href(URI.create(endpoint + "/network/"+networkId)).build();
+            .href(URI.create(endpoint + "/network/" + networkId)).build();
       
       MetadataEntry expected = context.getApi().getNetworkClient().getMetadataEntry(networkRef, metadataKey);
  
