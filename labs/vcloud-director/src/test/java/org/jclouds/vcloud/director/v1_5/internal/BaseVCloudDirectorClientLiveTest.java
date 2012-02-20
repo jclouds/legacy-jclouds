@@ -20,6 +20,8 @@ package org.jclouds.vcloud.director.v1_5.internal;
 
 import java.util.Properties;
 
+import javax.inject.Inject;
+
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
@@ -46,6 +48,7 @@ public class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTe
       provider = "vcloud-director";
    }
 
+   @Inject
    protected TaskSuccess successTester;
    
    protected RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context;
@@ -56,7 +59,7 @@ public class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTe
       Properties overrides = setupProperties();
       context = new RestContextFactory().createContext(provider, identity, credential,
                ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
-      successTester = new TaskSuccess(context, 1000L);
+      successTester = new TaskSuccess(context, 1000L); // NOTE is this required?
    }
 
    protected void tearDown() {
