@@ -158,6 +158,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       }
    }
    
+   // TODO: fix this
    @Test( enabled=false )
    public void testUpdateMedia() {
       URI mediaUri = URI.create(endpoint + "/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
