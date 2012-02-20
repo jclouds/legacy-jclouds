@@ -188,7 +188,7 @@ public class QueryResultReferences<T extends ReferenceType<T>> extends Container
    @XmlElementRefs({
        @XmlElementRef(type = CatalogReference.class)
    })
-   protected List<T> references;
+   protected List<T> references = Lists.newArrayList();
 
    /**
     * Set of references representing query results.

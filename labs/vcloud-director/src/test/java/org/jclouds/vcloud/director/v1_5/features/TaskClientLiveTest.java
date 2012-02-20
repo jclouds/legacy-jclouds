@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.*;
 import static org.testng.Assert.*;
 
@@ -75,7 +76,7 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // NOTE The environment MUST have ...
       
       // Check required elements and attributes
-      assertFalse(Iterables.isEmpty(taskList.getTasks()), "There must always be Task elements in the TaskList");
+      assertFalse(Iterables.isEmpty(taskList.getTasks()), String.format(NOT_EMPTY_OBJECT_FMT, "Task", "TaskList"));
       
       for (Task task : taskList.getTasks()) {
          checkTask(task);
