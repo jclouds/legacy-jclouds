@@ -64,7 +64,7 @@ public class Metadata extends ResourceType<Metadata> {
       private Set<MetadataEntry> metadataEntries = Sets.newLinkedHashSet();
 
       /**
-       * @see Metadata#getMetadata()
+       * @see Metadata#getMetadataEntries()
        */
       public Builder entries(Set<MetadataEntry> metadataEntries) {
          this.metadataEntries = Sets.newLinkedHashSet(checkNotNull(metadataEntries, "metadataEntries"));
@@ -72,7 +72,7 @@ public class Metadata extends ResourceType<Metadata> {
       }
 
       /**
-       * @see Metadata#getMetadata()
+       * @see Metadata#getMetadataEntries()
        */
       public Builder entry(MetadataEntry metadataEntry) {
          metadataEntries.add(checkNotNull(metadataEntry, "metadataEntry"));

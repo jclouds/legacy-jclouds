@@ -75,7 +75,7 @@ public class Media
       public static final String FLOPPY = "floppy";
 
       public static final List<String> ALL = Arrays.asList(
-            ISO, ISO
+            ISO, FLOPPY
          );
    }
    
