@@ -22,9 +22,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
-import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
 
 /**
  * Provides synchronous access to Network.
@@ -42,20 +42,20 @@ public interface NetworkClient {
     * 
     * @return the network or null if not found
     */
-   OrgNetwork getNetwork(ReferenceType<?> networkRef);
+   OrgNetwork getNetwork(Reference networkRef);
    
    /**
     * Retrieves an list of the network's metadata
     * 
     * @return a list of metadata
     */
-   Metadata getMetadata(ReferenceType<?> networkRef);
+   Metadata getMetadata(Reference networkRef);
 
    /**
-    * Retrieves a metadata entry
+    * Retrieves a metadata value
     * 
-    * @return the metadata entry, or null if not found
+    * @return the metadata value, or null if not found
     */
-   MetadataEntry getMetadataEntry(ReferenceType<?> networkRef, String key);
+   MetadataValue getMetadataValue(Reference networkRef, String key);
 
 }
