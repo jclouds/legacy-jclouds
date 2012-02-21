@@ -28,9 +28,9 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
-import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ReferenceToEndpoint;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
@@ -46,33 +46,33 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface NetworkAsyncClient {
 
    /**
-    * @see NeworkClient#getNetwork(ReferenceType)
+    * @see NeworkClient#getNetwork(Reference)
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<OrgNetwork> getNetwork(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> networkRef);
+   ListenableFuture<OrgNetwork> getNetwork(@EndpointParam(parser = ReferenceToEndpoint.class) Reference networkRef);
    
    /**
-    * @see NeworkClient#getMetadata(ReferenceType)
+    * @see NeworkClient#getMetadata(Reference)
     */
    @GET
    @Path("/metadata")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Metadata> getMetadata(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> networkRef);
+   ListenableFuture<Metadata> getMetadata(@EndpointParam(parser = ReferenceToEndpoint.class) Reference networkRef);
 
    /**
-    * @see NeworkClient#getMetadataEntry(ReferenceType, String)
+    * @see NeworkClient#getMetadataValue(Reference, String)
     */
    @GET
    @Path("/metadata/{key}")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<MetadataEntry> getMetadataEntry(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> networkRef ,
+   ListenableFuture<MetadataValue> getMetadataValue(@EndpointParam(parser = ReferenceToEndpoint.class) Reference networkRef ,
          @PathParam("key") String key);
    
 }

@@ -31,6 +31,7 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.google.common.net.InetAddresses;
 
 /**
  * @author grkvlt@apache.org
@@ -191,5 +192,123 @@ public class Checks {
    public static void checkImageType(String imageType) {
       assertTrue(Media.ImageType.ALL.contains(imageType), 
             "The Image type of a Media must be one of the allowed list");
+   }
+
+   public static void checkNetworkType(NetworkType<?> network) {
+      // Check optional fields
+      NetworkConfiguration config = network.getConfiguration();
+      if (config != null) {
+         checkNetworkConfiguration(config);
+      }
+      
+      // Check parent type
+      checkEntityType(network);
+   }
+   
+   public static void checkNetworkConfiguration(NetworkConfiguration config) {
+      // Check optional fields
+      if (config.getIpScope() != null) {
+         checkIpScope(config.getIpScope());
+      }
+      
+      if (config.getParentNetwork() != null) {
+         checkReferenceType(config.getParentNetwork());
+      }
+      
+      if (config.getNetworkFeatures() != null) {
+         checkNetworkFeatures(config.getNetworkFeatures());
+      }
+      
+      if (config.getSyslogServerSettings() != null) {
+         checkSyslogServerSettings(config.getSyslogServerSettings());
+      }
+      
+      if (config.getRouterInfo() != null) {
+         checkRouterInfo(config.getRouterInfo());
+      }
+   }
+   
+   public static void checkIpScope(IpScope ipScope) {
+      // Check required fields
+      assertNotNull(ipScope.isInherited(), "isInherited attribute of IpScope must be set");
+      
+      // Check optional fields
+      // NOTE dnsSuffix cannot be checked
+      if (ipScope.getGateway() != null) {
+         checkIpAddress(ipScope.getGateway());
+      }
+      if (ipScope.getNetmask() != null) {
+         checkIpAddress(ipScope.getNetmask());
+      }
+      if (ipScope.getDns1() != null) {
+         checkIpAddress(ipScope.getDns1());
+      }
+      if (ipScope.getDns2() != null) {
+         checkIpAddress(ipScope.getDns2());
+      }
+      if (ipScope.getIpRanges() != null) {
+         checkIpRanges(ipScope.getIpRanges());
+      }
+      if (ipScope.getAllocatedIpAddresses() != null) {
+         checkIpAddresses(ipScope.getAllocatedIpAddresses());
+      }
+   }
+   
+   public static void checkNetworkFeatures(NetworkFeatures features) {
+      // Check optional fields
+      if (features.getNetworkServices() != null) {
+         for (NetworkService service : features.getNetworkServices()) {
+            checkNetworkService(service);
+         }
+      }
+   }
+   
+   public static void checkSyslogServerSettings(SyslogServerSettings settings) {
+      // Check optional fields
+      if (settings.getSyslogServerIp1() != null) {
+         checkIpAddress(settings.getSyslogServerIp1());
+      }
+      
+      if (settings.getSyslogServerIp2() != null) {
+         checkIpAddress(settings.getSyslogServerIp2());
+      }
+      
+   }
+
+   public static void checkRouterInfo(RouterInfo routerInfo) {
+      // Check required fields
+      assertNotNull(routerInfo.getExternalIp(), "The external IP attribute of a Router Info must be set");
+      checkIpAddress(routerInfo.getExternalIp());
+   }
+   
+   public static void checkNetworkService(NetworkService service) {
+      // NOTE isEnabled cannot be checked
+   }
+   
+   public static void checkIpRanges(IpRanges ipRanges) {
+      // Check optional fields
+      for (IpRange range : ipRanges.getIpRanges()) {
+         checkIpRange(range);
+      }
+   }
+   
+   public static void checkIpRange(IpRange range) {
+      // Check required fields
+      assertNotNull(range.getStartAddress(), "The start address attribute of an IP Range must be set");
+      checkIpAddress(range.getStartAddress());
+      
+      assertNotNull(range.getEndAddress(), "The end address attribute of an IP Range must be set");
+      checkIpAddress(range.getEndAddress());
+   }
+   
+   public static void checkIpAddresses(IpAddresses ipAddresses) {
+      // Check optional fields
+      for (String address : ipAddresses.getIpAddresses()) {
+         checkIpAddress(address);
+      }
+   }
+   
+   public static void checkIpAddress(String ip) {
+      InetAddresses.isInetAddress(ip);
    }
 }

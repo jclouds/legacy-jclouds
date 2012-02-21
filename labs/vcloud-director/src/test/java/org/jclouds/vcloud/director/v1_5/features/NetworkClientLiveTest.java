@@ -18,19 +18,32 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_ATTRB_REQ;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ_LIVE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkResourceType;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
-import org.jclouds.vcloud.director.v1_5.domain.Error;
+import org.jclouds.vcloud.director.v1_5.domain.Checks;
+import org.jclouds.vcloud.director.v1_5.domain.IpAddresses;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code NetworkClient}
@@ -40,102 +53,87 @@ import org.testng.annotations.Test;
 @Test(groups = { "live", "apitests" }, testName = "NetworkClientLiveTest")
 public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
+   public static final String NETWORK = "network";
+ 
+   /*
+    * Convenience reference to API client.
+    */
+   protected NetworkClient networkClient;
+ 
+   private Reference networkRef;
+   
+   @BeforeGroups(groups = { "live" }, dependsOnMethods = { "setupClient" })
+   public void before() {
+      String networkId = "a604f3c2-0343-453e-ae1f-cddac5b7bd94"; // TODO: inject
+      networkRef = Reference.builder()
+            .type("application/vnd.vmware.vcloud.orgNetwork+xml")
+            .name("")
+            .href(URI.create(endpoint+"/network/"+networkId)) 
+            .id(networkId)
+            .build();
+      networkClient = context.getApi().getNetworkClient();
+   }
+
    @Test(testName = "GET /network/{id}")
-   public void testWhenResponseIs2xxLoginReturnsValidNetwork() {
-      Reference networkRef = Reference.builder()
-            .href(URI.create(endpoint + "/network/" + networkId)).build();
-      
-      OrgNetwork network = context.getApi().getNetworkClient().getNetwork(networkRef);
-      
-      //TODO assert network is valid
-   }
-   
-   @Test(testName = "GET /network/NOTAUUID", enabled=false)
-   public void testWhenResponseIs400ForInvalidNetworkId() {
-      Reference networkRef = Reference.builder()
-            .href(URI.create(endpoint + "/network/NOTAUUID")).build();
-      
-      Error expected = Error.builder()
-            .message("validation error : EntityRef has incorrect type, expected type is com.vmware.vcloud.entity.network.")
-            .majorErrorCode(400)
-            .minorErrorCode("BAD_REQUEST")
-            .build();
-      
-      try {
-         context.getApi().getNetworkClient().getNetwork(networkRef);
-         fail("Should give HTTP 400 error");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
-      } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
+   public void testGetNetwork() {
+      // required for testing
+      assertNotNull(networkRef, String.format(REF_REQ_LIVE, NETWORK));
+       
+      OrgNetwork network = networkClient.getNetwork(networkRef);
+      assertNotNull(network, String.format(OBJ_REQ_LIVE, NETWORK));
+      assertTrue(!network.getDescription().equals("DO NOT USE"), "Network isn't to be used for testing");
+       
+      // parent type
+      Checks.checkNetworkType(network);
+       
+      // optional
+      ReferenceType<?> networkPoolRef = network.getNetworkPool();
+      if (networkPoolRef != null) {
+         Checks.checkReferenceType(networkPoolRef);
       }
-   }
-   
-   @Test(testName = "GET /network/{catalog_id}", enabled=false)
-   public void testWhenResponseIs403ForCatalogIdUsedAsNetworkId() {
-      String catalogId = "7212e451-76e1-4631-b2de-ba1dfd8080e4";
-      Reference networkRef = Reference.builder().href(URI.create(endpoint + "/network/" + catalogId)).build();
-
-      Error expected = Error.builder()
-            .message("This operation is denied.")
-            .majorErrorCode(403)
-            .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-            .build();
-
-      try {
-         context.getApi().getNetworkClient().getNetwork(networkRef);
-         fail("Should give HTTP 403 error");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
-      } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
-      }
-   }
-
-   @Test(testName = "GET /network/{fake_id}")
-   public void testWhenResponseIs403ForFakeNetworkId() {
-      Reference networkRef = Reference.builder()
-            .href(URI.create(endpoint + "/network/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")).build();
       
-      Error expected = Error.builder()
-            .message("This operation is denied.")
-            .majorErrorCode(403)
-            .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-            .build();
-
-      try {
-         context.getApi().getNetworkClient().getNetwork(networkRef);
-         fail("Should give HTTP 403 error");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
-      } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
+      IpAddresses allowedExternalIpAddresses = network.getAllowedExternalIpAddresses();
+      if (allowedExternalIpAddresses != null) {
+         Checks.checkIpAddresses(allowedExternalIpAddresses);
       }
    }
    
    @Test(testName = "GET /network/{id}/metadata")
-   public void testWhenResponseIs2xxLoginReturnsValidMetadataList() {
-      Reference networkRef = Reference.builder()
-            .href(URI.create(endpoint + "/network/" + networkId)).build();
-      
-      Metadata expected = context.getApi().getNetworkClient().getMetadata(networkRef);
- 
-      // assert metadata is valid
-      // assert has metadata in order to support subsequent test
-      // assign metadata key (todo- ordering)
+   public void testGetMetadata() {
+      Metadata metadata = networkClient.getMetadata(networkRef);
+      // required for testing
+      assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), 
+            String.format(OBJ_FIELD_REQ_LIVE, NETWORK, "metadata.entries"));
+       
+      // parent type
+      checkResourceType(metadata);
+       
+      for (MetadataEntry entry : metadata.getMetadataEntries()) {
+         // required elements and attributes
+         assertNotNull(entry.getKey(), 
+               String.format(OBJ_FIELD_ATTRB_REQ, networkClient, "MetadataEntry", entry.getKey(), "key"));
+         assertNotNull(entry.getValue(), 
+               String.format(OBJ_FIELD_ATTRB_REQ, networkClient, "MetadataEntry", entry.getValue(), "value"));
+          
+         // parent type
+         checkResourceType(entry);
+      }
    }
    
-   String metadataKey = "key";
-   
-   //TODO depends on previous
-   @Test(testName = "GET /network/{id}/metadata", enabled=false)
-   public void testWhenResponseIs2xxLoginReturnsValidMetadataEntry() {
-      Reference networkRef = Reference.builder()
-            .href(URI.create(endpoint + "/network/" + networkId)).build();
-      
-      MetadataEntry expected = context.getApi().getNetworkClient().getMetadataEntry(networkRef, metadataKey);
- 
-      // assert metadataEntry is valid
+   @Test(testName = "GET /network/{id}/metadata/{key}")
+   public void testGetMetadataValue() {
+      MetadataValue metadataValue = networkClient.getMetadataValue(networkRef, "key");
+       
+      // Check parent type
+      checkResourceType(metadataValue);
+       
+      // Check required elements and attributes
+      String value = metadataValue.getValue();
+      assertNotNull(value, 
+            String.format(OBJ_FIELD_ATTRB_REQ, NETWORK, "MetadataEntry", 
+                  metadataValue.toString(), "value"));
+      assertEquals(value, "value", 
+            String.format(OBJ_FIELD_EQ, NETWORK, "metadataEntry.value", "value", value));
    }
 
 }
