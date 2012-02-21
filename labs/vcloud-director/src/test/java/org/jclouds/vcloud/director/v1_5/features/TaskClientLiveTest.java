@@ -50,6 +50,7 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private TaskClient taskClient;
 
    @BeforeClass(inheritGroups = true)
+   @Override
    public void setupRequiredClients() {
       orgClient = context.getApi().getOrgClient();
       taskClient = context.getApi().getTaskClient();

@@ -41,13 +41,16 @@ import org.testng.annotations.Test;
 @Test(groups = { "live", "api", "user" }, singleThreaded = true, testName = "NetworkClientLiveTest")
 public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
+   public static final String NETWORK = "network";
+
    /*
     * Convenience references to API clients.
     */
 
-   private NetworkClient networkClient;
+   protected NetworkClient networkClient;
 
    @BeforeClass(inheritGroups = true)
+   @Override
    public void setupRequiredClients() {
       networkClient = context.getApi().getNetworkClient();
    }

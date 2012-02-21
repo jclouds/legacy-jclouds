@@ -57,6 +57,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -71,12 +72,20 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = { "live", "api", "user" }, singleThreaded = true, testName = "MediaClientLiveTest")
 public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
+
    public static final String MEDIA = "media";
 
    /*
     * Convenience references to API clients.
     */
+
    protected MediaClient mediaClient;
+
+   @BeforeClass(inheritGroups = true)
+   @Override
+   public void setupRequiredClients() {
+      mediaClient = context.getApi().getMediaClient();
+   }
 
    /*
     * Shared state between dependent tests.
@@ -88,16 +97,14 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private MetadataValue metadataValue;
    private String metadataEntryValue = "value";
    
-   @BeforeGroups(groups = { "live" }, dependsOnMethods = { "setupClient" })
-   public void before() {
-      String mediaId = "68dc01a4-6c76-4177-9f19-ec12bf94287c"; // TODO: inject
+   @BeforeGroups(groups = { "live" })
+   public void createReferenceData() {
       mediaRef = Reference.builder()
             .type("application/vnd.vmware.vcloud.media+xml")
             .name("")
-            .href(URI.create(endpoint+"/media/"+mediaId)) 
+            .href(URI.create(endpoint+"/media/" + mediaId)) 
             .id(mediaId)
             .build();
-      mediaClient = context.getApi().getMediaClient();
       mediaClient.setMetadata(mediaRef, "key", MetadataValue.builder().value("value").build());
    }
    

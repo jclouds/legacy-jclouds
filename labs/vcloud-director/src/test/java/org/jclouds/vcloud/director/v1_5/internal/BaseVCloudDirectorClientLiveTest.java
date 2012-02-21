@@ -48,7 +48,7 @@ import com.google.inject.Module;
  * @author grkvlt@apache.org
  */
 @Test(groups = "live")
-public class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTest {
+public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTest {
 
    protected BaseVCloudDirectorClientLiveTest() {
       provider = "vcloud-director";
@@ -75,7 +75,12 @@ public class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTe
          overrides.setProperty(provider + ".vcd-id", vDCId);
       return overrides;
    }
+   
+   @BeforeClass(inheritGroups = true)
+   // NOTE Implement as required to populate xxxClient fields, or NOP
+   public abstract void setupRequiredClients();
 
+   /** Injected by {@link #setupContext} */
    public Predicate<URI> retryTaskSuccess;
 
    @Override

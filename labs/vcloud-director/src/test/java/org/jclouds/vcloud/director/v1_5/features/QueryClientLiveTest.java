@@ -43,6 +43,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private QueryClient queryClient;
 
    @BeforeClass(inheritGroups = true)
+   @Override
    public void setupRequiredClients() {
       catalogClient = context.getApi().getCatalogClient();
       queryClient = context.getApi().getQueryClient();

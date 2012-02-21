@@ -46,7 +46,7 @@ import org.testng.annotations.Test;
 @Test(groups = { "unit", "user" }, singleThreaded = true, testName = "NetworkClientExpectTest")
 public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
    
-   @Test
+   @Test(enabled = false)
    public void testGetMedia() {
       URI mediaUri = URI.create(endpoint + "/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
 
