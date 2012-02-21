@@ -18,8 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.internal;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.testng.Assert.assertNotNull;
+import static com.google.common.base.Preconditions.*;
+import static org.testng.Assert.*;
 
 import java.net.URI;
 
@@ -29,6 +29,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.BaseRestClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
 import org.testng.annotations.BeforeGroups;
 
 import com.google.common.collect.ImmutableMultimap;

@@ -18,28 +18,21 @@
  */
 package org.jclouds.vcloud.director.v1_5.predicates;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
-
 import java.net.URI;
 
 import javax.annotation.Resource;
-import javax.inject.Named;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
-import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.RestContext;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorAsyncClient;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 
 import com.google.common.base.Predicate;
-import com.google.inject.Inject;
 
 /**
- * Keeps testing {@link Task} to see if it has succeeded before a time limit has elapsed.
+ * Test a {@link Task} to see if it has succeeded.
  * 
  * @author grkvlt@apache.org
  */
@@ -47,35 +40,31 @@ import com.google.inject.Inject;
 public class TaskSuccess implements Predicate<URI> {
 
    private final TaskClient taskClient;
-   private final RetryablePredicate<URI> retry;
-   private final Predicate<URI> checkSuccess = new Predicate<URI>() {
-      @Override
-      public boolean apply(URI taskUri) {
-         logger.trace("looking for status on task %s", taskUri);
-
-         Task task = taskClient.getTask(taskUri);
-         // perhaps task isn't available, yet
-         if (task == null) return false;
-         logger.trace("%s: looking for status %s: currently: %s", task, Task.Status.SUCCESS, task.getStatus());
-         if (task.getStatus().equals(Task.Status.ERROR))
-            throw new VCloudDirectorException(task);
-         return task.getStatus().equals(Task.Status.SUCCESS);
-      }
-   };
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public TaskSuccess(RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context,
-         @Named(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED) long maxWait) {
-      this.taskClient = context.getApi().getTaskClient();
-      this.retry = new RetryablePredicate<URI>(checkSuccess, maxWait);
+   public TaskSuccess(TaskClient taskClient) {
+      this.taskClient = taskClient;
    }
 
    /** @see Predicate#apply(Object) */
    @Override
-   public boolean apply(URI input) {
-      return retry.apply(input);
+   public boolean apply(URI taskUri) {
+      logger.trace("looking for status on task %s", taskUri);
+
+      Task task = taskClient.getTask(taskUri);
+      // perhaps task isn't available, yet
+      if (task == null) return false;
+      logger.trace("%s: looking for status %s: currently: %s", task, Task.Status.SUCCESS, task.getStatus());
+      if (task.getStatus().equals(Task.Status.ERROR))
+         throw new VCloudDirectorException(task);
+      return task.getStatus().equals(Task.Status.SUCCESS);
+   }
+
+   @Override
+   public String toString() {
+      return "checkTaskSuccess()";
    }
 }

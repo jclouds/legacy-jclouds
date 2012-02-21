@@ -181,7 +181,8 @@ public class Checks {
       checkResourceType(metadata);
    }
 
-   public static void checkMetadataEntry(MetadataEntry metadataEntry) {+      // Check required fields
+   public static void checkMetadataEntry(MetadataEntry metadataEntry) {
+      // Check required fields
       assertNotNull(metadataEntry.getKey(), String.format(NOT_NULL_OBJECT_FMT, "Key", "MetadataEntry"));
       assertNotNull(metadataEntry.getValue(), String.format(NOT_NULL_OBJECT_FMT, "Value", "MetadataEntry"));
 

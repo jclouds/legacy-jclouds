@@ -33,28 +33,27 @@ import org.jclouds.PropertiesBuilder;
 public class VCloudDirectorPropertiesBuilder extends PropertiesBuilder {
 
    @Override
-   protected Properties defaultProperties() {
+   public Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+
       properties.setProperty(PROPERTY_ENDPOINT, "https://vcloudbeta.bluelock.com/api");
       properties.setProperty(PROPERTY_SESSION_INTERVAL, Integer.toString(30 * 60));
       properties.setProperty(PROPERTY_API_VERSION, "1.5");
 
-      properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE,
-            String.format("http://www.vmware.com/vcloud/v${%s}", PROPERTY_VCLOUD_VERSION_SCHEMA));
+      properties.setProperty(PROPERTY_VCLOUD_DIRECTOR_XML_NAMESPACE,
+            String.format("http://www.vmware.com/vcloud/v${%s}", PROPERTY_VCLOUD_DIRECTOR_VERSION_SCHEMA));
       properties.setProperty(PROPERTY_SESSION_INTERVAL, Integer.toString(8 * 60));
-      properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA, PROPERTY_ENDPOINT + "/v1.5/schema/master.xsd");
-      properties.setProperty(PROPERTY_VCLOUD_DNS_NAME_LEN_MIN, "1");
-      properties.setProperty(PROPERTY_VCLOUD_DNS_NAME_LEN_MAX, "80");
+      properties.setProperty(PROPERTY_VCLOUD_DIRECTOR_XML_SCHEMA, PROPERTY_ENDPOINT + "/v1.5/schema/master.xsd");
       
       // TODO integrate these with the {@link ComputeTimeouts} instead of having a single timeout for everything.
-      properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, Long.toString(1200l * 1000l));
       properties.setProperty(PROPERTY_SESSION_INTERVAL, Integer.toString(300));
-
-      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_CATALOG, "Public");
-      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_VDC, "FIXME");
-      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "FIXME");
+      properties.setProperty(PROPERTY_VCLOUD_DIRECTOR_TIMEOUT_TASK_COMPLETED, Long.toString(1200l * 1000l));
 
       return properties;
+   }
+
+   public VCloudDirectorPropertiesBuilder() {
+      super();
    }
 
    public VCloudDirectorPropertiesBuilder(Properties properties) {

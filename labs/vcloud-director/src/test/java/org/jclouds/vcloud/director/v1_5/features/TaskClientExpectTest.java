@@ -41,7 +41,7 @@ import com.google.common.collect.ImmutableMultimap;
  * 
  * @author grkvlt@apache.org
  */
-@Test(groups = "unit", singleThreaded = true, testName = "TaskClientExpectTest")
+@Test(groups = { "unit", "user" }, singleThreaded = true, testName = "TaskClientExpectTest")
 public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
 
    @Test

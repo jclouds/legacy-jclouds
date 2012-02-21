@@ -46,7 +46,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author grkvlt@apache.org
  */
-@Test(groups = "unit", singleThreaded = true, testName = "CatalogClientExpectTest")
+@Test(groups = { "unit", "user" }, singleThreaded = true, testName = "CatalogClientExpectTest")
 public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
 
    @Test

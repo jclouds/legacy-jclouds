@@ -48,7 +48,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author danikov
  */
-@Test(groups = "unit", singleThreaded = true, testName = "NetworkClientExpectTest")
+@Test(groups = { "unit", "user" }, singleThreaded = true, testName = "NetworkClientExpectTest")
 public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
    
    @Test

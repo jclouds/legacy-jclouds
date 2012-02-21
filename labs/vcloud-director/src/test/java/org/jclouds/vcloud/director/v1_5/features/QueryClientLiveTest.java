@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 * 
 * @author grkvlt@apache.org
 */
-@Test(groups = { "live", "apitests" }, testName = "QueryClientLiveTest")
+@Test(groups = { "live", "api", "user" }, singleThreaded = true, testName = "QueryClientLiveTest")
 public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    /*

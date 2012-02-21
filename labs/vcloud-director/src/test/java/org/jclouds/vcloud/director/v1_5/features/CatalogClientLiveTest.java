@@ -45,7 +45,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author grkvlt@apache.org
  */
-@Test(groups = { "live", "apitests" }, testName = "CatalogClientLiveTest", singleThreaded = true)
+@Test(groups = { "live", "api", "user" }, singleThreaded = true, testName = "CatalogClientLiveTest")
 public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    /*
@@ -178,7 +178,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       Task mergeCatalogItemMetadata = catalogClient.mergeCatalogItemMetadata(catalogItemRef, newMetadata);
       checkTask(mergeCatalogItemMetadata);
-      assertTrue(successTester.apply(mergeCatalogItemMetadata.getHref()),
+      assertTrue(retryTaskSuccess.apply(mergeCatalogItemMetadata.getHref()),
             String.format(TASK_COMPLETE_TIMELY, "mergeCatalogItemMetadata"));
       
       Metadata mergedCatalogItemMetadata = catalogClient.getCatalogItemMetadata(catalogItemRef);

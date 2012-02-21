@@ -18,17 +18,14 @@
  */
 package org.jclouds.vcloud.director.v1_5.login;
 
-import static org.jclouds.rest.RestContextFactory.contextSpec;
-import static org.jclouds.rest.RestContextFactory.createContextBuilder;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.jclouds.rest.RestContextFactory.*;
+import static org.testng.Assert.*;
 
 import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
@@ -61,7 +58,7 @@ public class SessionClientLiveTest extends BaseVersionedServiceLiveTest {
                apiVersion, buildVersion, "", identity, credential, SessionClient.class, SessionAsyncClient.class);
 
       context = createContextBuilder(contextSpec, overrides).withModules(
-               ImmutableSet.<Module> of(new SLF4JLoggingModule())).buildContext();
+               ImmutableSet.<Module> of(new Log4JLoggingModule())).buildContext();
 
       // session client isn't typically exposed to the user, as it is implicit
       client = context.utils().injector().getInstance(SessionClient.class);

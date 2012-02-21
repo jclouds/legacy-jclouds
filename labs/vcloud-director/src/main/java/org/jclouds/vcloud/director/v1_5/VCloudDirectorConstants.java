@@ -18,9 +18,10 @@
  */
 package org.jclouds.vcloud.director.v1_5;
 
+
 /**
  * Constants used by VCloudDirector clients
- * 
+ *
  * @author grkvlt@apache.org
  */
 public class VCloudDirectorConstants {
@@ -29,35 +30,36 @@ public class VCloudDirectorConstants {
    public static final String VCLOUD_1_5_NS = "http://www.vmware.com/vcloud/v1.5";
 
    /** The property used to configure the timeout for task completion. */
-   public static final String PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED = "jclouds.vcloud-director.timeout.task-complete";
+   public static final String PROPERTY_VCLOUD_DIRECTOR_TIMEOUT_TASK_COMPLETED = "jclouds.vcloud-director.timeout.task-complete";
 
-   public static final String PROPERTY_VCLOUD_VERSION_SCHEMA = "jclouds.vcloud.version.schema";
+   public static final String PROPERTY_VCLOUD_DIRECTOR_VERSION_SCHEMA = "jclouds.vcloud-director.version.schema";
 
    /** Name of the default org that your vApp will join, if an org isn't explicitly specified. */
-   public static final String PROPERTY_VCLOUD_DEFAULT_ORG = "jclouds.vcloud.defaults.org";
+   public static final String PROPERTY_VCLOUD_DIRECTOR_DEFAULT_ORG = "jclouds.vcloud-director.defaults.org";
 
    /** Name of the default catalog to query, if it isn't explicitly specified. */
-   public static final String PROPERTY_VCLOUD_DEFAULT_CATALOG = "jclouds.vcloud.defaults.catalog";
+   public static final String PROPERTY_VCLOUD_DIRECTOR_DEFAULT_CATALOG = "jclouds.vcloud-director.defaults.catalog";
 
    /** Name of the VDC that your vApp will join, if a vDC isn't explicitly specified. */
-   public static final String PROPERTY_VCLOUD_DEFAULT_VDC = "jclouds.vcloud.defaults.vdc";
+   public static final String PROPERTY_VCLOUD_DIRECTOR_DEFAULT_VDC = "jclouds.vcloud-director.defaults.vdc";
 
    /** Name of the default network, in the default VDC that your vApp will join. */
-   public static final String PROPERTY_VCLOUD_DEFAULT_NETWORK = "jclouds.vcloud.defaults.network";
+   public static final String PROPERTY_VCLOUD_DIRECTOR_DEFAULT_NETWORK = "jclouds.vcloud-director.defaults.network";
 
    /** TODO javadoc */
-   // public static final String PROPERTY_VCLOUD_DEFAULT_FENCEMODE = "jclouds.vcloud.defaults.fencemode";
+   // public static final String PROPERTY_VCLOUD_DEFAULT_FENCEMODE = "jclouds.vcloud-director.defaults.fencemode";
 
    /** TODO javadoc */
-   public static final String PROPERTY_VCLOUD_XML_NAMESPACE = "jclouds.vcloud.xml.ns";
+   public static final String PROPERTY_VCLOUD_DIRECTOR_XML_NAMESPACE = "jclouds.vcloud-director.xml.ns";
 
    /** TODO javadoc */
-   public static final String PROPERTY_VCLOUD_XML_SCHEMA = "jclouds.vcloud.xml.schema";
+   public static final String PROPERTY_VCLOUD_DIRECTOR_XML_SCHEMA = "jclouds.vcloud-director.xml.schema";
+
+   // TODO put these somewhere else, maybe core?
 
    /** TODO javadoc */
-   public static final String PROPERTY_VCLOUD_DNS_NAME_LEN_MIN = "jclouds.dns_name_length_min";
+   public static final String PROPERTY_DNS_NAME_LEN_MIN = "jclouds.dns_name_length_min";
 
    /** TODO javadoc */
-   public static final String PROPERTY_VCLOUD_DNS_NAME_LEN_MAX = "jclouds.dns_name_length_max";
-
+   public static final String PROPERTY_NS_NAME_LEN_MAX = "jclouds.dns_name_length_max";
 }
