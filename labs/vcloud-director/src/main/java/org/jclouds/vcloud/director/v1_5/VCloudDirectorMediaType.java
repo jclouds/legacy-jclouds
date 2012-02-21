@@ -51,7 +51,7 @@ public class VCloudDirectorMediaType {
 
    public static final String TASK = "application/vnd.vmware.vcloud.task+xml";
    
-   public static final String NETWORK = "application/vnd.vmware.vcloud.entity.network+xml";
+   public static final String NETWORK = "application/vnd.vmware.vcloud.network+xml";
 
    public static final String ORG_NETWORK = "application/vnd.vmware.vcloud.orgNetwork+xml";
 
