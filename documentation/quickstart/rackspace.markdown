@@ -18,7 +18,7 @@ title: Quick Start - Rackspace Cloud
 
 {% highlight java %}
 // get a context with rackspace that offers the portable BlobStore api
-BlobStoreContext context = new BlobStoreContextFactory().createContext("cloudfiles-us", user, password);
+BlobStoreContext context = new BlobStoreContextFactory().createContext("cloudfiles-us", user, apikey);
 
 // create a container in the default location
 context.getBlobStore().createContainerInLocation(null, container);
@@ -38,17 +38,17 @@ context.close();
 
 ## Cloud Servers
 {% highlight java %}
-import static org.jclouds.rackspace.cloudservers-us.options.CreateServerOptions.Builder.withFile;
-import static org.jclouds.rackspace.cloudservers-us.options.ListOptions.Builder.*;
+import static org.jclouds.cloudservers.options.CreateServerOptions.Builder.withFile;
+import static org.jclouds.cloudservers.options.ListOptions.Builder.*;
 
 // get a context with rackspace that offers the portable ComputeService api
- ComputeServiceContext context = new ComputeServiceContextFactory().createContext("cloudservers-us", accesskeyid, secretkey,
-                                                         ImmutableSet.<Module> of(new JschSshClientModule()));
+ ComputeServiceContext context = new ComputeServiceContextFactory().createContext("cloudservers-us", user, apikey,
+                                                         ImmutableSet.<Module> of(new SshjSshClientModule()));
 
  // here's an example of the portable api
 
  // run a couple nodes accessible via group
- nodes = context.getComputeService().client.runNodesInGroup("webserver", 2);
+ Set<? extends NodeMetadata> nodes = context.getComputeService().createNodesInGroup("webserver", 2);
  
  // when you need access to rackspace-specific features, use the provider-specific context
  CloudServersClient rackspaceClient = CloudServersClient.class.cast(context.getProviderSpecificContext()
@@ -63,13 +63,13 @@ import static org.jclouds.rackspace.cloudservers-us.options.ListOptions.Builder.
         withFile("/etc/jclouds.txt", "rackspace".getBytes()).withMetadata(metadata));
 
  // list all of my servers including details such as metadata
- List<Server> servers = rackspaceClient.listServers(withDetails());
+ Set<Server> servers = rackspaceClient.listServers(withDetails());
 
  // list the id and name of my servers that were modified since yesterday
  servers = rackspaceClient.listServers(changesSince(yesterday));
 
  // list the id and name of images I have access to, starting at index 200 limited to 100 results.
- List<Image> images = rackspaceClient.listImages(startAt(200).maxResults(100));
+ Set<Image> images = rackspaceClient.listImages(startAt(200).maxResults(100));
 
  context.close();
 {% endhighlight %}
