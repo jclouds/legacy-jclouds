@@ -196,15 +196,6 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       }
    }
    
-// POST /vdc/{id}/action/captureVApp
-// POST /vdc/{id}/action/cloneMedia
-// POST /vdc/{id}/action/cloneVApp
-// POST /vdc/{id}/action/cloneVAppTemplate
-// POST /vdc/{id}/action/composeVApp
-// POST /vdc/{id}/action/instantiateVAppTemplate
-// POST /vdc/{id}/action/uploadVAppTemplate
-// POST /vdc/{id}/media
-   
    @Test
    public void testCloneMedia() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
