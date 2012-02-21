@@ -181,7 +181,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
       Reference networkRef = Reference.builder().href(networkUri).build();
 
-      assertEquals(client.getNetworkClient().getMetadataEntry(networkRef, "KEY"), expected);
+      assertEquals(client.getNetworkClient().getMetadataValue(networkRef, "KEY"), expected);
    }
 
    public static OrgNetwork orgNetwork() {
