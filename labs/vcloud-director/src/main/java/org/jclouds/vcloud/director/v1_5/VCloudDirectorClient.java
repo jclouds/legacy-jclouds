@@ -24,6 +24,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
+import org.jclouds.vcloud.director.v1_5.features.MediaClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskClient;
@@ -59,7 +60,7 @@ public interface VCloudDirectorClient {
    TaskClient getTaskClient();
 
    /**
-    * @return synchronous access to Network features
+    * @return synchronous access to {@link Network} features
     */
    @Delegate
    NetworkClient getNetworkClient();
@@ -70,4 +71,9 @@ public interface VCloudDirectorClient {
    @Delegate
    CatalogClient getCatalogClient();
 
+   /**
+    * @return synchronous access to {@link Media} features
+    */
+   @Delegate
+   MediaClient getMediaClient();
 }

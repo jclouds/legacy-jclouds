@@ -18,9 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
-import static com.google.common.base.Preconditions.*;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.Set;
@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -65,21 +64,21 @@ public class Metadata extends ResourceType<Metadata> {
       private Set<MetadataEntry> metadataEntries = Sets.newLinkedHashSet();
 
       /**
-       * @see Metadata#getMetadata()
+       * @see Metadata#getMetadataEntries()
        */
-      public Builder metadata(Set<MetadataEntry> metadataEntries) {
+      public Builder entries(Set<MetadataEntry> metadataEntries) {
          this.metadataEntries = Sets.newLinkedHashSet(checkNotNull(metadataEntries, "metadataEntries"));
          return this;
       }
 
       /**
-       * @see Metadata#getMetadata()
+       * @see Metadata#getMetadataEntries()
        */
       public Builder entry(MetadataEntry metadataEntry) {
          metadataEntries.add(checkNotNull(metadataEntry, "metadataEntry"));
          return this;
       }
-
+      
       @Override
       public Metadata build() {
          Metadata metadata = new Metadata(href, metadataEntries);
@@ -125,7 +124,7 @@ public class Metadata extends ResourceType<Metadata> {
       }
 
       public Builder fromMetadata(Metadata in) {
-         return fromResourceType(in).metadata(in.getMetadata());
+         return fromResourceType(in).entries(in.getMetadataEntries());
       }
 
       /**
@@ -149,7 +148,7 @@ public class Metadata extends ResourceType<Metadata> {
    @XmlElement(namespace = VCLOUD_1_5_NS, name = "MetadataEntry")
    private Set<MetadataEntry> metadataEntries = Sets.newLinkedHashSet();
 
-   public Set<MetadataEntry> getMetadata() {
+   public Set<MetadataEntry> getMetadataEntries() {
       return ImmutableSet.copyOf(metadataEntries);
    }
 

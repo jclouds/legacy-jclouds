@@ -18,10 +18,11 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
 
@@ -44,7 +45,7 @@ public interface TaskClient {
     * @param orgId the unique id for the organization
     * @return a list of tasks
     */
-   TasksList getTaskList(ReferenceType<?> orgRef);
+   TasksList getTaskList(Reference orgRef);
 
    /**
     * Retrieves a task.
@@ -55,7 +56,7 @@ public interface TaskClient {
     * 
     * @return the task or null if not found
     */
-   Task getTask(ReferenceType<?> taskRef);
+   Task getTask(URI taskUri);
 
    /**
     * Cancels a task.
@@ -64,5 +65,5 @@ public interface TaskClient {
     * POST /task/{id}/action/cancel
     * </pre>
     */
-   void cancelTask(ReferenceType<?> taskRef);
+   void cancelTask(URI taskUri);
 }

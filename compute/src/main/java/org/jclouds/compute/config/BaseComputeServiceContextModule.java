@@ -103,7 +103,7 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
 
       install(new FactoryModuleBuilder().implement(new TypeLiteral<Callable<Void>>() {
       }, CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.class)
-            .implement(new TypeLiteral<Function<NodeMetadata, Void>>() {
+            .implement(new TypeLiteral<Function<AtomicReference<NodeMetadata>, Void>>() {
             }, CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.class)
             .build(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory.class));
 

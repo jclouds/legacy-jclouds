@@ -46,17 +46,22 @@ public class SaveHttpResponseTo extends InterpretableStatement {
     *           request headers to send
     */
    public SaveHttpResponseTo(String dir, String file, String method, URI endpoint, Multimap<String, String> headers) {
-      super(String.format("({md} %s && {cd} %s && [ ! -f %s ] && %s -C - -X %s %s %s >%s)\n", dir, dir, file, CURL,
-               method, Joiner.on(' ').join(
-                        Iterables.transform(headers.entries(), new Function<Map.Entry<String, String>, String>() {
+      super(String.format(
+            "({md} %s && {cd} %s && [ ! -f %s ] && %s -C - -X %s %s %s >%s)\n",
+            dir,
+            dir,
+            file,
+            CURL,
+            method,
+            Joiner.on(' ').join(
+                  Iterables.transform(headers.entries(), new Function<Map.Entry<String, String>, String>() {
 
-                           @Override
-                           public String apply(Map.Entry<String, String> from) {
-                              return String.format("-H \"%s: %s\"", from.getKey(), from.getValue());
-                           }
+                     @Override
+                     public String apply(Map.Entry<String, String> from) {
+                        return String.format("-H \"%s: %s\"", from.getKey(), from.getValue());
+                     }
 
-                        })), endpoint.toASCIIString(), file));
+                  })), endpoint.toASCIIString(), file));
 
    }
-
 }

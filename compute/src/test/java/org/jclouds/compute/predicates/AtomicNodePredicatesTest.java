@@ -1,0 +1,144 @@
+/**
+ * Licensed to jclouds, Inc. (jclouds) under one or more
+ * contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  jclouds licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.jclouds.compute.predicates;
+
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
+import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+/**
+ * Tests possible uses of NodePredicates
+ * 
+ * @author Aled Sage, Adrian Cole
+ */
+@Test(singleThreaded = true, testName = "AtomicNodePredicatesTest")
+public class AtomicNodePredicatesTest {
+
+   private NodeMetadata node;
+   private GetNodeMetadataStrategy computeService;
+
+   @Test
+   public void testNoUpdatesAtomicReferenceOnPass() {
+      NodeMetadata running = new NodeMetadataBuilder().id("myid").state(NodeState.RUNNING).build();
+      GetNodeMetadataStrategy computeService = createMock(GetNodeMetadataStrategy.class);
+
+      replay(computeService);
+
+      AtomicNodeRunning nodeRunning = new AtomicNodeRunning(computeService);
+      AtomicReference<NodeMetadata> reference = new AtomicReference<NodeMetadata>(running);
+      Assert.assertTrue(nodeRunning.apply(reference));
+      Assert.assertEquals(reference.get(), running);
+
+      verify(computeService);
+
+   }
+
+   @Test
+   public void testRefreshUpdatesAtomicReferenceOnRecheckPending() {
+      NodeMetadata pending = new NodeMetadataBuilder().id("myid").state(NodeState.PENDING).build();
+      GetNodeMetadataStrategy computeService = createMock(GetNodeMetadataStrategy.class);
+
+      expect(computeService.getNode("myid")).andReturn(pending);
+
+      replay(computeService);
+
+      AtomicNodeRunning nodeRunning = new AtomicNodeRunning(computeService);
+      AtomicReference<NodeMetadata> reference = new AtomicReference<NodeMetadata>(pending);
+      Assert.assertFalse(nodeRunning.apply(reference));
+      Assert.assertEquals(reference.get(), pending);
+
+      verify(computeService);
+
+   }
+   @Test
+   public void testRefreshUpdatesAtomicReferenceOnRecheckRunning() {
+      NodeMetadata running = new NodeMetadataBuilder().id("myid").state(NodeState.RUNNING).build();
+      NodeMetadata pending = new NodeMetadataBuilder().id("myid").state(NodeState.PENDING).build();
+      GetNodeMetadataStrategy computeService = createMock(GetNodeMetadataStrategy.class);
+
+      expect(computeService.getNode("myid")).andReturn(running);
+
+      replay(computeService);
+
+      AtomicNodeRunning nodeRunning = new AtomicNodeRunning(computeService);
+      AtomicReference<NodeMetadata> reference = new AtomicReference<NodeMetadata>(pending);
+      Assert.assertTrue(nodeRunning.apply(reference));
+      Assert.assertEquals(reference.get(), running);
+
+      verify(computeService);
+
+   }
+
+   @BeforeMethod
+   public void setUp() throws Exception {
+      node = createMock(NodeMetadata.class);
+      computeService = createMock(GetNodeMetadataStrategy.class);
+
+      expect(node.getId()).andReturn("myid").anyTimes();
+      expect(computeService.getNode("myid")).andReturn(node).anyTimes();
+      expect(node.getLocation()).andReturn(null).anyTimes();
+   }
+
+   @Test
+   public void testNodeRunningReturnsTrueWhenRunning() {
+      expect(node.getState()).andReturn(NodeState.RUNNING).atLeastOnce();
+      replay(node);
+      replay(computeService);
+
+      AtomicNodeRunning nodeRunning = new AtomicNodeRunning(computeService);
+      AtomicReference<NodeMetadata> reference = new AtomicReference<NodeMetadata>(node);
+      Assert.assertTrue(nodeRunning.apply(reference));
+      Assert.assertEquals(reference.get(), node);
+   }
+
+   @Test(expectedExceptions = IllegalStateException.class)
+   public void testNodeRunningFailsOnTerminated() {
+      expect(node.getState()).andReturn(NodeState.TERMINATED).atLeastOnce();
+      replay(node);
+      replay(computeService);
+
+      AtomicNodeRunning nodeRunning = new AtomicNodeRunning(computeService);
+      AtomicReference<NodeMetadata> reference = new AtomicReference<NodeMetadata>(node);
+      nodeRunning.apply(reference);
+      Assert.assertEquals(reference.get(), node);
+   }
+
+   @Test(expectedExceptions = IllegalStateException.class)
+   public void testNodeRunningFailsOnError() {
+      expect(node.getState()).andReturn(NodeState.ERROR).atLeastOnce();
+      replay(node);
+      replay(computeService);
+
+      AtomicNodeRunning nodeRunning = new AtomicNodeRunning(computeService);
+      AtomicReference<NodeMetadata> reference = new AtomicReference<NodeMetadata>(node);
+      nodeRunning.apply(reference);
+      Assert.assertEquals(reference.get(), node);
+   }
+}

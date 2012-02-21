@@ -50,11 +50,6 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
       adapter = context.utils().injector().getInstance(VirtualBoxComputeServiceAdapter.class);
    }
 
-   @Test
-   public void testListLocations() {
-      assertFalse(Iterables.isEmpty(adapter.listLocations()));
-   }
-
    private static final PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate = new PrioritizeCredentialsFromTemplate(
          new DefaultCredentialsFromImageOrOverridingCredentials());
 

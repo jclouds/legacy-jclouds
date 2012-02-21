@@ -1,15 +1,15 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- *(Link.builder().regarding copyright ownership.  jclouds licenses this file
+ * regarding copyright ownership.  jclouds licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless(Link.builder().required by applicable law or agreed to in writing,
+ * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
@@ -35,10 +35,11 @@ import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
- * Allows us to test a client via its side effects.
+ * Allows us to test the {@link OrgClient} via its side effects.
  * 
  * @author Adrian Cole
  */
@@ -46,9 +47,9 @@ import com.google.common.collect.Iterables;
 public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
 
    @Test
-   public void testWhenResponseIs2xxLoginReturnsValidOrgList() {
+   public void testGetOrgList() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", "/org"),
+            getStandardRequest("GET", "/org/"),
             getStandardPayloadResponse("/org/orglist.xml", VCloudDirectorMediaType.ORG_LIST));
 
       OrgList expected = OrgList.builder()
@@ -63,9 +64,9 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
    }
 
    @Test
-   public void testWhenResponseIs2xxLoginReturnsValidOrgFromListByReference() {
+   public void testGetOrgFromOrgListReference() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", "/org"),
+            getStandardRequest("GET", "/org/"),
             getStandardPayloadResponse("/org/orglist.xml", VCloudDirectorMediaType.ORG_LIST));
 
       Reference org = Iterables.getOnlyElement(client.getOrgClient().getOrgList().getOrgs());
@@ -80,7 +81,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
    }
 
    @Test
-   public void testWhenResponseIs2xxLoginReturnsValidOrg() {
+   public void testGetOrg() {
       URI orgUri = URI.create(endpoint + "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
@@ -95,7 +96,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
    }
 
    @Test
-   public void testWhenResponseIs400ForInvalidOrgId() {
+   public void testGetOrgFailOnInvalidOrgId() {
       URI orgUri = URI.create(endpoint + "/org/NOTAUUID");
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
@@ -120,7 +121,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
    }
 
    @Test
-   public void testWhenResponseIs403ForCatalogIdUsedAsOrgId() {
+   public void testGetOrgFailOnWrongOrgId() {
       URI orgUri = URI.create(endpoint + "/org/9e08c2f6-077a-42ce-bece-d5332e2ebb5c");
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
@@ -146,7 +147,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
    }
 
    @Test
-   public void testWhenResponseIs403ForFakeOrgId() {
+   public void testGetOrgFailOnFakeOrgId() {
       URI orgUri = URI.create(endpoint + "/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
@@ -172,12 +173,12 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
    }
    
    @Test
-   public void testWhenResponseIs2xxLoginReturnsValidMetadataList() {
+   public void testGetOrgMetadata() {
       URI orgUri = URI.create(endpoint + "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata"),
-            getStandardPayloadResponse("/org/metadata.xml", VCloudDirectorMediaType.METADATA));
+            getStandardPayloadResponse("/org/orgMetadata.xml", VCloudDirectorMediaType.METADATA));
       
       Metadata expected = Metadata.builder()
             .type("application/vnd.vmware.vcloud.metadata+xml")
@@ -187,28 +188,27 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
                   .type("application/vnd.vmware.vcloud.org+xml")
                   .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
                   .build())
+            .entries(ImmutableSet.of(metadataEntry()))
             .build();
 
        Reference orgRef = Reference.builder().href(orgUri).build();
  
-       assertEquals(client.getOrgClient().getMetadata(orgRef), expected);
+       assertEquals(client.getOrgClient().getOrgMetadata(orgRef), expected);
    }
    
-   @Test(enabled=false) // No metadata in exemplar xml...
-   public void testWhenResponseIs2xxLoginReturnsValidMetadata() {
+   @Test
+   public void testGetOrgMetadataEntry() {
       URI orgUri = URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata/KEY"),
-            getStandardPayloadResponse("/org/metadata.xml", VCloudDirectorMediaType.METADATA_ENTRY));
+            getStandardPayloadResponse("/org/orgMetadataEntry.xml", VCloudDirectorMediaType.METADATA_ENTRY));
       
-      MetadataEntry expected = MetadataEntry.builder()
-            .key("KEY")
-            .build();
+      MetadataEntry expected = metadataEntry();
 
       Reference orgRef = Reference.builder().href(orgUri).build();
 
-      assertEquals(client.getOrgClient().getMetadataEntry(orgRef, "KEY"), expected);
+      assertEquals(client.getOrgClient().getOrgMetadataEntry(orgRef, "KEY"), expected);
    }
 
    public static Org org() {
@@ -234,7 +234,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .rel("down")
             .type("application/vnd.vmware.vcloud.catalog+xml")
             .name("Public")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/9e08c2f6-077a-42ce-bece-d5332e2ebb5c"))
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
             .build())
          .link(Link.builder()
             .rel("down")
@@ -259,5 +259,17 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata"))
             .build())
          .build();
+   }
+   
+   public static MetadataEntry metadataEntry() {
+      return MetadataEntry.builder()
+		      .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata/KEY"))
+		      .link(Link.builder()
+		            .rel("up")
+		            .type("application/vnd.vmware.vcloud.metadata+xml")
+		            .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata"))
+		            .build())
+		      .entry("KEY", "VALUE")
+		      .build();
    }
 }

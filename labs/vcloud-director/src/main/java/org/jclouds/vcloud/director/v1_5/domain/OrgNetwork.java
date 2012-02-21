@@ -18,9 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
-import static com.google.common.base.Preconditions.*;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.Set;
@@ -33,7 +33,7 @@ import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Sets;
 
 @XmlRootElement(namespace = VCLOUD_1_5_NS, name = "OrgNetwork")
-public class OrgNetwork extends EntityType<OrgNetwork> {
+public class OrgNetwork extends NetworkType<OrgNetwork> {
    
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -45,19 +45,10 @@ public class OrgNetwork extends EntityType<OrgNetwork> {
       return new Builder().fromOrgNetwork(this);
    }
 
-   public static class Builder extends EntityType.Builder<OrgNetwork> {
+   public static class Builder extends NetworkType.Builder<OrgNetwork> {
 
-      private NetworkConfiguration networkConfiguration;
       private ReferenceType<?> networkPool;
       private IpAddresses allowedExternalIpAddresses;
-      
-      /**
-       * @see OrgNetwork#getConfiguration()
-       */
-      public Builder configuration(NetworkConfiguration networkConfiguration) {
-         this.networkConfiguration = networkConfiguration;
-         return this;
-      }
       
       /**
        * @see OrgNetwork#getNetworkPool()
@@ -87,6 +78,14 @@ public class OrgNetwork extends EntityType<OrgNetwork> {
          network.setLinks(links);
          network.setTasksInProgress(tasksInProgress);
          return network;
+      }
+      
+      /**
+       * @see NetworkType#getConfiguration()
+       */
+      public Builder configuration(NetworkConfiguration networkConfiguration) {
+         this.networkConfiguration = networkConfiguration;
+         return this;
       }
 
       /**
@@ -181,24 +180,11 @@ public class OrgNetwork extends EntityType<OrgNetwork> {
       super(href, name);
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Configuration")
-   private NetworkConfiguration networkConfiguration;
    @XmlElement(namespace = VCLOUD_1_5_NS, name = "NetworkPool")
    private ReferenceType<?> networkPool;
    @XmlElement(namespace = VCLOUD_1_5_NS, name = "AllowedExternalIpAddresses")
    private IpAddresses allowedExternalIpAddresses;
 
-   /**
-    * @return optional configuration
-    */
-   public NetworkConfiguration getConfiguration() {
-      return networkConfiguration;
-   }
-   
-   public void setConfiguration(NetworkConfiguration networkConfiguration) {
-      this.networkConfiguration = networkConfiguration;
-   }
-   
    /**
     * @return optional network pool
     */
@@ -226,20 +212,18 @@ public class OrgNetwork extends EntityType<OrgNetwork> {
       if (!super.equals(o))
          return false;
       OrgNetwork that = OrgNetwork.class.cast(o);
-      return super.equals(that) && equal(networkConfiguration, that.networkConfiguration) &&
-            equal(networkPool, that.networkPool) && 
+      return super.equals(that) && equal(networkPool, that.networkPool) && 
             equal(allowedExternalIpAddresses, that.allowedExternalIpAddresses);
    }
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(networkConfiguration, 
-            networkPool, allowedExternalIpAddresses);
+      return super.hashCode() + Objects.hashCode(networkPool, allowedExternalIpAddresses);
    }
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("configuration", networkConfiguration).add("networkPool", networkPool)
+      return super.string().add("networkPool", networkPool)
             .add("allowedExternalIpAddresses", allowedExternalIpAddresses);
    }
 

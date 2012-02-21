@@ -141,11 +141,11 @@
         <configuration>
           <instructions>
             <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.jclouds.openstack.nova.v1_1.*;version="${project.version}"</Export-Package>
+            <Export-Package>org.jclouds.openstack.nova.v1_1*;version="${project.version}"</Export-Package>
             <Import-Package>            
                         org.jclouds.compute.internal;version="${project.version}",
                         org.jclouds.rest.internal;version="${project.version}",
-                        org.jclouds.*;version="${project.version}",
+                        org.jclouds*;version="${project.version}",
                                 *
                         </Import-Package>
           </instructions>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Media size="175163392" imageType="iso" status="1" name="new testMedia1" id="urn:vcloud:media:c93e5cdc-f29a-4749-8ed2-093df04cc75e" type="application/vnd.vmware.vcloud.media+xml" href="https://mycloud.greenhousedata.com/api/media/c93e5cdc-f29a-4749-8ed2-093df04cc75e" xmlns="http://www.vmware.com/vcloud/v1.5">
+    <Link rel="up" type="application/vnd.vmware.vcloud.vdc+xml" href="https://mycloud.greenhousedata.com/api/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f"/>
+    <Link rel="catalogItem" type="application/vnd.vmware.vcloud.catalogItem+xml" href="https://mycloud.greenhousedata.com/api/catalogItem/1b317eb9-0e25-429a-ada2-3c7a74a0367b"/>
+    <Link rel="remove" href="https://mycloud.greenhousedata.com/api/media/c93e5cdc-f29a-4749-8ed2-093df04cc75e"/>
+    <Link rel="edit" type="application/vnd.vmware.vcloud.media+xml" href="https://mycloud.greenhousedata.com/api/media/c93e5cdc-f29a-4749-8ed2-093df04cc75e"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.owner+xml" href="https://mycloud.greenhousedata.com/api/media/c93e5cdc-f29a-4749-8ed2-093df04cc75e/owner"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml" href="https://mycloud.greenhousedata.com/api/media/c93e5cdc-f29a-4749-8ed2-093df04cc75e/metadata"/>
+    <Description>new test description</Description>
+    <Owner type="application/vnd.vmware.vcloud.owner+xml">
+        <User type="application/vnd.vmware.admin.user+xml" name="dan" href="https://mycloud.greenhousedata.com/api/admin/user/7818d31c-df33-4d77-9bbc-0a0741cf3d44"/>
+    </Owner>
+</Media>

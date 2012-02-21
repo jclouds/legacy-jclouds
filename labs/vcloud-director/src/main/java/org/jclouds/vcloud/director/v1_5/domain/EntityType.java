@@ -18,9 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
-import static com.google.common.base.Preconditions.*;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.Set;
@@ -143,6 +143,7 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       /**
        * {@inheritDoc}
        */
+      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> fromResourceType(ResourceType<T> in) {
          return Builder.class.cast(super.fromResourceType(in));
@@ -161,7 +162,7 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
    private TasksInProgress tasksInProgress;
    @XmlAttribute
    private String id;
-   @XmlAttribute
+   @XmlAttribute(required = true)
    private String name;
 
    protected EntityType(URI href, String name) {
@@ -214,6 +215,10 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
     */
    public String getName() {
       return name;
+   }
+   
+   public void setName(String name) {
+      this.name = name;
    }
 
    @Override

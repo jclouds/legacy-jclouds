@@ -19,7 +19,6 @@
 package org.jclouds.compute.callables;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,6 +26,7 @@ import javax.inject.Inject;
 
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.events.StatementOnNodeFailure;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.scriptbuilder.domain.Statement;
@@ -34,6 +34,7 @@ import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
+import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
 /**
@@ -46,10 +47,11 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete extends Ru
 
    @Inject
    public RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete(
-            BlockUntilInitScriptStatusIsZeroThenReturnOutput.Factory statusFactory, Timeouts timeouts,
-            Function<NodeMetadata, SshClient> sshFactory, InitScriptConfigurationForTasks initScriptConfiguration,
-            @Assisted NodeMetadata node, @Assisted Statement script, @Assisted RunScriptOptions options) {
-      super(sshFactory, initScriptConfiguration, node, script, options);
+         BlockUntilInitScriptStatusIsZeroThenReturnOutput.Factory statusFactory, Timeouts timeouts,
+         Function<NodeMetadata, SshClient> sshFactory, EventBus eventBus,
+         InitScriptConfigurationForTasks initScriptConfiguration, @Assisted NodeMetadata node,
+         @Assisted Statement script, @Assisted RunScriptOptions options) {
+      super(sshFactory, eventBus, initScriptConfiguration, node, script, options);
       this.statusFactory = checkNotNull(statusFactory, "statusFactory");
       this.timeouts = checkNotNull(timeouts, "timeouts");
    }
@@ -58,16 +60,21 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete extends Ru
    public ExecResponse doCall() {
       try {
          return future().get(timeouts.scriptComplete, TimeUnit.MILLISECONDS);
-      } catch (Exception e) {
-         Throwables.propagate(e);
-         return null;
+      } catch (Throwable e) {
+         eventBus.post(new StatementOnNodeFailure(init, node, e));
+         throw Throwables.propagate(e);
       }
    }
 
    public BlockUntilInitScriptStatusIsZeroThenReturnOutput future() {
       ExecResponse returnVal = super.doCall();
-      checkState(returnVal.getExitCode() == 0, String.format("task: %s had non-zero exit status: %s", init
-               .getInstanceName(), returnVal));
+      if (returnVal.getExitStatus() != 0) {
+         IllegalStateException e = new IllegalStateException(String.format(
+               "instance: %s on node: %s had non-zero exit status: %s", init.getInstanceName(), getNode().getId(),
+               returnVal));
+         eventBus.post(new StatementOnNodeFailure(init, node, e));
+         throw e;
+      }
       return statusFactory.create(this).init();
    }
 

@@ -32,7 +32,11 @@ public class SudoStatementsTest {
    public void testCreateWheelUNIX() {
       assertEquals(
                SudoStatements.createWheel().render(OsFamily.UNIX),
-               "rm /etc/sudoers\ncat >> /etc/sudoers <<'END_OF_FILE'\nroot ALL = (ALL) ALL\n%wheel ALL = (ALL) NOPASSWD:ALL\nEND_OF_FILE\nchmod 0440 /etc/sudoers\n");
+               "cat > /etc/sudoers <<-'END_OF_JCLOUDS_FILE'\n"+
+               "\troot ALL = (ALL) ALL\n"+
+               "\t%wheel ALL = (ALL) NOPASSWD:ALL\n"+
+               "END_OF_JCLOUDS_FILE\n"+
+               "chmod 0440 /etc/sudoers\n");
    }
 
    @Test(expectedExceptions = UnsupportedOperationException.class)

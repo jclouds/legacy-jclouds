@@ -139,7 +139,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
          machineSession.getConsole().resume();
          machineSession.unlockMachine();
       } catch (Exception e) {
-         propogate(e);
+         throw Throwables.propagate(e);
       }
    }
 
@@ -152,14 +152,8 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
          machineSession.getConsole().pause();
          machineSession.unlockMachine();
       } catch (Exception e) {
-         propogate(e);
+         throw Throwables.propagate(e);
       }
-   }
-
-   protected <T> T propogate(Exception e) {
-      Throwables.propagate(e);
-      assert false;
-      return null;
    }
 
    private void launchVMProcess(IMachine machine, ISession session) {
@@ -184,8 +178,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
          }
 
       } catch (Exception e) {
-         e.printStackTrace();
-         e.printStackTrace();
+         throw Throwables.propagate(e);
       }
    }
 }

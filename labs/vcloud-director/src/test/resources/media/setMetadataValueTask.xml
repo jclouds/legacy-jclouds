@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task xmlns="http://www.vmware.com/vcloud/v1.5" status="running" startTime="2012-02-13T06:35:08.011-05:00" operationName="metadataUpdate" operation="Updating metadata for Media File (794eb334-754e-4917-b5a0-5df85cbd61d1)" expiryTime="2012-05-13T06:35:08.011-04:00" name="task" id="urn:vcloud:task:c6dca927-eab4-41fa-ad6a-3ac58602541c" type="application/vnd.vmware.vcloud.task+xml" href="https://vcloudbeta.bluelock.com/api/task/c6dca927-eab4-41fa-ad6a-3ac58602541c" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd">
+    <Link rel="task:cancel" href="https://vcloudbeta.bluelock.com/api/task/c6dca927-eab4-41fa-ad6a-3ac58602541c/action/cancel"/>
+    <Owner type="application/vnd.vmware.vcloud.media+xml" name="" href="https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1"/>
+    <User type="application/vnd.vmware.admin.user+xml" name="dan@cloudsoftcorp.com" href="https://vcloudbeta.bluelock.com/api/admin/user/e9eb1b29-0404-4c5e-8ef7-e584acc51da9"/>
+    <Organization type="application/vnd.vmware.vcloud.org+xml" name="JClouds" href="https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"/>
+</Task>

@@ -70,6 +70,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
 
    private static final ExecResponse EXEC_GOOD = new ExecResponse("", "", 0);
    private static final ExecResponse EXEC_BAD = new ExecResponse("", "", 1);
+   private static final ExecResponse EXEC_RC_GOOD = new ExecResponse("0", "", 0);
 
    public StubComputeServiceIntegrationTest() {
       provider = "stub";
@@ -268,13 +269,15 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
                expect(client.exec("ln -fs /tmp/init-" + scriptName + " " + scriptName)).andReturn(EXEC_GOOD);
                expect(client.getUsername()).andReturn("root").atLeastOnce();
                expect(client.getHostAddress()).andReturn("localhost").atLeastOnce();
-               expect(client.exec("./" + scriptName + " init")).andReturn(EXEC_GOOD);
-               expect(client.exec("./" + scriptName + " start")).andReturn(EXEC_GOOD);
-               expect(client.exec("./" + scriptName + " status")).andReturn(EXEC_GOOD);
+               expect(client.exec("/tmp/init-" + scriptName + " init")).andReturn(EXEC_GOOD);
+               expect(client.exec("/tmp/init-" + scriptName + " start")).andReturn(EXEC_GOOD);
+               expect(client.exec("/tmp/init-" + scriptName + " status")).andReturn(EXEC_GOOD);
                // next status says the script is done, since not found.
-               expect(client.exec("./" + scriptName + " status")).andReturn(EXEC_BAD);
-               expect(client.exec("./" + scriptName + " tail")).andReturn(EXEC_GOOD);
-               expect(client.exec("./" + scriptName + " tailerr")).andReturn(EXEC_GOOD);
+               expect(client.exec("/tmp/init-" + scriptName + " status")).andReturn(EXEC_BAD);
+               expect(client.exec("/tmp/init-" + scriptName + " stdout")).andReturn(EXEC_GOOD);
+               expect(client.exec("/tmp/init-" + scriptName + " stderr")).andReturn(EXEC_GOOD);
+               expect(client.exec("/tmp/init-" + scriptName + " exitstatus")).andReturn(EXEC_RC_GOOD);
+
                // note we have to reconnect here, as we updated the login user.
                client.disconnect();
 
@@ -307,23 +310,23 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
                expect(clientNew.exec("ln -fs /tmp/init-" + scriptName + " " + scriptName)).andReturn(EXEC_GOOD);
                expect(clientNew.getUsername()).andReturn("web").atLeastOnce();
                expect(clientNew.getHostAddress()).andReturn("localhost").atLeastOnce();
-               expect(clientNew.exec("./" + scriptName + " init")).andReturn(EXEC_GOOD);
-               expect(clientNew.exec("./" + scriptName + " start")).andReturn(EXEC_GOOD);
+               expect(clientNew.exec("/tmp/init-" + scriptName + " init")).andReturn(EXEC_GOOD);
+               expect(clientNew.exec("/tmp/init-" + scriptName + " start")).andReturn(EXEC_GOOD);
                clientNew.disconnect();
                clientNew.connect();
-               expect(clientNew.exec("./" + scriptName + " tail\n")).andReturn(EXEC_GOOD);
-               clientNew.disconnect();
-
-               clientNew.connect();
-               expect(clientNew.exec("./" + scriptName + " stop\n")).andReturn(EXEC_GOOD);
+               expect(clientNew.exec("/tmp/init-" + scriptName + " stdout\n")).andReturn(EXEC_GOOD);
                clientNew.disconnect();
 
                clientNew.connect();
-               expect(clientNew.exec("./" + scriptName + " start\n")).andReturn(EXEC_GOOD);
+               expect(clientNew.exec("/tmp/init-" + scriptName + " stop\n")).andReturn(EXEC_GOOD);
                clientNew.disconnect();
 
                clientNew.connect();
-               expect(clientNew.exec("./" + scriptName + " tail\n")).andReturn(EXEC_GOOD);
+               expect(clientNew.exec("/tmp/init-" + scriptName + " start\n")).andReturn(EXEC_GOOD);
+               clientNew.disconnect();
+
+               clientNew.connect();
+               expect(clientNew.exec("/tmp/init-" + scriptName + " stdout\n")).andReturn(EXEC_GOOD);
                clientNew.disconnect();
             } catch (IOException e) {
                Throwables.propagate(e);
@@ -352,13 +355,14 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             expect(client.exec("ln -fs /tmp/init-" + scriptName + " " + scriptName)).andReturn(EXEC_GOOD);
             expect(client.getUsername()).andReturn("root").atLeastOnce();
             expect(client.getHostAddress()).andReturn(nodeId + "").atLeastOnce();
-            expect(client.exec("./" + scriptName + " init")).andReturn(EXEC_GOOD);
-            expect(client.exec("./" + scriptName + " start")).andReturn(EXEC_GOOD);
-            expect(client.exec("./" + scriptName + " status")).andReturn(EXEC_GOOD);
+            expect(client.exec("/tmp/init-" + scriptName + " init")).andReturn(EXEC_GOOD);
+            expect(client.exec("/tmp/init-" + scriptName + " start")).andReturn(EXEC_GOOD);
+            expect(client.exec("/tmp/init-" + scriptName + " status")).andReturn(EXEC_GOOD);
             // next status says the script is done, since not found.
-            expect(client.exec("./" + scriptName + " status")).andReturn(EXEC_BAD);
-            expect(client.exec("./" + scriptName + " tail")).andReturn(EXEC_GOOD);
-            expect(client.exec("./" + scriptName + " tailerr")).andReturn(EXEC_GOOD);
+            expect(client.exec("/tmp/init-" + scriptName + " status")).andReturn(EXEC_BAD);
+            expect(client.exec("/tmp/init-" + scriptName + " stdout")).andReturn(EXEC_GOOD);
+            expect(client.exec("/tmp/init-" + scriptName + " stderr")).andReturn(EXEC_GOOD);
+            expect(client.exec("/tmp/init-" + scriptName + " exitstatus")).andReturn(EXEC_RC_GOOD);
          }
 
          private void helloAndJava(SshClient client) {

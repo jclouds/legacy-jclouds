@@ -23,6 +23,7 @@ import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -79,7 +80,7 @@ public class AWSEC2CreateNodesInGroupThenAddToSet extends EC2CreateNodesInGroupT
    protected AWSEC2CreateNodesInGroupThenAddToSet(
             AWSEC2Client client,
             @Named("ELASTICIP") LoadingCache<RegionAndName, String> elasticIpCache,
-            @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
+            @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
             AWSEC2AsyncClient aclient,
             @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames,
             Provider<TemplateBuilder> templateBuilderProvider,

@@ -10,11 +10,11 @@ function abort {
 function default {
    export INSTANCE_NAME="adminUpdate"
 export INSTANCE_HOME="/tmp/adminUpdate"
-export LOG_DIR="/tmp/adminUpdate"
-   return 0
+export LOG_DIR="$INSTANCE_HOME"
+   return $?
 }
 function adminUpdate {
-      return 0
+      return $?
 }
 function findPid {
    unset FOUND_PID;
@@ -62,50 +62,56 @@ init)
    mkdir -p $INSTANCE_HOME
    
    # create runscript header
-   cat > $INSTANCE_HOME/adminUpdate.sh <<END_OF_SCRIPT
-#!/bin/bash
-set +u
-shopt -s xpg_echo
-shopt -s expand_aliases
-PROMPT_COMMAND='echo -ne "\033]0;adminUpdate\007"'
-export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
-export INSTANCE_NAME='adminUpdate'
-export INSTANCE_NAME='$INSTANCE_NAME'
-export INSTANCE_HOME='$INSTANCE_HOME'
-export LOG_DIR='$LOG_DIR'
-END_OF_SCRIPT
+   cat > $INSTANCE_HOME/adminUpdate.sh <<-'END_OF_JCLOUDS_SCRIPT'
+	#!/bin/bash
+	set +u
+	shopt -s xpg_echo
+	shopt -s expand_aliases
+	
+	PROMPT_COMMAND='echo -ne \"\033]0;adminUpdate\007\"'
+	export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
+
+	export INSTANCE_NAME='adminUpdate'
+END_OF_JCLOUDS_SCRIPT
+   cat >> $INSTANCE_HOME/adminUpdate.sh <<-END_OF_JCLOUDS_SCRIPT
+	export INSTANCE_NAME='$INSTANCE_NAME'
+	export INSTANCE_HOME='$INSTANCE_HOME'
+	export LOG_DIR='$LOG_DIR'
+END_OF_JCLOUDS_SCRIPT
    
    # add desired commands from the user
-   cat >> $INSTANCE_HOME/adminUpdate.sh <<'END_OF_SCRIPT'
-cd $INSTANCE_HOME
-rm /etc/sudoers
-cat >> /etc/sudoers <<'END_OF_FILE'
-root ALL = (ALL) ALL
-%wheel ALL = (ALL) NOPASSWD:ALL
-END_OF_FILE
-chmod 0440 /etc/sudoers
-mkdir -p /home/users
-groupadd -f wheel
-useradd -s /bin/bash -g wheel -m  -d /home/users/foo -p 'crypt(randompassword)' foo
-mkdir -p /home/users/foo/.ssh
-cat >> /home/users/foo/.ssh/authorized_keys <<'END_OF_FILE'
-publicKey
-END_OF_FILE
-chmod 600 /home/users/foo/.ssh/authorized_keys
-chown -R foo /home/users/foo
-exec 3<> /etc/ssh/sshd_config && awk -v TEXT="PasswordAuthentication no
-PermitRootLogin no
-" 'BEGIN {print TEXT}{print}' /etc/ssh/sshd_config >&3
-/etc/init.d/sshd reload||/etc/init.d/ssh reload
-awk -v user=^${SUDO_USER:=${USER}}: -v password='crypt(randompassword)' 'BEGIN { FS=OFS=":" } $0 ~ user { $2 = password } 1' /etc/shadow >/etc/shadow.${SUDO_USER:=${USER}}
-test -f /etc/shadow.${SUDO_USER:=${USER}} && mv /etc/shadow.${SUDO_USER:=${USER}} /etc/shadow
-
-END_OF_SCRIPT
+   cat >> $INSTANCE_HOME/adminUpdate.sh <<-'END_OF_JCLOUDS_SCRIPT'
+	cd $INSTANCE_HOME
+	rm -f $INSTANCE_HOME/rc
+	trap 'echo $?>$INSTANCE_HOME/rc' 0 1 2 3 15
+	cat > /etc/sudoers <<-'END_OF_JCLOUDS_FILE'
+		root ALL = (ALL) ALL
+		%wheel ALL = (ALL) NOPASSWD:ALL
+	END_OF_JCLOUDS_FILE
+	chmod 0440 /etc/sudoers
+	mkdir -p /home/users
+	groupadd -f wheel
+	useradd -s /bin/bash -g wheel -m  -d /home/users/foo -p 'crypt(randompassword)' foo
+	mkdir -p /home/users/foo/.ssh
+	cat >> /home/users/foo/.ssh/authorized_keys <<-'END_OF_JCLOUDS_FILE'
+		publicKey
+	END_OF_JCLOUDS_FILE
+	chmod 600 /home/users/foo/.ssh/authorized_keys
+	chown -R foo /home/users/foo
+	exec 3<> /etc/ssh/sshd_config && awk -v TEXT="PasswordAuthentication no
+	PermitRootLogin no
+	" 'BEGIN {print TEXT}{print}' /etc/ssh/sshd_config >&3
+	hash service 2>/dev/null && service ssh reload || /etc/init.d/ssh* reload
+	awk -v user=^${SUDO_USER:=${USER}}: -v password='crypt(randompassword)' 'BEGIN { FS=OFS=":" } $0 ~ user { $2 = password } 1' /etc/shadow >/etc/shadow.${SUDO_USER:=${USER}}
+	test -f /etc/shadow.${SUDO_USER:=${USER}} && mv /etc/shadow.${SUDO_USER:=${USER}} /etc/shadow
+	
+END_OF_JCLOUDS_SCRIPT
    
    # add runscript footer
-   cat >> $INSTANCE_HOME/adminUpdate.sh <<'END_OF_SCRIPT'
-exit 0
-END_OF_SCRIPT
+   cat >> $INSTANCE_HOME/adminUpdate.sh <<-'END_OF_JCLOUDS_SCRIPT'
+	exit $?
+	
+END_OF_JCLOUDS_SCRIPT
    
    chmod u+x $INSTANCE_HOME/adminUpdate.sh
    ;;
@@ -126,6 +132,17 @@ start)
    default || exit 1
    forget $INSTANCE_NAME $INSTANCE_HOME/$INSTANCE_NAME.sh $LOG_DIR || exit 1
    ;;
+stdout)
+   default || exit 1
+   cat $LOG_DIR/stdout.log
+   ;;
+stderr)
+   default || exit 1
+   cat $LOG_DIR/stderr.log
+   ;;
+exitstatus)
+   default || exit 1
+   [ -f $LOG_DIR/rc ] && cat $LOG_DIR/rc;;
 tail)
    default || exit 1
    tail $LOG_DIR/stdout.log
@@ -139,4 +156,4 @@ run)
    $INSTANCE_HOME/$INSTANCE_NAME.sh
    ;;
 esac
-exit 0
+exit $?

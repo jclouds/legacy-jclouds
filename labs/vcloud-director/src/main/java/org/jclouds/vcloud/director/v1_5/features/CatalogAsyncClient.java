@@ -140,8 +140,8 @@ public interface CatalogAsyncClient {
     */
    @POST
    @Path("/metadata")
-   @Consumes(VCloudDirectorMediaType.METADATA)
-   @Produces(VCloudDirectorMediaType.TASK)
+   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(VCloudDirectorMediaType.METADATA)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> mergeCatalogItemMetadata(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> catalogItemRef,
@@ -163,8 +163,8 @@ public interface CatalogAsyncClient {
     */
    @PUT
    @Path("/metadata/{key}")
-   @Consumes(VCloudDirectorMediaType.METADATA_VALUE)
-   @Produces(VCloudDirectorMediaType.TASK)
+   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(VCloudDirectorMediaType.METADATA_VALUE)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> setCatalogItemMetadataEntry(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> catalogItemRef,

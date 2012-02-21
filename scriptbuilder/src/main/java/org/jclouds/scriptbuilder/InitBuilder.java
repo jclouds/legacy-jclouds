@@ -19,10 +19,7 @@
 package org.jclouds.scriptbuilder;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.scriptbuilder.domain.Statements.call;
 import static org.jclouds.scriptbuilder.domain.Statements.createRunScript;
-import static org.jclouds.scriptbuilder.domain.Statements.findPid;
-import static org.jclouds.scriptbuilder.domain.Statements.forget;
 import static org.jclouds.scriptbuilder.domain.Statements.interpret;
 import static org.jclouds.scriptbuilder.domain.Statements.kill;
 import static org.jclouds.scriptbuilder.domain.Statements.newStatementList;
@@ -41,8 +38,10 @@ import com.google.common.collect.Iterables;
 /**
  * Creates an init script file
  * 
+ * @see InitScript
  * @author Adrian Cole
  */
+@Deprecated
 public class InitBuilder extends ScriptBuilder {
 
    private final String instanceName;
@@ -51,68 +50,67 @@ public class InitBuilder extends ScriptBuilder {
    private final StatementList initStatement;
    private final CreateRunScript createRunScript;
 
+   public InitBuilder(String instanceName, Statement initStatement, Statement runStatement) {
+      this(instanceName, ImmutableSet.of(initStatement), ImmutableSet.of(runStatement));
+   }
+
+   public InitBuilder(String instanceName, Iterable<Statement> initStatements, Iterable<Statement> statements) {
+      this(instanceName, String.format("{tmp}{fs}{varl}INSTANCE_NAME{varr}", instanceName), String.format(
+            "{tmp}{fs}{varl}INSTANCE_NAME{varr}", instanceName), ImmutableMap.<String, String> of(), initStatements,
+            statements);
+   }
+
    public InitBuilder(String instanceName, String instanceHome, String logDir, Map<String, String> variables,
-            Iterable<Statement> statements) {
+         Iterable<Statement> statements) {
       this(instanceName, instanceHome, logDir, variables, ImmutableSet.<Statement> of(), statements);
    }
 
    public InitBuilder(String instanceName, String instanceHome, String logDir, Map<String, String> variables,
-            Iterable<Statement> initStatements, Iterable<Statement> statements) {
+         Iterable<Statement> initStatements, Iterable<Statement> statements) {
       Map<String, String> defaultVariables = ImmutableMap.of("instanceName", instanceName, "instanceHome",
-               instanceHome, "logDir", logDir);
+            instanceHome, "logDir", logDir);
       this.initStatement = new StatementList(initStatements);
       this.createRunScript = createRunScript(instanceName,// TODO: convert
-               // so
-               // that
-               // createRunScript
-               // can take from a
-               // variable
-               Iterables.concat(variables.keySet(), defaultVariables.keySet()), "{varl}INSTANCE_HOME{varr}", statements);
+            // so
+            // that
+            // createRunScript
+            // can take from a
+            // variable
+            Iterables.concat(variables.keySet(), defaultVariables.keySet()), "{varl}INSTANCE_HOME{varr}", statements);
       this.instanceName = checkNotNull(instanceName, "instanceName");
       this.instanceHome = checkNotNull(instanceHome, "instanceHome");
       this.logDir = checkNotNull(logDir, "logDir");
 
       addEnvironmentVariableScope("default", defaultVariables)
-               .addEnvironmentVariableScope(instanceName, variables)
-               .addStatement(
-                        switchArg(
-                                 1,
-                                 new ImmutableMap.Builder<String, Statement>()
-                                          .put(
-                                                   "init",
-                                                   newStatementList(call("default"), call(instanceName), initStatement,
-                                                            createRunScript))
-                                          .put(
-                                                   "status",
-                                                   newStatementList(call("default"),
-                                                            findPid("{varl}INSTANCE_NAME{varr}"),
-                                                            interpret("echo [{varl}FOUND_PID{varr}]{lf}")))
-                                          .put(
-                                                   "stop",
-                                                   newStatementList(call("default"),
-                                                            findPid("{varl}INSTANCE_NAME{varr}"), kill()))
-                                          .put(
-                                                   "start",
-                                                   newStatementList(
-                                                            call("default"),
-                                                            forget(
-                                                                     "{varl}INSTANCE_NAME{varr}",
-                                                                     "{varl}INSTANCE_HOME{varr}{fs}{varl}INSTANCE_NAME{varr}.{sh}",
-                                                                     "{varl}LOG_DIR{varr}")))
-                                          .put(
-                                                   "tail",
-                                                   newStatementList(call("default"),
-                                                            interpret("tail {varl}LOG_DIR{varr}{fs}stdout.log{lf}")))
-                                          .put(
-                                                   "tailerr",
-                                                   newStatementList(call("default"),
-                                                            interpret("tail {varl}LOG_DIR{varr}{fs}stderr.log{lf}")))
-                                          .put(
-                                                   "run",
-                                                   newStatementList(
-                                                            call("default"),
-                                                            interpret("{varl}INSTANCE_HOME{varr}{fs}{varl}INSTANCE_NAME{varr}.{sh}{lf}")))
-                                          .build()));
+            .addEnvironmentVariableScope(instanceName, variables)
+            .addStatement(
+                  switchArg(
+                        1,
+                        new ImmutableMap.Builder<String, Statement>()
+                              .put("init",
+                                    newStatementList(call("default"), call(instanceName), initStatement,
+                                          createRunScript))
+                              .put("status",
+                                    newStatementList(call("default"), findPid("{varl}INSTANCE_NAME{varr}"),
+                                          interpret("echo [{varl}FOUND_PID{varr}]{lf}")))
+                              .put("stop",
+                                    newStatementList(call("default"), findPid("{varl}INSTANCE_NAME{varr}"), kill()))
+                              .put("start",
+                                    newStatementList(
+                                          call("default"),
+                                          forget("{varl}INSTANCE_NAME{varr}",
+                                                "{varl}INSTANCE_HOME{varr}{fs}{varl}INSTANCE_NAME{varr}.{sh}",
+                                                "{varl}LOG_DIR{varr}")))
+                              .put("tail",
+                                    newStatementList(call("default"),
+                                          interpret("tail {varl}LOG_DIR{varr}{fs}stdout.log{lf}")))
+                              .put("tailerr",
+                                    newStatementList(call("default"),
+                                          interpret("tail {varl}LOG_DIR{varr}{fs}stderr.log{lf}")))
+                              .put("run",
+                                    newStatementList(call("default"),
+                                          interpret("{varl}INSTANCE_HOME{varr}{fs}{varl}INSTANCE_NAME{varr}.{sh}{lf}")))
+                              .build()));
    }
 
    @Override

@@ -18,11 +18,6 @@
  */
 package org.jclouds.scriptbuilder.domain;
 
-import static org.jclouds.scriptbuilder.domain.Statements.interpret;
-
-import java.util.List;
-
-import com.google.common.collect.Lists;
 
 /**
  * Creates a run script
@@ -30,38 +25,54 @@ import com.google.common.collect.Lists;
  * @author Adrian Cole
  */
 public class CreateOrOverwriteFile extends AppendFile {
-
-   public CreateOrOverwriteFile(String path, Iterable<String> lines) {
-       super(path, lines);
+   public static Builder builder() {
+      return new Builder();
    }
 
-   public CreateOrOverwriteFile(String path, Iterable<String> lines, String marker) {
-       super(path, lines, marker);
+   public static class Builder extends AppendFile.Builder {
+
+      @Override
+      public Builder path(String path) {
+         return Builder.class.cast(super.path(path));
+      }
+
+      @Override
+      public Builder lines(Iterable<String> lines) {
+         return Builder.class.cast(super.lines(lines));
+      }
+
+      @Override
+      public Builder delimeter(String delimeter) {
+         return Builder.class.cast(super.delimeter(delimeter));
+      }
+
+      @Override
+      public Builder expandVariables(boolean expandVariables) {
+         return Builder.class.cast(super.expandVariables(expandVariables));
+      }
+
+      @Override
+      public CreateOrOverwriteFile build() {
+         return new CreateOrOverwriteFile(path, lines, delimeter, expandVariables);
+      }
+
+   }
+
+   protected CreateOrOverwriteFile(String path, Iterable<String> lines, String delimeter, boolean expandVariables) {
+      super(path, lines, delimeter, expandVariables);
    }
 
    @Override
-   public String render(OsFamily family) {
-      List<Statement> statements = Lists.newArrayList();
-      if (family == OsFamily.UNIX) {
-         StringBuilder builder = new StringBuilder();
-         hereFile(path, builder);
-         statements.add(interpret(builder.toString()));
-      } else {
-         // Windows:
-         statements.add(interpret(String.format("copy /y CON %s{lf}", path))); // This clears the file
-         for (String line : lines) {
-            statements.add(appendToFile(line, path, family));
-         }
-      }
-      return new StatementList(statements).render(family);
+   protected String appendToWindowsFile() {
+      return String.format("copy /y CON %s{lf}", path) + super.appendToWindowsFile();
    }
 
-   protected void hereFile(String path, StringBuilder builder) {
-      builder.append("cat > ").append(path).append(" <<'").append(marker).append("'\n");
-      for (String line : lines) {
-         builder.append(line).append("\n");
-      }
-      builder.append(marker).append("\n");
+   @Override
+   public StringBuilder startHereFile() {
+      StringBuilder hereFile = new StringBuilder().append("cat > ").append(path);
+      if (expandVariables)
+         return hereFile.append(" <<-").append(delimeter).append("\n");
+      return hereFile.append(" <<-'").append(delimeter).append("'\n");
    }
 
 }

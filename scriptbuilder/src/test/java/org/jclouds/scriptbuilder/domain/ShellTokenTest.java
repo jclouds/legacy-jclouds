@@ -40,9 +40,9 @@ public class ShellTokenTest {
                "args", "$@").put("varl", "$").put("return", "return").put("exit", "exit").put(
                "varr", "").put("libraryPathVariable", "LD_LIBRARY_PATH").put("beginScript",
                "#!/bin/bash\nset +u\nshopt -s xpg_echo\nshopt -s expand_aliases\n").put(
-               "endScript", "exit 0\n").put("vq", "\"").put("beginFunctions", "").put(
+               "endScript", "exit $?\n").put("vq", "\"").put("beginFunctions", "").put(
                "endFunctions", "").put("fncl", "function ").put("fncr", " {\n").put("fnce",
-               "   return 0\n}\n").put("export", "export").put("rm", "rm").put("cd", "cd").put(
+               "   return $?\n}\n").put("export", "export").put("rm", "rm").put("cd", "cd").put(
                "tmp", "/tmp").put("uid", "$USER").put("root", "/").put("closeFd", ">&-").put("md",
                "mkdir -p").put("escvar", "\\").build();
       assertEquals(ShellToken.tokenValueMap(OsFamily.UNIX), expected);

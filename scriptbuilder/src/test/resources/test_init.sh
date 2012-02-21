@@ -11,11 +11,11 @@ function default {
    export INSTANCE_NAME="mkebsboot"
 export INSTANCE_HOME="/mnt/tmp"
 export LOG_DIR="/mnt/tmp"
-   return 0
+   return $?
 }
 function mkebsboot {
    export TMP_DIR="/mnt/tmp"
-   return 0
+   return $?
 }
 function findPid {
    unset FOUND_PID;
@@ -63,35 +63,40 @@ init)
    mkdir -p $INSTANCE_HOME
    
    # create runscript header
-   cat > $INSTANCE_HOME/mkebsboot.sh <<END_OF_SCRIPT
-#!/bin/bash
-set +u
-shopt -s xpg_echo
-shopt -s expand_aliases
-PROMPT_COMMAND='echo -ne "\033]0;mkebsboot\007"'
-export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
-export INSTANCE_NAME='mkebsboot'
-export TMP_DIR='$TMP_DIR'
-export INSTANCE_NAME='$INSTANCE_NAME'
-export INSTANCE_HOME='$INSTANCE_HOME'
-export LOG_DIR='$LOG_DIR'
-END_OF_SCRIPT
+   cat > $INSTANCE_HOME/mkebsboot.sh <<-'END_OF_JCLOUDS_SCRIPT'
+	#!/bin/bash
+	set +u
+	shopt -s xpg_echo
+	shopt -s expand_aliases
+	
+	PROMPT_COMMAND='echo -ne \"\033]0;mkebsboot\007\"'
+	export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
+
+	export INSTANCE_NAME='mkebsboot'
+END_OF_JCLOUDS_SCRIPT
+   cat >> $INSTANCE_HOME/mkebsboot.sh <<-END_OF_JCLOUDS_SCRIPT
+	export TMP_DIR='$TMP_DIR'
+	export INSTANCE_NAME='$INSTANCE_NAME'
+	export INSTANCE_HOME='$INSTANCE_HOME'
+	export LOG_DIR='$LOG_DIR'
+END_OF_JCLOUDS_SCRIPT
    
    # add desired commands from the user
-   cat >> $INSTANCE_HOME/mkebsboot.sh <<'END_OF_SCRIPT'
-cd $INSTANCE_HOME
-cat >> /tmp/$USER/scripttest/temp.txt <<'END_OF_FILE'
-hello world
-END_OF_FILE
-
-find / || exit 1
-
-END_OF_SCRIPT
+   cat >> $INSTANCE_HOME/mkebsboot.sh <<-'END_OF_JCLOUDS_SCRIPT'
+	cd $INSTANCE_HOME
+	cat >> /tmp/$USER/scripttest/temp.txt <<-'END_OF_JCLOUDS_FILE'
+		hello world
+	END_OF_JCLOUDS_FILE
+	
+	find /
+	
+END_OF_JCLOUDS_SCRIPT
    
    # add runscript footer
-   cat >> $INSTANCE_HOME/mkebsboot.sh <<'END_OF_SCRIPT'
-exit 0
-END_OF_SCRIPT
+   cat >> $INSTANCE_HOME/mkebsboot.sh <<-'END_OF_JCLOUDS_SCRIPT'
+	exit $?
+	
+END_OF_JCLOUDS_SCRIPT
    
    chmod u+x $INSTANCE_HOME/mkebsboot.sh
    ;;
@@ -125,4 +130,4 @@ run)
    $INSTANCE_HOME/$INSTANCE_NAME.sh
    ;;
 esac
-exit 0
+exit $?

@@ -32,9 +32,13 @@ import javax.inject.Provider;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.domain.Location;
@@ -43,6 +47,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -385,7 +390,7 @@ public class TemplateBuilderImplTest {
          // make sure big data is not in the exception message
          assertEquals(
                   e.getMessage(),
-                  "no hardware profiles support images matching params: [biggest=false, fastest=false, imageName=null, imageDescription=null, imageId=myregion/imageId, imagePredicate=null, imageVersion=null, location=EasyMock for interface org.jclouds.domain.Location, minCores=0.0, minRam=0, osFamily=null, osName=null, osDescription=null, osVersion=null, osArch=null, os64Bit=false, hardwareId=null]");
+                  "no hardware profiles support images matching params: [biggest=false, fastest=false, imageName=null, imageDescription=null, imageId=myregion/imageId, imagePredicate=null, imageVersion=null, location=EasyMock for interface org.jclouds.domain.Location, minCores=0.0, minRam=0, osFamily=null, osName=null, osDescription=null, osVersion=null, osArch=null, os64Bit=false, hardwareId=null, hypervisor=null]");
          verify(image);
          verify(os);
          verify(defaultTemplate);
@@ -771,5 +776,111 @@ public class TemplateBuilderImplTest {
       verify(optionsProvider);
       verify(templateBuilderProvider);
    }
+   
+   @SuppressWarnings("unchecked")
+   @Test
+   public void testHardwareIdNullsHypervisor() {
+      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+               .<Location> of());
+      Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+               .<Hardware> of());
+      Location defaultLocation = createMock(Location.class);
+      Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
+      Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
 
+      replay(defaultLocation);
+      replay(optionsProvider);
+      replay(templateBuilderProvider);
+
+      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, defaultLocation,
+               optionsProvider, templateBuilderProvider);
+
+
+      template.hypervisorMatches("OpenVZ");
+
+      assertEquals(template.hardwareId, null);
+      assertEquals(template.hypervisor, "OpenVZ");
+
+      template.hardwareId("myid");
+      assertEquals(template.hardwareId, "myid");
+      assertEquals(template.hypervisor, null);
+
+
+      verify(defaultLocation);
+      verify(optionsProvider);
+      verify(templateBuilderProvider);
+   }
+
+   @Test
+   public void testMatchesHardwareWithIdPredicate() {
+      final Location defaultLocation = createMock(Location.class);
+
+      final Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+            .<Location> of(defaultLocation));
+      final Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet
+            .<Image> of(
+                  new ImageBuilder()
+                        .ids("Ubuntu 11.04 x64")
+                        .name("Ubuntu 11.04 x64")
+                        .description("Ubuntu 11.04 x64")
+                        .location(defaultLocation)
+                        .operatingSystem(
+                              OperatingSystem.builder().name("Ubuntu 11.04 x64").description("Ubuntu 11.04 x64")
+                                    .is64Bit(true).version("11.04").family(OsFamily.UBUNTU).build()).build(),
+                  new ImageBuilder()
+                        .ids("Ubuntu 11.04 64-bit")
+                        .name("Ubuntu 11.04 64-bit")
+                        .description("Ubuntu 11.04 64-bit")
+                        .location(defaultLocation)
+                        .operatingSystem(
+                              OperatingSystem.builder().name("Ubuntu 11.04 64-bit").description("Ubuntu 11.04 64-bit")
+                                    .is64Bit(true).version("11.04").family(OsFamily.UBUNTU).build()).build()));
+
+      final Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+            .<Hardware> of(
+                  new HardwareBuilder()
+                        .ids(String.format("datacenter(%s)platform(%s)cpuCores(%d)memorySizeMB(%d)diskSizeGB(%d)",
+                              "Falkenberg", "Xen", 1, 512, 5)).ram(512)
+                        .processors(ImmutableList.of(new Processor(1, 1.0)))
+                        .volumes(ImmutableList.<Volume> of(new VolumeImpl((float) 5, true, true))).hypervisor("Xen")
+                        .location(defaultLocation)
+                        .supportsImage(ImagePredicates.idIn(ImmutableSet.of("Ubuntu 11.04 x64"))).build(),
+                  new HardwareBuilder()
+                        .ids(String.format("datacenter(%s)platform(%s)cpuCores(%d)memorySizeMB(%d)diskSizeGB(%d)",
+                              "Falkenberg", "OpenVZ", 1, 512, 5)).ram(512)
+                        .processors(ImmutableList.of(new Processor(1, 1.0)))
+                        .volumes(ImmutableList.<Volume> of(new VolumeImpl((float) 5, true, true))).hypervisor("OpenVZ")
+                        .location(defaultLocation)
+                        .supportsImage(ImagePredicates.idIn(ImmutableSet.of("Ubuntu 11.04 64-bit"))).build()));
+
+      final Provider<TemplateOptions> optionsProvider = new Provider<TemplateOptions>() {
+
+         @Override
+         public TemplateOptions get() {
+            return new TemplateOptions();
+         }
+
+      };
+      Provider<TemplateBuilder> templateBuilderProvider = new Provider<TemplateBuilder>() {
+
+         @Override
+         public TemplateBuilder get() {
+            return createTemplateBuilder(null, locations, images, hardwares, defaultLocation, optionsProvider, this);
+         }
+
+      };
+      expect(defaultLocation.getId()).andReturn("region").anyTimes();
+
+      replay(defaultLocation);
+
+      TemplateBuilder templateBuilder = templateBuilderProvider.get().minRam(512).osFamily(OsFamily.UBUNTU)
+            .hypervisorMatches("OpenVZ").osVersionMatches("1[10].[10][04]").os64Bit(true);
+
+      Template template = templateBuilder.build();
+      assertEquals(template.getHardware().getHypervisor(), "OpenVZ");
+      assertEquals(template.getImage().getId(), "Ubuntu 11.04 64-bit");
+
+      verify(defaultLocation);
+   }
 }

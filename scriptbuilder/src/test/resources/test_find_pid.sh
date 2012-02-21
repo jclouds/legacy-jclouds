@@ -25,4 +25,4 @@ function findPid {
 export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
 findPid $@ || exit 1
 echo $FOUND_PID
-exit 0
+exit $?

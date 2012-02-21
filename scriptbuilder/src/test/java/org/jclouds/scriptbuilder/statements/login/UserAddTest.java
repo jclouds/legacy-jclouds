@@ -61,13 +61,13 @@ public class UserAddTest {
    public void testWithSshAuthorizedKeyUNIX() {
       assertEquals(
                UserAdd.builder().login("me").authorizeRSAPublicKey("rsapublickey").build().render(OsFamily.UNIX),
-               "mkdir -p /home/users\nuseradd -s /bin/bash -m  -d /home/users/me me\nmkdir -p /home/users/me/.ssh\ncat >> /home/users/me/.ssh/authorized_keys <<'END_OF_FILE'\nrsapublickey\nEND_OF_FILE\nchmod 600 /home/users/me/.ssh/authorized_keys\nchown -R me /home/users/me\n");
+               "mkdir -p /home/users\nuseradd -s /bin/bash -m  -d /home/users/me me\nmkdir -p /home/users/me/.ssh\ncat >> /home/users/me/.ssh/authorized_keys <<-'END_OF_JCLOUDS_FILE'\n\trsapublickey\nEND_OF_JCLOUDS_FILE\nchmod 600 /home/users/me/.ssh/authorized_keys\nchown -R me /home/users/me\n");
    }
 
    public void testWithSshInstalledKeyUNIX() {
       assertEquals(
                UserAdd.builder().login("me").installRSAPrivateKey("rsaprivate").build().render(OsFamily.UNIX),
-               "mkdir -p /home/users\nuseradd -s /bin/bash -m  -d /home/users/me me\nmkdir -p /home/users/me/.ssh\nrm /home/users/me/.ssh/id_rsa\ncat >> /home/users/me/.ssh/id_rsa <<'END_OF_FILE'\nrsaprivate\nEND_OF_FILE\nchmod 600 /home/users/me/.ssh/id_rsa\nchown -R me /home/users/me\n");
+               "mkdir -p /home/users\nuseradd -s /bin/bash -m  -d /home/users/me me\nmkdir -p /home/users/me/.ssh\nrm /home/users/me/.ssh/id_rsa\ncat >> /home/users/me/.ssh/id_rsa <<-'END_OF_JCLOUDS_FILE'\n\trsaprivate\nEND_OF_JCLOUDS_FILE\nchmod 600 /home/users/me/.ssh/id_rsa\nchown -R me /home/users/me\n");
    }
 
    @Test(expectedExceptions = UnsupportedOperationException.class)

@@ -20,19 +20,21 @@ package org.jclouds.compute.domain;
 
 import org.jclouds.compute.config.CustomizationResponse;
 
+import com.google.common.base.Objects;
+
 /**
  * @author Adrian Cole
  */
 public class ExecResponse implements CustomizationResponse {
 
-   private final String error;
    private final String output;
-   private final int exitCode;
+   private final String error;
+   private final int exitStatus;
 
-   public ExecResponse(String output, String error, int exitCode) {
+   public ExecResponse(String output, String error, int exitStatus) {
       this.output = output;
       this.error = error;
-      this.exitCode = exitCode;
+      this.exitStatus = exitStatus;
    }
 
    public String getError() {
@@ -43,47 +45,38 @@ public class ExecResponse implements CustomizationResponse {
       return output;
    }
 
-   @Override
-   public String toString() {
-      return "[output=" + output + ", error=" + error + ", exitCode=" + exitCode + "]";
+   /**
+    * @see #getExitStatus
+    */
+   @Deprecated
+   public int getExitCode() {
+      return exitStatus;
+   }
+
+   public int getExitStatus() {
+      return exitStatus;
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((error == null) ? 0 : error.hashCode());
-      result = prime * result + exitCode;
-      result = prime * result + ((output == null) ? 0 : output.hashCode());
-      return result;
+      return Objects.hashCode(output, error, exitStatus);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
+   public boolean equals(Object o) {
+      if (o == null)
          return false;
-      if (getClass() != obj.getClass())
+      if (!o.getClass().equals(getClass()))
          return false;
-      ExecResponse other = (ExecResponse) obj;
-      if (error == null) {
-         if (other.error != null)
-            return false;
-      } else if (!error.equals(other.error))
-         return false;
-      if (exitCode != other.exitCode)
-         return false;
-      if (output == null) {
-         if (other.output != null)
-            return false;
-      } else if (!output.equals(other.output))
-         return false;
-      return true;
+      ExecResponse that = ExecResponse.class.cast(o);
+      return Objects.equal(this.output, that.output) && Objects.equal(this.error, that.error)
+            && Objects.equal(this.exitStatus, that.exitStatus);
    }
 
-   public int getExitCode() {
-      return exitCode;
+   @Override
+   public String toString() {
+      return Objects.toStringHelper("").add("output", output).add("error", error).add("exitStatus", exitStatus)
+            .toString();
    }
 
 }

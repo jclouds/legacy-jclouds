@@ -125,9 +125,9 @@ public class BaseComputeService implements ComputeService {
    private final SuspendNodeStrategy suspendNodeStrategy;
    private final Provider<TemplateBuilder> templateBuilderProvider;
    private final Provider<TemplateOptions> templateOptionsProvider;
-   private final Predicate<NodeMetadata> nodeRunning;
-   private final Predicate<NodeMetadata> nodeTerminated;
-   private final Predicate<NodeMetadata> nodeSuspended;
+   private final Predicate<AtomicReference<NodeMetadata>> nodeRunning;
+   private final Predicate<AtomicReference<NodeMetadata>> nodeTerminated;
+   private final Predicate<AtomicReference<NodeMetadata>> nodeSuspended;
    private final InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory;
    private final Timeouts timeouts;
    private final InitAdminAccess initAdminAccess;
@@ -143,9 +143,9 @@ public class BaseComputeService implements ComputeService {
          RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
          ResumeNodeStrategy resumeNodeStrategy, SuspendNodeStrategy suspendNodeStrategy,
          Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
-         @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
-         @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
-         @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended,
+         @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
+         @Named("NODE_TERMINATED") Predicate<AtomicReference<NodeMetadata>> nodeTerminated,
+         @Named("NODE_SUSPENDED") Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
          InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, InitAdminAccess initAdminAccess,
          RunScriptOnNode.Factory runScriptOnNodeFactory, PersistNodeCredentials persistNodeCredentials,
          Timeouts timeouts, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
@@ -285,7 +285,7 @@ public class BaseComputeService implements ComputeService {
 
       }, timeouts.nodeRunning, 1000, TimeUnit.MILLISECONDS);
       
-      boolean successful = tester.apply(id) && (node.get() == null || nodeTerminated.apply(node.get()));
+      boolean successful = tester.apply(id) && (node.get() == null || nodeTerminated.apply(node));
       if (successful)
          credentialStore.remove("node#" + id);
       logger.debug("<< destroyed node(%s) success(%s)", id, successful);
@@ -383,7 +383,7 @@ public class BaseComputeService implements ComputeService {
    public void rebootNode(String id) {
       checkNotNull(id, "id");
       logger.debug(">> rebooting node(%s)", id);
-      NodeMetadata node = rebootNodeStrategy.rebootNode(id);
+      AtomicReference<NodeMetadata> node = new AtomicReference<NodeMetadata>(rebootNodeStrategy.rebootNode(id));
       boolean successful = nodeRunning.apply(node);
       logger.debug("<< rebooted node(%s) success(%s)", id, successful);
    }
@@ -414,7 +414,7 @@ public class BaseComputeService implements ComputeService {
    public void resumeNode(String id) {
       checkNotNull(id, "id");
       logger.debug(">> resuming node(%s)", id);
-      NodeMetadata node = resumeNodeStrategy.resumeNode(id);
+      AtomicReference<NodeMetadata> node = new AtomicReference<NodeMetadata>(resumeNodeStrategy.resumeNode(id));
       boolean successful = nodeRunning.apply(node);
       logger.debug("<< resumed node(%s) success(%s)", id, successful);
    }
@@ -445,7 +445,7 @@ public class BaseComputeService implements ComputeService {
    public void suspendNode(String id) {
       checkNotNull(id, "id");
       logger.debug(">> suspending node(%s)", id);
-      NodeMetadata node = suspendNodeStrategy.suspendNode(id);
+      AtomicReference<NodeMetadata> node = new AtomicReference<NodeMetadata>(suspendNodeStrategy.suspendNode(id));
       boolean successful = nodeSuspended.apply(node);
       logger.debug("<< suspended node(%s) success(%s)", id, successful);
    }

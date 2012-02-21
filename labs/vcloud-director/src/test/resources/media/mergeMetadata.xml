@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Metadata type="application/vnd.vmware.vcloud.metadata+xml" href="https://mycloud.greenhousedata.com/api/media/c93e5cdc-f29a-4749-8ed2-093df04cc75e/metadata" xmlns="http://www.vmware.com/vcloud/v1.5">
+    <Link rel="up" type="application/vnd.vmware.vcloud.media+xml" href="https://mycloud.greenhousedata.com/api/media/c93e5cdc-f29a-4749-8ed2-093df04cc75e"/>
+    <Link rel="add" type="application/vnd.vmware.vcloud.metadata+xml" href="https://mycloud.greenhousedata.com/api/media/c93e5cdc-f29a-4749-8ed2-093df04cc75e/metadata"/>
+    <MetadataEntry type="application/vnd.vmware.vcloud.metadata.value+xml" href="https://mycloud.greenhousedata.com/api/media/c93e5cdc-f29a-4749-8ed2-093df04cc75e/metadata/key">
+        <Link rel="up" type="application/vnd.vmware.vcloud.metadata+xml" href="https://mycloud.greenhousedata.com/api/media/c93e5cdc-f29a-4749-8ed2-093df04cc75e/metadata"/>
+        <Link rel="edit" type="application/vnd.vmware.vcloud.metadata.value+xml" href="https://mycloud.greenhousedata.com/api/media/c93e5cdc-f29a-4749-8ed2-093df04cc75e/metadata/key"/>
+        <Link rel="remove" href="https://mycloud.greenhousedata.com/api/media/c93e5cdc-f29a-4749-8ed2-093df04cc75e/metadata/key"/>
+        <Key>key</Key>
+        <Value>value</Value>
+    </MetadataEntry>
+</Metadata>

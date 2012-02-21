@@ -31,10 +31,8 @@ import static com.google.common.collect.Sets.newTreeSet;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.util.logging.Logger.getAnonymousLogger;
-import static org.jclouds.compute.ComputeTestUtils.buildScript;
 import static org.jclouds.compute.RunScriptData.JBOSS7_URL;
 import static org.jclouds.compute.RunScriptData.JBOSS_HOME;
-import static org.jclouds.compute.RunScriptData.JDK7_URL;
 import static org.jclouds.compute.RunScriptData.installAdminUserJBossAndOpenPorts;
 import static org.jclouds.compute.RunScriptData.startJBoss;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.nameTask;
@@ -78,7 +76,6 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
@@ -93,6 +90,7 @@ import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.scriptbuilder.domain.SaveHttpResponseTo;
 import org.jclouds.scriptbuilder.domain.Statements;
+import org.jclouds.scriptbuilder.statements.java.InstallJDK;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
@@ -210,8 +208,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
    @Test(enabled = true, expectedExceptions = NoSuchElementException.class)
    public void testCorrectExceptionRunningNodesNotFound() throws Exception {
-      client.runScriptOnNodesMatching(runningInGroup("zebras-are-awesome"), buildScript(new OperatingSystem.Builder()
-            .family(OsFamily.UBUNTU).description("ffoo").build()));
+      client.runScriptOnNodesMatching(runningInGroup("zebras-are-awesome"), InstallJDK.fromURL());
    }
 
    // since surefire and eclipse don't otherwise guarantee the order, we are
@@ -259,7 +256,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
          response = future.get(3, TimeUnit.MINUTES);
 
-         assert response.getExitCode() == 0 : node.getId() + ": " + response;
+         assert response.getExitStatus() == 0 : node.getId() + ": " + response;
 
          node = client.getNodeMetadata(node.getId());
          // test that the node updated to the correct admin user!
@@ -268,7 +265,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
          weCanCancelTasks(node);
 
-         assert response.getExitCode() == 0 : node.getId() + ": " + response;
+         assert response.getExitStatus() == 0 : node.getId() + ": " + response;
 
          response = client.runScriptOnNode(node.getId(), "echo $USER", wrapInInitScript(false).runAsRoot(false));
 
@@ -307,11 +304,11 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
          assert false : node.getId() + ": " + response;
       } catch (TimeoutException e) {
          assert !future.isDone();
-         response = client.runScriptOnNode(node.getId(), Statements.exec("./sleeper status"), wrapInInitScript(false)
+         response = client.runScriptOnNode(node.getId(), Statements.exec("/tmp/init-sleeper status"), wrapInInitScript(false)
                .runAsRoot(false));
          assert !response.getOutput().trim().equals("") : node.getId() + ": " + response;
          future.cancel(true);
-         response = client.runScriptOnNode(node.getId(), Statements.exec("./sleeper status"), wrapInInitScript(false)
+         response = client.runScriptOnNode(node.getId(), Statements.exec("/tmp/init-sleeper status"), wrapInInitScript(false)
                .runAsRoot(false));
          assert response.getOutput().trim().equals("") : node.getId() + ": " + response;
          try {
@@ -373,7 +370,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
    protected static Template addRunScriptToTemplate(Template template) {
       template.getOptions().runScript(
-            Statements.newStatementList(AdminAccess.standard(), buildScript(template.getImage().getOperatingSystem())));
+            Statements.newStatementList(AdminAccess.standard(), InstallJDK.fromURL()));
       return template;
    }
 
@@ -437,7 +434,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String group, OperatingSystem os,
          LoginCredentials creds) throws RunScriptOnNodesException {
-      return client.runScriptOnNodesMatching(runningInGroup(group), buildScript(os), overrideLoginCredentials(creds)
+      return client.runScriptOnNodesMatching(runningInGroup(group), InstallJDK.fromURL(), overrideLoginCredentials(creds)
             .nameTask("runScriptWithCreds"));
    }
 
@@ -595,10 +592,10 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
       IPSocket socket = new IPSocket(Iterables.get(node.getPublicAddresses(), 0), 8080);
       assert preciseSocketTester.apply(socket) : String.format("failed to open socket %s on node %s:%n%s%s", socket,
-            node, init(node, processName, "tail"), init(node, processName, "tailerr"));
+            node, init(node, processName, "stdout"), init(node, processName, "stderr"));
       stats.socketOpenMilliseconds = watch.elapsedTime(TimeUnit.MILLISECONDS);
 
-      exec = init(node, processName, "tail");
+      exec = init(node, processName, "stdout");
 
       Matcher matcher = parseReported.matcher(exec.getOutput());
       if (matcher.find())
@@ -609,7 +606,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
    }
 
    public ExecResponse init(NodeMetadata node, String processName, String command) {
-      return client.runScriptOnNode(node.getId(), "./" + processName + " "+command, runAsRoot(false)
+      return client.runScriptOnNode(node.getId(), "/tmp/init-" + processName + " "+command, runAsRoot(false)
             .wrapInInitScript(false));
    }
 
@@ -679,7 +676,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
                            format("ls %s/bundles/org/jboss/as/osgi/configadmin/main|sed -e 's/.*-//g' -e 's/.jar//g'",
                                  JBOSS_HOME)), configureSeconds));
 
-         for (Entry<String, URI> download : ImmutableMap.<String, URI> of("jboss7", JBOSS7_URL, "jdk7", JDK7_URL)
+         for (Entry<String, URI> download : ImmutableMap.<String, URI> of("jboss7", JBOSS7_URL, "jdk7", InstallJDK.FromURL.JDK7_URL)
                .entrySet()) {
             // note we cannot use nslookup until we've configured the system, as
             // it may have not been present checking the address of the download
@@ -719,13 +716,13 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
          }), "jboss", node, JBOSS_PATTERN);
 
-         client.runScriptOnNode(nodeId, "./jboss stop", runAsRoot(false).wrapInInitScript(false));
+         client.runScriptOnNode(nodeId, "/tmp/init-jboss stop", runAsRoot(false).wrapInInitScript(false));
 
          trackAvailabilityOfProcessOnNode(context.utils().userExecutor().submit(new Callable<ExecResponse>() {
 
             @Override
             public ExecResponse call() {
-               return client.runScriptOnNode(nodeId, "./jboss start", runAsRoot(false).wrapInInitScript(false));
+               return client.runScriptOnNode(nodeId, "/tmp/init-jboss start", runAsRoot(false).wrapInInitScript(false));
             }
 
             @Override

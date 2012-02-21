@@ -39,7 +39,7 @@ public class SshResponds implements Predicate<SshClient> {
 
       try {
          client.connect();
-         if (client.exec("id").getExitCode() == 0) {
+         if (client.exec("id").getExitStatus() == 0) {
             return true;
          }
       } catch (SshException e) {

@@ -10,11 +10,11 @@ function abort {
 function default {
    export INSTANCE_NAME="bootstrap"
 export INSTANCE_HOME="/tmp/bootstrap"
-export LOG_DIR="/tmp/bootstrap"
-   return 0
+export LOG_DIR="$INSTANCE_HOME"
+   return $?
 }
 function bootstrap {
-      return 0
+      return $?
 }
 function findPid {
    unset FOUND_PID;
@@ -62,75 +62,134 @@ init)
    mkdir -p $INSTANCE_HOME
    
    # create runscript header
-   cat > $INSTANCE_HOME/bootstrap.sh <<END_OF_SCRIPT
-#!/bin/bash
-set +u
-shopt -s xpg_echo
-shopt -s expand_aliases
-PROMPT_COMMAND='echo -ne "\033]0;bootstrap\007"'
-export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
-export INSTANCE_NAME='bootstrap'
-export INSTANCE_NAME='$INSTANCE_NAME'
-export INSTANCE_HOME='$INSTANCE_HOME'
-export LOG_DIR='$LOG_DIR'
-END_OF_SCRIPT
+   cat > $INSTANCE_HOME/bootstrap.sh <<-'END_OF_JCLOUDS_SCRIPT'
+	#!/bin/bash
+	set +u
+	shopt -s xpg_echo
+	shopt -s expand_aliases
+	
+	PROMPT_COMMAND='echo -ne \"\033]0;bootstrap\007\"'
+	export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
+
+	export INSTANCE_NAME='bootstrap'
+END_OF_JCLOUDS_SCRIPT
+   cat >> $INSTANCE_HOME/bootstrap.sh <<-END_OF_JCLOUDS_SCRIPT
+	export INSTANCE_NAME='$INSTANCE_NAME'
+	export INSTANCE_HOME='$INSTANCE_HOME'
+	export LOG_DIR='$LOG_DIR'
+END_OF_JCLOUDS_SCRIPT
+   cat >> $INSTANCE_HOME/bootstrap.sh <<-'END_OF_JCLOUDS_SCRIPT'
+	function abort {
+   echo "aborting: $@" 1>&2
+   exit 1
+}
+alias apt-get-install="apt-get install -f -y -qq --force-yes"
+alias apt-get-upgrade="(apt-get update -qq&&apt-get upgrade -y -qq)"
+
+function ensure_cmd_or_install_package_apt(){
+  local cmd=$1
+  local pkg=$2
+  
+  hash $cmd 2>/dev/null || apt-get-install $pkg || ( apt-get-upgrade && apt-get-install $pkg )
+}
+
+function ensure_cmd_or_install_package_yum(){
+  local cmd=$1
+  local pkg=$2
+  hash $cmd 2>/dev/null || yum --nogpgcheck -y ensure $pkg
+}
+
+function ensure_netutils_apt() {
+  ensure_cmd_or_install_package_apt nslookup dnsutils
+  ensure_cmd_or_install_package_apt curl curl
+}
+
+function ensure_netutils_yum() {
+  ensure_cmd_or_install_package_yum nslookup bind-utils
+  ensure_cmd_or_install_package_yum curl curl
+}
+
+# most network services require that the hostname is in
+# the /etc/hosts file, or they won't operate
+function ensure_hostname_in_hosts() {
+  egrep -q `hostname` /etc/hosts || awk -v hostname=`hostname` 'END { print $1" "hostname }' /proc/net/arp >> /etc/hosts
+}
+
+# download locations for many services are at public dns
+function ensure_can_resolve_public_dns() {
+  nslookup yahoo.com > /dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf
+}
+
+function setupPublicCurl() {
+  ensure_hostname_in_hosts
+  if hash apt-get 2>/dev/null; then
+    ensure_netutils_apt
+  elif hash yum 2>/dev/null; then
+    ensure_netutils_yum
+  else
+    abort "we only support apt-get and yum right now... please contribute!"
+    return 1
+  fi
+  ensure_can_resolve_public_dns
+  return 0  
+}
+
+END_OF_JCLOUDS_SCRIPT
    
    # add desired commands from the user
-   cat >> $INSTANCE_HOME/bootstrap.sh <<'END_OF_SCRIPT'
-cd $INSTANCE_HOME
-rm /etc/sudoers
-cat >> /etc/sudoers <<'END_OF_FILE'
-root ALL = (ALL) ALL
-%wheel ALL = (ALL) NOPASSWD:ALL
-END_OF_FILE
-chmod 0440 /etc/sudoers
-mkdir -p /home/users
-groupadd -f wheel
-useradd -s /bin/bash -g wheel -m  -d /home/users/defaultAdminUsername -p 'crypt(randompassword)' defaultAdminUsername
-mkdir -p /home/users/defaultAdminUsername/.ssh
-cat >> /home/users/defaultAdminUsername/.ssh/authorized_keys <<'END_OF_FILE'
-publicKey
-END_OF_FILE
-chmod 600 /home/users/defaultAdminUsername/.ssh/authorized_keys
-chown -R defaultAdminUsername /home/users/defaultAdminUsername
-exec 3<> /etc/ssh/sshd_config && awk -v TEXT="PasswordAuthentication no
-PermitRootLogin no
-" 'BEGIN {print TEXT}{print}' /etc/ssh/sshd_config >&3
-/etc/init.d/sshd reload||/etc/init.d/ssh reload
-awk -v user=^${SUDO_USER:=${USER}}: -v password='crypt(randompassword)' 'BEGIN { FS=OFS=":" } $0 ~ user { $2 = password } 1' /etc/shadow >/etc/shadow.${SUDO_USER:=${USER}}
-test -f /etc/shadow.${SUDO_USER:=${USER}} && mv /etc/shadow.${SUDO_USER:=${USER}} /etc/shadow
-which nslookup >&- 2>&-|| apt-get install -f -y -qq --force-yes dnsutils|| (apt-get update -qq&&apt-get upgrade -y -qq)&&apt-get install -f -y -qq --force-yes dnsutils
-grep `hostname` /etc/hosts >/dev/null || awk -v hostname=`hostname` 'END { print $1" "hostname }' /proc/net/arp >> /etc/hosts
-nslookup yahoo.com >/dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf
-which curl >&- 2>&-|| apt-get install -f -y -qq --force-yes curl|| (apt-get update -qq&&apt-get upgrade -y -qq)&&apt-get install -f -y -qq --force-yes curl
-mkdir -p /usr/local/jdk
-curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://download.oracle.com/otn-pub/java/jdk/7u2-b13/jdk-7u2-linux-x64.tar.gz |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
-mv /usr/local/jdk1.7*/* /usr/local/jdk/
-test -n "$SUDO_USER" && 
-cat >> /home/$SUDO_USER/.bashrc <<'END_OF_FILE'
-export JAVA_HOME=/usr/local/jdk
-export PATH=$JAVA_HOME/bin:$PATH
-END_OF_FILE
-cat >> /etc/bashrc <<'END_OF_FILE'
-export JAVA_HOME=/usr/local/jdk
-export PATH=$JAVA_HOME/bin:$PATH
-END_OF_FILE
-cat >> $HOME/.bashrc <<'END_OF_FILE'
-export JAVA_HOME=/usr/local/jdk
-export PATH=$JAVA_HOME/bin:$PATH
-END_OF_FILE
-cat >> /etc/skel/.bashrc <<'END_OF_FILE'
-export JAVA_HOME=/usr/local/jdk
-export PATH=$JAVA_HOME/bin:$PATH
-END_OF_FILE
-ln -fs /usr/local/jdk/bin/java /usr/bin/java
-
-END_OF_SCRIPT
+   cat >> $INSTANCE_HOME/bootstrap.sh <<-'END_OF_JCLOUDS_SCRIPT'
+	cd $INSTANCE_HOME
+	rm -f $INSTANCE_HOME/rc
+	trap 'echo $?>$INSTANCE_HOME/rc' 0 1 2 3 15
+	cat > /etc/sudoers <<-'END_OF_JCLOUDS_FILE'
+		root ALL = (ALL) ALL
+		%wheel ALL = (ALL) NOPASSWD:ALL
+	END_OF_JCLOUDS_FILE
+	chmod 0440 /etc/sudoers
+	mkdir -p /home/users
+	groupadd -f wheel
+	useradd -s /bin/bash -g wheel -m  -d /home/users/defaultAdminUsername -p 'crypt(randompassword)' defaultAdminUsername
+	mkdir -p /home/users/defaultAdminUsername/.ssh
+	cat >> /home/users/defaultAdminUsername/.ssh/authorized_keys <<-'END_OF_JCLOUDS_FILE'
+		publicKey
+	END_OF_JCLOUDS_FILE
+	chmod 600 /home/users/defaultAdminUsername/.ssh/authorized_keys
+	chown -R defaultAdminUsername /home/users/defaultAdminUsername
+	exec 3<> /etc/ssh/sshd_config && awk -v TEXT="PasswordAuthentication no
+	PermitRootLogin no
+	" 'BEGIN {print TEXT}{print}' /etc/ssh/sshd_config >&3
+	hash service 2>/dev/null && service ssh reload || /etc/init.d/ssh* reload
+	awk -v user=^${SUDO_USER:=${USER}}: -v password='crypt(randompassword)' 'BEGIN { FS=OFS=":" } $0 ~ user { $2 = password } 1' /etc/shadow >/etc/shadow.${SUDO_USER:=${USER}}
+	test -f /etc/shadow.${SUDO_USER:=${USER}} && mv /etc/shadow.${SUDO_USER:=${USER}} /etc/shadow
+	setupPublicCurl || return 1
+	curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://download.oracle.com/otn-pub/java/jdk/7/jdk-7-linux-x64.tar.gz |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
+	mv /usr/local/jdk* /usr/local/jdk/
+	test -n "$SUDO_USER" && 
+	cat >> /home/$SUDO_USER/.bashrc <<-'END_OF_JCLOUDS_FILE'
+		export JAVA_HOME=/usr/local/jdk
+		export PATH=$JAVA_HOME/bin:$PATH
+	END_OF_JCLOUDS_FILE
+	cat >> /etc/bashrc <<-'END_OF_JCLOUDS_FILE'
+		export JAVA_HOME=/usr/local/jdk
+		export PATH=$JAVA_HOME/bin:$PATH
+	END_OF_JCLOUDS_FILE
+	cat >> $HOME/.bashrc <<-'END_OF_JCLOUDS_FILE'
+		export JAVA_HOME=/usr/local/jdk
+		export PATH=$JAVA_HOME/bin:$PATH
+	END_OF_JCLOUDS_FILE
+	cat >> /etc/skel/.bashrc <<-'END_OF_JCLOUDS_FILE'
+		export JAVA_HOME=/usr/local/jdk
+		export PATH=$JAVA_HOME/bin:$PATH
+	END_OF_JCLOUDS_FILE
+	ln -fs /usr/local/jdk/bin/java /usr/bin/java
+	
+END_OF_JCLOUDS_SCRIPT
    
    # add runscript footer
-   cat >> $INSTANCE_HOME/bootstrap.sh <<'END_OF_SCRIPT'
-exit 0
-END_OF_SCRIPT
+   cat >> $INSTANCE_HOME/bootstrap.sh <<-'END_OF_JCLOUDS_SCRIPT'
+	exit $?
+	
+END_OF_JCLOUDS_SCRIPT
    
    chmod u+x $INSTANCE_HOME/bootstrap.sh
    ;;
@@ -151,6 +210,17 @@ start)
    default || exit 1
    forget $INSTANCE_NAME $INSTANCE_HOME/$INSTANCE_NAME.sh $LOG_DIR || exit 1
    ;;
+stdout)
+   default || exit 1
+   cat $LOG_DIR/stdout.log
+   ;;
+stderr)
+   default || exit 1
+   cat $LOG_DIR/stderr.log
+   ;;
+exitstatus)
+   default || exit 1
+   [ -f $LOG_DIR/rc ] && cat $LOG_DIR/rc;;
 tail)
    default || exit 1
    tail $LOG_DIR/stdout.log
@@ -164,4 +234,4 @@ run)
    $INSTANCE_HOME/$INSTANCE_NAME.sh
    ;;
 esac
-exit 0
+exit $?

@@ -18,6 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Resource Types used in VCloud.
  * 
@@ -47,6 +50,8 @@ public class VCloudDirectorMediaType {
    public static final String TASKS_LIST = "application/vnd.vmware.vcloud.tasksList+xml";
 
    public static final String TASK = "application/vnd.vmware.vcloud.task+xml";
+   
+   public static final String NETWORK = "application/vnd.vmware.vcloud.network+xml";
 
    public static final String ORG_NETWORK = "application/vnd.vmware.vcloud.orgNetwork+xml";
 
@@ -60,4 +65,18 @@ public class VCloudDirectorMediaType {
 
    public static final String PROPERTY = "application/vnd.vmware.vcloud.property+xml";
 
+   public static final String MEDIA = "application/vnd.vmware.vcloud.media+xml";
+
+   public static final String OWNER = "application/vnd.vmware.vcloud.owner+xml";
+   
+   public static final String VDC = "application/vnd.vmware.vcloud.vdc+xml";
+   
+   public static final String ADMIN_USER = "application/vnd.vmware.admin.user+xml";
+
+   public static final List<String> ALL = Arrays.asList(
+        SESSION, ERROR, ORG_LIST, METADATA, METADATA_ENTRY,
+        METADATA_VALUE, ORG, TASKS_LIST, TASK, NETWORK, ORG_NETWORK,
+        CATALOG, CATALOG_ITEM, CATALOG_ITEMS, CATALOGS_LIST, PROPERTY,
+        MEDIA, OWNER, VDC, ADMIN_USER
+     );
 }

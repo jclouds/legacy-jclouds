@@ -27,8 +27,8 @@ import static org.jclouds.compute.util.ComputeServiceUtils.findReachableSocketOn
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicReference;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
@@ -41,6 +41,7 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.domain.Statement;
 
@@ -55,31 +56,28 @@ import com.google.inject.assistedinject.AssistedInject;
  * @author Adrian Cole
  */
 public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Callable<Void>,
-         Function<NodeMetadata, Void> {
+      Function<AtomicReference<NodeMetadata>, Void> {
    public static interface Factory {
-      Callable<Void> create(TemplateOptions options, NodeMetadata node, Set<NodeMetadata> goodNodes,
-               Map<NodeMetadata, Exception> badNodes,
-               Multimap<NodeMetadata, CustomizationResponse> customizationResponses);
+      Callable<Void> create(TemplateOptions options, AtomicReference<NodeMetadata> node, Set<NodeMetadata> goodNodes,
+            Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses);
 
-      Function<NodeMetadata, Void> create(TemplateOptions options, Set<NodeMetadata> goodNodes,
-               Map<NodeMetadata, Exception> badNodes,
-               Multimap<NodeMetadata, CustomizationResponse> customizationResponses);
+      Function<AtomicReference<NodeMetadata>, Void> create(TemplateOptions options, Set<NodeMetadata> goodNodes,
+            Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses);
    }
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final Predicate<NodeMetadata> nodeRunning;
+   private final Predicate<AtomicReference<NodeMetadata>> nodeRunning;
    private final InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory;
-   private final GetNodeMetadataStrategy getNode;
    private final RetryIfSocketNotYetOpen socketTester;
    private final Timeouts timeouts;
 
    @Nullable
    private final Statement statement;
    private final TemplateOptions options;
-   private NodeMetadata node;
+   private AtomicReference<NodeMetadata> node;
    private final Set<NodeMetadata> goodNodes;
    private final Map<NodeMetadata, Exception> badNodes;
    private final Multimap<NodeMetadata, CustomizationResponse> customizationResponses;
@@ -88,18 +86,17 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
 
    @AssistedInject
    public CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap(
-            @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning, GetNodeMetadataStrategy getNode,
-            RetryIfSocketNotYetOpen socketTester, Timeouts timeouts,
-            Function<TemplateOptions, Statement> templateOptionsToStatement,
-            InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
-            @Assisted TemplateOptions options, @Assisted @Nullable NodeMetadata node,
-            @Assisted Set<NodeMetadata> goodNodes, @Assisted Map<NodeMetadata, Exception> badNodes,
-            @Assisted Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
+         @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
+         RetryIfSocketNotYetOpen socketTester, Timeouts timeouts,
+         Function<TemplateOptions, Statement> templateOptionsToStatement,
+         InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, @Assisted TemplateOptions options,
+         @Assisted AtomicReference<NodeMetadata> node, @Assisted Set<NodeMetadata> goodNodes,
+         @Assisted Map<NodeMetadata, Exception> badNodes,
+         @Assisted Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
       this.statement = checkNotNull(templateOptionsToStatement, "templateOptionsToStatement").apply(
-               checkNotNull(options, "options"));
+            checkNotNull(options, "options"));
       this.nodeRunning = checkNotNull(nodeRunning, "nodeRunning");
       this.initScriptRunnerFactory = checkNotNull(initScriptRunnerFactory, "initScriptRunnerFactory");
-      this.getNode = checkNotNull(getNode, "getNode");
       this.socketTester = checkNotNull(socketTester, "socketTester");
       this.timeouts = checkNotNull(timeouts, "timeouts");
       this.node = node;
@@ -111,61 +108,65 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
 
    @AssistedInject
    public CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap(
-            @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning, GetNodeMetadataStrategy getNode,
-            RetryIfSocketNotYetOpen socketTester, Timeouts timeouts,
-            Function<TemplateOptions, Statement> templateOptionsToStatement,
-            InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
-            @Assisted TemplateOptions options, @Assisted Set<NodeMetadata> goodNodes,
-            @Assisted Map<NodeMetadata, Exception> badNodes,
-            @Assisted Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
-      this(nodeRunning, getNode, socketTester, timeouts, templateOptionsToStatement, initScriptRunnerFactory, options,
-               null, goodNodes, badNodes, customizationResponses);
+         @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning, GetNodeMetadataStrategy getNode,
+         RetryIfSocketNotYetOpen socketTester, Timeouts timeouts,
+         Function<TemplateOptions, Statement> templateOptionsToStatement,
+         InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, @Assisted TemplateOptions options,
+         @Assisted Set<NodeMetadata> goodNodes, @Assisted Map<NodeMetadata, Exception> badNodes,
+         @Assisted Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
+      this(nodeRunning, socketTester, timeouts, templateOptionsToStatement, initScriptRunnerFactory, options,
+            new AtomicReference<NodeMetadata>(null), goodNodes, badNodes, customizationResponses);
    }
 
    @Override
    public Void call() {
       checkState(!tainted, "this object is not designed to be reused: %s", toString());
       tainted = true;
-      String originalId = node.getId();
-      NodeMetadata originalNode = node;
+      String originalId = node.get().getId();
+      NodeMetadata originalNode = node.get();
       try {
          if (options.shouldBlockUntilRunning()) {
-            if (nodeRunning.apply(node)) {
-               node = getNode.getNode(originalId);
-            } else {
-               NodeMetadata nodeForState = getNode.getNode(originalId);
-               NodeState state = nodeForState == null ? NodeState.TERMINATED : nodeForState.getState();
-               if (state == NodeState.TERMINATED)
+            try {
+               if (!nodeRunning.apply(node)) {
+                  if (node.get() == null) {
+                     node.set(originalNode);
+                     throw new IllegalStateException(format("api response for node(%s) was null, so we can't customize",
+                           originalId));
+                  }
+                  throw new IllegalStateException(
+                        format(
+                              "node(%s) didn't achieve the state running within %d seconds, so we couldn't customize; final state: %s",
+                              originalId, timeouts.nodeRunning / 1000, node.get().getState()));
+               }
+            } catch (IllegalStateException e) {
+               if (node.get().getState() == NodeState.TERMINATED) {
                   throw new IllegalStateException(format("node(%s) terminated before we could customize", originalId));
-               else
-                  throw new IllegalStateException(format(
-                           "node(%s) didn't achieve the state running within %d seconds, final state: %s", originalId,
-                           timeouts.nodeRunning / 1000, state));
+               } else {
+                  throw e;
+               }
             }
-            if (node == null)
-               throw new IllegalStateException(format("node %s terminated before applying options", originalId));
             if (statement != null) {
-               RunScriptOnNode runner = initScriptRunnerFactory.create(node, statement, options, badNodes).call();
+               RunScriptOnNode runner = initScriptRunnerFactory.create(node.get(), statement, options, badNodes).call();
                if (runner != null) {
                   ExecResponse exec = runner.call();
-                  customizationResponses.put(node, exec);
+                  customizationResponses.put(node.get(), exec);
                }
             }
             if (options.getPort() > 0) {
-               findReachableSocketOnNode(socketTester.seconds(options.getSeconds()), node, options.getPort());
+               findReachableSocketOnNode(socketTester.seconds(options.getSeconds()), node.get(), options.getPort());
             }
          }
-         logger.debug("<< options applied node(%s)", originalId);
-         goodNodes.add(node);
+         logger.debug("<< customized node(%s)", originalId);
+         goodNodes.add(node.get());
       } catch (Exception e) {
-         logger.error(e, "<< problem applying options to node(%s): ", originalId, getRootCause(e).getMessage());
-         badNodes.put(node == null ? originalNode : node, e);
+         logger.error(e, "<< problem customizing node(%s): ", originalId, getRootCause(e).getMessage());
+         badNodes.put(node.get(), e);
       }
       return null;
    }
 
    @Override
-   public Void apply(NodeMetadata input) {
+   public Void apply(AtomicReference<NodeMetadata> input) {
       this.node = input;
       call();
       return null;

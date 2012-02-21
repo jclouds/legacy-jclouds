@@ -25,7 +25,7 @@ import java.util.List;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.scriptbuilder.InitBuilder;
+import org.jclouds.scriptbuilder.InitScript;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
 import org.jclouds.scriptbuilder.statements.ssh.AuthorizeRSAPublicKeys;
@@ -51,7 +51,7 @@ public class TemplateOptionsToStatement implements Function<TemplateOptions, Sta
       if (options.getPrivateKey() != null)
          bootstrap.add(new InstallRSAPrivateKey(options.getPrivateKey()));
       if (bootstrap.size() >= 1) {
-         if (options.getTaskName() == null && !(options.getRunScript() instanceof InitBuilder))
+         if (options.getTaskName() == null && !(options.getRunScript() instanceof InitScript))
             options.nameTask("bootstrap");
          return bootstrap.size() == 1 ? bootstrap.get(0) : new StatementList(bootstrap);
       }

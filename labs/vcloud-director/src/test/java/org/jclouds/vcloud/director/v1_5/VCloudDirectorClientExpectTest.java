@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -25,7 +25,6 @@ import org.jclouds.vcloud.director.v1_5.login.SessionClientExpectTest;
 import org.testng.annotations.Test;
 
 /**
- * 
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "VCloudDirectorClient")

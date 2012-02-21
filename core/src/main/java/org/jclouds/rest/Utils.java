@@ -21,6 +21,7 @@ package org.jclouds.rest;
 import java.util.concurrent.ExecutorService;
 
 import com.google.common.annotations.Beta;
+import com.google.common.eventbus.EventBus;
 import com.google.inject.Injector;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
@@ -88,6 +89,11 @@ public interface Utils {
     */
    ExecutorService ioExecutor();
 
+   @Beta
+   EventBus getEventBus();
+
+   EventBus eventBus();
+
    LoggerFactory getLoggerFactory();
 
    /**
@@ -104,4 +110,5 @@ public interface Utils {
     */
    @Beta
    Injector injector();
+
 }

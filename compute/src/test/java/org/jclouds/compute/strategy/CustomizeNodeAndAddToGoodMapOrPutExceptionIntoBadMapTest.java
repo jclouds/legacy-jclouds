@@ -18,14 +18,14 @@
  */
 package org.jclouds.compute.strategy;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -33,13 +33,14 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.functions.TemplateOptionsToStatement;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.compute.predicates.AtomicNodeRunning;
 import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.scriptbuilder.domain.Statement;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
@@ -52,11 +53,8 @@ import com.google.common.collect.Sets;
 @Test(groups = "unit")
 public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapTest {
 
-   @SuppressWarnings("unchecked")
    public void testBreakWhenNodeStillPending() {
-      Predicate<NodeMetadata> nodeRunning = createMock(Predicate.class);
       InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory = createMock(InitializeRunScriptOnNodeOrPlaceInBadMap.Factory.class);
-      GetNodeMetadataStrategy getNode = createMock(GetNodeMetadataStrategy.class);
       RetryIfSocketNotYetOpen socketTester = createMock(RetryIfSocketNotYetOpen.class);
       Timeouts timeouts = new Timeouts();
       Function<TemplateOptions, Statement> templateOptionsToStatement = new TemplateOptionsToStatement();
@@ -67,41 +65,39 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapTest {
       Map<NodeMetadata, Exception> badNodes = Maps.newLinkedHashMap();
       Multimap<NodeMetadata, CustomizationResponse> customizationResponses = LinkedHashMultimap.create();
 
-      NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.PENDING).build();
+      final NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.PENDING).build();
 
-      // node never reached running state
-      expect(nodeRunning.apply(node)).andReturn(false);
-      expect(getNode.getNode(node.getId())).andReturn(node);
+      // node always stays pending
+      GetNodeMetadataStrategy nodeRunning = new GetNodeMetadataStrategy(){
+
+         @Override
+         public NodeMetadata getNode(String input) {
+            Assert.assertEquals(input, node.getId());
+            return node;
+         }
+         
+      };
 
       // replay mocks
-      replay(nodeRunning);
-      replay(initScriptRunnerFactory);
-      replay(getNode);
-      replay(socketTester);
-
+      replay(initScriptRunnerFactory, socketTester);
       // run
-      new CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap(nodeRunning, getNode, socketTester, timeouts,
-               templateOptionsToStatement, initScriptRunnerFactory, options, node, goodNodes, badNodes,
-               customizationResponses).apply(node);
-
+      AtomicReference<NodeMetadata> atomicNode = new AtomicReference<NodeMetadata>(node);
+      new CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap( new AtomicNodeRunning(nodeRunning),  socketTester, timeouts,
+               templateOptionsToStatement, initScriptRunnerFactory, options, atomicNode, goodNodes, badNodes,
+               customizationResponses).apply(atomicNode);
+      
       assertEquals(goodNodes.size(), 0);
       assertEquals(badNodes.keySet(), ImmutableSet.of(node));
       assertEquals(badNodes.get(node).getMessage(),
-               "node(id) didn't achieve the state running within 1200 seconds, final state: PENDING");
+               "node(id) didn't achieve the state running within 1200 seconds, so we couldn't customize; final state: PENDING");
       assertEquals(customizationResponses.size(), 0);
 
       // verify mocks
-      verify(nodeRunning);
-      verify(initScriptRunnerFactory);
-      verify(getNode);
-      verify(socketTester);
+      verify(initScriptRunnerFactory, socketTester);
    }
 
-   @SuppressWarnings("unchecked")
    public void testBreakGraceFullyWhenNodeDied() {
-      Predicate<NodeMetadata> nodeRunning = createMock(Predicate.class);
       InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory = createMock(InitializeRunScriptOnNodeOrPlaceInBadMap.Factory.class);
-      GetNodeMetadataStrategy getNode = createMock(GetNodeMetadataStrategy.class);
       RetryIfSocketNotYetOpen socketTester = createMock(RetryIfSocketNotYetOpen.class);
       Timeouts timeouts = new Timeouts();
       Function<TemplateOptions, Statement> templateOptionsToStatement = new TemplateOptionsToStatement();
@@ -112,32 +108,35 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapTest {
       Map<NodeMetadata, Exception> badNodes = Maps.newLinkedHashMap();
       Multimap<NodeMetadata, CustomizationResponse> customizationResponses = LinkedHashMultimap.create();
 
-      NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.PENDING).build();
+      final NodeMetadata node = new NodeMetadataBuilder().ids("id").state(NodeState.PENDING).build();
+      final NodeMetadata deadNnode = new NodeMetadataBuilder().ids("id").state(NodeState.TERMINATED).build();
 
-      // node never reached running state
-      expect(nodeRunning.apply(node)).andReturn(false);
-      expect(getNode.getNode(node.getId())).andReturn(null);
+      // node dies
+      GetNodeMetadataStrategy nodeRunning = new GetNodeMetadataStrategy(){
+
+         @Override
+         public NodeMetadata getNode(String input) {
+            Assert.assertEquals(input, node.getId());
+            return deadNnode;
+         }
+         
+      };
 
       // replay mocks
-      replay(nodeRunning);
-      replay(initScriptRunnerFactory);
-      replay(getNode);
-      replay(socketTester);
-
+      replay(initScriptRunnerFactory, socketTester);
       // run
-      new CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap(nodeRunning, getNode, socketTester, timeouts,
-               templateOptionsToStatement, initScriptRunnerFactory, options, node, goodNodes, badNodes,
-               customizationResponses).apply(node);
+      AtomicReference<NodeMetadata> atomicNode = new AtomicReference<NodeMetadata>(node);
+      new CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap( new AtomicNodeRunning(nodeRunning),  socketTester, timeouts,
+               templateOptionsToStatement, initScriptRunnerFactory, options, atomicNode, goodNodes, badNodes,
+               customizationResponses).apply(atomicNode);
 
       assertEquals(goodNodes.size(), 0);
       assertEquals(badNodes.keySet(), ImmutableSet.of(node));
+      badNodes.get(node).printStackTrace();
       assertEquals(badNodes.get(node).getMessage(), "node(id) terminated before we could customize");
       assertEquals(customizationResponses.size(), 0);
 
       // verify mocks
-      verify(nodeRunning);
-      verify(initScriptRunnerFactory);
-      verify(getNode);
-      verify(socketTester);
+      verify(initScriptRunnerFactory, socketTester);
    }
 }

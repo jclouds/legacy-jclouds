@@ -36,8 +36,10 @@ import com.google.inject.Inject;
  * Tests to see if a node is deleted
  * 
  * @author Adrian Cole
+ * @see TrueIfNullOrTerminatedRefreshAndDoubleCheckOnFalse
  */
 @Singleton
+@Deprecated
 public class NodeTerminated implements Predicate<NodeMetadata> {
 
    private final GetNodeMetadataStrategy client;

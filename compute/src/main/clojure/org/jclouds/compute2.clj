@@ -326,7 +326,7 @@ Here's an example of creating and running a small linux node in the group webser
     (make-option-map
       kw-memfn-1arg
       [:from-hardware :from-image :from-template
-       :os-family :location-id :image-id :hardware-id
+       :os-family :location-id :image-id :hardware-id :hypervisor-matches 
        :os-name-matches :os-description-matches :os-version-matches
        :os-arch-matches :os-64-bit :image-name-matches
        :image-version-matches :image-description-matches :image-matches

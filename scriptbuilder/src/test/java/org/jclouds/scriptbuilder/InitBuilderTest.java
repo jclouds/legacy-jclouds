@@ -18,8 +18,8 @@
  */
 package org.jclouds.scriptbuilder;
 
-import static org.jclouds.scriptbuilder.domain.Statements.call;
 import static org.jclouds.scriptbuilder.domain.Statements.appendFile;
+import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -45,48 +45,54 @@ import com.google.common.io.Resources;
 public class InitBuilderTest {
 
    InitBuilder testInitBuilder = new InitBuilder("mkebsboot", "/mnt/tmp", "/mnt/tmp", ImmutableMap.of("tmpDir",
-            "/mnt/tmp"), ImmutableList.<Statement> of(
-   appendFile("{tmp}{fs}{uid}{fs}scripttest{fs}temp.txt", ImmutableList.<String> of("hello world")), call("find /")));
+         "/mnt/tmp"), ImmutableList.<Statement> of(
+         appendFile("{tmp}{fs}{uid}{fs}scripttest{fs}temp.txt", ImmutableList.<String> of("hello world")),
+         exec("find /")));
 
-   @Test
+   @Test(expectedExceptions = UnsupportedOperationException.class)
    public void testBuildSimpleWindows() throws MalformedURLException, IOException {
-      assertEquals(testInitBuilder.render(OsFamily.WINDOWS), CharStreams.toString(Resources.newReaderSupplier(Resources
-               .getResource("test_init." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
+      testInitBuilder.render(OsFamily.WINDOWS);
    }
 
    @Test
    public void testBuildSimpleUNIX() throws MalformedURLException, IOException {
-      assertEquals(testInitBuilder.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources
-               .getResource("test_init." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+      assertEquals(
+            testInitBuilder.render(OsFamily.UNIX),
+            CharStreams.toString(Resources.newReaderSupplier(
+                  Resources.getResource("test_init." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
    }
 
    @Test
    public void testBuildEBS() throws MalformedURLException, IOException {
       assertEquals(
-               new InitBuilder(
-                        "mkebsboot",// name of the script
-                        "/tmp",// working directory
-                        "/tmp/logs",// location of stdout.log and stderr.log
-                        ImmutableMap.of("imageDir", "/mnt/tmp", "ebsDevice", "/dev/sdh", "ebsMountPoint", "/mnt/ebs"),// variables
-                                                                                                                      // used
-                                                                                                                      // inside
-                                                                                                                      // of
-                                                                                                                      // the
-                                                                                                                      // script
-                        ImmutableList.<Statement> of(Statements.interpret("echo creating a filesystem and mounting the ebs volume",// what to execute
-                        "{md} {varl}IMAGE_DIR{varr} {varl}EBS_MOUNT_POINT{varr}",
-                        "rm -rf {varl}IMAGE_DIR{varr}/*",
-                        "yes| mkfs -t ext3 {varl}EBS_DEVICE{varr} 2>&-",
-                        "mount {varl}EBS_DEVICE{varr} {varl}EBS_MOUNT_POINT{varr}",
-                        "echo making a local working copy of the boot disk",
-                        "rsync -ax --exclude /ubuntu/.bash_history --exclude /home/*/.bash_history --exclude /etc/ssh/ssh_host_* --exclude /etc/ssh/moduli --exclude /etc/udev/rules.d/*persistent-net.rules --exclude /var/lib/ec2/* --exclude=/mnt/* --exclude=/proc/* --exclude=/tmp/* --exclude=/dev/log / {varl}IMAGE_DIR{varr}",
-                        "echo preparing the local working copy",
-                        "touch {varl}IMAGE_DIR{varr}/etc/init.d/ec2-init-user-data",
-                        "echo copying the local working copy to the ebs mount", "{cd} {varl}IMAGE_DIR{varr}",
-                        "tar -cSf - * | tar xf - -C {varl}EBS_MOUNT_POINT{varr}", "echo size of ebs",
-                        "du -sk {varl}EBS_MOUNT_POINT{varr}", "echo size of source", "du -sk {varl}IMAGE_DIR{varr}",
-                        "rm -rf {varl}IMAGE_DIR{varr}/*", "umount {varl}EBS_MOUNT_POINT{varr}", "echo ----COMPLETE----")
-                        )).render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources
-                        .getResource("test_ebs." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+            new InitBuilder("mkebsboot",// name of the script
+                  "/tmp",// working directory
+                  "/tmp/logs",// location of stdout.log and stderr.log
+                  ImmutableMap.of("imageDir", "/mnt/tmp", "ebsDevice", "/dev/sdh", "ebsMountPoint", "/mnt/ebs"),// variables
+                                                                                                                // used
+                                                                                                                // inside
+                                                                                                                // of
+                                                                                                                // the
+                                                                                                                // script
+                  ImmutableList.<Statement> of(Statements
+                        .interpret(
+                              "echo creating a filesystem and mounting the ebs volume",// what
+                                                                                       // to
+                                                                                       // execute
+                              "{md} {varl}IMAGE_DIR{varr} {varl}EBS_MOUNT_POINT{varr}",
+                              "rm -rf {varl}IMAGE_DIR{varr}/*",
+                              "yes| mkfs -t ext3 {varl}EBS_DEVICE{varr} 2>&-",
+                              "mount {varl}EBS_DEVICE{varr} {varl}EBS_MOUNT_POINT{varr}",
+                              "echo making a local working copy of the boot disk",
+                              "rsync -ax --exclude /ubuntu/.bash_history --exclude /home/*/.bash_history --exclude /etc/ssh/ssh_host_* --exclude /etc/ssh/moduli --exclude /etc/udev/rules.d/*persistent-net.rules --exclude /var/lib/ec2/* --exclude=/mnt/* --exclude=/proc/* --exclude=/tmp/* --exclude=/dev/log / {varl}IMAGE_DIR{varr}",
+                              "echo preparing the local working copy",
+                              "touch {varl}IMAGE_DIR{varr}/etc/init.d/ec2-init-user-data",
+                              "echo copying the local working copy to the ebs mount", "{cd} {varl}IMAGE_DIR{varr}",
+                              "tar -cSf - * | tar xf - -C {varl}EBS_MOUNT_POINT{varr}", "echo size of ebs",
+                              "du -sk {varl}EBS_MOUNT_POINT{varr}", "echo size of source",
+                              "du -sk {varl}IMAGE_DIR{varr}", "rm -rf {varl}IMAGE_DIR{varr}/*",
+                              "umount {varl}EBS_MOUNT_POINT{varr}", "echo ----COMPLETE----"))).render(OsFamily.UNIX),
+            CharStreams.toString(Resources.newReaderSupplier(
+                  Resources.getResource("test_ebs." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
    }
 }

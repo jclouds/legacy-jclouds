@@ -9,7 +9,7 @@ function abort {
 }
 function default {
    export RUNTIME="Moo"
-   return 0
+   return $?
 }
 export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
 case $1 in
@@ -22,10 +22,10 @@ stop)
    echo stop $RUNTIME
    ;;
 status)
-   cat >> /tmp/$USER/scripttest/temp.txt <<'END_OF_FILE'
-hello world
-END_OF_FILE
+   cat >> /tmp/$USER/scripttest/temp.txt <<-'END_OF_JCLOUDS_FILE'
+	hello world
+END_OF_JCLOUDS_FILE
    echo "the following should be []: [$RUNTIME]"
    ;;
 esac
-exit 0
+exit $?

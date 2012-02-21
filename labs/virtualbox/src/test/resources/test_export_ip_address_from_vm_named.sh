@@ -26,4 +26,4 @@ function exportIpAddressFromVmNamed {
 export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
 exportIpAddressFromVmNamed $@ || exit 1
 echo $FOUND_IP_ADDRESS
-exit 0
+exit $?

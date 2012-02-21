@@ -50,7 +50,7 @@
   (merge
    {:exit 0 :err "stderr" :out "stdout"}
    (condp = cmd
-       "./bootstrap status" {:exit 1 :out "[]"}
+       "/tmp/init-bootstrap status" {:exit 1 :out "[]"}
        {})))
 
 

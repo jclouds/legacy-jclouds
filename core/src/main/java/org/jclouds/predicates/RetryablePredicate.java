@@ -21,6 +21,7 @@ package org.jclouds.predicates;
 import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
 
 import java.util.Date;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -87,6 +88,9 @@ public class RetryablePredicate<T> implements Predicate<T> {
             return false;
          } else if (getFirstThrowableOfType(e, IllegalStateException.class) != null) {
             logger.warn(e, "predicate %s on %s illegal state [%s], returning false", input, predicate, e.getMessage());
+            return false;
+         } else if (getFirstThrowableOfType(e, CancellationException.class) != null) {
+            logger.warn(e, "predicate %s on %s cancelled [%s], returning false", input, predicate, e.getMessage());
             return false;
          } else if (getFirstThrowableOfType(e, TimeoutException.class) != null) {
             logger.warn(e, "predicate %s on %s timed out [%s], returning false", input, predicate, e.getMessage());

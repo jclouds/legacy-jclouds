@@ -18,12 +18,12 @@
  */
 package org.jclouds.ec2.compute.strategy;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reportMatcher;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.verify;
 
 import java.util.Map;
 import java.util.Set;
@@ -33,8 +33,12 @@ import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
+import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.predicates.AtomicNodeRunning;
+import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -50,9 +54,9 @@ import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.options.RunInstancesOptions;
 import org.jclouds.ec2.services.ElasticIPAddressClient;
 import org.jclouds.ec2.services.InstanceClient;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -73,17 +77,19 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
 
       String imageId = "ami1";
       String instanceCreatedId = "instance1";
+      NodeMetadata nodeMetadata = new NodeMetadataBuilder().id(region + "/" + instanceCreatedId)
+            .providerId(instanceCreatedId).state(NodeState.RUNNING).build();
       // setup mocks
       TemplateBuilder templateBuilder = createMock(TemplateBuilder.class);
-      EC2CreateNodesInGroupThenAddToSet strategy = setupStrategy(templateBuilder);
+      EC2CreateNodesInGroupThenAddToSet strategy = setupStrategy(templateBuilder, nodeMetadata);
       InputParams input = new InputParams(location);
       InstanceClient instanceClient = createMock(InstanceClient.class);
       ElasticIPAddressClient ipClient = createMock(ElasticIPAddressClient.class);
       RunInstancesOptions ec2Options = createMock(RunInstancesOptions.class);
       RunningInstance instance = createMock(RunningInstance.class);
-      Reservation<? extends RunningInstance> reservation = new Reservation<RunningInstance>(region, ImmutableSet
-               .<String> of(), ImmutableSet.<RunningInstance> of(instance), "ownerId", "requesterId", "reservationId");
-      NodeMetadata nodeMetadata = createMock(NodeMetadata.class);
+      Reservation<? extends RunningInstance> reservation = new Reservation<RunningInstance>(region,
+            ImmutableSet.<String> of(), ImmutableSet.<RunningInstance> of(instance), "ownerId", "requesterId",
+            "reservationId");
 
       // enable auto-allocation
       strategy.autoAllocateElasticIps = true;
@@ -93,8 +99,8 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       expect(templateBuilder.build()).andReturn(input.template);
       expect(strategy.client.getInstanceServices()).andReturn(instanceClient).atLeastOnce();
       expect(
-               strategy.createKeyPairAndSecurityGroupsAsNeededAndReturncustomize.execute(region, input.tag,
-                        input.template)).andReturn(ec2Options);
+            strategy.createKeyPairAndSecurityGroupsAsNeededAndReturncustomize
+                  .execute(region, input.tag, input.template)).andReturn(ec2Options);
       expect(strategy.client.getElasticIPAddressServices()).andReturn(ipClient).atLeastOnce();
 
       expect(input.template.getLocation()).andReturn(input.location).atLeastOnce();
@@ -104,12 +110,11 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       // differences when ip allocation
       expect(ipClient.allocateAddressInRegion(region)).andReturn("1.1.1.1");
       expect(strategy.runningInstanceToNodeMetadata.apply(instance)).andReturn(nodeMetadata).atLeastOnce();
-      expect(strategy.nodeRunning.apply(nodeMetadata)).andReturn(true);
       ipClient.associateAddressInRegion(region, "1.1.1.1", instanceCreatedId);
       strategy.elasticIpCache.put(new RegionAndName(region, instanceCreatedId), "1.1.1.1");
 
       expect(instanceClient.runInstancesInRegion(region, zone, imageId, 1, input.count, ec2Options)).andReturn(
-               Reservation.class.cast(reservation));
+            Reservation.class.cast(reservation));
       expect(instance.getId()).andReturn(instanceCreatedId).atLeastOnce();
       // simulate a lazy credentials fetch
       Credentials creds = new Credentials("foo", "bar");
@@ -121,9 +126,9 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       expect(input.template.getOptions()).andReturn(input.options).atLeastOnce();
 
       expect(
-               strategy.utils.customizeNodesAndAddToGoodMapOrPutExceptionIntoBadMap(eq(input.options),
-                        containsNodeMetadata(nodeMetadata), eq(input.nodes), eq(input.badNodes),
-                        eq(input.customization))).andReturn(null);
+            strategy.utils.customizeNodesAndAddToGoodMapOrPutExceptionIntoBadMap(eq(input.options),
+                  containsNodeMetadata(nodeMetadata), eq(input.nodes), eq(input.badNodes), eq(input.customization)))
+            .andReturn(null);
 
       // replay mocks
       replay(templateBuilder);
@@ -131,7 +136,6 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       replay(ipClient);
       replay(ec2Options);
       replay(instance);
-      replay(nodeMetadata);
       input.replayMe();
       replayStrategy(strategy);
 
@@ -144,7 +148,6 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       verify(ipClient);
       verify(ec2Options);
       verify(instance);
-      verify(nodeMetadata);
       input.verifyMe();
       verifyStrategy(strategy);
    }
@@ -184,29 +187,32 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
    private void assertRegionAndZoneForLocation(Location location, String region, String zone) {
       String imageId = "ami1";
       String instanceCreatedId = "instance1";
+      NodeMetadata nodeMetadata = new NodeMetadataBuilder().id(region + "/" + instanceCreatedId)
+            .providerId(instanceCreatedId).state(NodeState.RUNNING).build();
+
       // setup mocks
       TemplateBuilder templateBuilder = createMock(TemplateBuilder.class);
-      EC2CreateNodesInGroupThenAddToSet strategy = setupStrategy(templateBuilder);
+      EC2CreateNodesInGroupThenAddToSet strategy = setupStrategy(templateBuilder, nodeMetadata);
       InputParams input = new InputParams(location);
       InstanceClient instanceClient = createMock(InstanceClient.class);
       RunInstancesOptions ec2Options = createMock(RunInstancesOptions.class);
       RunningInstance instance = createMock(RunningInstance.class);
-      Reservation<? extends RunningInstance> reservation = new Reservation<RunningInstance>(region, ImmutableSet
-               .<String> of(), ImmutableSet.<RunningInstance> of(instance), "ownerId", "requesterId", "reservationId");
-      NodeMetadata nodeMetadata = createMock(NodeMetadata.class);
+      Reservation<? extends RunningInstance> reservation = new Reservation<RunningInstance>(region,
+            ImmutableSet.<String> of(), ImmutableSet.<RunningInstance> of(instance), "ownerId", "requesterId",
+            "reservationId");
 
       // setup expectations
       expect(templateBuilder.fromTemplate(input.template)).andReturn(templateBuilder);
       expect(templateBuilder.build()).andReturn(input.template);
       expect(strategy.client.getInstanceServices()).andReturn(instanceClient).atLeastOnce();
       expect(
-               strategy.createKeyPairAndSecurityGroupsAsNeededAndReturncustomize.execute(region, input.tag,
-                        input.template)).andReturn(ec2Options);
+            strategy.createKeyPairAndSecurityGroupsAsNeededAndReturncustomize
+                  .execute(region, input.tag, input.template)).andReturn(ec2Options);
       expect(input.template.getLocation()).andReturn(input.location).atLeastOnce();
       expect(input.template.getImage()).andReturn(input.image).atLeastOnce();
       expect(input.image.getProviderId()).andReturn(imageId).atLeastOnce();
       expect(instanceClient.runInstancesInRegion(region, zone, imageId, 1, input.count, ec2Options)).andReturn(
-               Reservation.class.cast(reservation));
+            Reservation.class.cast(reservation));
       expect(instance.getId()).andReturn(instanceCreatedId).atLeastOnce();
       // simulate a lazy credentials fetch
       Credentials creds = new Credentials("foo", "bar");
@@ -219,16 +225,15 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
 
       expect(strategy.runningInstanceToNodeMetadata.apply(instance)).andReturn(nodeMetadata);
       expect(
-               strategy.utils.customizeNodesAndAddToGoodMapOrPutExceptionIntoBadMap(eq(input.options),
-                        containsNodeMetadata(nodeMetadata), eq(input.nodes), eq(input.badNodes),
-                        eq(input.customization))).andReturn(null);
+            strategy.utils.customizeNodesAndAddToGoodMapOrPutExceptionIntoBadMap(eq(input.options),
+                  containsNodeMetadata(nodeMetadata), eq(input.nodes), eq(input.badNodes), eq(input.customization)))
+            .andReturn(null);
 
       // replay mocks
       replay(templateBuilder);
       replay(instanceClient);
       replay(ec2Options);
       replay(instance);
-      replay(nodeMetadata);
       input.replayMe();
       replayStrategy(strategy);
 
@@ -240,16 +245,16 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
       verify(instanceClient);
       verify(ec2Options);
       verify(instance);
-      verify(nodeMetadata);
       input.verifyMe();
       verifyStrategy(strategy);
    }
 
-   private static final Location REGION_AP_SOUTHEAST_1 = new LocationBuilder().scope(LocationScope.REGION).id(
-            "ap-southeast-1").description("ap-southeast-1").parent(
-            new LocationBuilder().scope(LocationScope.PROVIDER).id("aws-ec2").description("aws-ec2").build()).build();
-   private static final Location ZONE_AP_SOUTHEAST_1A = new LocationBuilder().scope(LocationScope.ZONE).id(
-            "ap-southeast-1a").description("ap-southeast-1a").parent(REGION_AP_SOUTHEAST_1).build();
+   private static final Location REGION_AP_SOUTHEAST_1 = new LocationBuilder().scope(LocationScope.REGION)
+         .id("ap-southeast-1").description("ap-southeast-1")
+         .parent(new LocationBuilder().scope(LocationScope.PROVIDER).id("aws-ec2").description("aws-ec2").build())
+         .build();
+   private static final Location ZONE_AP_SOUTHEAST_1A = new LocationBuilder().scope(LocationScope.ZONE)
+         .id("ap-southeast-1a").description("ap-southeast-1a").parent(REGION_AP_SOUTHEAST_1).build();
 
    // /////////////////////////////////////////////////////////////////////
    @SuppressWarnings("unchecked")
@@ -293,7 +298,6 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
    private void verifyStrategy(EC2CreateNodesInGroupThenAddToSet strategy) {
       verify(strategy.createKeyPairAndSecurityGroupsAsNeededAndReturncustomize);
       verify(strategy.client);
-      verify(strategy.nodeRunning);
       verify(strategy.elasticIpCache);
       verify(strategy.instancePresent);
       verify(strategy.runningInstanceToNodeMetadata);
@@ -303,26 +307,33 @@ public class EC2CreateNodesInGroupThenAddToSetTest {
    }
 
    @SuppressWarnings("unchecked")
-   private EC2CreateNodesInGroupThenAddToSet setupStrategy(TemplateBuilder template) {
+   private EC2CreateNodesInGroupThenAddToSet setupStrategy(TemplateBuilder template, final NodeMetadata node) {
       EC2Client client = createMock(EC2Client.class);
       CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize = createMock(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class);
       InstancePresent instancePresent = createMock(InstancePresent.class);
       RunningInstanceToNodeMetadata runningInstanceToNodeMetadata = createMock(RunningInstanceToNodeMetadata.class);
       LoadingCache<RunningInstance, Credentials> instanceToCredentials = createMock(LoadingCache.class);
       LoadingCache<RegionAndName, String> elasticIpCache = createMock(LoadingCache.class);
-      Predicate<NodeMetadata> nodeRunning = createMock(Predicate.class);
+      GetNodeMetadataStrategy nodeRunning = new GetNodeMetadataStrategy(){
+
+         @Override
+         public NodeMetadata getNode(String input) {
+            Assert.assertEquals(input, node.getId());
+            return node;
+         }
+         
+      };
       Map<String, Credentials> credentialStore = createMock(Map.class);
       ComputeUtils utils = createMock(ComputeUtils.class);
-      return new EC2CreateNodesInGroupThenAddToSet(client, elasticIpCache, nodeRunning, Providers
-               .<TemplateBuilder> of(template), createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
-               instancePresent, runningInstanceToNodeMetadata, instanceToCredentials, credentialStore, utils);
+      return new EC2CreateNodesInGroupThenAddToSet(client, elasticIpCache, new AtomicNodeRunning(nodeRunning),
+            Providers.<TemplateBuilder> of(template), createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
+            instancePresent, runningInstanceToNodeMetadata, instanceToCredentials, credentialStore, utils);
    }
 
    private void replayStrategy(EC2CreateNodesInGroupThenAddToSet strategy) {
       replay(strategy.createKeyPairAndSecurityGroupsAsNeededAndReturncustomize);
       replay(strategy.client);
       replay(strategy.elasticIpCache);
-      replay(strategy.nodeRunning);
       replay(strategy.instancePresent);
       replay(strategy.runningInstanceToNodeMetadata);
       replay(strategy.instanceToCredentials);

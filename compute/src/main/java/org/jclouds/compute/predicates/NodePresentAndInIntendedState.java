@@ -39,7 +39,9 @@ import com.google.inject.Inject;
  * Tests to see if a node is active.
  * 
  * @author Adrian Cole
+ * @see RefreshAndDoubleCheckOnFailUnlessStateInvalid
  */
+@Deprecated
 @Singleton
 public class NodePresentAndInIntendedState implements Predicate<NodeMetadata> {
 

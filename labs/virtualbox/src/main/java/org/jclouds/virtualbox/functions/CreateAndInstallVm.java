@@ -18,14 +18,20 @@
  */
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Splitter;
-import com.google.common.base.Supplier;
-import com.google.common.cache.LoadingCache;
-import com.google.inject.Inject;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.scriptbuilder.domain.Statements.call;
+
+import java.net.URI;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.SshClient;
@@ -36,16 +42,20 @@ import org.jclouds.virtualbox.domain.MasterSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.predicates.GuestAdditionsInstaller;
 import org.jclouds.virtualbox.util.MachineUtils;
-import org.virtualbox_4_1.*;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.LockType;
+import org.virtualbox_4_1.VirtualBoxManager;
 
-import javax.annotation.Resource;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import java.net.URI;
-import java.util.List;
-
-import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.collect.Iterables.transform;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
+import com.google.common.base.Supplier;
+import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Inject;
 
 @Singleton
 public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
@@ -88,12 +98,12 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
       VmSpec vmSpec = masterSpec.getVmSpec();
       IsoSpec isoSpec = masterSpec.getIsoSpec();
       String vmName = vmSpec.getVmName();
-
+      
       final IMachine vm = createAndRegisterMachineFromIsoIfNotAlreadyExists.apply(masterSpec);
 
       // Launch machine and wait for it to come online
       ensureMachineIsLaunched(vmName);
-
+    
       URI uri = preConfiguration.getUnchecked(isoSpec);
       String installationKeySequence = isoSpec.getInstallationKeySequence().replace("PRECONFIGURATION_URL",
             uri.toASCIIString());
@@ -106,7 +116,13 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
       
       logger.debug(">> awaiting installation of guest additions on vm: %s", vmName);
       checkState(new GuestAdditionsInstaller(context).apply(vmName));
-
+      
+      logger.debug(">> awaiting post-installation actions on vm: %s", vmName);
+      ListenableFuture<ExecResponse> execFuture = context.getComputeService().submitScriptOnNode(vmName,
+            call("cleanupUdevIfNeeded"), RunScriptOptions.NONE);
+      ExecResponse execResponse = Futures.getUnchecked(execFuture);
+      checkState(execResponse.getExitCode() == 0);
+      
       logger.debug("<< installation of image complete. Powering down node(%s)", vmName);
       ensureMachineHasPowerDown(vmName);
       return vm;
