@@ -116,6 +116,54 @@ public class InstantiateVAppParamsType<T extends InstantiateVAppParamsType<T>>
          instantiateVAppParams.setLinkedClone(linkedClone);
          return instantiateVAppParams;
       }
+      
+      /**
+       * @see ParamsType#getDescription()
+       */
+      public Builder<T> description(String description) {
+         super.description(description);
+         return this;
+      }
+
+      /**
+       * @see ParamsType#getName()
+       */
+      public Builder<T> name(String name) {
+         super.name(name);
+         return this;
+      }
+      
+      /**
+       * @see VAppCreationParamsType#getVAppParent()
+       */
+      public Builder<T> vAppParent(Reference vAppParent) {
+         super.vAppParent(vAppParent);
+         return this;
+      }
+
+      /**
+       * @see VAppCreationParamsType#getInstantiationParams()
+       */
+      public Builder<T> instantiationParams(InstantiationParams instantiationParams) {
+         super.instantiationParams(instantiationParams);
+         return this;
+      }
+
+      /**
+       * @see VAppCreationParamsType#getDeploy()
+       */
+      public Builder<T> deploy(Boolean deploy) {
+         super.deploy(deploy);
+         return this;
+      }
+
+      /**
+       * @see VAppCreationParamsType#getPowerOn()
+       */
+      public Builder<T> powerOn(Boolean powerOn) {
+         super.powerOn(powerOn);
+         return this;
+      }
 
       /**
        * {@inheritDoc}

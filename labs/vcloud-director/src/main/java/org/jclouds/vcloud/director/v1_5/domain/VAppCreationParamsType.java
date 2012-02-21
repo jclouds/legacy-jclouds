@@ -129,6 +129,22 @@ public class VAppCreationParamsType<T extends VAppCreationParamsType<T>>
          vAppCreationParams.setPowerOn(powerOn);
          return vAppCreationParams;
       }
+      
+      /**
+       * @see ParamsType#getDescription()
+       */
+      public Builder<T> description(String description) {
+         super.description(description);
+         return this;
+      }
+
+      /**
+       * @see ParamsType#getName()
+       */
+      public Builder<T> name(String name) {
+         super.name(name);
+         return this;
+      }
 
       /**
        * {@inheritDoc}
