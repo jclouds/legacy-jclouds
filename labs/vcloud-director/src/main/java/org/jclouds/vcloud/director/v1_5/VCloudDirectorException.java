@@ -33,13 +33,13 @@ public class VCloudDirectorException extends RuntimeException {
    private final Task task;
 
    public VCloudDirectorException(Error error) {
-      super("Error: " + error.getMessage());
+      super("ERR-801: Error: " + error.getMessage());
       this.error = error;
       this.task = null;
    }
 
    public VCloudDirectorException(Task task) {
-      super("Task error: " + task.getError().getMessage());
+      super("ERR-802: Task error: " + task.getError().getMessage());
       this.error = task.getError();
       this.task = task;
    }
