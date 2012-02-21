@@ -57,52 +57,99 @@ import com.google.common.base.Objects;
 @XmlType(name = "InstantiateVAppTemplateParams", propOrder = {
     "allEULAsAccepted"
 })
-public class InstantiateVAppTemplateParamsType<T extends InstantiateVAppTemplateParamsType<T>>
-    extends InstantiateVAppParamsType<T>
-
-{
-   public static <T extends InstantiateVAppTemplateParamsType<T>> Builder<T> builder() {
-      return new Builder<T>();
+public class InstantiateVAppTemplateParams
+    extends InstantiateVAppParamsType<InstantiateVAppTemplateParams> {
+   
+   @SuppressWarnings("unchecked")
+   public static Builder builder() {
+      return new Builder();
    }
 
-   public Builder<T> toBuilder() {
-      return new Builder<T>().fromInstantiateVAppTemplateParams(this);
+   public Builder toBuilder() {
+      return new Builder().fromInstantiateVAppTemplateParams(this);
    }
 
-   public static class Builder<T extends InstantiateVAppTemplateParamsType<T>> extends InstantiateVAppParamsType.Builder<T> {
+   public static class Builder extends InstantiateVAppParamsType.Builder<InstantiateVAppTemplateParams> {
       
       private Boolean allEULAsAccepted;
 
       /**
        * @see InstantiateVAppTemplateParamsType#getAllEULAsAccepted()
        */
-      public Builder<T> allEULAsAccepted(Boolean allEULAsAccepted) {
+      public Builder allEULAsAccepted(Boolean allEULAsAccepted) {
          this.allEULAsAccepted = allEULAsAccepted;
          return this;
       }
 
-
-      public InstantiateVAppTemplateParamsType<T> build() {
-         InstantiateVAppTemplateParamsType<T> instantiateVAppTemplateParams = new InstantiateVAppTemplateParamsType<T>();
+      public InstantiateVAppTemplateParams build() {
+         InstantiateVAppTemplateParams instantiateVAppTemplateParams = new InstantiateVAppTemplateParams();
          instantiateVAppTemplateParams.setAllEULAsAccepted(allEULAsAccepted);
          return instantiateVAppTemplateParams;
+      }
+      
+      /**
+       * @see ParamsType#getDescription()
+       */
+      public Builder description(String description) {
+         super.description(description);
+         return this;
+      }
+
+      /**
+       * @see ParamsType#getName()
+       */
+      public Builder name(String name) {
+         super.name(name);
+         return this;
+      }
+      
+      /**
+       * @see VAppCreationParamsType#getVAppParent()
+       */
+      public Builder vAppParent(Reference vAppParent) {
+         super.vAppParent(vAppParent);
+         return this;
+      }
+
+      /**
+       * @see VAppCreationParamsType#getInstantiationParams()
+       */
+      public Builder instantiationParams(InstantiationParams instantiationParams) {
+         super.instantiationParams(instantiationParams);
+         return this;
+      }
+
+      /**
+       * @see VAppCreationParamsType#getDeploy()
+       */
+      public Builder deploy(Boolean deploy) {
+         super.deploy(deploy);
+         return this;
+      }
+
+      /**
+       * @see VAppCreationParamsType#getPowerOn()
+       */
+      public Builder powerOn(Boolean powerOn) {
+         super.powerOn(powerOn);
+         return this;
       }
 
       /**
        * {@inheritDoc}
        */
-      @SuppressWarnings("unchecked")
       @Override
-      public Builder<T> fromInstantiateVAppParamsType(InstantiateVAppParamsType<T> in) {
+      public Builder fromInstantiateVAppParamsType(InstantiateVAppParamsType<InstantiateVAppTemplateParams> in) {
           return Builder.class.cast(super.fromInstantiateVAppParamsType(in));
       }
-      public Builder<T> fromInstantiateVAppTemplateParams(InstantiateVAppTemplateParamsType<T> in) {
+      
+      public Builder fromInstantiateVAppTemplateParams(InstantiateVAppTemplateParams in) {
          return fromInstantiateVAppParamsType(in)
             .allEULAsAccepted(in.isAllEULAsAccepted());
       }
    }
 
-   private InstantiateVAppTemplateParamsType() {
+   private InstantiateVAppTemplateParams() {
       // For JAXB and builder use
    }
 
@@ -147,7 +194,7 @@ public class InstantiateVAppTemplateParamsType<T extends InstantiateVAppTemplate
           return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      InstantiateVAppTemplateParamsType<?> that = InstantiateVAppTemplateParamsType.class.cast(o);
+      InstantiateVAppTemplateParams that = InstantiateVAppTemplateParams.class.cast(o);
       return equal(allEULAsAccepted, that.allEULAsAccepted);
    }
 
