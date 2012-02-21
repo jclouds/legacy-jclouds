@@ -20,15 +20,8 @@ package org.jclouds.vcloud.director.v1_5.features;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.rest.annotations.EndpointParam;
-import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.JAXBResponseParser;
-import org.jclouds.rest.annotations.PayloadParam;
+import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneMediaParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
@@ -36,16 +29,12 @@ import org.jclouds.vcloud.director.v1_5.domain.ComposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParamsType;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.domain.UploadVAppTemplateParams;
+import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
-import org.jclouds.vcloud.director.v1_5.functions.ReferenceToEndpoint;
-import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
-
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides synchronous access to a vDC.
@@ -72,7 +61,7 @@ public interface VdcClient {
     * @return a VApp resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the vApp.
     */
-   VAppTemplate captureVApp(Reference vdcRef, CloneMediaParams params);
+   VAppTemplate captureVApp(Reference vdcRef, CaptureVAppParams params);
    
    /**
     * Clones a media into new one. 
@@ -162,10 +151,10 @@ public interface VdcClient {
    Metadata getMetadata(Reference vdcRef);
 
    /**
-    * Retrieves a metadata entry
+    * Retrieves a metadata value
     * 
-    * @return the metadata entry, or null if not found
+    * @return the metadata value, or null if not found
     */
-   MetadataEntry getMetadataEntry(Reference vdcRef, String key);
+   MetadataValue getMetadataValue(Reference vdcRef, String key);
 
 }
