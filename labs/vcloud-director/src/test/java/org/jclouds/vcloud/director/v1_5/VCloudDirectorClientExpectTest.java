@@ -35,7 +35,5 @@ public class VCloudDirectorClientExpectTest extends BaseVCloudDirectorRestClient
       VCloudDirectorClient clientWhenSessionsExist = requestSendsResponse(loginRequest, sessionResponse);
 
       assertEquals(clientWhenSessionsExist.getCurrentSession(), SessionClientExpectTest.SESSION);
-
    }
-
 }

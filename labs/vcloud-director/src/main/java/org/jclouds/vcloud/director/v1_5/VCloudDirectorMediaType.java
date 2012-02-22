@@ -18,8 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5;
 
-import java.util.Arrays;
 import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Resource Types used in VCloud.
@@ -73,10 +74,25 @@ public class VCloudDirectorMediaType {
    
    public static final String ADMIN_USER = "application/vnd.vmware.admin.user+xml";
 
-   public static final List<String> ALL = Arrays.asList(
-        SESSION, ERROR, ORG_LIST, METADATA, METADATA_ENTRY,
-        METADATA_VALUE, ORG, TASKS_LIST, TASK, NETWORK, ORG_NETWORK,
-        CATALOG, CATALOG_ITEM, CATALOG_ITEMS, CATALOGS_LIST, PROPERTY,
-        MEDIA, OWNER, VDC, ADMIN_USER
-     );
+   public static final String QUERY_RESULT_RECORDS = "application/vnd.vmware.vcloud.query.records+xml";
+ 
+   public static final String QUERY_RESULT_REFERENCES = "application/vnd.vmware.vcloud.query.references+xml";
+
+   public static final String QUERY_RESULT_ID_RECORDS = "application/vnd.vmware.vcloud.query.idrecords+xml";
+   
+   public static final String CONTROL_ACCESS = "application/vnd.vmware.vcloud.controlAccess+xml";
+
+   /**
+    * All acceptable media types.
+    *
+    * This list must be updated whenever a new media type constant is added.
+    */
+   public static final List<String> ALL = ImmutableList.of(
+            SESSION, ERROR, ORG_LIST, METADATA, METADATA_ENTRY,
+            METADATA_VALUE, ORG, TASKS_LIST, TASK, NETWORK, ORG_NETWORK,
+            CATALOG, CATALOG_ITEM, CATALOG_ITEMS, CATALOGS_LIST, PROPERTY,
+            MEDIA, OWNER, VDC, ADMIN_USER, QUERY_RESULT_RECORDS,
+            QUERY_RESULT_REFERENCES, QUERY_RESULT_ID_RECORDS,
+            CONTROL_ACCESS
+      );
 }

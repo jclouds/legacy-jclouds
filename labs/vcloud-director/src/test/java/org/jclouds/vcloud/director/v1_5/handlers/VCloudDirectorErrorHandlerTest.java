@@ -31,7 +31,6 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
-import org.jclouds.vcloud.director.v1_5.handlers.VCloudDirectorErrorHandler;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Strings2;

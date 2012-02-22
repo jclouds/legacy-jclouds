@@ -18,9 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
-import static com.google.common.base.Preconditions.*;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -146,13 +146,6 @@ public class Task extends EntityType<Task> {
       public Builder status(String status) {
          this.status = status;
          return this;
-      }
-      
-      /**
-       * @see Task#getStatus()
-       */
-      public Builder status(TaskStatus status) {
-         return this.status(status.toString());
       }
 
       /**
@@ -418,14 +411,10 @@ public class Task extends EntityType<Task> {
     * <li>aborted - The task was aborted by an administrative action.
     * </ul>
     */
-   public TaskStatus getStatus() {
-      return TaskStatus.fromValue(status);
+   public String getStatus() {
+      return status;
    }
    
-   public void setStatus(TaskStatus status) {
-      this.setStatus(status.toString());
-   }
-
    public void setStatus(String status) {
       this.status = status;
    }

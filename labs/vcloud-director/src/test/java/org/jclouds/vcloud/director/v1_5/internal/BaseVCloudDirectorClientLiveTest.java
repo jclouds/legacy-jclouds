@@ -18,19 +18,22 @@
  */
 package org.jclouds.vcloud.director.v1_5.internal;
 
+import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
@@ -38,14 +41,14 @@ import com.google.inject.Module;
  * Tests behavior of {@link VCloudDirectorClient} and acts as parent for other client live tests.
  * 
  * @author Adrian Cole
+ * @author grkvlt@apache.org
  */
 @Test(groups = "live")
-public class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTest {
-   public BaseVCloudDirectorClientLiveTest() {
+public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTest {
+
+   protected BaseVCloudDirectorClientLiveTest() {
       provider = "vcloud-director";
    }
-   
-   protected RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context;
 
    protected String catalogName;
    protected String mediaId;
@@ -54,27 +57,57 @@ public class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTe
    protected String vDCId;
 
    @Override
+   protected Properties setupProperties() {
+      Properties overrides= super.setupProperties();
+      if (catalogName != null)
+         overrides.setProperty(provider + ".catalog-name", catalogName);
+      if (mediaId != null)
+         overrides.setProperty(provider + ".media-id", mediaId);
+      if (vAppTemplateId != null)
+         overrides.setProperty(provider + ".vapptemplate-id", vAppTemplateId);
+      if (networkId != null)
+         overrides.setProperty(provider + ".network-id", networkId);
+      if (vDCId != null)
+         overrides.setProperty(provider + ".vcd-id", vDCId);
+      return overrides;
+   }
+   
+   @BeforeClass(inheritGroups = true)
+   // NOTE Implement as required to populate xxxClient fields, or NOP
+   public abstract void setupRequiredClients();
+
+   /** Injected by {@link #setupContext} */
+   public Predicate<URI> retryTaskSuccess;
+
+   @Override
+   @BeforeClass(groups = { "live" })
    protected void setupCredentials() {
       super.setupCredentials();
-      catalogName = System.getProperty("test." + provider + ".catalog-name", "Public");
+
+      catalogName = System.getProperty("test." + provider + ".catalog-name");
       mediaId = System.getProperty("test." + provider + ".media-id");
       vAppTemplateId = System.getProperty("test." + provider + ".vapptemplate-id");
       networkId = System.getProperty("test." + provider + ".network-id");
       vDCId = System.getProperty("test." + provider + ".vdc-id");
    }
+   
+   protected RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
+
+   @BeforeClass(groups = { "live" })
+   public void setupContext() {
       setupCredentials();
       Properties overrides = setupProperties();
+
       context = new RestContextFactory().createContext(provider, identity, credential,
                ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
+
+      TaskSuccess taskSuccess = context.utils().injector().getInstance(TaskSuccess.class);
+      retryTaskSuccess = new RetryablePredicate<URI>(taskSuccess, 1000L);
    }
 
-   @AfterGroups(groups = "live")
    protected void tearDown() {
       if (context != null)
          context.close();
    }
-
 }

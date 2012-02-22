@@ -18,7 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.net.URI;
 
@@ -41,7 +42,7 @@ import com.google.common.collect.ImmutableMultimap;
  * 
  * @author grkvlt@apache.org
  */
-@Test(groups = "unit", singleThreaded = true, testName = "TaskClientExpectTest")
+@Test(groups = { "unit", "user" }, singleThreaded = true, testName = "TaskClientExpectTest")
 public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
 
    @Test

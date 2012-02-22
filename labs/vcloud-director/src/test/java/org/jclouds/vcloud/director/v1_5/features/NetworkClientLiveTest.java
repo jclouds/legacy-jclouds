@@ -40,17 +40,17 @@ import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
 
 /**
- * Tests behavior of {@code NetworkClient}
+ * Tests behavior of {@link NetworkClient}
  * 
  * @author danikov
  */
-@Test(groups = { "live", "apitests" }, testName = "NetworkClientLiveTest")
+@Test(groups = { "live", "api", "user" }, singleThreaded = true, testName = "NetworkClientLiveTest")
 public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String NETWORK = "network";
@@ -62,8 +62,9 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
  
    private Reference networkRef;
    
-   @BeforeGroups(groups = { "live" }, dependsOnMethods = { "setupClient" })
-   public void before() {
+   @BeforeClass(inheritGroups = true)
+   @Override
+   public void setupRequiredClients() {
       String networkId = "a604f3c2-0343-453e-ae1f-cddac5b7bd94"; // TODO: inject
       networkRef = Reference.builder()
             .type("application/vnd.vmware.vcloud.orgNetwork+xml")
@@ -135,5 +136,4 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(value, "value", 
             String.format(OBJ_FIELD_EQ, NETWORK, "metadataEntry.value", "value", value));
    }
-
 }

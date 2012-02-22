@@ -29,7 +29,6 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 
 /**
- * 
  * @author Jason King
  */
 public abstract class BaseVersionedServiceLiveTest extends BaseRestClientLiveTest {
@@ -48,16 +47,18 @@ public abstract class BaseVersionedServiceLiveTest extends BaseRestClientLiveTes
          overrides.setProperty(provider + ".image.login-user", loginUser);
       if (authenticateSudo != null)
          overrides.setProperty(provider + ".image.authenticate-sudo", authenticateSudo);
-
       return overrides;
    }
 
+   @Override
    @BeforeClass
    protected void setupCredentials() {
       super.setupCredentials();
+
       imageId = System.getProperty("test." + provider + ".image-id");
       loginUser = System.getProperty("test." + provider + ".image.login-user");
       authenticateSudo = System.getProperty("test." + provider + ".image.authenticate-sudo");
+
       if (loginUser != null){
          Iterable<String> userPass = Splitter.on(':').split(loginUser);
          Builder loginCredentialsBuilder = LoginCredentials.builder();

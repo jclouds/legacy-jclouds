@@ -18,7 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.net.URI;
 
@@ -29,6 +30,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
@@ -43,7 +45,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", singleThreaded = true, testName = "OrgClientExpectTest")
+@Test(groups = { "unit", "user" }, singleThreaded = true, testName = "OrgClientExpectTest")
 public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
 
    @Test
@@ -197,18 +199,18 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
    }
    
    @Test
-   public void testGetOrgMetadataEntry() {
+   public void testGetOrgMetadataValue() {
       URI orgUri = URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata/KEY"),
-            getStandardPayloadResponse("/org/orgMetadataEntry.xml", VCloudDirectorMediaType.METADATA_ENTRY));
+            getStandardPayloadResponse("/org/orgMetadataValue.xml", VCloudDirectorMediaType.METADATA_VALUE));
       
-      MetadataEntry expected = metadataEntry();
+      MetadataValue expected = metadataValue();
 
       Reference orgRef = Reference.builder().href(orgUri).build();
 
-      assertEquals(client.getOrgClient().getOrgMetadataEntry(orgRef, "KEY"), expected);
+      assertEquals(client.getOrgClient().getOrgMetadataValue(orgRef, "KEY"), expected);
    }
 
    public static Org org() {
@@ -263,13 +265,25 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
    
    public static MetadataEntry metadataEntry() {
       return MetadataEntry.builder()
-		      .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata/KEY"))
-		      .link(Link.builder()
-		            .rel("up")
-		            .type("application/vnd.vmware.vcloud.metadata+xml")
-		            .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata"))
-		            .build())
-		      .entry("KEY", "VALUE")
-		      .build();
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata/KEY"))
+            .link(Link.builder()
+                  .rel("up")
+                  .type("application/vnd.vmware.vcloud.metadata+xml")
+                  .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata"))
+                  .build())
+            .entry("KEY", "VALUE")
+            .build();
+   }
+   
+   public static MetadataValue metadataValue() {
+      return MetadataValue.builder()
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata/KEY"))
+            .link(Link.builder()
+                  .rel("up")
+                  .type("application/vnd.vmware.vcloud.metadata+xml")
+                  .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata"))
+                  .build())
+            .value("VALUE")
+            .build();
    }
 }

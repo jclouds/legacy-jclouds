@@ -40,7 +40,6 @@ public abstract class BaseRestClientLiveTest {
    protected String apiVersion;
    protected String buildVersion;
 
-
    protected Properties setupRestProperties() {
       return RestContextFactory.getPropertiesFromResource("/rest.properties");
    }

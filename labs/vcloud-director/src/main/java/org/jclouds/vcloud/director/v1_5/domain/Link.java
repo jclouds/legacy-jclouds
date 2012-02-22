@@ -18,8 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -46,14 +46,27 @@ public class Link extends ReferenceType<Link> {
       public static final String UP = "up";
       public static final String DOWN = "down";
       public static final String EDIT = "edit";
-      public static final String DELETE = "delete";
       public static final String ADD = "add";
+      public static final String DELETE = "delete";
       public static final String REMOVE = "remove";
       public static final String CATALOG_ITEM = "catalogItem";
       public static final String TASK_CANCEL = "task:cancel";
+      public static final String ALTERNATE = "alternate";
+      public static final String NEXT_PAGE = "nextPage";
+      public static final String PREVIOUS_PAGE = "previousPage";
+      public static final String LAST_PAGE = "lastPage";
+      public static final String FIRST_PAGE = "firstPage";
+      public static final String CONTROL_ACCESS = "controlAccess";
 
-      public static final List<String> ALL = Arrays.asList(
-               UP, DOWN, EDIT, DELETE, ADD, REMOVE, CATALOG_ITEM, TASK_CANCEL
+		/**
+		 * All acceptable {@link Link#getRel()} values.
+		 *
+		 * This list must be updated whenever a new relationship is added.
+		 */
+		public static final List<String> ALL = Arrays.asList(
+               UP, DOWN, EDIT, ADD, DELETE, REMOVE, CATALOG_ITEM, TASK_CANCEL,
+               ALTERNATE, NEXT_PAGE, PREVIOUS_PAGE, LAST_PAGE, FIRST_PAGE,
+               CONTROL_ACCESS
          );
    }
 

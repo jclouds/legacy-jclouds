@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -21,6 +21,10 @@ package org.jclouds.vcloud.director.v1_5;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.PROPERTY_VCLOUD_DIRECTOR_TIMEOUT_TASK_COMPLETED;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.PROPERTY_VCLOUD_DIRECTOR_VERSION_SCHEMA;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.PROPERTY_VCLOUD_DIRECTOR_XML_NAMESPACE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.PROPERTY_VCLOUD_DIRECTOR_XML_SCHEMA;
 
 import java.util.Properties;
 
@@ -34,12 +38,27 @@ import org.jclouds.PropertiesBuilder;
 public class VCloudDirectorPropertiesBuilder extends PropertiesBuilder {
 
    @Override
-   protected Properties defaultProperties() {
+   public Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+
       properties.setProperty(PROPERTY_ENDPOINT, "https://vcloudbeta.bluelock.com/api");
-      properties.setProperty(PROPERTY_SESSION_INTERVAL, 30*60 + "");
+      properties.setProperty(PROPERTY_SESSION_INTERVAL, Integer.toString(30 * 60));
       properties.setProperty(PROPERTY_API_VERSION, "1.5");
+
+      properties.setProperty(PROPERTY_VCLOUD_DIRECTOR_XML_NAMESPACE,
+            String.format("http://www.vmware.com/vcloud/v${%s}", PROPERTY_VCLOUD_DIRECTOR_VERSION_SCHEMA));
+      properties.setProperty(PROPERTY_SESSION_INTERVAL, Integer.toString(8 * 60));
+      properties.setProperty(PROPERTY_VCLOUD_DIRECTOR_XML_SCHEMA, PROPERTY_ENDPOINT + "/v1.5/schema/master.xsd");
+      
+      // TODO integrate these with the {@link ComputeTimeouts} instead of having a single timeout for everything.
+      properties.setProperty(PROPERTY_SESSION_INTERVAL, Integer.toString(300));
+      properties.setProperty(PROPERTY_VCLOUD_DIRECTOR_TIMEOUT_TASK_COMPLETED, Long.toString(1200l * 1000l));
+
       return properties;
+   }
+
+   public VCloudDirectorPropertiesBuilder() {
+      super();
    }
 
    public VCloudDirectorPropertiesBuilder(Properties properties) {

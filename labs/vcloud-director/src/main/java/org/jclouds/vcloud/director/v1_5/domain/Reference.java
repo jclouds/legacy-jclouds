@@ -85,11 +85,11 @@ public class Reference extends ReferenceType<Reference> {
       }
 
       @Override
-      protected Builder fromReferenceType(ReferenceType<Reference> in) {
+      public Builder fromReferenceType(ReferenceType<Reference> in) {
          return Builder.class.cast(super.fromReferenceType(in));
       }
 
-      protected Builder fromReference(Reference in) {
+      public Builder fromReference(Reference in) {
          return fromReferenceType(in);
       }
    }

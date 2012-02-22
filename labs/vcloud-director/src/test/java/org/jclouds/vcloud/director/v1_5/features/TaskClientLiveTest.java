@@ -18,9 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.*;
-import static org.testng.Assert.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.NOT_EMPTY_OBJECT_FMT;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkTask;
+import static org.testng.Assert.assertFalse;
 
 import java.net.URI;
 
@@ -29,6 +29,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -38,15 +39,22 @@ import com.google.common.collect.Iterables;
  * 
  * @author grkvlt@apache.org
  */
-@Test(groups = { "live", "apitests" }, testName = "TaskClientLiveTest")
+@Test(groups = { "live", "api", "user" }, singleThreaded = true, testName = "TaskClientLiveTest")
 public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    /*
     * Convenience references to API clients.
     */
 
-   private final OrgClient orgClient = context.getApi().getOrgClient();
-   private final TaskClient taskClient = context.getApi().getTaskClient();
+   private OrgClient orgClient;
+   private TaskClient taskClient;
+
+   @BeforeClass(inheritGroups = true)
+   @Override
+   public void setupRequiredClients() {
+      orgClient = context.getApi().getOrgClient();
+      taskClient = context.getApi().getTaskClient();
+   }
 
    /*
     * Shared state between dependant tests.
@@ -69,7 +77,7 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // NOTE The environment MUST have ...
       
       // Check required elements and attributes
-      assertFalse(Iterables.isEmpty(taskList.getTasks()), "There must always be Task elements in the TaskList");
+      assertFalse(Iterables.isEmpty(taskList.getTasks()), String.format(NOT_EMPTY_OBJECT_FMT, "Task", "TaskList"));
       
       for (Task task : taskList.getTasks()) {
          checkTask(task);
