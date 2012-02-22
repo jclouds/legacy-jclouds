@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,6 +18,12 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CONDITION_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.MUST_BE_WELL_FORMED_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.MUST_CONTAIN_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.NOT_NULL_OBJECT_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_OBJECT_FMT;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -52,7 +58,7 @@ public class Checks {
    
    public static void checkEntityType(EntityType<?> entity) {
       // Check required fields
-      assertNotNull(entity.getName(), "The Name attribute of an EntityType must be set");
+      assertNotNull(entity.getName(), String.format(NOT_NULL_OBJECT_FMT, "Name", "EntityType"));
 
       // Check optional fields
       // NOTE description cannot be checked
@@ -67,7 +73,7 @@ public class Checks {
 
    public static void checkReferenceType(ReferenceType<?> reference) {
       // Check required fields
-      assertNotNull(reference.getHref(), "The Href attribute of a ReferenceType must be set");
+      assertNotNull(reference.getHref(), String.format(NOT_NULL_OBJECT_FMT, "Href", "ReferenceType"));
 
       // Check optional fields
       String id = reference.getId();
@@ -91,21 +97,18 @@ public class Checks {
    
    public static void checkId(String id) {
       Iterable<String> parts = Splitter.on(':').split(id);
-      assertEquals(Iterables.size(parts), 4, "The Id must be well formed");
-      assertEquals(Iterables.get(parts, 0), "urn", "The Id must start with 'urn'");
-      assertEquals(Iterables.get(parts, 1), "vcloud", "The Id must include 'vcloud'");
+      assertEquals(Iterables.size(parts), 4, String.format(MUST_BE_WELL_FORMED_FMT, "Id", id));
+      assertEquals(Iterables.get(parts, 0), "urn", String.format(MUST_CONTAIN_FMT, "Id", "urn", id));
+      assertEquals(Iterables.get(parts, 1), "vcloud", String.format(MUST_CONTAIN_FMT, "Id", "vcloud", id));
       try {
-         UUID uuid = UUID.fromString(Iterables.get(parts, 3));
-         assertNotNull(uuid, "The UUID part of an Id must be well formed");
+         UUID.fromString(Iterables.get(parts, 3));
       } catch (IllegalArgumentException iae) {
-         fail("The UUID part of an Id must be well formed");
+          fail(String.format(MUST_BE_WELL_FORMED_FMT, "Id", id));
       }
    }
 
    public static void checkType(String type) {
-      assertTrue(VCloudDirectorMediaType.ALL.contains(type), 
-            String.format("The Type (%s) must be a valid media type  - %s", type, 
-                  Iterables.toString(VCloudDirectorMediaType.ALL)));
+      assertTrue(VCloudDirectorMediaType.ALL.contains(type), String.format(REQUIRED_VALUE_FMT, "Type", type, Iterables.toString(VCloudDirectorMediaType.ALL)));
    }
 
    // NOTE this does not currently check anything
@@ -121,10 +124,8 @@ public class Checks {
 
    public static void checkLink(Link link) {
       // Check required fields
-      assertNotNull(link.getRel(), "The Rel attribute of a Link must be set");
-      assertTrue(Link.Rel.ALL.contains(link.getRel()), 
-            String.format("The Rel attribute (%s) of a Link must be one of the allowed list - %s", 
-                  link.getRel(), Iterables.toString(Link.Rel.ALL)));
+      assertNotNull(link.getRel(), String.format(NOT_NULL_OBJECT_FMT, "Rel", "Link"));
+      assertTrue(Link.Rel.ALL.contains(link.getRel()), String.format(REQUIRED_VALUE_OBJECT_FMT, "Rel", "Link", link.getRel(), Iterables.toString(Link.Rel.ALL)));
 
       // Check parent type
       checkReferenceType(link);
@@ -132,10 +133,8 @@ public class Checks {
 
    public static void checkTask(Task task) {
       // Check required fields
-      assertNotNull(task.getStatus(), "The Status attribute of a Task must be set");
-      assertTrue(Task.Status.ALL.contains(task.getStatus().toString()), 
-            String.format("The Status of a Task (%s) must be one of the allowed list - %s", 
-            task.getStatus().toString(), Iterables.toString(Task.Status.ALL)));
+      assertNotNull(task.getStatus(), String.format(NOT_NULL_OBJECT_FMT, "Status", "Task"));
+      assertTrue(Task.Status.ALL.contains(task.getStatus()), String.format(REQUIRED_VALUE_OBJECT_FMT, "Status", "Task", task.getStatus(), Iterables.toString(Task.Status.ALL)));
 
       // Check optional fields
       // NOTE operation cannot be checked
@@ -175,18 +174,76 @@ public class Checks {
       checkEntityType(file);
    }
 
+   public static void checkMetadata(Metadata metadata) {
+      Set<MetadataEntry> metadataEntries = metadata.getMetadataEntries();
+      if (metadataEntries != null && !metadataEntries.isEmpty()) {
+         for (MetadataEntry metadataEntry : metadataEntries) {
+            checkMetadataEntry(metadataEntry);
+         }
+      }
+
+      // Check parent type
+      checkResourceType(metadata);
+   }
+
+   public static void checkMetadataEntry(MetadataEntry metadataEntry) {
+      // Check required fields
+      assertNotNull(metadataEntry.getKey(), String.format(NOT_NULL_OBJECT_FMT, "Key", "MetadataEntry"));
+      assertNotNull(metadataEntry.getValue(), String.format(NOT_NULL_OBJECT_FMT, "Value", "MetadataEntry"));
+
+      // Check parent type
+      checkResourceType(metadataEntry);
+   }
+
+   public static void checkMetadataValue(MetadataValue metadataValue) {
+      // Check required elements and attributes
+      assertNotNull(metadataValue.getValue(), String.format(NOT_NULL_OBJECT_FMT, "Value", "MetadataValue"));
+      
+      // Check parent type
+      checkResourceType(metadataValue);
+   }
+
    public static void checkProgress(Integer progress) {
-      assertTrue(progress >= 0 && progress <= 100, "The Progress attribute must be between 0 and 100");
+      assertTrue(progress >= 0 && progress <= 100, String.format(CONDITION_FMT, "Progress", "between 0 and 100", Integer.toString(progress)));
    }
 
    public static void checkError(Error error) {
       // Check required fields
-      assertNotNull(error.getMessage(), "The Message attribute of an Error must be set");
-      assertNotNull(error.getMajorErrorCode(), "The MajorErrorCode attribute of an Error must be set");
-      assertNotNull(error.getMinorErrorCode(), "The MinorErrorCode attribute of an Error must be set");
+      assertNotNull(error.getMessage(), String.format(NOT_NULL_OBJECT_FMT, "Message", "Error"));
+      assertNotNull(error.getMajorErrorCode(), String.format(NOT_NULL_OBJECT_FMT, "MajorErrorCode", "Error"));
+      assertNotNull(error.getMinorErrorCode(), String.format(NOT_NULL_OBJECT_FMT, "MinorErrorCode", "Error"));
       
       // NOTE vendorSpecificErrorCode cannot be checked
       // NOTE stackTrace cannot be checked
+   }
+
+   public static void checkOrg(Org org) {
+      // Check required elements and attributes
+      assertNotNull(org.getFullName(), String.format(NOT_NULL_OBJECT_FMT, "FullName", "Org"));
+
+      // Check parent type
+      checkEntityType(org);
+   }
+
+   public static void checkCatalog(Catalog catalog) {
+      // Check optional elements/attributes
+      Entity owner = catalog.getOwner();
+      if (owner != null) checkEntityType(owner);
+      CatalogItems catalogItems = catalog.getCatalogItems();
+      if (catalogItems != null) {
+         for (Reference catalogItemReference : catalogItems.getCatalogItems()) {
+            checkReferenceType(catalogItemReference);
+         }
+      }
+      // NOTE isPublished cannot be checked
+      
+      // Check parent type
+      checkEntityType(catalog);
+   }
+
+   public static void checkCatalogItem(CatalogItem catalogItem) {
+      // Check parent type
+      checkEntityType(catalogItem);
    }
 
    public static void checkImageType(String imageType) {

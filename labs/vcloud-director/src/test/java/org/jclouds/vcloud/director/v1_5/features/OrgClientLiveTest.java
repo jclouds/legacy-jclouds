@@ -18,17 +18,24 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.*;
-import static org.testng.Assert.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CONDITION_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CORRECT_VALUE_OBJECT_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.NOT_EMPTY_OBJECT_FMT;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadata;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValue;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOrg;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkReferenceType;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -38,14 +45,20 @@ import com.google.common.collect.Iterables;
 * 
 * @author grkvlt@apache.org
 */
-@Test(groups = { "live", "apitests" }, testName = "OrgClientLiveTest")
+@Test(groups = { "live", "api", "user" }, singleThreaded = true, testName = "OrgClientLiveTest")
 public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    /*
     * Convenience references to API clients.
     */
 
-   private final OrgClient orgClient = context.getApi().getOrgClient();
+   private OrgClient orgClient;
+
+   @BeforeClass(inheritGroups = true)
+   @Override
+   public void setupRequiredClients() {
+      orgClient = context.getApi().getOrgClient();
+   }
 
    /*
     * Shared state between dependant tests.
@@ -62,11 +75,11 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       
       // NOTE The environment MUST have at least one organisation configured
       
-      // Check required elements and attributes
-      assertFalse(Iterables.isEmpty(orgList.getOrgs()), "There must always be Org elements in the OrgList");
+      // Check test requirements
+      assertFalse(Iterables.isEmpty(orgList.getOrgs()), String.format(NOT_EMPTY_OBJECT_FMT, "Org", "OrgList"));
       
       for (Reference orgRef : orgList.getOrgs()) {
-         assertEquals(orgRef.getType(), VCloudDirectorMediaType.ORG, "The Refernce must be to an Org type");
+         assertEquals(orgRef.getType(), VCloudDirectorMediaType.ORG, String.format(CONDITION_FMT, "Reference.Type", VCloudDirectorMediaType.ORG, orgRef.getType()));
          checkReferenceType(orgRef);
       }
    }
@@ -78,11 +91,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // Call the method being tested
       org = orgClient.getOrg(orgRef);
 
-      // Check required elements and attributes
-      assertNotNull(org.getFullName(), String.format(FIELD_NOT_NULL_FMT, "FullName", "Org"));
-
-      // Check parent type
-      checkEntityType(org);
+      checkOrg(org);
    }
    
    @Test(testName = "GET /org/{id}/metadata/", dependsOnMethods = { "testGetOrg" })
@@ -92,36 +101,22 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       
       // NOTE The environment MUST have at one metadata entry for the first organisation configured
       
-      // Check required elements and attributes
-      assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), "There must always be MetadataEntry elements in the Org");
+      checkMetadata(metadata);
       
-      // Check parent type
-      checkResourceType(metadata);
-      
-      for (MetadataEntry entry : metadata.getMetadataEntries()) {
-         // Check required elements and attributes
-         assertNotNull(entry.getKey(), String.format(FIELD_NOT_NULL_FMT, "Key", "MetadataEntry"));
-         assertNotNull(entry.getValue(), String.format(FIELD_NOT_NULL_FMT, "Value", "MetadataEntry"));
-         
-         // Check parent type
-         checkResourceType(entry);
-      }
+      // Check requirements for this test
+      assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), String.format(NOT_EMPTY_OBJECT_FMT, "MetadataEntry", "Org"));
    }
    
    @Test(testName = "GET /org/{id}/metadata/{key}", dependsOnMethods = { "testGetOrgMetadata" })
-   public void testGetOrgMetadataEntry() {
+   public void testGetOrgMetadataValue() {
       // Call the method being tested
-      MetadataEntry entry = orgClient.getOrgMetadataEntry(orgRef, "KEY");
+      MetadataValue value = orgClient.getOrgMetadataValue(orgRef, "KEY");
       
       // NOTE The environment MUST have configured the metadata entry as '{ key="KEY", value="VALUE" )'
 
-      // Check required elements and attributes
-      assertNotNull(entry.getKey(), String.format(FIELD_NOT_NULL_FMT, "Key", "MetadataEntry"));
-      assertEquals(entry.getKey(), "KEY", "The Key field must have the value \"KEY\"");
-      assertNotNull(entry.getValue(), String.format(FIELD_NOT_NULL_FMT, "Value", "MetadataEntry"));
-      assertEquals(entry.getValue(), "VALUE", "The Value field must have the value \"VALUE\"");
-      
-      // Check parent type
-      checkResourceType(entry);
+      String expected = "VALUE";
+
+      checkMetadataValue(value);
+      assertEquals(value.getValue(), expected, String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, value.getValue()));
    }
 }

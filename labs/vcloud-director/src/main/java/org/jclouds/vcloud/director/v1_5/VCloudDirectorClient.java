@@ -21,19 +21,21 @@ package org.jclouds.vcloud.director.v1_5;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.ovf.Network;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
 import org.jclouds.vcloud.director.v1_5.features.MediaClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgClient;
+import org.jclouds.vcloud.director.v1_5.features.QueryClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 
 import com.google.inject.Provides;
 
 /**
  * Provides synchronous access to VCloudDirector.
- * <p/>
  * 
  * @see VCloudDirectorAsyncClient
  * @author Adrian Cole
@@ -41,12 +43,17 @@ import com.google.inject.Provides;
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface VCloudDirectorClient {
    /**
-    * 
     * @return the current login session
     */
    @Provides
    Session getCurrentSession();
-   
+
+   /**
+    * @return asynchronous access to query features
+    */
+   @Delegate
+   QueryClient getQueryClient();
+
    /**
     * @return synchronous access to {@link Org} features
     */

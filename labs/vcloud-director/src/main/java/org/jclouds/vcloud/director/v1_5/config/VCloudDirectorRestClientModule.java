@@ -50,6 +50,8 @@ import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgClient;
+import org.jclouds.vcloud.director.v1_5.features.QueryAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.QueryClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 import org.jclouds.vcloud.director.v1_5.functions.LoginUserInOrgWithPassword;
@@ -82,6 +84,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
             .put(CatalogClient.class, CatalogAsyncClient.class)
             .put(NetworkClient.class, NetworkAsyncClient.class)
             .put(OrgClient.class, OrgAsyncClient.class)
+            .put(QueryClient.class, QueryAsyncClient.class)
             .put(MediaClient.class, MediaAsyncClient.class)
             .put(TaskClient.class, TaskAsyncClient.class)
             .build();
@@ -92,10 +95,13 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
 
    @Override
    protected void configure() {
-      // session client is used directly for filters and retry handlers, so let's bind it explicitly
+      // Bind clients that are used directly in Functions, Predicates and other circumstances
       bindClientAndAsyncClient(binder(), SessionClient.class, SessionAsyncClient.class);
       bindClientAndAsyncClient(binder(), OrgClient.class, OrgAsyncClient.class);
+      bindClientAndAsyncClient(binder(), TaskClient.class, TaskAsyncClient.class);
+
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(InvalidateSessionAndRetryOn401AndLogoutOnClose.class);
+
       super.configure();
    }
 

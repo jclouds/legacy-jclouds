@@ -36,4 +36,12 @@ public class VCloudDirectorClientExperimentLiveTest extends BaseVCloudDirectorCl
       assertEquals(session.getHref().toASCIIString(), context.getEndpoint().toASCIIString() + "/session/");
    }
 
+   /**
+    * No operation.
+    *
+    * @see BaseVCloudDirectorClientLiveTest#setupRequiredClients()
+    */
+   @Override
+   public void setupRequiredClients() { }
+
 }

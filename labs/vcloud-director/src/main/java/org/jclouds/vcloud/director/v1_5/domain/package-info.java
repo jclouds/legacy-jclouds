@@ -19,6 +19,8 @@
 @XmlSchema(namespace = VCLOUD_1_5_NS, elementFormDefault = XmlNsForm.QUALIFIED) 
 package org.jclouds.vcloud.director.v1_5.domain;
  
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
+
 import javax.xml.bind.annotation.XmlNsForm;
 import javax.xml.bind.annotation.XmlSchema;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
+

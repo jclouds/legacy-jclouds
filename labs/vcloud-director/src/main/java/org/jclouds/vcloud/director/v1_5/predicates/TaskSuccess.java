@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -21,25 +21,20 @@ package org.jclouds.vcloud.director.v1_5.predicates;
 import java.net.URI;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.RestContext;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorAsyncClient;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.TaskInErrorStateException;
-import org.jclouds.vcloud.director.v1_5.domain.TaskStatus;
 import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 
 import com.google.common.base.Predicate;
-import com.google.inject.Inject;
 
 /**
+ * Test a {@link Task} to see if it has succeeded.
  * 
- * Tests to see if a task succeeds.
- * 
- * @author Adrian Cole
+ * @author grkvlt@apache.org
  */
 @Singleton
 public class TaskSuccess implements Predicate<URI> {
@@ -50,21 +45,26 @@ public class TaskSuccess implements Predicate<URI> {
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public TaskSuccess(RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context) {
-      this.taskClient = context.getApi().getTaskClient();
+   public TaskSuccess(TaskClient taskClient) {
+      this.taskClient = taskClient;
    }
 
+   /** @see Predicate#apply(Object) */
+   @Override
    public boolean apply(URI taskUri) {
       logger.trace("looking for status on task %s", taskUri);
 
       Task task = taskClient.getTask(taskUri);
       // perhaps task isn't available, yet
-      if (task == null)
-         return false;
-      logger.trace("%s: looking for status %s: currently: %s", task, TaskStatus.SUCCESS, task.getStatus());
-      if (task.getStatus() == TaskStatus.ERROR)
-         throw new TaskInErrorStateException(task);
-      return task.getStatus() == TaskStatus.SUCCESS;
+      if (task == null) return false;
+      logger.trace("%s: looking for status %s: currently: %s", task, Task.Status.SUCCESS, task.getStatus());
+      if (task.getStatus().equals(Task.Status.ERROR))
+         throw new VCloudDirectorException(task);
+      return task.getStatus().equals(Task.Status.SUCCESS);
    }
 
+   @Override
+   public String toString() {
+      return "checkTaskSuccess()";
+   }
 }

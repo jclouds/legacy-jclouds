@@ -28,7 +28,7 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
@@ -81,6 +81,6 @@ public interface OrgAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<MetadataEntry> getOrgMetadataEntry(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> orgRef,
+   ListenableFuture<MetadataValue> getOrgMetadataValue(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> orgRef,
          @PathParam("key") String key);
 }

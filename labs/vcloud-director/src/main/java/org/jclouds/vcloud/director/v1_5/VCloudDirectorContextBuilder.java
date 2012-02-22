@@ -21,8 +21,8 @@ package org.jclouds.vcloud.director.v1_5;
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.vcloud.director.v1_5.config.VCloudDirectorRestClientModule;
 import org.jclouds.rest.RestContextBuilder;
+import org.jclouds.vcloud.director.v1_5.config.VCloudDirectorRestClientModule;
 
 import com.google.inject.Module;
 
