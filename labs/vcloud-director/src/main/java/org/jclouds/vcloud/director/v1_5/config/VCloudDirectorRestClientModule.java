@@ -54,6 +54,8 @@ import org.jclouds.vcloud.director.v1_5.features.QueryAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.QueryClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskClient;
+import org.jclouds.vcloud.director.v1_5.features.VdcAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.VdcClient;
 import org.jclouds.vcloud.director.v1_5.functions.LoginUserInOrgWithPassword;
 import org.jclouds.vcloud.director.v1_5.handlers.InvalidateSessionAndRetryOn401AndLogoutOnClose;
 import org.jclouds.vcloud.director.v1_5.handlers.VCloudDirectorErrorHandler;
@@ -87,6 +89,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
             .put(QueryClient.class, QueryAsyncClient.class)
             .put(MediaClient.class, MediaAsyncClient.class)
             .put(TaskClient.class, TaskAsyncClient.class)
+            .put(VdcClient.class, VdcAsyncClient.class)
             .build();
 
    public VCloudDirectorRestClientModule() {
