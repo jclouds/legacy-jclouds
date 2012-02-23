@@ -81,28 +81,34 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
       credential = password;
    }
    
+   @Deprecated
    protected HttpRequest getStandardRequest(String method, String path) {
       return getStandardRequest(method, path, VCloudDirectorMediaType.ANY);
    }
 
+   @Deprecated
    protected HttpRequest getStandardRequest(String method, URI uri) {
       return getStandardRequest(method, uri, VCloudDirectorMediaType.ANY);
    }
 
+   @Deprecated
    protected HttpRequest getStandardRequest(String method, String path, String mediaType) {
       return getStandardRequest(method, URI.create(endpoint + path), VCloudDirectorMediaType.ANY);
    }
 
+   @Deprecated
    protected HttpRequest getStandardPayloadRequest(String method, String command, String relativeFilePath, 
          String postMediaType) {
       return getStandardPayloadRequest(method, URI.create(endpoint + command), relativeFilePath, postMediaType);
    }
    
+   @Deprecated
    protected HttpRequest getStandardPayloadRequest(String method, URI uri, String relativeFilePath, 
          String postMediaType) {
       return getStandardRequestWithPayload(method, uri, VCloudDirectorMediaType.ANY, relativeFilePath, postMediaType);
    }
    
+   @Deprecated
    protected HttpRequest getStandardRequest(String method, URI uri, String mediaType) {
       return HttpRequest.builder()
             .method(method)
@@ -114,19 +120,23 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
             .build();
    }
    
+   @Deprecated
    protected HttpRequest getStandardRequestWithPayload(String method, String path, String relativeFilePath, String mediaType) {
       return getStandardRequestWithPayload(method, path, VCloudDirectorMediaType.ANY, relativeFilePath, mediaType);
    }
    
+   @Deprecated
    protected HttpRequest getStandardRequestWithPayload(String method, URI uri, String relativeFilePath, String mediaType) {
       return getStandardRequestWithPayload(method, uri, VCloudDirectorMediaType.ANY, relativeFilePath, mediaType);
    }
 
+   @Deprecated
    protected HttpRequest getStandardRequestWithPayload(String method, String path, String acceptType, String relativeFilePath, String mediaType) {
       URI uri = URI.create(endpoint + path);
       return getStandardRequestWithPayload(method, uri, acceptType, relativeFilePath, mediaType);
    }
 
+   @Deprecated
    protected HttpRequest getStandardRequestWithPayload(String method, URI uri, String acceptType, String relativeFilePath, String mediaType) {
       return HttpRequest.builder()
             .method(method)
@@ -139,10 +149,12 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
             .build();
    }
 
+   @Deprecated
    protected HttpResponse getStandardPayloadResponse(String relativeFilePath, String mediaType) {
       return getStandardPayloadResponse(200, relativeFilePath, mediaType);
    }
 
+   @Deprecated
    protected HttpResponse getStandardPayloadResponse(int statusCode, String relativeFilePath, String mediaType) {
       return HttpResponse.builder()
             .statusCode(statusCode)
