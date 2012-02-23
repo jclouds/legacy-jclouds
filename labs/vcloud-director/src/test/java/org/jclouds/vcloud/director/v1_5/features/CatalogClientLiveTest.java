@@ -34,6 +34,7 @@ import static org.testng.Assert.fail;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
+import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
@@ -63,7 +64,6 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    private CatalogClient catalogClient;
    private QueryClient queryClient;
-   private MediaClient mediaClient;
 
    /*
     * Shared state between dependant tests.
@@ -81,7 +81,6 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void setupRequiredClients() {
       catalogClient = context.getApi().getCatalogClient();
       queryClient = context.getApi().getQueryClient();
-      mediaClient = context.getApi().getMediaClient();
    }
 
    private Metadata catalogItemMetadata;
@@ -227,9 +226,9 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       Task setCatalogItemMetadataValue = catalogClient.setCatalogItemMetadataValue(catalogItemRef, "KEY", newMetadataValue);
       checkTask(setCatalogItemMetadataValue);
-      // TODO requires code from dan to be merged
-//      assertTrue(taskTester.apply(setCatalogItemMetadataValue.getHref()),
-//            String.format(TASK_COMPLETE_TIMELY, "setCatalogItemMetadataValue"));
+      Checks.checkTask(setCatalogItemMetadataValue);
+      assertTrue(retryTaskSuccess.apply(setCatalogItemMetadataValue.getHref()), 
+            String.format(TASK_COMPLETE_TIMELY, "setCatalogItemMetadataValue"));
       
       MetadataValue updatedMetadataValue = catalogClient.getCatalogItemMetadataValue(catalogItemRef, "KEY");
       assertEquals(updatedMetadataValue.getValue(), newMetadataValue.getValue(),
@@ -241,9 +240,9 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void testDeleteCatalogItemMetadataValue() {
       Task deleteCatalogItemMetadataValue = catalogClient.deleteCatalogItemMetadataValue(catalogItemRef, "KEY");
       checkTask(deleteCatalogItemMetadataValue);
-      // TODO requires code from dan to be merged
-//      assertTrue(taskTester.apply(deleteCatalogItemMetadataValue.getHref()),
-//            String.format(TASK_COMPLETE_TIMELY, "deleteCatalogItemMetadataValue"));
+      Checks.checkTask(deleteCatalogItemMetadataValue);
+      assertTrue(retryTaskSuccess.apply(deleteCatalogItemMetadataValue.getHref()), 
+            String.format(TASK_COMPLETE_TIMELY, "deleteCatalogItemMetadataValue"));
       try {
 	      catalogClient.getCatalogItemMetadataValue(catalogItemRef, "KEY");
 	      fail("The CatalogItem MetadataValue for KEY should have been deleted");
@@ -269,8 +268,8 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       deleteAllCatalogItemMetadata(catalogItemRef);
       Metadata newMetadata = Metadata.builder().entry(MetadataEntry.builder().entry("KEY", "VALUE").build()).build();
       Task mergeCatalogItemMetadata = catalogClient.mergeCatalogItemMetadata(catalogItemRef, newMetadata);
-      // TODO requires code from dan to be merged
-//    assertTrue(taskTester.apply(mergeCatalogItemMetadata.getHref()),
-//          String.format(TASK_COMPLETE_TIMELY, "mergeCatalogItemMetadata"));
+      Checks.checkTask(mergeCatalogItemMetadata);
+      assertTrue(retryTaskSuccess.apply(mergeCatalogItemMetadata.getHref()), 
+            String.format(TASK_COMPLETE_TIMELY, "mergeCatalogItemMetadata"));
    }
 }
