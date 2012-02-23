@@ -106,10 +106,10 @@ public class BackoffLimitedRetryHandler implements HttpRetryHandler, IOException
       command.incrementFailureCount();
 
       if (!command.isReplayable()) {
-         logger.warn("Cannot retry after server error, command is not replayable: %1$s", command);
+         logger.error("Cannot retry after server error, command is not replayable: %1$s", command);
          return false;
       } else if (command.getFailureCount() > retryCountLimit) {
-         logger.warn("Cannot retry after server error, command has exceeded retry limit %1$d: %2$s", retryCountLimit,
+         logger.error("Cannot retry after server error, command has exceeded retry limit %1$d: %2$s", retryCountLimit,
                   command);
          return false;
       } else {
