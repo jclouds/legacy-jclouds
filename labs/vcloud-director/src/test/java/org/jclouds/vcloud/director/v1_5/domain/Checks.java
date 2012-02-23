@@ -370,7 +370,6 @@ public class Checks {
    public static void checkIpAddress(String ip) {
       InetAddresses.isInetAddress(ip);
    }
-   }
 
    public static void checkVApp(VApp vApp) {
       // TODO Auto-generated method stub
@@ -391,4 +390,5 @@ public class Checks {
       
       // parent type
       Checks.checkResourceEntityType(media);
+   }
 }
