@@ -73,7 +73,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .build();
    }
    
-   @Test
+   @Test(enabled = false)
    public void testGetVdc() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -89,7 +89,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       assertEquals(client.getVdcClient().getVdc(vdcRef), expected);
    }
 
-   @Test
+   @Test(enabled = false)
    public void testResponse400ForInvalidVdcId() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -116,7 +116,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       }
    }
 
-   @Test
+   @Test(enabled = false)
    public void testResponse403ForFakeVdcId() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -193,7 +193,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       }
    }
    
-   @Test
+   @Test(enabled = false)
    public void testCloneMedia() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -325,7 +325,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       assertEquals(client.getVdcClient().uploadVAppTemplate(vdcRef, params), expected);
    }
 
-   @Test
+   @Test(enabled = false)
    public void testCreateMedia() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -347,7 +347,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       assertEquals(client.getVdcClient().createMedia(vdcRef, createMedia), expected);
    }
 
-   @Test
+   @Test(enabled = false)
    public void testGetMetadata() {
       URI vdcUri = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f");
       
@@ -367,6 +367,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       assertEquals(client.getMediaClient().getMetadata(mediaRef), expected);
    }
    
+   @Test(enabled = false)
    public void testGetMetadataValue() {
       URI vdcUri = URI.create("https://vcloudbeta.bluelock.com/api/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f");
       
