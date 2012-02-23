@@ -70,6 +70,77 @@ public class CloneVAppParams
          return cloneVAppParams;
       }
 
+      /**
+       * @see ParamsType#getDescription()
+       */
+      public Builder description(String description) {
+         super.description(description);
+         return this;
+      }
+
+      /**
+       * @see ParamsType#getName()
+       */
+      public Builder name(String name) {
+         super.name(name);
+         return this;
+      }
+      
+      /**
+       * @see VAppCreationParamsType#getVAppParent()
+       */
+      public Builder vAppParent(Reference vAppParent) {
+         super.vAppParent(vAppParent);
+         return this;
+      }
+
+      /**
+       * @see VAppCreationParamsType#getInstantiationParams()
+       */
+      public Builder instantiationParams(InstantiationParams instantiationParams) {
+         super.instantiationParams(instantiationParams);
+         return this;
+      }
+
+      /**
+       * @see VAppCreationParamsType#getDeploy()
+       */
+      public Builder deploy(Boolean deploy) {
+         super.deploy(deploy);
+         return this;
+      }
+
+      /**
+       * @see VAppCreationParamsType#getPowerOn()
+       */
+      public Builder powerOn(Boolean powerOn) {
+         super.powerOn(powerOn);
+         return this;
+      }
+      
+      /**
+       * @see InstantiateVAppParamsType#getSource()
+       */
+      public Builder source(Reference source) {
+         super.source(source);
+         return this;
+      }
+
+      /**
+       * @see InstantiateVAppParamsType#getIsSourceDelete()
+       */
+      public Builder isSourceDelete(Boolean isSourceDelete) {
+         super.isSourceDelete(isSourceDelete);
+         return this;
+      }
+
+      /**
+       * @see InstantiateVAppParamsType#getLinkedClone()
+       */
+      public Builder linkedClone(Boolean linkedClone) {
+         super.linkedClone(linkedClone);
+         return this;
+      }
 
       @Override
       public Builder fromInstantiateVAppParamsType(InstantiateVAppParamsType<CloneVAppParams> in) {
