@@ -22,45 +22,50 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
+import org.jclouds.openstack.domain.Resource;
+import org.jclouds.openstack.nova.v1_1.domain.Image;
 
 /**
- * Provides synchronous access to Floating IPs.
+ * Provides synchronous access to Images.
  * <p/>
  * 
- * @see FloatingIPAsyncClient
- * @author Jeremy Daggett
+ * @see ImageAsyncClient
+ * @see <a href="http://docs.openstack.org/api/openstack-compute/1.1/content/Servers-d1e2073.html"
+ *      />
+ * @author Adrian Cole
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface FloatingIPClient {
+public interface ImageClient {
 
    /**
-    * List all Floating IP addresses
+    * List all images (IDs, names, links)
     * 
-    * @return all Floating IPs
+    * @return all images (IDs, names, links)
     */
-   Set<FloatingIP> listFloatingIPs();
+   Set<Resource> listImages();
 
    /**
-    * Get a specific Floating IP address
+    * List all images (all details)
     * 
-    * @return all Floating IPs
+    * @return all images (all details)
     */
-   FloatingIP getFloatingIP(String id);
+   Set<Image> listImagesInDetail();
 
    /**
-    * Allocate a Floating IP address
-    * 
-    * @return a newly allocated FloatingIP
-    */
-   FloatingIP allocate();
-
-   /**
-    * Deallocate a Floating IP address
+    * List details of the specified image
     * 
     * @param id
-    *           the Floating IP id
+    *           id of the server
+    * @return server or null if not found
     */
-   void deallocate(String id);
+   Image getImage(String id);
 
+   /**
+    * Delete the specified image
+    * 
+    * @param id id of the image
+    * @return server or null if not found
+    */
+   void deleteImage(String id);
+   
 }

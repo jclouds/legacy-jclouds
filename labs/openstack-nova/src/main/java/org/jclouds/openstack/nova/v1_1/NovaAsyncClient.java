@@ -25,6 +25,7 @@ import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
 import org.jclouds.openstack.nova.v1_1.features.FloatingIPClient;
+import org.jclouds.openstack.nova.v1_1.features.ImageClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
@@ -61,6 +62,13 @@ public interface NovaAsyncClient {
     */
    @Delegate
    FlavorClient getFlavorClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+
+   /**
+    * Provides asynchronous access to Image features.
+    */
+   @Delegate
+   ImageClient getImageClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**

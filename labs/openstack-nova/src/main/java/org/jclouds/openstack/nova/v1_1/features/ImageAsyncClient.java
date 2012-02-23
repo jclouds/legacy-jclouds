@@ -23,75 +23,71 @@ import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
+import org.jclouds.openstack.nova.v1_1.domain.Image;
 import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.Payload;
-import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Provides asynchronous access to Floating IPs via the REST API.
+ * Provides asynchronous access to Images via the REST API.
  * <p/>
  * 
- * @see FloatingIPClient
+ * @see ImageClient
  * @author Jeremy Daggett
  */
 @SkipEncoding({ '/', '=' })
 @RequestFilters(AuthenticateRequest.class)
-public interface FloatingIPAsyncClient {
+public interface ImageAsyncClient {
 
    /**
-    * @see FloatingIPClient#listFloatingIPs
+    * @see ImageClient#listImages
     */
    @GET
-   @Path("/os-floating-ips")
-   @SelectJson("floating_ips")
+   @SelectJson("images")
    @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/images")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<FloatingIP>> listFloatingIPs();
+   ListenableFuture<Set<Resource>> listImages();
 
    /**
-    * @see FloatingIPClient#getFloatingIP
+    * @see ImageClient#listImagesInDetail
     */
    @GET
-   @Path("/os-floating-ips/{id}")
-   @SelectJson("floating_ip")
+   @SelectJson("images")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<FloatingIP> getFloatingIP(@PathParam("id") String id);
+   @Path("/images/detail")
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<Set<Image>> listImagesInDetail();
 
    /**
-    * @see FloatingIPClient#allocate
+    * @see ImageClient#getImage
     */
-   @POST
-   @Path("/os-floating-ips")
-   @SelectJson("floating_ip")
+   @GET
+   @SelectJson("flavor")
    @Consumes(MediaType.APPLICATION_JSON)
-   @Produces(MediaType.APPLICATION_JSON)
+   @Path("/images/{id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Payload("{}")
-   ListenableFuture<FloatingIP> allocate();
+   ListenableFuture<Image> getImage(@PathParam("id") String id);
 
    /**
-    * @see FloatingIPClient#deallocate
+    * @see ImageClient#deleteImage
     */
    @DELETE
    @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Path("/os-floating-ips/{id}")
-   ListenableFuture<Void> deallocate(@PathParam("id") String id);
+   @Path("/images/{id}")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> deleteImage(@PathParam("id") String id);
 
 }

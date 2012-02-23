@@ -23,17 +23,15 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.domain.Resource;
-import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v1_1.domain.Flavor;
-import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SkipEncoding;
 
 /**
  * Provides asynchronous access to Flavors via their REST API.
  * <p/>
  * 
  * @see FlavorClient
- * @see <a href="http://docs.openstack.org/api/openstack-compute/1.1/content/Flavors-d1e4180.html"
+ * @see <a href=
+ *      "http://docs.openstack.org/api/openstack-compute/1.1/content/Flavors-d1e4180.html"
  *      />
  * @author Jeremy Daggett
  */
@@ -59,7 +57,7 @@ public interface FlavorClient {
     * 
     * @param id
     *           id of the flavor
-    * @return flavorr or null if not found
+    * @return flavor or null if not found
     */
    Flavor getFlavor(String id);
 
