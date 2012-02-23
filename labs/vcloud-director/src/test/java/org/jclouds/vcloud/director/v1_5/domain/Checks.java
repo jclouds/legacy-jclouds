@@ -22,6 +22,8 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.C
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.MUST_BE_WELL_FORMED_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.MUST_CONTAIN_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.NOT_NULL_OBJECT_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_GTE_0;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_OBJECT_FMT;
 import static org.testng.Assert.assertEquals;
@@ -368,4 +370,25 @@ public class Checks {
    public static void checkIpAddress(String ip) {
       InetAddresses.isInetAddress(ip);
    }
+   }
+
+   public static void checkVApp(VApp vApp) {
+      // TODO Auto-generated method stub
+      
+   }
+
+   public static void checkVAppTemplate(VAppTemplate template) {
+      // TODO Auto-generated method stub
+      
+   }
+
+   public static void checkMediaFor(String client, Media media) {
+      // required
+      assertNotNull(media.getImageType(), String.format(OBJ_FIELD_REQ, client, "imageType"));
+      Checks.checkImageType(media.getImageType());
+      assertNotNull(media.getSize(), String.format(OBJ_FIELD_REQ, client, "size"));
+      assertTrue(media.getSize() >= 0, String.format(OBJ_FIELD_GTE_0, client, "size", media.getSize()));
+      
+      // parent type
+      Checks.checkResourceEntityType(media);
 }
