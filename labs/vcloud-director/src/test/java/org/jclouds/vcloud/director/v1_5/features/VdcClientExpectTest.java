@@ -50,6 +50,7 @@ import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -65,9 +66,9 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
    
    private Reference vdcRef;
    
-   @BeforeGroups(groups = { "unit" }, dependsOnMethods = { "setupClient" })
+   @BeforeClass
    public void before() {
-      String vdcId = "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f"; // TODO: inject
+      String vdcId = "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f";
       vdcRef = Reference.builder()
             .type("application/vnd.vmware.vcloud.vdc+xml")
             .name("")
