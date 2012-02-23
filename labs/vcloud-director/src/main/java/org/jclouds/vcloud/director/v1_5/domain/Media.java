@@ -92,10 +92,17 @@ public class Media extends ResourceEntityType<Media> {
 
       @Override
       public Media build() {
-         Media media = new Media();
+         Media media = new Media(href, name);
          media.setOwner(owner);
          media.setImageType(imageType);
          media.setSize(size);
+         media.setFiles(files);
+         media.setStatus(status);
+         media.setDescription(description);
+         media.setTasksInProgress(tasksInProgress);
+         media.setId(id);
+         media.setType(type);
+         media.setLinks(links);
          return media;
       }
 
@@ -200,7 +207,11 @@ public class Media extends ResourceEntityType<Media> {
    }
 
    public Media() {
-      super();
+      // for JAXB
+   }
+   
+   protected Media(URI href, String name) {
+      super(href, name);
    }
 
    @XmlElement(namespace = VCLOUD_1_5_NS, name = "Owner")
