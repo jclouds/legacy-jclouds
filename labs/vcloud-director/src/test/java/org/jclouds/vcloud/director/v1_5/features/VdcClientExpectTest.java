@@ -147,7 +147,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       }
    }
    
-   @Test
+   @Test(enabled = false)
    public void testCaptureVApp() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -169,7 +169,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       assertEquals(client.getVdcClient().captureVApp(vdcRef, params), expected);
    }
    
-   @Test
+   @Test(enabled = false)
    public void testResponse4xxForCaptureVAppNoParams() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -219,7 +219,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       assertEquals(client.getVdcClient().cloneMedia(vdcRef, params), expected);
    }
    
-   @Test
+   @Test(enabled = false)
    public void testCloneVApp() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -241,7 +241,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       assertEquals(client.getVdcClient().cloneVApp(vdcRef, params), expected);
    }
    
-   @Test
+   @Test(enabled = false)
    public void testCloneVAppTemplate() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -263,7 +263,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       assertEquals(client.getVdcClient().cloneVAppTemplate(vdcRef, params), expected);
    }
 
-   @Test
+   @Test(enabled = false)
    public void testComposeVApp() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -285,7 +285,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       assertEquals(client.getVdcClient().composeVApp(vdcRef, params), expected);
    }
 
-   @Test
+   @Test(enabled = false)
    public void testInstantiateVAppTemplate() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -307,7 +307,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       assertEquals(client.getVdcClient().instantiateVApp(vdcRef, params), expected);
    }
 
-   @Test
+   @Test(enabled = false)
    public void testUploadVAppTemplate() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
