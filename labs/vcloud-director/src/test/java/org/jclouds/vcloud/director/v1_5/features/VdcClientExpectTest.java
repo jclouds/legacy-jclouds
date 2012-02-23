@@ -40,7 +40,6 @@ import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ResourceEntities;
@@ -51,10 +50,7 @@ import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Allows us to test a client via its side effects.
@@ -356,40 +352,38 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       URI vdcUri = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/metadata"),
-            getStandardPayloadResponse("/vdc/metadata.xml", VCloudDirectorMediaType.METADATA));
+            new VcloudHttpRequestPrimer()
+               .apiCommand("GET", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/metadata")
+               .acceptAnyMedia()
+               .httpRequestBuilder().build(), 
+            new VcloudHttpResponsePrimer()
+               .xmlFilePayload("/vdc/metadata.xml", VCloudDirectorMediaType.METADATA)
+               .httpResponseBuilder().build());
       
-      Metadata expected = Metadata.builder()
-            .type("application/vnd.vmware.vcloud.metadata+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/metadata"))
-            .link(Link.builder()
-                  .rel("up")
-                  .type("application/vnd.vmware.vcloud.vdc+xml")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f"))
-                  .build())
-            .entries(ImmutableSet.of(MetadataEntry.builder().entry("key", "value").build()))
-            .build();
+      Reference mediaRef = Reference.builder().href(vdcUri).build();
+      
+      Metadata expected = metadata();
 
-       Reference vdcRef = Reference.builder().href(vdcUri).build();
- 
-       assertEquals(client.getVdcClient().getMetadata(vdcRef), expected);
+      assertEquals(client.getMediaClient().getMetadata(mediaRef), expected);
    }
    
-   @Test(enabled=false) // No metadata in exemplar xml...
    public void testGetMetadataValue() {
       URI vdcUri = URI.create("https://vcloudbeta.bluelock.com/api/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/metadata/KEY"),
-            getStandardPayloadResponse("/vdc/metadataEntry.xml", VCloudDirectorMediaType.METADATA_ENTRY));
+            new VcloudHttpRequestPrimer()
+               .apiCommand("GET", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/metadata/key")
+               .acceptAnyMedia()
+               .httpRequestBuilder().build(), 
+            new VcloudHttpResponsePrimer()
+               .xmlFilePayload("/vdc/metadataValue.xml", VCloudDirectorMediaType.METADATA_VALUE)
+               .httpResponseBuilder().build());
       
-      MetadataValue expected = MetadataValue.builder()
-            .value("value")
-            .build();
+      MetadataValue expected = metadataValue();
+      
+      Reference mediaRef = Reference.builder().href(vdcUri).build();
 
-      Reference vdcRef = Reference.builder().href(vdcUri).build();
-
-      assertEquals(client.getVdcClient().getMetadataValue(vdcRef, "KEY"), expected);
+      assertEquals(client.getVdcClient().getMetadataValue(mediaRef, "key"), expected);
    }
 
    public static Vdc getVdc() {
@@ -558,6 +552,16 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
    }
    
    private Media createMedia() {
+      // TODO Auto-generated method stub
+      return null;
+   }
+   
+   private Metadata metadata() {
+      // TODO Auto-generated method stub
+      return null;
+   }
+   
+   private MetadataValue metadataValue() {
       // TODO Auto-generated method stub
       return null;
    }
