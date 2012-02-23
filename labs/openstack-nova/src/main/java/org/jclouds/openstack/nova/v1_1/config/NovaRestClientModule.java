@@ -30,6 +30,10 @@ import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
+import org.jclouds.openstack.nova.v1_1.features.FloatingIPAsyncClient;
+import org.jclouds.openstack.nova.v1_1.features.FloatingIPClient;
+import org.jclouds.openstack.nova.v1_1.features.ImageAsyncClient;
+import org.jclouds.openstack.nova.v1_1.features.ImageClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerClient;
 import org.jclouds.openstack.nova.v1_1.handlers.NovaErrorHandler;
@@ -50,6 +54,8 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
             .put(ServerClient.class, ServerAsyncClient.class)//
             .put(FlavorClient.class, FlavorAsyncClient.class)
+            .put(ImageClient.class, ImageAsyncClient.class)
+            .put(FloatingIPClient.class, FloatingIPAsyncClient.class)
             .build();
 
    public NovaRestClientModule() {

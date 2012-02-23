@@ -22,43 +22,45 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.domain.Resource;
-import org.jclouds.openstack.nova.v1_1.domain.Flavor;
+import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
 
 /**
- * Provides asynchronous access to Flavors via their REST API.
+ * Provides synchronous access to Floating IPs.
  * <p/>
  * 
- * @see FlavorClient
- * @see <a href=
- *      "http://docs.openstack.org/api/openstack-compute/1.1/content/Flavors-d1e4180.html"
- *      />
+ * @see FloatingIPAsyncClient
  * @author Jeremy Daggett
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface FlavorClient {
+public interface FloatingIPClient {
 
    /**
-    * List all flavors (IDs, names, links)
+    * List all Floating IP addresses
     * 
-    * @return all flavors (IDs, names, links)
+    * @return all Floating IPs
     */
-   Set<Resource> listFlavors();
+   Set<FloatingIP> listFloatingIPs();
 
    /**
-    * List all flavors (all details)
+    * Get a specific Floating IP address
     * 
-    * @return all flavors (all details)
+    * @return all Floating IPs
     */
-   Set<Flavor> listFlavorsInDetail();
+   FloatingIP getFloatingIP(String id);
 
    /**
-    * List details of the specified flavor
+    * Allocate a Floating IP address
+    * 
+    * @return a newly allocated FloatingIP
+    */
+   FloatingIP allocate();
+
+   /**
+    * Deallocate a Floating IP address
     * 
     * @param id
-    *           id of the flavor
-    * @return flavor or null if not found
+    *           the Floating IP id
     */
-   Flavor getFlavor(String id);
+   void deallocate(String id);
 
 }
