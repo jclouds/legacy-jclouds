@@ -80,9 +80,9 @@ public class InstantiateVAppParamsType<T extends InstantiateVAppParamsType<T>>
 
    public static class Builder<T extends InstantiateVAppParamsType<T>> extends VAppCreationParamsType.Builder<T> {
       
-      private Reference source;
-      private Boolean isSourceDelete;
-      private Boolean linkedClone;
+      protected Reference source;
+      protected Boolean isSourceDelete;
+      protected Boolean linkedClone;
 
       /**
        * @see InstantiateVAppParamsType#getSource()
@@ -114,6 +114,12 @@ public class InstantiateVAppParamsType<T extends InstantiateVAppParamsType<T>>
          instantiateVAppParams.setSource(source);
          instantiateVAppParams.setIsSourceDelete(isSourceDelete);
          instantiateVAppParams.setLinkedClone(linkedClone);
+         instantiateVAppParams.setVAppParent(vAppParent);
+         instantiateVAppParams.setInstantiationParams(instantiationParams);
+         instantiateVAppParams.setDeploy(deploy);
+         instantiateVAppParams.setPowerOn(powerOn);
+         instantiateVAppParams.setDescription(description);
+         instantiateVAppParams.setName(name);
          return instantiateVAppParams;
       }
       

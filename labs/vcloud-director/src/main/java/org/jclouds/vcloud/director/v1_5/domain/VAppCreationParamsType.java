@@ -83,10 +83,10 @@ public class VAppCreationParamsType<T extends VAppCreationParamsType<T>>
 
    public static class Builder<T extends VAppCreationParamsType<T>> extends ParamsType.Builder<T> {
       
-      private Reference vAppParent;
-      private InstantiationParams instantiationParams;
-      private Boolean deploy;
-      private Boolean powerOn;
+      protected Reference vAppParent;
+      protected InstantiationParams instantiationParams;
+      protected Boolean deploy;
+      protected Boolean powerOn;
 
       /**
        * @see VAppCreationParamsType#getVAppParent()
@@ -127,6 +127,8 @@ public class VAppCreationParamsType<T extends VAppCreationParamsType<T>>
          vAppCreationParams.setInstantiationParams(instantiationParams);
          vAppCreationParams.setDeploy(deploy);
          vAppCreationParams.setPowerOn(powerOn);
+         vAppCreationParams.setDescription(description);
+         vAppCreationParams.setName(name);
          return vAppCreationParams;
       }
       

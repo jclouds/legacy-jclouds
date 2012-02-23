@@ -81,8 +81,8 @@ public class ParamsType<T extends ParamsType<T>> {
 
    public static class Builder<T extends ParamsType<T>>{
       
-      private String description;
-      private String name;
+      protected String description;
+      protected String name;
 
       /**
        * @see ParamsType#getDescription()
