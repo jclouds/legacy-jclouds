@@ -89,8 +89,10 @@ public class Owner
 
 
       public Owner build() {
-         Owner owner = new Owner();
+         Owner owner = new Owner(href);
          owner.setUser(user);
+         owner.setType(type);
+         owner.setLinks(links);
          return owner;
       }
 
@@ -144,6 +146,10 @@ public class Owner
 
    private Owner() {
       // For JAXB and builder use
+   }
+   
+   private Owner(URI href) {
+      super(href);
    }
 
 

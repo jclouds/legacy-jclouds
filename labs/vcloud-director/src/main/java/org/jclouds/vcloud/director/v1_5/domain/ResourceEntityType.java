@@ -54,8 +54,8 @@ public class ResourceEntityType<T extends ResourceEntityType<T>> extends EntityT
 
    public static class Builder<T extends ResourceEntityType<T>> extends EntityType.Builder<T> {
 
-      private FilesList files;
-      private Integer status;
+      protected FilesList files;
+      protected Integer status;
 
       /**
        * @see ResourceEntityType#getFiles()
@@ -75,9 +75,14 @@ public class ResourceEntityType<T extends ResourceEntityType<T>> extends EntityT
 
       @Override
       public ResourceEntityType<T> build() {
-         ResourceEntityType<T> resourceEntity = new ResourceEntityType<T>();
+         ResourceEntityType<T> resourceEntity = new ResourceEntityType<T>(href, name);
          resourceEntity.setFiles(files);
          resourceEntity.setStatus(status);
+         resourceEntity.setDescription(description);
+         resourceEntity.setTasksInProgress(tasksInProgress);
+         resourceEntity.setId(id);
+         resourceEntity.setType(type);
+         resourceEntity.setLinks(links);
          return resourceEntity;
       }
 
@@ -135,6 +140,7 @@ public class ResourceEntityType<T extends ResourceEntityType<T>> extends EntityT
          return this;
       }
 
+      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> fromResourceType(ResourceType<T> in) {
          return Builder.class.cast(super.fromResourceType(in));
@@ -145,8 +151,12 @@ public class ResourceEntityType<T extends ResourceEntityType<T>> extends EntityT
       }
    }
 
-   public ResourceEntityType() {
+   protected ResourceEntityType() {
       // for JAXB
+   }
+   
+   protected ResourceEntityType(URI href, String name) {
+      super(href, name);
    }
 
    @XmlElement(name = "Files")
