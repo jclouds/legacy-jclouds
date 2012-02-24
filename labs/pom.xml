@@ -36,5 +36,6 @@
        <module>virtualbox</module>
        <module>vcloud-director</module>
        <module>glesys</module>
+       <module>opsource-servers</module>
     </modules>
 </project>
