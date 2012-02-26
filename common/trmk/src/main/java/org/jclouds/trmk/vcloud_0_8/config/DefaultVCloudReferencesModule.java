@@ -54,7 +54,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @Provides
    @org.jclouds.trmk.vcloud_0_8.endpoints.Org
    @Singleton
-   protected ReferenceType provideDefaultOrg(DefaultOrgForUser defaultOrgURIForUser,
+   protected Supplier<ReferenceType> provideDefaultOrg(DefaultOrgForUser defaultOrgURIForUser,
          @Named(PROPERTY_IDENTITY) String user) {
       return defaultOrgURIForUser.apply(user);
    }
@@ -69,9 +69,9 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @Provides
    @org.jclouds.trmk.vcloud_0_8.endpoints.TasksList
    @Singleton
-   protected ReferenceType provideDefaultTasksList(DefaultTasksListForOrg defaultTasksListURIForOrg,
-         @org.jclouds.trmk.vcloud_0_8.endpoints.Org ReferenceType defaultOrg) {
-      return defaultTasksListURIForOrg.apply(defaultOrg);
+   protected Supplier<ReferenceType> provideDefaultTasksList(DefaultTasksListForOrg defaultTasksListURIForOrg,
+         @org.jclouds.trmk.vcloud_0_8.endpoints.Org Supplier<ReferenceType> defaultOrg) {
+      return Suppliers.compose(defaultTasksListURIForOrg, defaultOrg);
    }
 
    @Provides
@@ -84,9 +84,9 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @Provides
    @org.jclouds.trmk.vcloud_0_8.endpoints.Catalog
    @Singleton
-   protected ReferenceType provideDefaultCatalog(DefaultCatalogForOrg defaultCatalogURIForOrg,
-         @org.jclouds.trmk.vcloud_0_8.endpoints.Org ReferenceType defaultOrg) {
-      return defaultCatalogURIForOrg.apply(defaultOrg);
+   protected Supplier<ReferenceType> provideDefaultCatalog(DefaultCatalogForOrg defaultCatalogURIForOrg,
+         @org.jclouds.trmk.vcloud_0_8.endpoints.Org Supplier<ReferenceType> defaultOrg) {
+      return Suppliers.compose(defaultCatalogURIForOrg, defaultOrg);
    }
 
    @Provides
@@ -121,9 +121,9 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @Provides
    @org.jclouds.trmk.vcloud_0_8.endpoints.VDC
    @Singleton
-   protected ReferenceType provideDefaultVDC(DefaultVDCForOrg defaultVDCURIForOrg,
-         @org.jclouds.trmk.vcloud_0_8.endpoints.Org ReferenceType defaultOrg) {
-      return defaultVDCURIForOrg.apply(defaultOrg);
+   protected Supplier<ReferenceType> provideDefaultVDC(DefaultVDCForOrg defaultVDCURIForOrg,
+         @org.jclouds.trmk.vcloud_0_8.endpoints.Org Supplier<ReferenceType> defaultOrg) {
+      return Suppliers.compose(defaultVDCURIForOrg, defaultOrg);
    }
 
    @Provides
@@ -136,9 +136,9 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @Provides
    @org.jclouds.trmk.vcloud_0_8.endpoints.Network
    @Singleton
-   protected ReferenceType provideDefaultNetwork(DefaultNetworkForVDC defaultNetworkURIForVDC,
-         @org.jclouds.trmk.vcloud_0_8.endpoints.VDC ReferenceType defaultVDC) {
-      return defaultNetworkURIForVDC.apply(defaultVDC);
+   protected Supplier<ReferenceType> provideDefaultNetwork(DefaultNetworkForVDC defaultNetworkURIForVDC,
+         @org.jclouds.trmk.vcloud_0_8.endpoints.VDC Supplier<ReferenceType> defaultVDC) {
+      return Suppliers.compose(defaultNetworkURIForVDC, defaultVDC);
    }
 
    @Provides

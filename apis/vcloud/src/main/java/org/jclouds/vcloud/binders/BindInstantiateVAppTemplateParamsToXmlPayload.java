@@ -52,6 +52,7 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.jamesmurty.utils.XMLBuilder;
@@ -67,7 +68,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    protected final String ns;
    protected final String schema;
    protected final BindToStringPayload stringBinder;
-   protected final ReferenceType defaultNetwork;
+   protected final Supplier<ReferenceType> defaultNetwork;
    protected final FenceMode defaultFenceMode;
    protected final LoadingCache<URI, VAppTemplate> templateCache;
    protected final Function<VAppTemplate, String> defaultNetworkNameInTemplate;
@@ -76,7 +77,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    public BindInstantiateVAppTemplateParamsToXmlPayload(LoadingCache<URI, VAppTemplate> templateCache,
             @Network Function<VAppTemplate, String> defaultNetworkNameInTemplate, BindToStringPayload stringBinder,
             @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns, @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema,
-            @Network ReferenceType network, FenceMode fenceMode) {
+            @Network Supplier<ReferenceType> network, FenceMode fenceMode) {
       this.templateCache = templateCache;
       this.defaultNetworkNameInTemplate = defaultNetworkNameInTemplate;
       this.ns = ns;
@@ -98,7 +99,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       Set<NetworkConfig> networkConfig = null;
 
       NetworkConfigDecorator networkConfigDecorator = new NetworkConfigDecorator(templateCache.getUnchecked(template),
-            defaultNetwork.getHref(), defaultFenceMode, defaultNetworkNameInTemplate);
+            defaultNetwork.get().getHref(), defaultFenceMode, defaultNetworkNameInTemplate);
 
       InstantiateVAppTemplateOptions options = findOptionsInArgsOrNull(gRequest);
 

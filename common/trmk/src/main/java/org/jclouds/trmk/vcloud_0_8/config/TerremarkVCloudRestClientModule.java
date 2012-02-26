@@ -352,10 +352,17 @@ public class TerremarkVCloudRestClientModule<S extends TerremarkVCloudClient, A 
 
    @Provides
    @Singleton
-   protected org.jclouds.trmk.vcloud_0_8.domain.Org provideOrg(
-         Supplier<Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org>> orgSupplier,
-         @org.jclouds.trmk.vcloud_0_8.endpoints.Org ReferenceType defaultOrg) {
-      return orgSupplier.get().get(defaultOrg.getName());
+   protected Supplier<org.jclouds.trmk.vcloud_0_8.domain.Org> provideOrg(
+         final Supplier<Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org>> orgSupplier,
+         @org.jclouds.trmk.vcloud_0_8.endpoints.Org Supplier<ReferenceType> defaultOrg) {
+      return Suppliers.compose(new Function<ReferenceType, org.jclouds.trmk.vcloud_0_8.domain.Org>() {
+
+         @Override
+         public org.jclouds.trmk.vcloud_0_8.domain.Org apply(ReferenceType input) {
+            return orgSupplier.get().get(input.getName());
+
+         }
+      }, defaultOrg);
    }
 
    @Provides
