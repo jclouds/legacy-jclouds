@@ -41,11 +41,11 @@ import com.google.common.base.Supplier;
 @Singleton
 public class OrgNameToTasksListEndpoint implements Function<Object, URI> {
    private final Supplier<Map<String, Org>> orgMap;
-   private final ReferenceType defaultTasksList;
+   private final Supplier<ReferenceType> defaultTasksList;
 
    @Inject
    public OrgNameToTasksListEndpoint(Supplier<Map<String, Org>> orgMap,
-         @TasksList ReferenceType defaultTasksList) {
+         @TasksList Supplier<ReferenceType> defaultTasksList) {
       this.orgMap = orgMap;
       this.defaultTasksList = defaultTasksList;
    }
@@ -53,7 +53,7 @@ public class OrgNameToTasksListEndpoint implements Function<Object, URI> {
    public URI apply(Object from) {
       Object org = from;
       if (org == null)
-         return defaultTasksList.getHref();
+         return defaultTasksList.get().getHref();
       try {
          return checkNotNull(orgMap.get().get(org)).getTasksList().getHref();
       } catch (NullPointerException e) {

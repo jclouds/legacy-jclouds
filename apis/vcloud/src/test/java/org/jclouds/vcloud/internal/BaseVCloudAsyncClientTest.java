@@ -139,9 +139,9 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
       }
 
       @Override
-      protected Org provideOrg(Supplier<Map<String, Org>> orgSupplier,
-            @org.jclouds.vcloud.endpoints.Org ReferenceType defaultOrg) {
-         return ORG;
+      protected Supplier<Org> provideOrg(Supplier<Map<String, Org>> orgSupplier,
+            @org.jclouds.vcloud.endpoints.Org Supplier<ReferenceType> defaultOrg) {
+         return Suppliers.ofInstance(ORG);
       }
 
       @Override
@@ -150,14 +150,18 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
 
             @Override
             protected void configure() {
-               bind(ReferenceType.class).annotatedWith(org.jclouds.vcloud.endpoints.Org.class).toInstance(ORG_REF);
-               bind(ReferenceType.class).annotatedWith(org.jclouds.vcloud.endpoints.Catalog.class).toInstance(
-                     CATALOG_REF);
-               bind(ReferenceType.class).annotatedWith(org.jclouds.vcloud.endpoints.TasksList.class).toInstance(
-                     TASKSLIST_REF);
-               bind(ReferenceType.class).annotatedWith(org.jclouds.vcloud.endpoints.VDC.class).toInstance(VDC_REF);
-               bind(ReferenceType.class).annotatedWith(org.jclouds.vcloud.endpoints.Network.class).toInstance(
-                     NETWORK_REF);
+               TypeLiteral<Supplier<ReferenceType>> refTypeSupplier = new TypeLiteral<Supplier<ReferenceType>>() {
+               };
+               bind(refTypeSupplier).annotatedWith(org.jclouds.vcloud.endpoints.Org.class).toInstance(
+                     Suppliers.<ReferenceType> ofInstance(ORG_REF));
+               bind(refTypeSupplier).annotatedWith(org.jclouds.vcloud.endpoints.Catalog.class).toInstance(
+                     Suppliers.<ReferenceType> ofInstance(CATALOG_REF));
+               bind(refTypeSupplier).annotatedWith(org.jclouds.vcloud.endpoints.TasksList.class).toInstance(
+                     Suppliers.<ReferenceType> ofInstance(TASKSLIST_REF));
+               bind(refTypeSupplier).annotatedWith(org.jclouds.vcloud.endpoints.VDC.class).toInstance(
+                     Suppliers.<ReferenceType> ofInstance(VDC_REF));
+               bind(refTypeSupplier).annotatedWith(org.jclouds.vcloud.endpoints.Network.class).toInstance(
+                     Suppliers.<ReferenceType> ofInstance(NETWORK_REF));
             }
 
          });

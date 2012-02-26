@@ -49,6 +49,8 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -102,9 +104,9 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
          @Network
          @Provides
          @Singleton
-         ReferenceType provideNetwork() {
-            return new ReferenceTypeImpl(null, null, URI
-                     .create("https://vcenterprise.bluelock.com/api/v1.0/network/1990"));
+         Supplier<ReferenceType> provideNetwork() {
+            return Suppliers.<ReferenceType>ofInstance(new ReferenceTypeImpl(null, null, URI
+                     .create("https://vcenterprise.bluelock.com/api/v1.0/network/1990")));
          }
       }));
    }

@@ -36,10 +36,10 @@ import com.google.common.collect.Maps;
 public abstract class OrgURIToEndpoint implements Function<Object, URI> {
 
    protected final Supplier<Map<String, ? extends Org>> orgMap;
-   protected final ReferenceType defaultOrg;
+   protected final Supplier<ReferenceType> defaultOrg;
 
    public OrgURIToEndpoint(Supplier<Map<String, ? extends Org>> orgMap,
-         @org.jclouds.trmk.vcloud_0_8.endpoints.Org ReferenceType defaultUri) {
+         @org.jclouds.trmk.vcloud_0_8.endpoints.Org Supplier<ReferenceType> defaultUri) {
       this.orgMap = orgMap;
       this.defaultOrg = defaultUri;
    }
@@ -54,7 +54,7 @@ public abstract class OrgURIToEndpoint implements Function<Object, URI> {
 
       });
       try {
-         Org org = uriToOrg.get(from == null ? defaultOrg.getHref() : from);
+         Org org = uriToOrg.get(from == null ? defaultOrg.get().getHref() : from);
          return getUriFromOrg(org);
       } catch (NullPointerException e) {
          throw new ResourceNotFoundException("org " + from + " not found in: " + uriToOrg, e);

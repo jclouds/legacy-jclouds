@@ -316,8 +316,15 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
 
    @VCloudToken
    @Provides
-   String provideVCloudToken(Supplier<VCloudSession> cache) {
-      return checkNotNull(cache.get().getVCloudToken(), "No token present in session");
+   @Singleton
+   Supplier<String> provideVCloudToken(Supplier<VCloudSession> cache) {
+      return Suppliers.compose(new Function<VCloudSession, String>() {
+
+         @Override
+         public String apply(VCloudSession input) {
+            return checkNotNull(input.getVCloudToken(), "No token present in session");
+         }
+      }, cache);
    }
 
    @Provides
@@ -419,9 +426,16 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
 
    @Provides
    @Singleton
-   protected Org provideOrg(Supplier<Map<String, Org>> orgSupplier,
-            @org.jclouds.vcloud.endpoints.Org ReferenceType defaultOrg) {
-      return orgSupplier.get().get(defaultOrg.getName());
+   protected Supplier<Org> provideOrg(final Supplier<Map<String, Org>> orgSupplier,
+         @org.jclouds.vcloud.endpoints.Org Supplier<ReferenceType> defaultOrg) {
+      return Suppliers.compose(new Function<ReferenceType, Org>() {
+
+         @Override
+         public Org apply(ReferenceType input) {
+            return orgSupplier.get().get(input.getName());
+
+         }
+      }, defaultOrg);
    }
 
    @Provides

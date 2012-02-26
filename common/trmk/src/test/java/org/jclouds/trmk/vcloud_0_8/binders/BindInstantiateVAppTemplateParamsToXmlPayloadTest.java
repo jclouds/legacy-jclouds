@@ -41,6 +41,8 @@ import org.nnsoft.guice.rocoto.Rocoto;
 import org.nnsoft.guice.rocoto.configuration.ConfigurationModule;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
@@ -68,8 +70,9 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       @Network
       @Provides
       @Singleton
-      ReferenceType provideNetwork() {
-         return new ReferenceTypeImpl(null, null, URI.create("https://vcloud.safesecureweb.com/network/1990"));
+      Supplier<ReferenceType> provideNetwork() {
+         return Suppliers.<ReferenceType>ofInstance(new ReferenceTypeImpl(null, null, URI
+               .create("https://vcloud.safesecureweb.com/network/1990")));
       }
    }));
 

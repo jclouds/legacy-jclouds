@@ -42,13 +42,13 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class OrgNameCatalogNameItemNameToEndpoint implements Function<Object, URI> {
    private final Supplier<Map<String, Map<String, org.jclouds.vcloud.domain.Catalog>>> orgCatalogMap;
-   private final ReferenceType defaultOrg;
-   private final ReferenceType defaultCatalog;
+   private final Supplier<ReferenceType> defaultOrg;
+   private final Supplier<ReferenceType> defaultCatalog;
 
    @Inject
    public OrgNameCatalogNameItemNameToEndpoint(
          Supplier<Map<String, Map<String, org.jclouds.vcloud.domain.Catalog>>> orgCatalogMap,
-         @Org ReferenceType defaultOrg, @Catalog ReferenceType defaultCatalog) {
+         @Org Supplier<ReferenceType> defaultOrg, @Catalog Supplier<ReferenceType> defaultCatalog) {
       this.orgCatalogMap = orgCatalogMap;
       this.defaultOrg = defaultOrg;
       this.defaultCatalog = defaultCatalog;
@@ -61,9 +61,9 @@ public class OrgNameCatalogNameItemNameToEndpoint implements Function<Object, UR
       Object catalog = Iterables.get(orgCatalog, 1);
       Object catalogItem = Iterables.get(orgCatalog, 2);
       if (org == null)
-         org = defaultOrg.getName();
+         org = defaultOrg.get().getName();
       if (catalog == null)
-         catalog = defaultCatalog.getName();
+         catalog = defaultCatalog.get().getName();
       try {
          Map<String, org.jclouds.vcloud.domain.Catalog> catalogs = checkNotNull(orgCatalogMap.get().get(org));
          return catalogs.get(catalog).get(catalogItem).getHref();

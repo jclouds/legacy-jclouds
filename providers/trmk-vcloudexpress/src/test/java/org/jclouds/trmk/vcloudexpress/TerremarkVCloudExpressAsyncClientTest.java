@@ -680,9 +680,9 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
       }
 
       @Override
-      protected Org provideOrg(Supplier<Map<String, ? extends Org>> orgSupplier,
-            @org.jclouds.trmk.vcloud_0_8.endpoints.Org ReferenceType defaultOrg) {
-         return ORG;
+      protected Supplier<Org> provideOrg(Supplier<Map<String, ? extends Org>> orgSupplier,
+            @org.jclouds.trmk.vcloud_0_8.endpoints.Org Supplier<ReferenceType> defaultOrg) {
+         return Suppliers.ofInstance(ORG);
       }
 
       @Override
@@ -691,16 +691,18 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
 
             @Override
             protected void configure() {
-               bind(ReferenceType.class).annotatedWith(org.jclouds.trmk.vcloud_0_8.endpoints.Org.class).toInstance(
-                     ORG_REF);
-               bind(ReferenceType.class).annotatedWith(org.jclouds.trmk.vcloud_0_8.endpoints.Catalog.class).toInstance(
-                     CATALOG_REF);
-               bind(ReferenceType.class).annotatedWith(org.jclouds.trmk.vcloud_0_8.endpoints.TasksList.class)
-                     .toInstance(TASKSLIST_REF);
-               bind(ReferenceType.class).annotatedWith(org.jclouds.trmk.vcloud_0_8.endpoints.VDC.class).toInstance(
-                     VDC_REF);
-               bind(ReferenceType.class).annotatedWith(org.jclouds.trmk.vcloud_0_8.endpoints.Network.class).toInstance(
-                     NETWORK_REF);
+               TypeLiteral<Supplier<ReferenceType>> refTypeSupplier = new TypeLiteral<Supplier<ReferenceType>>() {
+               };
+               bind(refTypeSupplier).annotatedWith(org.jclouds.trmk.vcloud_0_8.endpoints.Org.class).toInstance(
+                     Suppliers.<ReferenceType> ofInstance(ORG_REF));
+               bind(refTypeSupplier).annotatedWith(org.jclouds.trmk.vcloud_0_8.endpoints.Catalog.class).toInstance(
+                     Suppliers.<ReferenceType> ofInstance(CATALOG_REF));
+               bind(refTypeSupplier).annotatedWith(org.jclouds.trmk.vcloud_0_8.endpoints.TasksList.class).toInstance(
+                     Suppliers.<ReferenceType> ofInstance(TASKSLIST_REF));
+               bind(refTypeSupplier).annotatedWith(org.jclouds.trmk.vcloud_0_8.endpoints.VDC.class).toInstance(
+                     Suppliers.<ReferenceType> ofInstance(VDC_REF));
+               bind(refTypeSupplier).annotatedWith(org.jclouds.trmk.vcloud_0_8.endpoints.Network.class).toInstance(
+                     Suppliers.<ReferenceType> ofInstance(NETWORK_REF));
             }
 
          });
