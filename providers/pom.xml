@@ -70,5 +70,6 @@
         <module>softlayer</module>
         <module>ninefold-compute</module>
         <module>hpcloud-objectstorage-lvs</module>
+        <module>gq-compute</module>
     </modules>
 </project>
