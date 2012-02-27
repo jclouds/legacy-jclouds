@@ -32,6 +32,11 @@
     <dependencies>
         <dependency>
             <groupId>org.jclouds.provider</groupId>
+            <artifactId>cloudloadbalancers-uk</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
             <artifactId>cloudloadbalancers-us</artifactId>
             <version>${project.version}</version>
         </dependency>
