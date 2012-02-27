@@ -32,17 +32,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.ovf.ProductSection;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 
 
 /**
  * 
- *                 Essentially a container
- *                 with a list of product sections.
- *             
+ * Essentially a container with a list of product sections.
  * 
  * <p>Java class for ProductSectionList complex type.
  * 
@@ -176,9 +172,7 @@ public class ProductSectionList
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link ProductSectionType }
-     * 
-     * 
+     * {@link ProductSection }
      */
     public List<ProductSection> getProductSection() {
         if (productSection == null) {

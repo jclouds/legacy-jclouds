@@ -17,14 +17,16 @@
  */
 package org.jclouds.vcloud.director.v1_5.config;
 
-import static com.google.common.base.Throwables.propagate;
-import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
-
-import java.net.URI;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import org.jclouds.Constants;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
 import org.jclouds.domain.Credentials;
@@ -42,36 +44,20 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.annotations.Login;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
-import org.jclouds.vcloud.director.v1_5.features.CatalogAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
-import org.jclouds.vcloud.director.v1_5.features.MediaAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.MediaClient;
-import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
-import org.jclouds.vcloud.director.v1_5.features.OrgAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.OrgClient;
-import org.jclouds.vcloud.director.v1_5.features.QueryAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.QueryClient;
-import org.jclouds.vcloud.director.v1_5.features.TaskAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.TaskClient;
-import org.jclouds.vcloud.director.v1_5.features.VdcAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.VdcClient;
+import org.jclouds.vcloud.director.v1_5.features.*;
 import org.jclouds.vcloud.director.v1_5.functions.LoginUserInOrgWithPassword;
 import org.jclouds.vcloud.director.v1_5.handlers.InvalidateSessionAndRetryOn401AndLogoutOnClose;
 import org.jclouds.vcloud.director.v1_5.handlers.VCloudDirectorErrorHandler;
 import org.jclouds.vcloud.director.v1_5.login.SessionAsyncClient;
 import org.jclouds.vcloud.director.v1_5.login.SessionClient;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
+import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
+import static com.google.common.base.Throwables.propagate;
+import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 
 /**
  * Configures the VCloudDirector connection.
@@ -90,6 +76,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
             .put(MediaClient.class, MediaAsyncClient.class)
             .put(TaskClient.class, TaskAsyncClient.class)
             .put(VdcClient.class, VdcAsyncClient.class)
+            .put(VAppTemplateClient.class, VAppTemplateAsyncClient.class)
             .build();
 
    public VCloudDirectorRestClientModule() {

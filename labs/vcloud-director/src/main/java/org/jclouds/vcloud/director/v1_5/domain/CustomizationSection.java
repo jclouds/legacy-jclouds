@@ -20,7 +20,6 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -34,27 +33,26 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.javax.annotation.Nullable;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Objects;
 
 
 /**
- * Represents the network config section of a vApp.
+ * Represents a vApp template customization settings section.
  * <p/>
  * <p/>
- * <p>Java class for NetworkConfigSection complex type.
+ * <p>Java class for CustomizationSection complex type.
  * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p/>
  * <pre>
- * &lt;complexType name="NetworkConfigSection">
+ * &lt;complexType name="CustomizationSection">
  *   &lt;complexContent>
  *     &lt;extension base="{http://schemas.dmtf.org/ovf/envelope/1}Section_Type">
  *       &lt;sequence>
+ *         &lt;element name="CustomizeOnInstantiate" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="Link" type="{http://www.vmware.com/vcloud/v1.5}LinkType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="NetworkConfig" type="{http://www.vmware.com/vcloud/v1.5}VAppNetworkConfigurationType" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;any processContents='lax' namespace='##other' maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="href" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
@@ -66,31 +64,38 @@ import com.google.common.base.Objects;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name="NetworkConfigSection", namespace = VCLOUD_1_5_NS)
-@XmlType( propOrder = {
+@XmlRootElement(name = "CustomizationSection")
+@XmlType(propOrder = {
+      "customizeOnInstantiate",
       "link",
-      "networkConfig",
       "any"
 })
-public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
+public class CustomizationSection extends SectionType<CustomizationSection> {
    public static Builder builder() {
       return new Builder();
    }
 
    public Builder toBuilder() {
-      return new Builder().fromNetworkConfigSection(this);
+      return new Builder().fromCustomizationSection(this);
    }
 
-   public static class Builder extends SectionType.Builder<NetworkConfigSection> {
-
+   public static class Builder extends SectionType.Builder<CustomizationSection> {
+      private boolean customizeOnInstantiate;
       private List<Link> link;
-      private List<VAppNetworkConfiguration<?>> networkConfig;
       private List<Object> any;
       private URI href;
       private String type;
 
       /**
-       * @see NetworkConfigSection#getLink()
+       * @see CustomizationSection#isCustomizeOnInstantiate()
+       */
+      public Builder customizeOnInstantiate(boolean customizeOnInstantiate) {
+         this.customizeOnInstantiate = customizeOnInstantiate;
+         return this;
+      }
+
+      /**
+       * @see CustomizationSection#getLink()
        */
       public Builder link(List<Link> link) {
          this.link = link;
@@ -98,15 +103,7 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
       }
 
       /**
-       * @see NetworkConfigSection#getNetworkConfig()
-       */
-      public Builder networkConfig(List<VAppNetworkConfiguration<?>> networkConfig) {
-         this.networkConfig = networkConfig;
-         return this;
-      }
-
-      /**
-       * @see NetworkConfigSection#getAny()
+       * @see CustomizationSection#getAny()
        */
       public Builder any(List<Object> any) {
          this.any = any;
@@ -114,7 +111,7 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
       }
 
       /**
-       * @see NetworkConfigSection#getHref()
+       * @see CustomizationSection#getHref()
        */
       public Builder href(URI href) {
          this.href = href;
@@ -122,7 +119,7 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
       }
 
       /**
-       * @see NetworkConfigSection#getType()
+       * @see CustomizationSection#getType()
        */
       public Builder type(String type) {
          this.type = type;
@@ -130,17 +127,18 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
       }
 
 
-      public NetworkConfigSection build() {
-         NetworkConfigSection networkConfigSection = new NetworkConfigSection(info, link, networkConfig, any);
-         networkConfigSection.setHref(href);
-         networkConfigSection.setType(type);
-         return networkConfigSection;
+      public CustomizationSection build() {
+         CustomizationSection customizationSection = new CustomizationSection(info, link, any);
+         customizationSection.setCustomizeOnInstantiate(customizeOnInstantiate);
+         customizationSection.setHref(href);
+         customizationSection.setType(type);
+         return customizationSection;
       }
 
-      public Builder fromNetworkConfigSection(NetworkConfigSection in) {
+      public Builder fromCustomizationSection(CustomizationSection in) {
          return fromSection(in)
+               .customizeOnInstantiate(in.isCustomizeOnInstantiate())
                .link(in.getLink())
-               .networkConfig(in.getNetworkConfig())
                .any(in.getAny())
                .href(in.getHref())
                .type(in.getType());
@@ -150,7 +148,7 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromSection(SectionType<NetworkConfigSection> in) {
+      public Builder fromSection(SectionType<CustomizationSection> in) {
          return Builder.class.cast(super.fromSection(in));
       }
 
@@ -161,13 +159,23 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
       public Builder info(String info) {
          return Builder.class.cast(super.info(info));
       }
-
+      
    }
 
+   private CustomizationSection(String info, List<Link> link, List<Object> any) {
+      super(info);
+      this.link = link;
+      this.any = any;
+   }
+
+   private CustomizationSection() {
+      // For JAXB
+   }
+
+   @XmlElement(name = "CustomizeOnInstantiate")
+   protected boolean customizeOnInstantiate;
    @XmlElement(name = "Link")
    protected List<Link> link;
-   @XmlElement(name = "NetworkConfig")
-   protected List<VAppNetworkConfiguration<?>> networkConfig;
    @XmlAnyElement(lax = true)
    protected List<Object> any;
    @XmlAttribute
@@ -175,18 +183,21 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
    protected URI href;
    @XmlAttribute
    protected String type;
-   
-   private NetworkConfigSection(@Nullable String info, List<Link> link, List<VAppNetworkConfiguration<?>> networkConfig, List<Object> any) {
-      super(info);
-      this.link = link;
-      this.networkConfig = networkConfig;
-      this.any = any;
+
+   /**
+    * Gets the value of the customizeOnInstantiate property.
+    */
+   public boolean isCustomizeOnInstantiate() {
+      return customizeOnInstantiate;
    }
 
-   private NetworkConfigSection() {
-      // For JAXB
+   /**
+    * Sets the value of the customizeOnInstantiate property.
+    */
+   public void setCustomizeOnInstantiate(boolean value) {
+      this.customizeOnInstantiate = value;
    }
-   
+
    /**
     * Gets the value of the link property.
     * <p/>
@@ -212,33 +223,6 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
          link = new ArrayList<Link>();
       }
       return this.link;
-   }
-
-   /**
-    * Gets the value of the networkConfig property.
-    * <p/>
-    * <p/>
-    * This accessor method returns a reference to the live list,
-    * not a snapshot. Therefore any modification you make to the
-    * returned list will be present inside the JAXB object.
-    * This is why there is not a <CODE>set</CODE> method for the networkConfig property.
-    * <p/>
-    * <p/>
-    * For example, to add a new item, do as follows:
-    * <pre>
-    *    getNetworkConfig().add(newItem);
-    * </pre>
-    * <p/>
-    * <p/>
-    * <p/>
-    * Objects of the following type(s) are allowed in the list
-    * {@link VAppNetworkConfiguration }
-    */
-   public List<VAppNetworkConfiguration<?>> getNetworkConfig() {
-      if (networkConfig == null) {
-         networkConfig = new ArrayList<VAppNetworkConfiguration<?>>();
-      }
-      return this.networkConfig;
    }
 
    /**
@@ -271,6 +255,9 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
 
    /**
     * Gets the value of the href property.
+    *
+    * @return possible object is
+    *         {@link String }
     */
    public URI getHref() {
       return href;
@@ -278,6 +265,9 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
 
    /**
     * Sets the value of the href property.
+    *
+    * @param value allowed object is
+    *              {@link String }
     */
    public void setHref(URI value) {
       this.href = value;
@@ -309,9 +299,9 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      NetworkConfigSection that = NetworkConfigSection.class.cast(o);
-      return equal(link, that.link) &&
-            equal(networkConfig, that.networkConfig) &&
+      CustomizationSection that = CustomizationSection.class.cast(o);
+      return equal(customizeOnInstantiate, that.customizeOnInstantiate) &&
+            equal(link, that.link) &&
             equal(any, that.any) &&
             equal(href, that.href) &&
             equal(type, that.type);
@@ -319,8 +309,8 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(link,
-            networkConfig,
+      return Objects.hashCode(customizeOnInstantiate,
+            link,
             any,
             href,
             type);
@@ -329,8 +319,8 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
    @Override
    public String toString() {
       return Objects.toStringHelper("")
+            .add("customizeOnInstantiate", customizeOnInstantiate)
             .add("link", link)
-            .add("networkConfig", networkConfig)
             .add("any", any)
             .add("href", href)
             .add("type", type).toString();

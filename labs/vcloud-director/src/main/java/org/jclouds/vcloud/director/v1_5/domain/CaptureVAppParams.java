@@ -31,7 +31,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 
+import org.jclouds.ovf.DeploymentOptionSection;
+import org.jclouds.ovf.DiskSection;
+import org.jclouds.ovf.OperatingSystemSection;
+import org.jclouds.ovf.ProductSection;
 import org.jclouds.ovf.Section;
+import org.jclouds.ovf.VirtualHardwareSection;
 
 import com.google.common.base.Objects;
 
@@ -93,7 +98,7 @@ public class CaptureVAppParams
       }
 
       /**
-       * @see CaptureVAppParams#getExtend()
+       * @see CaptureVAppParams#getSections()
        */
       public Builder sections(List<JAXBElement<? extends Section<?>>> sections) {
          this.sections = sections;
@@ -177,24 +182,24 @@ public class CaptureVAppParams
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link JAXBElement }{@code <}{@link Section<?>> }{@code >}
-     * {@link JAXBElement }{@code <}{@link VirtualHardwareSection<?>> }{@code >}
-     * {@link JAXBElement }{@code <}{@link LeaseSettingsSection<?>> }{@code >}
-     * {@link JAXBElement }{@code <}{@link EulaSection<?>> }{@code >}
-     * {@link JAXBElement }{@code <}{@link RuntimeInfoSection<?>> }{@code >}
-     * {@link JAXBElement }{@code <}{@link AnnotationSection<?>> }{@code >}
-     * {@link JAXBElement }{@code <}{@link DeploymentOptionSection<?>> }{@code >}
-     * {@link JAXBElement }{@code <}{@link StartupSection<?>> }{@code >}
-     * {@link JAXBElement }{@code <}{@link ResourceAllocationSection<?>> }{@code >}
-     * {@link JAXBElement }{@code <}{@link NetworkConnectionSection<?>> }{@code >}
-     * {@link JAXBElement }{@code <}{@link CustomizationSection<?>> }{@code >}
-     * {@link JAXBElement }{@code <}{@link ProductSection<?>> }{@code >}
-     * {@link JAXBElement }{@code <}{@link GuestCustomizationSection<?>> }{@code >}
-     * {@link JAXBElement }{@code <}{@link OperatingSystemSection<?>> }{@code >}
-     * {@link JAXBElement }{@code <}{@link NetworkConfigSection<?>> }{@code >}
-     * {@link JAXBElement }{@code <}{@link NetworkSection<?>> }{@code >}
-     * {@link JAXBElement }{@code <}{@link DiskSection<?>> }{@code >}
-     * {@link JAXBElement }{@code <}{@link InstallSection<?>> }{@code >}
+     * {@link JAXBElement }{@code <}{@link Section> }{@code >}
+     * {@link JAXBElement }{@code <}{@link VirtualHardwareSection > }{@code >}
+     * {@link JAXBElement }{@code <}{@link LeaseSettingsSection> }{@code >}
+     * {@link JAXBElement }{@code <}{@link EulaSection> }{@code >}
+     * {@link JAXBElement }{@code <}{@link RuntimeInfoSection> }{@code >}
+     * {@link JAXBElement }{@code <}{@link AnnotationSection> }{@code >}
+     * {@link JAXBElement }{@code <}{@link DeploymentOptionSection > }{@code >}
+     * {@link JAXBElement }{@code <}{@link StartupSection> }{@code >}
+     * {@link JAXBElement }{@code <}{@link ResourceAllocationSection> }{@code >}
+     * {@link JAXBElement }{@code <}{@link NetworkConnectionSection> }{@code >}
+     * {@link JAXBElement }{@code <}{@link CustomizationSection> }{@code >}
+     * {@link JAXBElement }{@code <}{@link ProductSection > }{@code >}
+     * {@link JAXBElement }{@code <}{@link GuestCustomizationSection> }{@code >}
+     * {@link JAXBElement }{@code <}{@link OperatingSystemSection > }{@code >}
+     * {@link JAXBElement }{@code <}{@link NetworkConfigSection> }{@code >}
+     * {@link JAXBElement }{@code <}{@link NetworkSection> }{@code >}
+     * {@link JAXBElement }{@code <}{@link DiskSection > }{@code >}
+     * {@link JAXBElement }{@code <}{@link InstallSection> }{@code >}
      * 
      * 
      */

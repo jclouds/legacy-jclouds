@@ -22,7 +22,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
+import java.util.Properties;
 
+import org.jclouds.Constants;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -55,6 +57,13 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
    protected static void setUpInjector() {
       dateService = Guice.createInjector().getInstance(DateService.class);
       assertNotNull(dateService);
+   }
+
+   @Override
+   public Properties setupProperties() {
+      Properties props = new Properties();
+      props.put(Constants.PROPERTY_MAX_RETRIES, 1);
+      return props;
    }
 
    protected HttpRequest loginRequest = HttpRequest.builder()

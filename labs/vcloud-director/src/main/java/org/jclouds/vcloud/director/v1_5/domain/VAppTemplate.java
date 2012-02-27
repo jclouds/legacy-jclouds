@@ -21,31 +21,31 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.bind.JAXBElement;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.ovf.Section;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 
 
 /**
- * 
- *                 Represents a vApp template.
- *             
- * 
+ * Represents a vApp template.
+ * <p/>
+ * <p/>
  * <p>Java class for VAppTemplate complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="VAppTemplate">
  *   &lt;complexContent>
@@ -63,18 +63,17 @@ import com.google.common.base.Objects;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "VAppTemplate", propOrder = {
-    "owner",
-    "children",
-    "section",
-    "vAppScopedLocalId"
+@XmlRootElement(name = "VAppTemplate")
+@XmlType(propOrder = {
+      "owner",
+      "children",
+      "sections",
+      "vAppScopedLocalId"
 })
 public class VAppTemplate
-    extends ResourceEntityType<VAppTemplate>
+      extends ResourceEntityType<VAppTemplate>
 
 {
    @SuppressWarnings("unchecked")
@@ -87,10 +86,9 @@ public class VAppTemplate
    }
 
    public static class Builder extends ResourceEntityType.Builder<VAppTemplate> {
-      
       private Owner owner;
       private VAppTemplateChildren children;
-      private List<JAXBElement<? extends Section<?>>> sections;
+      private List<SectionType> sections;
       private String vAppScopedLocalId;
       private Boolean ovfDescriptorUploaded;
       private Boolean goldMaster;
@@ -112,9 +110,9 @@ public class VAppTemplate
       }
 
       /**
-       * @see VAppTemplate#getExtend()
+       * @see VAppTemplate#getSections()
        */
-      public Builder extend(List<JAXBElement<? extends Section<?>>> sections) {
+      public Builder sections(List<SectionType> sections) {
          this.sections = sections;
          return this;
       }
@@ -128,7 +126,7 @@ public class VAppTemplate
       }
 
       /**
-       * @see VAppTemplate#getOvfDescriptorUploaded()
+       * @see VAppTemplate#isOvfDescriptorUploaded()
        */
       public Builder ovfDescriptorUploaded(Boolean ovfDescriptorUploaded) {
          this.ovfDescriptorUploaded = ovfDescriptorUploaded;
@@ -136,262 +134,342 @@ public class VAppTemplate
       }
 
       /**
-       * @see VAppTemplate#getGoldMaster()
+       * @see VAppTemplate#isGoldMaster()
        */
       public Builder goldMaster(Boolean goldMaster) {
          this.goldMaster = goldMaster;
          return this;
       }
 
-
+      @Override
       public VAppTemplate build() {
-         VAppTemplate vAppTemplate = new VAppTemplate(sections);
-         vAppTemplate.setOwner(owner);
-         vAppTemplate.setChildren(children);
-         vAppTemplate.setVAppScopedLocalId(vAppScopedLocalId);
-         vAppTemplate.setOvfDescriptorUploaded(ovfDescriptorUploaded);
-         vAppTemplate.setGoldMaster(goldMaster);
-         return vAppTemplate;
+         VAppTemplate result = new VAppTemplate(href, name, owner, children, sections, vAppScopedLocalId, ovfDescriptorUploaded, goldMaster);
+         result.setFiles(files);
+         result.setStatus(status);
+         result.setDescription(description);
+         result.setTasksInProgress(tasksInProgress);
+         result.setId(id);
+         result.setType(type);
+         result.setLinks(links);         
+         return result;
       }
 
 
       @Override
       public Builder fromResourceEntityType(ResourceEntityType<VAppTemplate> in) {
-          return Builder.class.cast(super.fromResourceEntityType(in));
+         return Builder.class.cast(super.fromResourceEntityType(in));
       }
+
       public Builder fromVAppTemplate(VAppTemplate in) {
          return fromResourceEntityType(in)
-            .owner(in.getOwner())
-            .children(in.getChildren())
-            .extend(in.getSections())
-            .vAppScopedLocalId(in.getVAppScopedLocalId())
-            .ovfDescriptorUploaded(in.isOvfDescriptorUploaded())
-            .goldMaster(in.isGoldMaster());
+               .owner(in.getOwner())
+               .children(in.getChildren())
+               .sections(in.getSections())
+               .vAppScopedLocalId(in.getVAppScopedLocalId())
+               .ovfDescriptorUploaded(in.isOvfDescriptorUploaded())
+               .goldMaster(in.isGoldMaster());
       }
+
+
+      /**
+       * @see ResourceEntityType#getFiles()
+       */
+      @Override
+      public Builder files(FilesList files) {
+         super.files(files);
+         return this;
+      }
+
+      /**
+       * @see ResourceEntityType#getStatus()
+       */
+      @Override
+      public Builder status(Integer status) {
+         super.status(status);
+         return this;
+      }
+
+      /**
+       * @see EntityType#getName()
+       */
+      @Override
+      public Builder name(String name) {
+         super.name(name);
+         return this;
+      }
+
+      /**
+       * @see EntityType#getDescription()
+       */
+      @Override
+      public Builder description(String description) {
+         super.description(description);
+         return this;
+      }
+
+      /**
+       * @see EntityType#getId()
+       */
+      @Override
+      public Builder id(String id) {
+         super.id(id);
+         return this;
+      }
+
+      /**
+       * @see EntityType#getTasksInProgress()
+       */
+      @Override
+      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
+         super.tasksInProgress(tasksInProgress);
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getHref()
+       */
+      @Override
+      public Builder href(URI href) {
+         super.href(href);
+         return this;
+      }
+
+      /**
+       * @see ReferenceType#getType()
+       */
+      @Override
+      public Builder type(String type) {
+         super.type(type);
+         return this;
+      }
+
+      /**
+       * @see EntityType#getLinks()
+       */
+      @Override
+      public Builder links(Set<Link> links) {
+         super.links(links);
+         return this;
+      }
+
+      /**
+       * @see EntityType#getLinks()
+       */
+      @Override
+      public Builder link(Link link) {
+         super.link(link);
+         return this;
+      }
+   }
+
+   @XmlElementRef
+   protected Owner owner;
+   @XmlElement(name = "Children")
+   protected VAppTemplateChildren children;
+   @XmlElementRef
+   protected List<SectionType> sections;
+   @XmlElement(name = "VAppScopedLocalId")
+   protected String vAppScopedLocalId;
+   @XmlAttribute
+   protected Boolean ovfDescriptorUploaded;
+   @XmlAttribute
+   protected Boolean goldMaster;
+
+   private VAppTemplate(URI href, String name, @Nullable Owner owner, @Nullable VAppTemplateChildren children, 
+                        List<SectionType> sections, @Nullable String vAppScopedLocalId, 
+                        @Nullable Boolean ovfDescriptorUploaded, @Nullable Boolean goldMaster) {
+      super(href, name);
+      this.sections = sections;
+      this.owner = owner;
+      this.children = children;
+      this.vAppScopedLocalId = vAppScopedLocalId;
+      this.ovfDescriptorUploaded = ovfDescriptorUploaded;
+      this.goldMaster = goldMaster;
    }
 
    private VAppTemplate() {
       // For JAXB and builder use
    }
 
-   private VAppTemplate(List<JAXBElement<? extends Section<?>>> sections) {
-      this.sections = sections;
+   /**
+    * Gets the value of the owner property.
+    *
+    * @return possible object is
+    *         {@link Owner }
+    */
+   public Owner getOwner() {
+      return owner;
    }
 
+   /**
+    * Sets the value of the owner property.
+    *
+    * @param value allowed object is
+    *              {@link Owner }
+    */
+   public void setOwner(Owner value) {
+      this.owner = value;
+   }
 
-    @XmlElement(name = "Owner")
-    protected Owner owner;
-    @XmlElement(name = "Children")
-    protected VAppTemplateChildren children;
-    @XmlElementRef(name = "Section", namespace = "http://schemas.dmtf.org/ovf/envelope/1", type = JAXBElement.class)
-    protected List<JAXBElement<? extends Section<?>>> sections;
-    @XmlElement(name = "VAppScopedLocalId")
-    protected String vAppScopedLocalId;
-    @XmlAttribute
-    protected Boolean ovfDescriptorUploaded;
-    @XmlAttribute
-    protected Boolean goldMaster;
+   /**
+    * Gets the value of the children property.
+    *
+    * @return possible object is
+    *         {@link VAppTemplateChildren }
+    */
+   public VAppTemplateChildren getChildren() {
+      return children;
+   }
 
-    /**
-     * Gets the value of the owner property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Owner }
-     *     
-     */
-    public Owner getOwner() {
-        return owner;
-    }
+   /**
+    * Sets the value of the children property.
+    *
+    * @param value allowed object is
+    *              {@link VAppTemplateChildren }
+    */
+   public void setChildren(VAppTemplateChildren value) {
+      this.children = value;
+   }
 
-    /**
-     * Sets the value of the owner property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Owner }
-     *     
-     */
-    public void setOwner(Owner value) {
-        this.owner = value;
-    }
+   /**
+    * Contains ovf sections for vApp template.
+    * Gets the value of the section property.
+    * <p/>
+    * <p/>
+    * This accessor method returns a reference to the live list,
+    * not a snapshot. Therefore any modification you make to the
+    * returned list will be present inside the JAXB object.
+    * This is why there is not a <CODE>set</CODE> method for the section property.
+    * <p/>
+    * <p/>
+    * For example, to add a new item, do as follows:
+    * <pre>
+    *    getSection().add(newItem);
+    * </pre>
+    * <p/>
+    * <p/>
+    * <p/>
+    * Objects of the following type(s) are allowed in the list
+    * {@link JAXBElement }{@code <}{@link SectionType }{@code >}
+    * {@link JAXBElement }{@code <}{@link VirtualHardwareSection }{@code >}
+    * {@link JAXBElement }{@code <}{@link LeaseSettingsSection }{@code >}
+    * {@link JAXBElement }{@code <}{@link EulaSection }{@code >}
+    * {@link JAXBElement }{@code <}{@link RuntimeInfoSection }{@code >}
+    * {@link JAXBElement }{@code <}{@link AnnotationSection }{@code >}
+    * {@link JAXBElement }{@code <}{@link DeploymentOptionSection }{@code >}
+    * {@link JAXBElement }{@code <}{@link StartupSection }{@code >}
+    * {@link JAXBElement }{@code <}{@link ResourceAllocationSection }{@code >}
+    * {@link JAXBElement }{@code <}{@link NetworkConnectionSection }{@code >}
+    * {@link JAXBElement }{@code <}{@link CustomizationSection }{@code >}
+    * {@link JAXBElement }{@code <}{@link ProductSection }{@code >}
+    * {@link JAXBElement }{@code <}{@link GuestCustomizationSection }{@code >}
+    * {@link JAXBElement }{@code <}{@link OperatingSystemSection }{@code >}
+    * {@link JAXBElement }{@code <}{@link NetworkConfigSection }{@code >}
+    * {@link JAXBElement }{@code <}{@link NetworkSection }{@code >}
+    * {@link JAXBElement }{@code <}{@link DiskSection }{@code >}
+    * {@link JAXBElement }{@code <}{@link InstallSection }{@code >}
+    */
+   public List<SectionType> getSections() {
+      if (sections == null) {
+         sections = new ArrayList<SectionType>();
+      }
+      return this.sections;
+   }
 
-    /**
-     * Gets the value of the children property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link VAppTemplateChildren }
-     *     
-     */
-    public VAppTemplateChildren getChildren() {
-        return children;
-    }
+   /**
+    * Gets the value of the vAppScopedLocalId property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getVAppScopedLocalId() {
+      return vAppScopedLocalId;
+   }
 
-    /**
-     * Sets the value of the children property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link VAppTemplateChildren }
-     *     
-     */
-    public void setChildren(VAppTemplateChildren value) {
-        this.children = value;
-    }
+   /**
+    * Sets the value of the vAppScopedLocalId property.
+    *
+    * @param value allowed object is
+    *              {@link String }
+    */
+   public void setVAppScopedLocalId(String value) {
+      this.vAppScopedLocalId = value;
+   }
 
-    /**
-     * 
-     *                                 Contains ovf sections for vApp template.
-     *                             Gets the value of the section property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the section property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSection().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link JAXBElement }{@code <}{@link SectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link VirtualHardwareSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link LeaseSettingsSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link EulaSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link RuntimeInfoSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link AnnotationSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link DeploymentOptionSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link StartupSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link ResourceAllocationSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link NetworkConnectionSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link CustomizationSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link ProductSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link GuestCustomizationSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link OperatingSystemSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link NetworkConfigSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link NetworkSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link DiskSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link InstallSectionType }{@code >}
-     * 
-     * 
-     */
-    public List<JAXBElement<? extends Section<?>>> getSections() {
-        if (sections == null) {
-            sections = new ArrayList<JAXBElement<? extends Section<?>>>();
-        }
-        return this.sections;
-    }
+   /**
+    * Gets the value of the ovfDescriptorUploaded property.
+    *
+    * @return possible object is
+    *         {@link Boolean }
+    */
+   public Boolean isOvfDescriptorUploaded() {
+      return ovfDescriptorUploaded;
+   }
 
-    /**
-     * Gets the value of the vAppScopedLocalId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getVAppScopedLocalId() {
-        return vAppScopedLocalId;
-    }
+   /**
+    * Sets the value of the ovfDescriptorUploaded property.
+    *
+    * @param value allowed object is
+    *              {@link Boolean }
+    */
+   public void setOvfDescriptorUploaded(Boolean value) {
+      this.ovfDescriptorUploaded = value;
+   }
 
-    /**
-     * Sets the value of the vAppScopedLocalId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setVAppScopedLocalId(String value) {
-        this.vAppScopedLocalId = value;
-    }
+   /**
+    * Gets the value of the goldMaster property.
+    *
+    * @return possible object is
+    *         {@link Boolean }
+    */
+   public boolean isGoldMaster() {
+      if (goldMaster == null) {
+         return false;
+      } else {
+         return goldMaster;
+      }
+   }
 
-    /**
-     * Gets the value of the ovfDescriptorUploaded property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isOvfDescriptorUploaded() {
-        return ovfDescriptorUploaded;
-    }
-
-    /**
-     * Sets the value of the ovfDescriptorUploaded property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setOvfDescriptorUploaded(Boolean value) {
-        this.ovfDescriptorUploaded = value;
-    }
-
-    /**
-     * Gets the value of the goldMaster property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public boolean isGoldMaster() {
-        if (goldMaster == null) {
-            return false;
-        } else {
-            return goldMaster;
-        }
-    }
-
-    /**
-     * Sets the value of the goldMaster property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setGoldMaster(Boolean value) {
-        this.goldMaster = value;
-    }
+   /**
+    * Sets the value of the goldMaster property.
+    *
+    * @param value allowed object is
+    *              {@link Boolean }
+    */
+   public void setGoldMaster(Boolean value) {
+      this.goldMaster = value;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       VAppTemplate that = VAppTemplate.class.cast(o);
-      return equal(owner, that.owner) && 
-           equal(children, that.children) && 
-           equal(sections, that.sections) && 
-           equal(vAppScopedLocalId, that.vAppScopedLocalId) && 
-           equal(ovfDescriptorUploaded, that.ovfDescriptorUploaded) && 
-           equal(goldMaster, that.goldMaster);
+      return super.equals(that) && 
+            equal(owner, that.owner) &&
+            equal(children, that.children) &&
+            equal(sections, that.sections) &&
+            equal(vAppScopedLocalId, that.vAppScopedLocalId) &&
+            equal(ovfDescriptorUploaded, that.ovfDescriptorUploaded) &&
+            equal(goldMaster, that.goldMaster);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(owner, 
-           children, 
-           sections, 
-           vAppScopedLocalId, 
-           ovfDescriptorUploaded, 
-           goldMaster);
+      return Objects.hashCode(super.hashCode(),
+            owner,
+            children,
+            sections,
+            vAppScopedLocalId,
+            ovfDescriptorUploaded,
+            goldMaster);
    }
 
    @Override
    public String toString() {
-      return Objects.toStringHelper("")
+      return Objects.toStringHelper(super.toString())
             .add("owner", owner)
             .add("children", children)
             .add("sections", sections)

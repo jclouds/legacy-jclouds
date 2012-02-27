@@ -107,6 +107,20 @@ public class VCloudDirectorMediaType {
          
    public static final String CONTROL_ACCESS = "application/vnd.vmware.vcloud.controlAccess+xml";
 
+   public static final String VAPP_TEMPLATE = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+
+   public static final String CUSTOMIZATION_SECTION = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+
+   public static final String GUEST_CUSTOMIZATION_SECTION = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+
+   public static final String NETWORK_SECTION = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+
+   public static final String NETWORK_CONFIG_SECTION = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+
+   public static final String NETWORK_CONNECTION_SECTION = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+   
+   public static final String PRODUCT_SECTION_LIST = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+
    /**
     * All acceptable media types.
     *
@@ -121,6 +135,7 @@ public class VCloudDirectorMediaType {
             COMPOSE_VAPP_PARAMS, INSTANTIATE_VAPP_TEMPLATE_PARAMS,
             UPLOAD_VAPP_TEMPLATE_PARAMS, 
             QUERY_RESULT_RECORDS, QUERY_RESULT_REFERENCES, QUERY_RESULT_ID_RECORDS,
-            CONTROL_ACCESS
+            VAPP_TEMPLATE, CUSTOMIZATION_SECTION, GUEST_CUSTOMIZATION_SECTION, NETWORK_SECTION, NETWORK_CONFIG_SECTION, NETWORK_CONNECTION_SECTION,   
+         CONTROL_ACCESS
       );
 }

@@ -24,6 +24,7 @@ import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 
 /**
  * @author grkvlt@apache.org
@@ -33,8 +34,8 @@ public class ReferenceToEndpoint implements Function<Object, URI> {
    @Override
    public URI apply(Object input) {
       Preconditions.checkNotNull(input);
-      Preconditions.checkArgument(input instanceof ReferenceType<?>);
-      ReferenceType<?> reference = (ReferenceType<?>) input;
+      Preconditions.checkArgument(input instanceof URISupplier);
+      URISupplier reference = (URISupplier) input;
       return reference.getURI();
 	};
 }

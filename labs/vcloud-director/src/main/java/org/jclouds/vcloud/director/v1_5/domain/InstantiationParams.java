@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.ovf.Section;
+import org.jclouds.vcloud.director.v1_5.domain.SectionType;
 
 import com.google.common.base.Objects;
 
@@ -74,12 +74,12 @@ public class InstantiationParams {
 
    public static class Builder {
       
-      private List<JAXBElement<? extends Section<?>>> sections;
+      private List<JAXBElement<? extends SectionType<?>>> sections;
 
       /**
-       * @see InstantiationParams#getExtend()
+       * @see InstantiationParams#getSections()
        */
-      public Builder sections(List<JAXBElement<? extends Section<?>>> sections) {
+      public Builder sections(List<JAXBElement<? extends SectionType<?>>> sections) {
          this.sections = sections;
          return this;
       }
@@ -100,18 +100,19 @@ public class InstantiationParams {
       // For JAXB and builder use
    }
 
-   private InstantiationParams(List<JAXBElement<? extends Section<?>>> sections) {
+   private InstantiationParams(List<JAXBElement<? extends SectionType<?>>> sections) {
       this.sections = sections;
    }
 
 
     @XmlElementRef(name = "Section", namespace = "http://schemas.dmtf.org/ovf/envelope/1", type = JAXBElement.class)
-    protected List<JAXBElement<? extends Section<?>>> sections;
+    protected List<JAXBElement<? extends SectionType<?>>> sections;
 
     /**
      * 
-     *                                 An ovf:Section to configure for instantiation.
-     *                             Gets the value of the section property.
+     * An ovf:Section to configure for instantiation.
+     * 
+     * Gets the value of the section property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
@@ -129,29 +130,29 @@ public class InstantiationParams {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link SectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link VirtualHardwareSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link LeaseSettingsSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link EulaSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link RuntimeInfoSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link AnnotationSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link DeploymentOptionSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link StartupSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link ResourceAllocationSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link NetworkConnectionSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link CustomizationSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link ProductSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link GuestCustomizationSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link OperatingSystemSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link NetworkConfigSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link NetworkSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link DiskSectionType }{@code >}
-     * {@link JAXBElement }{@code <}{@link InstallSectionType }{@code >}
+     * {@link JAXBElement }{@code <}{@link VirtualHardwareSection }{@code >}
+     * {@link JAXBElement }{@code <}{@link LeaseSettingsSection }{@code >}
+     * {@link JAXBElement }{@code <}{@link EulaSection }{@code >}
+     * {@link JAXBElement }{@code <}{@link RuntimeInfoSection }{@code >}
+     * {@link JAXBElement }{@code <}{@link AnnotationSection }{@code >}
+     * {@link JAXBElement }{@code <}{@link DeploymentOptionSection }{@code >}
+     * {@link JAXBElement }{@code <}{@link StartupSection }{@code >}
+     * {@link JAXBElement }{@code <}{@link ResourceAllocationSection }{@code >}
+     * {@link JAXBElement }{@code <}{@link NetworkConnectionSection }{@code >}
+     * {@link JAXBElement }{@code <}{@link CustomizationSection }{@code >}
+     * {@link JAXBElement }{@code <}{@link ProductSection }{@code >}
+     * {@link JAXBElement }{@code <}{@link GuestCustomizationSection }{@code >}
+     * {@link JAXBElement }{@code <}{@link org.jclouds.ovf.OperatingSystemSection }{@code >}
+     * {@link JAXBElement }{@code <}{@link NetworkConfigSection }{@code >}
+     * {@link JAXBElement }{@code <}{@link NetworkSection }{@code >}
+     * {@link JAXBElement }{@code <}{@link DiskSection }{@code >}
+     * {@link JAXBElement }{@code <}{@link InstallSection }{@code >}
      * 
      * 
      */
-    public List<JAXBElement<? extends Section<?>>> getSections() {
+    public List<JAXBElement<? extends SectionType<?>>> getSections() {
         if (sections == null) {
-           sections = new ArrayList<JAXBElement<? extends Section<?>>>();
+           sections = new ArrayList<JAXBElement<? extends SectionType<?>>>();
         }
         return this.sections;
     }

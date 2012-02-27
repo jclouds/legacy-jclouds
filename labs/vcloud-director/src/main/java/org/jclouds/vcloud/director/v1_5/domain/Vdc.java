@@ -273,7 +273,7 @@ public class Vdc
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
@@ -282,7 +282,7 @@ public class Vdc
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder link(Link link) {
