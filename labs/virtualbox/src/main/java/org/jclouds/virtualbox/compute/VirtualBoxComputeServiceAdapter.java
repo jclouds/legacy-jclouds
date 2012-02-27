@@ -21,8 +21,9 @@ package org.jclouds.virtualbox.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
+
+import java.io.InputStream;
 
 import javax.inject.Inject;
 
@@ -42,6 +43,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Singleton;
@@ -58,12 +60,18 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
    private final Supplier<VirtualBoxManager> manager;
    private final Function<IMachine, Image> iMachineToImage;
+	private final Function<String, LoadingCache<String, Image>> images;
+	private final Supplier<String> imagesDescSupplier;
 
    @Inject
    public VirtualBoxComputeServiceAdapter(Supplier<VirtualBoxManager> manager,
-         Function<IMachine, Image> iMachineToImage) {
+         Function<IMachine, Image> iMachineToImage,
+         Function<String, LoadingCache<String, Image>> images,
+         Supplier<String> imagesStreamSupplier) {
       this.iMachineToImage = iMachineToImage;
       this.manager = checkNotNull(manager, "manager");
+      this.images = images;
+      this.imagesDescSupplier = imagesStreamSupplier;
    }
 
    @Override
@@ -89,10 +97,10 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
       return imageMachines();
    }
 
-   @Override
-   public Iterable<Image> listImages() {
-      return transform(imageMachines(), iMachineToImage);
-   }
+	@Override
+	public Iterable<Image> listImages() {
+		return images.apply(imagesDescSupplier.get()).asMap().values();
+	}
 
    private Iterable<IMachine> imageMachines() {
       final Predicate<? super IMachine> imagePredicate = new Predicate<IMachine>() {

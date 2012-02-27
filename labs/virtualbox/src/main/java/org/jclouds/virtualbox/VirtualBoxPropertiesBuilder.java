@@ -71,7 +71,12 @@ public class VirtualBoxPropertiesBuilder extends PropertiesBuilder {
                + "initrd=/install/initrd.gz -- <Enter>");
       
       properties.put(VIRTUALBOX_WORKINGDIR, System.getProperty("user.home") + File.separator
-               + System.getProperty("test.virtualbox.workingDir", "jclouds-virtualbox-test"));
+               + System.getProperty("test.virtualbox.workingDir", ".jclouds-virtualbox"));
+      
+		properties.put(VIRTUALBOX_IMAGES_DESCRIPTOR,
+		               System.getProperty("user.home") + File.separator
+		                           + System.getProperty("test.virtualbox.image.descriptor.yaml", "images.yaml"));
+      
 
       properties.put(VIRTUALBOX_PRECONFIGURATION_URL, "http://10.0.2.2:8080/src/test/resources/preseed.cfg");
       

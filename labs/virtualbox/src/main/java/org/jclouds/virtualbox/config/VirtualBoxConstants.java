@@ -34,6 +34,8 @@ public interface VirtualBoxConstants {
    public static final String VIRTUALBOX_INSTALLATION_KEY_SEQUENCE = "jclouds.virtualbox.installationkeysequence";
 
    public static final String VIRTUALBOX_WORKINGDIR = "jclouds.virtualbox.workingdir";
+   
+   public static final String VIRTUALBOX_IMAGES_DESCRIPTOR = "jclouds.virtualbox.image.descriptor.yaml";
 
    public static final String VIRTUALBOX_ISO_URL = "jclouds.virtualbox.isourl";
 

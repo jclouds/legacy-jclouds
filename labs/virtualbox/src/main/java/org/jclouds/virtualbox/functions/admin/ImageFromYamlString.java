@@ -21,7 +21,6 @@ package org.jclouds.virtualbox.functions.admin;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +28,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.virtualbox.domain.YamlImage;
-import org.yaml.snakeyaml.Loader;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -47,7 +45,7 @@ import com.google.common.collect.Maps;
  * @author Andrea Turli
  */
 @Singleton
-public class ImageFromYamlStream implements Function<InputStream, LoadingCache<String, Image>> {
+public class ImageFromYamlString implements Function<String, LoadingCache<String, Image>> {
 
    /**
     * Type-safe config class for YAML
@@ -57,13 +55,8 @@ public class ImageFromYamlStream implements Function<InputStream, LoadingCache<S
       public List<YamlImage> images;
    }
 
-   private Object construct(String data) {
-      Yaml yaml = new Yaml();
-      return yaml.load(data);
-   }
-
    @Override
-   public LoadingCache<String, Image> apply(InputStream source) {
+   public LoadingCache<String, Image> apply(String source) {
 
       Constructor constructor = new Constructor(Config.class);
 
@@ -71,10 +64,11 @@ public class ImageFromYamlStream implements Function<InputStream, LoadingCache<S
       imageDesc.putListPropertyType("images", String.class);
       constructor.addTypeDescription(imageDesc);
 
-      Yaml yaml = new Yaml(new Loader(constructor));
+		Yaml yaml = new Yaml(constructor);
       Config config = (Config) yaml.load(source);
       checkState(config != null, "missing config: class");
       checkState(config.images != null, "missing images: collection");
+      
 
       Map<String, Image> backingMap = Maps.uniqueIndex(Iterables.transform(config.images, YamlImage.toImage),
             new Function<Image, String>() {

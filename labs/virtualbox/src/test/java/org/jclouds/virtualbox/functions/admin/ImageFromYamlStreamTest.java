@@ -22,7 +22,9 @@ package org.jclouds.virtualbox.functions.admin;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
+import org.apache.commons.io.IOUtils;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
@@ -37,20 +39,23 @@ import com.google.common.collect.ImmutableMap;
 @Test(groups = "unit")
 public class ImageFromYamlStreamTest {
 
-   public static final Image TEST1 = new ImageBuilder()
-         .id("myTestId")
-         .name("ubuntu-11.04-server-i386")
-         .description("ubuntu 11.04 server (i386)")
-         .operatingSystem(
-               OperatingSystem.builder().description("ubuntu").family(OsFamily.UBUNTU).version("11.04").build())
-         .build();
+	public static final Image TEST1 = new ImageBuilder()
+	            .id("myTestId")
+	            .name("ubuntu-11.04-server-i386")
+	            .description("ubuntu 11.04 server (i386)")
+	            .operatingSystem(OperatingSystem.builder().description("ubuntu").family(OsFamily.UBUNTU)
+	                                         .version("11.04").build()).build();
 
-   @Test
-   public void testNodesParse() throws Exception {
-      InputStream is = getClass().getResourceAsStream("/testImages.yaml");
-      ImageFromYamlStream parser = new ImageFromYamlStream();
-      assertEquals(parser.apply(is).asMap(), ImmutableMap.of(TEST1.getId(), TEST1));
-      is.close();
-   }
+	@Test
+	public void testNodesParse() throws Exception {
+
+		StringBuilder yamlFileLines = new StringBuilder();
+		for (Object line : IOUtils.readLines(new InputStreamReader(getClass().getResourceAsStream("/testImages.yaml")))) {
+			yamlFileLines.append(line).append("\n");
+		}
+
+		ImageFromYamlString parser = new ImageFromYamlString();
+		assertEquals(parser.apply(yamlFileLines.toString()).asMap(), ImmutableMap.of(TEST1.getId(), TEST1));
+	}
 
 }

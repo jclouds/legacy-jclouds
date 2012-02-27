@@ -38,6 +38,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.virtualbox.functions.IMachineToImage;
+import org.jclouds.virtualbox.functions.admin.ImageFromYamlString;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IGuestOSType;
 import org.virtualbox_4_1.IMachine;
@@ -45,6 +46,7 @@ import org.virtualbox_4_1.IVirtualBox;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Iterators;
 import com.google.inject.Guice;
@@ -83,11 +85,25 @@ public class VirtualBoxComputeServiceAdapterTest {
       replay(manager, vBox, clonedMachine, imageMachine, osType);
 
       Function<IMachine, Image> iMachineToImage = new IMachineToImage(Suppliers.ofInstance(manager), osMap);
-      VirtualBoxComputeServiceAdapter adapter = new VirtualBoxComputeServiceAdapter(Suppliers.ofInstance(manager), iMachineToImage);
+      VirtualBoxComputeServiceAdapter adapter = new VirtualBoxComputeServiceAdapter(Suppliers.ofInstance(manager), iMachineToImage, new ImageFromYamlString(), new Supplier<String>() {
+
+			@Override
+         public String get() {
+	         return "images:\n" + 
+	         		"    - id: myTestId\n" + 
+	         		"      name: ubuntu-11.04-server-i386\n" + 
+	         		"      description: ubuntu 11.04 server (i386)\n" + 
+	         		"      os_arch: x86\n" + 
+	         		"      os_family: ubuntu\n" + 
+	         		"      os_description: ubuntu\n" + 
+	         		"      os_version: 11.04\n" + 
+	         		"      iso: http://releases.ubuntu.com/11.04/ubuntu-11.04-server-i386.iso";
+         }
+		});
 
       Iterator<Image> iterator = adapter.listImages().iterator();
       Image image = Iterators.getOnlyElement(iterator);
-      assertEquals(image.getDescription(), VIRTUALBOX_IMAGE_PREFIX + "ubuntu-10.04");
+      assertEquals(image.getDescription(), "ubuntu 11.04 server (i386)");
 
    }
 }

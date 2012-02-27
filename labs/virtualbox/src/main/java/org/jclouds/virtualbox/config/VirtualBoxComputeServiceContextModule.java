@@ -54,6 +54,7 @@ import org.jclouds.virtualbox.functions.IMachineToHardware;
 import org.jclouds.virtualbox.functions.IMachineToImage;
 import org.jclouds.virtualbox.functions.IMachineToNodeMetadata;
 import org.jclouds.virtualbox.functions.IMachineToSshClient;
+import org.jclouds.virtualbox.functions.admin.ImageFromYamlString;
 import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
 import org.jclouds.virtualbox.functions.admin.StartVBoxIfNotAlreadyRunning;
 import org.jclouds.virtualbox.predicates.SshResponds;
@@ -106,6 +107,8 @@ public class VirtualBoxComputeServiceContextModule extends
       }).to((Class) StartJettyIfNotAlreadyRunning.class);
       bind(new TypeLiteral<Supplier<VirtualBoxManager>>() {
       }).to((Class) StartVBoxIfNotAlreadyRunning.class);
+      bind(new TypeLiteral<Function<InputStream, LoadingCache<String, Image>>>() {
+      }).to((Class) ImageFromYamlString.class);
       // for byon
       bind(new TypeLiteral<Function<URI, InputStream>>() {
       }).to(SupplyFromProviderURIOrNodesProperty.class);

@@ -96,7 +96,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    @BeforeClass(groups = "live")
    public void setupClient() {
       setupCredentials();
-      Properties overrides = setupProperties();
+      Properties overrides = new VirtualBoxPropertiesBuilder(setupProperties()).build();
 
       CacheNodeStoreModule hostModule = new CacheNodeStoreModule(
               ImmutableMap.of(
