@@ -55,7 +55,7 @@ public class ImageFromYamlStringTest {
       yamlFileLines.append(line).append("\n");
     }
 
-    ImageFromYamlString parser = new ImageFromYamlString(new Supplier<String>() {
+    ImagesToYamlImagesFromYamlDescriptor parser = new ImagesToYamlImagesFromYamlDescriptor(new Supplier<String>() {
 
       @Override
       public String get() {

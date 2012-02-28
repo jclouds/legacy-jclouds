@@ -35,7 +35,6 @@ import javax.inject.Named;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.MasterSpec;
@@ -66,20 +65,21 @@ public class MasterImages extends AbstractLoadingCache<Image, IMachine> {
   private final Map<Image, IMachine>           masters = Maps.newHashMap();
   private final Function<MasterSpec, IMachine> mastersLoader;
   private final Map<Image, YamlImage>          imageMapping;
-  private final ValueOfConfigurationKeyOrNull  cfg;
   private final String                         workingDir;
   private final String                         adminDisk;
   private String                               guestAdditionsIso;
+  private String                               installationKeySequence;
 
   @Inject
   public MasterImages(@Named(Constants.PROPERTY_BUILD_VERSION) String version,
-      Function<MasterSpec, IMachine> masterLoader, ValueOfConfigurationKeyOrNull cfg,
+      @Named(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE) String installationKeySequence,
+      @Named(VIRTUALBOX_WORKINGDIR) String workingDir, Function<MasterSpec, IMachine> masterLoader,
       Supplier<Map<Image, YamlImage>> yamlMapper) {
     checkNotNull(version, "version");
+    checkNotNull(installationKeySequence, "installationKeySequence");
     this.mastersLoader = masterLoader;
-    this.cfg = cfg;
-    this.workingDir = cfg.apply(VIRTUALBOX_WORKINGDIR) == null ? VIRTUALBOX_DEFAULT_DIR : cfg
-        .apply(VIRTUALBOX_WORKINGDIR);
+    this.installationKeySequence = installationKeySequence;
+    this.workingDir = workingDir == null ? VIRTUALBOX_DEFAULT_DIR : workingDir;
     File wdFile = new File(workingDir);
     if (!wdFile.exists()) {
       wdFile.mkdirs();
@@ -96,9 +96,12 @@ public class MasterImages extends AbstractLoadingCache<Image, IMachine> {
       return masters.get(key);
     }
 
+    checkNotNull(key, key);
     checkState(new File(guestAdditionsIso).exists(), "guest additions iso does not exist at: " + guestAdditionsIso);
 
     YamlImage yamlImage = imageMapping.get(key);
+
+    checkNotNull(yamlImage, "could not find yaml image for image: " + key);
 
     String vmName = VIRTUALBOX_IMAGE_PREFIX + yamlImage.id;
 
@@ -114,12 +117,8 @@ public class MasterImages extends AbstractLoadingCache<Image, IMachine> {
         .builder()
         .vm(vmSpecification)
         .iso(
-            IsoSpec
-                .builder()
-                .sourcePath(yamlImage.iso)
-                .installationScript(
-                    cfg.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace("HOSTNAME", vmSpecification.getVmName()))
-                .build())
+            IsoSpec.builder().sourcePath(yamlImage.iso)
+                .installationScript(installationKeySequence.replace("HOSTNAME", vmSpecification.getVmName())).build())
         .network(
             NetworkSpec.builder()
                 .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build()).build())

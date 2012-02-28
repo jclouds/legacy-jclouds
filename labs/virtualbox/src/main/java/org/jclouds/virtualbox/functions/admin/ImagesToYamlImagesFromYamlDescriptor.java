@@ -41,12 +41,12 @@ import com.google.common.collect.Maps;
  * @author Andrea Turli
  */
 @Singleton
-public class ImageFromYamlString implements Supplier<Map<Image, YamlImage>> {
+public class ImagesToYamlImagesFromYamlDescriptor implements Supplier<Map<Image, YamlImage>> {
 
   private String yamlDescriptor;
 
   @Inject
-  public ImageFromYamlString(Supplier<String> yamlDescriptorSupplier) {
+  public ImagesToYamlImagesFromYamlDescriptor(Supplier<String> yamlDescriptorSupplier) {
     this.yamlDescriptor = yamlDescriptorSupplier.get();
     checkNotNull(yamlDescriptor, "yaml descriptor");
     checkState(!yamlDescriptor.equals(""), "yaml descriptor is empty");
