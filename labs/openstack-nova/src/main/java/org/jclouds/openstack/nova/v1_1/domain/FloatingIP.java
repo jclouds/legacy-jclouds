@@ -31,7 +31,7 @@ import com.google.gson.annotations.SerializedName;
  * @author Jeremy Daggett
  * @author chamerling
  */
-public class FloatingIP {
+public class FloatingIP implements Comparable<FloatingIP> {
    public static Builder builder() {
       return new Builder();
    }
@@ -109,6 +109,11 @@ public class FloatingIP {
    }
 
    @Override
+   public int compareTo(FloatingIP o) {
+      return this.id.compareTo(o.getId());
+   }
+
+   @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
@@ -157,5 +162,5 @@ public class FloatingIP {
       return toStringHelper("").add("id", id).add("ip", ip)
             .add("fixedIp", fixedIp).add("instanceId", instanceId).toString();
    }
-
+   
 }

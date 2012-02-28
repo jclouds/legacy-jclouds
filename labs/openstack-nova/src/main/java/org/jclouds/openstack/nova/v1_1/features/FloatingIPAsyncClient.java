@@ -93,5 +93,29 @@ public interface FloatingIPAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("/os-floating-ips/{id}")
    ListenableFuture<Void> deallocate(@PathParam("id") String id);
+   
+   /**
+    * @see FloatingIPClient#addFloatingIP
+    */
+   @POST
+   @Path("/servers/{server}/action")
+   @Consumes
+   @Produces(MediaType.APPLICATION_JSON)
+   @Payload("%7B\"addFloatingIp\":%7B\"server\":\"{server}\",\"address\":\"{address}\"%7D%7D")
+   ListenableFuture<Void> addFloatingIP(
+         @PayloadParam("server") String serverId,
+         @PayloadParam("address") String address);
+
+   /**
+    * @see FloatingIPClient#removeFloatingIP
+    */
+   @POST
+   @Path("/servers/{server}/action")
+   @Consumes
+   @Produces(MediaType.APPLICATION_JSON)
+   @Payload("%7B\"removeFloatingIp\":%7B\"server\":\"{server}\",\"address\":\"{address}\"%7D%7D")
+   ListenableFuture<Void> removeFloatingIP(
+         @PayloadParam("server") String serverId,
+         @PayloadParam("address") String address);
 
 }

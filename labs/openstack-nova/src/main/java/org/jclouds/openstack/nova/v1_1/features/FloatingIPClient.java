@@ -63,4 +63,27 @@ public interface FloatingIPClient {
     */
    void deallocate(String id);
 
+   /**
+    * Add a Floating IP address to a Server
+    * 
+    * @param serverId
+    *           the serverId
+    * @param address
+    *           the IP address to add
+    * 
+    * NOTE: Possibly move this to ServerClient?
+    */
+   void addFloatingIP(String serverId, String address);
+
+   /**
+    * Remove a Floating IP address from a Server
+    * 
+    * @param serverId
+    *           the serverId
+    * @param address
+    *           the IP address to remove
+    * 
+    * NOTE: Possibly move this to ServerClient?
+    */
+   void removeFloatingIP(String serverId, String address);
 }
