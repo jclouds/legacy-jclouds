@@ -30,6 +30,7 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -38,23 +39,29 @@ import com.google.common.collect.ImmutableMap;
 @Test(groups = "unit")
 public class ImageFromYamlStringTest {
 
-	public static final Image TEST1 = new ImageBuilder()
-	            .id("myTestId")
-	            .name("ubuntu-11.04-server-i386")
-	            .description("ubuntu 11.04 server (i386)")
-	            .operatingSystem(OperatingSystem.builder().description("ubuntu").family(OsFamily.UBUNTU)
-	                                         .version("11.04").build()).build();
+  public static final Image TEST1 = new ImageBuilder()
+                                      .id("myTestId")
+                                      .name("ubuntu-11.04-server-i386")
+                                      .description("ubuntu 11.04 server (i386)")
+                                      .operatingSystem(
+                                          OperatingSystem.builder().description("ubuntu").family(OsFamily.UBUNTU)
+                                              .version("11.04").build()).build();
 
-	@Test
-	public void testNodesParse() throws Exception {
+  @Test
+  public void testNodesParse() throws Exception {
 
-		StringBuilder yamlFileLines = new StringBuilder();
-		for (Object line : IOUtils.readLines(new InputStreamReader(getClass().getResourceAsStream("/testImages.yaml")))) {
-			yamlFileLines.append(line).append("\n");
-		}
+    final StringBuilder yamlFileLines = new StringBuilder();
+    for (Object line : IOUtils.readLines(new InputStreamReader(getClass().getResourceAsStream("/testImages.yaml")))) {
+      yamlFileLines.append(line).append("\n");
+    }
 
-		ImageFromYamlString parser = new ImageFromYamlString();
-		assertEquals(parser.apply(yamlFileLines.toString()), ImmutableMap.of(TEST1.getId(), TEST1));
-	}
+    ImageFromYamlString parser = new ImageFromYamlString(new Supplier<String>() {
 
+      @Override
+      public String get() {
+        return yamlFileLines.toString();
+      }
+    });
+    assertEquals(parser.get(), ImmutableMap.of(TEST1.getId(), TEST1));
+  }
 }

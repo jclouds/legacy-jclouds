@@ -66,11 +66,10 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
   @Inject
   public VirtualBoxComputeServiceAdapter(Supplier<VirtualBoxManager> manager,
-      Function<String, Map<Image, YamlImage>> imagesMapper,
-      LoadingCache<Image, IMachine> mastersLoader, Supplier<String> imagesDescSupplier,
+      Supplier<Map<Image, YamlImage>> imagesMapper, LoadingCache<Image, IMachine> mastersLoader,
       Function<IMachine, NodeAndInitialCredentials<IMachine>> cloneCreator) {
     this.manager = checkNotNull(manager, "manager");
-    this.images = imagesMapper.apply(imagesDescSupplier.get());
+    this.images = imagesMapper.get();
     this.mastersLoader = mastersLoader;
     this.cloneCreator = cloneCreator;
   }

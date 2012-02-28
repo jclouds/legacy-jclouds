@@ -73,8 +73,8 @@ public class MasterImages extends AbstractLoadingCache<Image, IMachine> {
 
   @Inject
   public MasterImages(@Named(Constants.PROPERTY_BUILD_VERSION) String version,
-      Function<MasterSpec, IMachine> masterLoader, ValueOfConfigurationKeyOrNull cfg, Supplier<String> yamlSupplier,
-      Function<String, Map<Image, YamlImage>> yamlMapper) {
+      Function<MasterSpec, IMachine> masterLoader, ValueOfConfigurationKeyOrNull cfg,
+      Supplier<Map<Image, YamlImage>> yamlMapper) {
     checkNotNull(version, "version");
     this.mastersLoader = masterLoader;
     this.cfg = cfg;
@@ -85,7 +85,7 @@ public class MasterImages extends AbstractLoadingCache<Image, IMachine> {
       wdFile.mkdirs();
     }
     this.adminDisk = workingDir + "/testadmin.vdi";
-    this.imageMapping = yamlMapper.apply(yamlSupplier.get());
+    this.imageMapping = yamlMapper.get();
     this.guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", workingDir,
         Iterables.get(Splitter.on('r').split(version), 0));
   }

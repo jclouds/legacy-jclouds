@@ -25,6 +25,7 @@ import static com.google.common.base.Preconditions.checkState;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
@@ -33,45 +34,51 @@ import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
-import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 
 /**
  * @author Andrea Turli
  */
 @Singleton
-public class ImageFromYamlString implements Function<String, Map<Image, YamlImage>> {
+public class ImageFromYamlString implements Supplier<Map<Image, YamlImage>> {
 
-	/**
-	 * Type-safe config class for YAML
-	 * 
-	 */
-	public static class Config {
-		public List<YamlImage> images;
-	}
+  private String yamlDescriptor;
 
-	@Override
-	public Map<Image, YamlImage> apply(String source) {
-	  
-	  checkNotNull(source, "yaml descriptor");
-	  checkState(!source.equals(""),"yaml descriptor is empty");
+  @Inject
+  public ImageFromYamlString(Supplier<String> yamlDescriptorSupplier) {
+    this.yamlDescriptor = yamlDescriptorSupplier.get();
+    checkNotNull(yamlDescriptor, "yaml descriptor");
+    checkState(!yamlDescriptor.equals(""), "yaml descriptor is empty");
+  }
 
-		Constructor constructor = new Constructor(Config.class);
+  /**
+   * Type-safe config class for YAML
+   * 
+   */
+  public static class Config {
+    public List<YamlImage> images;
+  }
 
-		TypeDescription imageDesc = new TypeDescription(YamlImage.class);
-		imageDesc.putListPropertyType("images", String.class);
-		constructor.addTypeDescription(imageDesc);
+  @Override
+  public Map<Image, YamlImage> get() {
 
-		Yaml yaml = new Yaml(constructor);
-		Config config = (Config) yaml.load(source);
-		checkState(config != null, "missing config: class");
-		checkState(config.images != null, "missing images: collection");
+    Constructor constructor = new Constructor(Config.class);
 
-		Map<Image, YamlImage> backingMap = Maps.newLinkedHashMap();
-		for (YamlImage yamlImage : config.images) {
-			backingMap.put(YamlImage.toImage.apply(yamlImage), yamlImage);
-		}
-		return backingMap;
-	}
+    TypeDescription imageDesc = new TypeDescription(YamlImage.class);
+    imageDesc.putListPropertyType("images", String.class);
+    constructor.addTypeDescription(imageDesc);
+
+    Yaml yaml = new Yaml(constructor);
+    Config config = (Config) yaml.load(yamlDescriptor);
+    checkState(config != null, "missing config: class");
+    checkState(config.images != null, "missing images: collection");
+
+    Map<Image, YamlImage> backingMap = Maps.newLinkedHashMap();
+    for (YamlImage yamlImage : config.images) {
+      backingMap.put(YamlImage.toImage.apply(yamlImage), yamlImage);
+    }
+    return backingMap;
+  }
 
 }

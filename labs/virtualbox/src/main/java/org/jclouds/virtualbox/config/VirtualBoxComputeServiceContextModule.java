@@ -115,7 +115,7 @@ public class VirtualBoxComputeServiceContextModule extends
       bind(new TypeLiteral<Supplier<VirtualBoxManager>>() {
       }).to((Class) StartVBoxIfNotAlreadyRunning.class);
       // the yaml config to image mapper
-      bind(new TypeLiteral<Function<String, Map<Image, YamlImage>>>() {
+      bind(new TypeLiteral<Supplier<Map<Image, YamlImage>>>() {
       }).to((Class) ImageFromYamlString.class);
       // the yaml config provider
       bind(new TypeLiteral<Supplier<String>>() {
@@ -188,6 +188,7 @@ public class VirtualBoxComputeServiceContextModule extends
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
+     injector.getInstance(Supplier.class);
       return template.osFamily(OsFamily.UBUNTU).osVersionMatches("11.04");
    }
 
