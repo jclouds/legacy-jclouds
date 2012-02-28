@@ -16,39 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.domain;
+package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
-import org.jclouds.vcloud.director.v1_5.domain.ovf.Disk;
-import org.jclouds.vcloud.director.v1_5.domain.SectionType;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
- * A DiskSection describes meta-information about virtual disks in the OVF package. Virtual disks
- * and their metadata are described outside the virtual hardware to facilitate sharing between
- * virtual machines within an OVF package.
+ * The ProductSection element specifies product-information for an appliance, such as product name,
+ * version, and vendor.
  *
  * @author Adrian Cole
  * @author Adam Lowe
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "DiskSection", namespace = VCLOUD_OVF_NS)
-@XmlType(propOrder = {
-      "disks"
-})
-public class DiskSection extends SectionType<DiskSection> {
+@XmlRootElement(name = "ProductSection", namespace = VCLOUD_OVF_NS)
+public class ProductSection extends SectionType<ProductSection> {
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
@@ -60,25 +51,25 @@ public class DiskSection extends SectionType<DiskSection> {
     */
    @Override
    public Builder toBuilder() {
-      return new Builder().fromDiskSection(this);
+      return builder().fromDeploymentOptionSection(this);
    }
 
-   public static class Builder extends SectionType.Builder<DiskSection> {
-      protected Set<Disk> disks = Sets.newLinkedHashSet();
+   public static class Builder extends SectionType.Builder<ProductSection> {
+      protected Set<org.jclouds.vcloud.director.v1_5.domain.ovf.Property> properties = Sets.newLinkedHashSet();
 
       /**
-       * @see DiskSection#getDisks
+       * @see ProductSection#getProperties
        */
-      public Builder disk(Disk disk) {
-         this.disks.add(checkNotNull(disk, "disk"));
+      public Builder property(org.jclouds.vcloud.director.v1_5.domain.ovf.Property property) {
+         this.properties.add(checkNotNull(property, "property"));
          return this;
       }
 
       /**
-       * @see DiskSection#getDisks
+       * @see ProductSection#getProperties
        */
-      public Builder disks(Iterable<Disk> disks) {
-         this.disks = ImmutableSet.<Disk>copyOf(checkNotNull(disks, "disks"));
+      public Builder properties(Iterable<org.jclouds.vcloud.director.v1_5.domain.ovf.Property> properties) {
+         this.properties = ImmutableSet.<org.jclouds.vcloud.director.v1_5.domain.ovf.Property> copyOf(checkNotNull(properties, "properties"));
          return this;
       }
 
@@ -86,22 +77,22 @@ public class DiskSection extends SectionType<DiskSection> {
        * {@inheritDoc}
        */
       @Override
-      public DiskSection build() {
-         return new DiskSection(info, disks);
+      public ProductSection build() {
+         return new ProductSection(info, properties);
       }
 
-      public Builder fromDiskSection(DiskSection in) {
-         return disks(in.getDisks()).info(in.getInfo());
+      public Builder fromDeploymentOptionSection(ProductSection in) {
+         return info(in.getInfo()).properties(in.getProperties());
       }
 
       /**
        * {@inheritDoc}
        */
       @Override
-      public Builder fromSection(SectionType<DiskSection> in) {
+      public Builder fromSection(SectionType<ProductSection> in) {
          return Builder.class.cast(super.fromSection(in));
       }
-      
+
       /**
        * {@inheritDoc}
        */
@@ -109,47 +100,41 @@ public class DiskSection extends SectionType<DiskSection> {
       public Builder info(String info) {
          return Builder.class.cast(super.info(info));
       }
-
    }
 
-   private Set<Disk> disks;
+   protected Set<org.jclouds.vcloud.director.v1_5.domain.ovf.Property> properties;
 
-   private DiskSection(String info, Iterable<Disk> disks) {
+   private ProductSection(String info, Iterable<org.jclouds.vcloud.director.v1_5.domain.ovf.Property> properties) {
       super(info);
-      this.disks = ImmutableSet.<Disk>copyOf(checkNotNull(disks, "disks"));
+      this.properties = ImmutableSet.<org.jclouds.vcloud.director.v1_5.domain.ovf.Property> copyOf(checkNotNull(properties, "properties"));
    }
    
-   private DiskSection() {
-      // for JAXB
-   }   
-
-   /**
-    * All disks referred to from Connection elements in all {@link VirtualHardwareSection} elements
-    * shall be defined in the DiskSection.
-    *
-    * @return
-    */
-   public Set<Disk> getDisks() {
-      return disks;
+   private ProductSection() {
+      // For JAXB
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), disks);
+      return Objects.hashCode(super.hashCode(), properties);
    }
 
    @Override
    public boolean equals(Object obj) {
       if (this == obj) return true;
-      if (obj == null) return false;
+      if (!super.equals(obj)) return false;
       if (getClass() != obj.getClass()) return false;
 
-      DiskSection other = (DiskSection) obj;
-      return super.equals(other) && Objects.equal(disks, other.disks);
+      ProductSection other = (ProductSection) obj;
+      return super.equals(other) && Objects.equal(properties, other.properties);
    }
 
    @Override
    protected Objects.ToStringHelper string() {
-      return super.string().add("disks", disks);
+      return super.string().add("properties", properties);
    }
+
+   public Set<org.jclouds.vcloud.director.v1_5.domain.ovf.Property> getProperties() {
+      return properties;
+   }
+
 }

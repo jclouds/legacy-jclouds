@@ -37,6 +37,7 @@ import org.jclouds.ovf.OperatingSystemSection;
 import org.jclouds.ovf.ProductSection;
 import org.jclouds.ovf.Section;
 import org.jclouds.ovf.VirtualHardwareSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 
 import com.google.common.base.Objects;
 
@@ -197,7 +198,7 @@ public class CaptureVAppParams
      * {@link JAXBElement }{@code <}{@link GuestCustomizationSection> }{@code >}
      * {@link JAXBElement }{@code <}{@link OperatingSystemSection > }{@code >}
      * {@link JAXBElement }{@code <}{@link NetworkConfigSection> }{@code >}
-     * {@link JAXBElement }{@code <}{@link NetworkSection> }{@code >}
+     * {@link JAXBElement }{@code <}{@link NetworkSection > }{@code >}
      * {@link JAXBElement }{@code <}{@link DiskSection > }{@code >}
      * {@link JAXBElement }{@code <}{@link InstallSection> }{@code >}
      * 

@@ -22,10 +22,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
-import org.jclouds.vcloud.director.v1_5.domain.DiskSection;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.SectionType;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.DiskSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMultimap;

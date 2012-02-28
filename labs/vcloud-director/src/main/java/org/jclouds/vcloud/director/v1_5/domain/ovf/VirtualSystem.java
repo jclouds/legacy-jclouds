@@ -16,13 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.domain;
+package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jclouds.vcloud.director.v1_5.domain.SectionType;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.internal.BaseVirtualSystem;
 
 import com.google.common.collect.Multimap;
@@ -39,7 +39,7 @@ public class VirtualSystem extends BaseVirtualSystem<VirtualSystem> {
    }
 
    @Override
-   public SectionType.Builder<VirtualSystem> toBuilder() {
+   public Builder toBuilder() {
       return new Builder().fromVirtualSystem(this);
    }
 

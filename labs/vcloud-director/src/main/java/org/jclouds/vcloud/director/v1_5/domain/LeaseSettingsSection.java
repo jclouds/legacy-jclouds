@@ -36,6 +36,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Objects;

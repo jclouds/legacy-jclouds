@@ -24,11 +24,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jclouds.vcloud.director.v1_5.domain.DiskSection;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.VirtualSystem;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.internal.BaseEnvelope;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualSystem;
 
 import com.google.common.collect.Multimap;
 
