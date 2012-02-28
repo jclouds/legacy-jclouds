@@ -80,6 +80,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -188,8 +189,11 @@ public class VirtualBoxComputeServiceContextModule extends
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-     injector.getInstance(Supplier.class);
-      return template.osFamily(OsFamily.UBUNTU).osVersionMatches("11.04");
+     Supplier<Map<Image, YamlImage>> imagesSupplier = injector.getInstance(Supplier.class);
+     // get the first image from the supplier
+     Image image = Iterables.getFirst(imagesSupplier.get().keySet(), null);
+     template.fromImage(image);
+     return template;
    }
 
    @Provides
