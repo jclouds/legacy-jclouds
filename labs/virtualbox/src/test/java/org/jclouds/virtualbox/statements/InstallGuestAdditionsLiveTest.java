@@ -19,13 +19,14 @@
 
 package org.jclouds.virtualbox.statements;
 
-import com.google.common.base.CaseFormat;
-import com.google.inject.Injector;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
+
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
+import com.google.common.base.CaseFormat;
+import com.google.inject.Injector;
 
 /**
  * @author Andrea Turli

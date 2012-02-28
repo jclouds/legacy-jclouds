@@ -21,12 +21,12 @@ package org.jclouds.virtualbox.functions;
 
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.easymock.EasyMock.anyLong;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.createNiceMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 import org.jclouds.virtualbox.domain.DeviceDetails;
 import org.jclouds.virtualbox.domain.HardDisk;

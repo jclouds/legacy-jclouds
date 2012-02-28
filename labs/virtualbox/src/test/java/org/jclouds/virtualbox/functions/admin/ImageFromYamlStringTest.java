@@ -21,7 +21,6 @@ package org.jclouds.virtualbox.functions.admin;
 
 import static org.testng.Assert.assertEquals;
 
-import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.apache.commons.io.IOUtils;
@@ -37,7 +36,7 @@ import com.google.common.collect.ImmutableMap;
  * @author Andrea Turli
  */
 @Test(groups = "unit")
-public class ImageFromYamlStreamTest {
+public class ImageFromYamlStringTest {
 
 	public static final Image TEST1 = new ImageBuilder()
 	            .id("myTestId")
@@ -55,7 +54,7 @@ public class ImageFromYamlStreamTest {
 		}
 
 		ImageFromYamlString parser = new ImageFromYamlString();
-		assertEquals(parser.apply(yamlFileLines.toString()).asMap(), ImmutableMap.of(TEST1.getId(), TEST1));
+		assertEquals(parser.apply(yamlFileLines.toString()), ImmutableMap.of(TEST1.getId(), TEST1));
 	}
 
 }

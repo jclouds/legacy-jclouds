@@ -34,6 +34,7 @@ import org.jclouds.byon.Node;
 import org.jclouds.byon.functions.NodeToNodeMetadata;
 import org.jclouds.byon.suppliers.SupplyFromProviderURIOrNodesProperty;
 import org.jclouds.compute.ComputeServiceAdapter;
+import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -50,10 +51,16 @@ import org.jclouds.virtualbox.Preconfiguration;
 import org.jclouds.virtualbox.compute.VirtualBoxComputeServiceAdapter;
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.domain.IsoSpec;
+import org.jclouds.virtualbox.domain.MasterSpec;
+import org.jclouds.virtualbox.domain.YamlImage;
 import org.jclouds.virtualbox.functions.IMachineToHardware;
 import org.jclouds.virtualbox.functions.IMachineToImage;
 import org.jclouds.virtualbox.functions.IMachineToNodeMetadata;
 import org.jclouds.virtualbox.functions.IMachineToSshClient;
+import org.jclouds.virtualbox.functions.MasterImages;
+import org.jclouds.virtualbox.functions.MasterLoader;
+import org.jclouds.virtualbox.functions.NodeCreator;
+import org.jclouds.virtualbox.functions.YamlImagesFromFileConfig;
 import org.jclouds.virtualbox.functions.admin.ImageFromYamlString;
 import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
 import org.jclouds.virtualbox.functions.admin.StartVBoxIfNotAlreadyRunning;
@@ -107,8 +114,22 @@ public class VirtualBoxComputeServiceContextModule extends
       }).to((Class) StartJettyIfNotAlreadyRunning.class);
       bind(new TypeLiteral<Supplier<VirtualBoxManager>>() {
       }).to((Class) StartVBoxIfNotAlreadyRunning.class);
-      bind(new TypeLiteral<Function<InputStream, LoadingCache<String, Image>>>() {
+      // the yaml config to image mapper
+      bind(new TypeLiteral<Function<String, Map<Image, YamlImage>>>() {
       }).to((Class) ImageFromYamlString.class);
+      // the yaml config provider
+      bind(new TypeLiteral<Supplier<String>>() {
+      }).to((Class)YamlImagesFromFileConfig.class);
+      // the master machines cache
+      bind(new TypeLiteral<LoadingCache<Image, IMachine>>() {
+      }).to((Class)MasterImages.class);
+      // the master machines loading/creating function
+      bind(new TypeLiteral<Function<MasterSpec, IMachine>>() {
+      }).to((Class)MasterLoader.class);
+      // the machine cloning function
+      bind(new TypeLiteral<Function<IMachine, NodeAndInitialCredentials<IMachine>>>() {
+      }).to((Class)NodeCreator.class);
+      
       // for byon
       bind(new TypeLiteral<Function<URI, InputStream>>() {
       }).to(SupplyFromProviderURIOrNodesProperty.class);

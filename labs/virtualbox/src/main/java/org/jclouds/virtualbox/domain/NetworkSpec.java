@@ -19,13 +19,13 @@
 
 package org.jclouds.virtualbox.domain;
 
-import com.google.common.base.Objects;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.Objects;
 
 /**
  * Describes the network configuration for a VirtualBox machine.

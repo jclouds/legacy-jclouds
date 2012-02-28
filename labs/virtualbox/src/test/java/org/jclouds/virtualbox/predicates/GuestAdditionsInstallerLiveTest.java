@@ -44,7 +44,6 @@ import org.virtualbox_4_1.StorageBus;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
-import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
 

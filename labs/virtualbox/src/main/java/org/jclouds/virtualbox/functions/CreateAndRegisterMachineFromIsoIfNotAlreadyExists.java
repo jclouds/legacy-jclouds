@@ -19,25 +19,40 @@
 
 package org.jclouds.virtualbox.functions;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.logging.Logger;
-import org.jclouds.virtualbox.config.VirtualBoxConstants;
-import org.jclouds.virtualbox.domain.*;
-import org.jclouds.virtualbox.util.MachineUtils;
-import org.virtualbox_4_1.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.File;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.io.File;
-import java.util.Map;
-import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.logging.Logger;
+import org.jclouds.virtualbox.config.VirtualBoxConstants;
+import org.jclouds.virtualbox.domain.DeviceDetails;
+import org.jclouds.virtualbox.domain.HardDisk;
+import org.jclouds.virtualbox.domain.IsoImage;
+import org.jclouds.virtualbox.domain.MasterSpec;
+import org.jclouds.virtualbox.domain.NatAdapter;
+import org.jclouds.virtualbox.domain.NetworkSpec;
+import org.jclouds.virtualbox.domain.StorageController;
+import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.util.MachineUtils;
+import org.virtualbox_4_1.AccessMode;
+import org.virtualbox_4_1.DeviceType;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IMedium;
+import org.virtualbox_4_1.IVirtualBox;
+import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_1.VirtualBoxManager;
+
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 /**
  * @author Mattias Holmqvist

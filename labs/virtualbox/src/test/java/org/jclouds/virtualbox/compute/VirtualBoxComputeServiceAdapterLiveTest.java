@@ -20,7 +20,6 @@
 package org.jclouds.virtualbox.compute;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
@@ -57,7 +56,10 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
    public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
       String group = "foo";
       String name = "foo-ef4";
-      Template template = context.getComputeService().templateBuilder().build();
+      // get the image from
+      Image image = Iterables.get(adapter.listImages(),0);
+      System.out.println(context.getComputeService().templateBuilder());
+      Template template = context.getComputeService().templateBuilder().fromImage(image).build();
       machine = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
       assertEquals(machine.getNode().getName(), name);
       assertEquals(machine.getNodeId(), machine.getNode().getId());

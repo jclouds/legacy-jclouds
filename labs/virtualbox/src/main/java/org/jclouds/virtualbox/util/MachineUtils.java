@@ -18,9 +18,16 @@
  */
 package org.jclouds.virtualbox.util;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.inject.Inject;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
+import static org.jclouds.scriptbuilder.domain.Statements.call;
+import static org.jclouds.scriptbuilder.domain.Statements.findPid;
+import static org.jclouds.scriptbuilder.domain.Statements.kill;
+import static org.jclouds.scriptbuilder.domain.Statements.newStatementList;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.callables.RunScriptOnNode.Factory;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -29,14 +36,16 @@ import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Throwables2;
 import org.jclouds.virtualbox.functions.MutableMachine;
-import org.virtualbox_4_1.*;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.LockType;
+import org.virtualbox_4_1.SessionState;
+import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_1.VirtualBoxManager;
 
-import javax.annotation.Resource;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
-import static org.jclouds.scriptbuilder.domain.Statements.*;
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.inject.Inject;
 
 /**
  * Utilities for executing functions on a VirtualBox machine.

@@ -18,13 +18,16 @@
  */
 package org.jclouds.virtualbox.domain;
 
-import com.google.common.base.Objects;
-import org.virtualbox_4_1.CleanupMode;
-
-import java.util.*;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.virtualbox_4_1.CleanupMode;
+
+import com.google.common.base.Objects;
 
 /**
  * A description of a Virtual Machine in VirtualBox.

@@ -19,7 +19,8 @@
   under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.jclouds</groupId>
@@ -42,6 +43,8 @@
     <test.virtualbox.image-id>ubuntu-11.04-server-i386</test.virtualbox.image-id>
     <test.virtualbox.image.login-user>toor:password</test.virtualbox.image.login-user>
     <test.virtualbox.image.authenticate-sudo>true</test.virtualbox.image.authenticate-sudo>
+    <test.virtualbox.image.authenticate-sudo>true</test.virtualbox.image.authenticate-sudo>
+    <test.virtualbox.image.descriptor.yaml>target/test-classes/testImages.yaml</test.virtualbox.image.descriptor.yaml>
   </properties>
 
   <dependencies>
@@ -69,6 +72,11 @@
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>1.4</version>
     </dependency>
     <dependency>
       <groupId>org.jclouds</groupId>
@@ -114,7 +122,7 @@
       </exclusions>
     </dependency>
   </dependencies>
-  
+
   <profiles>
     <profile>
       <id>live</id>
@@ -141,6 +149,7 @@
                     <test.virtualbox.image-id>${test.virtualbox.image-id}</test.virtualbox.image-id>
                     <test.virtualbox.image.login-user>${test.virtualbox.image.login-user}</test.virtualbox.image.login-user>
                     <test.virtualbox.image.authenticate-sudo>${test.virtualbox.image.authenticate-sudo}</test.virtualbox.image.authenticate-sudo>
+                    <test.virtualbox.image.descriptor.yaml>${test.virtualbox.image.descriptor.yaml}</test.virtualbox.image.descriptor.yaml>
                   </systemPropertyVariables>
                 </configuration>
               </execution>
@@ -153,7 +162,7 @@
 
   <build>
     <plugins>
-      <plugin>  
+      <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>

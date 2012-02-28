@@ -19,10 +19,10 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createNiceMock;
-import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.domain.Hardware;

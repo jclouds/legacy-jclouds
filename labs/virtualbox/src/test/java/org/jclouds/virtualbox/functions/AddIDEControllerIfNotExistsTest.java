@@ -19,15 +19,18 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+
 import org.jclouds.virtualbox.domain.StorageController;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IStorageController;
 import org.virtualbox_4_1.StorageBus;
 import org.virtualbox_4_1.VBoxException;
-
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.*;
 
 /**
  * @author Adrian Cole

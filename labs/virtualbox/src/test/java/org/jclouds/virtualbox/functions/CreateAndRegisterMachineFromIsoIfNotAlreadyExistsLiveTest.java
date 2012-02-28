@@ -23,14 +23,21 @@ import static org.testng.Assert.fail;
 
 import java.util.UUID;
 
-import com.google.inject.Injector;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
-import org.jclouds.virtualbox.domain.*;
+import org.jclouds.virtualbox.domain.ErrorCode;
+import org.jclouds.virtualbox.domain.HardDisk;
+import org.jclouds.virtualbox.domain.IsoSpec;
+import org.jclouds.virtualbox.domain.MasterSpec;
+import org.jclouds.virtualbox.domain.NetworkSpec;
+import org.jclouds.virtualbox.domain.StorageController;
+import org.jclouds.virtualbox.domain.VmSpec;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.StorageBus;
 import org.virtualbox_4_1.VBoxException;
+
+import com.google.inject.Injector;
 
 /**
  * @author Mattias Holmqvist

@@ -18,9 +18,9 @@
  */
 package org.jclouds.virtualbox.domain;
 
-import com.google.common.base.Objects;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.google.common.base.Objects;
 
 /**
  * Represents an optical medium (DVD) in a VirtualBox VM.

@@ -19,10 +19,11 @@
 
 package org.jclouds.virtualbox.domain;
 
-import com.google.common.base.Objects;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.virtualbox_4_1.DeviceType;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.Objects;
 
 /**
  * Represents a specification for a device attachment.

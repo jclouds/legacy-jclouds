@@ -19,16 +19,9 @@
 
 package org.jclouds.virtualbox;
 
-import com.google.common.base.Function;
-import com.google.common.base.Splitter;
-import com.google.common.base.Supplier;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.inject.Key;
-import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
+import java.net.URI;
+import java.util.Properties;
+
 import org.jclouds.Constants;
 import org.jclouds.byon.Node;
 import org.jclouds.byon.config.CacheNodeStoreModule;
@@ -51,8 +44,16 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.VirtualBoxManager;
 
-import java.net.URI;
-import java.util.Properties;
+import com.google.common.base.Function;
+import com.google.common.base.Splitter;
+import com.google.common.base.Supplier;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.inject.Key;
+import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code VirtualBoxClient}
