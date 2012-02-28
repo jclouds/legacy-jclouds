@@ -10,6 +10,10 @@
         "progress" : 80,
         "minDisk" : 5,
         "minRam" : 256,
+        "metadata" : {
+            "ImageType" : "Gold",
+            "ImageVersion" : "1.5"
+        },
         "server" : {
             "id": "52415800-8b69-11e0-9b19-734f335aa7b3",
             "links": [

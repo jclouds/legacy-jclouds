@@ -73,22 +73,4 @@ public class ServerClientExpectTest extends BaseNovaRestClientExpectTest {
 
       assertTrue(clientWhenNoServersExist.getServerClientForRegion("North").listServers().isEmpty());
    }
-
-   // TODO: gson deserializer for Multimap
-   public void testGetServerWhenResponseIs2xx() throws Exception {
-      HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(
-               URI.create("https://compute.north.host/v1.1/3456/servers/foo")).headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
-                        authToken).build()).build();
-
-      HttpResponse listServersResponse = HttpResponse.builder().statusCode(200).payload(
-               payloadFromResource("/server_details.json")).build();
-
-      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-               responseWithKeystoneAccess, listServers, listServersResponse);
-
-      assertEquals(clientWhenServersExist.getServerClientForRegion("North").getServer("foo").toString(),
-               new ParseServerTest().expected().toString());
-   }
-
 }

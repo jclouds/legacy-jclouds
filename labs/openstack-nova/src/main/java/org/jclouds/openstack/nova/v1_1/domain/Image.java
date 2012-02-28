@@ -26,9 +26,9 @@ import java.util.Set;
 
 import org.jclouds.openstack.domain.Link;
 import org.jclouds.openstack.domain.Resource;
-import org.jclouds.openstack.nova.v1_1.domain.ImageStatus;
 
 import com.google.common.collect.Maps;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * An image is a collection of files you use to create or rebuild a server.
@@ -51,17 +51,16 @@ public class Image extends Resource {
 
    public static class Builder extends Resource.Builder {
 
-      private ImageStatus status;
       private Date updated;
       private Date created;
+      private String tenantId;
+      private String userId;
+      private ImageStatus status;
       private int progress;
-      private String serverRef;
+      private int minDisk;
+      private int minRam;
+      private Resource server;
       private Map<String, String> metadata = Maps.newHashMap();
-
-      public Builder status(ImageStatus status) {
-         this.status = status;
-         return this;
-      }
 
       public Builder updated(Date updated) {
          this.updated = updated;
@@ -73,13 +72,38 @@ public class Image extends Resource {
          return this;
       }
 
+      public Builder tenantId(String tenantId) {
+         this.tenantId = tenantId;
+         return this;
+      }
+
+      public Builder userId(String userId) {
+         this.userId = userId;
+         return this;
+      }
+
+      public Builder status(ImageStatus status) {
+         this.status = status;
+         return this;
+      }
+
       public Builder progress(int progress) {
          this.progress = progress;
          return this;
       }
 
-      public Builder serverRef(String serverRef) {
-         this.serverRef = serverRef;
+      public Builder minDisk(int minDisk) {
+         this.minDisk = minDisk;
+         return this;
+      }
+
+      public Builder minRam(int minRam) {
+         this.minRam = minRam;
+         return this;
+      }
+
+      public Builder server(Resource server) {
+         this.server = server;
          return this;
       }
 
@@ -89,14 +113,14 @@ public class Image extends Resource {
       }
 
       public Image build() {
-         return new Image(id, name, links, status, updated, created, progress,
-               serverRef, metadata);
+         return new Image(id, name, links, updated, created, tenantId, userId,
+               status, progress, minDisk, minRam, server, metadata);
       }
 
       public Builder fromImage(Image in) {
          return fromResource(in).status(in.getStatus())
                .updated(in.getUpdated()).created(in.getCreated())
-               .progress(in.getProgress()).serverRef(in.getServerRef())
+               .progress(in.getProgress()).server(in.getServer())
                .metadata(in.getMetadata());
       }
 
@@ -133,27 +157,34 @@ public class Image extends Resource {
       }
    }
 
-   private ImageStatus status;
    private Date updated;
    private Date created;
+   @SerializedName("tenant_id")
+   private String tenantId;
+   @SerializedName("user_id")
+   private String userId;
+   private ImageStatus status;
    private int progress;
-   private String serverRef;
+   private int minDisk;
+   private int minRam;
+   private Resource server;
    private Map<String, String> metadata = Maps.newHashMap();
-   
-   protected Image(String id, String name, Set<Link> links, ImageStatus status,
-         Date updated, Date created, int progress, String serverRef,
+
+   protected Image(String id, String name, Set<Link> links, Date updated,
+         Date created, String tenantId, String userId, ImageStatus status,
+         int progress, int minDisk, int minRam, Resource server,
          Map<String, String> metadata) {
       super(id, name, links);
-      this.status = status;
       this.updated = updated;
       this.created = created;
+      this.tenantId = tenantId;
+      this.userId = userId;
+      this.status = status;
       this.progress = progress;
-      this.serverRef = serverRef;
+      this.minDisk = minDisk;
+      this.minRam = minRam;
+      this.server = server;
       this.metadata = metadata;
-   }
-
-   public ImageStatus getStatus() {
-      return this.status;
    }
 
    public Date getUpdated() {
@@ -163,25 +194,47 @@ public class Image extends Resource {
    public Date getCreated() {
       return this.created;
    }
-   
+
+   public String getTenantId() {
+      return this.tenantId;
+   }
+
+   public String getUserId() {
+      return this.userId;
+   }
+
+   public ImageStatus getStatus() {
+      return this.status;
+   }
+
    public int getProgress() {
       return this.progress;
    }
-   
-   public String getServerRef() {
-      return this.serverRef;
+
+   public int getMinDisk() {
+      return this.minDisk;
    }
-   
+
+   public int getMinRam() {
+      return this.minRam;
+   }
+
+   public Resource getServer() {
+      return this.server;
+   }
+
    public Map<String, String> getMetadata() {
       return this.metadata;
    }
-   
-   
+
    @Override
    public String toString() {
       return toStringHelper("").add("id", id).add("name", name)
-            .add("links", links).add("status", status).add("updated", updated)
-            .add("created", created).add("progress", progress).add("serverRef", serverRef)
+            .add("links", links).add("updated", updated)
+            .add("created", created).add("tenantId", tenantId)
+            .add("userId", userId).add("status", status)
+            .add("progress", progress).add("minDisk", minDisk)
+            .add("minRam", minRam).add("server", server)
             .add("metadata", metadata).toString();
    }
 

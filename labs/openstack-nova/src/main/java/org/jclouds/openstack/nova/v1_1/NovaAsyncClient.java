@@ -26,6 +26,8 @@ import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
 import org.jclouds.openstack.nova.v1_1.features.FloatingIPClient;
 import org.jclouds.openstack.nova.v1_1.features.ImageClient;
+import org.jclouds.openstack.nova.v1_1.features.KeyPairClient;
+import org.jclouds.openstack.nova.v1_1.features.SecurityGroupClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
@@ -77,4 +79,19 @@ public interface NovaAsyncClient {
    @Delegate
    FloatingIPClient getFloatingIPClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+
+   /**
+    * Provides asynchronous access to Security Group features.
+    */
+   @Delegate
+   SecurityGroupClient getSecurityGroupClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+
+   /**
+    * Provides asynchronous access to Key Pair features.
+    */
+   @Delegate
+   KeyPairClient getKeyPairClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+
 }
