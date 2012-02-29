@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Named;
@@ -56,12 +55,12 @@ import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.MasterSpec;
 import org.jclouds.virtualbox.domain.YamlImage;
+import org.jclouds.virtualbox.functions.CreateAndInstallVm;
 import org.jclouds.virtualbox.functions.IMachineToHardware;
 import org.jclouds.virtualbox.functions.IMachineToImage;
 import org.jclouds.virtualbox.functions.IMachineToNodeMetadata;
 import org.jclouds.virtualbox.functions.IMachineToSshClient;
 import org.jclouds.virtualbox.functions.MasterImages;
-import org.jclouds.virtualbox.functions.MasterLoader;
 import org.jclouds.virtualbox.functions.NodeCreator;
 import org.jclouds.virtualbox.functions.YamlImagesFromFileConfig;
 import org.jclouds.virtualbox.functions.admin.ImagesToYamlImagesFromYamlDescriptor;
@@ -126,9 +125,9 @@ public class VirtualBoxComputeServiceContextModule extends
     // the master machines cache
     bind(new TypeLiteral<LoadingCache<Image, IMachine>>() {
     }).to((Class) MasterImages.class);
-    // the master machines loading/creating function
+    // the master creating function
     bind(new TypeLiteral<Function<MasterSpec, IMachine>>() {
-    }).to((Class) MasterLoader.class);
+    }).to((Class) CreateAndInstallVm.class);
     // the machine cloning function
     bind(new TypeLiteral<Function<IMachine, NodeAndInitialCredentials<IMachine>>>() {
     }).to((Class) NodeCreator.class);
@@ -188,8 +187,8 @@ public class VirtualBoxComputeServiceContextModule extends
   }
 
   @Override
-  protected Supplier provideHardware(
-      ComputeServiceAdapter<IMachine, IMachine, Image, Location> adapter, Function<IMachine, Hardware> transformer) {
+  protected Supplier provideHardware(ComputeServiceAdapter<IMachine, IMachine, Image, Location> adapter,
+      Function<IMachine, Hardware> transformer) {
     return Suppliers.ofInstance(Collections.singleton(new HardwareBuilder().id("").build()));
   }
 

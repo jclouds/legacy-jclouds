@@ -29,8 +29,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.jclouds.compute.ComputeServiceAdapter;
-import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.HardwareBuilder;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Location;

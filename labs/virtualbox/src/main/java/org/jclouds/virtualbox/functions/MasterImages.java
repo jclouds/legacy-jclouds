@@ -28,6 +28,7 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKI
 
 import java.io.File;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
@@ -47,12 +48,12 @@ import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.StorageBus;
 
-import com.beust.jcommander.internal.Maps;
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.cache.AbstractLoadingCache;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 /**
  * Does most of the work wrt to creating the master image.
@@ -62,13 +63,14 @@ import com.google.common.collect.Iterables;
  */
 public class MasterImages extends AbstractLoadingCache<Image, IMachine> {
 
-  private final Map<Image, IMachine>           masters = Maps.newHashMap();
+  private final Map<String, IMachine>          masters = Maps.newHashMap();
   private final Function<MasterSpec, IMachine> mastersLoader;
-  private final Map<Image, YamlImage>          imageMapping;
+  private final Map<String, YamlImage>         imageMapping;
   private final String                         workingDir;
   private final String                         adminDisk;
-  private String                               guestAdditionsIso;
-  private String                               installationKeySequence;
+  private final String                         guestAdditionsIso;
+  private final String                         installationKeySequence;
+  private final String                         isosDir;
 
   @Inject
   public MasterImages(@Named(Constants.PROPERTY_BUILD_VERSION) String version,
@@ -84,31 +86,39 @@ public class MasterImages extends AbstractLoadingCache<Image, IMachine> {
     if (!wdFile.exists()) {
       wdFile.mkdirs();
     }
+    this.isosDir = wdFile.getAbsolutePath() + File.separator + "isos";
     this.adminDisk = workingDir + "/testadmin.vdi";
-    this.imageMapping = yamlMapper.get();
-    this.guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", workingDir,
+    this.imageMapping = Maps.newLinkedHashMap();
+    for (Entry<Image, YamlImage> entry : yamlMapper.get().entrySet()) {
+      this.imageMapping.put(entry.getKey().getId(), entry.getValue());
+    }
+    this.guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", isosDir,
         Iterables.get(Splitter.on('r').split(version), 0));
+    checkState(new File(guestAdditionsIso).exists(), "guest additions iso does not exist at: " + guestAdditionsIso);
   }
 
   @Override
   public IMachine get(Image key) throws ExecutionException {
-    if (masters.containsKey(key)) {
+    if (masters.containsKey(key.getId())) {
       return masters.get(key);
     }
 
-    checkNotNull(key, key);
-    checkState(new File(guestAdditionsIso).exists(), "guest additions iso does not exist at: " + guestAdditionsIso);
+    checkNotNull(key, "key");
 
-    YamlImage yamlImage = imageMapping.get(key);
+    // the yaml image
+    YamlImage yamlImage = imageMapping.get(key.getId());
 
     checkNotNull(yamlImage, "could not find yaml image for image: " + key);
+
+    // check if the iso is here, download if not
+    String localIsoUrl = getFilePathOrDownload(yamlImage.iso);
 
     String vmName = VIRTUALBOX_IMAGE_PREFIX + yamlImage.id;
 
     HardDisk hardDisk = HardDisk.builder().diskpath(adminDisk).autoDelete(true).controllerPort(0).deviceSlot(1).build();
 
     StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
-        .attachISO(0, 0, yamlImage.iso).attachHardDisk(hardDisk).attachISO(1, 1, guestAdditionsIso).build();
+        .attachISO(0, 0, localIsoUrl).attachHardDisk(hardDisk).attachISO(1, 1, guestAdditionsIso).build();
 
     VmSpec vmSpecification = VmSpec.builder().id(yamlImage.id).name(vmName).memoryMB(512).osTypeId("")
         .controller(ideController).forceOverwrite(true).cleanUpMode(CleanupMode.Full).build();
@@ -117,7 +127,7 @@ public class MasterImages extends AbstractLoadingCache<Image, IMachine> {
         .builder()
         .vm(vmSpecification)
         .iso(
-            IsoSpec.builder().sourcePath(yamlImage.iso)
+            IsoSpec.builder().sourcePath(localIsoUrl)
                 .installationScript(installationKeySequence.replace("HOSTNAME", vmSpecification.getVmName())).build())
         .network(
             NetworkSpec.builder()
@@ -125,14 +135,23 @@ public class MasterImages extends AbstractLoadingCache<Image, IMachine> {
         .build();
 
     IMachine masterMachine = mastersLoader.apply(masterSpec);
-    masters.put(key, masterMachine);
+    masters.put(key.getId(), masterMachine);
     return masterMachine;
+  }
+
+  private String getFilePathOrDownload(String httpUrl) throws ExecutionException {
+    // TODO validation
+    String fileName = httpUrl.substring(httpUrl.lastIndexOf('/') + 1, httpUrl.length());
+    File localFile = new File(isosDir, fileName);
+    // TODO download. for now just expect the file to be there
+    checkState(localFile.exists(), "iso file has not been downloaded: " + fileName);
+    return localFile.getAbsolutePath();
   }
 
   @Override
   public IMachine getIfPresent(Image key) {
-    if (masters.containsKey(key)) {
-      return masters.get(key);
+    if (masters.containsKey(key.getId())) {
+      return masters.get(key.getId());
     }
     return null;
   }
