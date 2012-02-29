@@ -21,17 +21,20 @@ package org.jclouds.vcloud.director.v1_5;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Network;
 import org.jclouds.vcloud.director.v1_5.features.CatalogAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.QueryAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.UploadAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcAsyncClient;
 
 import com.google.inject.Provides;
@@ -92,6 +95,17 @@ public interface VCloudDirectorAsyncClient {
    @Delegate
    VdcAsyncClient getVdcClient();
 
+   /**
+    * @return asynchronous access to Upload features
+    */
+   @Delegate
+   UploadAsyncClient getUploadClient();
+   
+   /**
+    * @return asynchronous access to {@link Metadata} features
+    */
+   @Delegate
+   MetadataAsyncClient getMetadataClient();
    /**
     * @return asynchronous access to {@link org.jclouds.vcloud.director.v1_5.domain.VAppTemplate} features
     */

@@ -43,6 +43,10 @@ import org.jclouds.vcloud.director.v1_5.annotations.Login;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 import org.jclouds.vcloud.director.v1_5.features.*;
+import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.MetadataClient;
+import org.jclouds.vcloud.director.v1_5.features.UploadAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.UploadClient;
 import org.jclouds.vcloud.director.v1_5.functions.LoginUserInOrgWithPassword;
 import org.jclouds.vcloud.director.v1_5.handlers.InvalidateSessionAndRetryOn401AndLogoutOnClose;
 import org.jclouds.vcloud.director.v1_5.handlers.VCloudDirectorErrorHandler;
@@ -78,6 +82,8 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
             .put(TaskClient.class, TaskAsyncClient.class)
             .put(VdcClient.class, VdcAsyncClient.class)
             .put(VAppTemplateClient.class, VAppTemplateAsyncClient.class)
+            .put(UploadClient.class, UploadAsyncClient.class)
+            .put(MetadataClient.class, MetadataAsyncClient.class)
             .build();
 
    public VCloudDirectorRestClientModule() {
