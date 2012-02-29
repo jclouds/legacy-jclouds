@@ -41,14 +41,14 @@ import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParamsType;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 import org.jclouds.vcloud.director.v1_5.domain.UploadVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.ReferenceToEndpoint;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
+import org.jclouds.vcloud.director.v1_5.functions.URISupplierToEndpoint;
 
 import com.google.common.util.concurrent.ListenableFuture;
  
@@ -61,16 +61,16 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface VdcAsyncClient {
  
    /**
-    * @see VdcClient#getVdc(Reference)
+    * @see VdcClient#getVdc(URISupplier)
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Vdc> getVdc(@EndpointParam(parser = ReferenceToEndpoint.class) Reference vdcRef);
+   ListenableFuture<Vdc> getVdc(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef);
    
    /**
-    * @see VdcClient#captureVApp(Reference, CaptureVAppParams)
+    * @see VdcClient#captureVApp(URISupplier, CaptureVAppParams)
     */
    @POST
    @Path("/action/captureVApp")
@@ -78,112 +78,112 @@ public interface VdcAsyncClient {
    @Produces(VCloudDirectorMediaType.CAPTURE_VAPP_PARAMS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<VAppTemplate> captureVApp(@EndpointParam(parser = ReferenceToEndpoint.class) Reference vdcRef,
+   ListenableFuture<VAppTemplate> captureVApp(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef,
          @BinderParam(BindToXMLPayload.class) CaptureVAppParams params);
    
    /**
-    * @see VdcClient#cloneMedia(Reference, CloneMediaParams)
+    * @see VdcClient#cloneMedia(URISupplier, CloneMediaParams)
     */
    @POST
    @Path("/action/cloneMedia")
    @Consumes(VCloudDirectorMediaType.MEDIA)
-   @Produces(VCloudDirectorMediaType.CAPTURE_VAPP_PARAMS)
+   @Produces(VCloudDirectorMediaType.CLONE_MEDIA_PARAMS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Media> cloneMedia(@EndpointParam(parser = ReferenceToEndpoint.class) Reference vdcRef,
+   ListenableFuture<Media> cloneMedia(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef,
          @BinderParam(BindToXMLPayload.class) CloneMediaParams params);
    
    /**
-    * @see VdcClient#cloneVApp(Reference, CloneVAppParams)
+    * @see VdcClient#cloneVApp(URISupplier, CloneVAppParams)
     */
    @POST
    @Path("/action/cloneVApp")
    @Consumes(VCloudDirectorMediaType.V_APP)
-   @Produces(VCloudDirectorMediaType.CAPTURE_VAPP_PARAMS)
+   @Produces(VCloudDirectorMediaType.CLONE_V_APP_PARAMS) //TODO fix these etc.
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<VApp> cloneVApp(@EndpointParam(parser = ReferenceToEndpoint.class) Reference vdcRef,
+   ListenableFuture<VApp> cloneVApp(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef,
          @BinderParam(BindToXMLPayload.class) CloneVAppParams params);
    
    /**
-    * @see VdcClient#cloneVAppTemplate(Reference, CloneVAppTemplateParams)
+    * @see VdcClient#cloneVAppTemplate(URISupplier, CloneVAppTemplateParams)
     */
    @POST
    @Path("/action/cloneVAppTemplate")
    @Consumes(VCloudDirectorMediaType.V_APP_TEMPLATE)
-   @Produces(VCloudDirectorMediaType.CAPTURE_VAPP_PARAMS)
+   @Produces(VCloudDirectorMediaType.CLONE_V_APP_TEMPLATE_PARAMS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<VAppTemplate> cloneVAppTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) Reference vdcRef,
+   ListenableFuture<VAppTemplate> cloneVAppTemplate(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef,
          @BinderParam(BindToXMLPayload.class) CloneVAppTemplateParams params);
    
    /**
-    * @see VdcClient#composeVApp(Reference, ComposeVAppParams)
+    * @see VdcClient#composeVApp(URISupplier, ComposeVAppParams)
     */
    @POST
    @Path("/action/composeVApp")
    @Consumes(VCloudDirectorMediaType.V_APP)
-   @Produces(VCloudDirectorMediaType.CAPTURE_VAPP_PARAMS)
+   @Produces(VCloudDirectorMediaType.COMPOSE_VAPP_PARAMS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<VApp> composeVApp(@EndpointParam(parser = ReferenceToEndpoint.class) Reference vdcRef,
+   ListenableFuture<VApp> composeVApp(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef,
          @BinderParam(BindToXMLPayload.class) ComposeVAppParams params);
    
    /**
-    * @see VdcClient#instantiateVApp(Reference, InstantiateVAppParamsType)
+    * @see VdcClient#instantiateVApp(URISupplier, InstantiateVAppParamsType)
     */
    @POST
    @Path("/action/instantiateVApp")
    @Consumes(VCloudDirectorMediaType.V_APP)
-   @Produces(VCloudDirectorMediaType.CAPTURE_VAPP_PARAMS)
+   @Produces(VCloudDirectorMediaType.INSTANTIATE_VAPP_TEMPLATE_PARAMS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<VApp> instantiateVApp(@EndpointParam(parser = ReferenceToEndpoint.class) Reference vdcRef,
+   ListenableFuture<VApp> instantiateVApp(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef,
          @BinderParam(BindToXMLPayload.class) InstantiateVAppParamsType<?> params);
    
    /**
-    * @see VdcClient#uploadVAppTemplate(Reference, UploadVAppTemplateParams)
+    * @see VdcClient#uploadVAppTemplate(URISupplier, UploadVAppTemplateParams)
     */
    @POST
    @Path("/action/uploadVAppTemplate")
    @Consumes(VCloudDirectorMediaType.V_APP_TEMPLATE)
-   @Produces(VCloudDirectorMediaType.CAPTURE_VAPP_PARAMS)
+   @Produces(VCloudDirectorMediaType.UPLOAD_VAPP_TEMPLATE_PARAMS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<VAppTemplate> uploadVAppTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) Reference vdcRef,
+   ListenableFuture<VAppTemplate> uploadVAppTemplate(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef,
          @BinderParam(BindToXMLPayload.class) UploadVAppTemplateParams params);
    
    /**
-    * @see VdcClient#createMedia(Reference, Media)
+    * @see VdcClient#createMedia(URISupplier, Media)
     */
    @POST
    @Path("/media")
    @Consumes(VCloudDirectorMediaType.MEDIA)
-   @Produces(VCloudDirectorMediaType.CAPTURE_VAPP_PARAMS)
+   @Produces(VCloudDirectorMediaType.MEDIA)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Media> createMedia(@EndpointParam(parser = ReferenceToEndpoint.class) Reference vdcRef,
+   ListenableFuture<Media> createMedia(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef,
          @BinderParam(BindToXMLPayload.class) Media media);
     
    /**
-    * @see VdcClient#getMetadata(Reference)
+    * @see VdcClient#getMetadata(URISupplier)
     */
    @GET
    @Path("/metadata")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Metadata> getMetadata(@EndpointParam(parser = ReferenceToEndpoint.class) Reference vdcRef);
+   ListenableFuture<Metadata> getMetadata(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef);
  
    /**
-    * @see VdcClient#getMetadataEntry(Reference, String)
+    * @see VdcClient#getMetadataEntry(URISupplier, String)
     */
    @GET
    @Path("/metadata/{key}")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<MetadataValue> getMetadataValue(@EndpointParam(parser = ReferenceToEndpoint.class) Reference vdcRef ,
+   ListenableFuture<MetadataValue> getMetadataValue(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef ,
          @PathParam("key") String key);
     
 }
