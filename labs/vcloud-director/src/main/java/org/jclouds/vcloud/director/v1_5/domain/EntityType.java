@@ -198,6 +198,18 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
             equal(this.id, that.id) && equal(this.description, that.description) &&
             equal(this.tasksInProgress, that.tasksInProgress) && equal(this.name, that.name);
    }
+   
+   @Override
+   public boolean clone(Object o) {
+      if (this == o)
+         return false;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      EntityType<?> that = EntityType.class.cast(o);
+      return super.equals(that) &&
+            equal(this.description, that.description) &&
+            equal(this.name, that.name);
+   }
 
    @Override
    public int hashCode() {

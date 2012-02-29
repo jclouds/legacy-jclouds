@@ -244,6 +244,17 @@ public class Media extends ResourceEntityType<Media> {
       return super.equals(that) &&
             equal(this.owner, that.owner) && equal(this.imageType, that.imageType) && equal(this.size, that.size);
    }
+   
+   @Override
+   public boolean clone(Object o) {
+      if (this == o)
+         return false;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      Media that = Media.class.cast(o);
+      return super.clone(that) && 
+            equal(this.owner, that.owner) && equal(this.imageType, that.imageType) && equal(this.size, that.size);
+   }
 
    @Override
    public int hashCode() {
