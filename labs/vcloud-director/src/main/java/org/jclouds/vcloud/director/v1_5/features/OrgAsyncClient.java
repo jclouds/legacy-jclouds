@@ -32,9 +32,10 @@ import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
+import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.ReferenceToEndpoint;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
+import org.jclouds.vcloud.director.v1_5.functions.URISupplierToEndpoint;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -61,7 +62,7 @@ public interface OrgAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Org> getOrg(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> orgRef);
+   ListenableFuture<Org> getOrg(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier orgRef);
    
    /**
     * @see OrgClient#getMetadata(ReferenceType)
@@ -71,7 +72,7 @@ public interface OrgAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Metadata> getOrgMetadata(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> orgRef);
+   ListenableFuture<Metadata> getOrgMetadata(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier orgRef);
 
    /**
     * @see OrgClient#getMetadataEntry(ReferenceType, String)
@@ -81,6 +82,6 @@ public interface OrgAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<MetadataValue> getOrgMetadataValue(@EndpointParam(parser = ReferenceToEndpoint.class) ReferenceType<?> orgRef,
+   ListenableFuture<MetadataValue> getOrgMetadataValue(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier orgRef,
          @PathParam("key") String key);
 }

@@ -30,7 +30,7 @@ import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParamsType;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 import org.jclouds.vcloud.director.v1_5.domain.UploadVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
@@ -52,7 +52,7 @@ public interface VdcClient {
     * 
     * @return the vdc or null if not found
     */
-   Vdc getVdc(Reference vdcRef);
+   Vdc getVdc(URISupplier vdcRef);
    
    /**
     * Captures a vApp into vApp template. 
@@ -61,7 +61,7 @@ public interface VdcClient {
     * @return a VApp resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the vApp.
     */
-   VAppTemplate captureVApp(Reference vdcRef, CaptureVAppParams params);
+   VAppTemplate captureVApp(URISupplier vdcRef, CaptureVAppParams params);
    
    /**
     * Clones a media into new one. 
@@ -70,7 +70,7 @@ public interface VdcClient {
     * @return a Media resource which will contain a task. 
     * The user should monitor the contained task status in order to check when it is completed.
     */
-   Media cloneMedia(Reference vdcRef, CloneMediaParams params);
+   Media cloneMedia(URISupplier vdcRef, CloneMediaParams params);
    
    /**
     * Clones a vApp into new one. The status of vApp will be in UNRESOLVED(0) until the clone task is finished.
@@ -78,7 +78,7 @@ public interface VdcClient {
     * @return a VApp resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the vApp.
     */
-   VApp cloneVApp(Reference vdcRef, CloneVAppParams params);
+   VApp cloneVApp(URISupplier vdcRef, CloneVAppParams params);
    
    /**
     * Clones a vApp template into new one. 
@@ -87,7 +87,7 @@ public interface VdcClient {
     * @return a VAppTemplate resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the VAppTemplate.
     */
-   VAppTemplate cloneVAppTemplate(Reference vdcRef, CloneVAppTemplateParams params);
+   VAppTemplate cloneVAppTemplate(URISupplier vdcRef, CloneVAppTemplateParams params);
    
    /**
     * Composes a new vApp using VMs from other vApps or vApp templates. The vCloud API supports 
@@ -111,7 +111,7 @@ public interface VdcClient {
     * @return a VApp resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the vApp.
     */
-   VApp composeVApp(Reference vdcRef, ComposeVAppParams params);
+   VApp composeVApp(URISupplier vdcRef, ComposeVAppParams params);
    
    /**
     * Instantiate a vApp template into a new vApp. 
@@ -120,7 +120,7 @@ public interface VdcClient {
     * @return a VApp resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the vApp.
     */
-   VApp instantiateVApp(Reference vdcRef, InstantiateVAppParamsType<?> params);
+   VApp instantiateVApp(URISupplier vdcRef, InstantiateVAppParamsType<?> params);
    
    /**
     * Uploading vApp template to a vDC. The operation is separate on several steps: 
@@ -134,27 +134,27 @@ public interface VdcClient {
     * @return a VAppTemplate resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the VAppTemplate.
     */
-   VAppTemplate uploadVAppTemplate(Reference vdcRef, UploadVAppTemplateParams params);
+   VAppTemplate uploadVAppTemplate(URISupplier vdcRef, UploadVAppTemplateParams params);
    
    /**
     * Creates a media (and present upload link for the floppy/iso file).
     * 
     * @return The response will return a link to transfer site to be able to continue with uploading the media.
     */
-   Media createMedia(Reference vdcRef, Media media);
+   Media createMedia(URISupplier vdcRef, Media media);
    
    /**
     * Retrieves an list of the vdc's metadata
     * 
     * @return a list of metadata
     */
-   Metadata getMetadata(Reference vdcRef);
+   Metadata getMetadata(URISupplier vdcRef);
 
    /**
     * Retrieves a metadata value
     * 
     * @return the metadata value, or null if not found
     */
-   MetadataValue getMetadataValue(Reference vdcRef, String key);
+   MetadataValue getMetadataValue(URISupplier vdcRef, String key);
 
 }

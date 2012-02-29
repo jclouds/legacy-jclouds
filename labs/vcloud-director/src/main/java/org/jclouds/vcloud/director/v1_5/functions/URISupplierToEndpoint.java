@@ -16,32 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.domain;
+package org.jclouds.vcloud.director.v1_5.functions;
 
 import java.net.URI;
 
-/**
- * @author grkvlt@apache.org
- */
-public interface URISupplier {
+import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 
-   /**
-    * This returns the {@link URI} for a particular {@link ReferenceType} or {@link ResourceType} object.
-    *
-    * @see ResourceType#getHref()
-    * @see ReferenceType#getHref()
-    */
-   public URI getURI();
-   
-   public static class SingleURI {
-      public static URISupplier fromURI(final URI uri) {
-         return new URISupplier(){
-            @Override
-            public URI getURI() {
-               return uri;
-            }
-         };
-      }
-   }
-   
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+
+/**
+ * @author danikov
+ */
+public class URISupplierToEndpoint implements Function<Object, URI> {
+
+   @Override
+   public URI apply(Object input) {
+      Preconditions.checkNotNull(input);
+      Preconditions.checkArgument(input instanceof URISupplier);
+      URISupplier provider = (URISupplier) input;
+      return provider.getURI();
+	};
 }

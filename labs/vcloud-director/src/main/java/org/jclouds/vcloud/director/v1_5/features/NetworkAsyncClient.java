@@ -30,10 +30,10 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.ReferenceToEndpoint;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
+import org.jclouds.vcloud.director.v1_5.functions.URISupplierToEndpoint;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -46,33 +46,33 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface NetworkAsyncClient {
 
    /**
-    * @see NeworkClient#getNetwork(Reference)
+    * @see NeworkClient#getNetwork(URISupplier)
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<OrgNetwork> getNetwork(@EndpointParam(parser = ReferenceToEndpoint.class) Reference networkRef);
+   ListenableFuture<OrgNetwork> getNetwork(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier networkRef);
    
    /**
-    * @see NeworkClient#getMetadata(Reference)
+    * @see NeworkClient#getMetadata(URISupplier)
     */
    @GET
    @Path("/metadata")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Metadata> getMetadata(@EndpointParam(parser = ReferenceToEndpoint.class) Reference networkRef);
+   ListenableFuture<Metadata> getMetadata(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier networkRef);
 
    /**
-    * @see NeworkClient#getMetadataValue(Reference, String)
+    * @see NeworkClient#getMetadataValue(URISupplier, String)
     */
    @GET
    @Path("/metadata/{key}")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<MetadataValue> getMetadataValue(@EndpointParam(parser = ReferenceToEndpoint.class) Reference networkRef ,
+   ListenableFuture<MetadataValue> getMetadataValue(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier networkRef ,
          @PathParam("key") String key);
    
 }

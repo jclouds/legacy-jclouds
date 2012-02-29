@@ -29,9 +29,9 @@ import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
+import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.OrgReferenceToTaskListEndpoint;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
@@ -46,13 +46,13 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface TaskAsyncClient {
 
    /**
-    * @see TaskClient#getTaskList(ReferenceType<?>)
+    * @see TaskClient#getTaskList(URISupplier)
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<TasksList> getTaskList(@EndpointParam(parser = OrgReferenceToTaskListEndpoint.class) Reference orgRef);
+   ListenableFuture<TasksList> getTaskList(@EndpointParam(parser = OrgReferenceToTaskListEndpoint.class) URISupplier orgRef);
 
    /**
     * @see TaskClient#getTask(URI)
@@ -61,7 +61,7 @@ public interface TaskAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> getTask(@EndpointParam URI taskUri);
+   ListenableFuture<Task> getTask(@EndpointParam URISupplier taskRef);
 
    /**
     * @see TaskClient#cancelTask(URI)
@@ -71,5 +71,5 @@ public interface TaskAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Void> cancelTask(@EndpointParam URI taskUri);
+   ListenableFuture<Void> cancelTask(@EndpointParam URISupplier taskRef);
 }

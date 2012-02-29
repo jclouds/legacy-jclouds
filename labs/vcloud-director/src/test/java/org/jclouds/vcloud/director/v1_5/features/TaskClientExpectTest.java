@@ -32,6 +32,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
+import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -202,7 +203,7 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse);
 
-      URI taskUri = URI.create(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b");
+      URISupplier taskUri = URISupplier.SingleURI.fromURI(URI.create(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b"));
       
       Task expected = taskOne();
 
@@ -226,7 +227,7 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse);
 
-      URI taskUri = URI.create(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b");
+      URISupplier taskUri = URISupplier.SingleURI.fromURI(URI.create(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b"));
       
       client.getTaskClient().cancelTask(taskUri);
    }

@@ -25,7 +25,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
-import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
+import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 
 /**
  * Provides synchronous access to Org.
@@ -57,7 +57,7 @@ public interface OrgClient {
     * 
     * @return the org or null if not found
     */
-   Org getOrg(ReferenceType<?> orgRef);
+   Org getOrg(URISupplier orgRef);
    
    /**
     * Retrieves an list of the organization's metadata
@@ -68,7 +68,7 @@ public interface OrgClient {
     * 
     * @return a list of metadata
     */
-   Metadata getOrgMetadata(ReferenceType<?> orgRef);
+   Metadata getOrgMetadata(URISupplier orgRef);
 
    /**
     * Retrieves a metadata entry.
@@ -79,5 +79,5 @@ public interface OrgClient {
     * 
     * @return the metadata entry or null if not found
     */
-   MetadataValue getOrgMetadataValue(ReferenceType<?> orgRef, String key);
+   MetadataValue getOrgMetadataValue(URISupplier orgRef, String key);
 }

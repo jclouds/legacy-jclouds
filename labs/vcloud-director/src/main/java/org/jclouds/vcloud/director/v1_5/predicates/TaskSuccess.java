@@ -18,8 +18,6 @@
  */
 package org.jclouds.vcloud.director.v1_5.predicates;
 
-import java.net.URI;
-
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -27,6 +25,7 @@ import javax.inject.Singleton;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 
 import com.google.common.base.Predicate;
@@ -37,7 +36,7 @@ import com.google.common.base.Predicate;
  * @author grkvlt@apache.org
  */
 @Singleton
-public class TaskSuccess implements Predicate<URI> {
+public class TaskSuccess implements Predicate<URISupplier> {
 
    private final TaskClient taskClient;
 
@@ -51,10 +50,10 @@ public class TaskSuccess implements Predicate<URI> {
 
    /** @see Predicate#apply(Object) */
    @Override
-   public boolean apply(URI taskUri) {
-      logger.trace("looking for status on task %s", taskUri);
+   public boolean apply(URISupplier taskRef) {
+      logger.trace("looking for status on task %s", taskRef);
 
-      Task task = taskClient.getTask(taskUri);
+      Task task = taskClient.getTask(taskRef);
       // perhaps task isn't available, yet
       if (task == null) return false;
       logger.trace("%s: looking for status %s: currently: %s", task, Task.Status.SUCCESS, task.getStatus());

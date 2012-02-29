@@ -26,7 +26,7 @@ import javax.inject.Singleton;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
-import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
+import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 import org.jclouds.vcloud.director.v1_5.features.OrgClient;
 
 import com.google.common.base.Function;
@@ -47,8 +47,8 @@ public class OrgReferenceToTaskListEndpoint implements Function<Object, URI> {
    @Override
    public URI apply(Object input) {
       Preconditions.checkNotNull(input);
-      Preconditions.checkArgument(input instanceof ReferenceType<?>);
-      ReferenceType<?> reference = (ReferenceType<?>) input;
+      Preconditions.checkArgument(input instanceof URISupplier);
+      URISupplier reference = (URISupplier) input;
       Org org = client.getOrg(reference);
       for (Link link : org.getLinks()) {
          if (link.getType().equals(VCloudDirectorMediaType.TASKS_LIST)) {

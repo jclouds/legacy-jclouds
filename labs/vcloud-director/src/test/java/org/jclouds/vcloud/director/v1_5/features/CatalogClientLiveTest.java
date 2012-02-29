@@ -186,7 +186,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       Task mergeCatalogItemMetadata = catalogClient.mergeCatalogItemMetadata(catalogItemRef, newMetadata);
       checkTask(mergeCatalogItemMetadata);
-      assertTrue(retryTaskSuccess.apply(mergeCatalogItemMetadata.getHref()),
+      assertTrue(retryTaskSuccess.apply(mergeCatalogItemMetadata),
             String.format(TASK_COMPLETE_TIMELY, "mergeCatalogItemMetadata"));
       
       Metadata mergedCatalogItemMetadata = catalogClient.getCatalogItemMetadata(catalogItemRef);
@@ -227,7 +227,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Task setCatalogItemMetadataValue = catalogClient.setCatalogItemMetadataValue(catalogItemRef, "KEY", newMetadataValue);
       checkTask(setCatalogItemMetadataValue);
       Checks.checkTask(setCatalogItemMetadataValue);
-      assertTrue(retryTaskSuccess.apply(setCatalogItemMetadataValue.getHref()), 
+      assertTrue(retryTaskSuccess.apply(setCatalogItemMetadataValue), 
             String.format(TASK_COMPLETE_TIMELY, "setCatalogItemMetadataValue"));
       
       MetadataValue updatedMetadataValue = catalogClient.getCatalogItemMetadataValue(catalogItemRef, "KEY");
@@ -241,7 +241,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Task deleteCatalogItemMetadataValue = catalogClient.deleteCatalogItemMetadataValue(catalogItemRef, "KEY");
       checkTask(deleteCatalogItemMetadataValue);
       Checks.checkTask(deleteCatalogItemMetadataValue);
-      assertTrue(retryTaskSuccess.apply(deleteCatalogItemMetadataValue.getHref()), 
+      assertTrue(retryTaskSuccess.apply(deleteCatalogItemMetadataValue), 
             String.format(TASK_COMPLETE_TIMELY, "deleteCatalogItemMetadataValue"));
       try {
 	      catalogClient.getCatalogItemMetadataValue(catalogItemRef, "KEY");
@@ -269,7 +269,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Metadata newMetadata = Metadata.builder().entry(MetadataEntry.builder().entry("KEY", "VALUE").build()).build();
       Task mergeCatalogItemMetadata = catalogClient.mergeCatalogItemMetadata(catalogItemRef, newMetadata);
       Checks.checkTask(mergeCatalogItemMetadata);
-      assertTrue(retryTaskSuccess.apply(mergeCatalogItemMetadata.getHref()), 
+      assertTrue(retryTaskSuccess.apply(mergeCatalogItemMetadata), 
             String.format(TASK_COMPLETE_TIMELY, "mergeCatalogItemMetadata"));
    }
 }
