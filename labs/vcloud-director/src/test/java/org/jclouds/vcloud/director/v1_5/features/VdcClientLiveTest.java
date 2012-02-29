@@ -73,8 +73,8 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       vdcRef = Reference.builder()
             .type("application/vnd.vmware.vcloud.vdc+xml")
             .name("")
-            .href(URI.create(endpoint+"/vdc/"+vDCId)) 
-            .id(vDCId)
+            .href(URI.create(endpoint+"/vdc/"+vdcId)) 
+            .id(vdcId)
             .build();
       vdcClient = context.getApi().getVdcClient();
    }
@@ -138,23 +138,6 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .build());
       
       Checks.checkVAppTemplate(template);
-      
-      // TODO: await task to complete
-      // TODO: make assertions that the task was successful
-   }
-   
-   @Test(testName = "POST /vdc/{id}/action/cloneMedia")
-   public void testCloneMedia() {
-      Reference mediaSource = null; // TODO: media reference
-      Media media = vdcClient.cloneMedia(vdcRef, CloneMediaParams.builder()
-            .source(mediaSource)
-            // TODO: test optional params
-            //.name("")
-            //.description("")
-            //.isSourceDelete(true)
-            .build());
-      
-      Checks.checkMediaFor(VDC, media);
       
       // TODO: await task to complete
       // TODO: make assertions that the task was successful
@@ -260,25 +243,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // TODO: make assertions that the task was successful
    }
    
-   @Test(testName = "POST /vdc/{id}/media")
-   public void testCreateMedia() {
-      Media media = vdcClient.createMedia(vdcRef, Media.builder()
-            .name("")
-            .imageType(Media.ImageType.ISO)
-            .size(0)
-            // TODO: test optional params
-            //.name("")
-            //.description("")
-            //.isSourceDelete(true)
-            .build());
-      
-      Checks.checkMediaFor(VDC, media);
-      
-      // TODO: await task to complete
-      // TODO: make assertions that the task was successful
-   }
-   
-   @Test(testName = "GET /network/{id}/metadata")
+   @Test(testName = "GET /network/{id}/metadata", enabled = false)
    public void testGetMetadata() {
       Metadata metadata = vdcClient.getMetadata(vdcRef);
       // required for testing
@@ -288,7 +253,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkMetadataFor(VDC, metadata);
    }
    
-   @Test(testName = "GET /network/{id}/metadata/{key}")
+   @Test(testName = "GET /network/{id}/metadata/{key}", enabled = false)
    public void testGetMetadataValue() {
       MetadataValue metadataValue = vdcClient.getMetadataValue(vdcRef, "key");
       
