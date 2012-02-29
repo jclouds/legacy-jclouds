@@ -90,8 +90,26 @@ public class CloneMediaParams
 
       public CloneMediaParams build() {
          return new CloneMediaParams(description, name, source, isSourceDelete);
+         cloneMediaParams.setDescription(description);
+         cloneMediaParams.setName(name);
       }
 
+      
+      /**
+       * @see ParamsType#getDescription()
+       */
+      public Builder description(String description) {
+         this.description = description;
+         return this;
+      }
+
+      /**
+       * @see ParamsType#getName()
+       */
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
       @Override
       public Builder fromParamsType(ParamsType<CloneMediaParams> in) {
          return Builder.class.cast(super.fromParamsType(in));
