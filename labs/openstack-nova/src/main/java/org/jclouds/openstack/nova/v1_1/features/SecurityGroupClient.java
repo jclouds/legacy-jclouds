@@ -21,44 +21,50 @@ package org.jclouds.openstack.nova.v1_1.features;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.domain.Resource;
-import org.jclouds.openstack.nova.v1_1.domain.Flavor;
+import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
+import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Payload;
+import org.jclouds.rest.annotations.PayloadParam;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Provides asynchronous access to Flavors via their REST API.
+ * Provides synchronous access to Security Groups.
  * <p/>
  * 
- * @see FlavorClient
- * @see <a href=
- *      "http://docs.openstack.org/api/openstack-compute/1.1/content/Flavors-d1e4180.html"
- *      />
+ * @see SecurityGroupAsyncClient
  * @author Jeremy Daggett
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface FlavorClient {
+public interface SecurityGroupClient {
 
    /**
-    * List all flavors (IDs, names, links)
+    * List all Security Groups.
     * 
-    * @return all flavors (IDs, names, links)
+    * @return all Floating IPs
     */
-   Set<Resource> listFlavors();
+   Set<SecurityGroup> listSecurityGroups();
 
    /**
-    * List all flavors (all details)
+    * Get a specific Security Group
     * 
-    * @return all flavors (all details)
+    * @return a specific Security Group
     */
-   Set<Flavor> listFlavorsInDetail();
+   SecurityGroup getSecurityGroup(String id);
 
    /**
-    * List details of the specified flavor
+    * Create a Security Group
     * 
-    * @param id
-    *           id of the flavor
-    * @return flavor or null if not found
+    * @return a new Security Group
     */
-   Flavor getFlavor(String id);
+   SecurityGroup createSecurityGroup(String name);
 
 }

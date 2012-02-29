@@ -23,42 +23,49 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.domain.Resource;
-import org.jclouds.openstack.nova.v1_1.domain.Flavor;
+import org.jclouds.openstack.nova.v1_1.domain.Image;
 
 /**
- * Provides asynchronous access to Flavors via their REST API.
+ * Provides synchronous access to Images.
  * <p/>
  * 
- * @see FlavorClient
- * @see <a href=
- *      "http://docs.openstack.org/api/openstack-compute/1.1/content/Flavors-d1e4180.html"
+ * @see ImageAsyncClient
+ * @see <a href="http://docs.openstack.org/api/openstack-compute/1.1/content/Servers-d1e2073.html"
  *      />
- * @author Jeremy Daggett
+ * @author Adrian Cole
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface FlavorClient {
+public interface ImageClient {
 
    /**
-    * List all flavors (IDs, names, links)
+    * List all images (IDs, names, links)
     * 
-    * @return all flavors (IDs, names, links)
+    * @return all images (IDs, names, links)
     */
-   Set<Resource> listFlavors();
+   Set<Resource> listImages();
 
    /**
-    * List all flavors (all details)
+    * List all images (all details)
     * 
-    * @return all flavors (all details)
+    * @return all images (all details)
     */
-   Set<Flavor> listFlavorsInDetail();
+   Set<Image> listImagesInDetail();
 
    /**
-    * List details of the specified flavor
+    * List details of the specified image
     * 
     * @param id
-    *           id of the flavor
-    * @return flavor or null if not found
+    *           id of the server
+    * @return server or null if not found
     */
-   Flavor getFlavor(String id);
+   Image getImage(String id);
 
+   /**
+    * Delete the specified image
+    * 
+    * @param id id of the image
+    * @return server or null if not found
+    */
+   void deleteImage(String id);
+   
 }

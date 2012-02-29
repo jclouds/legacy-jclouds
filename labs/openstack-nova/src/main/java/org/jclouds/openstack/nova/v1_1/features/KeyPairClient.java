@@ -18,47 +18,49 @@
  */
 package org.jclouds.openstack.nova.v1_1.features;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.domain.Resource;
-import org.jclouds.openstack.nova.v1_1.domain.Flavor;
+import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
 
 /**
- * Provides asynchronous access to Flavors via their REST API.
+ * Provides synchronous access to Security Groups.
  * <p/>
  * 
- * @see FlavorClient
- * @see <a href=
- *      "http://docs.openstack.org/api/openstack-compute/1.1/content/Flavors-d1e4180.html"
- *      />
+ * @see KeyPairAsyncClient
  * @author Jeremy Daggett
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface FlavorClient {
+public interface KeyPairClient {
 
    /**
-    * List all flavors (IDs, names, links)
+    * List all Key Pairs.
     * 
-    * @return all flavors (IDs, names, links)
+    * @return all Key Pairs
     */
-   Set<Resource> listFlavors();
+   Set<Map<String,KeyPair>> listKeyPairs();
 
    /**
-    * List all flavors (all details)
+    * Create a Key Pair.
     * 
-    * @return all flavors (all details)
+    * @return a Key Pair
     */
-   Set<Flavor> listFlavorsInDetail();
+   KeyPair createKeyPair(String name);
 
    /**
-    * List details of the specified flavor
+    * Create a Key Pair with a public key.
     * 
-    * @param id
-    *           id of the flavor
-    * @return flavor or null if not found
+    * @return a Key Pair with a public key.
     */
-   Flavor getFlavor(String id);
+   KeyPair createKeyPairWithPublicKey(String name, String publicKey);
+
+   /**
+    * Delete a Key Pairs.
+    * 
+    * @return
+    */
+   Boolean deleteKeyPair(String name);
 
 }
