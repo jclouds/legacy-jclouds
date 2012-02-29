@@ -36,7 +36,11 @@ import org.testng.annotations.Test;
 @Test(groups = "live", testName = "FlavorClientLiveTest")
 public class FlavorClientLiveTest extends BaseNovaClientLiveTest {
 
-   
+   /**
+    * Tests the listing of Flavors (getFlavor() is tested too!)
+    * 
+    * @throws Exception
+    */
    @Test
    public void testListFlavors() throws Exception {
       for (String regionId : context.getApi().getConfiguredRegions()) {
@@ -51,6 +55,31 @@ public class FlavorClientLiveTest extends BaseNovaClientLiveTest {
             assertEquals(newDetails.getLinks(), flavor.getLinks());
          }
       }
+   }
+   
+   /**
+    * Tests the listing of Flavors in detail (getFlavor() is tested too!)
+    * 
+    * @throws Exception
+    */
+   @Test
+   public void testListFlavorsInDetail() throws Exception {   
+      for (String regionId : context.getApi().getConfiguredRegions()) {
+         FlavorClient client = context.getApi().getFlavorClientForRegion(regionId);
+         Set<Flavor> response = client.listFlavorsInDetail();
+         assert null != response;
+         assertTrue(response.size() >= 0);
+         for (Flavor flavor : response) {
+            Flavor newDetails = client.getFlavor(flavor.getId());
+            assertEquals(newDetails.getId(), flavor.getId());
+            assertEquals(newDetails.getName(), flavor.getName());
+            assertEquals(newDetails.getLinks(), flavor.getLinks());
+            assertEquals(newDetails.getRam(), flavor.getRam());
+            assertEquals(newDetails.getDisk(), flavor.getDisk());
+            assertEquals(newDetails.getVcpus(), flavor.getVcpus());
+         }
+      }
+   
    }
    
 }
