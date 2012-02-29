@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Sets;
 
 
@@ -228,24 +229,26 @@ public class File extends EntityType<File> {
       if (o == null || getClass() != o.getClass())
          return false;
       File that = File.class.cast(o);
-      return equal(size, that.size) &&
+      return super.equals(that) &&
+           equal(size, that.size) && 
             equal(bytesTransferred, that.bytesTransferred) &&
             equal(checksum, that.checksum);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(size,
+      return Objects.hashCode(super.hashCode(),
+           size, 
             bytesTransferred,
             checksum);
    }
 
    @Override
-   public String toString() {
-      return Objects.toStringHelper("")
+   public ToStringHelper string() {
+      return super.string()
             .add("size", size)
             .add("bytesTransferred", bytesTransferred)
-            .add("checksum", checksum).toString();
+            .add("checksum", checksum);
    }
 
 }
