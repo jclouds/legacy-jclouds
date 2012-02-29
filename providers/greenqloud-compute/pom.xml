@@ -8,21 +8,10 @@
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.provider</groupId>
-  <artifactId>gq-compute</artifactId>
+  <artifactId>greenqloud-compute</artifactId>
   <name>jclouds Greenqloud compute provider</name>
   <description>Compute implementation targeted to Greenqloud Web Services</description>
   <packaging>bundle</packaging>
-
-  <properties>
-    <test.gq-compute.endpoint>https://api.greenqloud.com</test.gq-compute.endpoint>
-    <test.gq-compute.api-version>2012-02-16</test.gq-compute.api-version>
-    <test.gq-compute.build-version />
-    <test.gq-compute.identity>${test.gq.identity}</test.gq-compute.identity>
-    <test.gq-compute.credential>${test.gq.credential}</test.gq-compute.credential>
-    <test.gq-compute.image-id />
-    <test.gq-compute.image.login-user />
-    <test.gq-compute.image.authenticate-sudo />
-  </properties>
 
   <dependencies>
    <dependency>
@@ -45,12 +34,6 @@
       <artifactId>ec2</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jclouds.provider</groupId>
-      <artifactId>aws-cloudwatch</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -81,41 +64,6 @@
     </dependency>
   </dependencies>
 
-  <profiles>
-    <profile>
-      <id>live</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>integration</id>
-                <phase>integration-test</phase>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <systemPropertyVariables>
-                    <test.gq-compute.endpoint>${test.gq-compute.endpoint}</test.gq-compute.endpoint>
-                    <test.gq-compute.api-version>${test.gq-compute.api-version}</test.gq-compute.api-version>
-                    <test.gq-compute.build-version>${test.gq-compute.build-version}</test.gq-compute.build-version>
-                    <test.gq-compute.identity>${test.gq-compute.identity}</test.gq-compute.identity>
-                    <test.gq-compute.credential>${test.gq-compute.credential}</test.gq-compute.credential>
-                    <test.gq-compute.image-id>${test.gq-compute.image-id}</test.gq-compute.image-id>
-                    <test.gq-compute.image.login-user>${test.gq-compute.image.login-user}</test.gq-compute.image.login-user>
-                    <test.gq-compute.image.authenticate-sudo>${test.gq-compute.image.authenticate-sudo}</test.gq-compute.image.authenticate-sudo>
-                  </systemPropertyVariables>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
   <build>
     <plugins>
       <plugin>  
@@ -124,12 +72,12 @@
         <configuration>
           <instructions>
             <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.jclouds.gq.compute.*;version="${project.version}"</Export-Package>
+            <Export-Package>org.jclouds.greenqloud.compute.*;version="${project.version}"</Export-Package>
             <Import-Package>
               org.jclouds.compute.internal;version="${project.version}",
               org.jclouds.rest.internal;version="${project.version}",
-              org.jclouds.gq;version="${project.version}",
-              org.jclouds.gq.*;version="${project.version}",
+              org.jclouds.greenqloud;version="${project.version}",
+              org.jclouds.greenqloud.*;version="${project.version}",
               org.jclouds.*;version="${project.version}",
               *
             </Import-Package>

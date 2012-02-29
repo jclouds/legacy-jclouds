@@ -1,21 +1,21 @@
-package org.jclouds.gq.compute;
+package org.jclouds.greenqloud.compute;
 
 import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.aws.ec2.AWSEC2ProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
 
 import com.google.common.collect.ImmutableSet;
 
-public class GQComputeProviderMetadata extends BaseProviderMetadata {
+public class GreenQloudComputeProviderMetadata extends AWSEC2ProviderMetadata {
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public String getId() {
-		return "gq-compute";
+		return "greenqloud-compute";
 	}
 
 	/**
