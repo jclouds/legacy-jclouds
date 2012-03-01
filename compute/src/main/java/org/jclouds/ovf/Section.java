@@ -55,11 +55,7 @@ public class Section<T extends Section<T>> {
       }
    }
 
-   protected String info;
-   
-   protected Section() {
-      // For Builders and JAXB
-   }
+   protected final String info;
 
    public Section(@Nullable String info) {
       this.info = info;
