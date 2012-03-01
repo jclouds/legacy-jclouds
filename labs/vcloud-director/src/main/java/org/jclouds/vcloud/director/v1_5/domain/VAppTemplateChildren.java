@@ -20,27 +20,26 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 
 /**
- * 
- *                 Represents vApp template children.
- *             
- * 
+ * Represents vApp template children.
+ * <p/>
+ * <p/>
  * <p>Java class for VAppTemplateChildren complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="VAppTemplateChildren">
  *   &lt;complexContent>
@@ -53,12 +52,10 @@ import com.google.common.base.Objects;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "VAppTemplateChildren", propOrder = {
-    "vm"
+@XmlRootElement(name = "Children")
+@XmlType(propOrder = {
+      "vms"
 })
 public class VAppTemplateChildren {
    public static Builder builder() {
@@ -70,89 +67,64 @@ public class VAppTemplateChildren {
    }
 
    public static class Builder {
-      
-      private List<VAppTemplate> vm;
+      private Set<VAppTemplate> vms = Sets.newLinkedHashSet();
 
       /**
-       * @see VAppTemplateChildren#getVm()
+       * @see VAppTemplateChildren#getVms()
        */
-      public Builder vm(List<VAppTemplate> vm) {
-         this.vm = vm;
+      public Builder vms(Set<VAppTemplate> vms) {
+         this.vms = checkNotNull(vms, "vms");
          return this;
       }
 
 
       public VAppTemplateChildren build() {
-         VAppTemplateChildren vAppTemplateChildren = new VAppTemplateChildren(vm);
-         return vAppTemplateChildren;
+         return new VAppTemplateChildren(vms);
       }
 
 
       public Builder fromVAppTemplateChildren(VAppTemplateChildren in) {
-         return vm(in.getVm());
+         return vms(in.getVms());
       }
    }
 
+   private VAppTemplateChildren(Set<VAppTemplate> vm) {
+      this.vms = ImmutableSet.copyOf(vm);
+   }
+
    private VAppTemplateChildren() {
-      // For JAXB and builder use
+      // For JAXB
    }
 
-   private VAppTemplateChildren(List<VAppTemplate> vm) {
-      this.vm = vm;
+   @XmlElement(name = "Vm")
+   protected Set<VAppTemplate> vms = Sets.newLinkedHashSet();
+
+   /**
+    * Gets the value of the vm property.
+    */
+   public Set<VAppTemplate> getVms() {
+      return this.vms;
    }
-
-
-    @XmlElement(name = "Vm")
-    protected List<VAppTemplate> vm;
-
-    /**
-     * Gets the value of the vm property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the vm property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getVm().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link VAppTemplate }
-     * 
-     * 
-     */
-    public List<VAppTemplate> getVm() {
-        if (vm == null) {
-            vm = new ArrayList<VAppTemplate>();
-        }
-        return this.vm;
-    }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       VAppTemplateChildren that = VAppTemplateChildren.class.cast(o);
-      return equal(vm, that.vm);
+      return equal(vms, that.vms);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(vm);
+      return Objects.hashCode(vms);
    }
 
    @Override
    public String toString() {
       return Objects.toStringHelper("")
-            .add("vm", vm).toString();
+            .add("vms", vms).toString();
    }
 
 }

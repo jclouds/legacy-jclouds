@@ -20,12 +20,9 @@
 package org.jclouds.vcloud.director.v1_5.domain.query;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.vcloud.director.v1_5.domain.CatalogReference;
@@ -35,17 +32,16 @@ import com.google.common.collect.Sets;
 
 /**
  * Represents the results from a vCloud query as references.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="QueryResultReferences" /&gt;
  * </pre>
- * 
+ *
  * @author grkvlt@apache.org
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "CatalogReferences")
+@XmlRootElement(name = "CatalogReferences")
 public class CatalogReferences extends QueryResultReferences<CatalogReference> {
 
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -59,22 +55,14 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
 
       @Override
       public CatalogReferences build() {
-         CatalogReferences queryResultReferences = new CatalogReferences(href);
-         queryResultReferences.setReferences(references);
-         queryResultReferences.setName(name);
-         queryResultReferences.setPage(page);
-         queryResultReferences.setPageSize(pageSize);
-         queryResultReferences.setTotal(total);
-         queryResultReferences.setType(type);
-         queryResultReferences.setLinks(links);
-         return queryResultReferences;
+         return new CatalogReferences(href, type, links, name, page, pageSize, total, references);
       }
 
       /**
        * @see QueryResultReferences#getReferences()
        */
       @Override
-      public Builder references(List<CatalogReference> references) {
+      public Builder references(Set<CatalogReference> references) {
          this.references = references;
          return this;
       }
@@ -89,7 +77,7 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
       }
 
       /**
-       * @see Container#getName()
+       * @see CatalogReference#getName()
        */
       @Override
       public Builder name(String name) {
@@ -98,7 +86,7 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
       }
 
       /**
-       * @see Container#getPage()
+       * @see CatalogReference#getPage()
        */
       @Override
       public Builder page(Integer page) {
@@ -107,7 +95,7 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
       }
 
       /**
-       * @see Container#getPageSize()
+       * @see CatalogReference#getPageSize()
        */
       @Override
       public Builder pageSize(Integer pageSize) {
@@ -116,7 +104,7 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
       }
 
       /**
-       * @see Container#getTotal()
+       * @see CatalogReference#getTotal()
        */
       @Override
       public Builder total(Long total) {
@@ -125,7 +113,7 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
       }
 
       /**
-       * @see ResourceType#getHref()
+       * @see CatalogReference#getHref()
        */
       @Override
       public Builder href(URI href) {
@@ -134,7 +122,7 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
       }
 
       /**
-       * @see ResourceType#getType()
+       * @see CatalogReference#getType()
        */
       @Override
       public Builder type(String type) {
@@ -143,7 +131,7 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
       }
 
       /**
-       * @see ResourceType#getLinks()
+       * @see CatalogReference#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
@@ -152,7 +140,7 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
       }
 
       /**
-       * @see ResourceType#getLinks()
+       * @see CatalogReference#getLinks()
        */
       @Override
       public Builder link(Link link) {
@@ -170,11 +158,11 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
       }
    }
 
-   protected CatalogReferences() {
-      // For JAXB and builder use
+   public CatalogReferences(URI href, String type, Set<Link> links, String name, Integer page, Integer pageSize, Long total, Set<CatalogReference> references) {
+      super(href, type, links, name, page, pageSize, total, references);
    }
 
-   protected CatalogReferences(URI href) {
-      super(href);
+   protected CatalogReferences() {
+      // For JAXB and builder use
    }
 }

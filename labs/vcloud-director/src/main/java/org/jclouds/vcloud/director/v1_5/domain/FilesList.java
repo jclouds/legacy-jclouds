@@ -21,27 +21,24 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 
 /**
- * 
- *                 Represents a list of files to be transferred (uploaded
- *                 or downloaded).
- *             
- * 
+ * Represents a list of files to be transferred (uploaded
+ * or downloaded).
+ * <p/>
+ * <p/>
  * <p>Java class for FilesList complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="FilesList">
  *   &lt;complexContent>
@@ -54,12 +51,9 @@ import com.google.common.base.Objects;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FilesList", propOrder = {
-    "files"
+      "files"
 })
 public class FilesList {
    public static Builder builder() {
@@ -71,14 +65,14 @@ public class FilesList {
    }
 
    public static class Builder {
-      
-      private List<File> files;
+
+      private Set<File> files = Sets.newLinkedHashSet();
 
       /**
        * @see FilesList#getFiles()
        */
-      public Builder file(List<File> file) {
-         this.files = file;
+      public Builder files(Set<File> files) {
+         this.files = files;
          return this;
       }
 
@@ -90,7 +84,7 @@ public class FilesList {
 
 
       public Builder fromFilesList(FilesList in) {
-         return file(in.getFiles());
+         return files(in.getFiles());
       }
    }
 
@@ -98,47 +92,25 @@ public class FilesList {
       // For JAXB and builder use
    }
 
-   private FilesList(List<File> files) {
-      this.files = files;
+   private FilesList(Set<File> files) {
+      this.files = ImmutableSet.copyOf(files);
    }
 
 
-    @XmlElement(name = "File", required = true)
-    protected List<File> files;
+   @XmlElement(name = "File", required = true)
+   protected Set<File> files = Sets.newLinkedHashSet();
 
-    /**
-     * Gets the value of the file property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the file property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFile().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FileType }
-     * 
-     * 
-     */
-    public List<File> getFiles() {
-        if (files == null) {
-            files = new ArrayList<File>();
-        }
-        return this.files;
-    }
+   /**
+    * Gets the value of the file property.
+    */
+   public Set<File> getFiles() {
+      return this.files;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       FilesList that = FilesList.class.cast(o);

@@ -22,7 +22,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OV
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.internal.BaseVirtualSystem;
 
 import com.google.common.collect.Multimap;
@@ -50,7 +50,7 @@ public class VirtualSystem extends BaseVirtualSystem<VirtualSystem> {
        */
       @Override
       public VirtualSystem build() {
-         return new VirtualSystem(id, info, name, operatingSystem, virtualHardwareSections, productSections,
+         return new VirtualSystem(id, info, required, name, operatingSystem, virtualHardwareSections, productSections,
                additionalSections);
       }
 
@@ -124,6 +124,14 @@ public class VirtualSystem extends BaseVirtualSystem<VirtualSystem> {
        * {@inheritDoc}
        */
       @Override
+      public Builder required(Boolean required) {
+         return Builder.class.cast(super.required(required));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
       public Builder name(String name) {
          return Builder.class.cast(super.name(name));
       }
@@ -154,11 +162,10 @@ public class VirtualSystem extends BaseVirtualSystem<VirtualSystem> {
 
    }
 
-   @SuppressWarnings("unchecked")
-   private VirtualSystem(String id, String info, String name, OperatingSystemSection operatingSystem,
+   private VirtualSystem(String id, String info, @Nullable Boolean required, String name, OperatingSystemSection operatingSystem,
                         Iterable<? extends VirtualHardwareSection> virtualHardwareSections,
                         Iterable<? extends ProductSection> productSections, Multimap<String, SectionType> additionalSections) {
-      super(id, info, name, operatingSystem, virtualHardwareSections, productSections, additionalSections);
+      super(id, info, required, name, operatingSystem, virtualHardwareSections, productSections, additionalSections);
    }
    
    private VirtualSystem() {

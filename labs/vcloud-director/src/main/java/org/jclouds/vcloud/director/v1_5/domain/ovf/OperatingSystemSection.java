@@ -18,14 +18,11 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
 
 import com.google.common.base.Objects;
 
@@ -35,7 +32,6 @@ import com.google.common.base.Objects;
  * @author Adrian Cole
  * @author Adam Lowe
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "VirtualHardwareSection")
 public class OperatingSystemSection extends SectionType<OperatingSystemSection> {
 
@@ -86,7 +82,7 @@ public class OperatingSystemSection extends SectionType<OperatingSystemSection> 
        */
       @Override
       public OperatingSystemSection build() {
-         return new OperatingSystemSection(info, id, version, description);
+         return new OperatingSystemSection(info, required, id, version, description);
       }
 
       public Builder fromOperatingSystemSection(OperatingSystemSection in) {
@@ -109,6 +105,13 @@ public class OperatingSystemSection extends SectionType<OperatingSystemSection> 
          return Builder.class.cast(super.info(info));
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder required(Boolean required) {
+         return Builder.class.cast(super.required(required));
+      }
    }
 
    @XmlAttribute
@@ -118,8 +121,8 @@ public class OperatingSystemSection extends SectionType<OperatingSystemSection> 
    @XmlElement
    protected String description;
 
-   public OperatingSystemSection(@Nullable String info, @Nullable Integer id, @Nullable String version, @Nullable String description) {
-      super(info);
+   public OperatingSystemSection(@Nullable String info, @Nullable Boolean required, @Nullable Integer id, @Nullable String version, @Nullable String description) {
+      super(info, required);
       this.id = id;
       this.description = description;
       this.version = version;

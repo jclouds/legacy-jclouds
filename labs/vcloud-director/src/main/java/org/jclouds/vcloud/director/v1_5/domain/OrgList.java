@@ -20,10 +20,8 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -35,12 +33,12 @@ import com.google.common.collect.Sets;
 
 /**
  * A list of organizations.
- * 
+ *
  * @author Adrian Cole
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "OrgList")
+@XmlRootElement(name = "OrgList")
 public class OrgList {
-   
+
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.ORG_LIST;
 
    public static Builder builder() {
@@ -88,7 +86,7 @@ public class OrgList {
       this.orgs = ImmutableSet.copyOf(orgs);
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Org")
+   @XmlElement(name = "Org")
    private Set<Reference> orgs = Sets.newLinkedHashSet();
 
    public Set<Reference> getOrgs() {

@@ -19,10 +19,8 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -30,12 +28,11 @@ import com.google.common.base.Objects;
 
 /**
  * Returns a network configuration
- * 
+ *
  * @author danikov
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "NetworkConfiguration")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class NetworkConfiguration{
+@XmlRootElement(name = "NetworkConfiguration")
+public class NetworkConfiguration {
 
    public static Builder builder() {
       return new Builder();
@@ -111,14 +108,7 @@ public class NetworkConfiguration{
       }
 
       public NetworkConfiguration build() {
-         NetworkConfiguration networkConfiguration = new NetworkConfiguration(fenceMode);
-         networkConfiguration.setIpScope(ipScope);
-         networkConfiguration.setParentNetwork(parentNetwork);
-         networkConfiguration.setRetainNetInfoAcrossDeployments(retainNetInfoAcrossDeployments);
-         networkConfiguration.setNetworkFeatures(features);
-         networkConfiguration.setSyslogServerSettings(syslogServerSettings);
-         networkConfiguration.setRouterInfo(routerInfo);
-         return networkConfiguration;
+         return new NetworkConfiguration(ipScope, parentNetwork, fenceMode, retainNetInfoAcrossDeployments, features, syslogServerSettings, routerInfo);
       }
 
       public Builder fromConfiguration(NetworkConfiguration in) {
@@ -130,40 +120,43 @@ public class NetworkConfiguration{
       }
    }
 
+   public NetworkConfiguration(IpScope ipScope, ReferenceType<?> parentNetwork, String fenceMode, boolean retainNetInfoAcrossDeployments,
+                               NetworkFeatures features, SyslogServerSettings syslogServerSettings, RouterInfo routerInfo) {
+      this.ipScope = ipScope;
+      this.parentNetwork = parentNetwork;
+      this.fenceMode = checkNotNull(fenceMode, "fenceMode");
+      this.retainNetInfoAcrossDeployments = retainNetInfoAcrossDeployments;
+      this.features = features;
+      this.syslogServerSettings = syslogServerSettings;
+      this.routerInfo = routerInfo;
+   }
+
    private NetworkConfiguration() {
       // For JAXB and builder use
    }
 
-   private NetworkConfiguration(String fenceMode) {
-      this.fenceMode = fenceMode;
-   }
-
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "IpScope")
+   @XmlElement(name = "IpScope")
    private IpScope ipScope;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "ParentNetwork")
+   @XmlElement(name = "ParentNetwork")
    private ReferenceType<?> parentNetwork;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "FenceMode")
+   @XmlElement(name = "FenceMode")
    private String fenceMode;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "RetainNetInfoAcrossDeployments")
+   @XmlElement(name = "RetainNetInfoAcrossDeployments")
    private boolean retainNetInfoAcrossDeployments = false;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Features")
+   @XmlElement(name = "Features")
    private NetworkFeatures features;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "SyslogServerSettings")
+   @XmlElement(name = "SyslogServerSettings")
    private SyslogServerSettings syslogServerSettings;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "RouterInfo")
+   @XmlElement(name = "RouterInfo")
    private RouterInfo routerInfo;
 
    /**
-    * @return IP level configuration items such as gateway, dns, subnet, 
-    * IP address pool to be used for allocation. Note that the pool of IP addresses 
-    * needs to fall within the subnet/mask of the IpScope.
+    * @return IP level configuration items such as gateway, dns, subnet,
+    *         IP address pool to be used for allocation. Note that the pool of IP addresses
+    *         needs to fall within the subnet/mask of the IpScope.
     */
    public IpScope getIpScope() {
       return ipScope;
-   }
-   
-   public void setIpScope(IpScope ipScope) {
-      this.ipScope = ipScope;
    }
 
    /**
@@ -172,31 +165,23 @@ public class NetworkConfiguration{
    public ReferenceType<?> getParentNetwork() {
       return parentNetwork;
    }
-   
-   public void setParentNetwork(ReferenceType<?> parentNetwork) {
-      this.parentNetwork = parentNetwork;
-   }
 
    /**
-    * @return Isolation type of the network. If ParentNetwork is specified, this property 
-    * controls connectivity to the parent. One of: bridged (connected directly to the ParentNetwork), 
-    * isolated (not connected to any other network), natRouted (connected to the ParentNetwork via a 
-    * NAT service)
+    * @return Isolation type of the network. If ParentNetwork is specified, this property
+    *         controls connectivity to the parent. One of: bridged (connected directly to the ParentNetwork),
+    *         isolated (not connected to any other network), natRouted (connected to the ParentNetwork via a
+    *         NAT service)
     */
    public String getFenceMode() {
       return fenceMode;
    }
 
    /**
-    * @return whether the network resources such as IP/MAC of router will be retained 
-    * across deployments. Default is false.
+    * @return whether the network resources such as IP/MAC of router will be retained
+    *         across deployments. Default is false.
     */
    public boolean getRetainNetInfoAcrossDeployments() {
       return retainNetInfoAcrossDeployments;
-   }
-   
-   public void setRetainNetInfoAcrossDeployments(boolean retainNetInfoAcrossDeployments) {
-      this.retainNetInfoAcrossDeployments = retainNetInfoAcrossDeployments;
    }
 
    /**
@@ -205,10 +190,6 @@ public class NetworkConfiguration{
    public NetworkFeatures getNetworkFeatures() {
       return features;
    }
-   
-   public void setNetworkFeatures(NetworkFeatures features) {
-      this.features = features;
-   }
 
    /**
     * @return Syslog server settings for the network.
@@ -216,20 +197,12 @@ public class NetworkConfiguration{
    public SyslogServerSettings getSyslogServerSettings() {
       return syslogServerSettings;
    }
-   
-   public void setSyslogServerSettings(SyslogServerSettings syslogServerSettings) {
-      this.syslogServerSettings = syslogServerSettings;
-   }
 
    /**
     * @return router information
     */
    public RouterInfo getRouterInfo() {
       return routerInfo;
-   }
-   
-   public void setRouterInfo(RouterInfo routerInfo) {
-      this.routerInfo = routerInfo;
    }
 
    @Override

@@ -20,14 +20,11 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyElement;
+import java.util.Collections;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -36,9 +33,10 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.w3c.dom.Element;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 
 /**
@@ -66,12 +64,10 @@ import com.google.common.base.Objects;
  * &lt;/complexType>
  * </pre>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name="NetworkConfigSection", namespace = VCLOUD_1_5_NS)
-@XmlType( propOrder = {
-      "link",
-      "networkConfig",
-      "any"
+@XmlRootElement(name = "NetworkConfigSection")
+@XmlType(propOrder = {
+      "links",
+      "networkConfigs"
 })
 public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
    public static Builder builder() {
@@ -84,33 +80,24 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
 
    public static class Builder extends SectionType.Builder<NetworkConfigSection> {
 
-      private List<Link> link;
-      private List<VAppNetworkConfiguration<?>> networkConfig;
-      private List<Object> any;
+      private Set<Link> links = Sets.newLinkedHashSet();
+      private Set<VAppNetworkConfiguration<?>> networkConfigs = Sets.newLinkedHashSet();
       private URI href;
       private String type;
 
       /**
-       * @see NetworkConfigSection#getLink()
+       * @see NetworkConfigSection#getLinks()
        */
-      public Builder link(List<Link> link) {
-         this.link = link;
+      public Builder links(Set<Link> links) {
+         this.links = checkNotNull(links, "links");
          return this;
       }
 
       /**
-       * @see NetworkConfigSection#getNetworkConfig()
+       * @see NetworkConfigSection#getNetworkConfigs()
        */
-      public Builder networkConfig(List<VAppNetworkConfiguration<?>> networkConfig) {
-         this.networkConfig = networkConfig;
-         return this;
-      }
-
-      /**
-       * @see NetworkConfigSection#getAny()
-       */
-      public Builder any(List<Object> any) {
-         this.any = any;
+      public Builder networkConfig(Set<VAppNetworkConfiguration<?>> networkConfigs) {
+         this.networkConfigs = checkNotNull(networkConfigs, "networkConfigs");
          return this;
       }
 
@@ -132,17 +119,13 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
 
 
       public NetworkConfigSection build() {
-         NetworkConfigSection networkConfigSection = new NetworkConfigSection(info, link, networkConfig, any);
-         networkConfigSection.setHref(href);
-         networkConfigSection.setType(type);
-         return networkConfigSection;
+         return new NetworkConfigSection(info, required, links, networkConfigs, href, type);
       }
 
       public Builder fromNetworkConfigSection(NetworkConfigSection in) {
          return fromSection(in)
-               .link(in.getLink())
-               .networkConfig(in.getNetworkConfig())
-               .any(in.getAny())
+               .links(in.getLinks())
+               .networkConfig(in.getNetworkConfigs())
                .href(in.getHref())
                .type(in.getType());
       }
@@ -163,111 +146,51 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
          return Builder.class.cast(super.info(info));
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder required(Boolean required) {
+         return Builder.class.cast(super.required(required));
+      }
+
    }
 
    @XmlElement(name = "Link")
-   protected List<Link> link;
+   protected Set<Link> links;
    @XmlElement(name = "NetworkConfig")
-   protected List<VAppNetworkConfiguration<?>> networkConfig;
-   @XmlAnyElement(lax = true)
-   protected List<Object> any;
+   protected Set<VAppNetworkConfiguration<?>> networkConfigs;
    @XmlAttribute
    @XmlSchemaType(name = "anyURI")
    protected URI href;
    @XmlAttribute
    protected String type;
-   
-   private NetworkConfigSection(@Nullable String info, List<Link> link, List<VAppNetworkConfiguration<?>> networkConfig, List<Object> any) {
-      super(info);
-      this.link = link;
-      this.networkConfig = networkConfig;
-      this.any = any;
+
+   public NetworkConfigSection(@Nullable String info, @Nullable Boolean required, Set<Link> links, Set<VAppNetworkConfiguration<?>> networkConfigs,
+                               URI href, String type) {
+      super(info, required);
+      this.links = ImmutableSet.copyOf(links);
+      this.networkConfigs = ImmutableSet.copyOf(networkConfigs);
+      this.href = href;
+      this.type = type;
    }
 
    private NetworkConfigSection() {
       // For JAXB
    }
-   
+
    /**
     * Gets the value of the link property.
-    * <p/>
-    * <p/>
-    * This accessor method returns a reference to the live list,
-    * not a snapshot. Therefore any modification you make to the
-    * returned list will be present inside the JAXB object.
-    * This is why there is not a <CODE>set</CODE> method for the link property.
-    * <p/>
-    * <p/>
-    * For example, to add a new item, do as follows:
-    * <pre>
-    *    getLink().add(newItem);
-    * </pre>
-    * <p/>
-    * <p/>
-    * <p/>
-    * Objects of the following type(s) are allowed in the list
-    * {@link Link }
     */
-   public List<Link> getLink() {
-      if (link == null) {
-         link = new ArrayList<Link>();
-      }
-      return this.link;
+   public Set<Link> getLinks() {
+      return Collections.unmodifiableSet(this.links);
    }
 
    /**
     * Gets the value of the networkConfig property.
-    * <p/>
-    * <p/>
-    * This accessor method returns a reference to the live list,
-    * not a snapshot. Therefore any modification you make to the
-    * returned list will be present inside the JAXB object.
-    * This is why there is not a <CODE>set</CODE> method for the networkConfig property.
-    * <p/>
-    * <p/>
-    * For example, to add a new item, do as follows:
-    * <pre>
-    *    getNetworkConfig().add(newItem);
-    * </pre>
-    * <p/>
-    * <p/>
-    * <p/>
-    * Objects of the following type(s) are allowed in the list
-    * {@link VAppNetworkConfiguration }
     */
-   public List<VAppNetworkConfiguration<?>> getNetworkConfig() {
-      if (networkConfig == null) {
-         networkConfig = new ArrayList<VAppNetworkConfiguration<?>>();
-      }
-      return this.networkConfig;
-   }
-
-   /**
-    * Gets the value of the any property.
-    * <p/>
-    * <p/>
-    * This accessor method returns a reference to the live list,
-    * not a snapshot. Therefore any modification you make to the
-    * returned list will be present inside the JAXB object.
-    * This is why there is not a <CODE>set</CODE> method for the any property.
-    * <p/>
-    * <p/>
-    * For example, to add a new item, do as follows:
-    * <pre>
-    *    getAny().add(newItem);
-    * </pre>
-    * <p/>
-    * <p/>
-    * <p/>
-    * Objects of the following type(s) are allowed in the list
-    * {@link Object }
-    * {@link Element }
-    */
-   public List<Object> getAny() {
-      if (any == null) {
-         any = new ArrayList<Object>();
-      }
-      return this.any;
+   public Set<VAppNetworkConfiguration<?>> getNetworkConfigs() {
+      return Collections.unmodifiableSet(this.networkConfigs);
    }
 
    /**
@@ -275,13 +198,6 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
     */
    public URI getHref() {
       return href;
-   }
-
-   /**
-    * Sets the value of the href property.
-    */
-   public void setHref(URI value) {
-      this.href = value;
    }
 
    /**
@@ -294,16 +210,6 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
       return type;
    }
 
-   /**
-    * Sets the value of the type property.
-    *
-    * @param value allowed object is
-    *              {@link String }
-    */
-   public void setType(String value) {
-      this.type = value;
-   }
-
    @Override
    public boolean equals(Object o) {
       if (this == o)
@@ -311,30 +217,29 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
       if (o == null || getClass() != o.getClass())
          return false;
       NetworkConfigSection that = NetworkConfigSection.class.cast(o);
-      return equal(link, that.link) &&
-            equal(networkConfig, that.networkConfig) &&
-            equal(any, that.any) &&
+      return super.equals(that) && 
+            equal(links, that.links) &&
+            equal(networkConfigs, that.networkConfigs) &&
             equal(href, that.href) &&
             equal(type, that.type);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(link,
-            networkConfig,
-            any,
+      return Objects.hashCode(super.hashCode(),
+            links,
+            networkConfigs,
             href,
             type);
    }
 
    @Override
-   public String toString() {
-      return Objects.toStringHelper("")
-            .add("link", link)
-            .add("networkConfig", networkConfig)
-            .add("any", any)
+   public Objects.ToStringHelper string() {
+      return super.string()
+            .add("links", links)
+            .add("networkConfigs", networkConfigs)
             .add("href", href)
-            .add("type", type).toString();
+            .add("type", type);
    }
 
 }

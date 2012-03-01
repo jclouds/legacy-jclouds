@@ -20,20 +20,16 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.DeploymentOptionSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.DiskSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
@@ -42,6 +38,8 @@ import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 
 /**
@@ -70,7 +68,6 @@ import com.google.common.base.Objects;
  * &lt;/complexType>
  * </pre>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "VAppTemplate")
 @XmlType(propOrder = {
       "owner",
@@ -78,23 +75,20 @@ import com.google.common.base.Objects;
       "sections",
       "vAppScopedLocalId"
 })
-public class VAppTemplate
-      extends ResourceEntityType<VAppTemplate>
-
-{
-   @SuppressWarnings("unchecked")
+public class VAppTemplate extends ResourceEntityType<VAppTemplate> {
    public static Builder builder() {
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromVAppTemplate(this);
    }
 
    public static class Builder extends ResourceEntityType.Builder<VAppTemplate> {
       private Owner owner;
-      private VAppTemplateChildren children;
-      private List<SectionType> sections;
+      private Set<VAppTemplate> children = Sets.newLinkedHashSet();
+      private Set<SectionType> sections = Sets.newLinkedHashSet();
       private String vAppScopedLocalId;
       private Boolean ovfDescriptorUploaded;
       private Boolean goldMaster;
@@ -110,15 +104,15 @@ public class VAppTemplate
       /**
        * @see VAppTemplate#getChildren()
        */
-      public Builder children(VAppTemplateChildren children) {
-         this.children = children;
+      public Builder children(Set<VAppTemplate> children) {
+         this.children = checkNotNull(children, "children");
          return this;
       }
 
       /**
        * @see VAppTemplate#getSections()
        */
-      public Builder sections(List<SectionType> sections) {
+      public Builder sections(Set<SectionType> sections) {
          this.sections = sections;
          return this;
       }
@@ -149,17 +143,8 @@ public class VAppTemplate
 
       @Override
       public VAppTemplate build() {
-         VAppTemplate result = new VAppTemplate(href, name, owner, children, sections, vAppScopedLocalId, ovfDescriptorUploaded, goldMaster);
-         result.setFiles(files);
-         result.setStatus(status);
-         result.setDescription(description);
-         result.setTasksInProgress(tasksInProgress);
-         result.setId(id);
-         result.setType(type);
-         result.setLinks(links);         
-         return result;
+         return new VAppTemplate(href, type, links, description, tasksInProgress, id, name, files, status, owner, children, sections, vAppScopedLocalId, ovfDescriptorUploaded, goldMaster);
       }
-
 
       @Override
       public Builder fromResourceEntityType(ResourceEntityType<VAppTemplate> in) {
@@ -270,10 +255,10 @@ public class VAppTemplate
 
    @XmlElementRef
    protected Owner owner;
-   @XmlElement(name = "Children")
-   protected VAppTemplateChildren children;
    @XmlElementRef
-   protected List<SectionType> sections;
+   protected VAppTemplateChildren children = VAppTemplateChildren.builder().build();
+   @XmlElementRef
+   protected Set<SectionType> sections = Sets.newLinkedHashSet();
    @XmlElement(name = "VAppScopedLocalId")
    protected String vAppScopedLocalId;
    @XmlAttribute
@@ -281,20 +266,19 @@ public class VAppTemplate
    @XmlAttribute
    protected Boolean goldMaster;
 
-   private VAppTemplate(URI href, String name, @Nullable Owner owner, @Nullable VAppTemplateChildren children, 
-                        List<SectionType> sections, @Nullable String vAppScopedLocalId, 
-                        @Nullable Boolean ovfDescriptorUploaded, @Nullable Boolean goldMaster) {
-      super(href, name);
-      this.sections = sections;
+   private VAppTemplate(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress,
+                        String id, String name, FilesList files, Integer status, Owner owner, Set<VAppTemplate> children, Set<SectionType> sections, String vAppScopedLocalId, Boolean ovfDescriptorUploaded, Boolean goldMaster) {
+      super(href, type, links, description, tasksInProgress, id, name, files, status);
       this.owner = owner;
-      this.children = children;
+      this.children = VAppTemplateChildren.builder().vms(children).build();
+      this.sections = ImmutableSet.copyOf(sections);
       this.vAppScopedLocalId = vAppScopedLocalId;
       this.ovfDescriptorUploaded = ovfDescriptorUploaded;
       this.goldMaster = goldMaster;
    }
 
    private VAppTemplate() {
-      // For JAXB and builder use
+      // For JAXB
    }
 
    /**
@@ -308,33 +292,13 @@ public class VAppTemplate
    }
 
    /**
-    * Sets the value of the owner property.
-    *
-    * @param value allowed object is
-    *              {@link Owner }
-    */
-   public void setOwner(Owner value) {
-      this.owner = value;
-   }
-
-   /**
     * Gets the value of the children property.
     *
     * @return possible object is
     *         {@link VAppTemplateChildren }
     */
-   public VAppTemplateChildren getChildren() {
-      return children;
-   }
-
-   /**
-    * Sets the value of the children property.
-    *
-    * @param value allowed object is
-    *              {@link VAppTemplateChildren }
-    */
-   public void setChildren(VAppTemplateChildren value) {
-      this.children = value;
+   public Set<VAppTemplate> getChildren() {
+      return children.getVms();
    }
 
    /**
@@ -375,10 +339,7 @@ public class VAppTemplate
     * {@link JAXBElement }{@code <}{@link DiskSection }{@code >}
     * {@link JAXBElement }{@code <}{@link InstallSection }{@code >}
     */
-   public List<SectionType> getSections() {
-      if (sections == null) {
-         sections = new ArrayList<SectionType>();
-      }
+   public Set<SectionType> getSections() {
       return this.sections;
    }
 
@@ -393,16 +354,6 @@ public class VAppTemplate
    }
 
    /**
-    * Sets the value of the vAppScopedLocalId property.
-    *
-    * @param value allowed object is
-    *              {@link String }
-    */
-   public void setVAppScopedLocalId(String value) {
-      this.vAppScopedLocalId = value;
-   }
-
-   /**
     * Gets the value of the ovfDescriptorUploaded property.
     *
     * @return possible object is
@@ -410,16 +361,6 @@ public class VAppTemplate
     */
    public Boolean isOvfDescriptorUploaded() {
       return ovfDescriptorUploaded;
-   }
-
-   /**
-    * Sets the value of the ovfDescriptorUploaded property.
-    *
-    * @param value allowed object is
-    *              {@link Boolean }
-    */
-   public void setOvfDescriptorUploaded(Boolean value) {
-      this.ovfDescriptorUploaded = value;
    }
 
    /**
@@ -436,16 +377,6 @@ public class VAppTemplate
       }
    }
 
-   /**
-    * Sets the value of the goldMaster property.
-    *
-    * @param value allowed object is
-    *              {@link Boolean }
-    */
-   public void setGoldMaster(Boolean value) {
-      this.goldMaster = value;
-   }
-
    @Override
    public boolean equals(Object o) {
       if (this == o)
@@ -453,7 +384,7 @@ public class VAppTemplate
       if (o == null || getClass() != o.getClass())
          return false;
       VAppTemplate that = VAppTemplate.class.cast(o);
-      return super.equals(that) && 
+      return super.equals(that) &&
             equal(owner, that.owner) &&
             equal(children, that.children) &&
             equal(sections, that.sections) &&

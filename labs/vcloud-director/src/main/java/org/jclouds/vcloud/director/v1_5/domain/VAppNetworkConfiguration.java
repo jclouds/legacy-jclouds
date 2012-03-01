@@ -24,9 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
@@ -36,14 +33,13 @@ import com.google.common.collect.Sets;
 
 
 /**
- * 
- *                 Represents a VApp network configuration.
- *             
- * 
+ * Represents a VApp network configuration.
+ * <p/>
+ * <p/>
  * <p>Java class for VAppNetworkConfiguration complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="VAppNetworkConfiguration">
  *   &lt;complexContent>
@@ -59,29 +55,24 @@ import com.google.common.collect.Sets;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "VAppNetworkConfiguration", propOrder = {
-    "description",
-    "configuration",
-    "isDeployed"
+      "description",
+      "configuration",
+      "isDeployed"
 })
-public class VAppNetworkConfiguration<T extends VAppNetworkConfiguration<T>>
-    extends ResourceType<T>
-
-{
+public class VAppNetworkConfiguration<T extends VAppNetworkConfiguration<T>> extends ResourceType<T> {
    public static <T extends VAppNetworkConfiguration<T>> Builder<T> builder() {
       return new Builder<T>();
    }
 
+   @Override
    public Builder<T> toBuilder() {
       return new Builder<T>().fromVAppNetworkConfiguration(this);
    }
 
    public static class Builder<T extends VAppNetworkConfiguration<T>> extends ResourceType.Builder<T> {
-      
+
       private String description;
       private NetworkConfiguration configuration;
       private Boolean isDeployed;
@@ -104,7 +95,7 @@ public class VAppNetworkConfiguration<T extends VAppNetworkConfiguration<T>>
       }
 
       /**
-       * @see VAppNetworkConfiguration#getIsDeployed()
+       * @see VAppNetworkConfiguration#isDeployed()
        */
       public Builder<T> isDeployed(Boolean isDeployed) {
          this.isDeployed = isDeployed;
@@ -121,15 +112,11 @@ public class VAppNetworkConfiguration<T extends VAppNetworkConfiguration<T>>
 
 
       public VAppNetworkConfiguration<T> build() {
-         VAppNetworkConfiguration<T> vAppNetworkConfiguration = new VAppNetworkConfiguration<T>();
-         vAppNetworkConfiguration.setDescription(description);
-         vAppNetworkConfiguration.setConfiguration(configuration);
-         vAppNetworkConfiguration.setIsDeployed(isDeployed);
-         vAppNetworkConfiguration.setNetworkName(networkName);
-         return vAppNetworkConfiguration;
+         return new VAppNetworkConfiguration<T>(href, type, links,
+               description, configuration, isDeployed, networkName);
       }
 
-      
+
       /**
        * @see ResourceType#getHref()
        */
@@ -171,147 +158,99 @@ public class VAppNetworkConfiguration<T extends VAppNetworkConfiguration<T>>
        */
       @SuppressWarnings("unchecked")
       public Builder<T> fromResourceType(ResourceType<T> in) {
-          return Builder.class.cast(super.fromResourceType(in));
+         return Builder.class.cast(super.fromResourceType(in));
       }
+
       public Builder<T> fromVAppNetworkConfiguration(VAppNetworkConfiguration<T> in) {
          return fromResourceType(in)
-            .description(in.getDescription())
-            .configuration(in.getConfiguration())
-            .isDeployed(in.isDeployed())
-            .networkName(in.getNetworkName());
+               .description(in.getDescription())
+               .configuration(in.getConfiguration())
+               .isDeployed(in.isDeployed())
+               .networkName(in.getNetworkName());
       }
+   }
+
+   @XmlElement(name = "Description")
+   protected String description;
+   @XmlElement(name = "Configuration", required = true)
+   protected NetworkConfiguration configuration;
+   @XmlElement(name = "IsDeployed")
+   protected Boolean isDeployed;
+   @XmlAttribute(required = true)
+   protected String networkName;
+
+   public VAppNetworkConfiguration(URI href, String type, Set<Link> links, String description,
+                                   NetworkConfiguration configuration, Boolean deployed, String networkName) {
+      super(href, type, links);
+      this.description = description;
+      this.configuration = configuration;
+      isDeployed = deployed;
+      this.networkName = networkName;
    }
 
    private VAppNetworkConfiguration() {
-      // For JAXB and builder use
+      // For JAXB
    }
 
+   /**
+    * Gets the value of the description property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getDescription() {
+      return description;
+   }
 
+   /**
+    * Gets the value of the configuration property.
+    *
+    * @return possible object is
+    *         {@link NetworkConfiguration }
+    */
+   public NetworkConfiguration getConfiguration() {
+      return configuration;
+   }
 
-    @XmlElement(name = "Description")
-    protected String description;
-    @XmlElement(name = "Configuration", required = true)
-    protected NetworkConfiguration configuration;
-    @XmlElement(name = "IsDeployed")
-    protected Boolean isDeployed;
-    @XmlAttribute(required = true)
-    protected String networkName;
+   /**
+    * Gets the value of the isDeployed property.
+    *
+    * @return possible object is
+    *         {@link Boolean }
+    */
+   public Boolean isDeployed() {
+      return isDeployed;
+   }
 
-    /**
-     * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setDescription(String value) {
-        this.description = value;
-    }
-
-    /**
-     * Gets the value of the configuration property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link NetworkConfiguration }
-     *     
-     */
-    public NetworkConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    /**
-     * Sets the value of the configuration property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link NetworkConfiguration }
-     *     
-     */
-    public void setConfiguration(NetworkConfiguration value) {
-        this.configuration = value;
-    }
-
-    /**
-     * Gets the value of the isDeployed property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isDeployed() {
-        return isDeployed;
-    }
-
-    /**
-     * Sets the value of the isDeployed property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setIsDeployed(Boolean value) {
-        this.isDeployed = value;
-    }
-
-    /**
-     * Gets the value of the networkName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getNetworkName() {
-        return networkName;
-    }
-
-    /**
-     * Sets the value of the networkName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setNetworkName(String value) {
-        this.networkName = value;
-    }
+   /**
+    * Gets the value of the networkName property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getNetworkName() {
+      return networkName;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       VAppNetworkConfiguration<?> that = VAppNetworkConfiguration.class.cast(o);
-      return equal(description, that.description) && 
-           equal(configuration, that.configuration) && 
-           equal(isDeployed, that.isDeployed) && 
-           equal(networkName, that.networkName);
+      return equal(description, that.description) &&
+            equal(configuration, that.configuration) &&
+            equal(isDeployed, that.isDeployed) &&
+            equal(networkName, that.networkName);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(description, 
-           configuration, 
-           isDeployed, 
-           networkName);
+      return Objects.hashCode(description,
+            configuration,
+            isDeployed,
+            networkName);
    }
 
    @Override

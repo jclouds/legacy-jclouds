@@ -19,13 +19,11 @@
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
 import java.util.Set;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -37,8 +35,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  * @author Adam Lowe
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "NetworkSection", namespace = VCLOUD_OVF_NS)
+@XmlRootElement(name = "NetworkSection")
 public class NetworkSection extends SectionType<NetworkSection> {
 
    @SuppressWarnings("unchecked")
@@ -78,7 +75,7 @@ public class NetworkSection extends SectionType<NetworkSection> {
        */
       @Override
       public NetworkSection build() {
-         return new NetworkSection(info, networks);
+         return new NetworkSection(info, required, networks);
       }
 
       public Builder fromNetworkSection(NetworkSection in) {
@@ -101,12 +98,20 @@ public class NetworkSection extends SectionType<NetworkSection> {
          return Builder.class.cast(super.info(info));
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder required(Boolean required) {
+         return Builder.class.cast(super.required(required));
+      }
+
    }
 
    private Set<Network> networks;
 
-   private NetworkSection(String info, Iterable<Network> networks) {
-      super(info);
+   private NetworkSection(@Nullable String info, @Nullable Boolean required, Iterable<Network> networks) {
+      super(info, required);
       this.networks = ImmutableSet.<Network> copyOf(checkNotNull(networks, "networks"));
    }
    

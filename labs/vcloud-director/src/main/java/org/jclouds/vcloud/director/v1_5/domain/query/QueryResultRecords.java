@@ -21,33 +21,31 @@ package org.jclouds.vcloud.director.v1_5.domain.query;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.EntityType;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
  * Represents the results from a vCloud query as records.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="QueryResultRecords" /&gt;
  * </pre>
- * 
+ *
  * @author grkvlt@apache.org
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "QueryResultRecords")
+@XmlRootElement(name = "QueryResultRecords")
 public class QueryResultRecords<T extends QueryResultRecordType<T>> extends ContainerType<QueryResultRecords<T>> {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.QUERY_RESULT_RECORDS;
@@ -63,13 +61,13 @@ public class QueryResultRecords<T extends QueryResultRecordType<T>> extends Cont
 
    public static class Builder<T extends QueryResultRecordType<T>> extends ContainerType.Builder<QueryResultRecords<T>> {
 
-      private List<T> records = Lists.newArrayList();
+      private Set<T> records = Sets.newLinkedHashSet();
 
       /**
        * @see QueryResultRecords#getRecords()
        */
-      public Builder<T> records(List<T> records) {
-         this.records = records;
+      public Builder<T> records(Set<T> records) {
+         this.records = checkNotNull(records, "records");
          return this;
       }
 
@@ -83,15 +81,7 @@ public class QueryResultRecords<T extends QueryResultRecordType<T>> extends Cont
 
       @Override
       public QueryResultRecords<T> build() {
-         QueryResultRecords<T> queryResultRecords = new QueryResultRecords<T>(href);
-         queryResultRecords.setRecords(records);
-         queryResultRecords.setName(name);
-         queryResultRecords.setPage(page);
-         queryResultRecords.setPageSize(pageSize);
-         queryResultRecords.setTotal(total);
-         queryResultRecords.setType(type);
-         queryResultRecords.setLinks(links);
-         return queryResultRecords;
+         return new QueryResultRecords<T>(href, type, links, name, page, pageSize, total, records);
       }
 
       /**
@@ -131,7 +121,7 @@ public class QueryResultRecords<T extends QueryResultRecordType<T>> extends Cont
       }
 
       /**
-       * @see ResourceType#getHref()
+       * @see EntityType#getHref()
        */
       @Override
       public Builder<T> href(URI href) {
@@ -140,7 +130,7 @@ public class QueryResultRecords<T extends QueryResultRecordType<T>> extends Cont
       }
 
       /**
-       * @see ResourceType#getType()
+       * @see EntityType#getType()
        */
       @Override
       public Builder<T> type(String type) {
@@ -149,7 +139,7 @@ public class QueryResultRecords<T extends QueryResultRecordType<T>> extends Cont
       }
 
       /**
-       * @see ResourceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder<T> links(Set<Link> links) {
@@ -158,7 +148,7 @@ public class QueryResultRecords<T extends QueryResultRecordType<T>> extends Cont
       }
 
       /**
-       * @see ResourceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder<T> link(Link link) {
@@ -176,30 +166,23 @@ public class QueryResultRecords<T extends QueryResultRecordType<T>> extends Cont
       }
    }
 
-   protected QueryResultRecords() {
-      // For JAXB and builder use
+   protected QueryResultRecords(URI href, String type, Set<Link> links, String name, Integer page, Integer pageSize, Long total, Set<T> records) {
+      super(href, type, links, name, page, pageSize, total);
+      this.records = ImmutableSet.copyOf(records);
    }
 
-   protected QueryResultRecords(URI href) {
-      super(href);
+   protected QueryResultRecords() {
+      // For JAXB
    }
 
    @XmlElementRef
-   protected List<T> records;
+   private Set<T> records = Sets.newLinkedHashSet();
 
    /**
     * Set of records representing query results.
     */
-   public List<T> getRecords() {
+   public Set<T> getRecords() {
       return records;
-   }
-
-   public void setRecords(List<T> records) {
-      this.records = Lists.newArrayList(checkNotNull(records, "records"));
-   }
-
-   public void addRecords(T record) {
-      this.records.add(checkNotNull(record, "record"));
    }
 
    @Override

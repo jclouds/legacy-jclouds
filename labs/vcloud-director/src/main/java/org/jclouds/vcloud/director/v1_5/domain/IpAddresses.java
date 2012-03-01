@@ -20,10 +20,8 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -33,10 +31,10 @@ import com.google.common.collect.Sets;
 
 /**
  * A list of IpAddresses.
- * 
+ *
  * @author danikov
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "IpAddresses")
+@XmlRootElement(name = "IpAddresses")
 public class IpAddresses {
 
    public static Builder builder() {
@@ -83,7 +81,7 @@ public class IpAddresses {
       this.ipAddresses = ImmutableSet.copyOf(orgs);
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "IpAddress")
+   @XmlElement(name = "IpAddress")
    private Set<String> ipAddresses = Sets.newLinkedHashSet();
 
    public Set<String> getIpAddresses() {

@@ -24,9 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -38,14 +35,13 @@ import com.google.common.collect.Sets;
 
 
 /**
- * 
- *                 Represents a virtual data center (vDC).
- *             
- * 
+ * Represents a virtual data center (vDC).
+ * <p/>
+ * <p/>
  * <p>Java class for Vdc complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="Vdc">
  *   &lt;complexContent>
@@ -68,41 +64,38 @@ import com.google.common.collect.Sets;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Vdc")
 @XmlType(propOrder = {
-    "allocationModel",
-    "storageCapacity",
-    "computeCapacity",
-    "resourceEntities",
-    "availableNetworks",
-    "capabilities",
-    "nicQuota",
-    "networkQuota",
-    "vmQuota",
-    "isEnabled"
+      "allocationModel",
+      "storageCapacity",
+      "computeCapacity",
+      "resourceEntities",
+      "availableNetworks",
+      "capabilities",
+      "nicQuota",
+      "networkQuota",
+      "vmQuota",
+      "isEnabled"
 })
 @XmlSeeAlso({
 //    AdminVdc.class
 })
 public class Vdc
-    extends EntityType<Vdc>
+      extends EntityType<Vdc>
 
 {
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromVdc(this);
    }
 
    public static class Builder extends EntityType.Builder<Vdc> {
-      
+
       private String allocationModel;
       private CapacityWithUsage storageCapacity;
       private ComputeCapacity computeCapacity;
@@ -203,23 +196,13 @@ public class Vdc
          return this;
       }
 
-
       public Vdc build() {
-         Vdc vdc = new Vdc();
-         vdc.setAllocationModel(allocationModel);
-         vdc.setStorageCapacity(storageCapacity);
-         vdc.setComputeCapacity(computeCapacity);
-         vdc.setResourceEntities(resourceEntities);
-         vdc.setAvailableNetworks(availableNetworks);
-         vdc.setCapabilities(capabilities);
-         vdc.setNicQuota(nicQuota);
-         vdc.setNetworkQuota(networkQuota);
-         vdc.setVmQuota(vmQuota);
-         vdc.setIsEnabled(isEnabled);
-         vdc.setStatus(status);
-         return vdc;
+         return new Vdc(
+               href, type, links, description, tasksInProgress, id, name, allocationModel, storageCapacity,
+               computeCapacity, resourceEntities, availableNetworks, capabilities, nicQuota, networkQuota,
+               vmQuota, isEnabled, status);
       }
-      
+
       /**
        * @see EntityType#getName()
        */
@@ -293,333 +276,205 @@ public class Vdc
 
       @Override
       public Builder fromEntityType(EntityType<Vdc> in) {
-          return Builder.class.cast(super.fromEntityType(in));
+         return Builder.class.cast(super.fromEntityType(in));
       }
+
       public Builder fromVdc(Vdc in) {
          return fromEntityType(in)
-            .allocationModel(in.getAllocationModel())
-            .storageCapacity(in.getStorageCapacity())
-            .computeCapacity(in.getComputeCapacity())
-            .resourceEntities(in.getResourceEntities())
-            .availableNetworks(in.getAvailableNetworks())
-            .capabilities(in.getCapabilities())
-            .nicQuota(in.getNicQuota())
-            .networkQuota(in.getNetworkQuota())
-            .vmQuota(in.getVmQuota())
-            .isEnabled(in.isEnabled())
-            .status(in.getStatus());
+               .allocationModel(in.getAllocationModel())
+               .storageCapacity(in.getStorageCapacity())
+               .computeCapacity(in.getComputeCapacity())
+               .resourceEntities(in.getResourceEntities())
+               .availableNetworks(in.getAvailableNetworks())
+               .capabilities(in.getCapabilities())
+               .nicQuota(in.getNicQuota())
+               .networkQuota(in.getNetworkQuota())
+               .vmQuota(in.getVmQuota())
+               .isEnabled(in.isEnabled())
+               .status(in.getStatus());
       }
+   }
+
+   public Vdc(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, String name, String allocationModel, CapacityWithUsage storageCapacity, ComputeCapacity computeCapacity, ResourceEntities resourceEntities, AvailableNetworks availableNetworks, Capabilities capabilities, int nicQuota, int networkQuota, Integer vmQuota, Boolean enabled, Integer status) {
+      super(href, type, links, description, tasksInProgress, id, name);
+      this.allocationModel = allocationModel;
+      this.storageCapacity = storageCapacity;
+      this.computeCapacity = computeCapacity;
+      this.resourceEntities = resourceEntities;
+      this.availableNetworks = availableNetworks;
+      this.capabilities = capabilities;
+      this.nicQuota = nicQuota;
+      this.networkQuota = networkQuota;
+      this.vmQuota = vmQuota;
+      isEnabled = enabled;
+      this.status = status;
    }
 
    private Vdc() {
-      // For JAXB and builder use
+      // For JAXB
    }
 
 
-    @XmlElement(name = "AllocationModel", required = true)
-    protected String allocationModel;
-    @XmlElement(name = "StorageCapacity", required = true)
-    protected CapacityWithUsage storageCapacity;
-    @XmlElement(name = "ComputeCapacity", required = true)
-    protected ComputeCapacity computeCapacity;
-    @XmlElement(name = "ResourceEntities")
-    protected ResourceEntities resourceEntities;
-    @XmlElement(name = "AvailableNetworks")
-    protected AvailableNetworks availableNetworks;
-    @XmlElement(name = "Capabilities")
-    protected Capabilities capabilities;
-    @XmlElement(name = "NicQuota")
-    protected int nicQuota;
-    @XmlElement(name = "NetworkQuota")
-    protected int networkQuota;
-    @XmlElement(name = "VmQuota")
-    protected Integer vmQuota;
-    @XmlElement(name = "IsEnabled")
-    protected Boolean isEnabled;
-    @XmlAttribute
-    protected Integer status;
+   @XmlElement(name = "AllocationModel", required = true)
+   protected String allocationModel;
+   @XmlElement(name = "StorageCapacity", required = true)
+   protected CapacityWithUsage storageCapacity;
+   @XmlElement(name = "ComputeCapacity", required = true)
+   protected ComputeCapacity computeCapacity;
+   @XmlElement(name = "ResourceEntities")
+   protected ResourceEntities resourceEntities;
+   @XmlElement(name = "AvailableNetworks")
+   protected AvailableNetworks availableNetworks;
+   @XmlElement(name = "Capabilities")
+   protected Capabilities capabilities;
+   @XmlElement(name = "NicQuota")
+   protected int nicQuota;
+   @XmlElement(name = "NetworkQuota")
+   protected int networkQuota;
+   @XmlElement(name = "VmQuota")
+   protected Integer vmQuota;
+   @XmlElement(name = "IsEnabled")
+   protected Boolean isEnabled;
+   @XmlAttribute
+   protected Integer status;
 
-    /**
-     * Gets the value of the allocationModel property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getAllocationModel() {
-        return allocationModel;
-    }
+   /**
+    * Gets the value of the allocationModel property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getAllocationModel() {
+      return allocationModel;
+   }
 
-    /**
-     * Sets the value of the allocationModel property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setAllocationModel(String value) {
-        this.allocationModel = value;
-    }
+   /**
+    * Gets the value of the storageCapacity property.
+    *
+    * @return possible object is
+    *         {@link CapacityWithUsage }
+    */
+   public CapacityWithUsage getStorageCapacity() {
+      return storageCapacity;
+   }
 
-    /**
-     * Gets the value of the storageCapacity property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CapacityWithUsage }
-     *     
-     */
-    public CapacityWithUsage getStorageCapacity() {
-        return storageCapacity;
-    }
+   /**
+    * Gets the value of the computeCapacity property.
+    *
+    * @return possible object is
+    *         {@link ComputeCapacity }
+    */
+   public ComputeCapacity getComputeCapacity() {
+      return computeCapacity;
+   }
 
-    /**
-     * Sets the value of the storageCapacity property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CapacityWithUsage }
-     *     
-     */
-    public void setStorageCapacity(CapacityWithUsage value) {
-        this.storageCapacity = value;
-    }
+   /**
+    * Gets the value of the resourceEntities property.
+    *
+    * @return possible object is
+    *         {@link ResourceEntities }
+    */
+   public ResourceEntities getResourceEntities() {
+      return resourceEntities;
+   }
 
-    /**
-     * Gets the value of the computeCapacity property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ComputeCapacity }
-     *     
-     */
-    public ComputeCapacity getComputeCapacity() {
-        return computeCapacity;
-    }
+   /**
+    * Gets the value of the availableNetworks property.
+    *
+    * @return possible object is
+    *         {@link AvailableNetworks }
+    */
+   public AvailableNetworks getAvailableNetworks() {
+      return availableNetworks;
+   }
 
-    /**
-     * Sets the value of the computeCapacity property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ComputeCapacity }
-     *     
-     */
-    public void setComputeCapacity(ComputeCapacity value) {
-        this.computeCapacity = value;
-    }
+   /**
+    * Gets the value of the capabilities property.
+    *
+    * @return possible object is
+    *         {@link Capabilities }
+    */
+   public Capabilities getCapabilities() {
+      return capabilities;
+   }
 
-    /**
-     * Gets the value of the resourceEntities property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ResourceEntities }
-     *     
-     */
-    public ResourceEntities getResourceEntities() {
-        return resourceEntities;
-    }
+   /**
+    * Gets the value of the nicQuota property.
+    */
+   public int getNicQuota() {
+      return nicQuota;
+   }
 
-    /**
-     * Sets the value of the resourceEntities property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ResourceEntities }
-     *     
-     */
-    public void setResourceEntities(ResourceEntities value) {
-        this.resourceEntities = value;
-    }
+   /**
+    * Gets the value of the networkQuota property.
+    */
+   public int getNetworkQuota() {
+      return networkQuota;
+   }
 
-    /**
-     * Gets the value of the availableNetworks property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AvailableNetworks }
-     *     
-     */
-    public AvailableNetworks getAvailableNetworks() {
-        return availableNetworks;
-    }
+   /**
+    * Gets the value of the vmQuota property.
+    *
+    * @return possible object is
+    *         {@link Integer }
+    */
+   public Integer getVmQuota() {
+      return vmQuota;
+   }
 
-    /**
-     * Sets the value of the availableNetworks property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AvailableNetworks }
-     *     
-     */
-    public void setAvailableNetworks(AvailableNetworks value) {
-        this.availableNetworks = value;
-    }
+   /**
+    * Gets the value of the isEnabled property.
+    *
+    * @return possible object is
+    *         {@link Boolean }
+    */
+   public Boolean isEnabled() {
+      return isEnabled;
+   }
 
-    /**
-     * Gets the value of the capabilities property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Capabilities }
-     *     
-     */
-    public Capabilities getCapabilities() {
-        return capabilities;
-    }
-
-    /**
-     * Sets the value of the capabilities property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Capabilities }
-     *     
-     */
-    public void setCapabilities(Capabilities value) {
-        this.capabilities = value;
-    }
-
-    /**
-     * Gets the value of the nicQuota property.
-     * 
-     */
-    public int getNicQuota() {
-        return nicQuota;
-    }
-
-    /**
-     * Sets the value of the nicQuota property.
-     * 
-     */
-    public void setNicQuota(int value) {
-        this.nicQuota = value;
-    }
-
-    /**
-     * Gets the value of the networkQuota property.
-     * 
-     */
-    public int getNetworkQuota() {
-        return networkQuota;
-    }
-
-    /**
-     * Sets the value of the networkQuota property.
-     * 
-     */
-    public void setNetworkQuota(int value) {
-        this.networkQuota = value;
-    }
-
-    /**
-     * Gets the value of the vmQuota property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
-     */
-    public Integer getVmQuota() {
-        return vmQuota;
-    }
-
-    /**
-     * Sets the value of the vmQuota property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
-     */
-    public void setVmQuota(Integer value) {
-        this.vmQuota = value;
-    }
-
-    /**
-     * Gets the value of the isEnabled property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isEnabled() {
-        return isEnabled;
-    }
-
-    /**
-     * Sets the value of the isEnabled property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setIsEnabled(Boolean value) {
-        this.isEnabled = value;
-    }
-
-    /**
-     * Gets the value of the status property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
-     */
-    public Integer getStatus() {
-        return status;
-    }
-
-    /**
-     * Sets the value of the status property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
-     */
-    public void setStatus(Integer value) {
-        this.status = value;
-    }
+   /**
+    * Gets the value of the status property.
+    *
+    * @return possible object is
+    *         {@link Integer }
+    */
+   public Integer getStatus() {
+      return status;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       Vdc that = Vdc.class.cast(o);
-      return equal(allocationModel, that.allocationModel) && 
-           equal(storageCapacity, that.storageCapacity) && 
-           equal(computeCapacity, that.computeCapacity) && 
-           equal(resourceEntities, that.resourceEntities) && 
-           equal(availableNetworks, that.availableNetworks) && 
-           equal(capabilities, that.capabilities) && 
-           equal(nicQuota, that.nicQuota) && 
-           equal(networkQuota, that.networkQuota) && 
-           equal(vmQuota, that.vmQuota) && 
-           equal(isEnabled, that.isEnabled) && 
-           equal(status, that.status);
+      return equal(allocationModel, that.allocationModel) &&
+            equal(storageCapacity, that.storageCapacity) &&
+            equal(computeCapacity, that.computeCapacity) &&
+            equal(resourceEntities, that.resourceEntities) &&
+            equal(availableNetworks, that.availableNetworks) &&
+            equal(capabilities, that.capabilities) &&
+            equal(nicQuota, that.nicQuota) &&
+            equal(networkQuota, that.networkQuota) &&
+            equal(vmQuota, that.vmQuota) &&
+            equal(isEnabled, that.isEnabled) &&
+            equal(status, that.status);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(allocationModel, 
-           storageCapacity, 
-           computeCapacity, 
-           resourceEntities, 
-           availableNetworks, 
-           capabilities, 
-           nicQuota, 
-           networkQuota, 
-           vmQuota, 
-           isEnabled, 
-           status);
+      return Objects.hashCode(allocationModel,
+            storageCapacity,
+            computeCapacity,
+            resourceEntities,
+            availableNetworks,
+            capabilities,
+            nicQuota,
+            networkQuota,
+            vmQuota,
+            isEnabled,
+            status);
    }
 
    @Override

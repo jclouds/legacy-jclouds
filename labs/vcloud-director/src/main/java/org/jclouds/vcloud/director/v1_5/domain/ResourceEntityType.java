@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
@@ -34,26 +33,17 @@ import com.google.common.collect.Sets;
 
 /**
  * Base type that represents a resource entity such as a vApp template or virtual media.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="ResourceEntity" &gt;
  * </pre>
- * 
+ *
  * @author danikov
+ * @author Adam Lowe
  */
-public class ResourceEntityType<T extends ResourceEntityType<T>> extends EntityType<T> {
+public abstract class ResourceEntityType<T extends ResourceEntityType<T>> extends EntityType<T> {
 
-   public static <T extends ResourceEntityType<T>> Builder<T> builder() {
-      return new Builder<T>();
-   }
-
-   @Override
-   public Builder<T> toBuilder() {
-      return new Builder<T>().fromResourceEntityType(this);
-   }
-
-   public static class Builder<T extends ResourceEntityType<T>> extends EntityType.Builder<T> {
-
+   public static abstract class Builder<T extends ResourceEntityType<T>> extends EntityType.Builder<T> {
       protected FilesList files;
       protected Integer status;
 
@@ -71,19 +61,6 @@ public class ResourceEntityType<T extends ResourceEntityType<T>> extends EntityT
       public Builder<T> status(Integer status) {
          this.status = status;
          return this;
-      }
-
-      @Override
-      public ResourceEntityType<T> build() {
-         ResourceEntityType<T> resourceEntity = new ResourceEntityType<T>(href, name);
-         resourceEntity.setFiles(files);
-         resourceEntity.setStatus(status);
-         resourceEntity.setDescription(description);
-         resourceEntity.setTasksInProgress(tasksInProgress);
-         resourceEntity.setId(id);
-         resourceEntity.setType(type);
-         resourceEntity.setLinks(links);
-         return resourceEntity;
       }
 
       /**
@@ -123,7 +100,7 @@ public class ResourceEntityType<T extends ResourceEntityType<T>> extends EntityT
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder<T> links(Set<Link> links) {
@@ -132,7 +109,7 @@ public class ResourceEntityType<T extends ResourceEntityType<T>> extends EntityT
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder<T> link(Link link) {
@@ -151,19 +128,22 @@ public class ResourceEntityType<T extends ResourceEntityType<T>> extends EntityT
       }
    }
 
-   protected ResourceEntityType() {
-      // for JAXB
-   }
-   
-   protected ResourceEntityType(URI href, String name) {
-      super(href, name);
-   }
-
    @XmlElement(name = "Files")
    protected FilesList files;
    @XmlAttribute
    protected Integer status;
 
+   public ResourceEntityType(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, String name, FilesList files, Integer status) {
+      super(href, type, links, description, tasksInProgress, id, name);
+      this.files = files;
+      this.status = status;
+   }
+
+   protected ResourceEntityType() {
+      // for JAXB
+   }
+
+   
    /**
     * Gets the value of the files property.
     */
@@ -171,19 +151,11 @@ public class ResourceEntityType<T extends ResourceEntityType<T>> extends EntityT
       return files;
    }
 
-   public void setFiles(FilesList value) {
-      this.files = value;
-   }
-
    /**
     * Gets the value of the status property.
     */
    public Integer getStatus() {
       return status;
-   }
-
-   public void setStatus(Integer value) {
-      this.status = value;
    }
 
    @Override

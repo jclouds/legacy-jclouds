@@ -21,8 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
@@ -30,14 +28,13 @@ import com.google.common.base.Objects;
 
 
 /**
- * 
- *                 Represents vApp Template upload parameters.
- *             
- * 
+ * Represents vApp Template upload parameters.
+ * <p/>
+ * <p/>
  * <p>Java class for UploadVAppTemplateParams complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="UploadVAppTemplateParams">
  *   &lt;complexContent>
@@ -49,13 +46,10 @@ import com.google.common.base.Objects;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UploadVAppTemplateParams")
 public class UploadVAppTemplateParams
-    extends ParamsType<UploadVAppTemplateParams>
+      extends ParamsType<UploadVAppTemplateParams>
 
 {
    @SuppressWarnings("unchecked")
@@ -68,7 +62,7 @@ public class UploadVAppTemplateParams
    }
 
    public static class Builder extends ParamsType.Builder<UploadVAppTemplateParams> {
-      
+
       private String transferFormat;
       private Boolean manifestRequired;
 
@@ -81,7 +75,7 @@ public class UploadVAppTemplateParams
       }
 
       /**
-       * @see UploadVAppTemplateParams#getManifestRequired()
+       * @see UploadVAppTemplateParams#isManifestRequired()
        */
       public Builder manifestRequired(Boolean manifestRequired) {
          this.manifestRequired = manifestRequired;
@@ -90,98 +84,73 @@ public class UploadVAppTemplateParams
 
 
       public UploadVAppTemplateParams build() {
-         UploadVAppTemplateParams uploadVAppTemplateParams = new UploadVAppTemplateParams();
-         uploadVAppTemplateParams.setTransferFormat(transferFormat);
-         uploadVAppTemplateParams.setManifestRequired(manifestRequired);
-         return uploadVAppTemplateParams;
+         return new UploadVAppTemplateParams(description, name, transferFormat, manifestRequired);
       }
 
 
       @Override
       public Builder fromParamsType(ParamsType<UploadVAppTemplateParams> in) {
-          return Builder.class.cast(super.fromParamsType(in));
+         return Builder.class.cast(super.fromParamsType(in));
       }
+
       public Builder fromUploadVAppTemplateParams(UploadVAppTemplateParams in) {
          return fromParamsType(in)
-            .transferFormat(in.getTransferFormat())
-            .manifestRequired(in.isManifestRequired());
+               .transferFormat(in.getTransferFormat())
+               .manifestRequired(in.isManifestRequired());
       }
+   }
+
+   public UploadVAppTemplateParams(String description, String name, String transferFormat, Boolean manifestRequired) {
+      super(description, name);
+      this.transferFormat = transferFormat;
+      this.manifestRequired = manifestRequired;
    }
 
    private UploadVAppTemplateParams() {
-      // For JAXB and builder use
+      // For JAXB
    }
 
 
+   @XmlAttribute
+   protected String transferFormat;
+   @XmlAttribute
+   protected Boolean manifestRequired;
 
-    @XmlAttribute
-    protected String transferFormat;
-    @XmlAttribute
-    protected Boolean manifestRequired;
+   /**
+    * Gets the value of the transferFormat property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getTransferFormat() {
+      return transferFormat;
+   }
 
-    /**
-     * Gets the value of the transferFormat property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getTransferFormat() {
-        return transferFormat;
-    }
-
-    /**
-     * Sets the value of the transferFormat property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setTransferFormat(String value) {
-        this.transferFormat = value;
-    }
-
-    /**
-     * Gets the value of the manifestRequired property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isManifestRequired() {
-        return manifestRequired;
-    }
-
-    /**
-     * Sets the value of the manifestRequired property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setManifestRequired(Boolean value) {
-        this.manifestRequired = value;
-    }
+   /**
+    * Gets the value of the manifestRequired property.
+    *
+    * @return possible object is
+    *         {@link Boolean }
+    */
+   public Boolean isManifestRequired() {
+      return manifestRequired;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       UploadVAppTemplateParams that = UploadVAppTemplateParams.class.cast(o);
-      return equal(transferFormat, that.transferFormat) && 
-           equal(manifestRequired, that.manifestRequired);
+      return equal(transferFormat, that.transferFormat) &&
+            equal(manifestRequired, that.manifestRequired);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(transferFormat, 
-           manifestRequired);
+      return Objects.hashCode(transferFormat,
+            manifestRequired);
    }
 
    @Override

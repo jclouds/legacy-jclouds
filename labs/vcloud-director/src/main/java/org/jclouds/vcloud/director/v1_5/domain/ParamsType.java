@@ -21,8 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
@@ -32,14 +30,13 @@ import com.google.common.base.Objects;
 
 
 /**
- * 
- *                 A basic type used to specify parameters for operations.
- *             
- * 
+ * A basic type used to specify parameters for operations.
+ * <p/>
+ * <p/>
  * <p>Java class for Params complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="Params">
  *   &lt;complexContent>
@@ -53,19 +50,16 @@ import com.google.common.base.Objects;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Params", propOrder = {
-    "description"
+      "description"
 })
 @XmlSeeAlso({
-//    CaptureVAppParams.class,
-//    CloneVAppTemplateParams.class,
-//    CloneMediaParams.class,
-//    UploadVAppTemplateParams.class,
-//    ImportVmAsVAppTemplateParams.class,
+    CaptureVAppParams.class,
+    CloneVAppTemplateParams.class,
+    CloneMediaParams.class,
+    UploadVAppTemplateParams.class
+//,    ImportVmAsVAppTemplateParams.class,
 //    ImportMediaParams.class,
 //    UpdateResourcePoolSetParams.class,
 //    VAppCreationParams.class
@@ -79,8 +73,8 @@ public class ParamsType<T extends ParamsType<T>> {
       return new Builder<T>().fromParamsType(this);
    }
 
-   public static class Builder<T extends ParamsType<T>>{
-      
+   public static class Builder<T extends ParamsType<T>> {
+
       protected String description;
       protected String name;
 
@@ -102,17 +96,18 @@ public class ParamsType<T extends ParamsType<T>> {
 
 
       public ParamsType<T> build() {
-         ParamsType<T> params = new ParamsType<T>();
-         params.setDescription(description);
-         params.setName(name);
-         return params;
+         return new ParamsType<T>(description, name);
       }
-
 
       public Builder<T> fromParamsType(ParamsType<T> in) {
          return description(in.getDescription())
-            .name(in.getName());
+               .name(in.getName());
       }
+   }
+
+   protected ParamsType(String description, String name) {
+      this.description = description;
+      this.name = name;
    }
 
    protected ParamsType() {
@@ -120,75 +115,46 @@ public class ParamsType<T extends ParamsType<T>> {
    }
 
 
+   @XmlElement(name = "Description")
+   protected String description;
+   @XmlAttribute
+   protected String name;
 
-    @XmlElement(name = "Description")
-    protected String description;
-    @XmlAttribute
-    protected String name;
+   /**
+    * Gets the value of the description property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getDescription() {
+      return description;
+   }
 
-    /**
-     * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setDescription(String value) {
-        this.description = value;
-    }
-
-    /**
-     * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
+   /**
+    * Gets the value of the name property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getName() {
+      return name;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       ParamsType<?> that = ParamsType.class.cast(o);
-      return equal(description, that.description) && 
-           equal(name, that.name);
+      return equal(description, that.description) &&
+            equal(name, that.name);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(description, 
-           name);
+      return Objects.hashCode(description,
+            name);
    }
 
    @Override

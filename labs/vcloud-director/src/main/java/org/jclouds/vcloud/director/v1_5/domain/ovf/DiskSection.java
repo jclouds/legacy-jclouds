@@ -22,11 +22,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
 import java.util.Set;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -40,7 +40,6 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  * @author Adam Lowe
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "DiskSection", namespace = VCLOUD_OVF_NS)
 @XmlType(propOrder = {
       "disks"
@@ -84,7 +83,7 @@ public class DiskSection extends SectionType<DiskSection> {
        */
       @Override
       public DiskSection build() {
-         return new DiskSection(info, disks);
+         return new DiskSection(info, required, disks);
       }
 
       public Builder fromDiskSection(DiskSection in) {
@@ -107,12 +106,21 @@ public class DiskSection extends SectionType<DiskSection> {
          return Builder.class.cast(super.info(info));
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder required(Boolean required) {
+         return Builder.class.cast(super.required(required));
+      }
+
    }
 
+   @XmlElementRef
    private Set<Disk> disks;
 
-   private DiskSection(String info, Iterable<Disk> disks) {
-      super(info);
+   private DiskSection(@Nullable String info, @Nullable Boolean required, Iterable<Disk> disks) {
+      super(info, required);
       this.disks = ImmutableSet.<Disk>copyOf(checkNotNull(disks, "disks"));
    }
    

@@ -21,8 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -30,14 +28,13 @@ import com.google.common.base.Objects;
 
 
 /**
- * 
- *                 Collection of supported hardware capabilities.
- *             
- * 
+ * Collection of supported hardware capabilities.
+ * <p/>
+ * <p/>
  * <p>Java class for Capabilities complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="Capabilities">
  *   &lt;complexContent>
@@ -50,12 +47,9 @@ import com.google.common.base.Objects;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Capabilities", propOrder = {
-    "supportedHardwareVersions"
+      "supportedHardwareVersions"
 })
 public class Capabilities {
    public static Builder builder() {
@@ -67,7 +61,7 @@ public class Capabilities {
    }
 
    public static class Builder {
-      
+
       private SupportedHardwareVersions supportedHardwareVersions;
 
       /**
@@ -80,9 +74,7 @@ public class Capabilities {
 
 
       public Capabilities build() {
-         Capabilities capabilities = new Capabilities();
-         capabilities.setSupportedHardwareVersions(supportedHardwareVersions);
-         return capabilities;
+         return new Capabilities(supportedHardwareVersions);
       }
 
 
@@ -91,43 +83,32 @@ public class Capabilities {
       }
    }
 
+   private Capabilities(SupportedHardwareVersions supportedHardwareVersions) {
+      this.supportedHardwareVersions = supportedHardwareVersions;
+   }
+
    private Capabilities() {
-      // For JAXB and builder use
+      // For JAXB 
    }
 
 
+   @XmlElement(name = "SupportedHardwareVersions")
+   protected SupportedHardwareVersions supportedHardwareVersions;
 
-    @XmlElement(name = "SupportedHardwareVersions")
-    protected SupportedHardwareVersions supportedHardwareVersions;
-
-    /**
-     * Gets the value of the supportedHardwareVersions property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SupportedHardwareVersions }
-     *     
-     */
-    public SupportedHardwareVersions getSupportedHardwareVersions() {
-        return supportedHardwareVersions;
-    }
-
-    /**
-     * Sets the value of the supportedHardwareVersions property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SupportedHardwareVersions }
-     *     
-     */
-    public void setSupportedHardwareVersions(SupportedHardwareVersions value) {
-        this.supportedHardwareVersions = value;
-    }
+   /**
+    * Gets the value of the supportedHardwareVersions property.
+    *
+    * @return possible object is
+    *         {@link SupportedHardwareVersions }
+    */
+   public SupportedHardwareVersions getSupportedHardwareVersions() {
+      return supportedHardwareVersions;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       Capabilities that = Capabilities.class.cast(o);

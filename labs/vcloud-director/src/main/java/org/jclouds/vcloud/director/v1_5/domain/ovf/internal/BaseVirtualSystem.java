@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
@@ -164,10 +165,10 @@ public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends 
    private Multimap<String, SectionType> additionalSections;
 
    @SuppressWarnings("unchecked")
-   protected BaseVirtualSystem(String id, String info, String name, OperatingSystemSection operatingSystem,
+   protected BaseVirtualSystem(String id, String info, @Nullable Boolean required, String name, OperatingSystemSection operatingSystem,
             Iterable<? extends VirtualHardwareSection> virtualHardwareSections,
             Iterable<? extends ProductSection> productSections, Multimap<String, SectionType> additionalSections) {
-      super(info);
+      super(info, required);
       this.id = id;
       this.name = name;
       this.operatingSystem = checkNotNull(operatingSystem, "operatingSystem");
@@ -216,7 +217,7 @@ public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends 
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(id, name, info, operatingSystem, virtualHardwareSections, productSections, additionalSections);
+      return Objects.hashCode(super.hashCode(), id, name, operatingSystem, virtualHardwareSections, productSections, additionalSections);
    }
 
    @Override
@@ -226,22 +227,17 @@ public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends 
       if (getClass() != obj.getClass()) return false;
 
       BaseVirtualSystem<?> other = (BaseVirtualSystem<?>) obj;
-      return Objects.equal(id, other.id)
+      return super.equals(other) 
+            && Objects.equal(id, other.id)
             && Objects.equal(name, other.name)
-            && Objects.equal(info, other.info)
             && Objects.equal(operatingSystem, other.operatingSystem)
             && Objects.equal(virtualHardwareSections, other.virtualHardwareSections)
             && Objects.equal(productSections, other.productSections)
             && Objects.equal(additionalSections, other.additionalSections);
    }
 
-   @Override
-   public String toString() {
-      return string().toString();
-   }
-
    protected Objects.ToStringHelper string() {
-      return Objects.toStringHelper("").add("id", id).add("name", name).add("info", info)
+      return super.string().add("id", id).add("name", name)
             .add("operatingSystem", operatingSystem).add("virtualHardwareSections", virtualHardwareSections)
             .add("productSections", productSections).add("additionalSections", additionalSections)
             .add("additionalSections", additionalSections);

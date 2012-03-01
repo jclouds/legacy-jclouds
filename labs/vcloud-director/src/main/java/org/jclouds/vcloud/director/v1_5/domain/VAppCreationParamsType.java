@@ -21,8 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
@@ -32,14 +30,13 @@ import com.google.common.base.Objects;
 
 
 /**
- * 
- *                 Represents vApp creation parameters.
- *             
- * 
+ * Represents vApp creation parameters.
+ * <p/>
+ * <p/>
  * <p>Java class for VAppCreationParams complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="VAppCreationParams">
  *   &lt;complexContent>
@@ -55,13 +52,10 @@ import com.google.common.base.Objects;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "VAppCreationParams", propOrder = {
-    "vAppParent",
-    "instantiationParams"
+      "vAppParent",
+      "instantiationParams"
 })
 @XmlSeeAlso({
 //    InstantiateOvfParamsType.class,
@@ -70,7 +64,7 @@ import com.google.common.base.Objects;
 //    ImportVmAsVAppParamsType.class
 })
 public class VAppCreationParamsType<T extends VAppCreationParamsType<T>>
-    extends ParamsType<T>
+      extends ParamsType<T>
 
 {
    public static <T extends VAppCreationParamsType<T>> Builder<T> builder() {
@@ -82,7 +76,7 @@ public class VAppCreationParamsType<T extends VAppCreationParamsType<T>>
    }
 
    public static class Builder<T extends VAppCreationParamsType<T>> extends ParamsType.Builder<T> {
-      
+
       protected Reference vAppParent;
       protected InstantiationParams instantiationParams;
       protected Boolean deploy;
@@ -105,7 +99,7 @@ public class VAppCreationParamsType<T extends VAppCreationParamsType<T>>
       }
 
       /**
-       * @see VAppCreationParamsType#getDeploy()
+       * @see VAppCreationParamsType#isDeploy()
        */
       public Builder<T> deploy(Boolean deploy) {
          this.deploy = deploy;
@@ -113,7 +107,7 @@ public class VAppCreationParamsType<T extends VAppCreationParamsType<T>>
       }
 
       /**
-       * @see VAppCreationParamsType#getPowerOn()
+       * @see VAppCreationParamsType#isPowerOn()
        */
       public Builder<T> powerOn(Boolean powerOn) {
          this.powerOn = powerOn;
@@ -122,16 +116,9 @@ public class VAppCreationParamsType<T extends VAppCreationParamsType<T>>
 
 
       public VAppCreationParamsType<T> build() {
-         VAppCreationParamsType<T> vAppCreationParams = new VAppCreationParamsType<T>();
-         vAppCreationParams.setVAppParent(vAppParent);
-         vAppCreationParams.setInstantiationParams(instantiationParams);
-         vAppCreationParams.setDeploy(deploy);
-         vAppCreationParams.setPowerOn(powerOn);
-         vAppCreationParams.setDescription(description);
-         vAppCreationParams.setName(name);
-         return vAppCreationParams;
+         return new VAppCreationParamsType<T>(description, name, vAppParent, instantiationParams,deploy, powerOn);
       }
-      
+
       /**
        * @see ParamsType#getDescription()
        */
@@ -154,145 +141,99 @@ public class VAppCreationParamsType<T extends VAppCreationParamsType<T>>
       @SuppressWarnings("unchecked")
       @Override
       public Builder<T> fromParamsType(ParamsType<T> in) {
-          return Builder.class.cast(super.fromParamsType(in));
+         return Builder.class.cast(super.fromParamsType(in));
       }
+
       public Builder<T> fromVAppCreationParamsType(VAppCreationParamsType<T> in) {
          return fromParamsType(in)
-            .vAppParent(in.getVAppParent())
-            .instantiationParams(in.getInstantiationParams())
-            .deploy(in.isDeploy())
-            .powerOn(in.isPowerOn());
+               .vAppParent(in.getVAppParent())
+               .instantiationParams(in.getInstantiationParams())
+               .deploy(in.isDeploy())
+               .powerOn(in.isPowerOn());
       }
+   }
+
+   @XmlElement(name = "VAppParent")
+   protected Reference vAppParent;
+   @XmlElement(name = "InstantiationParams")
+   protected InstantiationParams instantiationParams;
+   @XmlAttribute
+   protected Boolean deploy;
+   @XmlAttribute
+   protected Boolean powerOn;
+
+   public VAppCreationParamsType(String description, String name, Reference vAppParent,
+                                 InstantiationParams instantiationParams, Boolean deploy, Boolean powerOn) {
+      super(description, name);
+      this.vAppParent = vAppParent;
+      this.instantiationParams = instantiationParams;
+      this.deploy = deploy;
+      this.powerOn = powerOn;
    }
 
    protected VAppCreationParamsType() {
       // For JAXB and builder use
    }
 
-    @XmlElement(name = "VAppParent")
-    protected Reference vAppParent;
-    @XmlElement(name = "InstantiationParams")
-    protected InstantiationParams instantiationParams;
-    @XmlAttribute
-    protected Boolean deploy;
-    @XmlAttribute
-    protected Boolean powerOn;
+   /**
+    * Gets the value of the vAppParent property.
+    *
+    * @return possible object is
+    *         {@link Reference }
+    */
+   public Reference getVAppParent() {
+      return vAppParent;
+   }
 
-    /**
-     * Gets the value of the vAppParent property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Reference }
-     *     
-     */
-    public Reference getVAppParent() {
-        return vAppParent;
-    }
+   /**
+    * Gets the value of the instantiationParams property.
+    *
+    * @return possible object is
+    *         {@link InstantiationParams }
+    */
+   public InstantiationParams getInstantiationParams() {
+      return instantiationParams;
+   }
 
-    /**
-     * Sets the value of the vAppParent property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Reference }
-     *     
-     */
-    public void setVAppParent(Reference value) {
-        this.vAppParent = value;
-    }
+   /**
+    * Gets the value of the deploy property.
+    *
+    * @return possible object is
+    *         {@link Boolean }
+    */
+   public Boolean isDeploy() {
+      return deploy;
+   }
 
-    /**
-     * Gets the value of the instantiationParams property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link InstantiationParams }
-     *     
-     */
-    public InstantiationParams getInstantiationParams() {
-        return instantiationParams;
-    }
-
-    /**
-     * Sets the value of the instantiationParams property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link InstantiationParams }
-     *     
-     */
-    public void setInstantiationParams(InstantiationParams value) {
-        this.instantiationParams = value;
-    }
-
-    /**
-     * Gets the value of the deploy property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isDeploy() {
-        return deploy;
-    }
-
-    /**
-     * Sets the value of the deploy property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setDeploy(Boolean value) {
-        this.deploy = value;
-    }
-
-    /**
-     * Gets the value of the powerOn property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isPowerOn() {
-        return powerOn;
-    }
-
-    /**
-     * Sets the value of the powerOn property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setPowerOn(Boolean value) {
-        this.powerOn = value;
-    }
+   /**
+    * Gets the value of the powerOn property.
+    *
+    * @return possible object is
+    *         {@link Boolean }
+    */
+   public Boolean isPowerOn() {
+      return powerOn;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       VAppCreationParamsType<?> that = VAppCreationParamsType.class.cast(o);
-      return equal(vAppParent, that.vAppParent) && 
-           equal(instantiationParams, that.instantiationParams) && 
-           equal(deploy, that.deploy) && 
-           equal(powerOn, that.powerOn);
+      return equal(vAppParent, that.vAppParent) &&
+            equal(instantiationParams, that.instantiationParams) &&
+            equal(deploy, that.deploy) &&
+            equal(powerOn, that.powerOn);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(vAppParent, 
-           instantiationParams, 
-           deploy, 
-           powerOn);
+      return Objects.hashCode(vAppParent,
+            instantiationParams,
+            deploy,
+            powerOn);
    }
 
    @Override

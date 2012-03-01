@@ -20,11 +20,8 @@ package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
@@ -33,7 +30,6 @@ import com.google.common.base.Objects;
  * @author Adrian Cole
  * @author Adam Lowe
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Configuration", namespace = VCLOUD_OVF_NS, propOrder = {
       "label", "description"
 })

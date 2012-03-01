@@ -20,11 +20,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -36,16 +34,16 @@ import com.google.common.collect.Sets;
 
 /**
  * Represents a metadata entry
- * 
+ * <p/>
  * <pre>
  * &lt;xs:complexType name="MetadataType"&gt;
  * </pre>
  *
  * @author danikov
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "MetadataEntry")
+@XmlRootElement(name = "MetadataEntry")
 public class MetadataEntry extends ResourceType<MetadataEntry> {
-   
+
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.METADATA_ENTRY;
 
    @SuppressWarnings("unchecked")
@@ -53,7 +51,6 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
       return new Builder();
    }
 
-   @Override
    public Builder toBuilder() {
       return new Builder().fromMetadataEntry(this);
    }
@@ -87,15 +84,12 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
          this.value = value;
          return this;
       }
-      
+
       @Override
       public MetadataEntry build() {
-         MetadataEntry metadataEntry = new MetadataEntry(href, key, value);
-         metadataEntry.setType(type);
-         metadataEntry.setLinks(links);
-         return metadataEntry;
+         return new MetadataEntry(href, type, links, key, value);
       }
-      
+
       /**
        * @see ResourceType#getHref()
        */
@@ -149,15 +143,15 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
       // For JAXB and builder use
    }
 
-   private MetadataEntry(URI href, String key, String value) {
-      super(href);
+   public MetadataEntry(URI href, String type, Set<Link> links, String key, String value) {
+      super(href, type, links);
       this.key = checkNotNull(key, "key");
       this.value = checkNotNull(value, "value");
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Key")
+   @XmlElement(name = "Key")
    private String key;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Value")
+   @XmlElement(name = "Value")
    private String value;
 
    /**
@@ -173,7 +167,7 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
    public String getValue() {
       return value;
    }
-   
+
    @Override
    public boolean equals(Object o) {
       if (this == o)

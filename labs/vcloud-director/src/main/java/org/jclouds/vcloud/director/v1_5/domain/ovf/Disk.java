@@ -18,19 +18,15 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
-
 import java.net.URI;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
  * @author Adrian Cole
  * @author Adam Lowe
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Disk", namespace = VCLOUD_OVF_NS)
+@XmlRootElement(name = "Disk")
 public class Disk implements Comparable<Disk>{
    public static Builder builder() {
       return new Builder();

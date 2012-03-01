@@ -19,13 +19,13 @@
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
+import java.util.Collections;
 import java.util.Set;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -41,8 +41,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  * @author Adam Lowe
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "DeploymentOptionSection", namespace = VCLOUD_OVF_NS)
+@XmlRootElement(name = "DeploymentOptionSection")
 public class DeploymentOptionSection extends SectionType<DeploymentOptionSection> {
 
    @SuppressWarnings("unchecked")
@@ -82,7 +81,7 @@ public class DeploymentOptionSection extends SectionType<DeploymentOptionSection
        */
       @Override
       public DeploymentOptionSection build() {
-         return new DeploymentOptionSection(info, configurations);
+         return new DeploymentOptionSection(info, required, configurations);
       }
 
       public Builder fromDeploymentOptionSection(DeploymentOptionSection in) {
@@ -105,19 +104,30 @@ public class DeploymentOptionSection extends SectionType<DeploymentOptionSection
          return Builder.class.cast(super.info(info));
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder required(Boolean required) {
+         return Builder.class.cast(super.required(required));
+      }
+
    }
 
    @XmlElement(name = "Configuration")
    protected Set<Configuration> configurations;
 
-   private DeploymentOptionSection(String info, Iterable<Configuration> configurations) {
-      super(info);
-      this.configurations = ImmutableSet.<Configuration>copyOf(checkNotNull(configurations, "configurations"));
-
+   private DeploymentOptionSection(@Nullable String info, @Nullable Boolean required, Iterable<Configuration> configurations) {
+      super(info, required);
+      this.configurations = ImmutableSet.copyOf(configurations);
    }
 
    private DeploymentOptionSection() {
       // For JAXB
+   }
+
+   public Set<Configuration> getConfigurations() {
+      return Collections.unmodifiableSet(configurations);
    }
 
    @Override
@@ -139,9 +149,4 @@ public class DeploymentOptionSection extends SectionType<DeploymentOptionSection
    protected Objects.ToStringHelper string() {
       return super.string().add("configurations", configurations);
    }
-
-   public Set<Configuration> getConfigurations() {
-      return configurations;
-   }
-
 }

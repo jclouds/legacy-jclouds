@@ -20,23 +20,22 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyElement;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.w3c.dom.Element;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 
 /**
@@ -64,12 +63,10 @@ import com.google.common.base.Objects;
  * &lt;/complexType>
  * </pre>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "CustomizationSection")
 @XmlType(propOrder = {
       "customizeOnInstantiate",
-      "link",
-      "any"
+      "links"
 })
 public class CustomizationSection extends SectionType<CustomizationSection> {
    public static Builder builder() {
@@ -82,8 +79,7 @@ public class CustomizationSection extends SectionType<CustomizationSection> {
 
    public static class Builder extends SectionType.Builder<CustomizationSection> {
       private boolean customizeOnInstantiate;
-      private List<Link> link;
-      private List<Object> any;
+      private Set<Link> links = Sets.newLinkedHashSet();
       private URI href;
       private String type;
 
@@ -96,18 +92,10 @@ public class CustomizationSection extends SectionType<CustomizationSection> {
       }
 
       /**
-       * @see CustomizationSection#getLink()
+       * @see CustomizationSection#getLinks()
        */
-      public Builder link(List<Link> link) {
-         this.link = link;
-         return this;
-      }
-
-      /**
-       * @see CustomizationSection#getAny()
-       */
-      public Builder any(List<Object> any) {
-         this.any = any;
+      public Builder links(Set<Link> links) {
+         this.links = checkNotNull(links, "links");
          return this;
       }
 
@@ -129,18 +117,13 @@ public class CustomizationSection extends SectionType<CustomizationSection> {
 
 
       public CustomizationSection build() {
-         CustomizationSection customizationSection = new CustomizationSection(info, link, any);
-         customizationSection.setCustomizeOnInstantiate(customizeOnInstantiate);
-         customizationSection.setHref(href);
-         customizationSection.setType(type);
-         return customizationSection;
+         return new CustomizationSection(info, required, customizeOnInstantiate, links, href, type);
       }
 
       public Builder fromCustomizationSection(CustomizationSection in) {
          return fromSection(in)
                .customizeOnInstantiate(in.isCustomizeOnInstantiate())
-               .link(in.getLink())
-               .any(in.getAny())
+               .links(in.getLinks())
                .href(in.getHref())
                .type(in.getType());
       }
@@ -160,13 +143,23 @@ public class CustomizationSection extends SectionType<CustomizationSection> {
       public Builder info(String info) {
          return Builder.class.cast(super.info(info));
       }
-      
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder required(Boolean required) {
+         return Builder.class.cast(super.required(required));
+      }
    }
 
-   private CustomizationSection(String info, List<Link> link, List<Object> any) {
-      super(info);
-      this.link = link;
-      this.any = any;
+   private CustomizationSection(@Nullable String info, @Nullable Boolean required, boolean customizeOnInstantiate, Set<Link> links,
+                               URI href, String type) {
+      super(info, required);
+      this.customizeOnInstantiate = customizeOnInstantiate;
+      this.links = ImmutableSet.copyOf(links);
+      this.href = href;
+      this.type = type;
    }
 
    private CustomizationSection() {
@@ -176,9 +169,7 @@ public class CustomizationSection extends SectionType<CustomizationSection> {
    @XmlElement(name = "CustomizeOnInstantiate")
    protected boolean customizeOnInstantiate;
    @XmlElement(name = "Link")
-   protected List<Link> link;
-   @XmlAnyElement(lax = true)
-   protected List<Object> any;
+   protected Set<Link> links = Sets.newLinkedHashSet();
    @XmlAttribute
    @XmlSchemaType(name = "anyURI")
    protected URI href;
@@ -193,65 +184,10 @@ public class CustomizationSection extends SectionType<CustomizationSection> {
    }
 
    /**
-    * Sets the value of the customizeOnInstantiate property.
+    * Gets the value of the links property.
     */
-   public void setCustomizeOnInstantiate(boolean value) {
-      this.customizeOnInstantiate = value;
-   }
-
-   /**
-    * Gets the value of the link property.
-    * <p/>
-    * <p/>
-    * This accessor method returns a reference to the live list,
-    * not a snapshot. Therefore any modification you make to the
-    * returned list will be present inside the JAXB object.
-    * This is why there is not a <CODE>set</CODE> method for the link property.
-    * <p/>
-    * <p/>
-    * For example, to add a new item, do as follows:
-    * <pre>
-    *    getLink().add(newItem);
-    * </pre>
-    * <p/>
-    * <p/>
-    * <p/>
-    * Objects of the following type(s) are allowed in the list
-    * {@link Link }
-    */
-   public List<Link> getLink() {
-      if (link == null) {
-         link = new ArrayList<Link>();
-      }
-      return this.link;
-   }
-
-   /**
-    * Gets the value of the any property.
-    * <p/>
-    * <p/>
-    * This accessor method returns a reference to the live list,
-    * not a snapshot. Therefore any modification you make to the
-    * returned list will be present inside the JAXB object.
-    * This is why there is not a <CODE>set</CODE> method for the any property.
-    * <p/>
-    * <p/>
-    * For example, to add a new item, do as follows:
-    * <pre>
-    *    getAny().add(newItem);
-    * </pre>
-    * <p/>
-    * <p/>
-    * <p/>
-    * Objects of the following type(s) are allowed in the list
-    * {@link Object }
-    * {@link Element }
-    */
-   public List<Object> getAny() {
-      if (any == null) {
-         any = new ArrayList<Object>();
-      }
-      return this.any;
+   public Set<Link> getLinks() {
+      return this.links;
    }
 
    /**
@@ -265,16 +201,6 @@ public class CustomizationSection extends SectionType<CustomizationSection> {
    }
 
    /**
-    * Sets the value of the href property.
-    *
-    * @param value allowed object is
-    *              {@link String }
-    */
-   public void setHref(URI value) {
-      this.href = value;
-   }
-
-   /**
     * Gets the value of the type property.
     *
     * @return possible object is
@@ -284,16 +210,6 @@ public class CustomizationSection extends SectionType<CustomizationSection> {
       return type;
    }
 
-   /**
-    * Sets the value of the type property.
-    *
-    * @param value allowed object is
-    *              {@link String }
-    */
-   public void setType(String value) {
-      this.type = value;
-   }
-
    @Override
    public boolean equals(Object o) {
       if (this == o)
@@ -301,30 +217,30 @@ public class CustomizationSection extends SectionType<CustomizationSection> {
       if (o == null || getClass() != o.getClass())
          return false;
       CustomizationSection that = CustomizationSection.class.cast(o);
-      return equal(customizeOnInstantiate, that.customizeOnInstantiate) &&
-            equal(link, that.link) &&
-            equal(any, that.any) &&
+      return super.equals(that) && 
+            equal(customizeOnInstantiate, that.customizeOnInstantiate) &&
+            equal(links, that.links) &&
             equal(href, that.href) &&
             equal(type, that.type);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(customizeOnInstantiate,
-            link,
-            any,
+      return Objects.hashCode(
+            super.hashCode(),
+            customizeOnInstantiate,
+            links,
             href,
             type);
    }
 
    @Override
-   public String toString() {
-      return Objects.toStringHelper("")
+   public Objects.ToStringHelper string() {
+      return super.string()
             .add("customizeOnInstantiate", customizeOnInstantiate)
-            .add("link", link)
-            .add("any", any)
+            .add("links", links)
             .add("href", href)
-            .add("type", type).toString();
+            .add("type", type);
    }
 
 }

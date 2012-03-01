@@ -20,12 +20,9 @@ package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.vcloud.director.v1_5.domain.ovf.internal.BaseEnvelope;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualSystem;
 
 import com.google.common.collect.Multimap;
 
@@ -33,7 +30,6 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  * @author Adam Lowe
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Envelope", namespace = VCLOUD_OVF_NS)
 public class Envelope extends BaseEnvelope<VirtualSystem, Envelope> {
 

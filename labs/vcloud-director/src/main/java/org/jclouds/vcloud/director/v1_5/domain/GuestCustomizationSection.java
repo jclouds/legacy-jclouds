@@ -20,13 +20,11 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyElement;
+import java.util.Collections;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -37,6 +35,8 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 
 /**
@@ -77,7 +77,6 @@ import com.google.common.base.Objects;
  * &lt;/complexType>
  * </pre>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "GuestCustomizationSection")
 @XmlType(propOrder = {
       "enabled",
@@ -94,8 +93,7 @@ import com.google.common.base.Objects;
       "resetPasswordRequired",
       "customizationScript",
       "computerName",
-      "link",
-      "any"
+      "links"
 })
 public class GuestCustomizationSection extends SectionType<GuestCustomizationSection> {
    @SuppressWarnings("unchecked")
@@ -108,7 +106,6 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
    }
 
    public static class Builder extends SectionType.Builder<GuestCustomizationSection> {
-
       private Boolean enabled;
       private Boolean changeSid;
       private String virtualMachineId;
@@ -123,8 +120,7 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
       private Boolean resetPasswordRequired;
       private String customizationScript;
       private String computerName;
-      private List<Link> link;
-      private List<Object> any;
+      private Set<Link> links = Sets.newLinkedHashSet();
       private URI href;
       private String type;
 
@@ -243,16 +239,8 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
       /**
        * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#getLink()
        */
-      public Builder link(List<Link> link) {
-         this.link = link;
-         return this;
-      }
-
-      /**
-       * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#getAny()
-       */
-      public Builder any(List<Object> any) {
-         this.any = any;
+      public Builder links(Set<Link> links) {
+         this.links = checkNotNull(links, "links");
          return this;
       }
 
@@ -274,25 +262,13 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
 
 
       public GuestCustomizationSection build() {
-         GuestCustomizationSection guestCustomizationSection = new GuestCustomizationSection(info, resetPasswordRequired, link, any);
-         guestCustomizationSection.setEnabled(enabled);
-         guestCustomizationSection.setChangeSid(changeSid);
-         guestCustomizationSection.setVirtualMachineId(virtualMachineId);
-         guestCustomizationSection.setJoinDomainEnabled(joinDomainEnabled);
-         guestCustomizationSection.setUseOrgSettings(useOrgSettings);
-         guestCustomizationSection.setDomainName(domainName);
-         guestCustomizationSection.setDomainUserName(domainUserName);
-         guestCustomizationSection.setDomainUserPassword(domainUserPassword);
-         guestCustomizationSection.setAdminPasswordEnabled(adminPasswordEnabled);
-         guestCustomizationSection.setAdminPasswordAuto(adminPasswordAuto);
-         guestCustomizationSection.setAdminPassword(adminPassword);
-         guestCustomizationSection.setCustomizationScript(customizationScript);
-         guestCustomizationSection.setComputerName(computerName);
-         guestCustomizationSection.setHref(href);
-         guestCustomizationSection.setType(type);
-         return guestCustomizationSection;
+         return new GuestCustomizationSection(info, required, enabled, changeSid, virtualMachineId,
+               joinDomainEnabled, useOrgSettings, domainName, domainUserName,
+               domainUserPassword, adminPasswordEnabled, adminPasswordAuto,
+               adminPassword, resetPasswordRequired, customizationScript,
+               computerName, links, href, type);
       }
-      
+
       public Builder fromGuestCustomizationSection(GuestCustomizationSection in) {
          return fromSection(in)
                .enabled(in.isEnabled())
@@ -309,8 +285,7 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
                .resetPasswordRequired(in.isResetPasswordRequired())
                .customizationScript(in.getCustomizationScript())
                .computerName(in.getComputerName())
-               .link(in.getLink())
-               .any(in.getAny())
+               .links(in.getLink())
                .href(in.getHref())
                .type(in.getType());
       }
@@ -331,58 +306,80 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
          return Builder.class.cast(super.info(info));
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder required(Boolean required) {
+         return Builder.class.cast(super.required(required));
+      }
+   }
+
+   private GuestCustomizationSection(@Nullable String info, @Nullable Boolean required, Boolean enabled, Boolean changeSid, String virtualMachineId,
+                                     Boolean joinDomainEnabled, Boolean useOrgSettings, String domainName, String domainUserName,
+                                     String domainUserPassword, Boolean adminPasswordEnabled, Boolean adminPasswordAuto,
+                                     String adminPassword, Boolean resetPasswordRequired, String customizationScript,
+                                     String computerName, Set<Link> links,  URI href, String type) {
+      super(info, required);
+      this.enabled = enabled;
+      this.changeSid = changeSid;
+      this.virtualMachineId = virtualMachineId;
+      this.joinDomainEnabled = joinDomainEnabled;
+      this.useOrgSettings = useOrgSettings;
+      this.domainName = domainName;
+      this.domainUserName = domainUserName;
+      this.domainUserPassword = domainUserPassword;
+      this.adminPasswordEnabled = adminPasswordEnabled;
+      this.adminPasswordAuto = adminPasswordAuto;
+      this.adminPassword = adminPassword;
+      this.resetPasswordRequired = resetPasswordRequired;
+      this.customizationScript = customizationScript;
+      this.computerName = computerName;
+      this.links = ImmutableSet.copyOf(links);
+      this.href = href;
+      this.type = type;
    }
 
    private GuestCustomizationSection() {
       // For JAXB and builder use
-      super(null);
-   }
-
-   private GuestCustomizationSection(@Nullable String info, Boolean resetPasswordRequired, List<Link> link, List<Object> any) {
-      super(info);
-      this.resetPasswordRequired = resetPasswordRequired;
-      this.link = link;
-      this.any = any;
    }
 
 
    @XmlElement(name = "Enabled")
-   protected Boolean enabled;
+   private Boolean enabled;
    @XmlElement(name = "ChangeSid")
-   protected Boolean changeSid;
+   private Boolean changeSid;
    @XmlElement(name = "VirtualMachineId")
-   protected String virtualMachineId;
+   private String virtualMachineId;
    @XmlElement(name = "JoinDomainEnabled")
-   protected Boolean joinDomainEnabled;
+   private Boolean joinDomainEnabled;
    @XmlElement(name = "UseOrgSettings")
-   protected Boolean useOrgSettings;
+   private Boolean useOrgSettings;
    @XmlElement(name = "DomainName")
-   protected String domainName;
+   private String domainName;
    @XmlElement(name = "DomainUserName")
-   protected String domainUserName;
+   private String domainUserName;
    @XmlElement(name = "DomainUserPassword")
-   protected String domainUserPassword;
+   private String domainUserPassword;
    @XmlElement(name = "AdminPasswordEnabled")
-   protected Boolean adminPasswordEnabled;
+   private Boolean adminPasswordEnabled;
    @XmlElement(name = "AdminPasswordAuto")
-   protected Boolean adminPasswordAuto;
+   private Boolean adminPasswordAuto;
    @XmlElement(name = "AdminPassword")
-   protected String adminPassword;
+   private String adminPassword;
    @XmlElement(name = "ResetPasswordRequired")
-   protected Boolean resetPasswordRequired;
+   private Boolean resetPasswordRequired;
    @XmlElement(name = "CustomizationScript")
-   protected String customizationScript;
+   private String customizationScript;
    @XmlElement(name = "ComputerName")
-   protected String computerName;
+   private String computerName;
    @XmlElement(name = "Link")
-   protected List<Link> link;
-   @XmlAnyElement(lax = true)
-   protected List<Object> any;
+   private Set<Link> links = Sets.newLinkedHashSet();
    @XmlAttribute
    @XmlSchemaType(name = "anyURI")
-   protected URI href;
+   private URI href;
    @XmlAttribute
-   protected String type;
+   private String type;
 
    /**
     * Gets the value of the enabled property.
@@ -392,16 +389,6 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
     */
    public Boolean isEnabled() {
       return enabled;
-   }
-
-   /**
-    * Sets the value of the enabled property.
-    *
-    * @param value allowed object is
-    *              {@link Boolean }
-    */
-   public void setEnabled(Boolean value) {
-      this.enabled = value;
    }
 
    /**
@@ -415,16 +402,6 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
    }
 
    /**
-    * Sets the value of the changeSid property.
-    *
-    * @param value allowed object is
-    *              {@link Boolean }
-    */
-   public void setChangeSid(Boolean value) {
-      this.changeSid = value;
-   }
-
-   /**
     * Gets the value of the virtualMachineId property.
     *
     * @return possible object is
@@ -432,16 +409,6 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
     */
    public String getVirtualMachineId() {
       return virtualMachineId;
-   }
-
-   /**
-    * Sets the value of the virtualMachineId property.
-    *
-    * @param value allowed object is
-    *              {@link String }
-    */
-   public void setVirtualMachineId(String value) {
-      this.virtualMachineId = value;
    }
 
    /**
@@ -455,16 +422,6 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
    }
 
    /**
-    * Sets the value of the joinDomainEnabled property.
-    *
-    * @param value allowed object is
-    *              {@link Boolean }
-    */
-   public void setJoinDomainEnabled(Boolean value) {
-      this.joinDomainEnabled = value;
-   }
-
-   /**
     * Gets the value of the useOrgSettings property.
     *
     * @return possible object is
@@ -474,15 +431,6 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
       return useOrgSettings;
    }
 
-   /**
-    * Sets the value of the useOrgSettings property.
-    *
-    * @param value allowed object is
-    *              {@link Boolean }
-    */
-   public void setUseOrgSettings(Boolean value) {
-      this.useOrgSettings = value;
-   }
 
    /**
     * Gets the value of the domainName property.
@@ -492,16 +440,6 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
     */
    public String getDomainName() {
       return domainName;
-   }
-
-   /**
-    * Sets the value of the domainName property.
-    *
-    * @param value allowed object is
-    *              {@link String }
-    */
-   public void setDomainName(String value) {
-      this.domainName = value;
    }
 
    /**
@@ -515,16 +453,6 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
    }
 
    /**
-    * Sets the value of the domainUserName property.
-    *
-    * @param value allowed object is
-    *              {@link String }
-    */
-   public void setDomainUserName(String value) {
-      this.domainUserName = value;
-   }
-
-   /**
     * Gets the value of the domainUserPassword property.
     *
     * @return possible object is
@@ -532,16 +460,6 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
     */
    public String getDomainUserPassword() {
       return domainUserPassword;
-   }
-
-   /**
-    * Sets the value of the domainUserPassword property.
-    *
-    * @param value allowed object is
-    *              {@link String }
-    */
-   public void setDomainUserPassword(String value) {
-      this.domainUserPassword = value;
    }
 
    /**
@@ -555,16 +473,6 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
    }
 
    /**
-    * Sets the value of the adminPasswordEnabled property.
-    *
-    * @param value allowed object is
-    *              {@link Boolean }
-    */
-   public void setAdminPasswordEnabled(Boolean value) {
-      this.adminPasswordEnabled = value;
-   }
-
-   /**
     * Gets the value of the adminPasswordAuto property.
     *
     * @return possible object is
@@ -572,16 +480,6 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
     */
    public Boolean isAdminPasswordAuto() {
       return adminPasswordAuto;
-   }
-
-   /**
-    * Sets the value of the adminPasswordAuto property.
-    *
-    * @param value allowed object is
-    *              {@link Boolean }
-    */
-   public void setAdminPasswordAuto(Boolean value) {
-      this.adminPasswordAuto = value;
    }
 
    /**
@@ -595,16 +493,6 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
    }
 
    /**
-    * Sets the value of the adminPassword property.
-    *
-    * @param value allowed object is
-    *              {@link String }
-    */
-   public void setAdminPassword(String value) {
-      this.adminPassword = value;
-   }
-
-   /**
     * Gets the value of the resetPasswordRequired property.
     *
     * @return possible object is
@@ -612,16 +500,6 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
     */
    public Boolean isResetPasswordRequired() {
       return resetPasswordRequired;
-   }
-
-   /**
-    * Sets the value of the resetPasswordRequired property.
-    *
-    * @param value allowed object is
-    *              {@link Boolean }
-    */
-   public void setResetPasswordRequired(Boolean value) {
-      this.resetPasswordRequired = value;
    }
 
    /**
@@ -635,16 +513,6 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
    }
 
    /**
-    * Sets the value of the customizationScript property.
-    *
-    * @param value allowed object is
-    *              {@link String }
-    */
-   public void setCustomizationScript(String value) {
-      this.customizationScript = value;
-   }
-
-   /**
     * Gets the value of the computerName property.
     *
     * @return possible object is
@@ -655,68 +523,13 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
    }
 
    /**
-    * Sets the value of the computerName property.
-    *
-    * @param value allowed object is
-    *              {@link String }
-    */
-   public void setComputerName(String value) {
-      this.computerName = value;
-   }
-
-   /**
     * Gets the value of the link property.
-    * <p/>
-    * <p/>
-    * This accessor method returns a reference to the live list,
-    * not a snapshot. Therefore any modification you make to the
-    * returned list will be present inside the JAXB object.
-    * This is why there is not a <CODE>set</CODE> method for the link property.
-    * <p/>
-    * <p/>
-    * For example, to add a new item, do as follows:
-    * <pre>
-    *    getLink().add(newItem);
-    * </pre>
-    * <p/>
-    * <p/>
     * <p/>
     * Objects of the following type(s) are allowed in the list
     * {@link Link }
     */
-   public List<Link> getLink() {
-      if (link == null) {
-         link = new ArrayList<Link>();
-      }
-      return this.link;
-   }
-
-   /**
-    * Gets the value of the any property.
-    * <p/>
-    * <p/>
-    * This accessor method returns a reference to the live list,
-    * not a snapshot. Therefore any modification you make to the
-    * returned list will be present inside the JAXB object.
-    * This is why there is not a <CODE>set</CODE> method for the any property.
-    * <p/>
-    * <p/>
-    * For example, to add a new item, do as follows:
-    * <pre>
-    *    getAny().add(newItem);
-    * </pre>
-    * <p/>
-    * <p/>
-    * <p/>
-    * Objects of the following type(s) are allowed in the list
-    * {@link Object }
-    * {@link org.w3c.dom.Element }
-    */
-   public List<Object> getAny() {
-      if (any == null) {
-         any = new ArrayList<Object>();
-      }
-      return this.any;
+   public Set<Link> getLink() {
+      return Collections.unmodifiableSet(this.links);
    }
 
    /**
@@ -724,13 +537,6 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
     */
    public URI getHref() {
       return href;
-   }
-
-   /**
-    * Sets the value of the href property.
-    */
-   public void setHref(URI value) {
-      this.href = value;
    }
 
    /**
@@ -743,16 +549,6 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
       return type;
    }
 
-   /**
-    * Sets the value of the type property.
-    *
-    * @param value allowed object is
-    *              {@link String }
-    */
-   public void setType(String value) {
-      this.type = value;
-   }
-
    @Override
    public boolean equals(Object o) {
       if (this == o)
@@ -760,7 +556,8 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
       if (o == null || getClass() != o.getClass())
          return false;
       GuestCustomizationSection that = GuestCustomizationSection.class.cast(o);
-      return equal(enabled, that.enabled) &&
+      return super.equals(that) &&
+            equal(enabled, that.enabled) &&
             equal(changeSid, that.changeSid) &&
             equal(virtualMachineId, that.virtualMachineId) &&
             equal(joinDomainEnabled, that.joinDomainEnabled) &&
@@ -774,15 +571,15 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
             equal(resetPasswordRequired, that.resetPasswordRequired) &&
             equal(customizationScript, that.customizationScript) &&
             equal(computerName, that.computerName) &&
-            equal(link, that.link) &&
-            equal(any, that.any) &&
+            equal(links, that.links) &&
             equal(href, that.href) &&
             equal(type, that.type);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(enabled,
+      return Objects.hashCode(super.hashCode(),
+            enabled,
             changeSid,
             virtualMachineId,
             joinDomainEnabled,
@@ -796,15 +593,14 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
             resetPasswordRequired,
             customizationScript,
             computerName,
-            link,
-            any,
+            links,
             href,
             type);
    }
 
    @Override
-   public String toString() {
-      return Objects.toStringHelper("")
+   public Objects.ToStringHelper string() {
+      return super.string()
             .add("enabled", enabled)
             .add("changeSid", changeSid)
             .add("virtualMachineId", virtualMachineId)
@@ -819,10 +615,9 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
             .add("resetPasswordRequired", resetPasswordRequired)
             .add("customizationScript", customizationScript)
             .add("computerName", computerName)
-            .add("link", link)
-            .add("any", any)
+            .add("links", links)
             .add("href", href)
-            .add("type", type).toString();
+            .add("type", type);
    }
 
 }

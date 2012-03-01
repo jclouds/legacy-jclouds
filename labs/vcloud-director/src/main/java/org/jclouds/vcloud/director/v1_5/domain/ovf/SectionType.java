@@ -20,6 +20,7 @@ package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
@@ -44,48 +45,59 @@ import com.google.common.base.Objects;
 
 // TODO why do I have to declare these?
 @XmlSeeAlso(
-     {CustomizationSection.class,
-      DeploymentOptionSection.class,
-      DiskSection.class,     
-      LeaseSettingsSection.class,
-      GuestCustomizationSection.class,
-      NetworkSection.class,
-      NetworkConfigSection.class,
-      NetworkConnectionSection.class,
-      ProductSection.class,
-      VirtualHardwareSection.class,
-      VirtualSystem.class })
+      {CustomizationSection.class,
+            DeploymentOptionSection.class,
+            DiskSection.class,
+            LeaseSettingsSection.class,
+            GuestCustomizationSection.class,
+            NetworkSection.class,
+            NetworkConfigSection.class,
+            NetworkConnectionSection.class,
+            ProductSection.class,
+            VirtualHardwareSection.class,
+            VirtualSystem.class})
 public abstract class SectionType<T extends SectionType<T>> {
 
    public abstract Builder<T> toBuilder();
 
    public static abstract class Builder<T extends SectionType<T>> {
       protected String info;
-      
+      protected Boolean required;
+
       public abstract SectionType<T> build();
 
       /**
-       * @see SectionType#getInfo
+       * @see SectionType#getInfo()
        */
       public Builder<T> info(String info) {
          this.info = info;
          return this;
       }
+      /**
+       * @see SectionType#isRequired()
+       */
+      public Builder<T> required(Boolean required) {
+         this.required = required;
+         return this;
+      }
 
       public Builder<T> fromSection(SectionType<T> in) {
-         return info(in.getInfo());
+         return info(in.getInfo()).required(in.isRequired());
       }
    }
 
-   @XmlElement(name = "Info", namespace = VCLOUD_OVF_NS)
-   protected String info;
+   @XmlElement(name = "Info")
+   private String info;
+   @XmlAttribute(namespace = VCLOUD_OVF_NS)
+   private boolean required;
 
-   public SectionType(@Nullable String info) {
+   protected SectionType(@Nullable String info, @Nullable Boolean required) {
       this.info = info;
+      this.required = required;
    }
 
    protected SectionType() {
-      // For Builders and JAXB
+      // For JAXB
    }
 
    /**
@@ -98,9 +110,13 @@ public abstract class SectionType<T extends SectionType<T>> {
       return info;
    }
 
+   public Boolean isRequired() {
+      return required;
+   }
+
    @Override
    public int hashCode() {
-      return Objects.hashCode(info);
+      return Objects.hashCode(info, required);
    }
 
    @Override
@@ -112,7 +128,7 @@ public abstract class SectionType<T extends SectionType<T>> {
       if (getClass() != obj.getClass())
          return false;
       SectionType<?> other = (SectionType<?>) obj;
-      return Objects.equal(info, other.info);
+      return Objects.equal(info, other.info) && Objects.equal(required, other.required);
    }
 
    @Override
@@ -121,7 +137,7 @@ public abstract class SectionType<T extends SectionType<T>> {
    }
 
    protected Objects.ToStringHelper string() {
-      return Objects.toStringHelper("").add("info", info);
+      return Objects.toStringHelper("").add("info", info).add("required", required);
    }
 
 }

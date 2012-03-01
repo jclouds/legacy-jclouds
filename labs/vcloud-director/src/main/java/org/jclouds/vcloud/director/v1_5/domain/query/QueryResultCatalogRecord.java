@@ -21,12 +21,10 @@ package org.jclouds.vcloud.director.v1_5.domain.query;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.Date;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
@@ -39,14 +37,14 @@ import com.google.common.collect.Sets;
 
 /**
  * Represents the results from a Catalog vCloud query as a record.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="QueryResultCatalogRecord" /&gt;
  * </pre>
- * 
+ *
  * @author grkvlt@apache.org
  */
-@XmlRootElement(name = "CatalogRecord", namespace = VCLOUD_1_5_NS)
+@XmlRootElement(name = "CatalogRecord")
 public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultCatalogRecord> {
 
    @SuppressWarnings("unchecked")
@@ -80,7 +78,7 @@ public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultC
       }
 
       /**
-       * @see QueryResultCatalogRecord#getIsPublished()
+       * @see QueryResultCatalogRecord#isPublished()
        */
       public Builder isPublished(Boolean isPublished) {
          this.isPublished = isPublished;
@@ -88,7 +86,7 @@ public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultC
       }
 
       /**
-       * @see QueryResultCatalogRecord#getIsPublished()
+       * @see QueryResultCatalogRecord#isPublished()
        */
       public Builder published() {
          this.isPublished = Boolean.TRUE;
@@ -96,7 +94,7 @@ public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultC
       }
 
       /**
-       * @see QueryResultCatalogRecord#getIsPublished()
+       * @see QueryResultCatalogRecord#isPublished()
        */
       public Builder notPublished() {
          this.isPublished = Boolean.FALSE;
@@ -104,7 +102,7 @@ public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultC
       }
 
       /**
-       * @see QueryResultCatalogRecord#getIsShared()
+       * @see QueryResultCatalogRecord#isShared()
        */
       public Builder isShared(Boolean isShared) {
          this.isShared = isShared;
@@ -112,7 +110,7 @@ public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultC
       }
 
       /**
-       * @see QueryResultCatalogRecord#getIsShared()
+       * @see QueryResultCatalogRecord#isShared()
        */
       public Builder shared() {
          this.isShared = Boolean.TRUE;
@@ -120,7 +118,7 @@ public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultC
       }
 
       /**
-       * @see QueryResultCatalogRecord#getIsShared()
+       * @see QueryResultCatalogRecord#isShared()
        */
       public Builder notShared() {
          this.isShared = Boolean.FALSE;
@@ -177,20 +175,8 @@ public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultC
 
       @Override
       public QueryResultCatalogRecord build() {
-         QueryResultCatalogRecord queryResultCatalogRecord = new QueryResultCatalogRecord(href);
-         queryResultCatalogRecord.setName(name);
-         queryResultCatalogRecord.setIsPublished(isPublished);
-         queryResultCatalogRecord.setIsShared(isShared);
-         queryResultCatalogRecord.setCreationDate(creationDate);
-         queryResultCatalogRecord.setOrgName(orgName);
-         queryResultCatalogRecord.setOwnerName(ownerName);
-         queryResultCatalogRecord.setNumberOfVAppTemplates(numberOfVAppTemplates);
-         queryResultCatalogRecord.setNumberOfMedia(numberOfMedia);
-         queryResultCatalogRecord.setOwner(owner);
-         queryResultCatalogRecord.setId(id);
-         queryResultCatalogRecord.setType(type);
-         queryResultCatalogRecord.setLinks(links);
-         return queryResultCatalogRecord;
+         return new QueryResultCatalogRecord(links, href, id, type,name, isPublished, isShared, creationDate, orgName,
+               ownerName, numberOfVAppTemplates, numberOfMedia, owner);
       }
 
       /**
@@ -249,13 +235,26 @@ public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultC
       }
    }
 
+   private QueryResultCatalogRecord(Set<Link> links, URI href, String id, String type, String name,
+                                   Boolean published, Boolean shared, Date creationDate, String orgName, 
+                                   String ownerName, Integer numberOfVAppTemplates, Integer numberOfMedia, 
+                                   URI owner) {
+      super(links, href, id, type);
+      this.name = name;
+      isPublished = published;
+      isShared = shared;
+      this.creationDate = creationDate;
+      this.orgName = orgName;
+      this.ownerName = ownerName;
+      this.numberOfVAppTemplates = numberOfVAppTemplates;
+      this.numberOfMedia = numberOfMedia;
+      this.owner = owner;
+   }
+
    private QueryResultCatalogRecord() {
       // For JAXB and builder use
    }
 
-   private QueryResultCatalogRecord(URI href) {
-      super(href);
-   }
 
    @XmlAttribute
    protected String name;
@@ -284,30 +283,19 @@ public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultC
       return name;
    }
 
-   public void setName(String value) {
-      this.name = value;
-   }
 
+   /**
+    * Gets the value of the isPublished property.
+    */
    public Boolean isPublished() {
       return isPublished;
    }
 
    /**
-    * Sets the value of the isPublished property.
+    * Gets the value of the isShared property.
     */
-   public void setIsPublished(Boolean value) {
-      this.isPublished = value;
-   }
-
    public Boolean isShared() {
       return isShared;
-   }
-
-   /**
-    * Sets the value of the isShared property.
-    */
-   public void setIsShared(Boolean value) {
-      this.isShared = value;
    }
 
    /**
@@ -317,19 +305,11 @@ public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultC
       return creationDate;
    }
 
-   public void setCreationDate(Date value) {
-      this.creationDate = value;
-   }
-
    /**
     * Gets the value of the orgName property.
     */
    public String getOrgName() {
       return orgName;
-   }
-
-   public void setOrgName(String value) {
-      this.orgName = value;
    }
 
    /**
@@ -339,19 +319,11 @@ public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultC
       return ownerName;
    }
 
-   public void setOwnerName(String value) {
-      this.ownerName = value;
-   }
-
    /**
     * Gets the value of the numberOfVAppTemplates property.
     */
    public Integer getNumberOfVAppTemplates() {
       return numberOfVAppTemplates;
-   }
-
-   public void setNumberOfVAppTemplates(Integer value) {
-      this.numberOfVAppTemplates = value;
    }
 
    /**
@@ -361,19 +333,11 @@ public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultC
       return numberOfMedia;
    }
 
-   public void setNumberOfMedia(Integer value) {
-      this.numberOfMedia = value;
-   }
-
    /**
     * Gets the value of the owner property.
     */
    public URI getOwner() {
       return owner;
-   }
-
-   public void setOwner(URI value) {
-      this.owner = value;
    }
 
    @Override

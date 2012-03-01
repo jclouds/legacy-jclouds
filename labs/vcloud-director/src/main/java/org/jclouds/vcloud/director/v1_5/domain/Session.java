@@ -20,13 +20,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.Set;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -41,13 +37,12 @@ import com.google.common.collect.Sets;
  * Returns a representation of the current session that can serve as a single entry point to the
  * system, as it provides user, admin, and extension (sysadmin) entry links depending on the
  * privileges of the current user.
- * 
+ *
  * @author Adrian Cole
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Session")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "Session")
 public class Session {
-   
+
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.SESSION;
 
    public static Builder builder() {
@@ -124,7 +119,7 @@ public class Session {
       this.links = ImmutableSet.copyOf(links);
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Link")
+   @XmlElement(name = "Link")
    private Set<Link> links = Sets.newLinkedHashSet();
    @XmlAttribute
    private String user;
@@ -138,7 +133,6 @@ public class Session {
    }
 
    /**
-    * 
     * @return the user's login name.
     */
    public String getUser() {
@@ -146,7 +140,6 @@ public class Session {
    }
 
    /**
-    * 
     * @return is the name of an organization of which the user is a member
     */
    public String getOrg() {
@@ -154,7 +147,6 @@ public class Session {
    }
 
    /**
-    * 
     * @return a reference to the current session
     */
    public URI getHref() {
@@ -179,6 +171,6 @@ public class Session {
    @Override
    public String toString() {
       return Objects.toStringHelper("").add("user", user).add("org", org).add("href", href).add("links", links)
-               .toString();
+            .toString();
    }
 }

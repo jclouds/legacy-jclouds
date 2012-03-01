@@ -21,8 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
@@ -31,14 +29,13 @@ import com.google.common.base.Objects;
 
 
 /**
- * 
- *                 Represents a network connection.
- *             
- * 
+ * Represents a network connection.
+ * <p/>
+ * <p/>
  * <p>Java class for NetworkConnection complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="NetworkConnection">
  *   &lt;complexContent>
@@ -58,17 +55,14 @@ import com.google.common.base.Objects;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "NetworkConnection", propOrder = {
-    "networkConnectionIndex",
-    "ipAddress",
-    "externalIpAddress",
-    "isConnected",
-    "macAddress",
-    "ipAddressAllocationMode"
+      "networkConnectionIndex",
+      "ipAddress",
+      "externalIpAddress",
+      "isConnected",
+      "macAddress",
+      "ipAddressAllocationMode"
 })
 public class NetworkConnection {
    public static Builder builder() {
@@ -80,7 +74,7 @@ public class NetworkConnection {
    }
 
    public static class Builder {
-      
+
       private int networkConnectionIndex;
       private String ipAddress;
       private String externalIpAddress;
@@ -115,7 +109,7 @@ public class NetworkConnection {
       }
 
       /**
-       * @see NetworkConnection#getIsConnected()
+       * @see NetworkConnection#isConnected()
        */
       public Builder isConnected(boolean isConnected) {
          this.isConnected = isConnected;
@@ -123,7 +117,7 @@ public class NetworkConnection {
       }
 
       /**
-       * @see NetworkConnection#getMacAddress()
+       * @see NetworkConnection#getMACAddress()
        */
       public Builder macAddress(String macAddress) {
          this.macAddress = macAddress;
@@ -147,7 +141,7 @@ public class NetworkConnection {
       }
 
       /**
-       * @see NetworkConnection#getNeedsCustomization()
+       * @see NetworkConnection#needsCustomization()
        */
       public Builder needsCustomization(Boolean needsCustomization) {
          this.needsCustomization = needsCustomization;
@@ -156,259 +150,158 @@ public class NetworkConnection {
 
 
       public NetworkConnection build() {
-         NetworkConnection networkConnection = new NetworkConnection(macAddress);
-         networkConnection.setNetworkConnectionIndex(networkConnectionIndex);
-         networkConnection.setIpAddress(ipAddress);
-         networkConnection.setExternalIpAddress(externalIpAddress);
-         networkConnection.setIsConnected(isConnected);
-         networkConnection.setIpAddressAllocationMode(ipAddressAllocationMode);
-         networkConnection.setNetwork(network);
-         networkConnection.setNeedsCustomization(needsCustomization);
-         return networkConnection;
+         return new NetworkConnection(networkConnectionIndex, ipAddress, externalIpAddress, isConnected,
+               macAddress, ipAddressAllocationMode, network, needsCustomization);
       }
 
 
       public Builder fromNetworkConnection(NetworkConnection in) {
          return networkConnectionIndex(in.getNetworkConnectionIndex())
-            .ipAddress(in.getIpAddress())
-            .externalIpAddress(in.getExternalIpAddress())
-            .isConnected(in.isConnected())
-            .macAddress(in.getMACAddress())
-            .ipAddressAllocationMode(in.getIpAddressAllocationMode())
-            .network(in.getNetwork())
-            .needsCustomization(in.needsCustomization());
+               .ipAddress(in.getIpAddress())
+               .externalIpAddress(in.getExternalIpAddress())
+               .isConnected(in.isConnected())
+               .macAddress(in.getMACAddress())
+               .ipAddressAllocationMode(in.getIpAddressAllocationMode())
+               .network(in.getNetwork())
+               .needsCustomization(in.needsCustomization());
       }
+   }
+
+   public NetworkConnection(int networkConnectionIndex, String ipAddress, String externalIpAddress, boolean connected,
+                            String macAddress, String ipAddressAllocationMode, String network, Boolean needsCustomization) {
+      this.networkConnectionIndex = networkConnectionIndex;
+      this.ipAddress = ipAddress;
+      this.externalIpAddress = externalIpAddress;
+      isConnected = connected;
+      this.macAddress = macAddress;
+      this.ipAddressAllocationMode = ipAddressAllocationMode;
+      this.network = network;
+      this.needsCustomization = needsCustomization;
    }
 
    private NetworkConnection() {
       // For JAXB and builder use
    }
 
-   private NetworkConnection(String macAddress) {
-      this.macAddress = macAddress;
+
+   @XmlElement(name = "NetworkConnectionIndex")
+   protected int networkConnectionIndex;
+   @XmlElement(name = "IpAddress")
+   protected String ipAddress;
+   @XmlElement(name = "ExternalIpAddress")
+   protected String externalIpAddress;
+   @XmlElement(name = "IsConnected")
+   protected boolean isConnected;
+   @XmlElement(name = "MACAddress")
+   protected String macAddress;
+   @XmlElement(name = "IpAddressAllocationMode", required = true)
+   protected String ipAddressAllocationMode;
+   @XmlAttribute(required = true)
+   protected String network;
+   @XmlAttribute
+   protected Boolean needsCustomization;
+
+   /**
+    * Gets the value of the networkConnectionIndex property.
+    */
+   public int getNetworkConnectionIndex() {
+      return networkConnectionIndex;
    }
 
+   /**
+    * Gets the value of the ipAddress property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getIpAddress() {
+      return ipAddress;
+   }
 
-    @XmlElement(name = "NetworkConnectionIndex")
-    protected int networkConnectionIndex;
-    @XmlElement(name = "IpAddress")
-    protected String ipAddress;
-    @XmlElement(name = "ExternalIpAddress")
-    protected String externalIpAddress;
-    @XmlElement(name = "IsConnected")
-    protected boolean isConnected;
-    @XmlElement(name = "MACAddress")
-    protected String macAddress;
-    @XmlElement(name = "IpAddressAllocationMode", required = true)
-    protected String ipAddressAllocationMode;
-    @XmlAttribute(required = true)
-    protected String network;
-    @XmlAttribute
-    protected Boolean needsCustomization;
+   /**
+    * Gets the value of the externalIpAddress property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getExternalIpAddress() {
+      return externalIpAddress;
+   }
 
-    /**
-     * Gets the value of the networkConnectionIndex property.
-     * 
-     */
-    public int getNetworkConnectionIndex() {
-        return networkConnectionIndex;
-    }
+   /**
+    * Gets the value of the isConnected property.
+    */
+   public boolean isConnected() {
+      return isConnected;
+   }
 
-    /**
-     * Sets the value of the networkConnectionIndex property.
-     * 
-     */
-    public void setNetworkConnectionIndex(int value) {
-        this.networkConnectionIndex = value;
-    }
+   /**
+    * Gets the value of the macAddress property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getMACAddress() {
+      return macAddress;
+   }
 
-    /**
-     * Gets the value of the ipAddress property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getIpAddress() {
-        return ipAddress;
-    }
+   /**
+    * Gets the value of the ipAddressAllocationMode property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getIpAddressAllocationMode() {
+      return ipAddressAllocationMode;
+   }
 
-    /**
-     * Sets the value of the ipAddress property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setIpAddress(String value) {
-        this.ipAddress = value;
-    }
+   /**
+    * Gets the value of the network property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getNetwork() {
+      return network;
+   }
 
-    /**
-     * Gets the value of the externalIpAddress property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getExternalIpAddress() {
-        return externalIpAddress;
-    }
-
-    /**
-     * Sets the value of the externalIpAddress property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setExternalIpAddress(String value) {
-        this.externalIpAddress = value;
-    }
-
-    /**
-     * Gets the value of the isConnected property.
-     * 
-     */
-    public boolean isConnected() {
-        return isConnected;
-    }
-
-    /**
-     * Sets the value of the isConnected property.
-     * 
-     */
-    public void setIsConnected(boolean value) {
-        this.isConnected = value;
-    }
-
-    /**
-     * Gets the value of the macAddress property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getMACAddress() {
-        return macAddress;
-    }
-
-    /**
-     * Sets the value of the macAddress property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setMACAddress(String value) {
-        this.macAddress = value;
-    }
-
-    /**
-     * Gets the value of the ipAddressAllocationMode property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getIpAddressAllocationMode() {
-        return ipAddressAllocationMode;
-    }
-
-    /**
-     * Sets the value of the ipAddressAllocationMode property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setIpAddressAllocationMode(String value) {
-        this.ipAddressAllocationMode = value;
-    }
-
-    /**
-     * Gets the value of the network property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getNetwork() {
-        return network;
-    }
-
-    /**
-     * Sets the value of the network property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setNetwork(String value) {
-        this.network = value;
-    }
-
-    /**
-     * Gets the value of the needsCustomization property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean needsCustomization() {
-        return needsCustomization;
-    }
-
-    /**
-     * Sets the value of the needsCustomization property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setNeedsCustomization(Boolean value) {
-        this.needsCustomization = value;
-    }
+   /**
+    * Gets the value of the needsCustomization property.
+    *
+    * @return possible object is
+    *         {@link Boolean }
+    */
+   public Boolean needsCustomization() {
+      return needsCustomization;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       NetworkConnection that = NetworkConnection.class.cast(o);
-      return equal(networkConnectionIndex, that.networkConnectionIndex) && 
-           equal(ipAddress, that.ipAddress) && 
-           equal(externalIpAddress, that.externalIpAddress) && 
-           equal(isConnected, that.isConnected) && 
-           equal(macAddress, that.macAddress) && 
-           equal(ipAddressAllocationMode, that.ipAddressAllocationMode) && 
-           equal(network, that.network) && 
-           equal(needsCustomization, that.needsCustomization);
+      return equal(networkConnectionIndex, that.networkConnectionIndex) &&
+            equal(ipAddress, that.ipAddress) &&
+            equal(externalIpAddress, that.externalIpAddress) &&
+            equal(isConnected, that.isConnected) &&
+            equal(macAddress, that.macAddress) &&
+            equal(ipAddressAllocationMode, that.ipAddressAllocationMode) &&
+            equal(network, that.network) &&
+            equal(needsCustomization, that.needsCustomization);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(networkConnectionIndex, 
-           ipAddress, 
-           externalIpAddress, 
-           isConnected, 
-           macAddress, 
-           ipAddressAllocationMode, 
-           network, 
-           needsCustomization);
+      return Objects.hashCode(networkConnectionIndex,
+            ipAddress,
+            externalIpAddress,
+            isConnected,
+            macAddress,
+            ipAddressAllocationMode,
+            network,
+            needsCustomization);
    }
 
    @Override

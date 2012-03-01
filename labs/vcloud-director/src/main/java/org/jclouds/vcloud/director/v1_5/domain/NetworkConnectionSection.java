@@ -20,15 +20,10 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyElement;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -37,9 +32,10 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.w3c.dom.Element;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 
 /**
@@ -68,13 +64,11 @@ import com.google.common.base.Objects;
  * &lt;/complexType>
  * </pre>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name="NetworkConnectionSection", namespace = VCLOUD_1_5_NS)
+@XmlRootElement(name = "NetworkConnectionSection")
 @XmlType(propOrder = {
       "primaryNetworkConnectionIndex",
-      "networkConnection",
-      "link",
-      "any"
+      "networkConnections",
+      "links"
 })
 public class NetworkConnectionSection extends SectionType<NetworkConnectionSection> {
 
@@ -89,9 +83,8 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
    public static class Builder extends SectionType.Builder<NetworkConnectionSection> {
 
       private Integer primaryNetworkConnectionIndex;
-      private List<NetworkConnection> networkConnection;
-      private List<Link> link;
-      private List<Object> any;
+      private Set<NetworkConnection> networkConnection = Sets.newLinkedHashSet();
+      private Set<Link> links = Sets.newLinkedHashSet();
       private URI href;
       private String type;
 
@@ -104,26 +97,18 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
       }
 
       /**
-       * @see NetworkConnectionSection#getNetworkConnection()
+       * @see NetworkConnectionSection#getNetworkConnections()
        */
-      public Builder networkConnection(List<NetworkConnection> networkConnection) {
-         this.networkConnection = networkConnection;
+      public Builder networkConnection(Set<NetworkConnection> networkConnection) {
+         this.networkConnection = checkNotNull(networkConnection, "networkConnection");
          return this;
       }
 
       /**
-       * @see NetworkConnectionSection#getLink()
+       * @see NetworkConnectionSection#getLinks()
        */
-      public Builder link(List<Link> link) {
-         this.link = link;
-         return this;
-      }
-
-      /**
-       * @see NetworkConnectionSection#getAny()
-       */
-      public Builder any(List<Object> any) {
-         this.any = any;
+      public Builder links(Set<Link> links) {
+         this.links = checkNotNull(links, "links");
          return this;
       }
 
@@ -145,19 +130,15 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
 
 
       public NetworkConnectionSection build() {
-         NetworkConnectionSection networkConnectionSection = new NetworkConnectionSection(info, networkConnection, link, any);
-         networkConnectionSection.setPrimaryNetworkConnectionIndex(primaryNetworkConnectionIndex);
-         networkConnectionSection.setHref(href);
-         networkConnectionSection.setType(type);
-         return networkConnectionSection;
+         return new NetworkConnectionSection(info, required, primaryNetworkConnectionIndex, networkConnection, links, href, type);
+
       }
 
       public Builder fromNetworkConnectionSection(NetworkConnectionSection in) {
          return fromSection(in)
                .primaryNetworkConnectionIndex(in.getPrimaryNetworkConnectionIndex())
-               .networkConnection(in.getNetworkConnection())
-               .link(in.getLink())
-               .any(in.getAny())
+               .networkConnection(in.getNetworkConnections())
+               .links(in.getLinks())
                .href(in.getHref())
                .type(in.getType());
       }
@@ -177,13 +158,25 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
       public Builder info(String info) {
          return Builder.class.cast(super.info(info));
       }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder required(Boolean required) {
+         return Builder.class.cast(super.required(required));
+      }
+
    }
 
-   private NetworkConnectionSection(@Nullable String info, List<NetworkConnection> networkConnection, List<Link> link, List<Object> any) {
-      super(info);
-      this.networkConnection = networkConnection;
-      this.link = link;
-      this.any = any;
+   private NetworkConnectionSection(@Nullable String info, @Nullable Boolean required, Integer primaryNetworkConnectionIndex,
+                                    Set<NetworkConnection> networkConnections, Set<Link> links, URI href, String type) {
+      super(info, required);
+      this.primaryNetworkConnectionIndex = primaryNetworkConnectionIndex;
+      this.networkConnections = ImmutableSet.copyOf(networkConnections);
+      this.links = ImmutableSet.copyOf(links);
+      this.href = href;
+      this.type = type;
    }
 
    private NetworkConnectionSection() {
@@ -193,11 +186,9 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
    @XmlElement(name = "PrimaryNetworkConnectionIndex")
    protected Integer primaryNetworkConnectionIndex;
    @XmlElement(name = "NetworkConnection")
-   protected List<NetworkConnection> networkConnection;
+   protected Set<NetworkConnection> networkConnections = Sets.newLinkedHashSet();
    @XmlElement(name = "Link")
-   protected List<Link> link;
-   @XmlAnyElement(lax = true)
-   protected List<Object> any;
+   protected Set<Link> links = Sets.newLinkedHashSet();
    @XmlAttribute
    @XmlSchemaType(name = "anyURI")
    protected URI href;
@@ -215,95 +206,23 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
    }
 
    /**
-    * Sets the value of the primaryNetworkConnectionIndex property.
-    *
-    * @param value allowed object is
-    *              {@link Integer }
-    */
-   public void setPrimaryNetworkConnectionIndex(Integer value) {
-      this.primaryNetworkConnectionIndex = value;
-   }
-
-   /**
     * Gets the value of the networkConnection property.
-    * <p/>
-    * <p/>
-    * This accessor method returns a reference to the live list,
-    * not a snapshot. Therefore any modification you make to the
-    * returned list will be present inside the JAXB object.
-    * This is why there is not a <CODE>set</CODE> method for the networkConnection property.
-    * <p/>
-    * <p/>
-    * For example, to add a new item, do as follows:
-    * <pre>
-    *    getNetworkConnection().add(newItem);
-    * </pre>
-    * <p/>
-    * <p/>
     * <p/>
     * Objects of the following type(s) are allowed in the list
     * {@link NetworkConnection }
     */
-   public List<NetworkConnection> getNetworkConnection() {
-      if (networkConnection == null) {
-         networkConnection = new ArrayList<NetworkConnection>();
-      }
-      return this.networkConnection;
+   public Set<NetworkConnection> getNetworkConnections() {
+      return this.networkConnections;
    }
 
    /**
     * Gets the value of the link property.
     * <p/>
-    * <p/>
-    * This accessor method returns a reference to the live list,
-    * not a snapshot. Therefore any modification you make to the
-    * returned list will be present inside the JAXB object.
-    * This is why there is not a <CODE>set</CODE> method for the link property.
-    * <p/>
-    * <p/>
-    * For example, to add a new item, do as follows:
-    * <pre>
-    *    getLink().add(newItem);
-    * </pre>
-    * <p/>
-    * <p/>
-    * <p/>
     * Objects of the following type(s) are allowed in the list
     * {@link Link }
     */
-   public List<Link> getLink() {
-      if (link == null) {
-         link = new ArrayList<Link>();
-      }
-      return this.link;
-   }
-
-   /**
-    * Gets the value of the any property.
-    * <p/>
-    * <p/>
-    * This accessor method returns a reference to the live list,
-    * not a snapshot. Therefore any modification you make to the
-    * returned list will be present inside the JAXB object.
-    * This is why there is not a <CODE>set</CODE> method for the any property.
-    * <p/>
-    * <p/>
-    * For example, to add a new item, do as follows:
-    * <pre>
-    *    getAny().add(newItem);
-    * </pre>
-    * <p/>
-    * <p/>
-    * <p/>
-    * Objects of the following type(s) are allowed in the list
-    * {@link Object }
-    * {@link Element }
-    */
-   public List<Object> getAny() {
-      if (any == null) {
-         any = new ArrayList<Object>();
-      }
-      return this.any;
+   public Set<Link> getLinks() {
+      return this.links;
    }
 
    /**
@@ -311,15 +230,6 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
     */
    public URI getHref() {
       return href;
-   }
-
-   /**
-    * Sets the value of the href property.
-    *
-    * @param value the value to set
-    */
-   public void setHref(URI value) {
-      this.href = value;
    }
 
    /**
@@ -332,16 +242,6 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
       return type;
    }
 
-   /**
-    * Sets the value of the type property.
-    *
-    * @param value allowed object is
-    *              {@link String }
-    */
-   public void setType(String value) {
-      this.type = value;
-   }
-
    @Override
    public boolean equals(Object o) {
       if (this == o)
@@ -349,10 +249,10 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
       if (o == null || getClass() != o.getClass())
          return false;
       NetworkConnectionSection that = NetworkConnectionSection.class.cast(o);
-      return equal(primaryNetworkConnectionIndex, that.primaryNetworkConnectionIndex) &&
-            equal(networkConnection, that.networkConnection) &&
-            equal(link, that.link) &&
-            equal(any, that.any) &&
+      return super.equals(that) &&
+            equal(primaryNetworkConnectionIndex, that.primaryNetworkConnectionIndex) &&
+            equal(networkConnections, that.networkConnections) &&
+            equal(links, that.links) &&
             equal(href, that.href) &&
             equal(type, that.type);
    }
@@ -360,22 +260,20 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
    @Override
    public int hashCode() {
       return Objects.hashCode(primaryNetworkConnectionIndex,
-            networkConnection,
-            link,
-            any,
+            networkConnections,
+            links,
             href,
             type);
    }
 
    @Override
-   public String toString() {
-      return Objects.toStringHelper("")
+   public Objects.ToStringHelper string() {
+      return super.string()
             .add("primaryNetworkConnectionIndex", primaryNetworkConnectionIndex)
-            .add("networkConnection", networkConnection)
-            .add("link", link)
-            .add("any", any)
+            .add("networkConnection", networkConnections)
+            .add("links", links)
             .add("href", href)
-            .add("type", type).toString();
+            .add("type", type);
    }
 
 }

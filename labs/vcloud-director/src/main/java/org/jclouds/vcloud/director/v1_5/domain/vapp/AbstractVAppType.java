@@ -23,15 +23,16 @@ import org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType;
 
 /**
  * Represents a base type for VAppType and VmType.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="AbstractVAppType" &gt;
  * </pre>
- * 
+ *
  * @author grkvlt@apache.org
  */
-public abstract class AbstractVAppType extends ResourceEntityType<AbstractVAppType> {
+public abstract class AbstractVAppType<T extends AbstractVAppType<T>> extends ResourceEntityType<T>  {
 
+   public static abstract class Builder<T extends AbstractVAppType<T>> extends ResourceEntityType.Builder<T> {}
 //    @XmlElement(name = "VAppParent")
 //    protected ReferenceType vAppParent;
 //    @XmlElementRef(name = "Section", namespace = "http://schemas.dmtf.org/ovf/envelope/1", type = JAXBElement.class)

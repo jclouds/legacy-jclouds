@@ -19,18 +19,13 @@
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author Adrian Cole
  * @author Adam Lowe
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "Network", namespace = VCLOUD_OVF_NS)
+@XmlRootElement(name = "Network")
 public class Network {
    public static Builder builder() {
       return new Builder();

@@ -22,26 +22,23 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import java.util.Collections;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 
 /**
- * 
- *                 Represents a list of supported VM hardware versions.
- *             
- * 
+ * Represents a list of supported VM hardware versions.
+ * <p/>
+ * <p/>
  * <p>Java class for SupportedHardwareVersions complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="SupportedHardwareVersions">
  *   &lt;complexContent>
@@ -54,12 +51,9 @@ import com.google.common.collect.Lists;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SupportedHardwareVersions", propOrder = {
-    "supportedHardwareVersions"
+      "supportedHardwareVersions"
 })
 public class SupportedHardwareVersions {
    public static Builder builder() {
@@ -71,17 +65,17 @@ public class SupportedHardwareVersions {
    }
 
    public static class Builder {
-      
-      private List<String> supportedHardwareVersions = Lists.newArrayList();
+
+      private Set<String> supportedHardwareVersions = Sets.newLinkedHashSet();
 
       /**
        * @see SupportedHardwareVersions#getSupportedHardwareVersions()
        */
-      public Builder supportedHardwareVersions(List<String> supportedHardwareVersions) {
-         this.supportedHardwareVersions = Lists.newArrayList(checkNotNull(supportedHardwareVersions, "supportedHardwareVersions"));
+      public Builder supportedHardwareVersions(Set<String> supportedHardwareVersions) {
+         this.supportedHardwareVersions = Sets.newLinkedHashSet(checkNotNull(supportedHardwareVersions, "supportedHardwareVersions"));
          return this;
       }
-      
+
       /**
        * @see SupportedHardwareVersions#getSupportedHardwareVersions()
        */
@@ -105,47 +99,25 @@ public class SupportedHardwareVersions {
       // For JAXB and builder use
    }
 
-   private SupportedHardwareVersions(List<String> supportedHardwareVersions) {
+   private SupportedHardwareVersions(Set<String> supportedHardwareVersions) {
       this.supportedHardwareVersions = supportedHardwareVersions;
    }
 
 
-    @XmlElement(name = "SupportedHardwareVersion")
-    protected List<String> supportedHardwareVersions;
+   @XmlElement(name = "SupportedHardwareVersion")
+   protected Set<String> supportedHardwareVersions = Sets.newLinkedHashSet();
 
-    /**
-     * Gets the value of the supportedHardwareVersion property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the supportedHardwareVersion property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSupportedHardwareVersion().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
-     */
-    public List<String> getSupportedHardwareVersions() {
-        if (supportedHardwareVersions == null) {
-            supportedHardwareVersions = Lists.newArrayList();
-        }
-        return this.supportedHardwareVersions;
-    }
+   /**
+    * Gets the value of the supportedHardwareVersion property.
+    */
+   public Set<String> getSupportedHardwareVersions() {
+      return Collections.unmodifiableSet(supportedHardwareVersions);
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       SupportedHardwareVersions that = SupportedHardwareVersions.class.cast(o);

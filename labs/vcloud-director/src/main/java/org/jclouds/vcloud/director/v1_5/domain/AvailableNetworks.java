@@ -22,26 +22,23 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import java.util.Collection;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 
 /**
- * 
- *                 Represents a list of references to available networks.
- *             
- * 
+ * Represents a list of references to available networks.
+ * <p/>
+ * <p/>
  * <p>Java class for AvailableNetworks complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="AvailableNetworks">
  *   &lt;complexContent>
@@ -54,12 +51,9 @@ import com.google.common.collect.Lists;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AvailableNetworks", propOrder = {
-    "networks"
+      "networks"
 })
 public class AvailableNetworks {
    public static Builder builder() {
@@ -71,14 +65,13 @@ public class AvailableNetworks {
    }
 
    public static class Builder {
-      
-      private List<Reference> networks = Lists.newArrayList();
+      private Set<Reference> networks = Sets.newLinkedHashSet();
 
       /**
        * @see AvailableNetworks#getNetworks()
        */
-      public Builder networks(List<Reference> networks) {
-         this.networks = Lists.newArrayList(checkNotNull(networks, "networks"));
+      public Builder networks(Collection<Reference> networks) {
+         this.networks = Sets.newLinkedHashSet(checkNotNull(networks, "networks"));
          return this;
       }
 
@@ -101,51 +94,28 @@ public class AvailableNetworks {
       }
    }
 
-   private AvailableNetworks() {
-      // For JAXB and builder use
-   }
+   @XmlElement(name = "Network")
+   protected Set<Reference> networks = Sets.newLinkedHashSet();
 
-   private AvailableNetworks(List<Reference> networks) {
+   private AvailableNetworks(Set<Reference> networks) {
       this.networks = networks;
    }
 
+   private AvailableNetworks() {
+      // For JAXB
+   }
 
-    @XmlElement(name = "Network")
-    protected List<Reference> networks;
-
-    /**
-     * Gets the value of the network property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the network property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getNetwork().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ReferenceType }
-     * 
-     * 
-     */
-    public List<Reference> getNetworks() {
-        if (networks == null) {
-            networks = Lists.newArrayList();
-        }
-        return this.networks;
-    }
+   /**
+    * Gets the value of the network property.
+    */
+   public Set<Reference> getNetworks() {
+      return this.networks;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       AvailableNetworks that = AvailableNetworks.class.cast(o);

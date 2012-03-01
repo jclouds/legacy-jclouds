@@ -21,8 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
@@ -31,14 +29,13 @@ import com.google.common.base.Objects;
 
 
 /**
- * 
- *                 Represents a capacity of a given resource.
- *             
- * 
+ * Represents a capacity of a given resource.
+ * <p/>
+ * <p/>
  * <p>Java class for Capacity complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="Capacity">
  *   &lt;complexContent>
@@ -53,20 +50,17 @@ import com.google.common.base.Objects;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Capacity", propOrder = {
-    "units",
-    "allocated",
-    "limit"
+      "units",
+      "allocated",
+      "limit"
 })
 @XmlSeeAlso({
-//    CapacityWithUsageType.class
+      CapacityWithUsage.class
 })
 public class CapacityType<T extends CapacityType<T>> {
-   
+
    public static <T extends CapacityType<T>> Builder<T> builder() {
       return new Builder<T>();
    }
@@ -76,7 +70,7 @@ public class CapacityType<T extends CapacityType<T>> {
    }
 
    public static class Builder<T extends CapacityType<T>> {
-      
+
       protected String units;
       protected Long allocated;
       protected Long limit;
@@ -107,119 +101,78 @@ public class CapacityType<T extends CapacityType<T>> {
 
 
       public CapacityType<T> build() {
-         CapacityType<T> capacity = new CapacityType<T>();
-         capacity.setUnits(units);
-         capacity.setAllocated(allocated);
-         capacity.setLimit(limit);
-         return capacity;
+         return new CapacityType<T>(units, allocated, limit);
       }
 
 
       public Builder<T> fromCapacityType(CapacityType<T> in) {
          return units(in.getUnits())
-            .allocated(in.getAllocated())
-            .limit(in.getLimit());
+               .allocated(in.getAllocated())
+               .limit(in.getLimit());
       }
+   }
+
+   protected CapacityType(String units, Long allocated, Long limit) {
+      this.units = units;
+      this.allocated = allocated;
+      this.limit = limit;
    }
 
    protected CapacityType() {
       // For JAXB and builder use
    }
-   
-   protected CapacityType(String units) {
-      this.units = units;
+
+   @XmlElement(name = "Units", required = true)
+   protected String units;
+   @XmlElement(name = "Allocated")
+   protected Long allocated;
+   @XmlElement(name = "Limit")
+   protected Long limit;
+
+   /**
+    * Gets the value of the units property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getUnits() {
+      return units;
    }
 
+   /**
+    * Gets the value of the allocated property.
+    *
+    * @return possible object is
+    *         {@link Long }
+    */
+   public Long getAllocated() {
+      return allocated;
+   }
 
-
-    @XmlElement(name = "Units", required = true)
-    protected String units;
-    @XmlElement(name = "Allocated")
-    protected Long allocated;
-    @XmlElement(name = "Limit")
-    protected Long limit;
-
-    /**
-     * Gets the value of the units property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getUnits() {
-        return units;
-    }
-
-    /**
-     * Sets the value of the units property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setUnits(String value) {
-        this.units = value;
-    }
-
-    /**
-     * Gets the value of the allocated property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Long }
-     *     
-     */
-    public Long getAllocated() {
-        return allocated;
-    }
-
-    /**
-     * Sets the value of the allocated property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Long }
-     *     
-     */
-    public void setAllocated(Long value) {
-        this.allocated = value;
-    }
-
-    /**
-     * Gets the value of the limit property.
-     * 
-     */
-    public Long getLimit() {
-        return limit;
-    }
-
-    /**
-     * Sets the value of the limit property.
-     * 
-     */
-    public void setLimit(Long value) {
-        this.limit = value;
-    }
+   /**
+    * Gets the value of the limit property.
+    */
+   public Long getLimit() {
+      return limit;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       CapacityType<?> that = CapacityType.class.cast(o);
-      return equal(units, that.units) && 
-           equal(allocated, that.allocated) && 
-           equal(limit, that.limit);
+      return equal(units, that.units) &&
+            equal(allocated, that.allocated) &&
+            equal(limit, that.limit);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(units, 
-           allocated, 
-           limit);
+      return Objects.hashCode(units,
+            allocated,
+            limit);
    }
 
    @Override

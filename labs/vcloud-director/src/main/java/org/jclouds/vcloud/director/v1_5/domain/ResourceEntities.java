@@ -22,26 +22,23 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 
 /**
- * 
- *                 Represents a list of references to resource entities.
- *             
- * 
+ * Represents a list of references to resource entities.
+ * <p/>
+ * <p/>
  * <p>Java class for ResourceEntities complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="ResourceEntities">
  *   &lt;complexContent>
@@ -54,12 +51,9 @@ import com.google.common.collect.Lists;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ResourceEntities", propOrder = {
-    "resourceEntities"
+      "resourceEntities"
 })
 public class ResourceEntities {
    public static Builder builder() {
@@ -71,14 +65,14 @@ public class ResourceEntities {
    }
 
    public static class Builder {
-      
-      private List<Reference> resourceEntities = Lists.newArrayList();
-      
+
+      private Set<Reference> resourceEntities = Sets.newLinkedHashSet();
+
       /**
        * @see ResourceEntities#getResourceEntities()
        */
-      public Builder resourceEntities(List<Reference> resourceEntities) {
-         this.resourceEntities = Lists.newArrayList(checkNotNull(resourceEntities, "resourceEntities"));
+      public Builder resourceEntities(Set<Reference> resourceEntities) {
+         this.resourceEntities = checkNotNull(resourceEntities, "resourceEntities");
          return this;
       }
 
@@ -91,8 +85,7 @@ public class ResourceEntities {
       }
 
       public ResourceEntities build() {
-         ResourceEntities resourceEntities = new ResourceEntities(this.resourceEntities);
-         return resourceEntities;
+         return new ResourceEntities(this.resourceEntities);
       }
 
 
@@ -105,47 +98,25 @@ public class ResourceEntities {
       // For JAXB and builder use
    }
 
-   private ResourceEntities(List<Reference> resourceEntity) {
-      this.resourceEntities = resourceEntity;
+   private ResourceEntities(Set<Reference> resourceEntity) {
+      this.resourceEntities = ImmutableSet.copyOf(resourceEntity);
    }
 
 
-    @XmlElement(name = "ResourceEntity")
-    protected List<Reference> resourceEntities;
+   @XmlElement(name = "ResourceEntity")
+   private Set<Reference> resourceEntities = Sets.newLinkedHashSet();
 
-    /**
-     * Gets the value of the resourceEntity property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the resourceEntity property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getResourceEntity().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ReferenceType }
-     * 
-     * 
-     */
-    public List<Reference> getResourceEntities() {
-        if (resourceEntities == null) {
-            resourceEntities = Lists.newArrayList();
-        }
-        return this.resourceEntities;
-    }
+   /**
+    * Gets the value of the resourceEntity property.
+    */
+   public Set<Reference> getResourceEntities() {
+      return this.resourceEntities;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       ResourceEntities that = ResourceEntities.class.cast(o);

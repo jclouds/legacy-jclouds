@@ -21,27 +21,24 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 
 /**
- * 
- *                 Represents a composition item.
- *             
- * 
+ * Represents a composition item.
+ * <p/>
+ * <p/>
  * <p>Java class for SourcedCompositionItemParam complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="SourcedCompositionItemParam">
  *   &lt;complexContent>
@@ -58,15 +55,12 @@ import com.google.common.base.Objects;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SourcedCompositionItemParam", propOrder = {
-    "source",
-    "vAppScopedLocalId",
-    "instantiationParams",
-    "networkAssignment"
+      "source",
+      "vAppScopedLocalId",
+      "instantiationParams",
+      "networkAssignment"
 })
 public class SourcedCompositionItemParam {
    public static Builder builder() {
@@ -78,11 +72,11 @@ public class SourcedCompositionItemParam {
    }
 
    public static class Builder {
-      
+
       private Reference source;
       private String vAppScopedLocalId;
       private InstantiationParams instantiationParams;
-      private List<NetworkAssignment> networkAssignment;
+      private Set<NetworkAssignment> networkAssignments = Sets.newLinkedHashSet();
       private Boolean sourceDelete;
 
       /**
@@ -110,207 +104,144 @@ public class SourcedCompositionItemParam {
       }
 
       /**
-       * @see SourcedCompositionItemParam#getNetworkAssignment()
+       * @see SourcedCompositionItemParam#getNetworkAssignments()
        */
-      public Builder networkAssignment(List<NetworkAssignment> networkAssignment) {
-         this.networkAssignment = networkAssignment;
+      public Builder networkAssignments(Set<NetworkAssignment> networkAssignments) {
+         this.networkAssignments = networkAssignments;
          return this;
       }
 
       /**
-       * @see SourcedCompositionItemParam#getSourceDelete()
+       * @see SourcedCompositionItemParam#isSourceDelete()
        */
       public Builder sourceDelete(Boolean sourceDelete) {
          this.sourceDelete = sourceDelete;
          return this;
       }
 
-
       public SourcedCompositionItemParam build() {
-         SourcedCompositionItemParam sourcedCompositionItemParam = new SourcedCompositionItemParam(networkAssignment);
-         sourcedCompositionItemParam.setSource(source);
-         sourcedCompositionItemParam.setVAppScopedLocalId(vAppScopedLocalId);
-         sourcedCompositionItemParam.setInstantiationParams(instantiationParams);
-         sourcedCompositionItemParam.setSourceDelete(sourceDelete);
-         return sourcedCompositionItemParam;
+         return new SourcedCompositionItemParam(source, vAppScopedLocalId, instantiationParams, networkAssignments, sourceDelete);
       }
-
 
       public Builder fromSourcedCompositionItemParam(SourcedCompositionItemParam in) {
          return source(in.getSource())
-            .vAppScopedLocalId(in.getVAppScopedLocalId())
-            .instantiationParams(in.getInstantiationParams())
-            .networkAssignment(in.getNetworkAssignment())
-            .sourceDelete(in.isSourceDelete());
+               .vAppScopedLocalId(in.getVAppScopedLocalId())
+               .instantiationParams(in.getInstantiationParams())
+               .networkAssignments(in.getNetworkAssignments())
+               .sourceDelete(in.isSourceDelete());
       }
+   }
+
+   public SourcedCompositionItemParam(Reference source, String vAppScopedLocalId, InstantiationParams instantiationParams,
+                                      Set<NetworkAssignment> networkAssignments, Boolean sourceDelete) {
+      this.source = source;
+      this.vAppScopedLocalId = vAppScopedLocalId;
+      this.instantiationParams = instantiationParams;
+      this.networkAssignments = ImmutableSet.copyOf(networkAssignments);
+      this.sourceDelete = sourceDelete;
    }
 
    private SourcedCompositionItemParam() {
       // For JAXB and builder use
    }
 
-   private SourcedCompositionItemParam(List<NetworkAssignment> networkAssignment) {
-      this.networkAssignment = networkAssignment;
+   @XmlElement(name = "Source", required = true)
+   protected Reference source;
+   @XmlElement(name = "VAppScopedLocalId")
+   protected String vAppScopedLocalId;
+   @XmlElement(name = "InstantiationParams")
+   protected InstantiationParams instantiationParams;
+   @XmlElement(name = "NetworkAssignment")
+   protected Set<NetworkAssignment> networkAssignments = Sets.newLinkedHashSet();
+   @XmlAttribute
+   protected Boolean sourceDelete;
+
+   /**
+    * Gets the value of the source property.
+    *
+    * @return possible object is
+    *         {@link Reference }
+    */
+   public Reference getSource() {
+      return source;
    }
 
 
-    @XmlElement(name = "Source", required = true)
-    protected Reference source;
-    @XmlElement(name = "VAppScopedLocalId")
-    protected String vAppScopedLocalId;
-    @XmlElement(name = "InstantiationParams")
-    protected InstantiationParams instantiationParams;
-    @XmlElement(name = "NetworkAssignment")
-    protected List<NetworkAssignment> networkAssignment;
-    @XmlAttribute
-    protected Boolean sourceDelete;
+   /**
+    * Gets the value of the vAppScopedLocalId property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getVAppScopedLocalId() {
+      return vAppScopedLocalId;
+   }
 
-    /**
-     * Gets the value of the source property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Reference }
-     *     
-     */
-    public Reference getSource() {
-        return source;
-    }
+   /**
+    * Gets the value of the instantiationParams property.
+    *
+    * @return possible object is
+    *         {@link InstantiationParams }
+    */
+   public InstantiationParams getInstantiationParams() {
+      return instantiationParams;
+   }
 
-    /**
-     * Sets the value of the source property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Reference }
-     *     
-     */
-    public void setSource(Reference value) {
-        this.source = value;
-    }
+   /**
+    * Gets the value of the networkAssignment property.
+    * <p/>
+    * <p/>
+    * This accessor method returns a reference to the live list,
+    * not a snapshot. Therefore any modification you make to the
+    * returned list will be present inside the JAXB object.
+    * This is why there is not a <CODE>set</CODE> method for the networkAssignment property.
+    * <p/>
+    * <p/>
+    * For example, to add a new item, do as follows:
+    * <pre>
+    *    getNetworkAssignment().add(newItem);
+    * </pre>
+    * <p/>
+    * <p/>
+    * <p/>
+    * Objects of the following type(s) are allowed in the list
+    * {@link NetworkAssignment }
+    */
+   public Set<NetworkAssignment> getNetworkAssignments() {
+      return this.networkAssignments;
+   }
 
-    /**
-     * Gets the value of the vAppScopedLocalId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getVAppScopedLocalId() {
-        return vAppScopedLocalId;
-    }
-
-    /**
-     * Sets the value of the vAppScopedLocalId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setVAppScopedLocalId(String value) {
-        this.vAppScopedLocalId = value;
-    }
-
-    /**
-     * Gets the value of the instantiationParams property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link InstantiationParams }
-     *     
-     */
-    public InstantiationParams getInstantiationParams() {
-        return instantiationParams;
-    }
-
-    /**
-     * Sets the value of the instantiationParams property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link InstantiationParams }
-     *     
-     */
-    public void setInstantiationParams(InstantiationParams value) {
-        this.instantiationParams = value;
-    }
-
-    /**
-     * Gets the value of the networkAssignment property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the networkAssignment property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getNetworkAssignment().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link NetworkAssignmentType }
-     * 
-     * 
-     */
-    public List<NetworkAssignment> getNetworkAssignment() {
-        if (networkAssignment == null) {
-            networkAssignment = new ArrayList<NetworkAssignment>();
-        }
-        return this.networkAssignment;
-    }
-
-    /**
-     * Gets the value of the sourceDelete property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isSourceDelete() {
-        return sourceDelete;
-    }
-
-    /**
-     * Sets the value of the sourceDelete property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setSourceDelete(Boolean value) {
-        this.sourceDelete = value;
-    }
+   /**
+    * Gets the value of the sourceDelete property.
+    *
+    * @return possible object is
+    *         {@link Boolean }
+    */
+   public Boolean isSourceDelete() {
+      return sourceDelete;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       SourcedCompositionItemParam that = SourcedCompositionItemParam.class.cast(o);
-      return equal(source, that.source) && 
-           equal(vAppScopedLocalId, that.vAppScopedLocalId) && 
-           equal(instantiationParams, that.instantiationParams) && 
-           equal(networkAssignment, that.networkAssignment) && 
-           equal(sourceDelete, that.sourceDelete);
+      return equal(source, that.source) &&
+            equal(vAppScopedLocalId, that.vAppScopedLocalId) &&
+            equal(instantiationParams, that.instantiationParams) &&
+            equal(networkAssignments, that.networkAssignments) &&
+            equal(sourceDelete, that.sourceDelete);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(source, 
-           vAppScopedLocalId, 
-           instantiationParams, 
-           networkAssignment, 
-           sourceDelete);
+      return Objects.hashCode(source,
+            vAppScopedLocalId,
+            instantiationParams,
+            networkAssignments,
+            sourceDelete);
    }
 
    @Override
@@ -319,7 +250,7 @@ public class SourcedCompositionItemParam {
             .add("source", source)
             .add("vAppScopedLocalId", vAppScopedLocalId)
             .add("instantiationParams", instantiationParams)
-            .add("networkAssignment", networkAssignment)
+            .add("networkAssignments", networkAssignments)
             .add("sourceDelete", sourceDelete).toString();
    }
 

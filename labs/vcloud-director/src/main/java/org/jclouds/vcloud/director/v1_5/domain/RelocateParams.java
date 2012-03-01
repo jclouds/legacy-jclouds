@@ -19,21 +19,18 @@
 
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *                 Parameters to be used for vm relocation.
- *             
- * 
+ * Parameters to be used for vm relocation.
+ * <p/>
+ * <p/>
  * <p>Java class for RelocateParams complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="RelocateParams">
  *   &lt;complexContent>
@@ -45,40 +42,22 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RelocateParams", propOrder = {
-    "datastore"
+      "datastore"
 })
 public class RelocateParams {
 
-    @XmlElement(name = "Datastore", required = true)
-    protected ReferenceType<?> datastore;
+   @XmlElement(name = "Datastore", required = true)
+   protected ReferenceType<?> datastore;
 
-    /**
-     * Gets the value of the datastore property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ReferenceType }
-     *     
-     */
-    public ReferenceType<?> getDatastore() {
-        return datastore;
-    }
-
-    /**
-     * Sets the value of the datastore property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ReferenceType }
-     *     
-     */
-    public void setDatastore(ReferenceType<?> value) {
-        this.datastore = value;
-    }
-
+   /**
+    * Gets the value of the datastore property.
+    *
+    * @return possible object is
+    *         {@link ReferenceType }
+    */
+   public ReferenceType<?> getDatastore() {
+      return datastore;
+   }
 }

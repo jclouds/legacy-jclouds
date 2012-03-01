@@ -22,10 +22,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
 import java.util.Set;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
 import org.jclouds.vcloud.director.v1_5.domain.cim.VirtualSystemSettingData;
 
@@ -43,7 +42,6 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  * @author Adam Lowe
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "VirtualHardwareSection", namespace = VCLOUD_OVF_NS)
 public class VirtualHardwareSection extends SectionType<VirtualHardwareSection> {
 
@@ -111,7 +109,7 @@ public class VirtualHardwareSection extends SectionType<VirtualHardwareSection> 
        */
       @Override
       public VirtualHardwareSection build() {
-         return new VirtualHardwareSection(info, transports, virtualSystem, items);
+         return new VirtualHardwareSection(info, required, transports, virtualSystem, items);
       }
 
       public Builder fromVirtualHardwareSection(VirtualHardwareSection in) {
@@ -135,15 +133,22 @@ public class VirtualHardwareSection extends SectionType<VirtualHardwareSection> 
          return Builder.class.cast(super.info(info));
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder required(Boolean required) {
+         return Builder.class.cast(super.required(required));
+      }
    }
 
    private VirtualSystemSettingData virtualSystem;
    private Set<String> transports;
    private Set<ResourceAllocationSettingData> items;
 
-   private VirtualHardwareSection(String info, Iterable<String> transports, VirtualSystemSettingData virtualSystem,
+   private VirtualHardwareSection(@Nullable String info, @Nullable Boolean required, Iterable<String> transports, VirtualSystemSettingData virtualSystem,
                                   Iterable<? extends ResourceAllocationSettingData> items) {
-      super(info);
+      super(info, required);
       this.virtualSystem = virtualSystem;
       this.transports = ImmutableSet.<String>copyOf(checkNotNull(transports, "transports"));
       this.items = ImmutableSet.<ResourceAllocationSettingData>copyOf(checkNotNull(items, "items"));

@@ -23,29 +23,24 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 
 /**
- * 
  * Essentially a container with a list of product sections.
- * 
+ * <p/>
  * <p>Java class for ProductSectionList complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="ProductSectionList">
  *   &lt;complexContent>
@@ -58,15 +53,12 @@ import com.google.common.collect.Sets;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ProductSectionList", propOrder = {
-    "productSection"
+      "productSection"
 })
 public class ProductSectionList
-    extends ResourceType<ProductSectionList>
+      extends ResourceType<ProductSectionList>
 
 {
    @SuppressWarnings("unchecked")
@@ -74,29 +66,30 @@ public class ProductSectionList
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromProductSectionList(this);
    }
 
    public static class Builder extends ResourceType.Builder<ProductSectionList> {
-      
-      private List<ProductSection> productSection;
+
+      private Set<ProductSection> productSections = Sets.newLinkedHashSet();
 
       /**
        * @see ProductSectionList#getProductSection()
        */
-      public Builder productSection(List<ProductSection> productSection) {
-         this.productSection = productSection;
+      public Builder productSection(Set<ProductSection> productSections) {
+         this.productSections = checkNotNull(productSections, "productSection");
          return this;
       }
 
 
       public ProductSectionList build() {
-         ProductSectionList productSectionList = new ProductSectionList(productSection);
+         ProductSectionList productSectionList = new ProductSectionList(productSections);
          return productSectionList;
       }
 
-      
+
       /**
        * @see ResourceType#getHref()
        */
@@ -136,11 +129,12 @@ public class ProductSectionList
 
       @Override
       public Builder fromResourceType(ResourceType<ProductSectionList> in) {
-          return Builder.class.cast(super.fromResourceType(in));
+         return Builder.class.cast(super.fromResourceType(in));
       }
+
       public Builder fromProductSectionList(ProductSectionList in) {
          return fromResourceType(in)
-            .productSection(in.getProductSection());
+               .productSection(in.getProductSection());
       }
    }
 
@@ -148,45 +142,25 @@ public class ProductSectionList
       // For JAXB and builder use
    }
 
-   private ProductSectionList(List<ProductSection> productSection) {
-      this.productSection = productSection;
+   private ProductSectionList(Set<ProductSection> productSection) {
+      this.productSection = ImmutableSet.copyOf(productSection);
    }
 
 
-    @XmlElement(name = "ProductSection", namespace = "http://schemas.dmtf.org/ovf/envelope/1")
-    protected List<ProductSection> productSection;
+   @XmlElement(name = "ProductSection", namespace = "http://schemas.dmtf.org/ovf/envelope/1")
+   protected Set<ProductSection> productSection = Sets.newLinkedHashSet();
 
-    /**
-     * Gets the value of the productSection property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the productSection property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getProductSection().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ProductSection }
-     */
-    public List<ProductSection> getProductSection() {
-        if (productSection == null) {
-            productSection = new ArrayList<ProductSection>();
-        }
-        return this.productSection;
-    }
+   /**
+    * Gets the value of the productSection property.
+    */
+   public Set<ProductSection> getProductSection() {
+      return this.productSection;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       ProductSectionList that = ProductSectionList.class.cast(o);
