@@ -130,7 +130,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements
 		for (NetworkInterfaceCard nic : cloneSpec.getNetworkSpec().getNetworkInterfaceCards()){
 			ensureBridgedNetworkingIsAppliedToMachine(clonedMachine.getName(), nic);
 		}
-
+		
 		return clonedMachine;
 	}
 
