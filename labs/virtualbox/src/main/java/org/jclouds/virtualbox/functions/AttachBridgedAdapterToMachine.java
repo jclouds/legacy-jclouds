@@ -23,6 +23,7 @@ import static org.virtualbox_4_1.NetworkAttachmentType.Bridged;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
 
@@ -33,25 +34,20 @@ import com.google.common.base.Function;
  */
 public class AttachBridgedAdapterToMachine implements Function<IMachine, Void> {
 
-   private long adapterIndex;
-   private String macAddress;
-   private String hostInterface;
+	   private NetworkInterfaceCard networkInterfaceCard;
 
-   public AttachBridgedAdapterToMachine(long adapterSlot, String macAddress,
-         String hostInterface) {
-      this.adapterIndex = adapterSlot;
-      this.macAddress = macAddress;
-      this.hostInterface = hostInterface;
-   }
+	   public AttachBridgedAdapterToMachine(NetworkInterfaceCard networkInterfaceCard) {
+	      this.networkInterfaceCard = networkInterfaceCard;
+	   }
 
    @Override
    public Void apply(@Nullable IMachine machine) {
-      INetworkAdapter networkAdapter = machine.getNetworkAdapter(adapterIndex);
-      networkAdapter.setAttachmentType(Bridged);
-      networkAdapter.setAdapterType(Am79C973);
-      networkAdapter.setMACAddress(macAddress);
-      networkAdapter.setBridgedInterface(hostInterface);
-      networkAdapter.setEnabled(true);
+      INetworkAdapter iNetworkAdapter = machine.getNetworkAdapter(networkInterfaceCard.getSlot());
+      iNetworkAdapter.setAttachmentType(Bridged);
+      iNetworkAdapter.setAdapterType(Am79C973);
+      iNetworkAdapter.setMACAddress(networkInterfaceCard.getNetworkAdapter().getMacAddress());
+      iNetworkAdapter.setBridgedInterface(networkInterfaceCard.getNetworkInterfaceName());
+      iNetworkAdapter.setEnabled(true);
       machine.saveSettings();
       return null;
    }

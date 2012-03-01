@@ -29,7 +29,10 @@ import javax.inject.Named;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
+import org.jclouds.virtualbox.domain.CloneSpec;
+import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.CloneMode;
 import org.virtualbox_4_1.CloneOptions;
 import org.virtualbox_4_1.IMachine;
@@ -43,70 +46,98 @@ import com.google.common.base.Supplier;
 import com.google.inject.Inject;
 
 /**
- * CloneAndRegisterMachineFromIMachineIfNotAlreadyExists will take care of the followings: - cloning
- * the master - register the clone machine -
+ * CloneAndRegisterMachineFromIMachineIfNotAlreadyExists will take care of the
+ * followings: - cloning the master - register the clone machine -
  * 
  * @author Andrea Turli
  */
-public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Function<IMachine, IMachine> {
+public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements
+		Function<IMachine, IMachine> {
 
-   @Resource
-   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-   protected Logger logger = Logger.NULL;
+	@Resource
+	@Named(ComputeServiceConstants.COMPUTE_LOGGER)
+	protected Logger logger = Logger.NULL;
 
-   private final Supplier<VirtualBoxManager> manager;
-   private final String workingDir;
-   private final VmSpec vmSpec;
-   private final boolean isLinkedClone;
+	private final Supplier<VirtualBoxManager> manager;
+	private final String workingDir;
+	private final CloneSpec cloneSpec;
+	private final boolean isLinkedClone;
+	private final MachineUtils machineUtils;
+	
+	@Inject
+	public CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
+			Supplier<VirtualBoxManager> manager,
+			@Named(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR) String workingDir,
+			CloneSpec cloneSpec, boolean isLinkedClone, MachineUtils machineUtils) {
+		this.manager = manager;
+		this.workingDir = workingDir;
+		this.cloneSpec = cloneSpec;
+		this.isLinkedClone = isLinkedClone;
+		this.machineUtils = machineUtils;
+	}
 
-   @Inject
-   public CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(Supplier<VirtualBoxManager> manager,
-            @Named(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR) String workingDir, VmSpec vmSpec, boolean isLinkedClone) {
-      this.manager = manager;
-      this.workingDir = workingDir;
-      this.vmSpec = vmSpec;
-      this.isLinkedClone = isLinkedClone;
-   }
+	@Override
+	public IMachine apply(@Nullable IMachine master) {
+		VmSpec vmSpec = cloneSpec.getVmSpec();
+		try {
+			manager.get().getVBox().findMachine(vmSpec.getVmName());
+			throw new IllegalStateException("Machine " + vmSpec.getVmName()
+					+ " is already registered.");
+		} catch (VBoxException e) {
+			if (machineNotFoundException(e))
+				return cloneMachine(vmSpec, master);
+			else
+				throw e;
+		}
+	}
 
-   @Override
-   public IMachine apply(@Nullable IMachine master) {
-      try {
-         manager.get().getVBox().findMachine(vmSpec.getVmName());
-         throw new IllegalStateException("Machine " + vmSpec.getVmName() + " is already registered.");
-      } catch (VBoxException e) {
-         if (machineNotFoundException(e))
-            return cloneMachine(vmSpec, master);
-         else
-            throw e;
-      }
-   }
+	private boolean machineNotFoundException(VBoxException e) {
+		return e.getMessage().contains(
+				"VirtualBox error: Could not find a registered machine named ")
+				|| e.getMessage().contains(
+						"Could not find a registered machine with UUID {");
+	}
 
-   private boolean machineNotFoundException(VBoxException e) {
-      return e.getMessage().contains("VirtualBox error: Could not find a registered machine named ") ||
-            e.getMessage().contains("Could not find a registered machine with UUID {");
-   }
+	private IMachine cloneMachine(VmSpec vmSpec, IMachine master) {
+		String settingsFile = manager.get().getVBox()
+				.composeMachineFilename(vmSpec.getVmName(), workingDir);
+		IMachine clonedMachine = manager
+				.get()
+				.getVBox()
+				.createMachine(settingsFile, vmSpec.getVmName(),
+						vmSpec.getOsTypeId(), vmSpec.getVmId(),
+						vmSpec.isForceOverwrite());
+		List<CloneOptions> options = new ArrayList<CloneOptions>();
+		if (isLinkedClone)
+			options.add(CloneOptions.Link);
 
-   private IMachine cloneMachine(VmSpec vmSpec, IMachine master) {
-      String settingsFile = manager.get().getVBox().composeMachineFilename(vmSpec.getVmName(), workingDir);
-      IMachine clonedMachine = manager.get().getVBox().createMachine(settingsFile, vmSpec.getVmName(), vmSpec.getOsTypeId(),
-               vmSpec.getVmId(), vmSpec.isForceOverwrite());
-      List<CloneOptions> options = new ArrayList<CloneOptions>();
-      if (isLinkedClone)
-         options.add(CloneOptions.Link);
+		// TODO snapshot name
+		ISnapshot currentSnapshot = new TakeSnapshotIfNotAlreadyAttached(
+				manager, "snapshotName", "snapshotDesc").apply(master);
 
-      // TODO snapshot name
-      ISnapshot currentSnapshot = new TakeSnapshotIfNotAlreadyAttached(manager, "snapshotName", "snapshotDesc")
-               .apply(master);
+		// clone
+		IProgress progress = currentSnapshot.getMachine().cloneTo(
+				clonedMachine, CloneMode.MachineState, options);
 
-      // clone
-      IProgress progress = currentSnapshot.getMachine().cloneTo(clonedMachine, CloneMode.MachineState, options);
+		if (progress.getCompleted())
+			logger.debug("clone done");
 
-      if (progress.getCompleted())
-         logger.debug("clone done");
 
-      // registering
-      manager.get().getVBox().registerMachine(clonedMachine);
-      return clonedMachine;
-   }
+		// registering
+		manager.get().getVBox().registerMachine(clonedMachine);
 
+		// Bridged
+		for (NetworkInterfaceCard networkInterfaceCard : cloneSpec.getNetworkSpec().getNetworkInterfaceCards()) {
+			ensureBridgedNetworkingIsAppliedToMachine(clonedMachine.getName(), networkInterfaceCard);
+		}
+
+		return clonedMachine;
+	}
+
+	private void ensureBridgedNetworkingIsAppliedToMachine(String vmName,
+			NetworkInterfaceCard nic) {
+		
+		machineUtils.writeLockMachineAndApply(vmName,
+				new AttachBridgedAdapterToMachine(nic));
+	}
 }
