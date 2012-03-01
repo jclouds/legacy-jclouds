@@ -121,7 +121,14 @@ public class VCloudDirectorMediaType {
    
    public static final String PRODUCT_SECTION_LIST = "application/vnd.vmware.vcloud.vAppTemplate+xml";
 
+   public static final String RELOCATE_TEMPLATE = "application/vnd.vmware.vcloud.relocateTemplate+xml";
+
+   public static final String LEASE_SETTINGS_SECTION =  "application/vnd.vmware.vcloud.leastSettingsSection+xml";
+   
+   public static final String ENVELOPE =  "application/vnd.???";
+   
    /**
+    * 
     * All acceptable media types.
     *
     * This list must be updated whenever a new media type constant is added.
@@ -137,5 +144,7 @@ public class VCloudDirectorMediaType {
             QUERY_RESULT_RECORDS, QUERY_RESULT_REFERENCES, QUERY_RESULT_ID_RECORDS,
             VAPP_TEMPLATE, CUSTOMIZATION_SECTION, GUEST_CUSTOMIZATION_SECTION, NETWORK_SECTION, NETWORK_CONFIG_SECTION, NETWORK_CONNECTION_SECTION,   
          CONTROL_ACCESS
+         ,
+         LEASE_SETTINGS_SECTION, RELOCATE_TEMPLATE, ENVELOPE
       );
 }

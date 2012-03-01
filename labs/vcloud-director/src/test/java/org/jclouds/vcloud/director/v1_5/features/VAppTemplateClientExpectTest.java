@@ -39,21 +39,31 @@ import static org.testng.Assert.fail;
  *
  * @author Adam Lowe
  */
-@Test(groups = {"unit", "user"}, singleThreaded = true, testName = "VAppTemplateClientExpectTest")
+@Test(groups = {"unit", "user"}, testName = "VAppTemplateClientExpectTest")
 public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
 
-   public void testGetVAppTemplate() {
+   public void testVAppTemplate() {
       final String templateId = "/vAppTemplate/vAppTemplate/vappTemplate-xxxx-xxxx-xxxx-xxx";
       Reference vappTemplateRef = Reference.builder().href(URI.create(endpoint + templateId)).build();
 
-      VAppTemplateClient client = requestsSendResponses(loginRequest, sessionResponse,
+      VAppTemplateClient client = orderedRequestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId).acceptMedia(VAPP_TEMPLATE).httpRequestBuilder().build(),
-            new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/vAppTemplate.xml", VAPP_TEMPLATE).httpResponseBuilder().build()
-      ).getVAppTemplateClient();
+            new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/vAppTemplate.xml", VAPP_TEMPLATE).httpResponseBuilder().build(),
+            new VcloudHttpRequestPrimer().apiCommand("PUT", templateId).xmlFilePayload("/vapptemplate/vAppTemplate.xml", VAPP_TEMPLATE).acceptMedia(TASK).httpRequestBuilder().build(),
+            new VcloudHttpResponsePrimer().xmlFilePayload("/task/task.xml", TASK).httpResponseBuilder().build(),
+            new VcloudHttpRequestPrimer().apiCommand("DELETE", templateId).acceptMedia(TASK).httpRequestBuilder().build(),
+            new VcloudHttpResponsePrimer().xmlFilePayload("/task/task.xml", TASK).httpResponseBuilder().build()
+            ).getVAppTemplateClient();
 
       assertNotNull(client);
       VAppTemplate template = client.getVAppTemplate(vappTemplateRef);
       assertEquals(template, exampleTemplate());
+                  
+      Task task = client.editVAppTemplate(vappTemplateRef, template);
+      assertNotNull(task);
+
+      task = client.deleteVappTemplate(vappTemplateRef);
+      assertNotNull(task);
    }
 
    private VAppTemplate exampleTemplate() {
@@ -67,28 +77,32 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       LeaseSettingsSection leaseSettings = LeaseSettingsSection.builder().type("application/vnd.vmware.vcloud.leaseSettingsSection+xml")
             .href(URI.create("https://vcloudbeta.bluelock.com/api/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9/leaseSettingsSection/"))
             .info("Lease settings section")
-            .links(ImmutableList.of(Link.builder().rel("edit").type("application/vnd.vmware.vcloud.leaseSettingsSection+xml")
+            .links(ImmutableSet.of(Link.builder().rel("edit").type("application/vnd.vmware.vcloud.leaseSettingsSection+xml")
                   .href(URI.create("https://vcloudbeta.bluelock.com/api/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9/leaseSettingsSection/")).build()))
             .storageLeaseInSeconds(0)
+            .required(false)
             .build();
       CustomizationSection customization = CustomizationSection.builder()
             .type("application/vnd.vmware.vcloud.customizationSection+xml")
+            .info("VApp template customization section")
             .customizeOnInstantiate(true)
             .href(URI.create("https://vcloudbeta.bluelock.com/api/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9/customizationSection/"))
+            .required(false)
             .build();
             
       return VAppTemplate.builder().href(URI.create("https://vcloudbeta.bluelock.com/api/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9"))
             .links(ImmutableSet.of(aLink, bLink))
-            .children(VAppTemplateChildren.builder().build())
+            .children(ImmutableSet.<VAppTemplate>of())
             .type("application/vnd.vmware.vcloud.vAppTemplate+xml")
             .description("For testing")
             .id("urn:vcloud:vapptemplate:ef4415e6-d413-4cbb-9262-f9bbec5f2ea9")
             .name("ubuntu10")
-            .sections(ImmutableList.<SectionType>of(leaseSettings, customization))
+            .sections(ImmutableSet.<SectionType>of(leaseSettings, customization))
             .status(-1)
             .owner(owner)
             .ovfDescriptorUploaded(true)
             .goldMaster(false)
             .build();
+
    }
 }

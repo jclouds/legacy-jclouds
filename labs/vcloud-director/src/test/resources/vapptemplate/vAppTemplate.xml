@@ -16,7 +16,6 @@
               href="https://vcloudbeta.bluelock.com/api/admin/user/967d317c-4273-4a95-b8a4-bf63b78e9c69"/>
     </Owner>
     <Children/>
-
     <LeaseSettingsSection type="application/vnd.vmware.vcloud.leaseSettingsSection+xml"
                           href="https://vcloudbeta.bluelock.com/api/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9/leaseSettingsSection/"
                           ovf:required="false">

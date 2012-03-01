@@ -54,6 +54,7 @@ public interface VAppTemplateAsyncClient {
     * @see org.jclouds.vcloud.director.v1_5.features.VAppTemplateClient#editVAppTemplate(org.jclouds.vcloud.director.v1_5.domain.URISupplier, org.jclouds.vcloud.director.v1_5.domain.VAppTemplate)
     */
    @PUT
+   @Produces(VAPP_TEMPLATE)
    @Consumes(TASK)
    @JAXBResponseParser
    ListenableFuture<Task> editVAppTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier reference,
@@ -98,6 +99,7 @@ public interface VAppTemplateAsyncClient {
     * @see VAppTemplateClient#relocateVappTemplate(org.jclouds.vcloud.director.v1_5.domain.URISupplier, org.jclouds.vcloud.director.v1_5.domain.RelocateParams)
     */
    @POST
+   @Produces(RELOCATE_TEMPLATE)
    @Consumes(TASK)
    @Path("/action/relocate")
    @JAXBResponseParser
@@ -117,6 +119,8 @@ public interface VAppTemplateAsyncClient {
     * @see VAppTemplateClient#editVAppTemplateCustomizationSection(org.jclouds.vcloud.director.v1_5.domain.URISupplier, org.jclouds.vcloud.director.v1_5.domain.CustomizationSection)
     */
    @PUT
+   @Produces(CUSTOMIZATION_SECTION)
+   @Consumes(TASK)
    @Path("/customizationSection")
    @JAXBResponseParser
    ListenableFuture<Task> editVAppTemplateCustomizationSection(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
@@ -135,6 +139,7 @@ public interface VAppTemplateAsyncClient {
     * @see VAppTemplateClient#editVAppTemplateGuestCustomizationSection(org.jclouds.vcloud.director.v1_5.domain.URISupplier, org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection)
     */
    @PUT
+   @Produces(GUEST_CUSTOMIZATION_SECTION)
    @Consumes(TASK)
    @Path("/guestCustomizationSection")
    @JAXBResponseParser
@@ -145,6 +150,7 @@ public interface VAppTemplateAsyncClient {
     * @see VAppTemplateClient#getVappTemplateLeaseSettingsSection(org.jclouds.vcloud.director.v1_5.domain.URISupplier)
     */
    @GET
+   @Consumes(LEASE_SETTINGS_SECTION)
    @Path("/leaseSettingsSection")
    @JAXBResponseParser
    LeaseSettingsSection getVappTemplateLeaseSettingsSection(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
@@ -153,6 +159,7 @@ public interface VAppTemplateAsyncClient {
     * @see VAppTemplateClient#editVappTemplateLeaseSettingsSection(org.jclouds.vcloud.director.v1_5.domain.URISupplier, org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection)
     */
    @PUT
+   @Produces(LEASE_SETTINGS_SECTION)
    @Consumes(TASK)
    @Path("/leaseSettingsSection")
    @JAXBResponseParser
@@ -169,6 +176,7 @@ public interface VAppTemplateAsyncClient {
    ListenableFuture<Metadata> getMetadataForVappTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
 
    @PUT
+   @Produces(METADATA)
    @Consumes(TASK)
    @Path("/metadata")
    @JAXBResponseParser
@@ -188,6 +196,7 @@ public interface VAppTemplateAsyncClient {
     * @see VAppTemplateClient#editMetadataEntryForVAppTemplate(org.jclouds.vcloud.director.v1_5.domain.URISupplier, String, org.jclouds.vcloud.director.v1_5.domain.MetadataEntry)
     */
    @PUT
+   @Produces(METADATA_ENTRY)
    @Consumes(TASK)
    @Path("/metadata/{key}")
    ListenableFuture<Task> editMetadataEntryForVAppTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
@@ -198,7 +207,6 @@ public interface VAppTemplateAsyncClient {
     * @see VAppTemplateClient#deleteMetadataEntryForVAppTemplate(org.jclouds.vcloud.director.v1_5.domain.URISupplier, String)
     */
    @DELETE
-   @Produces()
    @Consumes(TASK)
    @Path("/metadata/{key}")
    ListenableFuture<Task> deleteMetadataEntryForVAppTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
@@ -259,6 +267,7 @@ public interface VAppTemplateAsyncClient {
     * @see VAppTemplateClient#getOvfForVAppTemplate(org.jclouds.vcloud.director.v1_5.domain.URISupplier)
     */
    @GET
+   @Consumes(ENVELOPE)
    @Path("/ovf")
    ListenableFuture<Envelope> getOvfForVAppTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
 
