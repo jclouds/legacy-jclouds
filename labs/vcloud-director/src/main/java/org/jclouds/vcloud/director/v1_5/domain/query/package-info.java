@@ -18,11 +18,10 @@
  */
 @XmlSchema(namespace = VCLOUD_1_5_NS, location="http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd", elementFormDefault = XmlNsForm.QUALIFIED,
       xmlns = {
-            @XmlNs(prefix = "cim", namespaceURI=VCLOUD_CIM_NS),
-            @XmlNs(prefix = "ovf", namespaceURI=VCLOUD_OVF_NS)
+            @XmlNs(prefix = "cim", namespaceURI=VCLOUD_CIM_NS)
       }
 )
-package org.jclouds.vcloud.director.v1_5.domain;
+package org.jclouds.vcloud.director.v1_5.domain.query;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_CIM_NS;
@@ -31,4 +30,3 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OV
 import javax.xml.bind.annotation.XmlNs;
 import javax.xml.bind.annotation.XmlNsForm;
 import javax.xml.bind.annotation.XmlSchema;
-

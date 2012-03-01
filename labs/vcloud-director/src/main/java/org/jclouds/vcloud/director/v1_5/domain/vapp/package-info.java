@@ -22,7 +22,7 @@
             @XmlNs(prefix = "ovf", namespaceURI=VCLOUD_OVF_NS)
       }
 )
-package org.jclouds.vcloud.director.v1_5.domain;
+package org.jclouds.vcloud.director.v1_5.domain.vapp;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_CIM_NS;
@@ -31,4 +31,3 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OV
 import javax.xml.bind.annotation.XmlNs;
 import javax.xml.bind.annotation.XmlNsForm;
 import javax.xml.bind.annotation.XmlSchema;
-
