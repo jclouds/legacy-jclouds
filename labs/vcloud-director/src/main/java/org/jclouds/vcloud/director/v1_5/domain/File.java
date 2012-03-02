@@ -100,14 +100,30 @@ public class File extends EntityType<File> {
 
       public File build() {
          return new File(href, type, links, description, tasksInProgress, id, name, size, bytesTransferred, checksum);
+
       }
 
+      /**
+       * @see EntityType#getName()
+       */
+      public Builder name(String name) {
+         super.name(name);
+         return this;
+      }
+      
+      /**
+       * @see EntityType#getDescription()
+       */
+      public Builder description(String description) {
+         super.description(description);
+         return this;
+      }
       /**
        * @see EntityType#getId()
        */
       @Override
       public Builder id(String id) {
-         this.id = id;
+         super.id(id);
          return this;
       }
 
@@ -116,7 +132,7 @@ public class File extends EntityType<File> {
        */
       @Override
       public Builder tasksInProgress(TasksInProgress tasksInProgress) {
-         this.tasksInProgress = tasksInProgress;
+         super.tasksInProgress (tasksInProgress);
          return this;
       }
 
@@ -125,7 +141,7 @@ public class File extends EntityType<File> {
        */
       @Override
       public Builder href(URI href) {
-         this.href = href;
+         super.href(href);
          return this;
       }
 
@@ -182,7 +198,9 @@ public class File extends EntityType<File> {
       // For JAXB and builder use
    }
 
-
+   private File(URI href, String name) {
+      super(href, name);
+   }
    @XmlAttribute
    protected Long size;
    @XmlAttribute
