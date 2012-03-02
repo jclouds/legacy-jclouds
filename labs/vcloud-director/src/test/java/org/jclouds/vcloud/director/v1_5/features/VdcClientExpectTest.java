@@ -30,7 +30,6 @@ import org.jclouds.vcloud.director.v1_5.domain.AvailableNetworks;
 import org.jclouds.vcloud.director.v1_5.domain.Capabilities;
 import org.jclouds.vcloud.director.v1_5.domain.CapacityWithUsage;
 import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.CloneMediaParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.ComposeVAppParams;
@@ -57,14 +56,14 @@ import org.testng.annotations.Test;
  * 
  * @author danikov
  */
-@Test(groups = { "unit", "apitests", "user" }, singleThreaded = true, testName = "VdcClientExpectTest")
+@Test(groups = { "unit", "user", "vdc" }, singleThreaded = true, testName = "VdcClientExpectTest")
 public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
    
    private Reference vdcRef;
    
    @BeforeClass
    public void before() {
-      String vdcId = "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f";
+      String vdcId = "e9cd3387-ac57-4d27-a481-9bee75e0690f";
       vdcRef = Reference.builder()
             .type("application/vnd.vmware.vcloud.vdc+xml")
             .name("")
@@ -73,7 +72,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .build();
    }
    
-   @Test(enabled = false)
+   @Test
    public void testGetVdc() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -89,8 +88,10 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       assertEquals(client.getVdcClient().getVdc(vdcRef), expected);
    }
 
-   @Test(enabled = false)
+   @Test
    public void testResponse400ForInvalidVdcId() {
+      URI vdcUri = URI.create(endpoint + "/vdc/NOTAUUID");
+      
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("GET", "/vdc/NOTAUUID")
@@ -105,6 +106,8 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .majorErrorCode(400)
             .minorErrorCode("BAD_REQUEST")
             .build();
+      
+      Reference vdcRef = Reference.builder().href(vdcUri).build();
 
       try {
          client.getVdcClient().getVdc(vdcRef);
@@ -116,8 +119,10 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       }
    }
 
-   @Test(enabled = false)
+   @Test
    public void testResponse403ForFakeVdcId() {
+      URI vdcUri = URI.create(endpoint + "/vdc/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
+      
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("GET", "/vdc/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
@@ -132,6 +137,8 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .majorErrorCode(403)
             .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
             .build();
+      
+      Reference vdcRef = Reference.builder().href(vdcUri).build();
 
       try {
          client.getVdcClient().getVdc(vdcRef);
@@ -191,6 +198,28 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       } catch (Exception e) {
          fail("Should have thrown a VCloudDirectorException");
       }
+   }
+   
+   @Test(enabled = false)
+   public void testCloneVApp() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+            new VcloudHttpRequestPrimer()
+               .apiCommand("POST", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/cloneVAppTemplate")
+               .xmlFilePayload("/vdc/params/cloneVApp.xml", VCloudDirectorMediaType.CLONE_V_APP_PARAMS)
+               .acceptAnyMedia()
+               .httpRequestBuilder().build(), 
+            new VcloudHttpResponsePrimer()
+               .xmlFilePayload("/vdc/cloneVApp.xml", VCloudDirectorMediaType.V_APP)
+               .httpResponseBuilder().build());
+      
+      VApp expected = cloneVApp();
+
+      // TODO: configure params
+      CloneVAppParams params = CloneVAppParams.builder()
+         
+         .build();
+      
+      assertEquals(client.getVdcClient().cloneVApp(vdcRef, params), expected);
    }
    
    @Test(enabled = false)
@@ -474,11 +503,6 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
    }
    
    private VAppTemplate captureVApp() {
-      // TODO Auto-generated method stub
-      return null;
-   }
-   
-   private Media cloneMedia() {
       // TODO Auto-generated method stub
       return null;
    }
