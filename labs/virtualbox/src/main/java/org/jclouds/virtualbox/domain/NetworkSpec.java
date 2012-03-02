@@ -16,26 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.virtualbox.domain;
 
-import com.google.common.base.Objects;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.common.base.Objects;
 
 /**
  * Describes the network configuration for a VirtualBox machine.
  */
 public class NetworkSpec {
 
-   private final Map<Long, NatAdapter> natNetworkAdapters;
+   private final List<NetworkInterfaceCard> networkInterfaceCards;
 
-   public NetworkSpec(final Map<Long, NatAdapter> natNetworkAdapters) {
-      this.natNetworkAdapters = checkNotNull(natNetworkAdapters, "natNetworkAdapters");
+   public NetworkSpec(final List<NetworkInterfaceCard> networkInterfaceCards) {
+      this.networkInterfaceCards = checkNotNull(networkInterfaceCards, "networkInterfaceCards");
    }
 
    public static Builder builder() {
@@ -44,21 +42,40 @@ public class NetworkSpec {
 
    public static class Builder {
 
-      private Map<Long, NatAdapter> natNetworkAdapters = new HashMap<Long, NatAdapter>();
+      private List<NetworkInterfaceCard> networkInterfaceCards = new ArrayList<NetworkInterfaceCard>();
 
-      public Builder natNetworkAdapter(int slot, NatAdapter adapter) {
-         this.natNetworkAdapters.put((long) slot, adapter);
+      public Builder addNIC1(NetworkInterfaceCard networkInterfaceCard) {
+    	  NetworkInterfaceCard nic = NetworkInterfaceCard.builder().slot(0L).addNetworkAdapter(networkInterfaceCard.getNetworkAdapter()).build();
+         this.networkInterfaceCards.add(nic);
          return this;
       }
+      
+      public Builder addNIC2(NetworkInterfaceCard networkInterfaceCard) {
+    	  NetworkInterfaceCard nic = NetworkInterfaceCard.builder().slot(1L).addNetworkAdapter(networkInterfaceCard.getNetworkAdapter()).build();
+         this.networkInterfaceCards.add(nic);
+         return this;
+      }
+      
+      public Builder addNIC3(NetworkInterfaceCard networkInterfaceCard) {
+    	  NetworkInterfaceCard nic = NetworkInterfaceCard.builder().slot(2L).addNetworkAdapter(networkInterfaceCard.getNetworkAdapter()).build();
+         this.networkInterfaceCards.add(nic);
+         return this;
+      }
+      
+      public Builder addNIC4(NetworkInterfaceCard networkInterfaceCard) {
+    	  NetworkInterfaceCard nic = NetworkInterfaceCard.builder().slot(3L).addNetworkAdapter(networkInterfaceCard.getNetworkAdapter()).build();
+         this.networkInterfaceCards.add(nic);
+         return this;
+      }      
 
       public NetworkSpec build() {
-         return new NetworkSpec(natNetworkAdapters);
+         return new NetworkSpec(networkInterfaceCards);
       }
    }
 
 
-   public Map<Long, NatAdapter> getNatNetworkAdapters() {
-      return Collections.unmodifiableMap(natNetworkAdapters);
+   public List<NetworkInterfaceCard> getNetworkInterfaceCards() {
+      return networkInterfaceCards;
    }
 
    @Override
@@ -66,21 +83,20 @@ public class NetworkSpec {
       if (this == o) return true;
       if (o instanceof VmSpec) {
          NetworkSpec other = (NetworkSpec) o;
-         return Objects.equal(natNetworkAdapters, other.natNetworkAdapters);
+         return Objects.equal(networkInterfaceCards, other.networkInterfaceCards);
       }
       return false;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(natNetworkAdapters);
+      return Objects.hashCode(networkInterfaceCards);
    }
-
 
    @Override
    public String toString() {
       return "NetworkSpec{" +
-              "natNetworkAdapters=" + natNetworkAdapters +
+              "networkInterfaceCards= " + networkInterfaceCards +
               '}';
    }
 }
