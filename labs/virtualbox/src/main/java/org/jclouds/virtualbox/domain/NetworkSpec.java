@@ -18,12 +18,14 @@
  */
 package org.jclouds.virtualbox.domain;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Describes the network configuration for a VirtualBox machine.
@@ -33,7 +35,7 @@ public class NetworkSpec {
    private final List<NetworkInterfaceCard> networkInterfaceCards;
 
    public NetworkSpec(final List<NetworkInterfaceCard> networkInterfaceCards) {
-      this.networkInterfaceCards = checkNotNull(networkInterfaceCards, "networkInterfaceCards");
+      this.networkInterfaceCards = ImmutableList.copyOf(checkNotNull(networkInterfaceCards, "networkInterfaceCards"));
    }
 
    public static Builder builder() {
@@ -44,35 +46,17 @@ public class NetworkSpec {
 
       private List<NetworkInterfaceCard> networkInterfaceCards = new ArrayList<NetworkInterfaceCard>();
 
-      public Builder addNIC1(NetworkInterfaceCard networkInterfaceCard) {
-    	  NetworkInterfaceCard nic = NetworkInterfaceCard.builder().slot(0L).addNetworkAdapter(networkInterfaceCard.getNetworkAdapter()).build();
+      public Builder addNIC(long slot, NetworkInterfaceCard networkInterfaceCard) {
+         checkArgument(slot >= 0 && slot < 4, "must be 0, 1, 2, 3: %s", slot);
+    	  NetworkInterfaceCard nic = NetworkInterfaceCard.builder().slot(slot).addNetworkAdapter(networkInterfaceCard.getNetworkAdapter()).build();
          this.networkInterfaceCards.add(nic);
          return this;
       }
-      
-      public Builder addNIC2(NetworkInterfaceCard networkInterfaceCard) {
-    	  NetworkInterfaceCard nic = NetworkInterfaceCard.builder().slot(1L).addNetworkAdapter(networkInterfaceCard.getNetworkAdapter()).build();
-         this.networkInterfaceCards.add(nic);
-         return this;
-      }
-      
-      public Builder addNIC3(NetworkInterfaceCard networkInterfaceCard) {
-    	  NetworkInterfaceCard nic = NetworkInterfaceCard.builder().slot(2L).addNetworkAdapter(networkInterfaceCard.getNetworkAdapter()).build();
-         this.networkInterfaceCards.add(nic);
-         return this;
-      }
-      
-      public Builder addNIC4(NetworkInterfaceCard networkInterfaceCard) {
-    	  NetworkInterfaceCard nic = NetworkInterfaceCard.builder().slot(3L).addNetworkAdapter(networkInterfaceCard.getNetworkAdapter()).build();
-         this.networkInterfaceCards.add(nic);
-         return this;
-      }      
 
       public NetworkSpec build() {
          return new NetworkSpec(networkInterfaceCards);
       }
    }
-
 
    public List<NetworkInterfaceCard> getNetworkInterfaceCards() {
       return networkInterfaceCards;
@@ -80,7 +64,8 @@ public class NetworkSpec {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) return true;
+      if (this == o)
+         return true;
       if (o instanceof VmSpec) {
          NetworkSpec other = (NetworkSpec) o;
          return Objects.equal(networkInterfaceCards, other.networkInterfaceCards);
@@ -95,8 +80,6 @@ public class NetworkSpec {
 
    @Override
    public String toString() {
-      return "NetworkSpec{" +
-              "networkInterfaceCards= " + networkInterfaceCards +
-              '}';
+      return "NetworkSpec{" + "networkInterfaceCards= " + networkInterfaceCards + '}';
    }
 }

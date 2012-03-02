@@ -18,6 +18,8 @@
  */
 package org.jclouds.virtualbox.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Objects;
 
 public class NetworkInterfaceCard {
@@ -28,9 +30,9 @@ public class NetworkInterfaceCard {
 
 	
 	public NetworkInterfaceCard(long slot, NetworkAdapter networkAdapter, String hostInterfaceName) {
-		this.slot = slot;
-		this.networkAdapter = networkAdapter;
-		this.hostInterfaceName = hostInterfaceName;
+		this.slot = checkNotNull(slot, "slot");
+		this.networkAdapter = checkNotNull(networkAdapter, "networkAdapter");
+		this.hostInterfaceName = checkNotNull(hostInterfaceName, "hostInterfaceName");
 	}
 
 	public static Builder builder() {

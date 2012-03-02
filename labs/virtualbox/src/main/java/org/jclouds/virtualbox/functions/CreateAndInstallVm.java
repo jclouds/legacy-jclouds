@@ -139,8 +139,13 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
       }
    }
 
+   /**
+    * ensureMachineHasPowerDown needs to have this delay just to ensure that the machine is completely powered off
+    * 
+    * @param vmName
+    */
    private void ensureMachineHasPowerDown(String vmName) {
-	   while(manager.get().getVBox().findMachine(vmName).getState().equals(MachineState.RUNNING)) {
+	   while(!manager.get().getVBox().findMachine(vmName).getState().equals(MachineState.POWERED_OFF)) {
 		   machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new Function<ISession, Void>() {
          @Override
          public Void apply(ISession session) {

@@ -29,8 +29,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class CloneSpec {
 
-   private VmSpec vmSpec;
-   private NetworkSpec networkSpec;
+   private final VmSpec vmSpec;
+   private final NetworkSpec networkSpec;
 
    public static Builder builder() {
       return new Builder();

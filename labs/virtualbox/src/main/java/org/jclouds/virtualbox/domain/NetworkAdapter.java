@@ -19,16 +19,16 @@
 
 package org.jclouds.virtualbox.domain;
 
-import org.virtualbox_4_1.NetworkAttachmentType;
-
-import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
-import org.virtualbox_4_1.NATProtocol;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collections;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.virtualbox_4_1.NATProtocol;
+import org.virtualbox_4_1.NetworkAttachmentType;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Represents a network adapter in VirtualBox.
@@ -39,14 +39,14 @@ public class NetworkAdapter {
 
 	private final NetworkAttachmentType networkAttachmentType;
 	private final String macAddress;
-	private final Set<RedirectRule> redirectRules = Sets.newLinkedHashSet();
+	private final Set<RedirectRule> redirectRules;
 
 	public NetworkAdapter(NetworkAttachmentType networkAttachmentType,
 			String macAddress, Set<RedirectRule> redirectRules) {
 		this.networkAttachmentType = checkNotNull(networkAttachmentType,
 				"networkAttachmentType");
 		this.macAddress = macAddress;
-		this.redirectRules.addAll(redirectRules);
+		this.redirectRules = ImmutableSet.<RedirectRule>copyOf(checkNotNull(redirectRules, "redirectRules"));
 	}
 
 	public static Builder builder() {
@@ -57,7 +57,7 @@ public class NetworkAdapter {
 
 		private NetworkAttachmentType networkAttachmentType;
 		private String macAddress;
-		private Set<RedirectRule> redirectRules = Sets.newLinkedHashSet();
+		private Set<RedirectRule> redirectRules;
 
 		/**
 		 * 

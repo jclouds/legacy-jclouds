@@ -18,6 +18,8 @@
  */
 package org.jclouds.virtualbox.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.annotation.Nullable;
 
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
@@ -36,8 +38,8 @@ public class AttachNicToMachine implements Function<NetworkInterfaceCard, Void> 
 
 
 	public AttachNicToMachine(String vmName, MachineUtils machineUtils) {
-		this.vmName = vmName;
-		this.machineUtils = machineUtils;
+		this.vmName = checkNotNull(vmName, "vmName");
+		this.machineUtils = checkNotNull(machineUtils, "machineUtils");
 	}
 
 	@Override
