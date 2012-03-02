@@ -253,7 +253,7 @@ public class Media extends ResourceEntityType<Media> {
          return false;
       Media that = Media.class.cast(o);
       return super.clone(that) && 
-            equal(this.owner, that.owner) && equal(this.imageType, that.imageType) && equal(this.size, that.size);
+            equal(this.imageType, that.imageType) && equal(this.size, that.size);
    }
 
    @Override

@@ -137,7 +137,7 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
 
    @XmlElement(name = "Description")
    private String description;
-   @XmlElement(name = "TasksInProgress")
+   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Tasks")
    private TasksInProgress tasksInProgress;
    @XmlAttribute
    private String id;
@@ -206,9 +206,7 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
       if (o == null || getClass() != o.getClass())
          return false;
       EntityType<?> that = EntityType.class.cast(o);
-      return super.equals(that) &&
-            equal(this.description, that.description) &&
-            equal(this.name, that.name);
+      return super.clone(that);
    }
 
    @Override
