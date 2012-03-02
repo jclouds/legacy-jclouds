@@ -118,7 +118,7 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
 				.builder().addNetworkAdapter(networkAdapter).build();
 
 		NetworkSpec networkSpec = NetworkSpec.builder()
-				.addNIC1(networkInterfaceCard).build();
+				.addNIC(0L, networkInterfaceCard).build();
 
 		masterSpec = MasterSpec
 				.builder()
@@ -213,8 +213,8 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
 	}
 
 	private void ensureMachineHasPowerDown(String vmName) {
-		while (manager.get().getVBox().findMachine(vmName).getState()
-				.equals(MachineState.RUNNING)) {
+		while (!manager.get().getVBox().findMachine(vmName).getState()
+				.equals(MachineState.POWERED_OFF)) {
 			machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared,
 					new Function<ISession, Void>() {
 						@Override

@@ -32,7 +32,7 @@ public class NetworkInterfaceCard {
 	public NetworkInterfaceCard(long slot, NetworkAdapter networkAdapter, String hostInterfaceName) {
 		this.slot = checkNotNull(slot, "slot");
 		this.networkAdapter = checkNotNull(networkAdapter, "networkAdapter");
-		this.hostInterfaceName = checkNotNull(hostInterfaceName, "hostInterfaceName");
+		this.hostInterfaceName = hostInterfaceName;
 	}
 
 	public static Builder builder() {

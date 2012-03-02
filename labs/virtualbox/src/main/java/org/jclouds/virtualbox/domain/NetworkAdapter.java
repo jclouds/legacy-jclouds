@@ -29,6 +29,7 @@ import org.virtualbox_4_1.NetworkAttachmentType;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Represents a network adapter in VirtualBox.
@@ -46,7 +47,7 @@ public class NetworkAdapter {
 		this.networkAttachmentType = checkNotNull(networkAttachmentType,
 				"networkAttachmentType");
 		this.macAddress = macAddress;
-		this.redirectRules = ImmutableSet.<RedirectRule>copyOf(checkNotNull(redirectRules, "redirectRules"));
+		this.redirectRules = ImmutableSet.<RedirectRule>copyOf(redirectRules);
 	}
 
 	public static Builder builder() {
@@ -57,7 +58,7 @@ public class NetworkAdapter {
 
 		private NetworkAttachmentType networkAttachmentType;
 		private String macAddress;
-		private Set<RedirectRule> redirectRules;
+		private Set<RedirectRule> redirectRules = Sets.newLinkedHashSet();
 
 		/**
 		 * 
@@ -116,7 +117,6 @@ public class NetworkAdapter {
 			return new NetworkAdapter(networkAttachmentType, macAddress,
 					redirectRules);
 		}
-
 	}
 
 	public NetworkAttachmentType getNetworkAttachmentType() {

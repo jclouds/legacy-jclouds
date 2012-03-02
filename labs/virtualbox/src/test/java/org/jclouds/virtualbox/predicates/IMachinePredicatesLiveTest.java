@@ -98,7 +98,7 @@ public class IMachinePredicatesLiveTest extends BaseVirtualBoxClientLiveTest {
 				.builder().addNetworkAdapter(networkAdapter).build();
 
 		NetworkSpec networkSpec = NetworkSpec.builder()
-				.addNIC1(networkInterfaceCard).build();
+				.addNIC(0L, networkInterfaceCard).build();
 
 		VmSpec clonedVmSpec = VmSpec.builder().id(cloneName).name(cloneName)
 				.memoryMB(512).cleanUpMode(CleanupMode.Full)
