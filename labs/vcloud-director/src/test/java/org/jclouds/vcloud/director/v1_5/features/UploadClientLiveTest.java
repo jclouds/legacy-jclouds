@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "api", "user" }, singleThreaded = true, testName = "NetworkClientLiveTest")
+@Test(groups = { "live", "api", "upload" }, singleThreaded = true, testName = "UploadClientLiveTest")
 public class UploadClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String UPLOAD = "upload";
@@ -40,27 +40,10 @@ public class UploadClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @BeforeClass(inheritGroups = true)
    @Override
    public void setupRequiredClients() {
-//      uploadClient = context.getApi().getUploadClient();
+      uploadClient = context.getApi().getUploadClient();
    }
 
-   @Test(testName = "PUT ???")
+   @Test(testName = "PUT ???", enabled = false)
    public void testUpload() {
-  ////TODO upload to target
-   // long sourceChecksum = 0;// =  Files.getChecksum(sourceFile, new CRC32())
-   // 
-   // // TODO: await task to complete
-   // media = mediaClient.getMedia(media);
-   // TasksInProgress tasks = media.getTasksInProgress();
-   // if (tasks.getTasks().size() > 0) {
-//       assertTrue(tasks.getTasks().size() == 1, "");
-//       Task uploadTask = Iterables.getFirst(tasks.getTasks(), null);
-//       Checks.checkTask(uploadTask);
-//       assertTrue(retryTaskSuccess.apply(uploadTask), String.format(TASK_COMPLETE_TIMELY, "createMedia"));
-   // }
-   // 
-   // // TODO: make assertions that the task was successful
-   // media = mediaClient.getMedia(media);
-   // assertTrue(equal(sourceFile.length(), uploadFile.getSize()), "");
-   // assertTrue(equal(sourceChecksum, uploadFile.getChecksum()), "");
    }
 }
