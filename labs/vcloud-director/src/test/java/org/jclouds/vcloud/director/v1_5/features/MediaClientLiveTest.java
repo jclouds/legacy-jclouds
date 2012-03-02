@@ -53,7 +53,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "api", "user" }, singleThreaded = true, testName = "MediaClientLiveTest")
+@Test(groups = { "live", "user", "media" }, singleThreaded = true, testName = "MediaClientLiveTest")
 public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    public static final String MEDIA = "media";
@@ -124,7 +124,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       context.getApi().getUploadClient().uploadFile(uploadLink, sourceFile);
    }
    
-   @Test(testName = "GET /media/{id}", dependsOnMethods = { "testCreateMedia" })
+   @Test(testName = "GET /media/{id}", dependsOnMethods = { "testCreateMedia" }, enabled = false)
    public void testGetMedia() {
       media = mediaClient.getMedia(media);
       assertNotNull(media, String.format(OBJ_REQ_LIVE, MEDIA));
@@ -137,7 +137,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    @Test(testName = "GET /media/{id}/owner",
-         dependsOnMethods = { "testGetMedia" })
+         dependsOnMethods = { "testGetMedia" }, enabled = false)
    public void testGetMediaOwner() {
       Owner directOwner = mediaClient.getOwner(media);
       assertEquals(owner, directOwner, String.format(GETTER_RETURNS_SAME_OBJ,
@@ -152,7 +152,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    @Test(testName = "POST /vdc/{id}/action/cloneMedia",
-         dependsOnMethods = { "testGetMediaOwner" })
+         dependsOnMethods = { "testGetMediaOwner" }, enabled = false)
    public void testCloneMedia() {
       oldMedia = media;
       media = vdcClient.cloneMedia(vdcRef, CloneMediaParams.builder()
@@ -200,7 +200,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    @Test(testName = "PUT /media/{id}",
-         dependsOnMethods = { "testCloneMedia" })
+         dependsOnMethods = { "testCloneMedia" }, enabled = false)
    public void testSetMedia() {
       String oldName = media.getName();
       String newName = "new "+oldName;
@@ -230,7 +230,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    @Test(testName = "GET /media/{id}/metadata",
-         dependsOnMethods = { "testGetMedia" })
+         dependsOnMethods = { "testGetMedia" }, enabled = false)
    public void testGetMetadata() {
       metadata = mediaClient.getMetadata(media);
       // required for testing
@@ -241,7 +241,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    @Test(testName = "POST /media/{id}/metadata",
-         dependsOnMethods = { "testGetMetadata" })
+         dependsOnMethods = { "testGetMetadata" }, enabled = false)
    public void testMergeMetadata() {
       // test new
       Set<MetadataEntry> inputEntries = ImmutableSet.of(MetadataEntry.builder().entry("testKey", "testValue").build());
@@ -294,14 +294,14 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    @Test(testName = "GET /media/{id}/metadata/{key}",
-         dependsOnMethods = { "testMergeMetadata" })
+         dependsOnMethods = { "testMergeMetadata" }, enabled = false)
    public void testGetMetadataValue() {
       metadataValue = mediaClient.getMetadataValue(media, "key");
       Checks.checkMetadataValueFor(MEDIA, metadataValue);
    }
    
    @Test(testName = "PUT /media/{id}/metadata/{key}",
-         dependsOnMethods = { "testGetMetadataValue" })
+         dependsOnMethods = { "testGetMetadataValue" }, enabled = false)
    public void testSetMetadataValue() {
       metadataEntryValue = "newValue";
       MetadataValue newValue = MetadataValue.builder().value(metadataEntryValue).build();
@@ -315,7 +315,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    @Test(testName = "DELETE /media/{id}/metadata/{key}",
-         dependsOnMethods = { "testSetMetadataValue" } )
+         dependsOnMethods = { "testSetMetadataValue" }, enabled = false )
    public void testDeleteMetadata() {
       Task deleteMetadataEntry = mediaClient.deleteMetadataEntry(media, "testKey");
       Checks.checkTask(deleteMetadataEntry);
@@ -352,7 +352,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    @Test(testName = "DELETE /media/{id}",
-         dependsOnMethods = { "testDeleteMetadata" } )
+         dependsOnMethods = { "testDeleteMetadata" }, enabled = false )
    public void testDeleteMedia() {
       Task deleteMedia = mediaClient.deleteMedia(media);
       Checks.checkTask(deleteMedia);
