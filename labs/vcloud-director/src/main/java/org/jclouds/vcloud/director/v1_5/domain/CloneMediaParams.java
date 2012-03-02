@@ -22,6 +22,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
@@ -50,7 +51,8 @@ import com.google.common.base.Objects;
  * &lt;/complexType>
  * </pre>
  */
-@XmlType(name = "CloneMediaParams", propOrder = {
+@XmlRootElement(name = "CloneMediaParams")
+@XmlType(propOrder = {
       "source",
       "isSourceDelete"
 })
@@ -90,8 +92,8 @@ public class CloneMediaParams
 
       public CloneMediaParams build() {
          return new CloneMediaParams(description, name, source, isSourceDelete);
-         cloneMediaParams.setDescription(description);
          cloneMediaParams.setName(name);
+         cloneMediaParams.setDescription(description);
       }
 
       
