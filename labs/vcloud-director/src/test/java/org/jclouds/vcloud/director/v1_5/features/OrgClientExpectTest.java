@@ -45,7 +45,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "unit", "user" }, singleThreaded = true, testName = "OrgClientExpectTest")
+@Test(groups = { "unit", "user", "org" }, singleThreaded = true, testName = "OrgClientExpectTest")
 public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
 
    @Test

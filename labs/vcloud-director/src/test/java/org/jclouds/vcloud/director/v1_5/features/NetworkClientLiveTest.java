@@ -50,7 +50,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "api", "user" }, singleThreaded = true, testName = "NetworkClientLiveTest")
+@Test(groups = { "live", "user", "network" }, singleThreaded = true, testName = "NetworkClientLiveTest")
 public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String NETWORK = "network";

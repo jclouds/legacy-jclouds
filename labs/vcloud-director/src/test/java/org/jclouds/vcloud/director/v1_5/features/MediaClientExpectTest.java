@@ -47,7 +47,7 @@ import org.testng.annotations.Test;
  * 
  * @author danikov
  */
-@Test(groups = { "unit", "media" }, singleThreaded = true, testName = "MediaClientExpectTest")
+@Test(groups = { "unit", "user", "media" }, singleThreaded = true, testName = "MediaClientExpectTest")
 public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
    
    @Test

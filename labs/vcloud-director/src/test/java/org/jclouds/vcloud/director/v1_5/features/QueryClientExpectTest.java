@@ -41,7 +41,7 @@ import com.google.common.collect.ImmutableMultimap;
  * 
  * @author grkvlt@apache.org
  */
-@Test(groups = { "unit", "user" }, singleThreaded = true, testName = "QueryClientExpectTest")
+@Test(groups = { "unit", "user", "query" }, singleThreaded = true, testName = "QueryClientExpectTest")
 public class QueryClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
 
    @Test

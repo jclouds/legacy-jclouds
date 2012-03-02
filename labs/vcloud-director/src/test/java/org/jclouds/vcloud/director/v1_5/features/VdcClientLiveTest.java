@@ -31,12 +31,10 @@ import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
-import org.jclouds.vcloud.director.v1_5.domain.CloneMediaParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.ComposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
@@ -55,7 +53,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "apitests", "user" }, testName = "VdcClientLiveTest")
+@Test(groups = { "live", "user", "vdc" }, testName = "VdcClientLiveTest")
 public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String VDC = "vdc";

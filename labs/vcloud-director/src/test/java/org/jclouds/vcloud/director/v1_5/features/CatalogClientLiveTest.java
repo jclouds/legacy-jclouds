@@ -55,7 +55,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author grkvlt@apache.org
  */
-@Test(groups = { "live", "api", "user" }, singleThreaded = true, testName = "CatalogClientLiveTest")
+@Test(groups = { "live", "user", "catalog" }, singleThreaded = true, testName = "CatalogClientLiveTest")
 public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    /*
